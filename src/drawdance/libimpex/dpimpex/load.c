@@ -45,6 +45,7 @@
 
 const DP_LoadFormat *DP_load_supported_formats(void)
 {
+    static const char *dppr_ext[] = {"dppr", NULL};
     static const char *dpcs_ext[] = {"dpcs", NULL};
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
@@ -52,6 +53,7 @@ const DP_LoadFormat *DP_load_supported_formats(void)
     static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_LoadFormat formats[] = {
+        {"Drawpile Project", dppr_ext},
         {"Drawpile Canvas", dpcs_ext},
         {"OpenRaster", ora_ext},
         {"PNG", png_ext},
@@ -1405,7 +1407,12 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
         return DP_SAVE_IMAGE_PSD;
     }
 
-    if (DP_project_check(buf, size).result == DP_PROJECT_CHECK_CANVAS) {
+    switch (DP_project_check(buf, size).result) {
+    case DP_PROJECT_CHECK_NONE:
+        break;
+    case DP_PROJECT_CHECK_PROJECT:
+        return DP_SAVE_IMAGE_PROJECT;
+    case DP_PROJECT_CHECK_CANVAS:
         return DP_SAVE_IMAGE_PROJECT_CANVAS;
     }
 
@@ -1479,9 +1486,8 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 
 static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                             const char *flat_image_layer_title,
-                            unsigned int flags,
-                            const char *(copy_dpcs_fn)(void *),
-                            void *copy_dpcs_user, DP_LoadResult *out_result,
+                            unsigned int flags, const char *(copy_fn)(void *),
+                            void *copy_user, DP_LoadResult *out_result,
                             DP_SaveImageType *out_type)
 {
     DP_Input *input = DP_file_input_new_from_path(path);
@@ -1513,22 +1519,25 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
         DP_input_free(input);
         return load_ora(dc, path, flags, NULL, NULL, out_result);
     }
-    else if (type == DP_SAVE_IMAGE_PROJECT_CANVAS) {
+    else if (type == DP_SAVE_IMAGE_PROJECT_CANVAS
+             || type == DP_SAVE_IMAGE_PROJECT) {
         DP_input_free(input);
         // On Android, we probably have some kind of content:// URL here that
         // SQLite can't deal with and we have to copy it to a temporary file.
-        const char *dpcs_path;
-        if (copy_dpcs_fn) {
-            dpcs_path = copy_dpcs_fn(copy_dpcs_user);
-            if (!dpcs_path) {
+        const char *project_path;
+        if (copy_fn) {
+            project_path = copy_fn(copy_user);
+            if (!project_path) {
                 assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
                 return NULL;
             }
         }
         else {
-            dpcs_path = path;
+            project_path = path;
         }
-        return DP_load_project_canvas(dc, dpcs_path, flags, out_result);
+        return DP_load_project_canvas(dc, project_path, flags,
+                                      type == DP_SAVE_IMAGE_PROJECT_CANVAS,
+                                      out_result);
     }
 
     if (!DP_input_rewind(input)) {
@@ -1590,8 +1599,18 @@ DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
 }
 
 
+static DP_CanvasState *clean_up_canvas(DP_CanvasState *cs, DP_DrawContext *dc)
+{
+    DP_CanvasState *next_cs = DP_canvas_state_merge_all_sublayers_dec(cs, dc);
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(next_cs);
+    DP_canvas_state_decref(next_cs);
+    DP_transient_canvas_state_post_load_fixup(tcs);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
 DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
                                        DP_UNUSED unsigned int flags,
+                                       bool snapshot_only,
                                        DP_LoadResult *out_result)
 {
     if (!path) {
@@ -1601,11 +1620,11 @@ DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
     }
 
     DP_CanvasState *cs;
-    int result = DP_project_canvas_load(dc, path, &cs);
+    int result = DP_project_canvas_load(dc, path, snapshot_only, &cs);
     switch (result) {
     case 0:
         assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
-        return cs;
+        return clean_up_canvas(cs, dc);
     case DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH:
         assign_load_result(out_result, DP_LOAD_RESULT_BAD_MIMETYPE);
         return NULL;
@@ -1622,7 +1641,6 @@ DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
         return NULL;
     }
 }
-
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
 {

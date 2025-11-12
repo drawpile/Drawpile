@@ -623,6 +623,39 @@ bool PaintEngine::isRecording() const
 	return m_paintEngine.recorderIsRecording();
 }
 
+void PaintEngine::startProjectRecording(
+	DP_ProjectWorker *pw, unsigned int fileId)
+{
+	m_paintEngine.startProjectRecording(pw, fileId);
+}
+
+bool PaintEngine::stopProjectRecording()
+{
+	return m_paintEngine.stopProjectRecording();
+}
+
+bool PaintEngine::isProjectRecording() const
+{
+	return m_paintEngine.isProjectRecording();
+}
+
+void PaintEngine::enqueueProjectThumbnailRequest()
+{
+	net::Message msg = net::makeInternalProjectThumbnailRequestMessage(0);
+	receiveMessages(false, 1, &msg);
+}
+
+void PaintEngine::enqueueProjectSnapshotRequest()
+{
+	net::Message msg = net::makeInternalProjectSnapshotRequestMessage(0);
+	receiveMessages(false, 1, &msg);
+}
+
+bool PaintEngine::hasPlayback() const
+{
+	return m_paintEngine.hasPlayback();
+}
+
 DP_PlayerResult PaintEngine::stepPlayback(long long steps)
 {
 	net::MessageList msgs;

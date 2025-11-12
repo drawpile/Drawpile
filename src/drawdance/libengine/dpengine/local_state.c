@@ -4,6 +4,7 @@
 #include "draw_context.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "layer_routes.h"
 #include "local_state_action.h"
 #include "pixels.h"
 #include "tile.h"
@@ -923,6 +924,138 @@ bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
     }
 
     return true;
+}
+
+
+static void set_local_layer_props_recursive(
+    DP_TransientCanvasState *tcs, DP_DrawContext *dc, bool reveal_censored,
+    DP_LayerPropsList *lpl,
+    DP_LocalStateCensoredLayerRevealedFn censored_layer_revealed, void *user)
+{
+    int count = DP_layer_props_list_count(lpl);
+    DP_draw_context_layer_indexes_push(dc);
+    for (int i = 0; i < count; ++i) {
+        DP_draw_context_layer_indexes_set(dc, i);
+
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        // Hidden layers are supposed to be purely local state. If the remote
+        // state gives us hidden layers, we unhide them first. That may get
+        // undone by the hidden layers processing that comes after this step.
+        bool needs_show = DP_layer_props_hidden(lp);
+        bool needs_reveal =
+            reveal_censored && DP_layer_props_censored_remote(lp);
+        bool needs_unsketch = DP_layer_props_sketch_opacity(lp) != 0;
+        if (needs_show || needs_reveal || needs_unsketch) {
+            int index_count;
+            int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
+            DP_TransientLayerProps *tlp =
+                DP_layer_routes_entry_indexes_transient_props(index_count,
+                                                              indexes, tcs);
+            if (needs_show) {
+                DP_transient_layer_props_hidden_set(tlp, false);
+            }
+            if (needs_reveal) {
+                DP_transient_layer_props_censored_remote_set(tlp, false);
+                if (censored_layer_revealed) {
+                    censored_layer_revealed(user, DP_layer_props_id(lp));
+                }
+            }
+            if (needs_unsketch) {
+                DP_transient_layer_props_sketch_opacity_set(tlp, 0);
+            }
+        }
+
+        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
+        if (child_lpl) {
+            set_local_layer_props_recursive(tcs, dc, reveal_censored, child_lpl,
+                                            censored_layer_revealed, user);
+        }
+    }
+    DP_draw_context_layer_indexes_pop(dc);
+}
+
+static void set_local_layer_states(DP_LocalState *ls,
+                                   DP_TransientCanvasState *tcs)
+{
+    int count;
+    const DP_LocalLayerState *llss = DP_local_state_layer_states(ls, &count);
+    if (count != 0) {
+        DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
+        for (int i = 0; i < count; ++i) {
+            const DP_LocalLayerState *lls = &llss[i];
+            DP_LayerRoutesEntry *lre =
+                DP_layer_routes_search(lr, lls->layer_id);
+            if (lre) {
+                DP_TransientLayerProps *tlp =
+                    DP_layer_routes_entry_transient_props(lre, tcs);
+                DP_transient_layer_props_hidden_set(tlp, lls->hidden);
+                DP_transient_layer_props_alpha_lock_set(tlp, lls->alpha_lock);
+                DP_transient_layer_props_censored_local_set(tlp, lls->censored);
+                DP_transient_layer_props_sketch_opacity_set(
+                    tlp, lls->sketch_opacity);
+                DP_transient_layer_props_sketch_tint_set(tlp, lls->sketch_tint);
+            }
+        }
+    }
+}
+
+void DP_local_state_layer_states_apply(
+    DP_LocalState *ls, DP_TransientCanvasState *tcs, DP_DrawContext *dc,
+    bool reveal_censored,
+    DP_LocalStateCensoredLayerRevealedFn censored_layer_revealed, void *user)
+{
+    DP_draw_context_layer_indexes_clear(dc);
+    set_local_layer_props_recursive(
+        tcs, dc, reveal_censored,
+        DP_transient_canvas_state_layer_props_noinc(tcs),
+        censored_layer_revealed, user);
+    set_local_layer_states(ls, tcs);
+}
+
+static bool get_local_track_state(const DP_LocalTrackState *track_states,
+                                  int count, int track_id, bool *out_hidden,
+                                  bool *out_onion_skin)
+{
+    for (int i = 0; i < count; ++i) {
+        const DP_LocalTrackState *lts = &track_states[i];
+        if (lts->track_id == track_id) {
+            *out_hidden = lts->hidden;
+            *out_onion_skin = lts->onion_skin;
+            return true;
+        }
+    }
+    *out_hidden = false;
+    *out_onion_skin = false;
+    return false;
+}
+
+void DP_local_state_track_states_apply(
+    DP_LocalState *ls, DP_Timeline *tl,
+    DP_TransientTimeline *(*get_transient_timeline_fn)(void *),
+    void *user)
+{
+    int lts_count = DP_size_to_int(ls->track_states.used);
+    const DP_LocalTrackState *track_states = ls->track_states.elements;
+
+    DP_TransientTimeline *ttl = NULL;
+    int track_count = DP_timeline_track_count(tl);
+    for (int i = 0; i < track_count; ++i) {
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
+        bool hidden, onion_skin;
+        get_local_track_state(track_states, lts_count, DP_track_id(t), &hidden,
+                              &onion_skin);
+        bool local_state_changed = DP_track_hidden(t) != hidden
+                                || DP_track_onion_skin(t) != onion_skin;
+        if (local_state_changed) {
+            if (!ttl) {
+                ttl = get_transient_timeline_fn(user);
+            }
+            DP_TransientTrack *tt =
+                DP_transient_timeline_transient_track_at_noinc(ttl, i, 0);
+            DP_transient_track_hidden_set(tt, hidden);
+            DP_transient_track_onion_skin_set(tt, onion_skin);
+        }
+    }
 }
 
 

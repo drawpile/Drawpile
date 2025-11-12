@@ -101,9 +101,9 @@ size_t DP_message_serialize_compat(DP_Message *msg, bool write_body_length,
                                    void *user) DP_MUST_CHECK;
 #endif
 
-size_t DP_message_serialize_body(DP_Message *msg,
-                                 DP_GetMessageBufferFn get_buffer,
-                                 void *user) DP_MUST_CHECK;
+bool DP_message_serialize_body(DP_Message *msg,
+                               DP_GetMessageBufferFn get_buffer, void *user,
+                               size_t *out_length) DP_MUST_CHECK;
 
 bool DP_message_write_text(DP_Message *msg,
                            DP_TextWriter *writer) DP_MUST_CHECK;
@@ -130,6 +130,8 @@ DP_Message *DP_message_deserialize_compat(const unsigned char *buf,
                                           size_t bufsize, bool decode_opaque);
 #endif
 
+
+bool DP_message_type_is_draw_dabs(DP_MessageType type);
 
 int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc);
 

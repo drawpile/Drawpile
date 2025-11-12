@@ -18,6 +18,7 @@ extern "C" {
 #include <functional>
 
 struct DP_Mutex;
+struct DP_ProjectWorker;
 struct DP_Semaphore;
 
 namespace drawdance {
@@ -233,6 +234,13 @@ public:
 	bool stopRecording();
 	bool isRecording() const;
 
+	void startProjectRecording(DP_ProjectWorker *pw, unsigned int fileId);
+	bool stopProjectRecording();
+	bool isProjectRecording() const;
+	void enqueueProjectThumbnailRequest();
+	void enqueueProjectSnapshotRequest();
+
+	bool hasPlayback() const;
 	DP_PlayerResult stepPlayback(long long steps);
 	DP_PlayerResult skipPlaybackBy(long long steps, bool bySnapshots);
 	DP_PlayerResult jumpPlaybackTo(long long position);

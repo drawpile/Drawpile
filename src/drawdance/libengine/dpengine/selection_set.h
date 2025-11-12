@@ -20,6 +20,8 @@ int DP_selection_set_refcount(DP_SelectionSet *ss);
 
 bool DP_selection_set_transient(DP_SelectionSet *ss);
 
+bool DP_selection_set_null(DP_SelectionSet *ss);
+
 int DP_selection_set_count(DP_SelectionSet *ss);
 
 DP_Selection *DP_selection_set_search_noinc(DP_SelectionSet *ss,
@@ -92,5 +94,7 @@ void DP_transient_selection_set_replace_at_noinc(DP_TransientSelectionSet *tss,
 
 void DP_transient_selection_set_delete_at(DP_TransientSelectionSet *tss,
                                           int index);
+
+void DP_transient_selection_set_clamp(DP_TransientSelectionSet *tss, int count);
 
 #endif

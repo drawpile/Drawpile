@@ -8,6 +8,7 @@
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/dialogs/startdialog/links.h"
 #include "desktop/dialogs/startdialog/page.h"
+#include "desktop/dialogs/startdialog/recover.h"
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
@@ -133,6 +134,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 #ifndef __EMSCRIPTEN__
 	startdialog::Recent *recentPage = new startdialog::Recent{this};
 #endif
+	startdialog::Recover *recoverPage = new startdialog::Recover(this);
 
 	EntryDefinition defs[Entry::Count];
 	defs[Entry::Welcome] = {
@@ -156,6 +158,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		"document-open-recent", tr("Recent Files"),
 		tr("Reopen a recently used file"), recentPage};
 #endif
+	defs[Entry::Recover] = {
+		"backup", tr("Recover"), tr("Restore autosaves or corrupted files"),
+		recoverPage};
 	defs[Entry::Layouts] = {
 		"window_", tr("Layouts"), tr("Choose application layout"), nullptr};
 	defs[Entry::Preferences] = {
@@ -415,6 +420,13 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		recentPage, &startdialog::Recent::openPath, this,
 		&StartDialog::openRecent);
 #endif
+
+	connect(
+		recoverPage, &startdialog::Recover::hideLinks, this,
+		&StartDialog::hideLinks);
+	connect(
+		recoverPage, &startdialog::Recover::openPath, this,
+		&StartDialog::openRecovery);
 
 	setMinimumSize(600, 350);
 	setSmallScreenMode(smallScreenMode);

@@ -11,6 +11,7 @@ typedef enum DP_SaveImageType {
     DP_SAVE_IMAGE_WEBP,
     DP_SAVE_IMAGE_PROJECT_CANVAS,
     DP_SAVE_IMAGE_QOI,
+    DP_SAVE_IMAGE_PROJECT,
 } DP_SaveImageType;
 
 typedef enum DP_SaveResult {
@@ -23,6 +24,7 @@ typedef enum DP_SaveResult {
     DP_SAVE_RESULT_WRITE_ERROR,
     DP_SAVE_RESULT_INTERNAL_ERROR,
     DP_SAVE_RESULT_CANCEL,
+    DP_SAVE_RESULT_TODO_DPPR,
 } DP_SaveResult;
 
 #endif

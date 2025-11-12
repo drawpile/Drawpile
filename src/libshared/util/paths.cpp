@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QLocale>
 #include <cmake-config/config.h>
 #ifdef Q_OS_ANDROID
 #	include <QRegularExpression>
@@ -181,6 +182,19 @@ bool slurp(const QString &path, QByteArray &outBytes, QString &outError)
 	} else {
 		file.close();
 		return true;
+	}
+}
+
+QString formatFileSize(qint64 sizeInBytes)
+{
+	qint64 mib = 1024LL * 1024LL;
+	qint64 gib = 1024LL * mib;
+	if(sizeInBytes >= gib) {
+		return QStringLiteral("%1 GB").arg(
+			QLocale().toString(qreal(sizeInBytes) / qreal(gib), 'f', 2));
+	} else {
+		return QStringLiteral("%1 MB").arg(
+			QLocale().toString(qreal(sizeInBytes) / qreal(mib), 'f', 2));
 	}
 }
 

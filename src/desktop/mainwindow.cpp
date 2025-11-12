@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "desktop/mainwindow.h"
+extern "C" {
+#include <dpengine/project.h>
+}
 #include "cmake-config/config.h"
 #include "desktop/chat/chatbox.h"
 #include "desktop/dialogs/abusereport.h"
@@ -39,6 +41,7 @@
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/mainwindow.h"
 #include "desktop/notifications.h"
 #include "desktop/scene/actionbaritem.h"
 #include "desktop/scene/hudhandler.h"
@@ -708,6 +711,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_canvasView->setCanvas(canvas);
 	m_flipbookState = dialogs::Flipbook::State();
 
+	connect(
+		this, &MainWindow::initialCatchupFinished, canvas,
+		&canvas::CanvasModel::requestProjectRecordingThumbnail);
+
 	canvas::AclState *aclState = canvas->aclState();
 	connect(
 		aclState, &canvas::AclState::localOpChanged, this,
@@ -833,6 +840,16 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		canvas, &canvas::CanvasModel::restoreLocalStateViewMode, this,
 		&MainWindow::restoreViewMode);
 
+	connect(
+		canvas, &canvas::CanvasModel::projectRecordingStarted, this,
+		&MainWindow::onProjectRecordingStarted);
+	connect(
+		canvas, &canvas::CanvasModel::projectRecordingStopped, this,
+		&MainWindow::onProjectRecordingStopped);
+	connect(
+		canvas, &canvas::CanvasModel::projectRecordingErrorOccurred, this,
+		&MainWindow::showProjectRecordingError);
+
 	m_dockToolSettings->inspectorSettings()->setUserList(canvas->userlist());
 
 	// Make sure the UI matches the default feature access level
@@ -851,6 +868,19 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		getAction("showselectionmask")->isChecked());
 	paintEngine->setSelectionEditActive(toolCtrl->isSelectionEditActive());
 	getAction("resetsession")->setEnabled(true);
+	getAction("autorecord")->setChecked(canvas->isProjectRecording());
+
+	QAction *retainProjectRecordings = searchAction("retainprojectrecordings");
+	if(retainProjectRecordings) {
+		retainProjectRecordings->setChecked(
+			canvas->isRetainProjectRecordings());
+		connect(
+			canvas, &canvas::CanvasModel::retainProjectRecordingsChanged,
+			retainProjectRecordings, &QAction::setChecked);
+		connect(
+			retainProjectRecordings, &QAction::triggered, canvas,
+			&canvas::CanvasModel::setRetainProjectRecordings);
+	}
 
 	updateSelectTransformActions();
 }
@@ -996,12 +1026,14 @@ void MainWindow::createNewWindow(const std::function<void(MainWindow *)> &block)
 
 void MainWindow::loadBlankDocument(const QSize &size, const QColor &background)
 {
+	bool autoRecord = dpAppConfig()->getAutoRecordHost();
 	m_doc->loadBlank(
 		size, background,
 		QApplication::translate("docks::LayerList", "Layer") +
 			QStringLiteral(" 1"),
 		QCoreApplication::translate("widgets::TimelineWidget", "Track") +
-			QStringLiteral(" 1"));
+			QStringLiteral(" 1"),
+		autoRecord);
 }
 
 /**
@@ -1601,6 +1633,81 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 	box->show();
 }
 
+
+void MainWindow::toggleProjectRecording(bool enabled)
+{
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas && canvas->isProjectRecording() != enabled) {
+		if(enabled) {
+			int sourceType;
+			if(m_doc->client()->isConnected()) {
+				sourceType = DP_PROJECT_SOURCE_SESSION;
+			} else if(m_doc->haveCurrentPath()) {
+				sourceType = DP_PROJECT_SOURCE_FILE;
+			} else {
+				sourceType = DP_PROJECT_SOURCE_BLANK;
+			}
+			canvas->startProjectRecording(dpAppConfig(), sourceType);
+		} else {
+			QMessageBox *box = utils::makeQuestion(
+				this, tr("Disable Autosave"),
+				tr("Are you sure you want to disable autosaving for this "
+				   "session?"),
+				tr("Unsaved data will be discarded and can't be recovered. You "
+				   "will not be able to create a timelapse."));
+			//: "Yes" button in the "do you want to turn off autosaving" dialog.
+			box->button(QMessageBox::Yes)->setText(tr("Yes, disable"));
+			//: "No" button in the "do you want to turn off autosaving" dialog.
+			box->button(QMessageBox::No)->setText(tr("No, keep enabled"));
+			connect(box, &QMessageBox::accepted, this, [this] {
+				canvas::CanvasModel *currentCanvas = m_doc->canvas();
+				if(currentCanvas) {
+					currentCanvas->discardProjectRecording();
+				}
+			});
+			connect(box, &QMessageBox::rejected, this, [this] {
+				canvas::CanvasModel *currentCanvas = m_doc->canvas();
+				bool isProjectRecording =
+					currentCanvas && currentCanvas->isProjectRecording();
+				getAction("autorecord")->setChecked(isProjectRecording);
+			});
+			box->show();
+		}
+	}
+}
+
+void MainWindow::onProjectRecordingStarted()
+{
+	getAction("autorecord")->setChecked(true);
+}
+
+void MainWindow::onProjectRecordingStopped(bool notify)
+{
+	getAction("autorecord")->setChecked(false);
+	if(notify) {
+		m_canvasView->showPopupNotice(tr("Autosave deactivated"));
+	}
+}
+
+void MainWindow::showProjectRecordingError(const QString &message)
+{
+	QString objectName = QStringLiteral("projectrecordingerrormessagebox");
+	if(!findChild<QMessageBox *>(objectName, Qt::FindDirectChildrenOnly)) {
+		QMessageBox *box = utils::showWarning(
+			this, tr("Autosave Error"), tr("Autosave error: %1").arg(message),
+			tr("Autosave will be disabled for the current session. The file "
+			   "will be left available for recovery. If you continue, you will "
+			   "not be able to create a timelapse."));
+		box->setObjectName(objectName);
+		connect(box, &QMessageBox::finished, this, [this] {
+			canvas::CanvasModel *canvas = m_doc->canvas();
+			if(canvas) {
+				canvas->unblockProjectRecordingErrors();
+			}
+		});
+	}
+}
+
 void MainWindow::showSelectionMaskColorPicker()
 {
 	QString objectName = QStringLiteral("selectionmaskcolordialog");
@@ -2104,6 +2211,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	utils::Connections *connections = new utils::Connections(key, dlg);
 	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, &MainWindow::open));
 	connections->add(connect(dlg, &dialogs::StartDialog::openRecent, this, std::bind(&MainWindow::openRecent, this, _1, nullptr)));
+	connections->add(connect(dlg, &dialogs::StartDialog::openRecovery, this, &MainWindow::openRecovery));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::networkPreferences, this, &MainWindow::showNetworkSettings));
@@ -2239,6 +2347,18 @@ void MainWindow::openRecent(const QString &path, QTemporaryFile *tempFile)
 		});
 }
 
+void MainWindow::openRecovery(const QString &path)
+{
+	questionWindowReplacement(
+		tr("Open Recovered File"),
+		tr("You're about to open a recovered file and close this window."),
+		[this, path](bool ok) {
+			if(ok) {
+				openPath(path);
+			}
+		});
+}
+
 void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 {
 	if(!canReplace()) {
@@ -2296,9 +2416,14 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 				this, &MainWindow::setRecorderStatus);
 			connect(
 				m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this,
-				[this](QObject *) {
+				[this, path](QObject *) {
 					m_playbackDialog = nullptr;
 					setRecorderStatus(false);
+					canvas::CanvasModel *canvas = m_doc->canvas();
+					if(canvas && dpAppConfig()->getAutoRecordHost()) {
+						canvas->startProjectRecording(
+							dpAppConfig(), DP_PROJECT_SOURCE_FILE);
+					}
 				});
 		} else {
 			delete tempFile;
@@ -2353,8 +2478,10 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 					showElapsedStatusMessage(
 						//: %1 is minutes, %2 is seconds, %3 is milliseconds.
 						tr("Canvas loaded in %1:%2.%3"), elapsedMsec);
+					bool autoRecord = dpAppConfig()->getAutoRecordHost();
 					m_doc->loadState(
-						canvasState, loader->path(), loader->type(), false);
+						canvasState, loader->path(), loader->type(), false,
+						autoRecord);
 				}
 
 				loader->deleteLater();
@@ -2478,8 +2605,10 @@ void MainWindow::importAnimation(int source)
 				auto block = [canvasState](MainWindow *win) {
 					// Don't use the path of the imported animation to avoid
 					// clobbering the old file by mashing Ctrl+S instinctually.
+					bool autoRecord = dpAppConfig()->getAutoRecordHost();
 					win->m_doc->loadState(
-						canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
+						canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true,
+						autoRecord);
 				};
 				if(canReplace()) {
 					block(this);
@@ -2663,6 +2792,7 @@ void MainWindow::updateCatchupProgress(int percent)
 		m_initialCatchup = false;
 		dpApp().notifications()->trigger(
 			this, notification::Event::Login, tr("Joined the session!"));
+		Q_EMIT initialCatchupFinished();
 	}
 	m_canvasView->setCatchupProgress(percent, false);
 }
@@ -3788,6 +3918,7 @@ void MainWindow::connectToSession(
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
 	config::Config *cfg = dpAppConfig();
+	m_doc->setProjectRecordOnConnect(cfg->getAutoRecordJoin());
 	m_doc->connectToServer(
 		cfg->getServerTimeout(), cfg->getNetworkProxyMode(),
 		net::resolveConnectStrategy(
@@ -4164,6 +4295,12 @@ void MainWindow::exit()
 	QApplication::processEvents();
 	saveSplitterState();
 	saveWindowState();
+
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas) {
+		canvas->discardProjectRecording();
+	}
+
 	deleteLater();
 }
 #endif
@@ -5520,6 +5657,9 @@ void MainWindow::setupActions()
 	QAction *closefile =
 		makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
+	QAction *autoRecord = makeAction("autorecord", tr("Autosave"))
+							  .noDefaultShortcut()
+							  .checkable();
 #ifdef __EMSCRIPTEN__
 	QAction *download = makeAction("downloaddocument", tr("&Download Image…"))
 							.icon("document-save")
@@ -5550,10 +5690,6 @@ void MainWindow::setupActions()
 	QAction *savesel = makeAction("saveselection", tr("Export Selection..."))
 						   .icon("select-rectangular")
 						   .noDefaultShortcut();
-	QAction *autosave = makeAction("autosave", tr("Autosave"))
-							.noDefaultShortcut()
-							.checkable()
-							.disabled();
 	QAction *exportTemplate =
 		makeAction("exporttemplate", tr("Export Session &Template..."))
 			.noDefaultShortcut();
@@ -5610,6 +5746,7 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(exportDocumentAgain);
 #	endif
 	m_currentdoctools->addAction(record);
+	m_currentdoctools->addAction(autoRecord);
 #endif
 	m_currentdoctools->addAction(exportAnimation);
 
@@ -5635,13 +5772,11 @@ void MainWindow::setupActions()
 		exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
-	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
-	connect(m_doc, &Document::autosaveChanged, autosave, &QAction::setChecked);
-	connect(
-		m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
-
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
+	connect(
+		autoRecord, &QAction::triggered, this,
+		&MainWindow::toggleProjectRecording);
 
 	connect(
 		exportAnimation, &QAction::triggered, this,
@@ -5700,7 +5835,6 @@ void MainWindow::setupActions()
 #	ifndef Q_OS_ANDROID
 	filemenu->addAction(exportDocumentAgain);
 #	endif
-	filemenu->addAction(autosave);
 #endif
 	filemenu->addSeparator();
 
@@ -5723,6 +5857,7 @@ void MainWindow::setupActions()
 #ifndef __EMSCRIPTEN__
 	filemenu->addAction(record);
 #endif
+	filemenu->addAction(autoRecord);
 	filemenu->addSeparator();
 	filemenu->addAction(start);
 #ifndef __EMSCRIPTEN__
@@ -7275,10 +7410,17 @@ void MainWindow::setupActions()
 				.noDefaultShortcut();
 		QAction *causeCrash =
 			makeAction("causecrash", tr("Cause Crash…")).noDefaultShortcut();
+		QAction *retainProjectRecordings =
+			makeAction(
+				"retainprojectrecordings",
+				QStringLiteral("Retain project recordings"))
+				.checkable()
+				.noDefaultShortcut();
 		devtoolsmenu->addSeparator();
 		devtoolsmenu->addAction(artificialLag);
 		devtoolsmenu->addAction(artificialDisconnect);
 		devtoolsmenu->addAction(causeCrash);
+		devtoolsmenu->addAction(retainProjectRecordings);
 		connect(
 			artificialLag, &QAction::triggered, this,
 			&MainWindow::setArtificialLag);

@@ -171,6 +171,26 @@ bool DP_document_metadata_transient(DP_DocumentMetadata *dm)
     return dm->transient;
 }
 
+bool DP_document_metadata_null(DP_DocumentMetadata *dm)
+{
+    if (dm) {
+        DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
+        return dm->dpix == DP_DOCUMENT_METADATA_DPIX_DEFAULT
+            && dm->dpiy == DP_DOCUMENT_METADATA_DPIY_DEFAULT
+            && dm->framerate == DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT
+            && dm->framerate_fraction
+                   == DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT
+            && dm->frame_count == DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT
+            && dm->frame_range_first
+                   == DP_DOCUMENT_METADATA_FRAME_RANGE_FIRST_DEFAULT
+            && dm->frame_range_last
+                   == DP_DOCUMENT_METADATA_FRAME_RANGE_LAST_DEFAULT;
+    }
+    else {
+        return true;
+    }
+}
+
 int DP_document_metadata_dpix(DP_DocumentMetadata *dm)
 {
     DP_ASSERT(dm);

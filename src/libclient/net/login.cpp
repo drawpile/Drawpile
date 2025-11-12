@@ -72,6 +72,9 @@ LoginHandler::LoginHandler(
 	, m_redirectHistory(redirectHistory)
 	, m_redirectData(redirectData)
 {
+	if(!m_hostParams.isNull()) {
+		m_sessionTitle = m_hostParams->title;
+	}
 }
 
 #ifdef __EMSCRIPTEN__
@@ -1211,6 +1214,7 @@ void LoginHandler::prepareJoinSelectedSession(
 	m_compatibilityMode = compatibilityMode;
 	m_minorIncompatibility = minorIncompatibility;
 	m_needSessionPassword = needPassword;
+	m_sessionTitle = title;
 	m_server->messageQueue()->setCompatibilityMode(m_compatibilityMode);
 	emit sessionConfirmationNeeded(title, nsfm, autoJoin);
 }

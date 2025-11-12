@@ -36,6 +36,17 @@ set(SUPPORTED_FILE_TYPES
 			68 big32 520585025
 
 	TYPE
+		EXPORTED
+		NAME Drawpile project
+		GROUP LAYERED_IMAGE
+		MIME application/vnd.drawpile.project
+		UTI net.drawpile.dppr
+		EXT dppr
+		MAGIC
+			0 string "SQLite format 3\\0"
+			68 big32 520585024
+
+	TYPE
 		IMPORTED
 		NAME OpenRaster image
 		GROUP LAYERED_IMAGE

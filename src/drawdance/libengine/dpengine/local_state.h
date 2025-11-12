@@ -4,7 +4,8 @@
 #include "view_mode.h"
 #include <dpcommon/common.h>
 
-typedef struct DP_CanvasState DP_CanvasState;
+DP_TYPEDEF_PERSISTENT(CanvasState);
+DP_TYPEDEF_PERSISTENT(Timeline);
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_LocalStateAction DP_LocalStateAction;
 typedef struct DP_Message DP_Message;
@@ -34,6 +35,7 @@ typedef void (*DP_LocalStateViewInvalidatedFn)(void *user, bool check_all,
 typedef bool (*DP_LocalStateAcceptResetMessageFn)(void *user, DP_Message *msg);
 typedef void (*DP_LocalStateActionSaveFn)(void *user,
                                           const DP_LocalStateAction *action);
+typedef void (*DP_LocalStateCensoredLayerRevealedFn)(void *user, int layer_id);
 
 DP_LocalState *
 DP_local_state_new(DP_CanvasState *cs_or_null,
@@ -76,6 +78,16 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
 bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                                       DP_LocalStateAcceptResetMessageFn fn,
                                       void *user);
+
+
+void DP_local_state_layer_states_apply(
+    DP_LocalState *ls, DP_TransientCanvasState *tcs, DP_DrawContext *dc,
+    bool reveal_censored,
+    DP_LocalStateCensoredLayerRevealedFn censored_layer_revealed, void *user);
+
+void DP_local_state_track_states_apply(
+    DP_LocalState *ls, DP_Timeline *tl,
+    DP_TransientTimeline *(*get_transient_timeline_fn)(void *), void *user);
 
 
 DP_Message *DP_local_state_msg_layer_visibility_new(int layer_id, bool hidden);

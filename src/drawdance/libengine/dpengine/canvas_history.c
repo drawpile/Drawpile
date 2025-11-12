@@ -21,6 +21,8 @@
  */
 #include "canvas_history.h"
 #include "canvas_state.h"
+#include "project.h"
+#include "project_worker.h"
 #include "recorder.h"
 #include "snapshots.h"
 #include <dpcommon/atomic.h>
@@ -486,11 +488,11 @@ DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
                       void *save_point_user, bool want_dump,
                       const char *dump_dir)
 {
-    return DP_canvas_history_new_inc(NULL, save_point_fn, save_point_user,
-                                     want_dump, dump_dir);
+    return DP_canvas_history_new_noinc(NULL, save_point_fn, save_point_user,
+                                       want_dump, dump_dir);
 }
 
-DP_CanvasHistory *DP_canvas_history_new_inc(
+DP_CanvasHistory *DP_canvas_history_new_noinc(
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
     void *save_point_user, bool want_dump, const char *dump_dir)
 {
@@ -500,8 +502,7 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
     }
 
     DP_CanvasHistory *ch = DP_malloc(sizeof(*ch));
-    DP_CanvasState *cs =
-        cs_or_null ? DP_canvas_state_incref(cs_or_null) : DP_canvas_state_new();
+    DP_CanvasState *cs = cs_or_null ? cs_or_null : DP_canvas_state_new();
     size_t entries_size = sizeof(*ch->entries) * INITIAL_CAPACITY;
 
     *ch = (DP_CanvasHistory){
@@ -534,6 +535,18 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
     DP_queue_init(&ch->fork.queue, INITIAL_CAPACITY, sizeof(DP_ForkEntry));
     set_initial_entry(ch, cs);
     validate_history(ch, true);
+    return ch;
+}
+
+DP_CanvasHistory *DP_canvas_history_new_inc(
+    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
+    void *save_point_user, bool want_dump, const char *dump_dir)
+{
+    DP_CanvasHistory *ch = DP_canvas_history_new_noinc(
+        cs_or_null, save_point_fn, save_point_user, want_dump, dump_dir);
+    if (cs_or_null && ch) {
+        DP_canvas_state_incref(cs_or_null);
+    }
     return ch;
 }
 
@@ -708,20 +721,6 @@ void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
     dump_snapshot(ch, cs);
 }
 
-static bool is_draw_dabs_message_type(DP_MessageType type)
-{
-    switch (type) {
-    case DP_MSG_DRAW_DABS_CLASSIC:
-    case DP_MSG_DRAW_DABS_PIXEL:
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-    case DP_MSG_DRAW_DABS_MYPAINT:
-    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
-        return true;
-    default:
-        return false;
-    }
-}
-
 static DP_CanvasState *flush_replay_buffer(DP_CanvasHistory *ch,
                                            DP_CanvasState *cs,
                                            DP_DrawContext *dc)
@@ -745,7 +744,7 @@ static DP_CanvasState *replay_drawing_command_dec(DP_CanvasHistory *ch,
                                                   DP_Message *msg,
                                                   DP_MessageType type)
 {
-    if (is_draw_dabs_message_type(type)) {
+    if (DP_message_type_is_draw_dabs(type)) {
         int index = ch->replay.used++;
         DP_ASSERT(index < REPLAY_BUFFER_CAPACITY);
         ch->replay.buffer[index] = msg;
@@ -1819,6 +1818,69 @@ DP_Recorder *DP_canvas_history_recorder_new(
         DP_recorder_free_join(params.r, NULL);
         return NULL;
     }
+}
+
+
+struct DP_CanvasHistoryProjectRecordingParams {
+    DP_ProjectWorker *pw;
+    unsigned int file_id;
+    unsigned int local_user_id;
+    unsigned int snapshot_flags;
+};
+
+static bool accept_project_recording_state(void *user, DP_CanvasState *cs)
+{
+    struct DP_CanvasHistoryProjectRecordingParams *params = user;
+    DP_project_worker_snapshot_open_inc(params->pw, params->file_id, cs,
+                                        params->snapshot_flags);
+    return true;
+}
+
+static bool accept_project_recording_message(void *user, DP_Message *msg)
+{
+    struct DP_CanvasHistoryProjectRecordingParams *params = user;
+    unsigned int flags = DP_message_context_id(msg) == params->local_user_id
+                           ? DP_PROJECT_MESSAGE_FLAG_OWN
+                           : 0u;
+    DP_project_worker_snapshot_message_record_noinc(params->pw, params->file_id,
+                                                    msg, flags);
+    return true;
+}
+
+static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
+                                  unsigned int file_id,
+                                  unsigned int local_user_id,
+                                  unsigned int snapshot_flags,
+                                  bool discard_other_snapshots)
+{
+    DP_ASSERT(ch);
+    DP_ASSERT(pw);
+    struct DP_CanvasHistoryProjectRecordingParams params = {
+        pw, file_id, local_user_id, snapshot_flags};
+    DP_canvas_history_reset_image_new(ch, accept_project_recording_state,
+                                      accept_project_recording_message,
+                                      &params);
+    DP_project_worker_snapshot_finish(pw, file_id, discard_other_snapshots);
+}
+
+void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
+                                               DP_ProjectWorker *pw,
+                                               unsigned int file_id,
+                                               unsigned int local_user_id)
+{
+    make_project_snapshot(ch, pw, file_id, local_user_id,
+                          DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT
+                              | DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE,
+                          false);
+}
+
+void DP_canvas_history_project_recording_snapshot(DP_CanvasHistory *ch,
+                                                  DP_ProjectWorker *pw,
+                                                  unsigned int file_id,
+                                                  unsigned int local_user_id)
+{
+    make_project_snapshot(ch, pw, file_id, local_user_id,
+                          DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE, true);
 }
 
 

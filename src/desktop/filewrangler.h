@@ -62,6 +62,7 @@ public:
 		AUTH_LIST,
 		LOG_FILE,
 		SESSION_SETTINGS,
+		AUTOSAVE,
 	};
 
 	FileWrangler(QWidget *parent);
@@ -126,6 +127,9 @@ public:
 	void downloadSelection(Document *doc);
 	void
 	saveFileContent(const QString &defaultName, const QByteArray &bytes) const;
+#else
+	QString getAutosaveExportPath(
+		const QString &defaultDirectory, const QString &defaultName) const;
 #endif
 
 	void saveBrushPack(const PathSaveFn &onSave) const;

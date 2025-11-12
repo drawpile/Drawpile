@@ -31,6 +31,7 @@ struct LoggedInParams {
 	bool minorIncompatibility;
 	uint8_t userId;
 	QUrl url;
+	QString sessionTitle;
 	QString joinPassword;
 	QString authId;
 	QStringList userFlags;

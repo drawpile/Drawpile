@@ -238,9 +238,21 @@ public:
 	virtual void setAnimationExportFormat(int value) = 0;
 	static int defaultAnimationExportFormat();
 
-	virtual int getAutoSaveIntervalMinutes() const = 0;
-	virtual void setAutoSaveIntervalMinutes(int value) = 0;
-	static int defaultAutoSaveIntervalMinutes();
+	virtual bool getAutoRecordHost() const = 0;
+	virtual void setAutoRecordHost(bool value) = 0;
+	static bool defaultAutoRecordHost();
+
+	virtual bool getAutoRecordJoin() const = 0;
+	virtual void setAutoRecordJoin(bool value) = 0;
+	static bool defaultAutoRecordJoin();
+
+	virtual int getAutoRecordSnapshotIntervalMinutes() const = 0;
+	virtual void setAutoRecordSnapshotIntervalMinutes(int value) = 0;
+	static int defaultAutoRecordSnapshotIntervalMinutes();
+
+	virtual int getAutoRecordThumbnailIntervalMinutes() const = 0;
+	virtual void setAutoRecordThumbnailIntervalMinutes(int value) = 0;
+	static int defaultAutoRecordThumbnailIntervalMinutes();
 
 	virtual int getAutomaticAlphaPreserve() const = 0;
 	virtual void setAutomaticAlphaPreserve(int value) = 0;
@@ -1119,7 +1131,10 @@ Q_SIGNALS:
 	void changeActionBarLocation(int value);
 	void changeAlphaLockCursor(int value);
 	void changeAnimationExportFormat(int value);
-	void changeAutoSaveIntervalMinutes(int value);
+	void changeAutoRecordHost(bool value);
+	void changeAutoRecordJoin(bool value);
+	void changeAutoRecordSnapshotIntervalMinutes(int value);
+	void changeAutoRecordThumbnailIntervalMinutes(int value);
 	void changeAutomaticAlphaPreserve(int value);
 	void changeBrushCursor(int value);
 	void changeBrushOutlineWidth(double value);

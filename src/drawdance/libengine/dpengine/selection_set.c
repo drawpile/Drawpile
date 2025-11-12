@@ -105,6 +105,17 @@ bool DP_selection_set_transient(DP_SelectionSet *ss)
     return ss->transient;
 }
 
+bool DP_selection_set_null(DP_SelectionSet *ss)
+{
+    if (ss) {
+        DP_ASSERT(DP_atomic_get(&ss->refcount) > 0);
+        return ss->count == 0;
+    }
+    else {
+        return true;
+    }
+}
+
 int DP_selection_set_count(DP_SelectionSet *ss)
 {
     DP_ASSERT(ss);
@@ -441,4 +452,18 @@ void DP_transient_selection_set_delete_at(DP_TransientSelectionSet *tss,
     int new_count = --tss->count;
     memmove(&tss->elements[index], &tss->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(tss->elements[0]));
+}
+
+void DP_transient_selection_set_clamp(DP_TransientSelectionSet *tss, int count)
+{
+    DP_ASSERT(tss);
+    DP_ASSERT(DP_atomic_get(&tss->refcount) > 0);
+    DP_ASSERT(tss->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tss->count);
+    int old_count = tss->count;
+    for (int i = count; i < old_count; ++i) {
+        DP_selection_decref_nullable(tss->elements[i].sel);
+    }
+    tss->count = count;
 }

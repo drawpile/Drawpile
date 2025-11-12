@@ -43,6 +43,7 @@ else()
         -Wmissing-include-dirs -Wconversion
         $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
         $<$<COMPILE_LANGUAGE:C>:-Wstrict-prototypes>
+        $<$<COMPILE_LANGUAGE:C>:-Wno-overlength-strings>
     )
 	if(UNIX AND NOT APPLE)
 		add_compile_definitions(_XOPEN_SOURCE=600)

@@ -144,6 +144,10 @@ target_sources(dpclient PRIVATE
 	net/server.h
 	net/sessionlistingmodel.cpp
 	net/sessionlistingmodel.h
+	project/recoverymodel.cpp
+	project/recoverymodel.h
+	project/projecthandler.cpp
+	project/projecthandler.h
 	tools/annotation.cpp
 	tools/annotation.h
 	tools/beziertool.cpp

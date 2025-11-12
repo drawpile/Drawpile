@@ -41,9 +41,24 @@ int Config::defaultAnimationExportFormat()
 	return -1;
 }
 
-int Config::defaultAutoSaveIntervalMinutes()
+bool Config::defaultAutoRecordHost()
 {
-	return 5;
+	return false;
+}
+
+bool Config::defaultAutoRecordJoin()
+{
+	return false;
+}
+
+int Config::defaultAutoRecordSnapshotIntervalMinutes()
+{
+	return 10;
+}
+
+int Config::defaultAutoRecordThumbnailIntervalMinutes()
+{
+	return 4;
 }
 
 int Config::defaultAutomaticAlphaPreserve()

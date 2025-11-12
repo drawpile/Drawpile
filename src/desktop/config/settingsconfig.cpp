@@ -24,9 +24,21 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeAnimationExportFormat,
 		Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::autoRecordHostChanged, this,
+		&SettingsConfig::changeAutoRecordHost, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::autoRecordJoinChanged, this,
+		&SettingsConfig::changeAutoRecordJoin, Qt::DirectConnection);
+	connect(
 		m_settings,
-		&desktop::settings::Settings::autoSaveIntervalMinutesChanged, this,
-		&SettingsConfig::changeAutoSaveIntervalMinutes, Qt::DirectConnection);
+		&desktop::settings::Settings::autoRecordSnapshotIntervalMinutesChanged,
+		this, &SettingsConfig::changeAutoRecordSnapshotIntervalMinutes,
+		Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::autoRecordThumbnailIntervalMinutesChanged,
+		this, &SettingsConfig::changeAutoRecordThumbnailIntervalMinutes,
+		Qt::DirectConnection);
 	connect(
 		m_settings, &desktop::settings::Settings::automaticAlphaPreserveChanged,
 		this, &SettingsConfig::changeAutomaticAlphaPreserve,
@@ -805,14 +817,44 @@ void SettingsConfig::setAnimationExportFormat(int value)
 	m_settings->setAnimationExportFormat(value);
 }
 
-int SettingsConfig::getAutoSaveIntervalMinutes() const
+bool SettingsConfig::getAutoRecordHost() const
 {
-	return m_settings->autoSaveIntervalMinutes();
+	return m_settings->autoRecordHost();
 }
 
-void SettingsConfig::setAutoSaveIntervalMinutes(int value)
+void SettingsConfig::setAutoRecordHost(bool value)
 {
-	m_settings->setAutoSaveIntervalMinutes(value);
+	m_settings->setAutoRecordHost(value);
+}
+
+bool SettingsConfig::getAutoRecordJoin() const
+{
+	return m_settings->autoRecordJoin();
+}
+
+void SettingsConfig::setAutoRecordJoin(bool value)
+{
+	m_settings->setAutoRecordJoin(value);
+}
+
+int SettingsConfig::getAutoRecordSnapshotIntervalMinutes() const
+{
+	return m_settings->autoRecordSnapshotIntervalMinutes();
+}
+
+void SettingsConfig::setAutoRecordSnapshotIntervalMinutes(int value)
+{
+	m_settings->setAutoRecordSnapshotIntervalMinutes(value);
+}
+
+int SettingsConfig::getAutoRecordThumbnailIntervalMinutes() const
+{
+	return m_settings->autoRecordThumbnailIntervalMinutes();
+}
+
+void SettingsConfig::setAutoRecordThumbnailIntervalMinutes(int value)
+{
+	m_settings->setAutoRecordThumbnailIntervalMinutes(value);
 }
 
 int SettingsConfig::getAutomaticAlphaPreserve() const

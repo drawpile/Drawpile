@@ -12,6 +12,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't try to set the one-finger touch input on Android according to whether the device says it has a stylus attached because devices just lie about it. It's always set to be dynamically detected by default now.
  * Fix: Make stylus buttons on some external tablets on Android work properly. The pen buttons used to not activate until pressing the pen down and release only if the pen was continued to be held. This is a patch to Qt.
  * Fix: Clamp OKLAB colors the proper way round. Thanks Bonbli for reporting.
+ * Feature: Replace autosave mechanism with more robust auto-recording. Work in progress.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

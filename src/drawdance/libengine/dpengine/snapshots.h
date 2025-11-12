@@ -70,6 +70,7 @@ typedef struct DP_ResetEntryBackground {
 typedef struct DP_ResetEntryLayer {
     int layer_index;
     int layer_id;
+    int sublayer_index;
     int sublayer_id;
     int parent_index;
     int parent_id;
@@ -80,6 +81,7 @@ typedef struct DP_ResetEntryLayer {
 typedef struct DP_ResetEntryTile {
     int layer_index;
     int layer_id;
+    int sublayer_index;
     int sublayer_id;
     int tile_index;
     int tile_run;
@@ -167,6 +169,10 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
                           bool compatibility_mode,
                           void (*push_message)(void *, DP_Message *),
                           void *user);
+
+
+bool DP_reset_entry_selection_tile_opaque(
+    const DP_ResetEntrySelectionTile *rest);
 
 
 #endif

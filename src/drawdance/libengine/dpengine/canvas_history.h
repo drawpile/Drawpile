@@ -29,6 +29,7 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Message DP_Message;
+typedef struct DP_ProjectWorker DP_ProjectWorker;
 typedef struct json_value_t JSON_Value;
 
 
@@ -86,6 +87,10 @@ DP_CanvasHistory *
 DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
                       void *save_point_user, bool want_dump,
                       const char *dump_dir);
+
+DP_CanvasHistory *DP_canvas_history_new_noinc(
+    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
+    void *save_point_user, bool want_dump, const char *dump_dir);
 
 DP_CanvasHistory *DP_canvas_history_new_inc(
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
@@ -162,6 +167,16 @@ bool DP_canvas_history_reset_image_new(
 DP_Recorder *DP_canvas_history_recorder_new(
     DP_CanvasHistory *ch, DP_RecorderType type, JSON_Value *header,
     DP_RecorderGetTimeMsFn get_time_fn, void *get_time_user, DP_Output *output);
+
+void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
+                                               DP_ProjectWorker *pw,
+                                               unsigned int file_id,
+                                               unsigned int local_user_id);
+
+void DP_canvas_history_project_recording_snapshot(DP_CanvasHistory *ch,
+                                                  DP_ProjectWorker *pw,
+                                                  unsigned int file_id,
+                                                  unsigned int local_user_id);
 
 
 DP_CanvasHistoryReconnectState *

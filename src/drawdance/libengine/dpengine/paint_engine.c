@@ -36,11 +36,12 @@
 #include "paint.h"
 #include "player.h"
 #include "preview.h"
+#include "project.h"
+#include "project_worker.h"
 #include "recorder.h"
 #include "renderer.h"
 #include "tile.h"
 #include "timeline.h"
-#include "track.h"
 #include "view_mode.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
@@ -151,6 +152,8 @@ struct DP_PaintEngine {
         int state_change;
         DP_RecorderGetTimeMsFn get_time_ms_fn;
         void *get_time_ms_user;
+        DP_ProjectWorker *pw;
+        unsigned int file_id;
     } record;
     DP_PaintEnginePlayback playback;
     struct {
@@ -258,6 +261,37 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
         decref_messages(count, msgs);
         DP_warn("Unknown dump entry type %d", type);
         break;
+    }
+}
+
+static void handle_internal_project_worker_thumbnail_request(DP_PaintEngine *pe)
+{
+    DP_CanvasState *cs = DP_canvas_history_get(pe->ch);
+    if (cs) {
+        DP_project_worker_thumbnail_make_noinc(pe->record.pw,
+                                               pe->record.file_id, cs);
+    }
+}
+
+static void handle_internal_project_worker_snapshot_request(DP_PaintEngine *pe)
+{
+    DP_canvas_history_project_recording_snapshot(
+        pe->ch, pe->record.pw, pe->record.file_id,
+        DP_acl_state_local_user_id(pe->acls));
+}
+
+static void
+handle_internal_project_worker_request(DP_PaintEngine *pe,
+                                       void (*handler_fn)(DP_PaintEngine *pe))
+{
+    if (pe->record.pw) {
+        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+        DP_ProjectWorker *pw = pe->record.pw;
+        // Might have stopped recording in the interim, so check again.
+        if (pw) {
+            handler_fn(pe);
+        }
+        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
     }
 }
 
@@ -386,6 +420,14 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_local_state_save(pe->local_state, pe->local_view.reveal_censored,
                             DP_msg_internal_local_state_save_callback(mi),
                             DP_msg_internal_local_state_save_user(mi));
+        break;
+    case DP_MSG_INTERNAL_TYPE_PROJECT_THUMBAIL_REQUEST:
+        handle_internal_project_worker_request(
+            pe, handle_internal_project_worker_thumbnail_request);
+        break;
+    case DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST:
+        handle_internal_project_worker_request(
+            pe, handle_internal_project_worker_snapshot_request);
         break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
@@ -805,6 +847,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->record.state_change = RECORDER_STOPPED;
     pe->record.get_time_ms_fn = get_time_ms_fn;
     pe->record.get_time_ms_user = get_time_ms_user;
+    pe->record.pw = NULL;
+    pe->record.file_id = 0u;
     pe->playback.player = player_or_null;
     pe->playback.msecs = 0;
     pe->playback.next_has_time = true;
@@ -1178,6 +1222,51 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe)
 }
 
 
+void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
+                                             DP_ProjectWorker *pw,
+                                             unsigned int file_id)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(pw);
+
+    // Get a clean start, see the explanation in start_recording.
+    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+    DP_message_queue_push_noinc(&pe->remote_queue,
+                                DP_msg_internal_recorder_start_new(0));
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+    // Wait for the paint engine to post to this semaphore.
+    DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
+    DP_ASSERT(pe->remote_queue.used == 0);
+
+    DP_canvas_history_project_recording_start(
+        pe->ch, pw, file_id, DP_acl_state_local_user_id(pe->acls));
+    pe->record.pw = pw;
+    pe->record.file_id = file_id;
+}
+
+bool DP_paint_engine_project_recording_stop(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    if (pe->record.pw) {
+        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+        pe->record.pw = NULL;
+        pe->record.file_id = 0u;
+        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool DP_paint_engine_is_project_recording(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->record.pw != NULL;
+}
+
+
 DP_PaintEnginePlayback *DP_paint_engine_playback(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
@@ -1252,6 +1341,31 @@ static void record_message(DP_PaintEngine *pe, DP_Message *msg,
     }
 }
 
+static void project_record_message(DP_PaintEngine *pe, DP_Message *msg,
+                                   DP_MessageType type)
+{
+    DP_ProjectWorker *pw = pe->record.pw;
+    if (pw) {
+        if (type == DP_MSG_INTERNAL) {
+            DP_MsgInternal *mi = DP_message_internal(msg);
+            if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+                DP_project_worker_message_internal_record(
+                    pw, pe->record.file_id,
+                    DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET, 0u, NULL, 0, 0u);
+            }
+        }
+        else if (!DP_message_type_control(type)
+                 && !DP_msg_local_match_is_local_match(msg)) {
+            unsigned int local_user_id = DP_acl_state_local_user_id(pe->acls);
+            unsigned int flags = DP_message_context_id(msg) == local_user_id
+                                   ? DP_PROJECT_MESSAGE_FLAG_OWN
+                                   : 0u;
+            DP_project_worker_message_record_inc(pw, pe->record.file_id, msg,
+                                                 flags);
+        }
+    }
+}
+
 static void handle_laser_trail(DP_PaintEngine *pe, DP_Message *msg)
 {
     DP_MsgLaserTrail *mlt = DP_message_internal(msg);
@@ -1295,6 +1409,7 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
         }
     }
     else {
+        project_record_message(pe, msg, type);
         DP_local_state_handle(pe->local_state, pe->main_dc, msg, false);
         if (is_pushable_remote(type, msg) || type == DP_MSG_UNDO_DEPTH
             || type == DP_MSG_SOFT_RESET) {
@@ -1583,91 +1698,15 @@ static DP_Timeline *maybe_get_timeline(DP_CanvasState *cs, DP_ViewMode vm)
     return want_timeline ? DP_canvas_state_timeline_noinc(cs) : NULL;
 }
 
-static void set_local_layer_props_recursive(
-    DP_TransientCanvasState *tcs, DP_DrawContext *dc, bool reveal_censored,
-    DP_LayerPropsList *lpl,
-    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
-{
-    int count = DP_layer_props_list_count(lpl);
-    DP_draw_context_layer_indexes_push(dc);
-    for (int i = 0; i < count; ++i) {
-        DP_draw_context_layer_indexes_set(dc, i);
-
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        // Hidden layers are supposed to be purely local state. If the remote
-        // state gives us hidden layers, we unhide them first. That may get
-        // undone by the hidden layers processing that comes after this step.
-        bool needs_show = DP_layer_props_hidden(lp);
-        bool needs_reveal =
-            reveal_censored && DP_layer_props_censored_remote(lp);
-        bool needs_unsketch = DP_layer_props_sketch_opacity(lp) != 0;
-        if (needs_show || needs_reveal || needs_unsketch) {
-            int index_count;
-            int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
-            DP_TransientLayerProps *tlp =
-                DP_layer_routes_entry_indexes_transient_props(index_count,
-                                                              indexes, tcs);
-            if (needs_show) {
-                DP_transient_layer_props_hidden_set(tlp, false);
-            }
-            if (needs_reveal) {
-                DP_transient_layer_props_censored_remote_set(tlp, false);
-                censored_layer_revealed(user, DP_layer_props_id(lp));
-            }
-            if (needs_unsketch) {
-                DP_transient_layer_props_sketch_opacity_set(tlp, 0);
-            }
-        }
-
-        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-        if (child_lpl) {
-            set_local_layer_props_recursive(tcs, dc, reveal_censored, child_lpl,
-                                            censored_layer_revealed, user);
-        }
-    }
-    DP_draw_context_layer_indexes_pop(dc);
-}
-
-static void set_local_layer_states(DP_LocalState *ls,
-                                   DP_TransientCanvasState *tcs)
-{
-    int count;
-    const DP_LocalLayerState *llss = DP_local_state_layer_states(ls, &count);
-    if (count != 0) {
-        DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
-        for (int i = 0; i < count; ++i) {
-            const DP_LocalLayerState *lls = &llss[i];
-            DP_LayerRoutesEntry *lre =
-                DP_layer_routes_search(lr, lls->layer_id);
-            if (lre) {
-                DP_TransientLayerProps *tlp =
-                    DP_layer_routes_entry_transient_props(lre, tcs);
-                DP_transient_layer_props_hidden_set(tlp, lls->hidden);
-                DP_transient_layer_props_alpha_lock_set(tlp, lls->alpha_lock);
-                DP_transient_layer_props_censored_local_set(tlp, lls->censored);
-                DP_transient_layer_props_sketch_opacity_set(
-                    tlp, lls->sketch_opacity);
-                DP_transient_layer_props_sketch_tint_set(tlp, lls->sketch_tint);
-            }
-        }
-    }
-}
-
 static DP_CanvasState *set_local_layer_props(
     DP_PaintEngine *pe, DP_CanvasState *cs,
     DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
 {
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
 
-    bool reveal_censored = pe->local_view.reveal_censored;
-    DP_DrawContext *dc = pe->main_dc;
-    DP_draw_context_layer_indexes_clear(dc);
-    set_local_layer_props_recursive(
-        tcs, dc, reveal_censored,
-        DP_transient_canvas_state_layer_props_noinc(tcs),
-        censored_layer_revealed, user);
-
-    set_local_layer_states(pe->local_state, tcs);
+    DP_local_state_layer_states_apply(pe->local_state, tcs, pe->main_dc,
+                                      pe->local_view.reveal_censored,
+                                      censored_layer_revealed, user);
 
     // We remember the root layer props list for later and then jam it into
     // subsequent canvas states. That'll make them diff correctly instead of
@@ -1720,21 +1759,28 @@ static DP_CanvasState *apply_local_layer_props(
     }
 }
 
-static bool get_local_track_state(const DP_LocalTrackState *track_states,
-                                  int count, int track_id, bool *out_hidden,
-                                  bool *out_onion_skin)
+struct DP_PaintEngineLocalTrackParams {
+    union {
+        DP_CanvasState *cs;
+        DP_TransientCanvasState *tcs;
+    };
+    DP_TransientTimeline *ttl;
+};
+
+static DP_TransientTimeline *get_local_track_transient_timeline(void *user)
 {
-    for (int i = 0; i < count; ++i) {
-        const DP_LocalTrackState *lts = &track_states[i];
-        if (lts->track_id == track_id) {
-            *out_hidden = lts->hidden;
-            *out_onion_skin = lts->onion_skin;
-            return true;
-        }
-    }
-    *out_hidden = false;
-    *out_onion_skin = false;
-    return false;
+    struct DP_PaintEngineLocalTrackParams *params = user;
+    DP_ASSERT(!params->ttl); // Should only be called once.
+
+    DP_TransientCanvasState *tcs =
+        get_or_make_transient_canvas_state(params->cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+
+    params->tcs = tcs;
+    params->ttl = ttl;
+
+    return ttl;
 }
 
 static DP_CanvasState *apply_local_track_state(DP_PaintEngine *pe,
@@ -1756,38 +1802,17 @@ static DP_CanvasState *apply_local_track_state(DP_PaintEngine *pe,
     }
     else {
         // Timeline changed, make a new local view.
-        int lts_count;
-        const DP_LocalTrackState *track_states =
-            DP_local_state_track_states(pe->local_state, &lts_count);
-        DP_TransientCanvasState *tcs = NULL;
-        DP_TransientTimeline *ttl = NULL;
-        int track_count = DP_timeline_track_count(tl);
-        for (int i = 0; i < track_count; ++i) {
-            DP_Track *t = DP_timeline_track_at_noinc(tl, i);
-            bool hidden, onion_skin;
-            get_local_track_state(track_states, lts_count, DP_track_id(t),
-                                  &hidden, &onion_skin);
-            bool local_state_changed = DP_track_hidden(t) != hidden
-                                    || DP_track_onion_skin(t) != onion_skin;
-            if (local_state_changed) {
-                if (!tcs) {
-                    tcs = get_or_make_transient_canvas_state(cs);
-                    ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
-                }
-                DP_TransientTrack *tt =
-                    DP_transient_timeline_transient_track_at_noinc(ttl, i, 0);
-                DP_transient_track_hidden_set(tt, hidden);
-                DP_transient_track_onion_skin_set(tt, onion_skin);
-            }
-        }
+        struct DP_PaintEngineLocalTrackParams params = {{cs}, NULL};
+        DP_local_state_track_states_apply(
+            pe->local_state, tl, get_local_track_transient_timeline, &params);
         // Remember the local view (or NULL if there's no change) for next time.
         DP_timeline_decref_nullable(pe->local_view.tracks.prev_tl);
         DP_timeline_decref_nullable(pe->local_view.tracks.tl);
         pe->local_view.tracks.prev_tl = DP_timeline_incref(tl);
-        if (tcs) {
+        if (params.ttl) {
             pe->local_view.tracks.tl =
-                DP_timeline_incref(DP_transient_timeline_persist(ttl));
-            return (DP_CanvasState *)tcs;
+                DP_timeline_incref(DP_transient_timeline_persist(params.ttl));
+            return (DP_CanvasState *)params.tcs;
         }
         else {
             pe->local_view.tracks.tl = NULL;

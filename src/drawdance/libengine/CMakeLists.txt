@@ -34,6 +34,7 @@ dp_target_sources(dpengine
     dpengine/player.c
     dpengine/preview.c
     dpengine/project.c
+    dpengine/project_worker.c
     dpengine/recorder.c
     dpengine/renderer.c
     dpengine/selection.c
@@ -81,6 +82,7 @@ dp_target_sources(dpengine
     dpengine/player.h
     dpengine/preview.h
     dpengine/project.h
+    dpengine/project_worker.h
     dpengine/recorder.h
     dpengine/renderer.h
     dpengine/save_enums.h

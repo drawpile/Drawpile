@@ -27,8 +27,17 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
-	int getAutoSaveIntervalMinutes() const override;
-	void setAutoSaveIntervalMinutes(int value) override;
+	bool getAutoRecordHost() const override;
+	void setAutoRecordHost(bool value) override;
+
+	bool getAutoRecordJoin() const override;
+	void setAutoRecordJoin(bool value) override;
+
+	int getAutoRecordSnapshotIntervalMinutes() const override;
+	void setAutoRecordSnapshotIntervalMinutes(int value) override;
+
+	int getAutoRecordThumbnailIntervalMinutes() const override;
+	void setAutoRecordThumbnailIntervalMinutes(int value) override;
 
 	int getAutomaticAlphaPreserve() const override;
 	void setAutomaticAlphaPreserve(int value) override;
@@ -691,7 +700,12 @@ private:
 	int m_actionBarLocation = defaultActionBarLocation();
 	int m_alphaLockCursor = defaultAlphaLockCursor();
 	int m_animationExportFormat = defaultAnimationExportFormat();
-	int m_autoSaveIntervalMinutes = defaultAutoSaveIntervalMinutes();
+	bool m_autoRecordHost = defaultAutoRecordHost();
+	bool m_autoRecordJoin = defaultAutoRecordJoin();
+	int m_autoRecordSnapshotIntervalMinutes =
+		defaultAutoRecordSnapshotIntervalMinutes();
+	int m_autoRecordThumbnailIntervalMinutes =
+		defaultAutoRecordThumbnailIntervalMinutes();
 	int m_automaticAlphaPreserve = defaultAutomaticAlphaPreserve();
 	int m_brushCursor = defaultBrushCursor();
 	double m_brushOutlineWidth = defaultBrushOutlineWidth();

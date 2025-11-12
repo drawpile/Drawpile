@@ -262,6 +262,34 @@ static unsigned char *get_inflate_mask_output_buffer(size_t out_size,
     }
 }
 
+DP_Tile *DP_tile_new_mask_from_delta_zstd8le_nonopaque_with(
+    ZSTD_DCtx **in_out_ctx_or_null, unsigned char *channel_buffer,
+    unsigned int context_id, const unsigned char *mask, size_t mask_size)
+{
+    DP_ASSERT(mask);
+    DP_ASSERT(mask_size > 0);
+    struct DP_TileInflateArgs args = {
+        channel_buffer,
+        context_id,
+        NULL,
+    };
+    if (DP_decompress_zstd(in_out_ctx_or_null, mask, mask_size,
+                           get_inflate_mask_output_buffer, &args)) {
+        const uint8_t *buffer = args.buffer;
+        DP_Pixel15 *pixels = args.tt->pixels;
+        uint8_t a = 0;
+        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+            a += buffer[i];
+            pixels[i] = (DP_Pixel15){0, 0, 0, DP_channel8_to_15(a)};
+        }
+        return (DP_Tile *)args.tt;
+    }
+    else {
+        DP_tile_decref_nullable((DP_Tile *)args.tt);
+        return NULL;
+    }
+}
+
 DP_Tile *DP_tile_new_mask_from_delta_zstd8le(DP_DrawContext *dc,
                                              unsigned int context_id,
                                              const unsigned char *mask,
@@ -273,26 +301,10 @@ DP_Tile *DP_tile_new_mask_from_delta_zstd8le(DP_DrawContext *dc,
         return DP_tile_opaque_inc();
     }
     else {
-        struct DP_TileInflateArgs args = {
-            DP_draw_context_tile8_buffer(dc),
-            context_id,
-            NULL,
-        };
-        if (DP_decompress_zstd(DP_draw_context_zstd_dctx(dc), mask, mask_size,
-                               get_inflate_mask_output_buffer, &args)) {
-            const uint8_t *buffer = args.buffer;
-            DP_Pixel15 *pixels = args.tt->pixels;
-            uint8_t a = 0;
-            for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-                a += buffer[i];
-                pixels[i] = (DP_Pixel15){0, 0, 0, DP_channel8_to_15(a)};
-            }
-            return (DP_Tile *)args.tt;
-        }
-        else {
-            DP_tile_decref_nullable((DP_Tile *)args.tt);
-            return NULL;
-        }
+        return DP_tile_new_mask_from_delta_zstd8le_nonopaque_with(
+            DP_draw_context_zstd_dctx(dc),
+            (unsigned char *)DP_draw_context_tile8_buffer(dc), context_id, mask,
+            mask_size);
     }
 }
 

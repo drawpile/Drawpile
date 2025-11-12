@@ -259,6 +259,24 @@ bool DP_canvas_state_transient(DP_CanvasState *cs)
     return cs->transient;
 }
 
+bool DP_canvas_state_null(DP_CanvasState *cs)
+{
+    if (cs) {
+        DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+        return cs->width == 0 && cs->height == 0 && cs->offset_x == 0
+            && cs->offset_y == 0 && !cs->background_tile
+            && DP_layer_list_count(cs->layers) == 0
+            && DP_layer_props_list_count(cs->layer_props) == 0
+            && DP_annotation_list_count(cs->annotations) == 0
+            && DP_timeline_null(cs->timeline)
+            && DP_document_metadata_null(cs->metadata)
+            && DP_selection_set_null(cs->selections);
+    }
+    else {
+        return true;
+    }
+}
+
 int DP_canvas_state_width(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
@@ -1648,6 +1666,21 @@ DP_CanvasState *DP_canvas_state_handle_multidab(DP_CanvasState *cs,
     return next_cs;
 }
 
+DP_CanvasState *DP_canvas_state_merge_all_sublayers_dec(DP_CanvasState *cs,
+                                                        DP_DrawContext *dc)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(dc);
+    DP_CanvasState *next_cs = DP_ops_pen_up(cs, dc, NULL, 0u, 0);
+    if (next_cs) {
+        DP_canvas_state_decref(cs);
+        return next_cs;
+    }
+    else {
+        return cs;
+    }
+}
+
 int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
                                          unsigned int context_id, int *out_x,
                                          int *out_y, int *out_width,
@@ -2497,6 +2530,14 @@ void DP_transient_canvas_state_post_load_fixup(DP_TransientCanvasState *tcs)
         DP_transient_document_metadata_frame_range_last_set(tdm,
                                                             frame_range_last);
     }
+
+    // Selections only exist to restore autosaves, we don't actually want them
+    // to end up in the loaded file.
+    DP_SelectionSet *ss = tcs->selections;
+    if (ss) {
+        DP_selection_set_decref(ss);
+        tcs->selections = NULL;
+    }
 }
 
 DP_LayerList *
@@ -2534,6 +2575,15 @@ DP_transient_canvas_state_annotations_noinc(DP_TransientCanvasState *tcs)
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     return DP_canvas_state_annotations_noinc((DP_CanvasState *)tcs);
+}
+
+DP_Timeline *
+DP_transient_canvas_state_timeline_noinc(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    return DP_canvas_state_timeline_noinc((DP_CanvasState *)tcs);
 }
 
 DP_DocumentMetadata *

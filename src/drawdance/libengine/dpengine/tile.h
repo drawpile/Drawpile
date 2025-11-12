@@ -110,6 +110,10 @@ DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
                                               const unsigned char *image,
                                               size_t image_size);
 
+DP_Tile *DP_tile_new_mask_from_delta_zstd8le_nonopaque_with(
+    ZSTD_DCtx **in_out_ctx_or_null, unsigned char *channel_buffer,
+    unsigned int context_id, const unsigned char *mask, size_t mask_size);
+
 DP_Tile *DP_tile_new_mask_from_delta_zstd8le(DP_DrawContext *dc,
                                              unsigned int context_id,
                                              const unsigned char *mask,

@@ -345,8 +345,9 @@ size_t DP_message_serialize_compat(DP_Message *msg, bool write_body_length,
 }
 #endif
 
-size_t DP_message_serialize_body(DP_Message *msg,
-                                 DP_GetMessageBufferFn get_buffer, void *user)
+bool DP_message_serialize_body(DP_Message *msg,
+                               DP_GetMessageBufferFn get_buffer, void *user,
+                               size_t *out_length)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
@@ -355,17 +356,27 @@ size_t DP_message_serialize_body(DP_Message *msg,
     size_t length = msg->methods->payload_length(msg);
     if (length > DP_MESSAGE_MAX_PAYLOAD_LENGTH) {
         DP_error_set("Message body length out of bounds: %zu", length);
-        return 0;
+        return false;
+    }
+
+    if (length == 0) {
+        if (out_length) {
+            *out_length = 0;
+        }
+        return true;
     }
 
     unsigned char *buffer = get_buffer(user, length);
     if (!buffer) {
-        return 0;
+        return false;
     }
 
     size_t written = msg->methods->serialize_payload(msg, buffer);
     DP_ASSERT(written == length);
-    return written;
+    if (out_length) {
+        *out_length = written;
+    }
+    return true;
 }
 
 bool DP_message_write_text(DP_Message *msg, DP_TextWriter *writer)
@@ -468,6 +479,19 @@ DP_Message *DP_message_deserialize_compat(const unsigned char *buf,
 }
 #endif
 
+bool DP_message_type_is_draw_dabs(DP_MessageType type)
+{
+    switch (type) {
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+        return true;
+    default:
+        return false;
+    }
+}
 
 static int unpack_paint_mode(int flags)
 {

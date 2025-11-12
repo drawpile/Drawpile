@@ -22,6 +22,7 @@
 #define DP_SELECTION_ID_MAIN_FLOOD         64
 #define DP_SELECTION_ID_FIRST_FLOOD_LOCAL  64
 #define DP_SELECTION_ID_FIRST_FLOOD_REMOTE 192
+#define DP_SELECTION_ID_MAX                UINT8_MAX
 
 
 DP_INLINE int DP_protocol_to_layer_id(uint32_t protocol_layer_id)

@@ -39,6 +39,7 @@ public:
 #ifndef __EMSCRIPTEN__
 		Recent,
 #endif
+		Recover,
 		Open,
 		Layouts,
 		Preferences,
@@ -69,6 +70,7 @@ public slots:
 signals:
 	void openFile();
 	void openRecent(const QString &path);
+	void openRecovery(const QString &path);
 	void layouts();
 	void preferences();
 	void networkPreferences();

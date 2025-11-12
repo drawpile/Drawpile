@@ -14,7 +14,9 @@ extern "C" {
 #include "libclient/canvas/userlist.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/viewmode.h"
+#include "libclient/project/projecthandler.h"
 #include "libclient/utils/identicon.h"
+#include "libshared/net/protover.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
 #include <QPainter>
@@ -245,9 +247,38 @@ void CanvasModel::disconnectedFromServer()
 void CanvasModel::handleCommands(int count, const net::Message *msgs)
 {
 	handleMetaMessages(count, msgs);
-	if(m_paintengine->receiveMessages(false, count, msgs) != 0 && !m_dirty &&
-	   net::anyMessageDirtiesCanvas(count, msgs)) {
-		emit canvasModified();
+	if(m_paintengine->receiveMessages(false, count, msgs) != 0) {
+
+		bool dirtyReady = !m_dirty;
+
+		bool projectThumbnailTimerReady;
+		bool projectSnapshotTimerReady;
+		if(m_projectHandler) {
+			projectThumbnailTimerReady =
+				m_projectHandler->isThumbnailTimerReady();
+			projectSnapshotTimerReady =
+				m_projectHandler->isSnapshotTimerReady();
+		} else {
+			projectThumbnailTimerReady = false;
+			projectSnapshotTimerReady = false;
+		}
+
+		bool needsDirtyCheck = dirtyReady || projectThumbnailTimerReady ||
+							   projectSnapshotTimerReady;
+		if(needsDirtyCheck && net::anyMessageDirtiesCanvas(count, msgs)) {
+
+			if(projectThumbnailTimerReady) {
+				m_projectHandler->startThumbnailTimer();
+			}
+
+			if(projectSnapshotTimerReady) {
+				m_projectHandler->startSnapshotTimer();
+			}
+
+			if(dirtyReady) {
+				emit canvasModified();
+			}
+		}
 	}
 }
 
@@ -624,9 +655,127 @@ bool CanvasModel::isRecording() const
 	return m_paintengine->isRecording();
 }
 
+bool CanvasModel::startProjectRecording(
+	config::Config *cfg, int sourceType, bool requestThumbnail)
+{
+	if(m_projectHandler) {
+		Q_EMIT projectRecordingErrorOccurred(
+			tr("Project recording is already active"));
+		return false;
+	}
+
+	if(m_paintengine->hasPlayback()) {
+		Q_EMIT projectRecordingErrorOccurred(tr("Playback is active"));
+		return false;
+	}
+
+	m_projectHandler = new project::ProjectHandler(cfg, this);
+	connect(
+		m_projectHandler, &project::ProjectHandler::thumbnailRequested,
+		m_paintengine, &PaintEngine::enqueueProjectThumbnailRequest);
+	connect(
+		m_projectHandler, &project::ProjectHandler::snapshotRequested,
+		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
+	connect(
+		m_projectHandler, &project::ProjectHandler::errorOccurred, this,
+		&CanvasModel::handleProjectRecordingError, Qt::QueuedConnection);
+
+	QString error;
+	bool started = m_projectHandler->startProjectRecording(
+		m_paintengine, sourceType,
+		protocol::ProtocolVersion::current().asString(), &error);
+	if(!started) {
+		delete m_projectHandler;
+		m_projectHandler = nullptr;
+		Q_EMIT projectRecordingErrorOccurred(error);
+		return false;
+	}
+
+	if(requestThumbnail) {
+		requestProjectRecordingThumbnail();
+	}
+
+	Q_EMIT projectRecordingStarted();
+	return true;
+}
+
+bool CanvasModel::cancelProjectRecording()
+{
+	return stopProjectRecording(false, true);
+}
+
+bool CanvasModel::discardProjectRecording()
+{
+	return stopProjectRecording(!m_retainProjectRecordings, true);
+}
+
+bool CanvasModel::discardProjectRecordingReinit()
+{
+	return stopProjectRecording(!m_retainProjectRecordings, false);
+}
+
+bool CanvasModel::isProjectRecording() const
+{
+	return m_projectHandler != nullptr;
+}
+
+void CanvasModel::setRetainProjectRecordings(bool retainProjectRecordings)
+{
+	if(retainProjectRecordings != m_retainProjectRecordings) {
+		m_retainProjectRecordings = retainProjectRecordings;
+		Q_EMIT retainProjectRecordingsChanged(retainProjectRecordings);
+	}
+}
+
+void CanvasModel::unblockProjectRecordingErrors()
+{
+	if(m_projectHandler) {
+		m_projectHandler->unblockErrors();
+	}
+}
+
+void CanvasModel::requestProjectRecordingThumbnail()
+{
+	if(m_projectHandler) {
+		m_projectHandler->stopThumbnailTimer();
+		m_paintengine->enqueueProjectThumbnailRequest();
+	}
+}
+
+void CanvasModel::addProjectRecordingMetadataSource(
+	int sourceType, const QString &sourceParam)
+{
+	if(m_projectHandler) {
+		m_projectHandler->addMetadataSource(sourceType, sourceParam);
+	}
+}
+
 void CanvasModel::updatePaintEngineTransform()
 {
 	m_paintengine->setTransformActive(m_transform->isActive());
+}
+
+bool CanvasModel::stopProjectRecording(bool remove, bool notify)
+{
+	if(!m_projectHandler) {
+		return false;
+	}
+
+	bool ok = m_projectHandler->stopProjectRecording(m_paintengine, remove);
+	delete m_projectHandler;
+	m_projectHandler = nullptr;
+
+	Q_EMIT projectRecordingStopped(notify);
+	return ok;
+}
+
+void CanvasModel::handleProjectRecordingError(const QString &message)
+{
+	bool recording = isProjectRecording();
+	if(recording) {
+		cancelProjectRecording();
+		Q_EMIT projectRecordingErrorOccurred(message);
+	}
 }
 
 void CanvasModel::applyLocalStateActions(

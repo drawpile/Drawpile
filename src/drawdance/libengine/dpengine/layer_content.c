@@ -2287,6 +2287,16 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
     }
 }
 
+void DP_transient_layer_content_fill_entirely(DP_TransientLayerContent *tlc,
+                                              unsigned int context_id,
+                                              DP_UPixel15 pixel)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    fill_entirely(tlc, context_id, DP_BLEND_MODE_REPLACE, pixel);
+}
+
 void DP_transient_layer_content_tile_set_noinc(DP_TransientLayerContent *tlc,
                                                DP_Tile *t, int i)
 {

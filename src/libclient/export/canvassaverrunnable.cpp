@@ -102,6 +102,8 @@ QString CanvasSaverRunnable::saveResultToErrorString(
 				  "partially written.");
 	case DP_SAVE_RESULT_INTERNAL_ERROR:
 		return tr("Internal error during saving.");
+	case DP_SAVE_RESULT_TODO_DPPR:
+		return tr("Saving to dppr is not implemented yet.");
 	}
 	return tr("Unknown error.");
 }

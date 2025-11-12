@@ -109,6 +109,17 @@ bool DP_timeline_transient(DP_Timeline *tl)
     return tl->transient;
 }
 
+bool DP_timeline_null(DP_Timeline *tl)
+{
+    if (tl) {
+        DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
+        return tl->track_count == 0;
+    }
+    else {
+        return true;
+    }
+}
+
 int DP_timeline_track_count(DP_Timeline *tl)
 {
     DP_ASSERT(tl);

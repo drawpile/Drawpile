@@ -5,6 +5,7 @@
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/config/config.h"
 #include "libclient/view/enums.h"
+#include "libshared/util/qtcompat.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
 #include <QButtonGroup>
@@ -29,6 +30,7 @@
 #include <QResizeEvent>
 #include <QScreen>
 #include <QScrollBar>
+#include <QSpinBox>
 #include <QStyle>
 #include <QStyleHints>
 #include <QTimer>
@@ -989,6 +991,19 @@ EncapsulatedLayout *indent(QWidget *child)
 	layout->setContentsMargins(indentSize(child), 0, 0, 0);
 	layout->addWidget(child);
 	return layout;
+}
+
+void encapsulateSpinBoxPrefixSuffix(QSpinBox *spinBox, const QString &text)
+{
+	QString splitter = QStringLiteral("%1");
+	compat::sizetype index = text.indexOf(splitter);
+	if(index == compat::sizetype(-1)) {
+		spinBox->setPrefix(text);
+		spinBox->setSuffix(QString());
+	} else {
+		spinBox->setPrefix(text.mid(0, index));
+		spinBox->setSuffix(text.mid(index + splitter.length()));
+	}
 }
 
 FormNote *

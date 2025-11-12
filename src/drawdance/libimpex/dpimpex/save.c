@@ -39,6 +39,7 @@
 
 const DP_SaveFormat *DP_save_supported_formats(void)
 {
+    static const char *dppr_ext[] = {"dppr", NULL};
     static const char *dpcs_ext[] = {"dpcs", NULL};
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
@@ -47,6 +48,7 @@ const DP_SaveFormat *DP_save_supported_formats(void)
     static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_SaveFormat formats[] = {
+        {"Drawpile Project", dppr_ext},
         {"Drawpile Canvas", dpcs_ext},
         {"OpenRaster", ora_ext},
         {"PNG", png_ext},
@@ -74,7 +76,10 @@ DP_SaveImageType DP_save_image_type_guess(const char *path)
     }
 
     const char *ext = dot + 1;
-    if (DP_str_equal_lowercase(ext, "dpcs")) {
+    if (DP_str_equal_lowercase(ext, "dppr")) {
+        return DP_SAVE_IMAGE_PROJECT;
+    }
+    else if (DP_str_equal_lowercase(ext, "dpcs")) {
         return DP_SAVE_IMAGE_PROJECT_CANVAS;
     }
     else if (DP_str_equal_lowercase(ext, "ora")) {
@@ -119,6 +124,8 @@ const char *DP_save_image_type_name(DP_SaveImageType type)
         return "DPCS";
     case DP_SAVE_IMAGE_QOI:
         return "QOI";
+    case DP_SAVE_IMAGE_PROJECT:
+        return "DPPR";
     case DP_SAVE_IMAGE_UNKNOWN:
         break;
     }
@@ -137,6 +144,7 @@ int DP_save_image_type_max_dimension(DP_SaveImageType type)
     case DP_SAVE_IMAGE_PNG:
     case DP_SAVE_IMAGE_PROJECT_CANVAS:
     case DP_SAVE_IMAGE_QOI:
+    case DP_SAVE_IMAGE_PROJECT:
         return 2147483647;
     case DP_SAVE_IMAGE_PSD:
         return 30000;
@@ -190,6 +198,7 @@ bool DP_save_image_type_is_flat_image(DP_SaveImageType type)
     case DP_SAVE_IMAGE_ORA:
     case DP_SAVE_IMAGE_PSD:
     case DP_SAVE_IMAGE_PROJECT_CANVAS:
+    case DP_SAVE_IMAGE_PROJECT:
         return false;
     case DP_SAVE_IMAGE_PNG:
     case DP_SAVE_IMAGE_JPEG:
@@ -1043,16 +1052,10 @@ save_flat_image(DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop,
 }
 
 
-static bool write_project_thumbnail(DP_UNUSED void *user, DP_Image *img,
-                                    DP_Output *output)
-{
-    return DP_image_write_jpeg_quality(img, output, 80);
-}
-
 static DP_SaveResult save_project_canvas(DP_CanvasState *cs, const char *path)
 {
-    int result =
-        DP_project_canvas_save(cs, path, write_project_thumbnail, NULL);
+    int result = DP_project_canvas_save(cs, path,
+                                        DP_image_write_project_thumbnail, NULL);
     switch (result) {
     case 0:
         return DP_SAVE_RESULT_SUCCESS;
@@ -1096,6 +1099,10 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
         return DP_save_psd(cs, path, dc);
     case DP_SAVE_IMAGE_PROJECT_CANVAS:
         return save_project_canvas(cs, path);
+    case DP_SAVE_IMAGE_PROJECT:
+        // TODO implement this
+        DP_error_set("Saving to dppr is not implemented yet");
+        return DP_SAVE_RESULT_TODO_DPPR;
     default:
         DP_error_set("Unknown save format");
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;

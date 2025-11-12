@@ -2,15 +2,20 @@
 #include "project.h"
 #include "annotation.h"
 #include "annotation_list.h"
+#include "canvas_history.h"
 #include "canvas_state.h"
 #include "compress.h"
 #include "document_metadata.h"
+#include "draw_context.h"
 #include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "local_state.h"
+#include "selection.h"
+#include "selection_set.h"
 #include "snapshots.h"
 #include "tile.h"
 #include "timeline.h"
@@ -27,6 +32,7 @@
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/ids.h>
 #include <dpmsg/message.h>
+#include <dpmsg/protover.h>
 
 #define DP_PERF_CONTEXT "project"
 
@@ -57,16 +63,21 @@ typedef enum DP_ProjectSnapshotState {
     DP_PROJECT_SNAPSHOT_STATE_READY,
     DP_PROJECT_SNAPSHOT_STATE_ERROR,
     DP_PROJECT_SNAPSHOT_STATE_OK,
+    DP_PROJECT_SNAPSHOT_STATE_NULL,
 } DP_ProjectSnapshotState;
 
 typedef enum DP_ProjectSnapshotPersistentStatement {
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA,
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_LAYER,
+    DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER,
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TILE,
+    DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER_TILE,
+    DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE,
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_ANNOTATION,
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TRACK,
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME,
     DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME_LAYER,
+    DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_MESSAGE,
     DP_PROJECT_SNAPSHOT_STATEMENT_COUNT,
 } DP_ProjectSnapshotPersistentStatement;
 
@@ -81,11 +92,17 @@ typedef enum DP_ProjectSnapshotMetadata {
     DP_PROJECT_SNAPSHOT_METADATA_FRAMERATE_FRACTION = 8,
     DP_PROJECT_SNAPSHOT_METADATA_FRAME_RANGE_FIRST = 9,
     DP_PROJECT_SNAPSHOT_METADATA_FRAME_RANGE_LAST = 10,
+    DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID = 11,
 } DP_ProjectSnapshotMetadata;
 
 typedef struct DP_ProjectSnapshot {
     long long id;
+    long long sequence_id;
     DP_ProjectSnapshotState state;
+    bool merge_sublayers;
+    bool include_selections;
+    bool has_sublayers;
+    bool has_selections;
     sqlite3_stmt *stmts[DP_PROJECT_SNAPSHOT_STATEMENT_COUNT];
     DP_Mutex *mutex;
 } DP_ProjectSnapshot;
@@ -348,80 +365,106 @@ static void set_db_configs(sqlite3 *db)
     TRY_SET_DB_CONFIG(db, ENABLE_TRIGGER, 0);
     TRY_SET_DB_CONFIG(db, ENABLE_LOAD_EXTENSION, 0);
     TRY_SET_DB_CONFIG(db, TRUSTED_SCHEMA, 0);
-    TRY_SET_DB_CONFIG(db, ENABLE_ATTACH_CREATE, 0);
+    TRY_SET_DB_CONFIG(db, ENABLE_ATTACH_CREATE, 1);
 }
 
-static bool is_empty_db(sqlite3 *db, bool *out_empty, int *out_result)
-{
-    int value;
-    if (exec_int_stmt(db, "select 1 from sqlite_master limit 1", 0, &value,
-                      out_result)) {
-        *out_empty = value == 0;
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+#define PRAGMA_SETUP(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)                       \
+    do {                                                                       \
+        OUT_OK =                                                               \
+            exec_write_stmt(DB, "pragma " PREFIX "locking_mode = exclusive",   \
+                            "setting exclusive locking mode", &OUT_SQL_RESULT) \
+            && exec_write_stmt(DB, "pragma " PREFIX "journal_mode = memory",   \
+                               "setting journal mode to memory",               \
+                               &OUT_SQL_RESULT)                                \
+            && exec_write_stmt(DB, "pragma " PREFIX "synchronous = off",       \
+                               "setting synchronous off", &OUT_SQL_RESULT)     \
+            && exec_text_stmt(DB, "pragma " PREFIX "locking_mode", NULL,       \
+                              check_pragma_result,                             \
+                              (char *[]){"exclusive", "locking_mode"},         \
+                              &OUT_SQL_RESULT);                                \
+    } while (0)
 
-static bool init_header(sqlite3 *db, bool snapshot_only, int *out_result)
-{
-    const char *application_id_sql;
-    const char *user_version_sql;
-    if (snapshot_only) {
-        application_id_sql = "pragma application_id = " DP_PROJECT_XSTR(
-            DP_PROJECT_CANVAS_APPLICATION_ID);
-        user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(
-            DP_PROJECT_CANVAS_USER_VERSION);
-    }
-    else {
-        application_id_sql = "pragma application_id = " DP_PROJECT_XSTR(
-            DP_PROJECT_APPLICATION_ID);
-        user_version_sql =
-            "pragma user_version = " DP_PROJECT_XSTR(DP_PROJECT_USER_VERSION);
-    }
+#define PRAGMA_READY(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)                     \
+    do {                                                                     \
+        OUT_OK =                                                             \
+            exec_write_stmt(DB, "pragma " PREFIX "journal_mode = off",       \
+                            "setting journal mode to off", &OUT_SQL_RESULT); \
+    } while (0)
 
-    bool ok = exec_write_stmt(db, application_id_sql, "setting application_id",
-                              out_result)
-           && exec_write_stmt(db, user_version_sql, "setting user_version",
-                              out_result);
-    return ok;
-}
+#define IS_EMPTY_DB(DB, PREFIX, OUT_OK, OUT_EMPTY, OUT_SQL_RESULT)             \
+    do {                                                                       \
+        int _value;                                                            \
+        if (exec_int_stmt(db, "select 1 from " PREFIX "sqlite_master limit 1", \
+                          0, &_value, &OUT_SQL_RESULT)) {                      \
+            OUT_EMPTY = (_value == 0);                                         \
+            OUT_OK = true;                                                     \
+        }                                                                      \
+        else {                                                                 \
+            OUT_OK = false;                                                    \
+        }                                                                      \
+    } while (0)
 
-static int check_header(sqlite3 *db, bool snapshot_only, int *out_result)
-{
-    int application_id, user_version;
-    bool exec_ok = exec_int_stmt(db, "pragma application_id", -1,
-                                 &application_id, out_result)
-                && exec_int_stmt(db, "pragma user_version", -1, &user_version,
-                                 out_result);
-    if (!exec_ok) {
-        return DP_PROJECT_OPEN_ERROR_HEADER_READ;
-    }
+#define INIT_HEADER(DB, PREFIX, SNAPSHOT_ONLY, OUT_OK, OUT_SQL_RESULT)      \
+    do {                                                                    \
+        const char *_application_id_sql;                                    \
+        const char *_user_version_sql;                                      \
+        if (SNAPSHOT_ONLY) {                                                \
+            _application_id_sql =                                           \
+                "pragma " PREFIX "application_id = " DP_PROJECT_XSTR(       \
+                    DP_PROJECT_CANVAS_APPLICATION_ID);                      \
+            _user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(   \
+                DP_PROJECT_CANVAS_USER_VERSION);                            \
+        }                                                                   \
+        else {                                                              \
+            _application_id_sql =                                           \
+                "pragma " PREFIX "application_id = " DP_PROJECT_XSTR(       \
+                    DP_PROJECT_APPLICATION_ID);                             \
+            _user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(   \
+                DP_PROJECT_USER_VERSION);                                   \
+        }                                                                   \
+        OUT_OK = exec_write_stmt(DB, _application_id_sql,                   \
+                                 "setting application_id", &OUT_SQL_RESULT) \
+              && exec_write_stmt(DB, _user_version_sql,                     \
+                                 "setting user_version", &OUT_SQL_RESULT);  \
+    } while (0)
 
-    int expected_application_id;
-    int expected_user_version;
-    if (snapshot_only) {
-        expected_application_id = DP_PROJECT_CANVAS_APPLICATION_ID;
-        expected_user_version = DP_PROJECT_CANVAS_USER_VERSION;
-    }
-    else {
-        expected_application_id = DP_PROJECT_APPLICATION_ID;
-        expected_user_version = DP_PROJECT_USER_VERSION;
-    }
-
-    if (application_id != expected_application_id) {
-        DP_error_set("File has incorrect application id %d", application_id);
-        return DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;
-    }
-    else if (user_version != expected_user_version) {
-        DP_error_set("File has unknown user version %d", user_version);
-        return DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;
-    }
-    else {
-        return 0;
-    }
-}
+#define CHECK_HEADER(DB, PREFIX, SNAPSHOT_ONLY, OUT_RESULT, OUT_SQL_RESULT)    \
+    do {                                                                       \
+        int _application_id, _user_version;                                    \
+        bool _exec_ok = exec_int_stmt(DB, "pragma " PREFIX "application_id",   \
+                                      -1, &_application_id, &OUT_SQL_RESULT)   \
+                     && exec_int_stmt(DB, "pragma " PREFIX "user_version", -1, \
+                                      &_user_version, &OUT_SQL_RESULT);        \
+        if (_exec_ok) {                                                        \
+            int _expected_application_id;                                      \
+            int _expected_user_version;                                        \
+            if (SNAPSHOT_ONLY) {                                               \
+                _expected_application_id = DP_PROJECT_CANVAS_APPLICATION_ID;   \
+                _expected_user_version = DP_PROJECT_CANVAS_USER_VERSION;       \
+            }                                                                  \
+            else {                                                             \
+                _expected_application_id = DP_PROJECT_APPLICATION_ID;          \
+                _expected_user_version = DP_PROJECT_USER_VERSION;              \
+            }                                                                  \
+                                                                               \
+            if (_application_id != _expected_application_id) {                 \
+                DP_error_set("File has incorrect application id %d",           \
+                             _application_id);                                 \
+                OUT_RESULT = DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;            \
+            }                                                                  \
+            else if (_user_version != _expected_user_version) {                \
+                DP_error_set("File has unknown user version %d",               \
+                             _user_version);                                   \
+                OUT_RESULT = DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;            \
+            }                                                                  \
+            else {                                                             \
+                OUT_RESULT = 0;                                                \
+            }                                                                  \
+        }                                                                      \
+        else {                                                                 \
+            OUT_RESULT = DP_PROJECT_OPEN_ERROR_HEADER_READ;                    \
+        }                                                                      \
+    } while (0)
 
 static void try_rollback(sqlite3 *db)
 {
@@ -436,180 +479,232 @@ static void try_rollback(sqlite3 *db)
     }
 }
 
-static bool apply_migrations(sqlite3 *db, int *out_result)
-{
-    if (!exec_write_stmt(db,
-                         "create table if not exists migrations (\n"
-                         "    migration_id integer primary key not null)\n"
-                         "strict",
-                         "creating migrations table", out_result)) {
-        return false;
-    }
+#define APPLY_MIGRATIONS(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)                   \
+    do {                                                                       \
+        if (!exec_write_stmt(                                                  \
+                DB,                                                            \
+                "create table if not exists " PREFIX "migrations (\n"          \
+                "    migration_id integer primary key not null)\n"             \
+                "strict",                                                      \
+                "creating migrations table", &OUT_SQL_RESULT)) {               \
+            OUT_OK = false;                                                    \
+            break;                                                             \
+        }                                                                      \
+                                                                               \
+        sqlite3_stmt *_insert_migration_stmt = prepare(                        \
+            DB,                                                                \
+            "insert or ignore into " PREFIX "migrations (migration_id)\n"      \
+            "values (?)",                                                      \
+            0, &OUT_SQL_RESULT);                                               \
+        if (!_insert_migration_stmt) {                                         \
+            OUT_OK = false;                                                    \
+            break;                                                             \
+        }                                                                      \
+                                                                               \
+        const char *_migrations[] = {                                          \
+            /* Migration 1: initial setup. */                                  \
+            "create table " PREFIX "sessions (\n"                              \
+            "    session_id integer primary key autoincrement not null,\n"     \
+            "    source_type integer not null,\n"                              \
+            "    source_param text not null,\n"                                \
+            "    protocol text not null,\n"                                    \
+            "    flags integer not null\n,"                                    \
+            "    opened_at real not null,\n"                                   \
+            "    closed_at real,\n"                                            \
+            "    thumbnail blob)\n"                                            \
+            "strict;\n"                                                        \
+            "create table " PREFIX "messages (\n"                              \
+            "    session_id integer not null,\n"                               \
+            "    sequence_id integer not null,\n"                              \
+            "    recorded_at real not null,\n"                                 \
+            "    flags integer not null,\n"                                    \
+            "    type integer not null,\n"                                     \
+            "    context_id integer not null,\n"                               \
+            "    body blob,\n"                                                 \
+            "    primary key (session_id, sequence_id))\n"                     \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshots (\n"                             \
+            "    snapshot_id integer primary key autoincrement not null,\n"    \
+            "    session_id integer not null,\n"                               \
+            "    flags integer not null,\n"                                    \
+            "    taken_at real not null,\n"                                    \
+            "    thumbnail blob)\n"                                            \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_metadata (\n"                     \
+            "    snapshot_id integer not null,\n"                              \
+            "    metadata_id integer not null,\n"                              \
+            "    value any,\n"                                                 \
+            "    primary key (snapshot_id, metadata_id))\n"                    \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_layers (\n"                       \
+            "    snapshot_id integer not null,\n"                              \
+            "    layer_index integer not null,\n"                              \
+            "    parent_index integer not null,\n"                             \
+            "    layer_id integer not null,\n"                                 \
+            "    title text not null,\n"                                       \
+            "    blend_mode integer not null,\n"                               \
+            "    opacity integer not null,\n"                                  \
+            "    sketch_opacity integer not null,\n"                           \
+            "    sketch_tint integer not null,\n"                              \
+            "    flags integer not null,\n"                                    \
+            "    fill integer not null,\n"                                     \
+            "    primary key (snapshot_id, layer_index))\n"                    \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_sublayers (\n"                    \
+            "    snapshot_id integer not null,\n"                              \
+            "    sublayer_index integer not null,\n"                           \
+            "    layer_index integer not null,\n"                              \
+            "    sublayer_id integer not null,\n"                              \
+            "    blend_mode integer not null,\n"                               \
+            "    opacity integer not null,\n"                                  \
+            "    flags integer not null,\n"                                    \
+            "    fill integer not null,\n"                                     \
+            "    primary key (snapshot_id, sublayer_index))\n"                 \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_tiles (\n"                        \
+            "    snapshot_id integer not null,\n"                              \
+            "    layer_index integer not null,\n"                              \
+            "    tile_index integer not null,\n"                               \
+            "    context_id integer not null,\n"                               \
+            "    repeat integer not null,\n"                                   \
+            "    pixels blob not null,\n"                                      \
+            "    primary key (snapshot_id, layer_index, tile_index))\n"        \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_sublayer_tiles (\n"               \
+            "    snapshot_id integer not null,\n"                              \
+            "    sublayer_index integer not null,\n"                           \
+            "    tile_index integer not null,\n"                               \
+            "    repeat integer not null,\n"                                   \
+            "    pixels blob not null,\n"                                      \
+            "    primary key (snapshot_id, sublayer_index, tile_index))\n"     \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_selection_tiles (\n"              \
+            "    snapshot_id integer not null,\n"                              \
+            "    selection_id integer not null,\n"                             \
+            "    context_id integer not null,\n"                               \
+            "    tile_index integer not null,\n"                               \
+            "    mask blob,\n"                                                 \
+            "    primary key (snapshot_id, selection_id, context_id,\n"        \
+            "                 tile_index))\n"                                  \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_annotations (\n"                  \
+            "    snapshot_id integer not null,\n"                              \
+            "    annotation_index integer not null,\n"                         \
+            "    annotation_id integer not null,\n"                            \
+            "    content text not null,\n"                                     \
+            "    x integer not null,\n"                                        \
+            "    y integer not null,\n"                                        \
+            "    width integer not null,\n"                                    \
+            "    height integer not null,\n"                                   \
+            "    background_color integer not null,\n"                         \
+            "    valign integer not null,\n"                                   \
+            "    flags integer not null,\n"                                    \
+            "    primary key (snapshot_id, annotation_index))\n"               \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_tracks (\n"                       \
+            "    snapshot_id integer not null,\n"                              \
+            "    track_index integer not null,\n"                              \
+            "    track_id integer not null,\n"                                 \
+            "    title text not null,\n"                                       \
+            "    flags integer not null,\n"                                    \
+            "    primary key (snapshot_id, track_index))\n"                    \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_key_frames (\n"                   \
+            "    snapshot_id integer not null,\n"                              \
+            "    track_index integer not null,\n"                              \
+            "    frame_index integer not null,\n"                              \
+            "    title text not null,\n"                                       \
+            "    layer_id integer not null,\n"                                 \
+            "    primary key (snapshot_id, track_index, frame_index))\n"       \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_key_frame_layers (\n"             \
+            "    snapshot_id integer not null,\n"                              \
+            "    track_index integer not null,\n"                              \
+            "    frame_index integer not null,\n"                              \
+            "    layer_id integer not null,\n"                                 \
+            "    flags integer not null,\n"                                    \
+            "    primary key (snapshot_id, track_index, frame_index, "         \
+            "layer_id))\n"                                                     \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_messages (\n"                     \
+            "    snapshot_id integer not null,\n"                              \
+            "    sequence_id integer not null,\n"                              \
+            "    recorded_at real not null,\n"                                 \
+            "    flags integer not null,\n"                                    \
+            "    type integer not null,\n"                                     \
+            "    context_id integer not null,\n"                               \
+            "    body blob,\n"                                                 \
+            "    primary key (snapshot_id, sequence_id))\n"                    \
+            "strict, without rowid;\n",                                        \
+        };                                                                     \
+                                                                               \
+        OUT_OK = true;                                                         \
+        for (int i = 0; i < (int)DP_ARRAY_LENGTH(_migrations); ++i) {          \
+            int _bind_result =                                                 \
+                sqlite3_bind_int(_insert_migration_stmt, 1, i + 1);            \
+            if (!is_ok(_bind_result)) {                                        \
+                DP_error_set("Error %d binding migration insertion: %s",       \
+                             _bind_result, db_error(DB));                      \
+                OUT_SQL_RESULT = _bind_result;                                 \
+                OUT_OK = false;                                                \
+                break;                                                         \
+            }                                                                  \
+                                                                               \
+            int _step_result = sqlite3_step(_insert_migration_stmt);           \
+            if (_step_result != SQLITE_DONE) {                                 \
+                DP_error_set("Error %d inserting migration: %s", _step_result, \
+                             db_error(DB));                                    \
+                OUT_SQL_RESULT = _step_result;                                 \
+                OUT_OK = false;                                                \
+                break;                                                         \
+            }                                                                  \
+                                                                               \
+            int _changes = sqlite3_changes(DB);                                \
+            int _reset_result = sqlite3_reset(_insert_migration_stmt);         \
+            if (!is_ok(_reset_result)) {                                       \
+                DP_error_set("Error %d resetting migration insertion: %s",     \
+                             _reset_result, db_error(DB));                     \
+                OUT_SQL_RESULT = _reset_result;                                \
+                OUT_OK = false;                                                \
+                break;                                                         \
+            }                                                                  \
+                                                                               \
+            if (_changes > 0) {                                                \
+                const char *sql = _migrations[i];                              \
+                DP_debug("Executing migration %d", i + 1);                     \
+                if (!exec_write_stmt(DB, sql, "executing migration",           \
+                                     &OUT_SQL_RESULT)) {                       \
+                    OUT_OK = false;                                            \
+                    break;                                                     \
+                }                                                              \
+            }                                                                  \
+        }                                                                      \
+                                                                               \
+        sqlite3_finalize(_insert_migration_stmt);                              \
+    } while (0)
 
-    sqlite3_stmt *insert_migration_stmt = prepare(
-        db, "insert or ignore into migrations (migration_id) values (?)", 0,
-        out_result);
-    if (!insert_migration_stmt) {
-        return false;
-    }
-
-    const char *migrations[] = {
-        // Migration 1: initial setup.
-        "create table sessions (\n"
-        "    session_id integer primary key not null,\n"
-        "    source_type integer not null,\n"
-        "    source_param text not null,\n"
-        "    protocol text not null,\n"
-        "    flags integer not null\n,"
-        "    opened_at real not null,\n"
-        "    closed_at real,\n"
-        "    thumbnail blob)\n"
-        "strict;\n"
-        "create table messages (\n"
-        "    session_id integer not null,\n"
-        "    sequence_id integer not null,\n"
-        "    recorded_at real not null,\n"
-        "    flags integer not null,\n"
-        "    type integer not null,\n"
-        "    context_id integer not null,\n"
-        "    body blob,\n"
-        "    primary key (session_id, sequence_id))\n"
-        "strict, without rowid;\n"
-        "create table snapshots (\n"
-        "    snapshot_id integer primary key not null,\n"
-        "    session_id integer not null,\n"
-        "    flags integer not null,\n"
-        "    taken_at real not null,\n"
-        "    thumbnail blob)\n"
-        "strict;\n"
-        "create table snapshot_metadata (\n"
-        "    snapshot_id integer not null,\n"
-        "    metadata_id integer not null,\n"
-        "    value any,\n"
-        "    primary key (snapshot_id, metadata_id))\n"
-        "strict;\n"
-        "create table snapshot_layers (\n"
-        "    snapshot_id integer not null,\n"
-        "    layer_index integer not null,\n"
-        "    parent_index integer not null,\n"
-        "    layer_id integer not null,\n"
-        "    title text not null,\n"
-        "    blend_mode integer not null,\n"
-        "    opacity integer not null,\n"
-        "    sketch_opacity integer not null,\n"
-        "    sketch_tint integer not null,\n"
-        "    flags integer not null,\n"
-        "    fill integer not null,\n"
-        "    primary key (snapshot_id, layer_index))\n"
-        "strict, without rowid;\n"
-        "create table snapshot_tiles (\n"
-        "    snapshot_id integer not null,\n"
-        "    layer_index integer not null,\n"
-        "    tile_index integer not null,\n"
-        "    context_id integer not null,\n"
-        "    repeat integer not null,\n"
-        "    pixels blob not null,\n"
-        "    primary key (snapshot_id, layer_index, tile_index))\n"
-        "strict;\n"
-        "create table snapshot_annotations (\n"
-        "    snapshot_id integer not null,\n"
-        "    annotation_index integer not null,\n"
-        "    annotation_id integer not null,\n"
-        "    content text not null,\n"
-        "    x integer not null,\n"
-        "    y integer not null,\n"
-        "    width integer not null,\n"
-        "    height integer not null,\n"
-        "    background_color integer not null,\n"
-        "    valign integer not null,\n"
-        "    flags integer not null,\n"
-        "    primary key (snapshot_id, annotation_index))\n"
-        "strict;\n"
-        "create table snapshot_tracks (\n"
-        "    snapshot_id integer not null,\n"
-        "    track_index integer not null,\n"
-        "    track_id integer not null,\n"
-        "    title text not null,\n"
-        "    flags integer not null,\n"
-        "    primary key (snapshot_id, track_index))\n"
-        "strict, without rowid;\n"
-        "create table snapshot_key_frames (\n"
-        "    snapshot_id integer not null,\n"
-        "    track_index integer not null,\n"
-        "    frame_index integer not null,\n"
-        "    title text not null,\n"
-        "    layer_id integer not null,\n"
-        "    primary key (snapshot_id, track_index, frame_index))\n"
-        "strict, without rowid;\n"
-        "create table snapshot_key_frame_layers (\n"
-        "    snapshot_id integer not null,\n"
-        "    track_index integer not null,\n"
-        "    frame_index integer not null,\n"
-        "    layer_id integer not null,\n"
-        "    flags integer not null,\n"
-        "    primary key (snapshot_id, track_index, frame_index, layer_id))\n"
-        "strict, without rowid;\n",
-    };
-
-    bool result = true;
-    for (int i = 0; i < (int)DP_ARRAY_LENGTH(migrations); ++i) {
-        int bind_result = sqlite3_bind_int(insert_migration_stmt, 1, i + 1);
-        if (!is_ok(bind_result)) {
-            assign_result(bind_result, out_result);
-            DP_error_set("Error %d binding migration insertion: %s",
-                         bind_result, db_error(db));
-            result = false;
-            break;
-        }
-
-        int step_result = sqlite3_step(insert_migration_stmt);
-        if (step_result != SQLITE_DONE) {
-            assign_result(step_result, out_result);
-            DP_error_set("Error %d inserting migration: %s", bind_result,
-                         db_error(db));
-            result = false;
-            break;
-        }
-
-        int changes = sqlite3_changes(db);
-        int reset_result = sqlite3_reset(insert_migration_stmt);
-        if (!is_ok(reset_result)) {
-            assign_result(reset_result, out_result);
-            DP_error_set("Error %d resetting migration insertion: %s",
-                         bind_result, db_error(db));
-            result = false;
-            break;
-        }
-
-        if (changes > 0) {
-            const char *sql = migrations[i];
-            DP_debug("Executing migration %d", i + 1);
-            if (!exec_write_stmt(db, sql, "executing migration", out_result)) {
-                result = false;
-                break;
-            }
-        }
-    }
-
-    sqlite3_finalize(insert_migration_stmt);
-    return result;
-}
-
-static bool apply_migrations_in_tx(sqlite3 *db, int *out_result)
-{
-    if (exec_write_stmt(db, "begin exclusive", "opening migration transaction",
-                        out_result)) {
-        if (apply_migrations(db, out_result)
-            && exec_write_stmt(db, "commit", "committing migration transaction",
-                               out_result)) {
-            return true;
-        }
-        else {
-            try_rollback(db);
-        }
-    }
-    return false;
-}
+#define APPLY_MIGRATIONS_IN_TX(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)     \
+    do {                                                               \
+        if (exec_write_stmt(DB, "begin exclusive",                     \
+                            "opening migration transaction",           \
+                            &OUT_SQL_RESULT)) {                        \
+            bool _apply_ok;                                            \
+            APPLY_MIGRATIONS(DB, PREFIX, _apply_ok, OUT_SQL_RESULT);   \
+            if (_apply_ok                                              \
+                && exec_write_stmt(DB, "commit",                       \
+                                   "committing migration transaction", \
+                                   &OUT_SQL_RESULT)) {                 \
+                OUT_OK = true;                                         \
+            }                                                          \
+            else {                                                     \
+                try_rollback(DB);                                      \
+                OUT_OK = false;                                        \
+            }                                                          \
+        }                                                              \
+        else {                                                         \
+            OUT_OK = false;                                            \
+        }                                                              \
+    } while (0)
 
 static const char *pps_sql(DP_ProjectPersistentStatement pps)
 {
@@ -669,17 +764,9 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
             return make_open_error(DP_PROJECT_OPEN_ERROR_READ_ONLY, SQLITE_OK);
         }
 
-        bool setup_ok =
-            exec_write_stmt(db, "pragma locking_mode = exclusive",
-                            "setting exclusive locking mode", &sql_result)
-            && exec_write_stmt(db, "pragma journal_mode = memory",
-                               "setting journal mode to memory", &sql_result)
-            && exec_write_stmt(db, "pragma synchronous = off",
-                               "setting synchronous off", &sql_result)
-            && exec_text_stmt(
-                db, "pragma locking_mode", NULL, check_pragma_result,
-                (char *[]){"exclusive", "locking_mode"}, &sql_result);
-        if (!setup_ok) {
+        bool ok;
+        PRAGMA_SETUP(db, "", ok, sql_result);
+        if (!ok) {
             try_close_db(db);
             return make_open_error(sql_result == SQLITE_BUSY
                                        ? DP_PROJECT_OPEN_ERROR_LOCKED
@@ -699,45 +786,63 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
         sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 0, 0);
         empty = true;
     }
-    else if (!is_empty_db(db, &empty, &sql_result)) {
-        try_close_db(db);
-        return make_open_error(read_only && sql_result == SQLITE_BUSY
-                                   ? DP_PROJECT_OPEN_ERROR_LOCKED
-                                   : DP_PROJECT_OPEN_ERROR_READ_EMPTY,
-                               sql_result);
-    }
-    else if (empty && read_only) {
-        DP_error_set("Read-only database is empty");
-        try_close_db(db);
-        return make_open_error(DP_PROJECT_OPEN_ERROR_READ_EMPTY, sql_result);
+    else {
+        bool ok;
+        IS_EMPTY_DB(db, "", ok, empty, sql_result);
+        if (!ok) {
+            try_close_db(db);
+            return make_open_error(read_only && sql_result == SQLITE_BUSY
+                                       ? DP_PROJECT_OPEN_ERROR_LOCKED
+                                       : DP_PROJECT_OPEN_ERROR_READ_EMPTY,
+                                   sql_result);
+        }
+
+        if (empty && read_only) {
+            DP_error_set("Read-only database is empty");
+            try_close_db(db);
+            return make_open_error(DP_PROJECT_OPEN_ERROR_READ_EMPTY,
+                                   sql_result);
+        }
     }
 
-    if (empty && !init_header(db, snapshot_only, &sql_result)) {
-        try_close_db(db);
-        return make_open_error(DP_PROJECT_OPEN_ERROR_HEADER_WRITE, sql_result);
+    if (empty) {
+        bool ok;
+        INIT_HEADER(db, "", snapshot_only, ok, sql_result);
+        if (!ok) {
+            try_close_db(db);
+            return make_open_error(DP_PROJECT_OPEN_ERROR_HEADER_WRITE,
+                                   sql_result);
+        }
     }
 
-    int header_error = check_header(db, snapshot_only, &sql_result);
-    if (header_error != 0) {
+    int header_result;
+    CHECK_HEADER(db, "", snapshot_only, header_result, sql_result);
+    if (header_result != 0) {
         try_close_db(db);
-        return make_open_error(header_error, sql_result);
-    }
-
-    if (!read_only && !apply_migrations_in_tx(db, &sql_result)) {
-        try_close_db(db);
-        return make_open_error(DP_PROJECT_OPEN_ERROR_MIGRATION, sql_result);
+        return make_open_error(header_result, sql_result);
     }
 
     if (!read_only) {
-        if (!exec_write_stmt(db, "pragma journal_mode = off",
-                             "setting journal mode to off", &sql_result)) {
+        bool ok;
+        APPLY_MIGRATIONS_IN_TX(db, "", ok, sql_result);
+        if (!ok) {
+            try_close_db(db);
+            return make_open_error(DP_PROJECT_OPEN_ERROR_MIGRATION, sql_result);
+        }
+    }
+
+    if (!read_only) {
+        bool ok;
+        PRAGMA_READY(db, "", ok, sql_result);
+        if (!ok) {
             try_close_db(db);
             return make_open_error(DP_PROJECT_OPEN_ERROR_SETUP, sql_result);
         }
     }
 
     sqlite3_stmt *stmts[DP_PROJECT_STATEMENT_COUNT];
-    if (!snapshot_only) {
+    bool have_project_stmts = !snapshot_only && !read_only;
+    if (have_project_stmts) {
         for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
             sqlite3_stmt *stmt =
                 prepare(db, pps_sql((DP_ProjectPersistentStatement)i),
@@ -761,18 +866,23 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
     prj->session_id = 0LL;
     prj->sequence_id = 0LL;
     prj->snapshot.id = 0LL;
+    prj->snapshot.sequence_id = 0LL;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_CLOSED;
+    prj->snapshot.merge_sublayers = false;
+    prj->snapshot.include_selections = false;
+    prj->snapshot.has_sublayers = false;
+    prj->snapshot.has_selections = false;
     prj->snapshot.mutex = NULL;
     for (int i = 0; i < DP_PROJECT_SNAPSHOT_STATEMENT_COUNT; ++i) {
         prj->snapshot.stmts[i] = NULL;
     }
-    if (snapshot_only) {
+    if (have_project_stmts) {
+        memcpy(prj->stmts, stmts, sizeof(stmts));
+    }
+    else {
         for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
             prj->stmts[i] = NULL;
         }
-    }
-    else {
-        memcpy(prj->stmts, stmts, sizeof(stmts));
     }
     return (DP_ProjectOpenResult){prj, 0, SQLITE_OK};
 }
@@ -859,7 +969,7 @@ static bool handle_verify(void *user, const char *text)
         }
     }
     else {
-        DP_error_set("Integrity check returnd no result");
+        DP_error_set("Integrity check returned no result");
         *out_status = DP_PROJECT_VERIFY_ERROR;
         return false;
     }
@@ -885,6 +995,19 @@ static sqlite3_stmt *ps_prepare_ephemeral(DP_Project *prj, const char *sql)
 static sqlite3_stmt *ps_prepare_persistent(DP_Project *prj, const char *sql)
 {
     return prepare(prj->db, sql, SQLITE_PREPARE_PERSISTENT, NULL);
+}
+
+static bool ps_bind_null(DP_Project *prj, sqlite3_stmt *stmt, int param)
+{
+    int bind_result = sqlite3_bind_null(stmt, param);
+    if (is_ok(bind_result)) {
+        return true;
+    }
+    else {
+        DP_error_set("Error %d binding null parameter %d to %s: %s",
+                     bind_result, param, sqlite3_sql(stmt), prj_db_error(prj));
+        return false;
+    }
 }
 
 static bool ps_bind_int(DP_Project *prj, sqlite3_stmt *stmt, int param,
@@ -927,6 +1050,17 @@ static bool ps_bind_blob(DP_Project *prj, sqlite3_stmt *stmt, int param,
         DP_error_set("Error %d binding blob parameter %d to %s: %s",
                      bind_result, param, sqlite3_sql(stmt), prj_db_error(prj));
         return false;
+    }
+}
+
+static bool ps_bind_blob_or_null(DP_Project *prj, sqlite3_stmt *stmt, int param,
+                                 const void *value, size_t length)
+{
+    if (value && length > 0) {
+        return ps_bind_blob(prj, stmt, param, value, length);
+    }
+    else {
+        return ps_bind_null(prj, stmt, param);
     }
 }
 
@@ -1092,6 +1226,7 @@ int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set)
 
     long long session_id = prj->session_id;
     if (session_id == 0LL) {
+        DP_error_set("No open session");
         return DP_PROJECT_SESSION_CLOSE_NOT_OPEN;
     }
 
@@ -1120,11 +1255,32 @@ int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set)
 }
 
 
-unsigned char *get_serialize_buffer(void *user, DP_UNUSED size_t length)
+static unsigned char *get_serialize_buffer(void *user, DP_UNUSED size_t length)
 {
     DP_ASSERT(length <= DP_MESSAGE_MAX_PAYLOAD_LENGTH);
     DP_Project *prj = user;
     return prj->serialize_buffer;
+}
+
+static int record_message(DP_Project *prj, long long session_id,
+                          unsigned int flags, int type, unsigned int context_id,
+                          const void *body_or_null, size_t length)
+{
+    sqlite3_stmt *stmt = prj->stmts[DP_PROJECT_STATEMENT_MESSAGE_RECORD];
+    bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                 && ps_bind_int64(prj, stmt, 2, ++prj->sequence_id)
+                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
+                 && ps_bind_int(prj, stmt, 4, type)
+                 && ps_bind_int64(prj, stmt, 5, context_id)
+                 && ps_bind_blob_or_null(prj, stmt, 6, body_or_null, length)
+                 && ps_exec_write(prj, stmt, NULL);
+    ps_clear_bindings(prj, stmt);
+    if (write_ok) {
+        return 0;
+    }
+    else {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE;
+    }
 }
 
 int DP_project_message_record(DP_Project *prj, DP_Message *msg,
@@ -1143,28 +1299,42 @@ int DP_project_message_record(DP_Project *prj, DP_Message *msg,
     long long session_id = prj->session_id;
     if (session_id == 0LL) {
         DP_error_set("No open session");
-        return DP_PROJECT_MESSAGE_RECORD_ERROR_NO_SESSION;
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
     }
 
-    size_t length = DP_message_serialize_body(msg, get_serialize_buffer, prj);
-    if (length == 0) {
+    size_t length;
+    if (!DP_message_serialize_body(msg, get_serialize_buffer, prj, &length)) {
         return DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE;
     }
 
-    sqlite3_stmt *stmt = prj->stmts[DP_PROJECT_STATEMENT_MESSAGE_RECORD];
-    bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
-                 && ps_bind_int64(prj, stmt, 2, ++prj->sequence_id)
-                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
-                 && ps_bind_int(prj, stmt, 4, (int)DP_message_type(msg))
-                 && ps_bind_int64(prj, stmt, 5, DP_message_context_id(msg))
-                 && ps_bind_blob(prj, stmt, 6, prj->serialize_buffer, length)
-                 && ps_exec_write(prj, stmt, NULL);
-    ps_clear_bindings(prj, stmt);
-    if (!write_ok) {
-        return DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE;
+    return record_message(prj, session_id, flags, (int)DP_message_type(msg),
+                          DP_message_context_id(msg), prj->serialize_buffer,
+                          length);
+}
+
+int DP_project_message_internal_record(DP_Project *prj, int type,
+                                       unsigned int context_id,
+                                       const void *body_or_null, size_t size,
+                                       unsigned int flags)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
     }
 
-    return 0;
+    if (type >= 0) {
+        DP_error_set("Invalid internal message type %d", type);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    return record_message(prj, session_id, flags, type, context_id,
+                          body_or_null, size);
 }
 
 
@@ -1179,10 +1349,22 @@ static const char *snapshot_sql(DP_ProjectSnapshotPersistentStatement psps)
                "parent_index, layer_id, title, blend_mode, opacity, "
                "sketch_opacity, sketch_tint, flags, fill) values (?, ?, ?, "
                "?, ?, ?, ?, ?, ?, ?, ?)";
+    case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER:
+        return "insert into snapshot_sublayers (snapshot_id, sublayer_index, "
+               "layer_index, sublayer_id, blend_mode, opacity, flags, fill) "
+               "values (?, ?, ?, ?, ?, ?, 0, ?)";
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TILE:
         return "insert into snapshot_tiles (snapshot_id, layer_index, "
                "tile_index, context_id, repeat, pixels) values (?, ?, ?, ?, ?, "
                "?)";
+    case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER_TILE:
+        return "insert into snapshot_sublayer_tiles (snapshot_id, "
+               "sublayer_index, tile_index, repeat, pixels) values (?, ?, ?, "
+               "?, ?)";
+    case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE:
+        return "insert into snapshot_selection_tiles (snapshot_id, "
+               "selection_id, context_id, tile_index, mask) values (?, ?, ?, "
+               "?, ?)";
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_ANNOTATION:
         return "insert into snapshot_annotations (snapshot_id, "
                "annotation_index, annotation_id, content, x, y, width, height, "
@@ -1198,6 +1380,10 @@ static const char *snapshot_sql(DP_ProjectSnapshotPersistentStatement psps)
         return "insert into snapshot_key_frame_layers (snapshot_id, "
                "track_index, frame_index, layer_id, flags) values (?, ?, ?, ?, "
                "?)";
+    case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_MESSAGE:
+        return "insert into snapshot_messages (snapshot_id, sequence_id, "
+               "recorded_at, flags, type, context_id, body) values (?, ?, "
+               "unixepoch('subsec'), ?, ?, ?, ?)";
     case DP_PROJECT_SNAPSHOT_STATEMENT_COUNT:
         break;
     }
@@ -1272,7 +1458,13 @@ static long long project_snapshot_open(DP_Project *prj, unsigned int flags)
 
     DP_ASSERT(snapshot_id > 0);
     prj->snapshot.id = snapshot_id;
+    prj->snapshot.sequence_id = 0LL;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_READY;
+    bool is_autosave = flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE;
+    prj->snapshot.merge_sublayers = !is_autosave;
+    prj->snapshot.include_selections = is_autosave;
+    prj->snapshot.has_sublayers = false;
+    prj->snapshot.has_selections = false;
     prj->snapshot.mutex = mutex;
     return snapshot_id;
 }
@@ -1288,6 +1480,67 @@ long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags)
     }
 
     return project_snapshot_open(prj, flags);
+}
+
+static int record_snapshot_message(DP_Project *prj, unsigned int flags,
+                                   int type, unsigned int context_id,
+                                   const void *body_or_null, size_t length)
+{
+    sqlite3_stmt *stmt =
+        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_MESSAGE];
+    bool write_ok = ps_bind_int64(prj, stmt, 2, ++prj->snapshot.sequence_id)
+                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
+                 && ps_bind_int(prj, stmt, 4, type)
+                 && ps_bind_int64(prj, stmt, 5, context_id)
+                 && ps_bind_blob_or_null(prj, stmt, 6, body_or_null, length)
+                 && ps_exec_write(prj, stmt, NULL);
+
+    // Don't want to clear all bindings because parameter 1 always stays bound
+    // to the snapshot id. We only clear the pointer binding to avoid staleness.
+    if (body_or_null) {
+        ps_bind_null(prj, stmt, 6);
+    }
+
+    if (write_ok) {
+        return 0;
+    }
+    else {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE;
+    }
+}
+
+int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
+                                       DP_Message *msg, unsigned int flags)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    if (!msg) {
+        DP_error_set("No message given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    if (prj->snapshot.id == 0LL) {
+        DP_error_set("Snapshot %lld is not open (none is)", snapshot_id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.id != snapshot_id) {
+        DP_error_set("Snapshot %lld is not open, (%lld is)", snapshot_id,
+                     prj->snapshot.id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    size_t length;
+    if (!DP_message_serialize_body(msg, get_serialize_buffer, prj, &length)) {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE;
+    }
+
+    return record_snapshot_message(prj, flags, (int)DP_message_type(msg),
+                                   DP_message_context_id(msg),
+                                   prj->serialize_buffer, (size_t)length);
 }
 
 static void snapshot_close(DP_Project *prj)
@@ -1318,6 +1571,7 @@ int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id)
         return DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN;
     }
 
+    DP_ProjectSnapshotState snapshot_state = prj->snapshot.state;
     snapshot_close(prj);
 
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
@@ -1326,10 +1580,20 @@ int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id)
         return DP_PROJECT_SNAPSHOT_FINISH_ERROR_PREPARE;
     }
 
-    bool write_ok =
-        ps_bind_int64(prj, stmt, 1, DP_PROJECT_SNAPSHOT_FLAG_COMPLETE)
-        && ps_bind_int64(prj, stmt, 2, snapshot_id)
-        && ps_exec_write(prj, stmt, NULL);
+    unsigned int flags_to_set =
+        DP_PROJECT_SNAPSHOT_FLAG_COMPLETE
+        | DP_flag_uint(prj->snapshot.sequence_id != 0LL,
+                       DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES)
+        | DP_flag_uint(prj->snapshot.has_sublayers,
+                       DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS)
+        | DP_flag_uint(prj->snapshot.has_selections,
+                       DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS)
+        | DP_flag_uint(snapshot_state == DP_PROJECT_SNAPSHOT_STATE_NULL,
+                       DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS);
+
+    bool write_ok = ps_bind_int64(prj, stmt, 1, flags_to_set)
+                 && ps_bind_int64(prj, stmt, 2, snapshot_id)
+                 && ps_exec_write(prj, stmt, NULL);
     sqlite3_finalize(stmt);
     if (!write_ok) {
         return DP_PROJECT_SNAPSHOT_FINISH_ERROR_WRITE;
@@ -1348,10 +1612,15 @@ static int project_snapshot_discard_relations(DP_Project *prj,
                                               long long snapshot_id)
 {
     const char *sqls[] = {
+        "delete from snapshot_messages where snapshot_id = ?",
+        "delete from snapshot_key_frame_layers where snapshot_id = ?",
         "delete from snapshot_key_frames where snapshot_id = ?",
         "delete from snapshot_tracks where snapshot_id = ?",
         "delete from snapshot_annotations where snapshot_id = ?",
+        "delete from snapshot_selection_tiles where snapshot_id = ?",
+        "delete from snapshot_sublayer_tiles where snapshot_id = ?",
         "delete from snapshot_tiles where snapshot_id = ?",
+        "delete from snapshot_sublayers where snapshot_id = ?",
         "delete from snapshot_layers where snapshot_id = ?",
         "delete from snapshot_metadata where snapshot_id = ?",
     };
@@ -1497,18 +1766,17 @@ int DP_project_snapshot_discard_all_except(DP_Project *prj,
 
 static bool snapshot_write_metadata_int(DP_Project *prj,
                                         DP_ProjectSnapshotMetadata id,
-                                        int value)
+                                        long long value)
 {
     sqlite3_stmt *stmt =
         prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA];
     return ps_bind_int(prj, stmt, 2, (int)id)
-        && ps_bind_int(prj, stmt, 3, value) && ps_exec_write(prj, stmt, NULL);
+        && ps_bind_int64(prj, stmt, 3, value) && ps_exec_write(prj, stmt, NULL);
 }
 
-static bool
-snapshot_write_metadata_int_unless_default(DP_Project *prj,
-                                           DP_ProjectSnapshotMetadata id,
-                                           int value, int default_value)
+static bool snapshot_write_metadata_int_unless_default(
+    DP_Project *prj, DP_ProjectSnapshotMetadata id, long long value,
+    long long default_value)
 {
     return value == default_value
         || snapshot_write_metadata_int(prj, id, value);
@@ -1566,10 +1834,9 @@ static bool snapshot_handle_background(DP_Project *prj,
         && ps_exec_write(prj, stmt, NULL);
 }
 
-static bool snapshot_handle_layer(DP_Project *prj,
+static bool snapshot_insert_layer(DP_Project *prj,
                                   const DP_ResetEntryLayer *rel)
 {
-    DP_ASSERT(rel->sublayer_id == 0);
     sqlite3_stmt *stmt =
         prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_LAYER];
     DP_LayerProps *lp = rel->lp;
@@ -1601,9 +1868,37 @@ static bool snapshot_handle_layer(DP_Project *prj,
         && ps_exec_write(prj, stmt, NULL);
 }
 
-static bool snapshot_handle_tile(DP_Project *prj, const DP_ResetEntryTile *ret)
+static bool snapshot_insert_sublayer(DP_Project *prj,
+                                     const DP_ResetEntryLayer *rel)
 {
-    DP_ASSERT(ret->sublayer_id == 0);
+    DP_ASSERT(prj->snapshot.merge_sublayers);
+    prj->snapshot.has_sublayers = true;
+    sqlite3_stmt *stmt =
+        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER];
+    DP_LayerProps *lp = rel->lp;
+    return ps_bind_int(prj, stmt, 2, rel->sublayer_index)
+        && ps_bind_int(prj, stmt, 3, rel->layer_index)
+        && ps_bind_int(prj, stmt, 4, rel->sublayer_id)
+        && ps_bind_int(prj, stmt, 5, DP_layer_props_blend_mode(lp))
+        && ps_bind_int(prj, stmt, 6, DP_layer_props_opacity(lp))
+        && ps_bind_int64(prj, stmt, 7, rel->fill)
+        && ps_exec_write(prj, stmt, NULL);
+}
+
+static bool snapshot_handle_layer(DP_Project *prj,
+                                  const DP_ResetEntryLayer *rel)
+{
+    if (rel->sublayer_id == 0) {
+        return snapshot_insert_layer(prj, rel);
+    }
+    else {
+        return snapshot_insert_sublayer(prj, rel);
+    }
+}
+
+static bool snapshot_insert_layer_tile(DP_Project *prj,
+                                       const DP_ResetEntryTile *ret)
+{
     DP_ASSERT(ret->tile_run > 0);
     DP_ASSERT(ret->size != 0);
     DP_ASSERT(ret->data);
@@ -1614,6 +1909,63 @@ static bool snapshot_handle_tile(DP_Project *prj, const DP_ResetEntryTile *ret)
         && ps_bind_int64(prj, stmt, 4, ret->context_id)
         && ps_bind_int(prj, stmt, 5, ret->tile_run - 1)
         && ps_bind_blob(prj, stmt, 6, ret->data, ret->size)
+        && ps_exec_write(prj, stmt, NULL);
+}
+
+static bool snapshot_insert_sublayer_tile(DP_Project *prj,
+                                          const DP_ResetEntryTile *ret)
+{
+    DP_ASSERT(prj->snapshot.merge_sublayers);
+    DP_ASSERT(ret->tile_run > 0);
+    DP_ASSERT(ret->size != 0);
+    DP_ASSERT(ret->data);
+    sqlite3_stmt *stmt =
+        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER_TILE];
+    return ps_bind_int(prj, stmt, 2, ret->sublayer_index)
+        && ps_bind_int(prj, stmt, 3, ret->tile_index)
+        && ps_bind_int(prj, stmt, 4, ret->tile_run - 1)
+        && ps_bind_blob(prj, stmt, 5, ret->data, ret->size)
+        && ps_exec_write(prj, stmt, NULL);
+}
+
+static bool snapshot_handle_tile(DP_Project *prj, const DP_ResetEntryTile *ret)
+{
+    if (ret->sublayer_id == 0) {
+        return snapshot_insert_layer_tile(prj, ret);
+    }
+    else {
+        return snapshot_insert_sublayer_tile(prj, ret);
+    }
+}
+
+static bool
+snapshot_handle_selection_tile(DP_Project *prj,
+                               const DP_ResetEntrySelectionTile *rest)
+{
+    DP_ASSERT(rest->size != 0);
+    DP_ASSERT(rest->data);
+
+    prj->snapshot.has_selections = true;
+
+    // Opaque selection tiles are stored as NULLs.
+    size_t size;
+    const void *data;
+    if (DP_reset_entry_selection_tile_opaque(rest)) {
+        size = 0;
+        data = NULL;
+    }
+    else {
+        size = rest->size;
+        data = rest->data;
+    }
+
+    sqlite3_stmt *stmt =
+        prj->snapshot
+            .stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE];
+    return ps_bind_int(prj, stmt, 2, rest->selection_id)
+        && ps_bind_int64(prj, stmt, 3, rest->context_id)
+        && ps_bind_int(prj, stmt, 4, rest->tile_index)
+        && ps_bind_blob_or_null(prj, stmt, 5, data, size)
         && ps_exec_write(prj, stmt, NULL);
 }
 
@@ -1736,8 +2088,7 @@ static bool snapshot_handle_entry(DP_Project *prj, const DP_ResetEntry *entry)
     case DP_RESET_ENTRY_TILE:
         return snapshot_handle_tile(prj, &entry->tile);
     case DP_RESET_ENTRY_SELECTION_TILE:
-        // TODO
-        return true;
+        return snapshot_handle_selection_tile(prj, &entry->selection_tile);
     case DP_RESET_ENTRY_ANNOTATION:
         return snapshot_handle_annotation(prj, &entry->annotation);
     case DP_RESET_ENTRY_TRACK:
@@ -1779,19 +2130,30 @@ snapshot_canvas(DP_Project *prj, long long snapshot_id, DP_CanvasState *cs,
         return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_READY;
     }
 
-    prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_OK;
-    DP_ResetImageOptions options = {true,
-                                    true,
-                                    false,
-                                    DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
-                                    256,
-                                    256,
-                                    {thumb_write_fn, thumb_write_user}};
-    DP_reset_image_build_with(cs, &options, snapshot_handle_entry_callback,
-                              prj);
-
-    if (prj->snapshot.state != DP_PROJECT_SNAPSHOT_STATE_OK) {
+    if (!snapshot_write_metadata_int_unless_default(
+            prj, DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID,
+            prj->sequence_id + 1LL, 1LL)) {
         return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE;
+    }
+
+    if (DP_canvas_state_null(cs)) {
+        DP_debug("Snapshotting null canvas");
+        prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_NULL;
+    }
+    else {
+        prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_OK;
+        DP_ResetImageOptions options = {true,
+                                        prj->snapshot.merge_sublayers,
+                                        prj->snapshot.include_selections,
+                                        DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
+                                        DP_PROJECT_THUMBNAIL_SIZE,
+                                        DP_PROJECT_THUMBNAIL_SIZE,
+                                        {thumb_write_fn, thumb_write_user}};
+        DP_reset_image_build_with(cs, &options, snapshot_handle_entry_callback,
+                                  prj);
+        if (prj->snapshot.state != DP_PROJECT_SNAPSHOT_STATE_OK) {
+            return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE;
+        }
     }
 
     return 0;
@@ -1822,14 +2184,27 @@ typedef struct DP_ProjectCanvasFromSnapshotLayer {
     int used;
 } DP_ProjectCanvasFromSnapshotLayer;
 
+typedef struct DP_ProjectCanvasFromSnapshotSublayer {
+    DP_TransientLayerProps *tlp;
+    DP_TransientLayerContent *tlc;
+} DP_ProjectCanvasFromSnapshotSublayer;
+
 typedef struct DP_ProjectCanvasFromSnapshotContext
     DP_ProjectCanvasFromSnapshotContext;
 
 typedef struct DP_ProjectCanvasFromSnapshotTileJobHeader {
     DP_ProjectCanvasFromSnapshotContext *c;
-    int layer_index;
+    union {
+        struct {
+            union {
+                unsigned int context_id;
+                int sublayer_index;
+            };
+            int layer_index;
+        };
+        DP_TransientSelection *tsel;
+    };
     int tile_index;
-    unsigned int context_id;
     int repeat;
     size_t size;
 } DP_ProjectCanvasFromSnapshotTileJobHeader;
@@ -1851,6 +2226,7 @@ struct DP_ProjectCanvasFromSnapshotContext {
     DP_SplitTile8 **split_buffers;
     ZSTD_DCtx **zstd_contexts;
     DP_ProjectCanvasFromSnapshotLayer *layers;
+    DP_ProjectCanvasFromSnapshotSublayer *sublayers;
     long long snapshot_id;
     unsigned int snapshot_flags;
     int layer_count;
@@ -1859,38 +2235,132 @@ struct DP_ProjectCanvasFromSnapshotContext {
     int track_count;
 };
 
-static void cfs_tile_job(void *element, int thread_index)
+#define TILE_JOB_REPEAT_SENTINEL_BACKGROUND (-1)
+#define TILE_JOB_REPEAT_SENTINEL_SELECTION  (-2)
+
+static void cfs_tile_job_layer_tile(DP_ProjectCanvasFromSnapshotTileJob *job,
+                                    int thread_index)
 {
-    DP_ProjectCanvasFromSnapshotTileJob *job = element;
+    DP_ProjectCanvasFromSnapshotContext *c = job->header.c;
+    DP_Tile *t = DP_tile_new_from_split_delta_zstd8le_with(
+        &c->zstd_contexts[thread_index], c->split_buffers[thread_index],
+        job->header.context_id, job->data, job->header.size);
+
+    int layer_index = job->header.layer_index;
+    DP_ASSERT(layer_index >= 0);
+    int tile_index = job->header.tile_index;
+    if (t) {
+        int repeat = job->header.repeat;
+        for (int i = 0; i <= repeat; ++i) {
+            DP_transient_layer_content_tile_set_noinc(
+                c->layers[layer_index].tlc, t, tile_index + i);
+        }
+        if (repeat != 0) {
+            DP_tile_incref_by(t, repeat);
+        }
+    }
+    else {
+        DP_warn("Tile index %d of layer %d failed to decompress: %s",
+                tile_index, layer_index, DP_error());
+    }
+}
+
+static void cfs_tile_job_sublayer_tile(DP_ProjectCanvasFromSnapshotTileJob *job,
+                                       int thread_index)
+{
+    DP_ProjectCanvasFromSnapshotContext *c = job->header.c;
+    int sublayer_index = job->header.layer_index;
+    DP_ASSERT(sublayer_index >= 0);
+
+    int sublayer_id =
+        DP_transient_layer_props_id(c->sublayers[sublayer_index].tlp);
+    if (sublayer_id < 0 || sublayer_id > 255) {
+        sublayer_id = 0;
+    }
+
+    DP_Tile *t = DP_tile_new_from_split_delta_zstd8le_with(
+        &c->zstd_contexts[thread_index], c->split_buffers[thread_index],
+        DP_int_to_uint(sublayer_id), job->data, job->header.size);
+
+    int tile_index = job->header.tile_index;
+    if (t) {
+        int repeat = job->header.repeat;
+        for (int i = 0; i <= repeat; ++i) {
+            DP_transient_layer_content_tile_set_noinc(
+                c->sublayers[sublayer_index].tlc, t, tile_index + i);
+        }
+        if (repeat != 0) {
+            DP_tile_incref_by(t, repeat);
+        }
+    }
+    else {
+        DP_warn("Tile index %d of sublayer %d failed to decompress: %s",
+                tile_index, sublayer_index, DP_error());
+    }
+}
+
+static void
+cfs_tile_job_background_tile(DP_ProjectCanvasFromSnapshotTileJob *job,
+                             int thread_index)
+{
     DP_ProjectCanvasFromSnapshotContext *c = job->header.c;
     DP_Tile *t = DP_tile_new_from_split_delta_zstd8le_with(
         &c->zstd_contexts[thread_index], c->split_buffers[thread_index], 0,
         job->data, job->header.size);
 
-    int layer_index = job->header.layer_index;
-    if (layer_index >= 0) {
-        int tile_index = job->header.tile_index;
-        if (t) {
-            int repeat = job->header.repeat;
-            for (int i = 0; i <= repeat; ++i) {
-                DP_transient_layer_content_tile_set_noinc(
-                    c->layers[layer_index].tlc, t, tile_index + i);
-            }
-            if (repeat != 0) {
-                DP_tile_incref_by(t, repeat);
-            }
-        }
-        else {
-            DP_warn("Tile index %d of layer %d failed to decompress: %s",
-                    tile_index, layer_index, DP_error());
-        }
-    }
-    else if (t) {
+    if (t) {
         DP_transient_canvas_state_background_tile_set_noinc(c->tcs, t,
                                                             DP_tile_opaque(t));
     }
     else {
         DP_warn("Background tile failed to decompress: %s", DP_error());
+    }
+}
+
+static void
+cfs_tile_job_selection_tile(DP_ProjectCanvasFromSnapshotTileJob *job,
+                            int thread_index)
+{
+    DP_ProjectCanvasFromSnapshotContext *c = job->header.c;
+    DP_TransientSelection *tsel = job->header.tsel;
+    DP_Tile *t = DP_tile_new_mask_from_delta_zstd8le_nonopaque_with(
+        &c->zstd_contexts[thread_index],
+        (unsigned char *)c->split_buffers[thread_index],
+        DP_transient_selection_context_id(tsel), job->data, job->header.size);
+
+    if (t) {
+        DP_TransientLayerContent *tlc =
+            (DP_TransientLayerContent *)DP_transient_selection_content_noinc(
+                tsel);
+        DP_transient_layer_content_tile_set_noinc(tlc, t,
+                                                  job->header.tile_index);
+    }
+    else {
+        DP_warn("Selection tile failed to decompress: %s", DP_error());
+    }
+}
+
+static void cfs_tile_job(void *element, int thread_index)
+{
+    DP_ProjectCanvasFromSnapshotTileJob *job = element;
+
+    int repeat = job->header.repeat;
+    if (repeat >= 0) {
+        if (job->header.layer_index == -1) {
+            cfs_tile_job_sublayer_tile(job, thread_index);
+        }
+        else {
+            cfs_tile_job_layer_tile(job, thread_index);
+        }
+    }
+    else if (repeat == TILE_JOB_REPEAT_SENTINEL_BACKGROUND) {
+        cfs_tile_job_background_tile(job, thread_index);
+    }
+    else if (repeat == TILE_JOB_REPEAT_SENTINEL_SELECTION) {
+        cfs_tile_job_selection_tile(job, thread_index);
+    }
+    else {
+        DP_UNREACHABLE();
     }
 }
 
@@ -1984,7 +2454,15 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
             size_t size = DP_int_to_size(sqlite3_column_bytes(stmt, 1));
             if (data && size >= 4) {
                 DP_ProjectCanvasFromSnapshotTileJobParams params = {
-                    {c, -1, -1, 0, 0, size}, data};
+                    {
+                        c,
+                        {{{0u}, -1}},
+                        -1,
+                        TILE_JOB_REPEAT_SENTINEL_BACKGROUND,
+                        size,
+                    },
+                    data,
+                };
                 DP_worker_push_with(c->worker, cfs_insert_tile_job, &params);
             }
             break;
@@ -2017,6 +2495,8 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
             DP_transient_document_metadata_frame_range_last_set(
                 tdm, sqlite3_column_int(stmt, 1));
             break;
+        case DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID:
+            break;
         default:
             DP_warn("Unknown snapshot metadatum %d", metadata_id);
             break;
@@ -2027,7 +2507,8 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
         return false;
     }
 
-    if (DP_canvas_state_dimensions_in_bounds(width, height)) {
+    if ((width == 0 && height == 0)
+        || DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_transient_canvas_state_width_set(tcs, width);
         DP_transient_canvas_state_height_set(tcs, height);
         return true;
@@ -2442,13 +2923,432 @@ static bool cfs_read_tiles(DP_ProjectCanvasFromSnapshotContext *c,
         }
         else {
             DP_ProjectCanvasFromSnapshotTileJobParams params = {
-                {c, layer_index, tile_index, DP_int_to_uint(context_id), repeat,
-                 size},
-                pixels};
+                {
+                    c,
+                    {{{DP_int_to_uint(context_id)}, layer_index}},
+                    tile_index,
+                    repeat,
+                    size,
+                },
+                pixels,
+            };
             DP_worker_push_with(c->worker, cfs_insert_tile_job, &params);
         }
     }
     sqlite3_finalize(stmt);
+    return !error;
+}
+
+static int cfs_count_sublayers(DP_ProjectCanvasFromSnapshotContext *c)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select count(*) from snapshot_sublayers where snapshot_id = ?");
+    if (!stmt) {
+        return -1;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, c->snapshot_id)) {
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    bool error;
+    int count;
+    if (ps_exec_step(prj, stmt, &error)) {
+        count = sqlite3_column_int(stmt, 0);
+    }
+    else {
+        count = -1;
+        if (!error) {
+            error = true;
+            DP_error_set("Sublayer count query resulted in no rows");
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    return count;
+}
+
+static bool cfs_read_sublayers(DP_ProjectCanvasFromSnapshotContext *c,
+                               int *out_count)
+{
+    int count = cfs_count_sublayers(c);
+    *out_count = count;
+    if (count < 0) {
+        return false;
+    }
+    else if (count == 0) {
+        return true;
+    }
+
+    c->sublayers = DP_malloc(sizeof(*c->sublayers) * DP_int_to_size(count));
+    for (int i = 0; i < count; ++i) {
+        c->sublayers[i] = (DP_ProjectCanvasFromSnapshotSublayer){NULL, NULL};
+    }
+
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select sublayer_index, layer_index, sublayer_id, blend_mode, "
+             "opacity, fill from snapshot_sublayers where snapshot_id = ?");
+    if (!stmt) {
+        return false;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, c->snapshot_id)) {
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
+    int layer_count = c->layer_count;
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        int sublayer_index = sqlite3_column_int(stmt, 0);
+        if (sublayer_index < 0 || sublayer_index >= count) {
+            DP_warn("Sublayer index %d out of bounds", sublayer_index);
+            continue;
+        }
+
+        DP_ProjectCanvasFromSnapshotSublayer *sublayer =
+            &c->sublayers[sublayer_index];
+        if (sublayer->tlp) {
+            DP_warn("Duplicate sublayer index %d", sublayer_index);
+            continue;
+        }
+
+        int layer_index = sqlite3_column_int(stmt, 1);
+        if (layer_index < 0 || layer_index >= layer_count) {
+            DP_warn("Sublayer layer index %d out of bounds", layer_index);
+            continue;
+        }
+
+        DP_ProjectCanvasFromSnapshotLayer *layer = &c->layers[layer_index];
+        if (!layer->tlp) {
+            DP_warn("Sublayer layer %d is null", layer_index);
+            continue;
+        }
+        else if (layer->used >= 0) {
+            DP_warn("Sublayer layer %d is a group", layer_index);
+            continue;
+        }
+
+        int sublayer_id = sqlite3_column_int(stmt, 2);
+        if (sublayer_id < 0 || sublayer_id > 255) {
+            DP_warn("Sublayer %d id %d out of bounds", sublayer_index,
+                    sublayer_id);
+            continue;
+        }
+
+        int blend_mode = sqlite3_column_int(stmt, 3);
+        if (!DP_blend_mode_valid_for_layer(blend_mode)) {
+            DP_warn("Sublayer %d has invalid blend mode %d", sublayer_index,
+                    blend_mode);
+            blend_mode = DP_BLEND_MODE_NORMAL;
+        }
+
+        int opacity = sqlite3_column_int(stmt, 4);
+        if (opacity < 0 || opacity > DP_BIT15) {
+            DP_warn("Subayer %d opacity %d out of bounds", sublayer_index,
+                    opacity);
+            opacity = DP_BIT15;
+        }
+
+        long long fill = sqlite3_column_int64(stmt, 5);
+        if (fill < 0LL || fill > UINT32_MAX) {
+            DP_warn("Sublayer %d fill %lld out of bounds", sublayer_index,
+                    fill);
+            fill = 0;
+        }
+
+        DP_transient_layer_content_transient_sublayer(
+            layer->tlc, sublayer_id, &sublayer->tlc, &sublayer->tlp);
+
+        DP_transient_layer_props_blend_mode_set(sublayer->tlp, blend_mode);
+        DP_transient_layer_props_opacity_set(sublayer->tlp,
+                                             DP_int_to_uint16(opacity));
+
+        if (fill != 0) {
+            DP_transient_layer_content_fill_entirely(
+                sublayer->tlc, 0,
+                DP_upixel15_from_color(DP_llong_to_uint32(fill)));
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    return !error;
+}
+
+static bool cfs_read_subtiles(DP_ProjectCanvasFromSnapshotContext *c,
+                              size_t max_pixel_size, int sublayer_count)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select sublayer_index, tile_index, repeat, pixels "
+             "from snapshot_tiles where snapshot_id = ?");
+    if (!stmt) {
+        return false;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, c->snapshot_id)) {
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
+    int tile_count =
+        DP_tile_total_round(DP_transient_canvas_state_width(c->tcs),
+                            DP_transient_canvas_state_height(c->tcs));
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        int sublayer_index = sqlite3_column_int(stmt, 0);
+        if (sublayer_index < 0 || sublayer_index >= sublayer_count) {
+            DP_warn("Tile sublayer index %d out of bounds", sublayer_index);
+            continue;
+        }
+
+        DP_ProjectCanvasFromSnapshotSublayer *sublayer =
+            &c->sublayers[sublayer_index];
+        if (!sublayer->tlp) {
+            DP_warn("Tile sublayer %d is null", sublayer_index);
+            continue;
+        }
+
+        int tile_index = sqlite3_column_int(stmt, 1);
+        if (tile_index < 0 || tile_index >= tile_count) {
+            DP_warn("Tile index %d of layer %d out of bounds", tile_index,
+                    sublayer_index);
+            continue;
+        }
+
+        int repeat = sqlite3_column_int(stmt, 2);
+        int max_repeat = tile_count - tile_index - 1;
+        if (repeat < 0) {
+            DP_warn("Tile index %d of sublayer %d repeat %d less than zero",
+                    tile_index, sublayer_index, repeat);
+            repeat = 0;
+        }
+        else if (repeat > max_repeat) {
+            DP_warn(
+                "Tile index %d of sublayer %d repeat %d beyond max repeat %d",
+                tile_index, sublayer_index, repeat, max_repeat);
+            repeat = max_repeat;
+        }
+
+        const unsigned char *pixels = sqlite3_column_blob(stmt, 3);
+        if (!pixels) {
+            DP_warn("Tile index %d of sublayer %d has null pixel data",
+                    tile_index, sublayer_index);
+            continue;
+        }
+
+        size_t size = DP_int_to_size(sqlite3_column_bytes(stmt, 3));
+        if (size < 4) {
+            DP_warn("Tile index %d of sublayer %d has too little pixel data",
+                    tile_index, sublayer_index);
+            continue;
+        }
+        else if (size > max_pixel_size) {
+            DP_warn("Tile index %d of sublayer %d has too much pixel data",
+                    tile_index, sublayer_index);
+            continue;
+        }
+
+        DP_TransientLayerContent *tlc = sublayer->tlc;
+        if (size == 4
+            && memcmp(pixels, (unsigned char[]){0, 0, 0, 0}, 4) == 0) {
+            for (int i = 0; i <= repeat; ++i) {
+                DP_transient_layer_content_tile_set_noinc(tlc, NULL,
+                                                          tile_index + i);
+            }
+        }
+        else {
+            DP_ProjectCanvasFromSnapshotTileJobParams params = {
+                {
+                    c,
+                    {{{.sublayer_index = sublayer_index}, -1}},
+                    tile_index,
+                    repeat,
+                    size,
+                },
+                pixels,
+            };
+            DP_worker_push_with(c->worker, cfs_insert_tile_job, &params);
+        }
+    }
+    sqlite3_finalize(stmt);
+    return !error;
+}
+
+static bool cfs_count_selections(DP_ProjectCanvasFromSnapshotContext *c,
+                                 int *out_count)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select count (*) from (select distinct selection_id, context_id "
+             "from snapshot_selection_tiles where snapshot_id = ?) limit 1");
+    if (!stmt) {
+        return false;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, c->snapshot_id)) {
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        *out_count = sqlite3_column_int(stmt, 0);
+    }
+    else if (!error) {
+        error = true;
+        DP_error_set("Selection count query resulted in no rows");
+    }
+
+    sqlite3_finalize(stmt);
+    return !error;
+}
+
+static bool cfs_read_selections(DP_ProjectCanvasFromSnapshotContext *c,
+                                size_t max_mask_size)
+{
+    int count;
+    if (!cfs_count_selections(c, &count)) {
+        return false;
+    }
+
+    if (count <= 0) {
+        return true;
+    }
+
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select selection_id, context_id, tile_index, mask "
+             "from snapshot_selection_tiles where snapshot_id = ? "
+             "order by selection_id, context_id");
+    if (!stmt) {
+        return false;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, c->snapshot_id)) {
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
+    int width = DP_transient_canvas_state_width(c->tcs);
+    int height = DP_transient_canvas_state_height(c->tcs);
+    int tile_count = DP_tile_total_round(width, height);
+
+    int used = 0;
+    int current_selection_id = -1;
+    int current_context_id = -1;
+    DP_TransientSelectionSet *tss =
+        DP_transient_canvas_state_transient_selection_set_noinc_nullable(c->tcs,
+                                                                         count);
+    DP_TransientSelection *tsel = NULL;
+    DP_TransientLayerContent *tlc = NULL;
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        int selection_id = sqlite3_column_int(stmt, 0);
+        if (selection_id < DP_SELECTION_ID_FIRST_REMOTE
+            || selection_id > DP_SELECTION_ID_MAX) {
+            DP_warn("Selection id %d out of bounds", selection_id);
+            continue;
+        }
+
+        int context_id = sqlite3_column_int(stmt, 1);
+        if (context_id < 0 || context_id > 255) {
+            DP_warn("Context id %d of selection %d out of bounds", context_id,
+                    selection_id);
+            continue;
+        }
+
+        int tile_index = sqlite3_column_int(stmt, 2);
+        if (tile_index < 0 || tile_index >= tile_count) {
+            DP_warn("Tile index %d of selection %d of user %d out of bounds",
+                    tile_index, selection_id, context_id);
+            continue;
+        }
+
+        size_t size;
+        const unsigned char *data;
+        if (sqlite3_column_type(stmt, 3) == SQLITE_NULL) {
+            size = 0;
+            data = NULL;
+        }
+        else {
+            data = sqlite3_column_blob(stmt, 3);
+            if (!data) {
+                DP_warn("Tile index %d of selection %d of user %d has null "
+                        "mask data",
+                        tile_index, selection_id, context_id);
+                continue;
+            }
+
+            size = DP_int_to_size(sqlite3_column_bytes(stmt, 3));
+            if (size < 4) {
+                DP_warn("Tile index %d of selection %d of user %d has too "
+                        "little mask data",
+                        tile_index, selection_id, context_id);
+                continue;
+            }
+            else if (size > max_mask_size) {
+                DP_warn("Tile index %d of selection %d of user %d has too much "
+                        "mask data",
+                        tile_index, selection_id, context_id);
+                continue;
+            }
+        }
+
+        bool need_new_selection = selection_id != current_selection_id
+                               || context_id != current_context_id;
+        if (need_new_selection) {
+            int index = used++;
+            if (index < count) {
+                tsel = DP_transient_selection_new_init(
+                    DP_int_to_uint(context_id), selection_id, width, height);
+                DP_transient_selection_set_insert_transient_at_noinc(tss, index,
+                                                                     tsel);
+                current_selection_id = selection_id;
+                current_context_id = context_id;
+                tlc = DP_transient_selection_transient_content_noinc(tsel);
+            }
+            else {
+                DP_warn("Selection %d of user %u index %d out of bounds",
+                        selection_id, context_id, index);
+                continue;
+            }
+        }
+
+        if (data) {
+            DP_ProjectCanvasFromSnapshotTileJobParams params = {
+                {
+                    c,
+                    {.tsel = tsel},
+                    tile_index,
+                    TILE_JOB_REPEAT_SENTINEL_SELECTION,
+                    size,
+                },
+                data,
+            };
+            DP_worker_push_with(c->worker, cfs_insert_tile_job, &params);
+        }
+        else {
+            DP_transient_layer_content_tile_set_noinc(tlc, DP_tile_opaque_inc(),
+                                                      tile_index);
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    if (used < count) {
+        DP_transient_selection_set_clamp(tss, used);
+        DP_warn("Had to clamp %d selection(s)", count - used);
+    }
+    else if (used > count) {
+        DP_warn("Had %d excess selections(s)", used - count);
+    }
+
     return !error;
 }
 
@@ -2856,6 +3756,7 @@ cfs_context_dispose(DP_ProjectCanvasFromSnapshotContext *c,
         DP_free(c->zstd_contexts);
         DP_free(c->split_buffers);
     }
+    DP_free(c->sublayers);
     DP_free(c->layers);
     DP_CanvasState *cs;
     if (keep_canvas_state) {
@@ -2890,18 +3791,24 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
                                                 long long snapshot_id)
 {
     DP_ASSERT(prj);
-    DP_ASSERT(snapshot_id);
+    DP_ASSERT(dc);
+    DP_ASSERT(snapshot_id > 0LL);
     DP_PERF_BEGIN(fn, "load");
 
     DP_PERF_BEGIN(setup, "load:setup");
     DP_ProjectCanvasFromSnapshotContext c = {
-        prj, NULL, NULL, NULL, NULL, NULL, snapshot_id, 0, 0, 0, 0, 0};
+        prj, NULL, NULL, NULL, NULL, NULL, NULL, snapshot_id, 0, 0, 0, 0, 0};
     if (!cfs_read_header(&c)) {
         return NULL;
     }
 
     if (!(c.snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_COMPLETE)) {
         DP_warn("Snapshot %lld is incomplete", snapshot_id);
+    }
+
+    if (c.snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
+        DP_debug("Loading null canvas");
+        return DP_canvas_state_new();
     }
 
     size_t max_pixel_size = DP_compress_zstd_bounds(DP_TILE_COMPRESSED_BYTES);
@@ -2955,6 +3862,30 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
             DP_warn("Error reading tiles: %s", DP_error());
         }
         DP_PERF_END(tiles);
+
+        if (c.snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS) {
+            DP_PERF_BEGIN(sublayers, "load:sublayers");
+            int sublayer_count;
+            if (!cfs_read_sublayers(&c, &sublayer_count)) {
+                DP_warn("Error reading sublayers: %s", DP_error());
+            }
+            DP_PERF_END(sublayers);
+
+            DP_PERF_BEGIN(subtiles, "load:subtiles");
+            if (sublayer_count > 0
+                && !cfs_read_subtiles(&c, max_pixel_size, sublayer_count)) {
+                DP_warn("Error reading sublayer tiles: %s", DP_error());
+            }
+            DP_PERF_END(subtiles);
+        }
+    }
+
+    if (c.snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS) {
+        DP_PERF_BEGIN(selections, "load:selections");
+        if (!cfs_read_selections(&c, DP_compress_zstd_bounds(DP_TILE_LENGTH))) {
+            DP_warn("Error reading selections: %s", DP_error());
+        }
+        DP_PERF_END(selections);
     }
 
     if (c.annotation_count > 0) {
@@ -2978,7 +3909,6 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
 
     DP_PERF_BEGIN(cleanup, "load:cleanup");
     DP_transient_canvas_state_layer_routes_reindex(c.tcs, dc);
-    DP_transient_canvas_state_post_load_fixup(c.tcs);
     DP_transient_canvas_state_timeline_cleanup(c.tcs);
     DP_PERF_END(cleanup);
 
@@ -2987,21 +3917,401 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
     return cs;
 }
 
-DP_CanvasState *DP_project_canvas_from_latest_snapshot(DP_Project *prj,
-                                                       DP_DrawContext *dc)
+static bool canvas_load_warn(DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+                             int warn)
+{
+    return warn_fn && warn_fn(user, warn);
+}
+
+static DP_CanvasState *canvas_load_warn_cs(DP_ProjectCanvasLoadWarnFn warn_fn,
+                                           void *user, int warn,
+                                           DP_CanvasState *cs)
+{
+    if (canvas_load_warn(warn_fn, user, warn)) {
+        DP_canvas_state_decref(cs);
+        return NULL;
+    }
+    else {
+        return cs;
+    }
+}
+
+#define MAX_MULTIDAB_COUNT 8192
+
+struct DP_ProjectPlaybackContext {
+    DP_CanvasHistory *ch;
+    DP_DrawContext *dc;
+    DP_LocalState *ls;
+    DP_Message **multidab_msgs;
+    int multidab_count;
+};
+
+typedef void (*DP_ProjectPlaybackHandleFn)(struct DP_ProjectPlaybackContext *,
+                                           DP_Message *);
+
+static void playback_handle_single_dec(struct DP_ProjectPlaybackContext *c,
+                                       DP_Message *msg)
+{
+    if (!DP_canvas_history_handle(c->ch, c->dc, msg)) {
+        DP_warn("Error playing back project message: %s", DP_error());
+    }
+    DP_message_decref(msg);
+}
+
+static void playback_flush_multidab(struct DP_ProjectPlaybackContext *c)
+{
+    int count = c->multidab_count;
+    switch (count) {
+    case 0:
+        break;
+    case 1:
+        c->multidab_count = 0;
+        playback_handle_single_dec(c, c->multidab_msgs[0]);
+        break;
+    default:
+        c->multidab_count = 0;
+        DP_canvas_history_handle_multidab_dec(c->ch, c->dc, count,
+                                              c->multidab_msgs);
+        break;
+    }
+}
+
+static void playback_handle_command(struct DP_ProjectPlaybackContext *c,
+                                    DP_Message *msg)
+{
+    DP_MessageType type = DP_message_type(msg);
+    if (DP_message_type_is_draw_dabs(type)) {
+        int index = c->multidab_count++;
+        c->multidab_msgs[index] = msg;
+        if (index == MAX_MULTIDAB_COUNT - 1) {
+            playback_flush_multidab(c);
+        }
+    }
+    else {
+        playback_flush_multidab(c);
+        DP_local_state_handle(c->ls, c->dc, msg, false);
+        playback_handle_single_dec(c, msg);
+    }
+}
+
+static void playback_handle_soft_reset(struct DP_ProjectPlaybackContext *c,
+                                       DP_Message *msg)
+{
+    playback_flush_multidab(c);
+    DP_canvas_history_soft_reset(c->ch, c->dc, DP_message_context_id(msg), NULL,
+                                 0);
+    DP_message_decref(msg);
+}
+
+static void playback_handle_undo_depth(struct DP_ProjectPlaybackContext *c,
+                                       DP_Message *msg)
+{
+    playback_flush_multidab(c);
+    DP_MsgUndoDepth *mud = DP_message_internal(msg);
+    DP_canvas_history_undo_depth_limit_set(c->ch, c->dc,
+                                           DP_msg_undo_depth_depth(mud));
+    DP_canvas_history_soft_reset(c->ch, c->dc, DP_message_context_id(msg), NULL,
+                                 0);
+    DP_message_decref(msg);
+}
+
+static void playback_handle_local_change(struct DP_ProjectPlaybackContext *c,
+                                         DP_Message *msg)
+{
+    DP_local_state_handle(c->ls, c->dc, msg, false);
+    DP_message_decref(msg);
+}
+
+static DP_ProjectPlaybackHandleFn playback_get_handle_fn(int type)
+{
+    switch (type) {
+    case DP_MSG_SOFT_RESET:
+        return playback_handle_soft_reset;
+    case DP_MSG_UNDO_DEPTH:
+        return playback_handle_undo_depth;
+    case DP_MSG_LOCAL_CHANGE:
+        return playback_handle_local_change;
+    default:
+        if (DP_message_type_command((DP_MessageType)type)) {
+            return playback_handle_command;
+        }
+        else {
+            DP_warn("Unhandled project message type %d", type);
+            return NULL;
+        }
+    }
+}
+
+static DP_TransientTimeline *get_local_track_transient_timeline(void *user)
+{
+    DP_TransientCanvasState *tcs = user;
+    return DP_transient_canvas_state_transient_timeline(tcs, 0);
+}
+
+static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
+                           struct DP_ProjectPlaybackContext *c)
+{
+    bool error;
+    while (ps_exec_step(prj, stmt, &error) && !error) {
+        int type = sqlite3_column_int(stmt, 0);
+        if (type < 0) { // Internal message.
+            switch (type) {
+            case DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET:
+                DP_canvas_history_reset(c->ch);
+                break;
+            default:
+                DP_debug("Unhandled internal project message type %d", type);
+                break;
+            }
+        }
+        else {
+            DP_ProjectPlaybackHandleFn handle_fn = playback_get_handle_fn(type);
+            if (handle_fn) {
+                unsigned int context_id =
+                    DP_int_to_uint(sqlite3_column_int(stmt, 1));
+                size_t length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
+                const unsigned char *buf;
+                if (length == 0) {
+                    buf = NULL;
+                }
+                else {
+                    buf = sqlite3_column_blob(stmt, 2);
+                }
+
+                DP_Message *msg = DP_message_deserialize_body(
+                    type, context_id, buf, length, true);
+                if (msg) {
+                    handle_fn(c, msg);
+                }
+                else {
+                    DP_warn("Error deserializing project message: %s",
+                            DP_error());
+                }
+            }
+        }
+    }
+
+    playback_flush_multidab(c);
+    return !error;
+}
+
+static int playback_query_snapshot_messages(DP_Project *prj,
+                                            long long snapshot_id,
+                                            unsigned int flags,
+                                            struct DP_ProjectPlaybackContext *c)
+{
+    if (flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES) {
+        sqlite3_stmt *stmt = ps_prepare_ephemeral(
+            prj, "select type, context_id, body from snapshot_messages\n"
+                 "where snapshot_id = ?\n"
+                 "order by sequence_id");
+        if (!stmt) {
+            return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+        }
+
+        bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
+        if (!bind_ok) {
+            sqlite3_finalize(stmt);
+            return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+        }
+
+        bool query_ok = playback_query(prj, stmt, c);
+        sqlite3_finalize(stmt);
+        if (!query_ok) {
+            return DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR;
+        }
+    }
+    return 0;
+}
+
+static int playback_query_messages(DP_Project *prj, long long session_id,
+                                   long long first_sequence_id,
+                                   struct DP_ProjectPlaybackContext *c)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select type, context_id, body from messages\n"
+             "where session_id = ? and sequence_id >= ?\n"
+             "order by sequence_id");
+    if (!stmt) {
+        return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                && ps_bind_int64(prj, stmt, 2, first_sequence_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+    }
+
+    bool query_ok = playback_query(prj, stmt, c);
+    sqlite3_finalize(stmt);
+    if (query_ok) {
+        return 0;
+    }
+    else {
+        return DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR;
+    }
+}
+
+static DP_CanvasState *
+canvas_from_snapshot_playback(DP_Project *prj, DP_DrawContext *dc,
+                              long long snapshot_id, long long session_id,
+                              long long first_sequence_id, unsigned int flags,
+                              DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
 {
     DP_ASSERT(prj);
+    DP_ASSERT(dc);
+    DP_ASSERT(snapshot_id > 0LL);
+    DP_ASSERT(session_id > 0LL);
+    DP_ASSERT(first_sequence_id > 0LL);
+
+    // FIXME: check whether there's an internal reset message after this,
+    // because it's pointless to do a bunch of work just to throw it all away
+    // along the way.
+
+    DP_CanvasState *cs;
+    if (flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
+        DP_debug("Starting from null canvas");
+        cs = DP_canvas_state_new();
+    }
+    else {
+        cs = DP_project_canvas_from_snapshot(prj, dc, snapshot_id);
+        if (!cs) {
+            return NULL;
+        }
+    }
+
+    DP_CanvasHistory *ch =
+        DP_canvas_history_new_noinc(cs, NULL, NULL, false, NULL);
+    if (!ch) {
+        return canvas_load_warn_cs(
+            warn_fn, user, DP_PROJECT_CANVAS_LOAD_WARN_HISTORY_ERROR, cs);
+    }
+
+    DP_LocalState *ls = DP_local_state_new(cs, NULL, NULL);
+
+    struct DP_ProjectPlaybackContext c = {
+        ch, dc, ls,
+        DP_malloc(sizeof(*c.multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT), 0};
+
+    // Play back snapshot messages, effectively the undo history from the point
+    // of the snapshot onwards. These should only exist for autosave snapshots.
+    int snapshot_messages_error =
+        playback_query_snapshot_messages(prj, snapshot_id, flags, &c);
+    bool cancel = snapshot_messages_error != 0
+               && canvas_load_warn(warn_fn, user, snapshot_messages_error);
+
+    if (!cancel) {
+        // Play back regular messages after the snapshot was taken. Should also
+        // only exist for autosave snapshots.
+        int messages_error =
+            playback_query_messages(prj, session_id, first_sequence_id, &c);
+        cancel = messages_error != 0
+              && canvas_load_warn(warn_fn, user, messages_error);
+    }
+
+    DP_free(c.multidab_msgs);
+
+    if (cancel) {
+        cs = NULL;
+    }
+    else {
+        cs = DP_canvas_history_get(ch);
+
+        bool has_local_layers = DP_local_state_layer_state_count(ls) != 0;
+        bool has_local_tracks = DP_local_state_track_state_count(ls) != 0;
+        if (has_local_layers || has_local_tracks) {
+            DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+            DP_canvas_state_decref(cs);
+
+            if (has_local_layers) {
+                DP_local_state_layer_states_apply(ls, tcs, dc, false, NULL,
+                                                  NULL);
+            }
+
+            if (has_local_tracks) {
+                DP_local_state_track_states_apply(
+                    ls, DP_transient_canvas_state_timeline_noinc(tcs),
+                    get_local_track_transient_timeline, tcs);
+            }
+
+            cs = DP_transient_canvas_state_persist(tcs);
+        }
+    }
+
+    DP_local_state_free(ls);
+    DP_canvas_history_free(ch);
+    return cs;
+}
+
+DP_CanvasState *DP_project_canvas_from_latest_snapshot(
+    DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
+    DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
+{
+    DP_ASSERT(prj);
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
+                  "snapshot complete flag matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID == 11,
+                  "sequence id snapshot metadata matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj,
-        "select snapshot_id from snapshots order by taken_at desc limit 1");
+        "select h.snapshot_id, h.session_id, h.flags, m.value, i.protocol\n"
+        "from snapshots h\n"
+        "left join sessions i on h.session_id = i.session_id\n"
+        "left join snapshot_metadata m\n"
+        "    on h.snapshot_id = m.snapshot_id\n"
+        "    and m.metadata_id = 11\n" // SEQUENCE_ID
+        "where (h.flags & 1) <> 0\n"   // COMPLETE
+        "order by h.snapshot_id desc\n"
+        "limit 1");
     if (!stmt) {
         return NULL;
     }
 
     bool error;
+    bool load_messages;
+    unsigned int flags;
     long long snapshot_id;
+    long long session_id;
+    long long sequence_id;
     if (ps_exec_step(prj, stmt, &error)) {
         snapshot_id = sqlite3_column_int64(stmt, 0);
+        session_id = sqlite3_column_int64(stmt, 1);
+        flags = DP_int_to_uint(sqlite3_column_int(stmt, 2));
+
+        sequence_id = sqlite3_column_int64(stmt, 3);
+        if (sequence_id < 1LL) {
+            sequence_id = 1LL;
+        }
+
+        if (snapshot_only) {
+            load_messages = false;
+        }
+        else {
+            DP_ProtocolVersion *protover = DP_protocol_version_parse(
+                (const char *)sqlite3_column_text(stmt, 4));
+            if (DP_protocol_version_is_current(protover)) {
+                load_messages = true;
+            }
+            else if (DP_protocol_version_is_future_minor_incompatibility(
+                         protover)) {
+                load_messages = true;
+                if (canvas_load_warn(
+                        warn_fn, user,
+                        DP_PROJECT_CANVAS_LOAD_WARN_MINOR_INCOMPATIBILITY)) {
+                    snapshot_id = -1LL;
+                }
+            }
+            else {
+                load_messages = false;
+                if (canvas_load_warn(
+                        warn_fn, user,
+                        DP_PROJECT_CANVAS_LOAD_WARN_INCOMPATIBLE)) {
+                    snapshot_id = -1LL;
+                }
+            }
+            DP_protocol_version_free(protover);
+        }
     }
     else {
         if (!error) {
@@ -3015,6 +4325,21 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(DP_Project *prj,
         return NULL;
     }
 
+    // We can only load snapshots with messages in them if the recording is
+    // sufficiently compatible, otherwise we fall back to just loading the
+    // snapshot on its own. Also, only autosave snapshots can have messages.
+    if (load_messages && (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE)) {
+        DP_debug("Load from autosave snapshot sequence id %lld", sequence_id);
+        return canvas_from_snapshot_playback(prj, dc, snapshot_id, session_id,
+                                             sequence_id, flags, warn_fn, user);
+    }
+
+    if (flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
+        DP_error_set("Canvas to load is null");
+        return NULL;
+    }
+
+    DP_debug("Load from snapshot alone");
     return DP_project_canvas_from_snapshot(prj, dc, snapshot_id);
 }
 
@@ -3062,20 +4387,22 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
 }
 
 int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
-                           DP_CanvasState **out_cs)
+                           bool snapshot_only, DP_CanvasState **out_cs)
 {
     DP_ASSERT(dc);
     DP_ASSERT(path);
     DP_ASSERT(out_cs);
 
-    DP_ProjectOpenResult open_result = project_open(
-        path, DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY, true);
+    DP_ProjectOpenResult open_result =
+        project_open(path, DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY,
+                     snapshot_only);
     DP_Project *prj = open_result.project;
     if (!prj) {
         return open_result.error;
     }
 
-    DP_CanvasState *cs = DP_project_canvas_from_latest_snapshot(prj, dc);
+    DP_CanvasState *cs = DP_project_canvas_from_latest_snapshot(
+        prj, dc, snapshot_only, NULL, NULL);
     project_close(prj, true);
     if (!cs) {
         return DP_PROJECT_CANVAS_LOAD_ERROR_READ;

@@ -29,9 +29,8 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size);
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title, unsigned int flags,
-                        const char *(copy_dpcs_fn)(void *),
-                        void *copy_dpcs_user, DP_LoadResult *out_result,
-                        DP_SaveImageType *out_type);
+                        const char *(copy_fn)(void *), void *copy_user,
+                        DP_LoadResult *out_result, DP_SaveImageType *out_type);
 
 DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
                             unsigned int flags,
@@ -42,7 +41,7 @@ DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
                             DP_LoadResult *out_result);
 
 DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
-                                       unsigned int flags,
+                                       unsigned int flags, bool snapshot_only,
                                        DP_LoadResult *out_result);
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);

@@ -63,6 +63,8 @@ int DP_document_metadata_refcount(DP_DocumentMetadata *dm);
 
 bool DP_document_metadata_transient(DP_DocumentMetadata *dm);
 
+bool DP_document_metadata_null(DP_DocumentMetadata *dm);
+
 int DP_document_metadata_dpix(DP_DocumentMetadata *dm);
 
 int DP_document_metadata_dpiy(DP_DocumentMetadata *dm);

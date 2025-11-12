@@ -8,6 +8,7 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
+typedef struct DP_LocalStateAction DP_LocalStateAction;
 
 
 #define DP_PROJECT_APPLICATION_ID 520585024
@@ -15,6 +16,8 @@ typedef struct DP_Output DP_Output;
 
 #define DP_PROJECT_CANVAS_APPLICATION_ID 520585025
 #define DP_PROJECT_CANVAS_USER_VERSION   1
+
+#define DP_PROJECT_THUMBNAIL_SIZE 256
 
 #define DP_PROJECT_ERROR_IN(VALUE, CATEGORY) \
     (VALUE <= CATEGORY##_UNKNOWN && VALUE > CATEGORY##_UNKNOWN - 100)
@@ -53,11 +56,11 @@ typedef struct DP_Output DP_Output;
 #define DP_PROJECT_SESSION_CLOSE_ERROR_NO_CHANGE (-404)
 #define DP_PROJECT_SESSION_CLOSE_NOT_OPEN        1
 
-#define DP_PROJECT_MESSAGE_RECORD_ERROR_UNKNOWN    (-500)
-#define DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE     (-501)
-#define DP_PROJECT_MESSAGE_RECORD_ERROR_NO_SESSION (-502)
-#define DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE  (-503)
-#define DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE      (-504)
+#define DP_PROJECT_MESSAGE_RECORD_ERROR_UNKNOWN   (-500)
+#define DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE    (-501)
+#define DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN  (-502)
+#define DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE (-503)
+#define DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE     (-504)
 
 #define DP_PROJECT_SNAPSHOT_OPEN_ERROR_UNKNOWN      (-600)
 #define DP_PROJECT_SNAPSHOT_OPEN_ERROR_NO_SESSION   (-601)
@@ -95,6 +98,13 @@ typedef struct DP_Output DP_Output;
 #define DP_PROJECT_CANVAS_LOAD_ERROR_UNKNOWN (-1200)
 #define DP_PROJECT_CANVAS_LOAD_ERROR_READ    (-1201)
 
+#define DP_PROJECT_CANVAS_LOAD_WARN_UNKNOWN               (-1300)
+#define DP_PROJECT_CANVAS_LOAD_WARN_INCOMPATIBLE          (-1301)
+#define DP_PROJECT_CANVAS_LOAD_WARN_MINOR_INCOMPATIBILITY (-1302)
+#define DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR         (-1303)
+#define DP_PROJECT_CANVAS_LOAD_WARN_HISTORY_ERROR         (-1304)
+#define DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR           (-1305)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -110,9 +120,16 @@ typedef struct DP_Output DP_Output;
 
 #define DP_PROJECT_MESSAGE_FLAG_OWN (1u << 0u)
 
-#define DP_PROJECT_SNAPSHOT_FLAG_COMPLETE   (1u << 0u)
-#define DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT (1u << 1u)
-#define DP_PROJECT_SNAPSHOT_FLAG_CANVAS     (1u << 2u)
+#define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET (-1)
+
+#define DP_PROJECT_SNAPSHOT_FLAG_COMPLETE       (1u << 0u)
+#define DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT     (1u << 1u)
+#define DP_PROJECT_SNAPSHOT_FLAG_CANVAS         (1u << 2u)
+#define DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE       (1u << 3u)
+#define DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES   (1u << 4u)
+#define DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS  (1u << 5u)
+#define DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS (1u << 6u)
+#define DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS    (1u << 7u)
 
 
 typedef struct DP_Project DP_Project;
@@ -142,6 +159,19 @@ typedef enum DP_ProjectVerifyStatus {
     DP_PROJECT_VERIFY_CORRUPTED,
     DP_PROJECT_VERIFY_ERROR,
 } DP_ProjectVerifyStatus;
+
+typedef struct DP_ProjectRecoveryInfo {
+    int error;
+    int source_type;
+    char *source_param;
+    long long own_work_minutes;
+} DP_ProjectRecoveryInfo;
+
+// Warning handler when loading a canvas. The warn parameter is one of the
+// DP_PROJECT_CANVAS_LOAD_WARN_* constants. Return true if loading should be
+// cancelled, false to keep going. If cancelling, you should call DP_error_set
+// as well to avoid getting hit with some stale error message down the line.
+typedef bool (*DP_ProjectCanvasLoadWarnFn)(void *user, int warn);
 
 
 // Check whether the given buffer looks like the header of project file. The
@@ -175,17 +205,28 @@ int DP_project_session_open(DP_Project *prj, int source_type,
 // DP_PROJECT_SESSION_CLOSE_NOT_OPEN if there's not session to close.
 int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set);
 
-
 // Records a message to the current session. Returns 0 on success and a negative
 // DP_PROJECT_MESSAGE_RECORD_ERROR_* value on failure. A session must be open.
 int DP_project_message_record(DP_Project *prj, DP_Message *msg,
                               unsigned int flags);
+
+// Like DP_project_message_record, but for internal messages like resets.
+int DP_project_message_internal_record(DP_Project *prj, int type,
+                                       unsigned int context_id,
+                                       const void *body_or_null, size_t size,
+                                       unsigned int flags);
 
 
 // Opens a snapshot to record messages to. Returns a positive snapshot id on
 // success and a negative DP_PROJECT_SNAPSHOT_OPEN_ERROR_* value on failure.
 // A session must be open and no snapshot must be open yet.
 long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags);
+
+// Records a message to the given snapshot. The snapshot id must match the
+// currently open snapshot. This will cause the snapshot to get the flag
+// DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES attached to it upon finishing it.
+int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
+                                       DP_Message *msg, unsigned int flags);
 
 // Marks the given snapshot completed. Returns 0 on success and a negative
 // DP_PROJECT_SNAPSHOT_FINISH_ERROR_* value on failure. The snapshot id must
@@ -199,9 +240,8 @@ int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id);
 int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id);
 
 // Discards all snapshots and messages associated with them except the one with
-// the given id and any snapshots that have the PERSISTENT flag set. At the time
-// of writing, we never set this flag, but it's there for forward-compatibility.
-// Returns the number of snapshots discarded on success and a negative
+// the given id and any snapshots that have the PERSISTENT flag set. Returns the
+// number of snapshots discarded on success and a negative
 // DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR value on failure.
 int DP_project_snapshot_discard_all_except(DP_Project *prj,
                                            long long snapshot_id);
@@ -217,8 +257,9 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
                                                 DP_DrawContext *dc,
                                                 long long snapshot_id);
 
-DP_CanvasState *DP_project_canvas_from_latest_snapshot(DP_Project *prj,
-                                                       DP_DrawContext *dc);
+DP_CanvasState *DP_project_canvas_from_latest_snapshot(
+    DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
+    DP_ProjectCanvasLoadWarnFn warn_fn, void *user);
 
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_*,
@@ -232,10 +273,10 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_* or
 // DP_PROJECT_CANVAS_LOAD_ERROR_* value on failure. The out_cs parameter is
-// required, it will be set on success and left untouched on failure.
+// required, it will be set on success and left untouched on failure. Set
+// snapshot_only to true to load a dpcs file, false for a dppr file.
 int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
-                           DP_CanvasState **out_cs);
-
+                           bool snapshot_only, DP_CanvasState **out_cs);
 
 bool DP_project_dump(DP_Project *prj, DP_Output *output);
 

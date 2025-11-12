@@ -45,6 +45,8 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_MAKE,
     DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_APPLY,
     DP_MSG_INTERNAL_TYPE_LOCAL_STATE_SAVE,
+    DP_MSG_INTERNAL_TYPE_PROJECT_THUMBAIL_REQUEST,
+    DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
@@ -102,6 +104,12 @@ DP_msg_internal_reconnect_state_apply_new(unsigned int context_id,
 
 DP_Message *DP_msg_internal_local_state_save_new(
     unsigned int context_id, DP_LocalStateSaveCallback callback, void *user);
+
+DP_Message *
+DP_msg_internal_project_thumbail_request_new(unsigned int context_id);
+
+DP_Message *
+DP_msg_internal_project_snapshot_request_new(unsigned int context_id);
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
 

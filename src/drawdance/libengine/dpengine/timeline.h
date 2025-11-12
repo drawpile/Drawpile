@@ -29,6 +29,8 @@ int DP_timeline_refcount(DP_Timeline *tl);
 
 bool DP_timeline_transient(DP_Timeline *tl);
 
+bool DP_timeline_null(DP_Timeline *tl);
+
 int DP_timeline_track_count(DP_Timeline *tl);
 
 DP_Track *DP_timeline_track_at_noinc(DP_Timeline *tl, int index);

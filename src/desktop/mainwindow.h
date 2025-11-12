@@ -99,6 +99,7 @@ public:
 	QMenu *createPopupMenu() override;
 
 	void openRecent(const QString &path, QTemporaryFile *tempFile = nullptr);
+	void openRecovery(const QString &path);
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void autoJoin(
 		const QUrl &url, const QString &autoRecordPath, int connectStrategy);
@@ -141,6 +142,7 @@ signals:
 	void resizeReactionRequested();
 	void lockWidgetUpdateRequested();
 	void selectionMaskVisibilityChanged(bool visible);
+	void initialCatchupFinished();
 
 public slots:
 	// Triggerable actions
@@ -392,6 +394,11 @@ private:
 	void showLoadResultMessage(DP_LoadResult result);
 	void showResetImageTooLargeErrorMessage(int maxSize, bool autoReset);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
+
+	void toggleProjectRecording(bool enabled);
+	void onProjectRecordingStarted();
+	void onProjectRecordingStopped(bool notify);
+	void showProjectRecordingError(const QString &message);
 
 	void showSelectionMaskColorPicker();
 

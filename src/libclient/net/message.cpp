@@ -116,6 +116,18 @@ Message makeInternalPaintSyncMessage(
 		DP_msg_internal_paint_sync_new(contextId, callback, user));
 }
 
+Message makeInternalProjectSnapshotRequestMessage(uint8_t contextId)
+{
+	return Message::noinc(
+		DP_msg_internal_project_snapshot_request_new(contextId));
+}
+
+Message makeInternalProjectThumbnailRequestMessage(uint8_t contextId)
+{
+	return Message::noinc(
+		DP_msg_internal_project_thumbail_request_new(contextId));
+}
+
 Message makeInternalReconnectStateApplyMessage(
 	uint8_t contextId, DP_CanvasHistoryReconnectState *chrs)
 {

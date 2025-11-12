@@ -270,6 +270,10 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
                                           int right, int bottom,
                                           DP_UPixel15 pixel);
 
+void DP_transient_layer_content_fill_entirely(DP_TransientLayerContent *tlc,
+                                              unsigned int context_id,
+                                              DP_UPixel15 pixel);
+
 void DP_transient_layer_content_tile_set_noinc(DP_TransientLayerContent *tlc,
                                                DP_Tile *t, int i);
 

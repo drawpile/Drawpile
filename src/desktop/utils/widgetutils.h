@@ -22,6 +22,7 @@ class QHeaderView;
 class QInputDialog;
 class QKeySequence;
 class QLabel;
+class QSpinBox;
 class QWidget;
 
 namespace utils {
@@ -208,6 +209,8 @@ void addFormSeparator(QBoxLayout *layout);
 EncapsulatedLayout *encapsulate(const QString &label, QWidget *child);
 
 EncapsulatedLayout *indent(QWidget *child);
+
+void encapsulateSpinBoxPrefixSuffix(QSpinBox *spinBox, const QString &text);
 
 FormNote *formNote(
 	const QString &text, QSizePolicy::ControlType type = QSizePolicy::Label,

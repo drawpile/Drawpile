@@ -470,7 +470,32 @@ void FileWrangler::downloadSelection(Document *doc)
 void FileWrangler::saveFileContent(
 	const QString &defaultName, const QByteArray &bytes) const
 {
-	QFileDialog::saveFileContent(bytes, defaultName);
+	QFileDialog::saveFileContent(bytes, defaultName, parentWidget());
+}
+#else
+QString FileWrangler::getAutosaveExportPath(
+	const QString &defaultDirectory, const QString &defaultName) const
+{
+	const QString ext = QStringLiteral(".dppr");
+
+	QString directory;
+	if(defaultDirectory.isEmpty()) {
+		QFileInfo fileInfo(getLastPath(LastPath::IMAGE, ext));
+		directory = fileInfo.path();
+	} else {
+		directory = defaultDirectory;
+	}
+
+	updateLastPath(
+		LastPath::AUTOSAVE, directory + QDir::separator() + defaultName);
+
+	QString path = showSaveFileDialogFilters(
+		tr("Export Autosave"), LastPath::AUTOSAVE, ext,
+		{QStringLiteral("%1 (*.dppr)").arg(tr("Drawpile Project"))});
+	if(!path.isEmpty()) {
+		updateLastPath(LastPath::IMAGE, path);
+	}
+	return path;
 }
 #endif
 
@@ -539,6 +564,7 @@ bool FileWrangler::confirmFlatten(
 	// need to confirm anything.
 	bool needsBetterFormat = type != DP_SAVE_IMAGE_ORA &&
 							 type != DP_SAVE_IMAGE_PROJECT_CANVAS &&
+							 type != DP_SAVE_IMAGE_PROJECT &&
 							 !doc->canvas()->paintEngine()->isFlatImage();
 	if(!needsBetterFormat) {
 		return true;
@@ -561,6 +587,7 @@ bool FileWrangler::confirmFlatten(
 	case DP_SAVE_IMAGE_UNKNOWN:
 	case DP_SAVE_IMAGE_ORA:
 	case DP_SAVE_IMAGE_PROJECT_CANVAS:
+	case DP_SAVE_IMAGE_PROJECT:
 		break;
 	case DP_SAVE_IMAGE_PSD:
 		format = QStringLiteral("PSD");
@@ -669,6 +696,8 @@ DP_SaveImageType FileWrangler::preferredSaveType()
 		return DP_SAVE_IMAGE_ORA;
 	} else if(format == QStringLiteral("dpcs")) {
 		return DP_SAVE_IMAGE_PROJECT_CANVAS;
+	} else if(format == QStringLiteral("dppr")) {
+		return DP_SAVE_IMAGE_PROJECT;
 	} else {
 		DP_warn("Unknown preferred save format '%s'", qUtf8Printable(format));
 		return DP_SAVE_IMAGE_ORA;
@@ -690,6 +719,8 @@ DP_SaveImageType FileWrangler::preferredExportType()
 		return DP_SAVE_IMAGE_ORA;
 	} else if(format == QStringLiteral("dpcs")) {
 		return DP_SAVE_IMAGE_PROJECT_CANVAS;
+	} else if(format == QStringLiteral("dppr")) {
+		return DP_SAVE_IMAGE_PROJECT;
 	} else if(format == QStringLiteral("psd")) {
 		return DP_SAVE_IMAGE_PSD;
 	} else {
@@ -710,6 +741,8 @@ QString FileWrangler::preferredSaveExtensionFor(DP_SaveImageType type)
 		return QStringLiteral(".ora");
 	case DP_SAVE_IMAGE_PROJECT_CANVAS:
 		return QStringLiteral(".dpcs");
+	case DP_SAVE_IMAGE_PROJECT:
+		return QStringLiteral(".dppr");
 	default:
 		DP_warn("Unhandled preferred save format '%d'", int(type));
 		return QStringLiteral(".ora");
@@ -738,6 +771,8 @@ QString FileWrangler::preferredExportExtensionFor(DP_SaveImageType type)
 		return QStringLiteral(".psd");
 	case DP_SAVE_IMAGE_PROJECT_CANVAS:
 		return QStringLiteral(".dpcs");
+	case DP_SAVE_IMAGE_PROJECT:
+		return QStringLiteral(".dppr");
 	default:
 		DP_warn("Unhandled preferred export format '%d'", int(type));
 		return QStringLiteral(".png");
@@ -839,6 +874,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("logfile");
 	case LastPath::SESSION_SETTINGS:
 		return QStringLiteral("sessionsettings");
+	case LastPath::AUTOSAVE:
+		return QStringLiteral("autosave");
 	}
 	return QStringLiteral("unknown");
 }

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpengine/project.h>
 #include <dpengine/snapshots.h>
 #include <dpimpex/load.h>
 #include <dpmsg/reset_stream.h>
@@ -77,10 +78,6 @@ Document::Document(
 		new net::AnnouncementListModel(m_cfg->getListServers(), this);
 	m_inviteList = new net::InviteListModel(this);
 	m_serverLog = new QStringListModel(this);
-
-	m_autosaveTimer = new QTimer(this);
-	m_autosaveTimer->setSingleShot(true);
-	connect(m_autosaveTimer, &QTimer::timeout, this, &Document::autosaveNow);
 
 	// Make connections
 	connect(
@@ -165,6 +162,9 @@ Document::Document(
 
 void Document::initCanvas()
 {
+	if(m_canvas) {
+		m_canvas->discardProjectRecordingReinit();
+	}
 	delete m_canvas;
 
 	m_canvas = new canvas::CanvasModel(
@@ -242,9 +242,9 @@ void Document::onSessionOutOfSpace()
 
 bool Document::loadBlank(
 	const QSize &size, const QColor &background,
-	const QString &initialLayerName, const QString &initialTrackName)
+	const QString &initialLayerName, const QString &initialTrackName,
+	bool autoRecord)
 {
-	setAutosave(false);
 	initCanvas();
 	unmarkDirty();
 
@@ -252,14 +252,18 @@ bool Document::loadBlank(
 		m_cfg->getEngineUndoDepth(), size, background, initialLayerName,
 		initialTrackName);
 	clearPaths();
+
+	if(autoRecord) {
+		m_canvas->startProjectRecording(m_cfg, DP_PROJECT_SOURCE_BLANK);
+	}
+
 	return true;
 }
 
 void Document::loadState(
 	const drawdance::CanvasState &canvasState, const QString &path,
-	DP_SaveImageType type, bool dirty)
+	DP_SaveImageType type, bool dirty, bool autoRecord)
 {
-	setAutosave(false);
 	initCanvas();
 	if(dirty) {
 		markDirty();
@@ -272,11 +276,20 @@ void Document::loadState(
 	case DP_SAVE_IMAGE_UNKNOWN:
 	case DP_SAVE_IMAGE_ORA:
 	case DP_SAVE_IMAGE_PROJECT_CANVAS:
+	case DP_SAVE_IMAGE_PROJECT:
 		setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 		break;
 	default:
 		setExportPath(path, type);
 		break;
+	}
+
+	if(autoRecord) {
+		m_canvas->startProjectRecording(m_cfg, DP_PROJECT_SOURCE_FILE);
+		if(!path.isEmpty()) {
+			m_canvas->addProjectRecordingMetadataSource(
+				DP_PROJECT_SOURCE_FILE, path);
+		}
 	}
 }
 
@@ -299,7 +312,6 @@ DP_LoadResult Document::loadRecording(
 	bool isTemplate;
 	switch(result) {
 	case DP_LOAD_RESULT_SUCCESS:
-		setAutosave(false);
 		initCanvas();
 		unmarkDirty();
 		m_canvas->loadPlayer(player);
@@ -353,6 +365,13 @@ void Document::onServerLogin(const net::LoggedInParams &params)
 		m_originalRecordingFilename = m_recordOnConnect;
 		startRecording(m_recordOnConnect);
 		m_recordOnConnect = QString();
+	}
+
+	if(params.join && m_projectRecordOnConnect) {
+		m_canvas->startProjectRecording(
+			m_cfg, DP_PROJECT_SOURCE_SESSION, false);
+		m_canvas->addProjectRecordingMetadataSource(
+			DP_PROJECT_SOURCE_SESSION, params.sessionTitle);
 	}
 
 	m_sessionHistoryMaxSize = 0;
@@ -868,39 +887,12 @@ void Document::setServerSupportsInviteCodes(bool serverSupportsInviteCodes)
 	}
 }
 
-void Document::setAutosave(bool autosave)
-{
-	if(autosave && !canAutosave()) {
-		qWarning("Can't autosave");
-		return;
-	}
-
-	if(m_autosave != autosave) {
-		m_autosave = autosave;
-		emit autosaveChanged(autosave);
-
-		if(autosave && isDirty()) {
-			this->autosave();
-		}
-	}
-}
-
 void Document::setCurrentPath(const QString &path, DP_SaveImageType type)
 {
 	if(m_currentPath != path || m_currentType != type) {
 		m_currentPath = path;
 		m_currentType = path.isEmpty() ? DP_SAVE_IMAGE_UNKNOWN : type;
 		emit currentPathChanged(path);
-
-		const bool couldAutosave = m_canAutosave;
-		m_canAutosave = m_currentType != DP_SAVE_IMAGE_UNKNOWN;
-		if(couldAutosave != m_canAutosave) {
-			emit canAutosaveChanged(m_canAutosave);
-		}
-
-		if(!canAutosave()) {
-			setAutosave(false);
-		}
 	}
 }
 
@@ -918,10 +910,6 @@ void Document::markDirty()
 	if(m_canvas) {
 		bool wasDirty = m_canvas->isDirty();
 		m_canvas->setDirty(true);
-
-		if(m_autosave) {
-			autosave();
-		}
 
 		if(!wasDirty) {
 			emit dirtyCanvas(true);
@@ -1028,25 +1016,6 @@ void Document::clearReconnectState()
 	m_reconnectState = nullptr;
 }
 
-void Document::autosave()
-{
-	if(!m_autosaveTimer->isActive()) {
-		int autosaveInterval =
-			qMax(0, m_cfg->getAutoSaveIntervalMinutes() * 60000);
-		m_autosaveTimer->start(autosaveInterval);
-	}
-}
-
-void Document::autosaveNow()
-{
-	if(!isDirty() || !isAutosave() || m_saveInProgress)
-		return;
-
-	saveCanvasState(
-		m_canvas->paintEngine()->viewCanvasState(), true, false, currentPath(),
-		currentType());
-}
-
 void Document::clearConfig()
 {
 	m_cumulativeConfig = QJsonObject();
@@ -1118,7 +1087,8 @@ void Document::saveCanvasState(
 	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
 		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr);
 	if(isCurrentState && (!exported || type == DP_SAVE_IMAGE_ORA ||
-						  type == DP_SAVE_IMAGE_PROJECT_CANVAS)) {
+						  type == DP_SAVE_IMAGE_PROJECT_CANVAS ||
+						  type == DP_SAVE_IMAGE_PROJECT)) {
 		unmarkDirty();
 	}
 	connect(
@@ -1126,6 +1096,11 @@ void Document::saveCanvasState(
 		&Document::onCanvasSaved);
 	emit canvasSaveStarted();
 	QThreadPool::globalInstance()->start(saver);
+
+	if(m_canvas) {
+		m_canvas->addProjectRecordingMetadataSource(
+			DP_PROJECT_SOURCE_FILE, path);
+	}
 }
 
 void Document::exportTemplate(const QString &path)

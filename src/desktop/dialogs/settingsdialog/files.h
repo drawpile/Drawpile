@@ -20,7 +20,7 @@ protected:
 
 private:
 	void initFormats(config::Config *cfg, QFormLayout *form);
-	void initAutosave(config::Config *cfg, QFormLayout *form);
+	void initAutorecord(config::Config *cfg, QFormLayout *form);
 	void initDialogs(config::Config *cfg, QFormLayout *form);
 	void initLogging(config::Config *cfg, QFormLayout *form);
 };

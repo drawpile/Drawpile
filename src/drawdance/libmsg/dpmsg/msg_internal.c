@@ -322,6 +322,22 @@ DP_Message *DP_msg_internal_local_state_save_new(
     return msg;
 }
 
+DP_Message *
+DP_msg_internal_project_thumbail_request_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id,
+                            DP_MSG_INTERNAL_TYPE_PROJECT_THUMBAIL_REQUEST,
+                            sizeof(DP_MsgInternal));
+}
+
+DP_Message *
+DP_msg_internal_project_snapshot_request_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id,
+                            DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST,
+                            sizeof(DP_MsgInternal));
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {

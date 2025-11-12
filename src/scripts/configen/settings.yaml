@@ -1,11 +1,43 @@
 settings:
   # libclient
 
-  - id: autoSaveIntervalMinutes
-    type: 'int'
-    default: '5'
-    qsettings: 'settings/autosaveminutes'
+  - id: autoRecordHost
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/autorecord/host'
     legacy_package: 'libclient'
+    comment: |
+      Whether to automatically record ("autosave") when hosting a session or
+      drawing offline by default.
+
+  - id: autoRecordJoin
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/autorecord/join'
+    legacy_package: 'libclient'
+    comment: |
+      Whether to automatically record ("autosave") when joining a session by
+      default.
+
+  - id: autoRecordSnapshotIntervalMinutes
+    type: 'int'
+    default: '10'
+    qsettings: 'settings/autorecord/snapshotinterval'
+    legacy_package: 'libclient'
+    comment: |
+      Time in minutes between taking snapshots during automatic recording
+      ("autosaving"). All messages are recorded as well, so autosaving is sort
+      of instantaneous, this is just the interval between taking snapshots
+      where the playback can start from more quickly.
+
+  - id: autoRecordThumbnailIntervalMinutes
+    type: 'int'
+    default: '4'
+    qsettings: 'settings/autorecord/thumbnailinterval'
+    legacy_package: 'libclient'
+    comment: |
+      Time in minutes between creating thumbnails during automatic recording
+      ("autosaving").
 
   - id: cancelDeselects
     type: 'bool'

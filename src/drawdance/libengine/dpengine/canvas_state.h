@@ -97,6 +97,8 @@ int DP_canvas_state_refcount(DP_CanvasState *cs);
 
 bool DP_canvas_state_transient(DP_CanvasState *cs);
 
+bool DP_canvas_state_null(DP_CanvasState *cs);
+
 int DP_canvas_state_width(DP_CanvasState *cs);
 
 int DP_canvas_state_height(DP_CanvasState *cs);
@@ -146,6 +148,9 @@ DP_CanvasState *DP_canvas_state_handle_multidab(DP_CanvasState *cs,
                                                 DP_DrawContext *dc,
                                                 DP_UserCursors *ucs_or_null,
                                                 int count, DP_Message **msgs);
+
+DP_CanvasState *DP_canvas_state_merge_all_sublayers_dec(DP_CanvasState *cs,
+                                                        DP_DrawContext *dc);
 
 int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
                                          unsigned int context_id, int *out_x,
@@ -272,6 +277,9 @@ DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs);
 
 DP_AnnotationList *
 DP_transient_canvas_state_annotations_noinc(DP_TransientCanvasState *tcs);
+
+DP_Timeline *
+DP_transient_canvas_state_timeline_noinc(DP_TransientCanvasState *tcs);
 
 DP_DocumentMetadata *
 DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs);

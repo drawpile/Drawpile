@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/files.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -23,9 +24,8 @@ void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
 	initFormats(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-#ifndef __EMSCRIPTEN__
-	initAutosave(cfg, utils::addFormSection(layout));
-#endif
+	initAutorecord(cfg, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
 	initLogging(cfg, utils::addFormSection(layout));
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
 	utils::addFormSeparator(layout);
@@ -33,23 +33,35 @@ void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 #endif
 }
 
-void Files::initAutosave(config::Config *cfg, QFormLayout *form)
+void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 {
-	QSpinBox *autosaveInterval = new QSpinBox;
-	autosaveInterval->setRange(1, 999);
-	CFG_BIND_SPINBOX(cfg, AutoSaveIntervalMinutes, autosaveInterval);
+	QCheckBox *autoRecordHost =
+		new QCheckBox(tr("When offline or hosting sessions"));
+	CFG_BIND_CHECKBOX(cfg, AutoRecordHost, autoRecordHost);
+	form->addRow(tr("Autosave:"), autoRecordHost);
 
-	utils::EncapsulatedLayout *snapshotCountLayout = utils::encapsulate(
-		tr("When enabled, save every %1 minutes"), autosaveInterval);
-	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
-	form->addRow(tr("Autosave:"), snapshotCountLayout);
+	QCheckBox *autoRecordJoin = new QCheckBox(tr("When joining sessions"));
+	CFG_BIND_CHECKBOX(cfg, AutoRecordJoin, autoRecordJoin);
+	form->addRow(nullptr, autoRecordJoin);
 
-	QString autosaveNote = tr(
-		"Autosave can be enabled for the current file under File ▸ Autosave.");
-#ifdef Q_OS_ANDROID
-	// The Android font can't deal with this character.
-	autosaveNote.replace(QStringLiteral("▸"), QStringLiteral(">"));
-#endif
+	KisSliderSpinBox *snapshotInterval = new KisSliderSpinBox;
+	snapshotInterval->setRange(1, 60);
+	CFG_BIND_SLIDERSPINBOX(
+		cfg, AutoRecordSnapshotIntervalMinutes, snapshotInterval);
+	form->addRow(nullptr, snapshotInterval);
+
+	auto updateSnapshotIntervalText = [snapshotInterval](int value) {
+		utils::encapsulateSpinBoxPrefixSuffix(
+			snapshotInterval,
+			tr("Snapshot every %1 minute(s)", nullptr, value));
+	};
+	connect(
+		snapshotInterval, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		snapshotInterval, updateSnapshotIntervalText);
+	updateSnapshotIntervalText(snapshotInterval->value());
+
+	QString autosaveNote =
+		tr("You can control autosaving during a session via the File menu.");
 	form->addRow(nullptr, utils::formNote(autosaveNote));
 }
 
