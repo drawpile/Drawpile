@@ -11,6 +11,8 @@ class StateDatabase final : public QObject {
 public:
 	explicit StateDatabase(QObject *parent = nullptr);
 
+	const QString &path() const { return m_db.path(); }
+
 	// Acquires a recursive mutex on the state database, releases when the query
 	// goes out of scope. Don't let it deadlock in multiple threads.
 	drawdance::Query query() { return m_db.query(); }

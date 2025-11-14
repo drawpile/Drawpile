@@ -122,6 +122,8 @@ public:
 		m_presetModel = presetModel;
 	}
 
+	const QString &path() const { return db.path(); }
+
 	BrushPresetModel *presetModel() const { return m_presetModel; }
 
 	int createTag(const QString &name)
@@ -1054,6 +1056,11 @@ BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 BrushPresetTagModel::~BrushPresetTagModel()
 {
 	delete d;
+}
+
+const QString &BrushPresetTagModel::path() const
+{
+	return d->path();
 }
 
 BrushPresetModel *BrushPresetTagModel::presetModel()

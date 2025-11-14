@@ -178,6 +178,11 @@ class Database final {
         return m_db != nullptr;
     }
 
+    const QString &path() const
+    {
+        return m_path;
+    }
+
     const QString &humaneName() const
     {
         return m_humaneName;
@@ -234,6 +239,7 @@ class Database final {
 
     sqlite3 *m_db = nullptr;
     DP_Mutex *m_mutex = nullptr;
+    QString m_path;
     QString m_humaneName;
 };
 

@@ -299,6 +299,7 @@ bool Database::open(const QString &path, const QString &humaneName)
     }
 
     m_db = db;
+    m_path = path;
     m_humaneName = humaneName;
     return true;
 }

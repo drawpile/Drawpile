@@ -120,6 +120,8 @@ public:
 	explicit BrushPresetTagModel(QObject *parent = nullptr);
 	~BrushPresetTagModel() override;
 
+	const QString &path() const;
+
 	BrushPresetModel *presetModel();
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;

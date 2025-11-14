@@ -7,6 +7,8 @@
 #include "desktop/tabletinput.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/glcanvas.h"
+#include "libclient/utils/statedatabase.h"
+#include "libclient/brushes/brushpresetmodel.h"
 #include <QClipboard>
 #include <QDialogButtonBox>
 #include <QFont>
@@ -323,7 +325,12 @@ QString SystemInfoDialog::getSystemInfo() const
 					QNetworkProxy::SctpListeningCapability)));
 	info += QStringLiteral("\n");
 
-	info += "END OF SYSTEM INFORMATION";
+	info += QStringLiteral("Settings file path: %1\n").arg(settings.path());
+	info += QStringLiteral("State database path: %1\n").arg(app.state().path());
+	info += QStringLiteral("Brush database path: %1\n").arg(app.brushPresets()->path());
+	info += QStringLiteral("\n");
+
+	info += QStringLiteral("END OF SYSTEM INFORMATION");
 	return info;
 }
 
