@@ -362,7 +362,7 @@ if(KRITA_QT)
 				qtbase:patches/android35-qt5-krita.diff
 				qtbase:patches/android_krita_exit.diff
 				qtbase:patches/qtglobal_patched_define.diff
-				qtbase:patches/androidinputfocus-qt5.diff
+				qtbase:patches/androidinputfocus-qt5-krita.diff
 				qtbase:patches/android-fallbackpaths-qt5.diff
 				TARGET_BITS=64@qtbase:patches/android-16k-alignment-qt5-krita.diff
 	)
@@ -414,7 +414,7 @@ else()
 					patches/android_no_build_id.diff
 					patches/kineticscrollfilter-qt5.diff
 					patches/android35-qt5.diff
-					patches/androidinputfocus-qt5.diff
+					# TODO patches/androidinputfocus-qt5.diff
 					# TODO patches/android-fallbackpaths-qt5.diff
 					TARGET_BITS=64@patches/android-16k-alignment-qt5.diff
 				6.7.2
