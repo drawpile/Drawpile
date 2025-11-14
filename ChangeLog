@@ -36,6 +36,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Use different zoom levels for hardware and software renderers, depending on which ones work better in the respective modes.
  * Fix: Default hardware renderer to single-buffering, since the system default buffering can add an immense amount of input lag.
  * Feature: Three new layout presets under View → Layouts. Thanks Ausjamcian, lambda20xx and Scruff for providing them.
+ * Feature: Several new brush presets in the Drawpile tag. Thanks Annoy, Blozzom and lambda20xx for providing them.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.

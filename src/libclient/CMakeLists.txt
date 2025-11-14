@@ -62,6 +62,8 @@ target_sources(dpclient PRIVATE
 	drawdance/canvashistory.h
 	drawdance/canvasstate.cpp
 	drawdance/canvasstate.h
+	drawdance/compress.h
+	drawdance/compress.cpp
 	drawdance/documentmetadata.cpp
 	drawdance/documentmetadata.h
 	drawdance/eventlog.cpp

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/drawdance/compress.h"
 #include "libclient/drawdance/ziparchive.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/database.h"
@@ -15,6 +16,7 @@
 #include <QMutexLocker>
 #include <QRecursiveMutex>
 #include <QRegularExpression>
+#include <QTextStream>
 #include <QTimer>
 #include <QVector>
 #include <algorithm>
@@ -166,6 +168,11 @@ public:
 	QString readTagNameById(int id)
 	{
 		return db.readText16("select name from tag where id = ?", {id});
+	}
+
+	int readTagIdByName(const QString &name)
+	{
+		return db.readInt("select id from tag where name = ?", 0, {name});
 	}
 
 	int readTagIndexById(int id)
@@ -916,6 +923,7 @@ private:
 				query.tx([this, &query] {
 					return createStateTable(query) && executeMigrations(query);
 				});
+				migratePresets();
 				cleanupDb(query);
 				query.setForeignKeysEnabled(true);
 			}
@@ -1028,6 +1036,121 @@ private:
 			qWarning("Failed to migrate marker brush to marker blend mode");
 		}
 		// This migration isn't critical, just carry on if it fails.
+		return true;
+	}
+
+	void migratePresets()
+	{
+		QStringList migrations = {
+			QStringLiteral("0001-2_3_0.zpresets"),
+		};
+
+		for(const QString &name : migrations) {
+			QString error;
+			if(!migratePresetFile(name, error)) {
+				qWarning(
+					"Failed to migrate preset file %s: %s",
+					qUtf8Printable(name), qUtf8Printable(error));
+			}
+		}
+	}
+
+	bool migratePresetFile(const QString &name, QString &outError)
+	{
+		if(readStateBool(name, false)) {
+			return true; // Already migrated.
+		}
+
+		QString path = utils::paths::locateDataFile(
+			QStringLiteral("brushes/%1").arg(name));
+		if(path.isEmpty()) {
+			outError = QStringLiteral("Unable to locate file");
+			return false;
+		}
+
+		QString content = drawdance::decompressZstdFile(path);
+		if(content.isEmpty()) {
+			outError = QStringLiteral("Error decompressing '%1': %2")
+						   .arg(path, QString::fromUtf8(DP_error()));
+			return false;
+		}
+
+		if(!createOrUpdateState(name, true)) {
+			outError = QStringLiteral("Failed to insert migration state");
+			return false;
+		}
+
+		QTextStream stream(&content);
+		QString line;
+		int i = 0;
+		while(stream.readLineInto(&line)) {
+			if(!line.isEmpty()) {
+				++i;
+				QString error;
+				if(!migratePresetFromFile(line, error)) {
+					qWarning(
+						"Error migrating preset %d from '%s': %s", i,
+						qUtf8Printable(path), qUtf8Printable(error));
+				}
+			}
+		}
+
+		return true;
+	}
+
+	bool migratePresetFromFile(const QString &line, QString &outError)
+	{
+		QJsonParseError err;
+		QJsonDocument doc = QJsonDocument::fromJson(line.toUtf8(), &err);
+		if(err.error != QJsonParseError::NoError) {
+			outError = err.errorString();
+			return false;
+		}
+
+		if(!doc.isObject()) {
+			outError = QStringLiteral("Not an object");
+			return false;
+		}
+
+		QJsonObject object = doc.object();
+		int presetId = createPreset(
+			object.value(QStringLiteral("name")).toString(),
+			object.value(QStringLiteral("description")).toString(),
+			QByteArray::fromBase64(
+				object.value(QStringLiteral("thumbnail")).toString().toUtf8()),
+			object.value(QStringLiteral("type")).toString(),
+			QJsonDocument(object.value(QStringLiteral("data")).toObject())
+				.toJson(QJsonDocument::Compact));
+		if(presetId == 0) {
+			outError = QStringLiteral("Failed to create preset");
+			return false;
+		}
+
+		QSet<int> tagIdsToAssign;
+		for(const QJsonValue &tagValue :
+			object.value(QStringLiteral("tags")).toArray()) {
+			QString tagName = tagValue.toString();
+			if(!tagName.isEmpty()) {
+				int tagId = readTagIdByName(tagName);
+				if(tagId == 0) {
+					tagId = createTag(tagName);
+					if(tagId == 0) {
+						qWarning(
+							"Failed to create tag %s", qUtf8Printable(tagName));
+					}
+				} else {
+					tagIdsToAssign.insert(tagId);
+				}
+			}
+		}
+
+		for(int tagId : tagIdsToAssign) {
+			if(!createPresetTag(presetId, tagId)) {
+				qWarning(
+					"Failed to assign preset %d to tag %d", presetId, tagId);
+			}
+		}
+
 		return true;
 	}
 

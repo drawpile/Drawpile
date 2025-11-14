@@ -1157,7 +1157,7 @@ add_resources(drawpile
 		rust.colors
 		watermelon.colors
 		initialbrushpresets.db
-	DIRS gamutmasks palettes sounds theme
+	DIRS brushes gamutmasks palettes sounds theme
 	BUILD_TIME_DESTINATION "${build_time_assets_dir}"
 )
 
