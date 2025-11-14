@@ -229,6 +229,7 @@ SETTING(lastWindowViewState       , LastWindowViewState       , "window/viewstat
 SETTING(layerSketchOpacityPercent , LayerSketchOpacityPercent , "layers/sketchopacitypercent"           , 75)
 SETTING(layerSketchTint           , LayerSketchTint           , "layers/sketchtint"                     , LAYER_SKETCH_TINT_DEFAULT)
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
+SETTING(layoutsVersion            , LayoutsVersion            , "layoutsversion"                        , 0)
 SETTING(leftyMode                 , LeftyMode                 , "settings/leftymode"                    , false)
 SETTING(longPressEnabled          , LongPressEnabled          , "settings/longpress/enabled"            , LONG_PRESS_ENABLED_DEFAULT)
 SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , true)

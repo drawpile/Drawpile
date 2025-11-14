@@ -50,6 +50,10 @@ struct LayoutsDialog::Layout {
 };
 
 struct LayoutsDialog::Private {
+	static constexpr int LAYOUTS_VERSION_2_2_0 = 0;
+	static constexpr int LAYOUTS_VERSION_2_3_0 = 1;
+	static constexpr int LAYOUTS_VERSION_CURRENT = LAYOUTS_VERSION_2_3_0;
+
 	struct Predefs {
 		QByteArray defaultLayout;
 		QByteArray defaultAnimationLayout;
@@ -62,6 +66,9 @@ struct LayoutsDialog::Private {
 		QByteArray paintNetEsqueLayout;
 		QByteArray saiEsqueLayout;
 		QByteArray spiderLayout;
+		QByteArray floofdergLayout;
+		QByteArray kerfluffLayout;
+		QByteArray lambdaLayout;
 		QHash<QByteArray, const QByteArray *> compatibilityMappings;
 	};
 
@@ -80,7 +87,8 @@ struct LayoutsDialog::Private {
 		, updateInProgress{false}
 	{
 		layouts.append(Layout{currentState});
-		const auto savedLayouts = dpApp().settings().layouts();
+		desktop::settings::Settings &settings = dpApp().settings();
+		const auto savedLayouts = settings.layouts();
 		Predefs predefs = getPredefs();
 		if(savedLayouts.isEmpty()) {
 			createDefaultLayouts(predefs);
@@ -92,27 +100,74 @@ struct LayoutsDialog::Private {
 				layouts.append(
 					Layout{savedLayout.value("title").toString(), state});
 			}
+			switch(settings.layoutsVersion()) {
+			case LAYOUTS_VERSION_2_2_0:
+				createLayouts2_3_0(predefs);
+				Q_FALLTHROUGH();
+			default:
+				break;
+			}
 		}
 	}
 
 	void createDefaultLayouts(const Predefs &predefs)
 	{
+		createLayouts2_2_0(predefs);
+		createLayouts2_3_0(predefs);
+	}
+
+	void createLayouts2_2_0(const Predefs &predefs)
+	{
 		layouts.append({
+			//: The name of the default layout.
 			LayoutsDialog::Layout{tr("Default"), predefs.defaultLayout},
 			LayoutsDialog::Layout{
+				//: The name of the default layout for animations.
 				tr("Default Animation"), predefs.defaultAnimationLayout},
 			LayoutsDialog::Layout{
+				//: The name of a layout that looks similar to FireAlpaca
+				//: (another drawing program.)
 				tr("FireAlpaca-esque"), predefs.fireAlpacaEsqueLayout},
+			//: The name of a layout that arranges docks horizontally.
 			LayoutsDialog::Layout{tr("Horizontal"), predefs.horizontalLayout},
+			//: The name of a layout, the person who made the layout has a
+			//: character whose species is a hyena.
 			LayoutsDialog::Layout{tr("Hyena"), predefs.hyenaLayout},
+			//: The name of a layout that looks similar to Krita (another
+			//: drawing program.)
 			LayoutsDialog::Layout{tr("Krita-esque"), predefs.kritaEsqueLayout},
 			LayoutsDialog::Layout{
+				//: The name of a layout that looks similar to MediBang (another
+				//: drawing program.)
 				tr("MediBang-esque"), predefs.mediBangEsqueLayout},
+			//: The name of a layout, the person who made the layout has a
+			//: character whose species is a mink.
 			LayoutsDialog::Layout{tr("Mink"), predefs.minkLayout},
 			LayoutsDialog::Layout{
+				//: The name of a layout that looks similar to Paint.NET
+				//: (another drawing program.)
 				tr("Paint.NET-esque"), predefs.paintNetEsqueLayout},
+			//: The name of a layout that looks similar to PaintTool SAI
+			//: (another drawing program.)
 			LayoutsDialog::Layout{tr("SAI-esque"), predefs.saiEsqueLayout},
+			//: The name of a layout, the person who made the layout has a
+			//: character whose species is a spider.
 			LayoutsDialog::Layout{tr("Spider"), predefs.spiderLayout},
+		});
+	}
+
+	void createLayouts2_3_0(const Predefs &predefs)
+	{
+		layouts.append({
+			//: The name of a layout, the person who made the layout has a
+			//: character whose species is a furred dragon.
+			LayoutsDialog::Layout{tr("Floofderg"), predefs.floofdergLayout},
+			//: The name of a layout, the person who made the layout has a
+			//: username similar to this.
+			LayoutsDialog::Layout{tr("Kerfluff"), predefs.kerfluffLayout},
+			//: The name of a layout, the person who made the layout has a
+			//: username similar to this.
+			LayoutsDialog::Layout{tr("Lambda"), predefs.lambdaLayout},
 		});
 	}
 
@@ -136,7 +191,9 @@ struct LayoutsDialog::Private {
 					{{"title", layout.title}, {"state", layout.state}});
 			}
 		}
-		dpApp().settings().setLayouts(savedLayouts);
+		desktop::settings::Settings &settings = dpApp().settings();
+		settings.setLayouts(savedLayouts);
+		settings.setLayoutsVersion(LAYOUTS_VERSION_CURRENT);
 	}
 
 	QListWidgetItem *selectedItem()
@@ -550,6 +607,64 @@ LayoutsDialog::Private::Predefs LayoutsDialog::Private::getPredefs()
 		"bwBvAGwAcwBiAGEAcgEAAAAA/////wAAAAAAAAAAAAAAGABlAGQAaQB0AHQAbwBvAG"
 		"wAcwBiAGEAcgEAAACV/////wAAAAAAAAAAAAAAGABkAHIAYQB3AHQAbwBvAGwAcwBi"
 		"AGEAcgEAAAFr/////wAAAAAAAAAA");
+	predefs.floofdergLayout = QByteArray::fromBase64(
+		"AAAA/wAAAAD9AAAAAwAAAAAAAAD6AAAD+vwCAAAAAfsAAAASAEwAYQB5AGUAcg"
+		"BMAGkAcwB0AQAAAD4AAAP6AAAAnAD///8AAAABAAABnQAAA/r8AgAAAAL8AAAA"
+		"PgAAA/oAAAJNAP////wBAAAAAvsAAAAaAHIAZQBmAGUAcgBlAG4AYwBlAGQAbw"
+		"BjAGsBAAAF4wAAAKwAAACYAP////wAAAaVAAAA6wAAAOsA/////AIAAAAD/AAA"
+		"AD4AAAFoAAAAuwEAABz6AAAAAAIAAAAE+wAAACAAYwBvAGwAbwByAHMAcABpAG"
+		"4AbgBlAHIAZABvAGMAawEAAAAA/////wAAAGQA////+wAAACAAYwBvAGwAbwBy"
+		"AHAAYQBsAGUAdAB0AGUAZABvAGMAawEAAAAA/////wAAAE0A////+wAAAB4AYw"
+		"BvAGwAbwByAGMAaQByAGMAbABlAGQAbwBjAGsBAAAAAP////8AAABuAP////sA"
+		"AAAeAGMAbwBsAG8AcgBzAGwAaQBkAGUAcgBkAG8AYwBrAQAAAAD/////AAAAng"
+		"D////7AAAAGABUAG8AbwBsAFMAZQB0AHQAaQBuAGcAcwEAAAGsAAABSAAAASMA"
+		"////+wAAABgAQgByAHUAcwBoAFAAYQBsAGUAdAB0AGUBAAAC+gAAAT4AAABjAP"
+		"////sAAAAaAG4AYQB2AGkAZwBhAHQAbwByAGQAbwBjAGsAAAAAAP////8AAAA+"
+		"AP///wAAAAMAAATdAAAAk/wBAAAAAfwAAAEAAAAE3QAAAj4A////+gAAAAECAA"
+		"AAAvsAAAAUAG8AbgBpAG8AbgBzAGsAaQBuAHMBAAAAAP////8AAABWAP////sA"
+		"AAAQAFQAaQBtAGUAbABpAG4AZQEAAAOtAAAAdgAAAHYA////AAAE3QAAA2EAAA"
+		"ABAAAAAgAAAAEAAAAC/AAAAAEAAAACAAAAAwAAABgAZgBpAGwAZQB0AG8AbwBs"
+		"AHMAYgBhAHIBAAAAAP////8AAAAAAAAAAAAAABgAZQBkAGkAdAB0AG8AbwBsAH"
+		"MAYgBhAHIBAAAAlP////8AAAAAAAAAAAAAABgAZAByAGEAdwB0AG8AbwBsAHMA"
+		"YgBhAHIBAAABav////8AAAAAAAAAAA==");
+	predefs.kerfluffLayout = QByteArray::fromBase64(
+		"AAAA/wAAAAD9AAAAAgAAAAAAAAEFAAAEIvwCAAAAA/wAAAAWAAABNwAAAJkBAA"
+		"Ac+gAAAAUCAAAABvsAAAAaAG4AYQB2AGkAZwBhAHQAbwByAGQAbwBjAGsBAAAA"
+		"AP////8AAAA+AP////sAAAAgAGMAbwBsAG8AcgBwAGEAbABlAHQAdABlAGQAbw"
+		"BjAGsAAAAAAP////8AAABNAP////sAAAAeAGMAbwBsAG8AcgBzAGwAaQBkAGUA"
+		"cgBkAG8AYwBrAAAAAAD/////AAAAngD////7AAAAGgByAGUAZgBlAHIAZQBuAG"
+		"MAZQBkAG8AYwBrAQAAAAD/////AAAAfAD////7AAAAHgBjAG8AbABvAHIAYwBp"
+		"AHIAYwBsAGUAZABvAGMAawAAAAAA/////wAAAG4A////+wAAACAAYwBvAGwAbw"
+		"ByAHMAcABpAG4AbgBlAHIAZABvAGMAawEAAACJAAAAxAAAAGQA////+wAAABIA"
+		"TABhAHkAZQByAEwAaQBzAHQBAAABUwAAAYEAAACcAP////wAAALaAAABXgAAAU"
+		"IBAAAc+gAAAAEBAAAAAvsAAAAYAEIAcgB1AHMAaABQAGEAbABlAHQAdABlAQAA"
+		"AAD/////AAAAbwD////7AAAAGABUAG8AbwBsAFMAZQB0AHQAaQBuAGcAcwEAAA"
+		"AoAAABXAAAAOsA////AAAAAgAABRgAAAC4/AEAAAAB/AAAAWIAAAUYAAAAAAD/"
+		"///6/////wEAAAAC+wAAABAAVABpAG0AZQBsAGkAbgBlAAAAAAD/////AAACPg"
+		"D////7AAAAFABvAG4AaQBvAG4AcwBrAGkAbgBzAAAAAAD/////AAABZQD///8A"
+		"AAZNAAAEIgAAAAEAAAACAAAAAQAAAAL8AAAAAQAAAAAAAAADAAAAGABmAGkAbA"
+		"BlAHQAbwBvAGwAcwBiAGEAcgMAAAAA/////wAAAAAAAAAAAAAAGABlAGQAaQB0"
+		"AHQAbwBvAGwAcwBiAGEAcgMAAACQ/////wAAAAAAAAAAAAAAGABkAHIAYQB3AH"
+		"QAbwBvAGwAcwBiAGEAcgMAAAFhAAACwQAAAAAAAAAA");
+	predefs.lambdaLayout = QByteArray::fromBase64(
+		"AAAA/wAAAAD9AAAAAwAAAAAAAAEpAAAD+vwCAAAAA/sAAAAYAFQAbwBvAGwAUw"
+		"BlAHQAdABpAG4AZwBzAQAAAD4AAAEsAAABIwD////8AAABcAAAAW8AAACLAQAA"
+		"HPoAAAAAAQAAAAP7AAAAIABjAG8AbABvAHIAcwBwAGkAbgBuAGUAcgBkAG8AYw"
+		"BrAQAAAAAAAAEVAAAASAD////7AAAAHgBjAG8AbABvAHIAYwBpAHIAYwBsAGUA"
+		"ZABvAGMAawEAAAAA/////wAAAFIA////+wAAACAAYwBvAGwAbwByAHAAYQBsAG"
+		"UAdAB0AGUAZABvAGMAawEAAAAA/////wAAAFIA////+wAAAB4AYwBvAGwAbwBy"
+		"AHMAbABpAGQAZQByAGQAbwBjAGsBAAAC5QAAAVMAAACeAP///wAAAAEAAADqAA"
+		"AD+vwCAAAABPsAAAAaAHIAZQBmAGUAcgBlAG4AYwBlAGQAbwBjAGsBAAAAPgAA"
+		"ARYAAAB8AP////sAAAASAEwAYQB5AGUAcgBMAGkAcwB0AQAAAVoAAAGXAAAAnA"
+		"D////7AAAAGABCAHIAdQBzAGgAUABhAGwAZQB0AHQAZQEAAAL3AAABQQAAAGMA"
+		"////+wAAABoAbgBhAHYAaQBnAGEAdABvAHIAZABvAGMAawAAAAAA/////wAAAD"
+		"4A////AAAAAgAABRgAAAC4/AEAAAAB/AAAAWIAAAUYAAAAAAD////6/////wEA"
+		"AAAC+wAAABAAVABpAG0AZQBsAGkAbgBlAAAAAAD/////AAACPgD////7AAAAFA"
+		"BvAG4AaQBvAG4AcwBrAGkAbgBzAAAAAAD/////AAABZQD///8AAAVhAAAD+gAA"
+		"AAEAAAACAAAAAQAAAAL8AAAAAQAAAAIAAAADAAAAGABmAGkAbABlAHQAbwBvAG"
+		"wAcwBiAGEAcgEAAAAA/////wAAAAAAAAAAAAAAGABlAGQAaQB0AHQAbwBvAGwA"
+		"cwBiAGEAcgEAAACU/////wAAAAAAAAAAAAAAGABkAHIAYQB3AHQAbwBvAGwAcw"
+		"BiAGEAcgEAAAFq/////wAAAAAAAAAA");
 	predefs.compatibilityMappings.insert(
 		QByteArray::fromBase64(
 			"AAAA/wAAAAD9AAAAAwAAAAAAAAFcAAAD5/wCAAAAAvsAAAAYAFQAbwBvAGwAUwBlAH"
