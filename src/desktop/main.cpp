@@ -1237,8 +1237,7 @@ extern "C" void drawpileMain(int argc, char **argv)
 #endif
 
 	int vsync = 0;
-	QSurfaceFormat::SwapBehavior swapBehavior =
-		QSurfaceFormat::DefaultSwapBehavior;
+	QSurfaceFormat::SwapBehavior swapBehavior = QSurfaceFormat::SingleBuffer;
 	applyRenderSettings(argc, argv, vsync, swapBehavior);
 
 #ifdef Q_OS_WIN
