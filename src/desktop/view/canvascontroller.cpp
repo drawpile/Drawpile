@@ -23,8 +23,6 @@
 #include <QWheelEvent>
 #include <cmath>
 
-using libclient::settings::zoomMax;
-using libclient::settings::zoomMin;
 using utils::Cursors;
 
 namespace view {
@@ -307,7 +305,9 @@ void CanvasController::setZoom(qreal zoom)
 
 void CanvasController::setZoomAt(qreal zoom, const QPointF &point)
 {
-	qreal newZoom = qBound(zoomMin, zoom, zoomMax);
+	qreal newZoom = qBound(
+		libclient::settings::getZoomMin(), zoom,
+		libclient::settings::getZoomMax());
 	if(newZoom != m_zoom) {
 		QTransform matrix;
 		mirrorFlip(matrix, m_mirror, m_flip);
@@ -390,7 +390,7 @@ void CanvasController::zoomSteps(int steps)
 void CanvasController::zoomStepsAt(int steps, const QPointF &point)
 {
 	constexpr qreal eps = 1e-5;
-	const QVector<qreal> &zoomLevels = libclient::settings::zoomLevels();
+	const QVector<qreal> &zoomLevels = libclient::settings::getZoomLevels();
 	// This doesn't actually take the number of steps into account, it just
 	// zooms by a single step. But that works really well, so I'll leave it be.
 	if(steps > 0) {
@@ -399,7 +399,8 @@ void CanvasController::zoomStepsAt(int steps, const QPointF &point)
 			i++;
 		}
 		qreal level = zoomLevels[i];
-		qreal zoom = m_zoom > level - eps ? zoomMax : qMax(m_zoom, level);
+		qreal zoom = m_zoom > level - eps ? libclient::settings::getZoomMax()
+										  : qMax(m_zoom, level);
 		setZoomAt(zoom, point);
 	} else if(steps < 0) {
 		int i = zoomLevels.size() - 1;
@@ -407,7 +408,8 @@ void CanvasController::zoomStepsAt(int steps, const QPointF &point)
 			i--;
 		}
 		qreal level = zoomLevels[i];
-		qreal zoom = m_zoom < level + eps ? zoomMin : qMin(m_zoom, level);
+		qreal zoom = m_zoom < level + eps ? libclient::settings::getZoomMin()
+										  : qMin(m_zoom, level);
 		setZoomAt(zoom, point);
 	}
 }
@@ -2472,7 +2474,9 @@ void CanvasController::setZoomToFit(Qt::Orientations orientations)
 		{
 			QSignalBlocker blocker(this);
 			QScopedValueRollback<bool> rollback(m_blockNotices, true);
-			qreal newZoom = qBound(zoomMin, scale, zoomMax);
+			qreal newZoom = qBound(
+				libclient::settings::getZoomMin(), scale,
+				libclient::settings::getZoomMax());
 			updateCanvasTransform([&] {
 				m_pos += center * (newZoom - m_zoom);
 				m_zoom = newZoom;

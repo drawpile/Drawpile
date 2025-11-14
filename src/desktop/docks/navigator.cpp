@@ -23,9 +23,6 @@
 #include <QBoxLayout>
 #include <QMenu>
 
-using libclient::settings::zoomMax;
-using libclient::settings::zoomMin;
-
 namespace docks {
 
 static QPixmap makeCursorBackground(const int avatarSize)
@@ -524,8 +521,8 @@ Navigator::Navigator(QWidget *parent)
 	m_zoomSlider = new widgets::ZoomSlider(this);
 	m_zoomSlider->setMinimumWidth(0);
 	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
-	m_zoomSlider->setMinimum(zoomMin * 100.0);
-	m_zoomSlider->setMaximum(zoomMax * 100.0);
+	m_zoomSlider->setMinimum(libclient::settings::getZoomMin() * 100.0);
+	m_zoomSlider->setMaximum(libclient::settings::getZoomMax() * 100.0);
 	m_zoomSlider->setExponentRatio(4.0);
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");

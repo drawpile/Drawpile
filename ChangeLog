@@ -33,6 +33,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make keyboards like GBoard not eat all your hardware keyboard shortcuts after editing text once. This is a patch to Qt. Thanks justanotatest for reporting.
  * Fix: Unfocus chat when collapsing it so that you don't continue typing into it while it's gone.
  * Fix: Fall back to the application storage on Android when proper storage is unavailable. This is a patch to Qt. Thanks Sherb for reporting.
+ * Fix: Use different zoom levels for hardware and software renderers, depending on which ones work better in the respective modes.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.

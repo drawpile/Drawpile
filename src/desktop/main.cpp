@@ -416,6 +416,8 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 		m_canvasImplementationFromSettings = true;
 	}
 	m_canvasImplementation = getCanvasImplementationFor(canvasImplementation);
+	libclient::settings::setZoomLevelsCanvasImplementation(
+		m_canvasImplementation);
 }
 
 void DrawpileApp::initInterface()

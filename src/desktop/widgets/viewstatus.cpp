@@ -16,11 +16,6 @@
 #include <QScopedValueRollback>
 #include <QSlider>
 
-using libclient::settings::zoomMax;
-using libclient::settings::zoomMin;
-using libclient::settings::zoomSoftMax;
-using libclient::settings::zoomSoftMin;
-
 namespace widgets {
 
 ViewStatus::ViewStatus(QWidget *parent)
@@ -104,8 +99,8 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_zoomSlider->setMaximumWidth(200);
 	m_zoomSlider->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
-	m_zoomSlider->setMinimum(zoomMin * 100.0);
-	m_zoomSlider->setMaximum(zoomMax * 100.0);
+	m_zoomSlider->setMinimum(libclient::settings::getZoomMin() * 100.0);
+	m_zoomSlider->setMaximum(libclient::settings::getZoomMax() * 100.0);
 	m_zoomSlider->setExponentRatio(4.0);
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");
@@ -126,7 +121,9 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	m_zoomsMenu = new QMenu{m_zoomPreset};
 	m_zoomPreset->setMenu(m_zoomsMenu);
-	for(qreal zoomLevel : libclient::settings::zoomLevels()) {
+	qreal zoomSoftMin = libclient::settings::getZoomSoftMin();
+	qreal zoomSoftMax = libclient::settings::getZoomSoftMax();
+	for(qreal zoomLevel : libclient::settings::getZoomLevels()) {
 		if(zoomLevel >= zoomSoftMin && zoomLevel <= zoomSoftMax) {
 			QAction *zoomAction = m_zoomsMenu->addAction(
 				QStringLiteral("%1%").arg(zoomLevel * 100.0, 0, 'f', 2));

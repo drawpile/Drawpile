@@ -71,12 +71,12 @@ inline constexpr int defaultSmoothing = 3;
 
 inline constexpr int maxSmoothing = 20;
 
-inline constexpr qreal zoomMin = 0.0078125;
-inline constexpr qreal zoomMax = 64.0;
-inline constexpr qreal zoomSoftMin = 0.125;
-inline constexpr qreal zoomSoftMax = 32.0;
-
-const QVector<qreal> &zoomLevels();
+qreal getZoomMin();
+qreal getZoomMax();
+qreal getZoomSoftMin();
+qreal getZoomSoftMax();
+const QVector<qreal> &getZoomLevels();
+void setZoomLevelsCanvasImplementation(int canvasImplementation);
 
 class Settings;
 
