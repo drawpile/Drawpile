@@ -955,6 +955,7 @@ private:
 				&Private::migrateInitial,
 				&Private::migrateChangedPreset,
 				&Private::migratePresetShortcuts,
+				&Private::migrateMarkerBlendMode,
 			};
 
 		int originalMigrationVersion = migrationVersionVariant.toInt();
@@ -1012,6 +1013,22 @@ private:
 	{
 		return query.exec(
 			"alter table preset add column shortcut text not null default ''");
+	}
+
+	bool migrateMarkerBlendMode(drawdance::Query &query)
+	{
+		// There's a brush called "Marker" in the default brush set that was
+		// added before the blend mode of the same name. To avoid confusion,
+		// we'll retroactively equip it with the blend mode by default.
+		if(!query.exec(
+			   "update preset set data = cast(json_set(data, "
+			   "    '$.settings.blend', '-dp-marker',"
+			   "    '$.settings.blendalpha', json('false')) as blob)"
+			   "where id = 205 and name = '0900-Marker'")) {
+			qWarning("Failed to migrate marker brush to marker blend mode");
+		}
+		// This migration isn't critical, just carry on if it fails.
+		return true;
 	}
 
 	static drawdance::Database db;
