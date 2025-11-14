@@ -1,0 +1,72 @@
+Description: When external storage is unavailable on Android, Qt doesn't
+properly fall back to internal file paths, which leads to the application being
+totally unable to store its internal files. This patch corrects the behavior
+and makes it use the internal storage as a fallback.
+
+--- a/src/corelib/io/qstandardpaths_android.cpp
++++ b/src/corelib/io/qstandardpaths_android.cpp
+@@ -90,6 +90,28 @@
+     return path.toString();
+ }
+ 
++static QString fallBackToInternalFilesDir(const char *directoryField)
++{
++    QString filesDir = getFilesDir();
++    if (filesDir.isEmpty()) {
++        return QString();
++    }
++
++    if (!filesDir.endsWith(QLatin1Char('/'))) {
++        filesDir.append(QLatin1Char('/'));
++    }
++
++    QString dir;
++    if (directoryField && strlen(directoryField) > 0) {
++        dir = QLatin1String("ext_%1").arg(QLatin1String(directoryField));
++    } else {
++        dir = QLatin1String("ext");
++    }
++    filesDir.append(dir.toLower());
++
++    return filesDir;
++}
++
+ /*
+  * Locations where applications can place persistent files it owns.
+  * E.g., /storage/org.app/Music
+@@ -110,7 +132,7 @@
+                                                            directoryField,
+                                                            "Ljava/lang/String;");
+         if (!dirField.isValid())
+-            return QString();
++            return (path = fallBackToInternalFilesDir(directoryField));
+     }
+ 
+     QJNIObjectPrivate file = appCtx.callObjectMethod("getExternalFilesDir",
+@@ -118,7 +140,7 @@
+                                                      dirField.object());
+ 
+     if (!file.isValid())
+-        return QString();
++        return (path = fallBackToInternalFilesDir(directoryField));
+ 
+     QJNIObjectPrivate mediaMountedObj = QJNIObjectPrivate::getStaticObjectField(
+         "android/os/Environment", "MEDIA_MOUNTED", "Ljava/lang/String;");
+@@ -127,14 +149,14 @@
+         "android/os/Environment", "getExternalStorageState", "()Ljava/lang/String;");
+ 
+     if (!storageStateObj.isValid() || !mediaMountedObj.isValid()) {
+-        return QString();
++        return (path = fallBackToInternalFilesDir(directoryField));
+     }
+ 
+     QString storageState = storageStateObj.toString();
+     QString mediaMounted = mediaMountedObj.toString();
+     if (storageState != mediaMounted) {
+         qWarning() << "External Storage not mounted";
+-        return getFilesDir();
++        return (path = fallBackToInternalFilesDir(directoryField));
+     }
+ 
+     return (path = getAbsolutePath(file));
+
