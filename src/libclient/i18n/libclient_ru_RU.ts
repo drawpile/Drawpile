@@ -24,7 +24,7 @@
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished">Выделенная память не является буфером SharedArrayBuffer, хотя ваш браузер поддерживает его. Возможно, вам нужно изменить настройки.</translation>
+        <translation>Выделенная память не является буфером Shared Array Buffer, хотя ваш браузер поддерживает его. Возможно, вам нужно изменить настройки.</translation>
     </message>
     <message>
         <location line="+4"/>

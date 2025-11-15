@@ -832,17 +832,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished">続き…</translation>
+        <translation>続く…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">変形</translation>
+        <translation>変形</translation>
     </message>
 </context>
 <context>
@@ -1698,7 +1698,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+29"/>
         <source>Selection Action Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバーの位置</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2187,17 +2187,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="-2211"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム表示モードに切り替えました。
+表示メニューまたはタイムラインから終了できます。</translation>
     </message>
     <message>
         <location line="+2203"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロードは正常に完了しましたか？</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>未保存の変更があります。再接続する前にそれらをダウンロードしますか？</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2207,17 +2208,17 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ、もう一度試してください</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>はい、再接続します</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロード</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2288,12 +2289,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+444"/>
         <source>Cr&amp;op canvas to transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスを切り取って変形(&amp;o)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスを選択範囲まで切り抜き(&amp;o)…</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -2665,67 +2666,67 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバーを表示</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>左上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバー 左上</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">上</translation>
+        <translation>上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバー 上</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>右上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバー 右上</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>左下</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバー 左下</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom</source>
-        <translation type="unfinished">下</translation>
+        <translation>下</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバー 下</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>右下</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバー 右下</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2760,7 +2761,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス表示モード変更の通知</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3349,7 +3350,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Cr&amp;op canvas to selection/transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスを選択範囲で切り取り変形(&amp;o)…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3914,70 +3915,72 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+105"/>
         <source>Disable view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>表示モード通知を無効</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー表示モードが無効になっていることが通知されます。
+表示メニューまたは設定から再度有効にすることができます。</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>バーの位置</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disable This Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>このバーを無効</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の反転</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand/Shrink</source>
         <extracomment>Refers to expanding or shrinking the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の拡大/縮小</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
+        <translation>適用</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>左右反転</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>上下反転</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>反時計回りに90度回転</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>時計回りに90度回転</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択アクションバーが無効になっています。
+表示メニューから再度有効にすることができます。</translation>
     </message>
     <message>
         <location line="+604"/>
@@ -9305,7 +9308,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Improve zoom quality (hardware renderer only)</source>
-        <translation type="unfinished"></translation>
+        <translation>ズーム品質の向上 (ハードウェア レンダラーのみ)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -10394,12 +10397,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Enable pressure for touch drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>タッチ描画の圧力感知を有効にする</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
-        <translation type="unfinished"></translation>
+        <translation>特定のディスプレイのタブレットに必要ですが、おそらく指での描画では機能しません！</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10667,7 +10670,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>View mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>表示モードの通知</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12929,19 +12932,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/colordialog.cpp" line="+20"/>
         <source>Screen Color Picking Unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>画面の色の取得はサポートされていません</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picking colors from the screen is not supported under Wayland.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wayland では、画面からの色の取得はサポートされていません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Linux でユーザー アカウントにログインする時、Wayland から Xorg に切り替えることができる場合もあります。</translation>
     </message>
 </context>
 <context>
@@ -13496,67 +13499,67 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-119"/>
         <source>Exit layer view</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー表示モードの終了</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit group view</source>
-        <translation type="unfinished"></translation>
+        <translation>グループ表示モードの終了</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit frame view</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム表示モードの終了</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unlock canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスのロック解除</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスのリセット…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>全て選択</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー境界を選択</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Disable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止を無効</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set current layer as fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のレイヤーを塗りつぶし参照元にする</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶし参照元をクリア</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Out of space, you must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>スペースが不足しているため、キャンバスをリセットする必要があります</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Out of space, operator must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>スペースが不足しているため、管理者はキャンバスをリセットする必要があります</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13732,19 +13735,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+41"/>
         <source>As regular window</source>
         <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>通常ウィンドウ</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of Drawpile</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileウィンドウの上に常に表示</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of everything</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>全てのウィンドウの最前面に表示</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -13888,12 +13891,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Detach</source>
-        <translation>取り外し</translation>
+        <translation>チャットウィンドウの分離</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Attach</source>
-        <translation>取り付け</translation>
+        <translation>チャットウィンドウの分離をやめる</translation>
     </message>
 </context>
 <context>
