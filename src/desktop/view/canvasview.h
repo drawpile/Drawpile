@@ -83,6 +83,11 @@ private:
 	NotificationBarState m_notificationBarState = NotificationBarState::None;
 	bool m_blockScrolling = false;
 	bool m_touchUseGestureEvents = false;
+#ifdef CANVAS_VIEW_KEEP_EVEN
+	bool m_marginsReset = false;
+	bool m_marginsSet = false;
+	bool m_resizeHandled = false;
+#endif
 };
 
 }

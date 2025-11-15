@@ -567,6 +567,10 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	dp_qt_private_headers(drawpile Gui)
 endif()
 
+if(CANVAS_VIEW_KEEP_EVEN)
+	target_compile_definitions(drawpile PRIVATE CANVAS_VIEW_KEEP_EVEN=1)
+endif()
+
 if(DISABLE_UPDATE_CHECK_DEFAULT)
 	target_compile_definitions(drawpile PRIVATE DISABLE_UPDATE_CHECK_DEFAULT=1)
 endif()

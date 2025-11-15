@@ -85,6 +85,11 @@ if(NOT MSVC AND NOT EMSCRIPTEN)
 	add_feature_info("Non-portable optimizations (ENABLE_ARCH_NATIVE)" ENABLE_ARCH_NATIVE "")
 endif()
 
+# TODO: Make this a setting or fix the underlying issue requiring this hack.
+# See src/desktop/view/canvasview.cpp for details.
+option(CANVAS_VIEW_KEEP_EVEN "Keep canvas view dimensions even hack" OFF)
+add_feature_info("Keep canvas view dimensions even hack (CANVAS_VIEW_KEEP_EVEN)" DISABLE_UPDATE_CHECK_DEFAULT "")
+
 option(DIST_BUILD "Build for stand-alone distribution")
 add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
 
