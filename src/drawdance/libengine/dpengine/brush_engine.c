@@ -2011,26 +2011,36 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                    float colorize, float posterize,
                                    float posterize_num, DP_UNUSED float paint)
 {
-    // A radius less than 0.1 pixels is infinitesimally small. A hardness or
-    // opacity of zero means the mask is completely blank. Disregard the dab
-    // in those cases. MyPaint uses the same logic for this.
-    if (radius < 0.1f && hardness <= 0.0f && opaque <= 0.0f) {
+    DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
+    DP_MyPaintDabParams dab;
+
+    // A radius less than 0.1 pixels is infinitesimally small.
+    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
+    if (dab.size < 51) {
         return 0;
     }
 
-    DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
+    // A hardness of zero means the mask is completely blank.
+    dab.hardness = get_uint8(hardness);
+    if (dab.hardness == 0) {
+        return 0;
+    }
+
+    // An opacity of zero puts nothing on the canvas.
+    dab.opacity = get_uint8(opaque);
+    if (dab.opacity == 0) {
+        return 0;
+    }
+
     DP_PaintMode paint_mode = get_mypaint_paint_mode(be);
     DP_BlendMode blend_mode = get_mypaint_blend_mode(be);
     // Disregard colors with zero alpha if the paint and/or blend modes can't
     // deal with it. MyPaint brushes do this when they want to smudge at full
     // alpha, which will use an undefined (in practice: fully red) color.
-    if (alpha_eraser <= 0.0f
+    if (get_uint8(alpha_eraser) == 0
         && should_ignore_full_alpha_mypaint_dab(paint_mode, blend_mode)) {
         return 0;
     }
-
-    DP_MyPaintDabParams dab;
-    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
 
     DP_Rect bounds =
         subpixel_dab_bounds(x, y, DP_uint32_to_float(dab.size) / 256.0f);
@@ -2041,7 +2051,6 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
 
     dab.x = DP_float_to_int32(x * 4.0f);
     dab.y = DP_float_to_int32(y * 4.0f);
-    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
     dab.angle = get_mypaint_dab_angle(angle);
     dab.aspect_ratio = get_mypaint_dab_aspect_ratio(aspect_ratio);
 
@@ -2126,8 +2135,6 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         dab.mode = 0;
     }
 
-    dab.hardness = get_uint8(hardness);
-    dab.opacity = get_uint8(opaque);
     pixel_perfect_apply(be, dab.x / 4, dab.y / 4, pixel_perfect_append_mypaint,
                         pixel_perfect_append_tentative_mypaint,
                         pixel_perfect_assign_tentative_mypaint, &dab);

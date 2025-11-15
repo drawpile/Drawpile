@@ -1038,11 +1038,16 @@ static void get_mypaint_brush_stamp_offsets(DP_BrushStamp *stamp, float x,
 
 static float get_mypaint_brush_stamp(DP_BrushStamp *stamp, uint16_t *mask,
                                      float *rr_mask, int raw_x, int raw_y,
-                                     uint32_t raw_diameter,
+                                     uint32_t raw_diameter, uint8_t raw_opacity,
                                      uint8_t raw_hardness,
                                      uint8_t raw_aspect_ratio,
                                      uint8_t raw_angle)
 {
+    // Same logic as in brush_engine.c, these dabs are effectively invisible.
+    if (raw_diameter < 51 || raw_opacity == 0 || raw_hardness == 0) {
+        return 0.0f;
+    }
+
     float x = DP_int_to_float(raw_x) / 4.0f;
     float y = DP_int_to_float(raw_y) / 4.0f;
     float diameter = DP_uint32_to_float(raw_diameter) / 256.0f;
@@ -1246,25 +1251,31 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
 
         uint32_t last_size =
             clamp_subpixel_dab_size(DP_mypaint_dab_size(first_dab));
+        uint8_t first_opacity = DP_mypaint_dab_opacity(first_dab);
         uint8_t last_hardness = DP_mypaint_dab_hardness(first_dab);
         uint8_t last_aspect_ratio = DP_mypaint_dab_aspect_ratio(first_dab);
         uint8_t last_angle = DP_mypaint_dab_angle(first_dab);
 
         DP_BrushStamp stamp;
-        float radius = get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, last_x,
-                                               last_y, last_size, last_hardness,
-                                               last_aspect_ratio, last_angle);
-        apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
-                              flood_lc_or_null);
-        apply_mypaint_dab(tlc, context_id, indirect, pixel, normal, lock_alpha,
-                          colorize, posterize, posterize_num, &stamp,
-                          DP_mypaint_dab_opacity(first_dab),
-                          normal_and_eraser_mode, normal_mode, recolor_mode);
-        if (ucs_or_null) {
-            DP_user_cursors_activate(ucs_or_null, context_id);
-            DP_user_cursors_move_smooth(ucs_or_null, context_id,
-                                        params->layer_id, last_x / 4,
-                                        last_y / 4, radius);
+        float radius = get_mypaint_brush_stamp(
+            &stamp, mask1, mask2.rr, last_x, last_y, last_size, first_opacity,
+            last_hardness, last_aspect_ratio, last_angle);
+        if (radius > 0.0f) {
+            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
+                                  flood_lc_or_null);
+            apply_mypaint_dab(tlc, context_id, indirect, pixel, normal,
+                              lock_alpha, colorize, posterize, posterize_num,
+                              &stamp, first_opacity, normal_and_eraser_mode,
+                              normal_mode, recolor_mode);
+            if (ucs_or_null) {
+                DP_user_cursors_activate(ucs_or_null, context_id);
+                DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                            params->layer_id, last_x / 4,
+                                            last_y / 4, radius);
+            }
+        }
+        else {
+            last_size = 0; // Force new mask.
         }
 
         for (int i = 1; i < dab_count; ++i) {
@@ -1273,6 +1284,7 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
             int y = last_y + DP_mypaint_dab_y(dab);
 
             uint32_t size = clamp_subpixel_dab_size(DP_mypaint_dab_size(dab));
+            uint8_t opacity = DP_mypaint_dab_opacity(dab);
             uint8_t hardness = DP_mypaint_dab_hardness(dab);
             uint8_t aspect_ratio = DP_mypaint_dab_aspect_ratio(dab);
             uint8_t angle = DP_mypaint_dab_angle(dab);
@@ -1281,32 +1293,39 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                                || angle != last_angle;
 
             if (needs_new_mask) {
-                radius =
-                    get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, x, y, size,
-                                            hardness, aspect_ratio, angle);
-                last_hardness = hardness;
-                last_size = size;
-                last_aspect_ratio = aspect_ratio;
-                last_angle = angle;
+                radius = get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, x, y,
+                                                 size, opacity, hardness,
+                                                 aspect_ratio, angle);
+                if (radius > 0.0f) {
+                    last_hardness = hardness;
+                    last_size = size;
+                    last_aspect_ratio = aspect_ratio;
+                    last_angle = angle;
+                }
             }
-            else {
+            else if (opacity != 0) {
                 float xf = DP_int_to_float(x) / 4.0f;
                 float yf = DP_int_to_float(y) / 4.0f;
                 radius = DP_uint32_to_float(size) / 256.0f / 2.0f;
                 get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
             }
+            else {
+                radius = 0.0f;
+            }
 
-            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
-                                  flood_lc_or_null);
-            apply_mypaint_dab(
-                tlc, context_id, indirect, pixel, normal, lock_alpha, colorize,
-                posterize, posterize_num, &stamp, DP_mypaint_dab_opacity(dab),
-                normal_and_eraser_mode, normal_mode, recolor_mode);
+            if (radius > 0.0f) {
+                apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp,
+                                      mask_lc_or_null, flood_lc_or_null);
+                apply_mypaint_dab(
+                    tlc, context_id, indirect, pixel, normal, lock_alpha,
+                    colorize, posterize, posterize_num, &stamp, opacity,
+                    normal_and_eraser_mode, normal_mode, recolor_mode);
 
-            if (ucs_or_null) {
-                DP_user_cursors_move_smooth(ucs_or_null, context_id,
-                                            params->layer_id, x / 4, y / 4,
-                                            radius);
+                if (ucs_or_null) {
+                    DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                                params->layer_id, x / 4, y / 4,
+                                                radius);
+                }
             }
 
             last_x = x;
@@ -1349,27 +1368,32 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
 
         uint32_t last_size =
             clamp_subpixel_dab_size(DP_mypaint_blend_dab_size(first_dab));
+        uint8_t first_opacity = DP_mypaint_blend_dab_opacity(first_dab);
         uint8_t last_hardness = DP_mypaint_blend_dab_hardness(first_dab);
         uint8_t last_aspect_ratio =
             DP_mypaint_blend_dab_aspect_ratio(first_dab);
         uint8_t last_angle = DP_mypaint_blend_dab_angle(first_dab);
 
         DP_BrushStamp stamp;
-        float radius = get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, last_x,
-                                               last_y, last_size, last_hardness,
-                                               last_aspect_ratio, last_angle);
-        apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
-                              flood_lc_or_null);
-        DP_transient_layer_content_brush_stamp_apply(
-            tlc, context_id, pixel,
-            DP_channel8_to_15(DP_mypaint_blend_dab_opacity(first_dab)),
-            blend_mode, &stamp);
+        float radius = get_mypaint_brush_stamp(
+            &stamp, mask1, mask2.rr, last_x, last_y, last_size, first_opacity,
+            last_hardness, last_aspect_ratio, last_angle);
+        if (radius > 0.0f) {
+            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
+                                  flood_lc_or_null);
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel, DP_channel8_to_15(first_opacity),
+                blend_mode, &stamp);
 
-        if (ucs_or_null) {
-            DP_user_cursors_activate(ucs_or_null, context_id);
-            DP_user_cursors_move_smooth(ucs_or_null, context_id,
-                                        params->layer_id, last_x / 4,
-                                        last_y / 4, radius);
+            if (ucs_or_null) {
+                DP_user_cursors_activate(ucs_or_null, context_id);
+                DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                            params->layer_id, last_x / 4,
+                                            last_y / 4, radius);
+            }
+        }
+        else {
+            last_size = 0; // Force new mask.
         }
 
         for (int i = 1; i < dab_count; ++i) {
@@ -1379,6 +1403,7 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
 
             uint32_t size =
                 clamp_subpixel_dab_size(DP_mypaint_blend_dab_size(dab));
+            uint8_t opacity = DP_mypaint_blend_dab_opacity(dab);
             uint8_t hardness = DP_mypaint_blend_dab_hardness(dab);
             uint8_t aspect_ratio = DP_mypaint_blend_dab_aspect_ratio(dab);
             uint8_t angle = DP_mypaint_blend_dab_angle(dab);
@@ -1387,32 +1412,38 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
                                || angle != last_angle;
 
             if (needs_new_mask) {
-                radius =
-                    get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, x, y, size,
-                                            hardness, aspect_ratio, angle);
-                last_hardness = hardness;
-                last_size = size;
-                last_aspect_ratio = aspect_ratio;
-                last_angle = angle;
+                radius = get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, x, y,
+                                                 size, opacity, hardness,
+                                                 aspect_ratio, angle);
+                if (radius > 0.0f) {
+                    last_hardness = hardness;
+                    last_size = size;
+                    last_aspect_ratio = aspect_ratio;
+                    last_angle = angle;
+                }
             }
-            else {
+            else if (opacity != 0) {
                 float xf = DP_int_to_float(x) / 4.0f;
                 float yf = DP_int_to_float(y) / 4.0f;
                 radius = DP_uint32_to_float(size) / 256.0f / 2.0f;
                 get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
             }
+            else {
+                radius = 0.0f;
+            }
 
-            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
-                                  flood_lc_or_null);
-            DP_transient_layer_content_brush_stamp_apply(
-                tlc, context_id, pixel,
-                DP_channel8_to_15(DP_mypaint_blend_dab_opacity(dab)),
-                blend_mode, &stamp);
+            if (radius > 0.0f) {
+                apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp,
+                                      mask_lc_or_null, flood_lc_or_null);
+                DP_transient_layer_content_brush_stamp_apply(
+                    tlc, context_id, pixel, DP_channel8_to_15(opacity),
+                    blend_mode, &stamp);
 
-            if (ucs_or_null) {
-                DP_user_cursors_move_smooth(ucs_or_null, context_id,
-                                            params->layer_id, x / 4, y / 4,
-                                            radius);
+                if (ucs_or_null) {
+                    DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                                params->layer_id, x / 4, y / 4,
+                                                radius);
+                }
             }
 
             last_x = x;

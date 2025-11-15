@@ -38,6 +38,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Three new layout presets under View → Layouts. Thanks Ausjamcian, lambda20xx and Scruff for providing them.
  * Feature: Several new brush presets in the Drawpile tag. Thanks Annoy, Blozzom and lambda20xx for providing them.
  * Fix: Properly disable the save as ORA/DPCS actions while another save is going.
+ * Fix: Don't process brush dabs that are invisible due to being infinitesimally tiny, fully transparent or infinitely soft (as opposed to only skipping their processing when they fulfilled all three criteria.) Thanks Blozzom for reporting.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.
