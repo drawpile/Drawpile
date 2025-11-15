@@ -2498,6 +2498,8 @@ void MainWindow::onCanvasSaveStarted()
 	getAction("savedocument")->setEnabled(false);
 	getAction("savedocumentas")->setEnabled(false);
 	getAction("exportdocument")->setEnabled(false);
+	getAction("savedocumentasdpcs")->setEnabled(false);
+	getAction("savedocumentasora")->setEnabled(false);
 #	ifndef Q_OS_ANDROID
 	getAction("exportdocumentagain")->setEnabled(false);
 #	endif
@@ -2516,6 +2518,8 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
 	getAction("exportdocument")->setEnabled(true);
+	getAction("savedocumentasdpcs")->setEnabled(true);
+	getAction("savedocumentasora")->setEnabled(true);
 #	ifndef Q_OS_ANDROID
 	getAction("exportdocumentagain")->setEnabled(m_doc->haveExportPath());
 #	endif
