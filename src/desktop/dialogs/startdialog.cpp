@@ -23,6 +23,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QLabel>
 #include <QMenu>
 #include <QMetaEnum>
 #include <QPalette>
@@ -320,6 +321,15 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 
 	m_links = new startdialog::Links(vertical);
 	mainLayout->insertWidget(menuFirst ? mainLayout->count() : 0, m_links);
+
+	if(!smallScreenMode) {
+		QLabel *versionLabel = new QLabel(
+			QStringLiteral("<span style=\"font-size:small;\">%1</span>")
+				.arg(cmake_config::version()));
+		versionLabel->setAlignment(Qt::AlignRight);
+		versionLabel->setWordWrap(true);
+		m_links->layout()->addWidget(versionLabel);
+	}
 
 	connect(
 		m_addServerButton, &QPushButton::clicked, this,
