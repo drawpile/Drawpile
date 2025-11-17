@@ -828,32 +828,27 @@ import { UAParser } from "ua-parser-js";
   }
 
   function makeVersionSelector(params) {
-    const stableOption = tag("option", { value: "stable" }, "Drawpile 2.2.2");
-    const betaOption = tag(
+    const oldOption = tag("option", { value: "old" }, "Drawpile 2.2.2");
+    const currentOption = tag(
       "option",
-      { value: "beta" },
-      "Drawpile 2.3.0-beta.4"
+      { value: "current" },
+      "Drawpile 2.3.0"
     );
 
     if (params.has("v1")) {
-      stableOption.setAttribute("disabled", "");
-      betaOption.setAttribute("selected", "");
+      oldOption.setAttribute("disabled", "");
+      currentOption.setAttribute("selected", "");
     } else {
-      const versionToSelect = params.get("version")?.trim();
-      if (versionToSelect && /beta|alpha/i.test(versionToSelect)) {
-        betaOption.setAttribute("selected", "");
-      } else {
-        stableOption.setAttribute("selected", "");
-      }
+      currentOption.setAttribute("selected", "");
     }
 
-    const select = tag("select", [stableOption, betaOption]);
+    const select = tag("select", [currentOption, oldOption]);
     const updateVersion = () => {
       const version = select.options[select.selectedIndex].value;
-      if (version === "beta") {
-        pathMappingPrefix = null;
-      } else {
+      if (version === "old") {
         pathMappingPrefix = "stable/";
+      } else {
+        pathMappingPrefix = null;
       }
     };
     select.addEventListener("change", updateVersion);
