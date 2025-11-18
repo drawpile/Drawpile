@@ -1,4 +1,6 @@
-Unreleased Version 2.3.0-pre
+Unreleased Version 2.3.1-pre
+
+2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
  * Fix: Properly remove the "unsaved changes" marker when saving to DPCS.
  * Feature: Add crop to selection action in the selection menu. Not any different to the resize canvas action, but there for discoverability.
