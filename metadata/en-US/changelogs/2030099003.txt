@@ -1,0 +1,1 @@
+Major new release with many new features and fixes, particularly for Android. Among them being clipping layers, selections masking brush strokes, OKLAB and spectral painting modes, a selection action bar, fast reconnects and more. See the website for a full changelog.
