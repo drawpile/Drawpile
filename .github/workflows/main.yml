@@ -305,7 +305,7 @@ jobs:
               sudo apt-get install --no-install-recommends
               libsecret-1-dev
 
-          - os: macos-13
+          - os: macos-15-intel
             cross_os: ''
             component: ''
             qt: 6.8.3
@@ -332,7 +332,7 @@ jobs:
                 fi
               done
 
-          - os: macos-14
+          - os: macos-15
             cross_os: ''
             component: ''
             qt: 6.8.3
