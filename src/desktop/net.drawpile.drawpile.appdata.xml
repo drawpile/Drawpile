@@ -25,11 +25,51 @@
     <category>Graphics</category>
   </categories>
   <releases>
-    <release version="2.3.0-beta.4" type="development" date="2025-10-18">
-      <url>https://drawpile.net/news/release-2.3.0-beta.4/</url>
+    <release version="2.3.0" type="stable" date="2025-11-18">
+      <url>https://drawpile.net/news/release-2.3.0/</url>
       <description>
         <p>Changes in this version:</p>
         <ul>
+          <li>Fix: Don't show "exit layer view" notice when there's no canvas.</li>
+          <li>Fix: Properly remove the "unsaved changes" marker when saving to DPCS.</li>
+          <li>Feature: Add crop to selection action in the selection menu. Not any different to the resize canvas action, but there for discoverability.</li>
+          <li>Feature: Allow using stabilizer and smoothing with lasso select tool.</li>
+          <li>Fix: Don't remember interpolation mode on transform tool, since it's too easy to mess up art from having a stale mode set.</li>
+          <li>Fix: Make mipmap usage in hardware renderer configurable, since it causes performance issues with some graphics cards or drivers. Defaults to off. Thanks Bluestrings and Sinamer for reporting.</li>
+          <li>Fix: Make setting the hue slider to 359 in HSL space not turn out gray. Thanks BornIncompetence for reporting.</li>
+          <li>Fix: Make sliders not show a text selection cursor on Android when they're not in edit mode.</li>
+          <li>Fix: Make layer list items not show a text selection cursor on Android.</li>
+          <li>Fix: Correctly calculate the distance to move before a press is no longer considered a long-press. The calculation ended up with incorectly small values in most cases.</li>
+          <li>Fix: Improve long-press handling for context menus to act more like a real right-click would.</li>
+          <li>Fix: Don't delay long-presses by left-click or touch kinetic scrolling.</li>
+          <li>Feature: Add touch draw pressure settings, because apparently some screen tablets on Android use touch inputs instead of stylus ones. Thanks SurgeonTaco for suggesting.</li>
+          <li>Fix: Make dragging a layer onto its own canvas not paste its contents. Dragging layers between different windows is still possible. Thanks Blozzom and Pepper for reporting.</li>
+          <li>Server Fix: Don't claim that dprec templates are incompatible when they're not.</li>
+          <li>Fix: Make the "alpha lock layer for you" a buttton in the layer dock, rather than having it in the lock menu. Otherwise the inherit alpha button is too confusing to people not used to that feature existing. Thanks Phoneme for reporting.</li>
+          <li>Feature: Add extra thickness to the color sampling ring in the area where the colors meet to give better visibility of the comparison. Thanks tiar for suggesting.</li>
+          <li>Feature: Allow toggling color sampling ring in the color picker tool settings.</li>
+          <li>Fix: Only add actually picked colors to the color picker history, not every color hovered over along the way.</li>
+          <li>Fix: Make opening settings dialog not exit fullscreen on Android.</li>
+          <li>Fix: On Android devices with a screen large enough to show a full desktop UI, dialogs no longer get full-screened by default. The start and settings dialogs also no longer use their vertical design meant for tiny screens. Thanks tiar for reporting.</li>
+          <li>Fix: Replace some symbols in messages that don't show up properly on Android with equivalent ones that do.</li>
+          <li>Fix: Default MyPaint brushes to use synchronized smudging, since many of them only work properly with it turned on.</li>
+          <li>Fix: Select proper file type and remove the extension on the name input field when saving on Android and the browser.</li>
+          <li>Fix: Make color picker color dialog use the current foreground color when manually adding a color. Thanks Phoneme for reporting.</li>
+          <li>Fix: Show an error message on Linux under Wayland when attempting to pick a color from the screen with a hint to use Xorg instead. Thanks Meru and Phoneme for reporting.</li>
+          <li>Fix: Remove pick from screen button in the browser, since it doesn't work there.</li>
+          <li>Fix: Don't enter fullscreen in the browser when reopening the main window. Thanks Bluestrings for reporting.</li>
+          <li>Feature: Skip the username selection when reconnecting to a session in the browser using a drawpile.net account. It now automatically picks the same username again as it does on other platforms.</li>
+          <li>Fix: Remember local state when reconnecting, such as layer/track visibility, sketch mode, alpha lock, view mode etc. Thanks Bluestrings and hpar for reporting.</li>
+          <li>Removed Feature: Migration of settings from very old versions of Drawpile. That code no longer works properly, but it's doubtful anyone would want to port their settings from a 2017 version of Drawpile anyway.</li>
+          <li>Fix: Make keyboards like GBoard not eat all your hardware keyboard shortcuts after editing text once. This is a patch to Qt. Thanks justanotatest for reporting.</li>
+          <li>Fix: Unfocus chat when collapsing it so that you don't continue typing into it while it's gone.</li>
+          <li>Fix: Fall back to the application storage on Android when proper storage is unavailable. This is a patch to Qt. Thanks Sherb for reporting.</li>
+          <li>Fix: Use different zoom levels for hardware and software renderers, depending on which ones work better in the respective modes.</li>
+          <li>Fix: Default hardware renderer to single-buffering, since the system default buffering can add an immense amount of input lag.</li>
+          <li>Feature: Three new layout presets under View → Layouts. Thanks Ausjamcian, lambda20xx and Scruff for providing them.</li>
+          <li>Feature: Several new brush presets in the Drawpile tag. Thanks Annoy, Blozzom and lambda20xx for providing them.</li>
+          <li>Fix: Properly disable the save as ORA/DPCS actions while another save is going.</li>
+          <li>Fix: Don't process brush dabs that are invisible due to being infinitesimally tiny, fully transparent or infinitely soft (as opposed to only skipping their processing when they fulfilled all three criteria.) Thanks Blozzom for reporting.</li>
           <li>Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.</li>
           <li>Fix: Make the preferences menu item on macOS open the preferences again.</li>
           <li>Fix: Make mouse wheel to adjust brush sizes not skip over small values on wheels that make big steps. Thanks Meiren for reporting.</li>
@@ -102,178 +142,13 @@
           <li>Fix: Properly restore chat size when reattaching.</li>
           <li>Fix: Properly save accounts on the web when asked when the server doesn't support browser authentication. Thanks Bluestrings and Evil Sonic for reporting.</li>
           <li>Fix: Don't hang when quickly switching tools while strokes with smudge sync are in progress. Thanks D'mitri for reporting and helping find this.</li>
-        </ul>
-      </description>
-      <artifacts>
-        <artifact type="binary" platform="win64">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86_64.msi</location>
-          <checksum type="sha256">d0428daae5715dae3019448774c95c9be0af5776173b74a7b2976e5834df8c57</checksum>
-          <size type="download">23810048</size>
-        </artifact>
-        <artifact type="binary" platform="win32">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86.msi</location>
-          <checksum type="sha256">57282b1ab068bb1d3c9cff73ce4e4f6e2dcf944730301fd247de00d5b385432f</checksum>
-          <size type="download">20537344</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-arm64.msi</location>
-          <checksum type="sha256">fcc672dfc2abc3b797145eb3f27213ce116e0382bbc266a2923dcab385cf87a9</checksum>
-          <size type="download">21680128</size>
-        </artifact>
-        <artifact type="binary" platform="macos">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86_64.dmg</location>
-          <checksum type="sha256">755121d2f9c09ea077be4918fc11b90acae9c21034a35d50f6ca2f818ff56a1b</checksum>
-          <size type="download">33622167</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-arm64.dmg</location>
-          <checksum type="sha256">de4806ed1b5b404a6645d60378e86e18d6a10166c890a6ef89a94521a9ac8111</checksum>
-          <size type="download">30657446</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86_64.AppImage</location>
-          <checksum type="sha256">595f0d1208a3ee42e8aceccee401bbbb5f02ad9c292f4c6b8851a21b4398f148</checksum>
-          <size type="download">55116992</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-30-35-arm64-v8a.apk</location>
-          <checksum type="sha256">ccebb16162dea1ded4e1a90c827d787d5e7f57427721cf905c3da80e1bd6f140</checksum>
-          <size type="download">23394591</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-23-23-armeabi-v7a.apk</location>
-          <checksum type="sha256">37592023b56a3bb7e552f6514b62a3352e82a16e7bdf841237ce888268c488f0</checksum>
-          <size type="download">20097529</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.4.tar.gz</location>
-          <checksum type="sha256">159deeff39bcae669efdb810128ba27e53267cd00999328141e78b5741f93d92</checksum>
-          <size type="download">10770131</size>
-        </artifact>
-      </artifacts>
-    </release>
-    <release version="2.3.0-beta.3" type="development" date="2025-08-14">
-      <url>https://drawpile.net/news/release-2.3.0-beta.3/</url>
-      <description>
-        <p>Changes in this version:</p>
-        <ul>
           <li>Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.</li>
           <li>Feature: Pixel art input for pixel brushes, turns off all smoothing and makes the inputs apply immediately. Thanks Ben, dAVePAGE and Nilifin for reporting.</li>
           <li>Fix: Remove alpha lock and erase toggle buttons when using the eraser tool.</li>
           <li>Fix: Disable the "modern" WASAPI audio backend, because on some devices it causes crashes in the depths of Windows, makes drag and drop stop working or other strange effects. Thanks Ben, CrustStuff, dAVePAGE and Momo for reporting various different incarnations of this problem.</li>
-        </ul>
-      </description>
-      <artifacts>
-        <artifact type="binary" platform="win64">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86_64.msi</location>
-          <checksum type="sha256">0dfa47c8da48ef647b4f2eedffd72cb58fb0db1384e4cbd95036a2571e35e71c</checksum>
-          <size type="download">23830528</size>
-        </artifact>
-        <artifact type="binary" platform="win32">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86.msi</location>
-          <checksum type="sha256">896c8578fdc8409d2e07e8053426d6ba588ba6bce7aea5f5f3e6f58ad9a26877</checksum>
-          <size type="download">20549632</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-arm64.msi</location>
-          <checksum type="sha256">a16fa3a7fa6f642d11908898feb7403c5e1d4ec569a8eab59b9fabaae3c2731c</checksum>
-          <size type="download">21692416</size>
-        </artifact>
-        <artifact type="binary" platform="macos">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86_64.dmg</location>
-          <checksum type="sha256">008cf2ec54a3181c462feca038ba2d465a2bca913aadf5e3f85f35e77dc97e40</checksum>
-          <size type="download">34095299</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-arm64.dmg</location>
-          <checksum type="sha256">6e41d7dc8f6e3e2e798d20a6c14205b3d147984869f777d0f9286be9146562d6</checksum>
-          <size type="download">30705228</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86_64.AppImage</location>
-          <checksum type="sha256">cc47262d0c720b3142c5ae0adfa8bea0f4ec06d51ab978379c66c37719143b72</checksum>
-          <size type="download">55284928</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-30-34-arm64-v8a.apk</location>
-          <checksum type="sha256">6c527e29a334d474b7ad19e3def664a76729c8e7a17164221fde406dcccaf9c0</checksum>
-          <size type="download">23557135</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-23-23-armeabi-v7a.apk</location>
-          <checksum type="sha256">01fbd4d21ab2d310d9f6b84e5dcf00239f102790b950ef3d1d5c958c24aa2699</checksum>
-          <size type="download">20161711</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.3.tar.gz</location>
-          <checksum type="sha256">62450b0d41bcbcdeba713c8f846abae84c7b1fa096c335a35210e55eb092cc15</checksum>
-          <size type="download">10638158</size>
-        </artifact>
-      </artifacts>
-    </release>
-    <release version="2.3.0-beta.2" type="development" date="2025-08-08">
-      <url>https://drawpile.net/news/release-2.3.0-beta.2/</url>
-      <description>
-        <p>Changes in this version:</p>
-        <ul>
           <li>Fix: Make start dialog not flicker briefly on some systems.</li>
           <li>Removed Feature: Use the same logo for the application, too distracting evidently.</li>
           <li>Fix: Make hosting session with a password work, it did not get picked up sometimes. Thanks Bluestrings for reporting.</li>
-        </ul>
-      </description>
-      <artifacts>
-        <artifact type="binary" platform="win64">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86_64.msi</location>
-          <checksum type="sha256">3617cff04d883dcce408f6f9815321874badfb500d4f0b7ef9b62f6da75384ea</checksum>
-          <size type="download">23904256</size>
-        </artifact>
-        <artifact type="binary" platform="win32">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86.msi</location>
-          <checksum type="sha256">6213a1c9c76f4c1ba272c1a3e09bc0c640fbe746fa434e4a318eaf165eaae8aa</checksum>
-          <size type="download">20619264</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-arm64.msi</location>
-          <checksum type="sha256">1cb03224620c7d6fedbbec1733a4b67f221669234374898564db5a839fd55c44</checksum>
-          <size type="download">21766144</size>
-        </artifact>
-        <artifact type="binary" platform="macos">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86_64.dmg</location>
-          <checksum type="sha256">275866f3b7db7a3f0af8e4dee13c1523a45f44d2b8acc0d9b37e68e191121c9c</checksum>
-          <size type="download">34293444</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-arm64.dmg</location>
-          <checksum type="sha256">d718caef1005e51fac2c49a3e62df9ecfc153a40428a8104fe0455560088e859</checksum>
-          <size type="download">30916737</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86_64.AppImage</location>
-          <checksum type="sha256">476a1d5ea6918133c6f7db7ac11fb19e25b85b7ca13bcb06aa0e4b5e94613c68</checksum>
-          <size type="download">55325888</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-30-34-arm64-v8a.apk</location>
-          <checksum type="sha256">53a179177e8bb1393ccddd6f1960ffbd9f5cb15164e79b38f704198d402bd12b</checksum>
-          <size type="download">23589744</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-23-23-armeabi-v7a.apk</location>
-          <checksum type="sha256">0a68f4cea8c7918bc991414f55dbeef95910d0f97db80d445091569b9c92de57</checksum>
-          <size type="download">20194320</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.2.tar.gz</location>
-          <checksum type="sha256">4e5968a9681be08aace549ff7a86229d82509c9484c1c6755cefc17be1001d28</checksum>
-          <size type="download">10985095</size>
-        </artifact>
-      </artifacts>
-    </release>
-    <release version="2.3.0-beta.1" type="development" date="2025-08-07">
-      <url>https://drawpile.net/news/release-2.3.0-beta.1/</url>
-      <description>
-        <p>Changes in this version:</p>
-        <ul>
           <li>Removed Feature: Compatibility with the old 2.1 versions, which was originally released 6 years ago. 2.3 is compatible with 2.2 instead.</li>
           <li>Feature: Add Edit &gt; Lightness/Darkness to Alpha action. Thanks Ben for suggesting.</li>
           <li>Feature: Allow switching annotation rendering between vector, smooth and pixel fonts. Thanks cvrsoiioo4 for suggesting.</li>
@@ -348,53 +223,6 @@
           <li>Feature: Add a build for Windows on ARM. Thanks fizbin for testing.</li>
         </ul>
       </description>
-      <artifacts>
-        <artifact type="binary" platform="win64">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-x86_64.msi</location>
-          <checksum type="sha256">7b9b4105250f454e8cee335636184c6d75df7bab731bae44eb8547c165956a66</checksum>
-          <size type="download">23900160</size>
-        </artifact>
-        <artifact type="binary" platform="win32">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-x86.msi</location>
-          <checksum type="sha256">0435fb7b5a6cd7e7648e458e049e27d93256dc34baa837cb62b586d73f3fbde7</checksum>
-          <size type="download">20619264</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-arm64.msi</location>
-          <checksum type="sha256">811ffa04af2f38d2cd2dda03077199e8f834dedd31401ab8feedd5178c0ad5ec</checksum>
-          <size type="download">21762048</size>
-        </artifact>
-        <artifact type="binary" platform="macos">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-x86_64.dmg</location>
-          <checksum type="sha256">b28324861ed022679da2ecef256bbea213002055a0fc2301988931f8c3203de2</checksum>
-          <size type="download">34111358</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-arm64.dmg</location>
-          <checksum type="sha256">4236390a6757e2076a9165ad2202113b91ff0b4ec581a471c5d01aa9a9fd947b</checksum>
-          <size type="download">30739079</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-x86_64.AppImage</location>
-          <checksum type="sha256">449537ed0bef1277536b91cbf3e3fa126eb9d5dc7d5df68dc74e60ee72b13c6a</checksum>
-          <size type="download">55375040</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-30-34-arm64-v8a.apk</location>
-          <checksum type="sha256">990c3150e0a87264a61c32c9a595598163cf55cdca921fb8737689f6719b5458</checksum>
-          <size type="download">23590528</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.1/Drawpile-2.3.0-beta.1-23-23-armeabi-v7a.apk</location>
-          <checksum type="sha256">97d94348fcc5d860cf6bc3f359bebd8b12c55721d32ccbc4b263235bb64da9f7</checksum>
-          <size type="download">20293744</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.1.tar.gz</location>
-          <checksum type="sha256">4e77bd6cbac19e72d2875c83df9e426ffc493f1783af7d7b8b22a32ed14a0bfb</checksum>
-          <size type="download">10982040</size>
-        </artifact>
-      </artifacts>
     </release>
     <release version="2.2.2" type="stable" date="2025-03-26">
       <url>https://drawpile.net/news/release-2.2.2/</url>
