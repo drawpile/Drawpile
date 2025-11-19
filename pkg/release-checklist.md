@@ -41,7 +41,9 @@ Yes, this can be automated to a large degree, but it currently happens infrequen
     * Wait for CI to generate the release if it hasn't yet.
     * Run `gh release upload $VERSION "Drawpile-$VERSION-Qt5-x86_64.dmg#macOS Disk Image for Intel older than Monterey"` to upload the disk image to the release.
 * Update Docker:
-    * Change directories pkg/docker, build and push drawpile-srv for the version you're releasing. If you're releasing for a stable version, also add a tag with the last segment chopped off (e.g. 2.2.0 and 2.2) for x86_64 and ARM64. `docker buildx build -t drawpile/drawpile-srv:$VERSION -t drawpile/drawpile-srv:"$(echo "$VERSION" | sed 's/\.[0-9+]$//')" --platform linux/amd64,linux/arm64 --build-arg version=$VERSION --push .`
+    * Change directories to pkg/docker.
+    * If you haven't done so before, create a builder: `docker buildx create --name container-builder --driver docker-container --bootstrap --use`
+    * Build and push. If you're releasing for a stable version, also add a tag with the last segment chopped off (e.g. 2.2.0, 2.2 and 2, but don't do that for betas) for x86_64 and ARM64. `docker buildx build -t drawpile/drawpile-srv:$VERSION [-t drawpile/drawpile-srv:$SERVERVERSION.$MAJORVERSION -t drawpile/drawpile-srv:$SERVERVERSION] --platform linux/amd64,linux/arm64 --build-arg version=$VERSION --push .`
     * Let it build. It'll automatically push.
     * Prune the buildx guff: `docker buildx prune` - do it now, if you try to do it later the container will just say it isn't running and then you have to start another build and cancel it just so you can prune.
 * Update Flatpak:
