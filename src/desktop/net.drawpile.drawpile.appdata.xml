@@ -223,6 +223,53 @@
           <li>Feature: Add a build for Windows on ARM. Thanks fizbin for testing.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-x86_64.msi</location>
+          <checksum type="sha256">cc3555d0af30ec2081f80af1ee6fc1dab49129cb20e750320c56e1d7a1e29639</checksum>
+          <size type="download">23859200</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-x86.msi</location>
+          <checksum type="sha256">821806f6f738f4b34c5c81c65d4ff45af5aa6e2059c349705605f41993cd5699</checksum>
+          <size type="download">20578304</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-arm64.msi</location>
+          <checksum type="sha256">570072c0da2f684448b23c5910f6037b8117c2e4e6e14ad48f7079be926901ef</checksum>
+          <size type="download">21721088</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-x86_64.dmg</location>
+          <checksum type="sha256">09eeff8bacc62200f810c8be89dcb595e0a069efd9ca9659b6f97f50c1244573</checksum>
+          <size type="download">33637060</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-arm64.dmg</location>
+          <checksum type="sha256">d6ba02a723b57ca83a523ea61b192b349005c8c3f8a10579877477d5b652409c</checksum>
+          <size type="download">30694829</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-x86_64.AppImage</location>
+          <checksum type="sha256">983dd866449e9c42d36af96c959f72e9d961692477842b7b5aae57239905bd2b</checksum>
+          <size type="download">55366848</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-30-35-arm64-v8a.apk</location>
+          <checksum type="sha256">5b0707aa9013c207f2c36b3b76ffbead904f0d423ca7eb9eea863b7b2abb3efa</checksum>
+          <size type="download">23435977</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">7c0b9985e799de5330741fdd71cf741b9630e1ba3377bf7cf914b90d2c3c43a8</checksum>
+          <size type="download">20138915</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0.tar.gz</location>
+          <checksum type="sha256">d09d3eef00b15004184700817d1b6620acc4cfd0738ad8977680c1e05bc2ea7d</checksum>
+          <size type="download">10842390</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.2.2" type="stable" date="2025-03-26">
       <url>https://drawpile.net/news/release-2.2.2/</url>
