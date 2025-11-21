@@ -75,22 +75,18 @@ static void addBlendModesTo(
 			addSeparator(model);
 		}
 
-		QStandardItem *item = new QStandardItem(m.name);
-		item->setData(int(m.mode), Qt::UserRole);
-		if(m.mode == DP_BLEND_MODE_RECOLOR) {
-			if(recolor == RECOLOR_DISABLED) {
-				item->setEnabled(false);
-				model->appendRow(item);
-			} else if(recolor != RECOLOR_OMITTED) {
-				model->appendRow(item);
-			}
-		} else {
-			model->appendRow(item);
-		}
+		if(m.mode != DP_BLEND_MODE_RECOLOR || recolor != RECOLOR_OMITTED) {
+			QStandardItem *item = new QStandardItem(m.name);
+			item->setData(int(m.mode), Qt::UserRole);
 
-		if(compatibilityMode &&
-		   !(myPaint ? m.myPaintCompatible : m.compatible)) {
-			item->setEnabled(false);
+			if((m.mode == DP_BLEND_MODE_RECOLOR &&
+				recolor == RECOLOR_DISABLED) ||
+			   (compatibilityMode &&
+				!(myPaint ? m.myPaintCompatible : m.compatible))) {
+				item->setEnabled(false);
+			}
+
+			model->appendRow(item);
 		}
 
 		if(m.separatorBelow && i != count - 1) {
