@@ -28,6 +28,7 @@ CanvasView::CanvasView(
 	: QAbstractScrollArea(parent)
 	, m_controller(controller)
 	, m_canvasWidget(canvasWidget)
+	, m_needsEvenResizeHack(canvasWidget->isHardware())
 {
 	setFrameShape(QFrame::NoFrame);
 
@@ -149,41 +150,40 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 
 void CanvasView::resizeEvent(QResizeEvent *event)
 {
-#ifdef CANVAS_VIEW_KEEP_EVEN
 	// Ridiculous hack to work around the hardware renderer on some systems no
 	// handling odd canvas dimensions properly and producing jittery pixels.
-	// TODO: Make this a setting or fix the issue to make this unnecessary.
-	bool initial = !m_marginsReset;
-	if(initial) {
-		m_marginsReset = true;
-		m_marginsSet = false;
-		m_resizeHandled = false;
-		setViewportMargins(0, 0, 0, 0);
-	}
+	if(m_needsEvenResizeHack) {
+		bool initial = !m_marginsReset;
+		if(initial) {
+			m_marginsReset = true;
+			m_marginsSet = false;
+			m_resizeHandled = false;
+			setViewportMargins(0, 0, 0, 0);
+		}
 
-	if(!m_marginsSet) {
-		m_marginsSet = true;
-		QSize size = event->size();
-		int w = size.width();
-		int h = size.height();
-		setViewportMargins(0, 0, w % 2, h % 2);
-	}
+		if(!m_marginsSet) {
+			m_marginsSet = true;
+			QSize size = event->size();
+			int w = size.width();
+			int h = size.height();
+			setViewportMargins(0, 0, w % 2, h % 2);
+		}
 
-	if(!m_resizeHandled) {
-		m_resizeHandled = true;
+		if(!m_resizeHandled) {
+			m_resizeHandled = true;
+			QAbstractScrollArea::resizeEvent(event);
+			m_canvasWidget->handleResize(event);
+		}
+
+		if(initial) {
+			m_marginsReset = false;
+			m_marginsSet = false;
+			m_resizeHandled = false;
+		}
+	} else {
 		QAbstractScrollArea::resizeEvent(event);
 		m_canvasWidget->handleResize(event);
 	}
-
-	if(initial) {
-		m_marginsReset = false;
-		m_marginsSet = false;
-		m_resizeHandled = false;
-	}
-#else
-	QAbstractScrollArea::resizeEvent(event);
-	m_canvasWidget->handleResize(event);
-#endif
 }
 
 void CanvasView::paintEvent(QPaintEvent *event)

@@ -15,6 +15,8 @@ public:
 	GlCanvas(CanvasController *controller, QWidget *parent = nullptr);
 	~GlCanvas() override;
 
+	bool isHardware() const override;
+
 	QWidget *asWidget() override;
 
 	QSize viewSize() const override;

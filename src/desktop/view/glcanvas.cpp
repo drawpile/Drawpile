@@ -1053,6 +1053,11 @@ GlCanvas::~GlCanvas()
 	delete d;
 }
 
+bool GlCanvas::isHardware() const
+{
+	return true;
+}
+
 QWidget *GlCanvas::asWidget()
 {
 	return this;

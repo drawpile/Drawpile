@@ -17,6 +17,8 @@ public:
 	SoftwareCanvas(CanvasController *controller, QWidget *parent = nullptr);
 	~SoftwareCanvas() override;
 
+	bool isHardware() const override;
+
 	QWidget *asWidget() override;
 
 	QSize viewSize() const override;

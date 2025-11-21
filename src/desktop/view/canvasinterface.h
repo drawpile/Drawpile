@@ -16,6 +16,8 @@ class CanvasInterface {
 public:
 	virtual ~CanvasInterface() = default;
 
+	virtual bool isHardware() const = 0;
+
 	virtual QWidget *asWidget() = 0;
 
 	virtual QSize viewSize() const = 0;

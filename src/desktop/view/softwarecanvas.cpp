@@ -239,6 +239,11 @@ SoftwareCanvas::~SoftwareCanvas()
 	delete d;
 }
 
+bool SoftwareCanvas::isHardware() const
+{
+	return false;
+}
+
 QWidget *SoftwareCanvas::asWidget()
 {
 	return this;
