@@ -50,7 +50,7 @@ jobs:
           - os: ubuntu-22.04
             cross_os: ''
             component: ''
-            qt: 5.15.17
+            qt: 5.15.18
             arch: x86_64
             android_sdk_versions: ''
             sccache_triplet: x86_64-unknown-linux-musl
@@ -308,7 +308,7 @@ jobs:
           - os: macos-15-intel
             cross_os: ''
             component: ''
-            qt: 6.8.3
+            qt: 6.10.1
             arch: x86_64
             android_sdk_versions: ''
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
@@ -335,7 +335,7 @@ jobs:
           - os: macos-15
             cross_os: ''
             component: ''
-            qt: 6.8.3
+            qt: 6.10.1
             arch: arm64
             android_sdk_versions: ''
             build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
@@ -362,7 +362,7 @@ jobs:
           - os: windows-2025
             cross_os: ''
             component: ''
-            qt: 5.15.17
+            qt: 5.15.18
             arch: x86_64
             android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
@@ -388,7 +388,7 @@ jobs:
           - os: windows-2025
             cross_os: ''
             component: 'Tools'
-            qt: 5.15.17
+            qt: 5.15.18
             arch: x86_64
             android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
@@ -412,7 +412,7 @@ jobs:
               cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
 
           - os: windows-2025
-            qt: 5.15.17
+            qt: 5.15.18
             arch: x86
             android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
@@ -438,7 +438,7 @@ jobs:
           - os: windows-11-arm
             cross_os: ''
             component: ''
-            qt: 5.15.17
+            qt: 5.15.18
             arch: arm64
             android_sdk_versions: ''
             sccache_triplet: aarch64-pc-windows-msvc
@@ -871,15 +871,15 @@ jobs:
           checkout/pkg/make-github-release.sh \
             'Drawpile-Android-30-35-arm64-Qt5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1;Drawpile-*.apk;Android APK 64bit' \
             'Drawpile-Android-23-23-arm64-Qt5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1;Drawpile-*.apk;Android APK 64bit for end of life systems - only use if you have Android 10 or older' \
-            'Drawpile-Linux-x86_64-Qt5.15.17;Drawpile-*.AppImage;Linux AppImage 64bit' \
-            'Drawpile-macOS-x86_64-Qt6.8.3;Drawpile-*.dmg;macOS Disk Image for Intel' \
-            'Drawpile-macOS-arm64-Qt6.8.3;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
-            'Drawpile-Windows-x86_64-Qt5.15.17;Drawpile-*.msi;Windows Installer 64bit' \
-            'Drawpile-Windows-x86_64-Qt5.15.17;Drawpile-*.zip;Windows Portable ZIP 64bit' \
-            'Drawpile-Windows-x86_64-Qt5.15.17;DrawpileSymbols-*.zip;Debug Symbols for Windows 64bit - does not include Drawpile' \
-            'Drawpile-Tools-Windows-x86_64-Qt5.15.17;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
+            'Drawpile-Linux-x86_64-Qt5.15.18;Drawpile-*.AppImage;Linux AppImage 64bit' \
+            'Drawpile-macOS-x86_64-Qt6.10.1;Drawpile-*.dmg;macOS Disk Image for Intel' \
+            'Drawpile-macOS-arm64-Qt6.10.1;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
+            'Drawpile-Windows-x86_64-Qt5.15.18;Drawpile-*.msi;Windows Installer 64bit' \
+            'Drawpile-Windows-x86_64-Qt5.15.18;Drawpile-*.zip;Windows Portable ZIP 64bit' \
+            'Drawpile-Windows-x86_64-Qt5.15.18;DrawpileSymbols-*.zip;Debug Symbols for Windows 64bit - does not include Drawpile' \
+            'Drawpile-Tools-Windows-x86_64-Qt5.15.18;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
             'Drawpile-Android-23-23-arm32-Qt5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
-            'Drawpile-Windows-x86-Qt5.15.17;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
-            'Drawpile-Windows-x86-Qt5.15.17;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit' \
-            'Drawpile-Windows-arm64-Qt5.15.17;Drawpile-*.msi;Windows Installer for ARM-based devices - do not use, you want 64bit' \
-            'Drawpile-Windows-arm64-Qt5.15.17;Drawpile-*.zip;Windows Portable ZIP for ARM-based devices - do not use, you want 64bit'
+            'Drawpile-Windows-x86-Qt5.15.18;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
+            'Drawpile-Windows-x86-Qt5.15.18;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit' \
+            'Drawpile-Windows-arm64-Qt5.15.18;Drawpile-*.msi;Windows Installer for ARM-based devices - do not use, you want 64bit' \
+            'Drawpile-Windows-arm64-Qt5.15.18;Drawpile-*.zip;Windows Portable ZIP for ARM-based devices - do not use, you want 64bit'

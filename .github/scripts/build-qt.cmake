@@ -204,10 +204,11 @@ if(QT_VERSION VERSION_GREATER_EQUAL 6)
 		list(APPEND BASE_FLAGS "-DOPENSSL_ROOT_DIR=${CMAKE_INSTALL_PREFIX}")
 	endif()
 
-	set(TOOLS_FLAGS
-		-no-feature-clang
-		-no-feature-clangcpp
-	)
+	if(QT_VERSION VERSION_LESS 6.10)
+		set(TOOLS_FLAGS -no-feature-clang -no-feature-clangcpp)
+	else()
+		set(TOOLS_FLAGS -no-feature-clang)
+	endif()
 else()
 	set(URL_LICENSE opensource-)
 
@@ -376,12 +377,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=7a39dfa69b2ef819afde52f2f905907a31ff1a9f9f5c4698f8d042994a2fa08e5632bd98e7ced76b8e333645bb849d15
+				5.15.18
+				SHA384=9d6af04e494ac144d69f09edb583be5d30267fbf700e39e8120fb47c01055f8a5a50b57e2d9cdb0794b01dfc0b1b48da
 				6.7.2
 				SHA384=47f0fb85e5a34220e91a5f9d4ecb3fa358442fbcd7fdeb4e7f7a86c4ecd6271268d6fbf07b03abb301e858253b8f76a2
 				6.8.3
 				SHA384=ad909f70006e9ab97da86505a4b93dd23507a647b95f05c4ae249751442cb5badb1db9b2ebda14e6844f50509489ada4
+				6.10.1
+				SHA384=1e543b953eed80d28ccd3c06f6bb375f8538ba69e77a81791e30a7a538953f3d6cec1c9932721f51a1ec4cd6661f568e
 			ALL_PLATFORMS
 				${BASE_GENERATOR}
 					ALL
@@ -399,7 +402,7 @@ else()
 					RELEASE
 						-release ${BASE_RELEASE_FLAGS}
 			PATCHES
-				5.15.17
+				5.15.18
 					patches/qtbug-111538.diff
 					patches/androiddeployqt_keystore_env.diff
 					patches/cast_types_for_egl_x11_test.diff
@@ -459,6 +462,26 @@ else()
 					# TODO androidinputfocus-qt6.diff
 					# TODO android-fallbackpaths-qt6.diff
 					# TODO 64bit android-16k-alignment-qt6.diff
+				6.10.1
+					patches/qtbug-113394.diff
+					# TODO patches/cancel_touch_on_pen.diff
+					# TODO patches/qtbug-121416.diff
+					# TODO patches/qtbug-116754.diff
+					# TODO patches/touchstart_prevent_default.diff
+					patches/fusioncontrast-qt6.10.diff
+					patches/macostabs-qt6.diff
+					patches/qt6androidmacros_build_tools_revision.diff
+					patches/findeglemscripten.diff
+					# TODO: make these patches work.
+					# patches/noasyncify.diff
+					# patches/browser_keyboard_input.diff
+					# patches/browser_file_accept.diff
+					patches/android_no_build_id.diff
+					patches/kineticscrollfilter-qt6.10.diff
+					patches/nonativemessagebox.diff
+					# TODO androidinputfocus-qt6.diff
+					# TODO android-fallbackpaths-qt6.diff
+					# TODO 64bit android-16k-alignment-qt6.diff
 		)
 	endif()
 
@@ -468,12 +491,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=7346d8ea7f756406610614087bee6ac90883b22ac017fa0e15361fae5191cbdea5f72ae3c80292ab7b169a2603241362
+				5.15.18
+				SHA384=9bf81ec5140edcac23680e9cfeb9a4c42d8a968d0f50530b78f5249ae238161e3645928b4762ac7fbc42d50961a27502
 				6.7.2
 				SHA384=384c7dac3434be7063fca4931c0da179657c275b2e3a343fb6b9f597c1b1390a4c17ca4a16b73f31c23841fd987685c8
 				6.8.3
 				SHA384=79d688174b899383b87da518f8817db6203bc7d847e29b19c1a180ae75baa67c6934185fa76f95b0f59e664eaa9fc7d5
+				6.10.1
+				SHA384=79624b738fe450edf23e31b386b9036f042ed86dcbf2304258603e5dd6d716a88174824134da884e727293dd4c127ce0
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 		)
@@ -485,12 +510,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=457917b0c8eeb6ebcbe8bf754a3dc6482b91149e910354d1c88958edd2e0dba614feecfda8afe18c1932ad950c0e569a
+				5.15.18
+				SHA384=54ab33cc6567ff0cffa8de44090440eca2a96834b1adc8cae269087af06f65b6aa79cf30b04f3387845f826b68f3345d
 				6.7.2
 				SHA384=fd1a98a1ff4643a4eccbcbb6d383eebf306a1f421889e4ef2a9d6cfef80360fe10c506b673db45bda0d21647c49b75aa
 				6.8.3
 				SHA384=f9ee66cb619e6070dbf8974b0bcc15a4dfc89e0eca202da2ee8a201224d54570eb469a072a349f198b20649b70e1f4ff
+				6.10.1
+				SHA384=d318b75254caa908254e1bcde2de14394d27d76daa7f2774c0ac3df243e0cceaf50762524285beffb579ce1c05100674
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 					ALL ${FLAGS_SEPARATOR}
@@ -518,6 +545,8 @@ else()
 				SHA384=56a7ea77e78006f805283befa415b3d78c21e7509d790b95e3fbb836495c824a736abaaf4ff01cccd019e66198edc4fe
 				6.8.3
 				SHA384=cb2d4f4fe3e5aa556d6923cdb1408444114730ef9cb52f10796bd363ad9f4da38b3676633f1fe06678d10eee695cf97f
+				6.10.1
+				SHA384=6d9bdb12cb576ef540baa8d38b108b3f6191ccd4c7ffa52b20bdf549661064c47ffd927aa669e8c671ea6d029f6e3c5d
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 			PATCHES
@@ -532,12 +561,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=ff33b29081e7f7f609121e4b06aaa4f44a9b999210a0a37e4966f97b9b4ab8a8fd31ccf6970268ca57e741e9e9e4e432
+				5.15.18
+				SHA384=ae7cbdd4c1a25d33a68f3df66e88affcb9f77ba693361a0a7fb5bbd6a063f619c04a1d6abb3a91344cc025b6ad608209
 				6.7.2
 				SHA384=ef58f56cc00b9d32dcbdcf2713f2cc7145be09b12cf919d0c8e1e7a1ec88c312c4a477d1aaf1e5ed4d16550008172584
 				6.8.3
 				SHA384=bdac10fe1da84398f026a32cda120d109ab9ef3e6c938d64d20e93e2208da0d44b73027924057bf6dd06992fb0e139c1
+				6.10.1
+				SHA384=325abd83e6b953be5c1d41f17a7e69b8e8aa353acf7e5a151d0f612592225acf8507629123e9ca5c8380232f7348a0e2
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 					ALL ${FLAGS_SEPARATOR} ${MULTIMEDIA_FLAGS}
@@ -554,12 +585,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=fba513518a1fbaef8b9515466a47ae9dc2edc513a8a5e988ebc2b1df19ca980b5a70f74e131970bba2f1d63d4a10b2b8
+				5.15.18
+				SHA384=ec5cf38985d8ed24c5477021a7a5ee41dc82901147e65b09f593d5fdd097a4d05f795d57edd1e159589f35c338352029
 				6.7.2
 				SHA384=ecd8e52476dfb7aad42acf6bb68a8ad03a307c066cb0f0be235d0a4724725fbb297ddfcd90c704667415eef73ba2a6cb
 				6.8.3
 				SHA384=1c0d200820356f8cc297ba471d1873a4d3b5feda8a8c2d765cf12e216dcafbc350d3bebdf526f777484b6321fcd4e49c
+				6.10.1
+				SHA384=3b2d2cfacbbb5b73259116ef708831380bd63677a03a99bbd4c4880e6d959d03b9b722b4f4feb2a8cbe58f22db5d0dc2
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 					# linguist is required for translation compilation, and it transitively
@@ -584,8 +617,8 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=54fa55d66ef7983ac62e22a0d2b5b2866d53bfffd8bb8aacfec388d5c89dbca15d4dc39b7e99f6ee180e6147341f0814
+				5.15.18
+				SHA384=ff88bd8ac6e0883dbfdc5b3a17292d1fbc7bd83cb979516b31748c1eaa7fb06d32e9944d87c66f1d1267fed10234b0e4
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 		)
@@ -597,12 +630,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=fe4edf5d4a8867950574c3218190a71be58d99eadde34505a6b0a2d759fda241822ada837cc2e08035dc23ffb6957117
+				5.15.18
+				SHA384=1d3d2072d2bec21fd0cd66bad8ae1eb19fe4193feb72cf2ac6715c737008d0ccab4812876d1de442b53d7bc3d4f4e83e
 				6.7.2
 				SHA384=428908175b3f14da484fac4a682d85de16add57c734863ca55e4873d82826328cde2451dd2b353a8d77e96d4dbfafa82
 				6.8.3
 				SHA384=a7c5bef878c88646f9db9bc102fdc733a748e2a22d1d40f050c435c929acd858cf742a3408ae983e7df97eccc1334240
+				6.10.1
+				SHA384=7d6aab55926b91ca276b79e3274428133dd623436b441462bdc14a21208d4359b14cfad16fb3244584975bfcee8e228a
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 		)
@@ -614,12 +649,14 @@ else()
 			TARGET_ARCH "${TARGET_ARCH}"
 			SOURCE_DIR "${TEMPLATE_SOURCE_DIR}"
 			VERSIONS
-				5.15.17
-				SHA384=4fd8b976f17b9a51eeac08eb0ca2cc90786f649ce4b801004aa2cfd22db618bce89f81ecff5b89cc461f9cdc20c2fd6f
+				5.15.18
+				SHA384=37eeeb6498f50012799eea8a50ee6995ccb9a55f7c38789ae88d094dc4606b4b0e4a157aa0ed6976b2bb14388408a840
 				6.7.2
 				SHA384=a668d863fb73d8e25e4e334cd9bc22d7b98333186496110ba4080d007fdd52b6134ccf50c5aa671ff04540b3e10fa6a9
 				6.8.3
 				SHA384=1bf6667c83d90b1100e4e5f2bc14a2936392d5a7cd4bb7842f573390b1d9913c6c6d09405d1c2a47525ca174c7edc86c
+				6.10.1
+				SHA384=b67ff7fb1008524ff9f9f269bdcebd316eda8494756421c5a3ef471b9b7b009ced3e26d575fc59845f79f0056dccc37b
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
 		)

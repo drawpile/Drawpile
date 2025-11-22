@@ -115,6 +115,12 @@ using CheckBoxState = int;
 #	define COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(CLS) &CLS::stateChanged
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+#	define COMPAT_FLAGS_ARG(F) (F).toInt()
+#else
+#	define COMPAT_FLAGS_ARG(F) (F)
+#endif
+
 }
 
 #endif
