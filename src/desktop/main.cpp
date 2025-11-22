@@ -1140,9 +1140,39 @@ static QUrl buildJoinUrl(const QString &address)
 	return url;
 }
 
-static void startApplication(DrawpileApp *app)
+static void startApplication(
+	DrawpileApp *app, int vsync, QSurfaceFormat::SwapBehavior swapBehavior)
 {
 	StartupOptions startupOptions = initApp(*app);
+
+	if(app->canvasImplementation() ==
+	   int(libclient::settings::CanvasImplementation::OpenGl)) {
+		// OpenGL rendering format. 8 bit color, no alpha, no depth. Stencil
+		// buffer is needed for QPainter, without it, it can't manage to draw
+		// large paths and spams the warning log with "Painter path exceeds
+		// +/-32767 pixels."
+		QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+		if(vsync >= 0) {
+			format.setSwapInterval(vsync);
+		}
+		format.setSwapBehavior(swapBehavior);
+		format.setRedBufferSize(8);
+		format.setGreenBufferSize(8);
+		format.setBlueBufferSize(8);
+		format.setAlphaBufferSize(0);
+		format.setDepthBufferSize(0);
+		format.setStencilBufferSize(8);
+#ifdef Q_OS_MACOS
+		// No support for OpenGL ES 2.0 or the compatibility profile on macOS.
+		format.setMajorVersion(3);
+		format.setMinorVersion(2);
+		format.setRenderableType(QSurfaceFormat::OpenGL);
+		format.setProfile(QSurfaceFormat::CoreProfile);
+		format.setOption(QSurfaceFormat::DeprecatedFunctions, false);
+#endif
+		QSurfaceFormat::setDefaultFormat(format);
+	}
+
 	if(!startupOptions.joinUrl.isEmpty()) {
 		app->joinUrl(
 			buildJoinUrl(startupOptions.joinUrl), startupOptions.autoRecordPath,
@@ -1256,30 +1286,6 @@ extern "C" void drawpileMain(int argc, char **argv)
 	}
 #endif
 
-	// OpenGL rendering format. 8 bit color, no alpha, no depth. Stencil buffer
-	// is needed for QPainter, without it, it can't manage to draw large paths
-	// and spams the warning log with "Painter path exceeds +/-32767 pixels."
-	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
-	if(vsync >= 0) {
-		format.setSwapInterval(vsync);
-	}
-	format.setSwapBehavior(swapBehavior);
-	format.setRedBufferSize(8);
-	format.setGreenBufferSize(8);
-	format.setBlueBufferSize(8);
-	format.setAlphaBufferSize(0);
-	format.setDepthBufferSize(0);
-	format.setStencilBufferSize(8);
-#ifdef Q_OS_MACOS
-	// No support for OpenGL ES 2.0 or the compatibility profile on macOS.
-	format.setMajorVersion(3);
-	format.setMinorVersion(2);
-	format.setRenderableType(QSurfaceFormat::OpenGL);
-	format.setProfile(QSurfaceFormat::CoreProfile);
-	format.setOption(QSurfaceFormat::DeprecatedFunctions, false);
-#endif
-	QSurfaceFormat::setDefaultFormat(format);
-
 #ifdef __EMSCRIPTEN__
 	DrawpileApp *app = new DrawpileApp(argc, argv);
 #else
@@ -1288,7 +1294,7 @@ extern "C" void drawpileMain(int argc, char **argv)
 #endif
 	DP_QT_LOCALE_RESET();
 
-	startApplication(app);
+	startApplication(app, vsync, swapBehavior);
 
 #ifndef __EMSCRIPTEN__
 	return app->exec();
