@@ -26,9 +26,11 @@ declare -a modules=(
 if [[ $major = 5 ]]; then
     modules+=(qtandroidextras)
     suffix=-opensource
+    sums=md5sums.txt
 elif [[ $major = 6 ]]; then
     modules+=(qtshadertools)
     suffix=
+    sums=md5sums
 else
     echo "Unhandled Qt major version $major in $version" 1>&2
     exit 1
@@ -41,7 +43,7 @@ for module in "${modules[@]}"; do
     wget "https://download.qt.io/archive/qt/$major.$minor/$version/submodules/$module-everywhere$suffix-src-$version.tar.xz"
 done
 
-wget "https://download.qt.io/archive/qt/$major.$minor/$version/submodules/md5sums.txt"
+wget -O md5sums.txt "https://download.qt.io/archive/qt/$major.$minor/$version/submodules/$sums"
 md5sum -c --ignore-missing md5sums.txt
 
 sha384sum *.tar.xz
