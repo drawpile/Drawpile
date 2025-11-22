@@ -240,13 +240,13 @@
           <size type="download">21721088</size>
         </artifact>
         <artifact type="binary" platform="macos">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-x86_64.dmg</location>
-          <checksum type="sha256">09eeff8bacc62200f810c8be89dcb595e0a069efd9ca9659b6f97f50c1244573</checksum>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-fix.1-x86_64.dmg</location>
+          <checksum type="sha256">5a1190da6f7201088e92fc984efcb602b9e22b99f95b6ab0c1e74a3a1ed77154</checksum>
           <size type="download">33637060</size>
         </artifact>
         <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-arm64.dmg</location>
-          <checksum type="sha256">d6ba02a723b57ca83a523ea61b192b349005c8c3f8a10579877477d5b652409c</checksum>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0/Drawpile-2.3.0-fix.1-arm64.dmg</location>
+          <checksum type="sha256">79a52b08663883b5026637762fbee82a45c4d2a9bd6e027891ec3dde839fa8e3</checksum>
           <size type="download">30694829</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
