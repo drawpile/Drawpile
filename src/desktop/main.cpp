@@ -1237,7 +1237,13 @@ extern "C" void drawpileMain(int argc, char **argv)
 #endif
 
 	int vsync = 0;
+#ifdef Q_OS_MACOS
+	// Single-buffering is busted on macOS, it causes windows to not repaint.
+	QSurfaceFormat::SwapBehavior swapBehavior =
+		QSurfaceFormat::DefaultSwapBehavior;
+#else
 	QSurfaceFormat::SwapBehavior swapBehavior = QSurfaceFormat::SingleBuffer;
+#endif
 	applyRenderSettings(argc, argv, vsync, swapBehavior);
 
 #ifdef Q_OS_WIN
