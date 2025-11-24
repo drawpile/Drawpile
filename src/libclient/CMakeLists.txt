@@ -218,6 +218,8 @@ target_sources(dpclient PRIVATE
 	utils/listservermodel.h
 	utils/logging.cpp
 	utils/logging.h
+	utils/qtguicompat.cpp
+	utils/qtguicompat.h
 	utils/scopedoverridecursor.h
 	utils/selectionalteration.cpp
 	utils/selectionalteration.h
