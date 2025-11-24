@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DESKTOP_UTILS_TOUCHHANDLER_H
-#define DESKTOP_UTILS_TOUCHHANDLER_H
+#ifndef LIBCLIENT_VIEW_TOUCHHANDLER_H
+#define LIBCLIENT_VIEW_TOUCHHANDLER_H
 #include <QDeadlineTimer>
 #include <QHash>
 #include <QObject>
 #include <QPointF>
 
-class QGestureEvent;
 class QTimer;
 class QTouchEvent;
+
+namespace view {
 
 class TouchHandler : public QObject {
 	Q_OBJECT
@@ -37,8 +38,6 @@ public:
 		QTouchEvent *event, qreal zoom, qreal rotation, qreal dpr);
 	void handleTouchEnd(QTouchEvent *event, bool cancel);
 
-	void handleGesture(QGestureEvent *event, qreal zoom, qreal rotation);
-
 signals:
 	void touchPressed(
 		QEvent *event, long long timeMsec, const QPointF &posf,
@@ -50,6 +49,28 @@ signals:
 	void touchTapActionActivated(int action);
 	void touchColorPicked(const QPointF &posf);
 	void touchColorPickFinished();
+
+protected:
+	void setTouchDrawPressureEnabled(bool touchDrawPressureEnabled);
+	void setOneFingerTouchAction(int oneFingerTouchAction);
+	void setTwoFingerPinchAction(int twoFingerPinchAction);
+	void setTwoFingerTwistAction(int twoFingerTwistAction);
+	void setOneFingerTapAction(int oneFingerTapAction);
+	void setTwoFingerTapAction(int twoFingerTapAction);
+	void setThreeFingerTapAction(int threeFingerTapAction);
+	void setFourFingerTapAction(int fourFingerTapAction);
+	void setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction);
+	void setSmoothing(int smoothing);
+
+	void scrollBy(qreal dx, qreal dy);
+	void startZoomRotate(qreal zoom, qreal rotation);
+	void zoomRotate(qreal zoom, qreal rotation);
+	qreal adjustTwistRotation(qreal degrees) const;
+
+	void emitOneFingerTapAction() { emitTapAction(m_oneFingerTapAction); }
+	void emitTwoFingerTapAction() { emitTapAction(m_twoFingerTapAction); }
+	void emitThreeFingerTapAction() { emitTapAction(m_threeFingerTapAction); }
+	void emitFourFingerTapAction() { emitTapAction(m_fourFingerTapAction); }
 
 private:
 	static constexpr qreal TAP_SLOP_SQUARED = 16.0 * 16.0;
@@ -114,24 +135,10 @@ private:
 		return p.x() * p.x() + p.y() * p.y();
 	}
 
-	void setTouchDrawPressureEnabled(bool touchDrawPressureEnabled);
-	void setOneFingerTouchAction(int oneFingerTouchAction);
-	void setTwoFingerPinchAction(int twoFingerPinchAction);
-	void setTwoFingerTwistAction(int twoFingerTwistAction);
-	void setOneFingerTapAction(int oneFingerTapAction);
-	void setTwoFingerTapAction(int twoFingerTapAction);
-	void setThreeFingerTapAction(int threeFingerTapAction);
-	void setFourFingerTapAction(int fourFingerTapAction);
-	void setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction);
-	void setSmoothing(int smoothing);
-	void scrollBy(qreal dx, qreal dy);
-	void startZoomRotate(qreal zoom, qreal rotation);
-	void zoomRotate(qreal zoom, qreal rotation);
 	void updateSmoothedMotion();
 
 	void triggerTapAndHold();
 
-	qreal adjustTwistRotation(qreal degrees) const;
 	void flushTouchDrawBuffer();
 	void emitTapAction(int action);
 
@@ -171,5 +178,7 @@ private:
 	QTimer *m_tapAndHoldTimer;
 	QTimer *m_smoothTimer = nullptr;
 };
+
+}
 
 #endif

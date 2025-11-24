@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_SCENE_CANVASVIEW
 #define DESKTOP_SCENE_CANVASVIEW
-#include "desktop/scene/hudaction.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/tabletfilter.h"
 #include "desktop/view/lock.h"
@@ -9,6 +8,7 @@
 #include "libclient/canvas/point.h"
 #include "libclient/tools/enums.h"
 #include "libclient/utils/kis_cubic_curve.h"
+#include "libclient/view/hudaction.h"
 #include <QDeadlineTimer>
 #include <QGraphicsView>
 #include <functional>
@@ -16,10 +16,13 @@
 class QAction;
 class QGestureEvent;
 class QTouchEvent;
-class TouchHandler;
 
 namespace drawingboard {
 class CanvasScene;
+}
+
+namespace view {
+class WidgetTouchHandler;
 }
 
 namespace widgets {
@@ -36,8 +39,8 @@ class NotificationBar;
 class CanvasView final : public QGraphicsView {
 	Q_OBJECT
 public:
-	// Replaced by view::Cursor in desktop/view/cursor.h. This enum is only kept
-	// for compatibility purposes, allowing the settings to load the old value.
+	// Replaced by view::Cursor in libclient/view/enums.h. This is only kept for
+	// compatibility purposes, allowing the settings to load the old value.
 	enum class BrushCursor : int {
 		Dot,
 		Cross,
@@ -482,7 +485,7 @@ private:
 	QRectF m_posBounds; // Position limits to keep the canvas in view.
 
 	drawingboard::CanvasScene *m_scene;
-	TouchHandler *m_touch;
+	view::WidgetTouchHandler *m_touch;
 
 	int m_zoomWheelDelta;
 

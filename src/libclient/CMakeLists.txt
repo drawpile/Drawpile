@@ -237,6 +237,12 @@ target_sources(dpclient PRIVATE
 	utils/usernamevalidator.cpp
 	utils/usernamevalidator.h
 	utils/wasmpersistence.h
+	view/canvascontrollerbase.cpp
+	view/canvascontrollerbase.h
+	view/enums.h
+	view/hudaction.h
+	view/touchhandler.cpp
+	view/touchhandler.h
 )
 
 if(ANDROID OR EMSCRIPTEN)

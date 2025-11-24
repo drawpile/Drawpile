@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_SCENE_HUDHANDLER_H
 #define DESKTOP_SCENE_HUDHANDLER_H
-#include "desktop/scene/hudaction.h"
+#include "libclient/view/hudaction.h"
 #include <QObject>
 #include <QVector>
 

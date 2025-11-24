@@ -126,10 +126,10 @@ namespace oneFingerTouch {
 			int value = any::get(meta, settings).toInt(&ok);
 			if(ok) {
 				switch(value) {
-				case int(OneFingerTouchAction::Nothing):
-				case int(OneFingerTouchAction::Draw):
-				case int(OneFingerTouchAction::Pan):
-				case int(OneFingerTouchAction::Guess):
+				case int(view::OneFingerTouchAction::Nothing):
+				case int(view::OneFingerTouchAction::Draw):
+				case int(view::OneFingerTouchAction::Pan):
+				case int(view::OneFingerTouchAction::Guess):
 					return value;
 				default:
 					break;
@@ -141,13 +141,13 @@ namespace oneFingerTouch {
 		std::optional<libclient::settings::FoundKey> touchDrawKey = findKey(
 			settings, "settings/input/touchdraw", SettingMeta::Version::V0);
 		if(touchDrawKey.has_value() && settings.value(touchDrawKey->key).toBool()) {
-			return int(OneFingerTouchAction::Draw);
+			return int(view::OneFingerTouchAction::Draw);
 		}
 
 		std::optional<libclient::settings::FoundKey> touchScrollKey = findKey(
 			settings, "settings/input/touchscroll", SettingMeta::Version::V0);
 		if(touchScrollKey.has_value() && settings.value(touchScrollKey->key).toBool()) {
-			return int(OneFingerTouchAction::Pan);
+			return int(view::OneFingerTouchAction::Pan);
 		}
 
 		return int(ONE_FINGER_TOUCH_DEFAULT);
@@ -162,14 +162,14 @@ namespace twoFingerPinch {
 			int value = any::get(meta, settings).toInt(&ok);
 			if(ok) {
 				switch(value) {
-				case int(TwoFingerPinchAction::Nothing):
-				case int(TwoFingerPinchAction::Zoom):
+				case int(view::TwoFingerPinchAction::Nothing):
+				case int(view::TwoFingerPinchAction::Zoom):
 					return value;
 				default:
 					break;
 				}
 			}
-			return int(TwoFingerPinchAction::Zoom);
+			return int(view::TwoFingerPinchAction::Zoom);
 		}
 
 		std::optional<libclient::settings::FoundKey> touchPinchKey = findKey(
@@ -177,11 +177,11 @@ namespace twoFingerPinch {
 		if(touchPinchKey.has_value() &&
 		settings.value(touchPinchKey->key).toBool()) {
 			return settings.value(touchPinchKey->key).toBool()
-					? int(TwoFingerPinchAction::Zoom)
-					: int(TwoFingerPinchAction::Nothing);
+					? int(view::TwoFingerPinchAction::Zoom)
+					: int(view::TwoFingerPinchAction::Nothing);
 		}
 
-		return int(TwoFingerPinchAction::Zoom);
+		return int(view::TwoFingerPinchAction::Zoom);
 	}
 }
 
@@ -193,16 +193,16 @@ namespace twoFingerTwist {
 			int value = any::get(meta, settings).toInt(&ok);
 			if(ok) {
 				switch(value) {
-				case int(TwoFingerTwistAction::Nothing):
-				case int(TwoFingerTwistAction::Rotate):
-				case int(TwoFingerTwistAction::RotateNoSnap):
-				case int(TwoFingerTwistAction::RotateDiscrete):
+				case int(view::TwoFingerTwistAction::Nothing):
+				case int(view::TwoFingerTwistAction::Rotate):
+				case int(view::TwoFingerTwistAction::RotateNoSnap):
+				case int(view::TwoFingerTwistAction::RotateDiscrete):
 					return value;
 				default:
 					break;
 				}
 			}
-			return int(TwoFingerTwistAction::Rotate);
+			return int(view::TwoFingerTwistAction::Rotate);
 		}
 
 		std::optional<libclient::settings::FoundKey> touchTwistKey = findKey(
@@ -210,11 +210,11 @@ namespace twoFingerTwist {
 		if(touchTwistKey.has_value() &&
 		settings.value(touchTwistKey->key).toBool()) {
 			return settings.value(touchTwistKey->key).toBool()
-					? int(TwoFingerTwistAction::Rotate)
-					: int(TwoFingerTwistAction::Nothing);
+					? int(view::TwoFingerTwistAction::Rotate)
+					: int(view::TwoFingerTwistAction::Nothing);
 		}
 
-		return int(TwoFingerTwistAction::Rotate);
+		return int(view::TwoFingerTwistAction::Rotate);
 	}
 }
 

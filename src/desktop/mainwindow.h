@@ -5,11 +5,11 @@ extern "C" {
 #include <dpengine/load_enums.h>
 }
 #include "desktop/dialogs/flipbook.h"
-#include "desktop/scene/hudaction.h"
 #include "desktop/utils/hostparams.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/tools/tool.h"
+#include "libclient/view/hudaction.h"
 #include <QByteArray>
 #include <QDeadlineTimer>
 #include <QElapsedTimer>

@@ -3,6 +3,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/view/enums.h"
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
@@ -84,25 +85,17 @@ void Touch::initTapActions(
 	QComboBox *fourFingerTap = new QComboBox;
 	for(QComboBox *tap :
 		{oneFingerTap, twoFingerTap, threeFingerTap, fourFingerTap}) {
+		tap->addItem(tr("No action"), int(view::TouchTapAction::Nothing));
+		tap->addItem(tr("Undo"), int(view::TouchTapAction::Undo));
+		tap->addItem(tr("Redo"), int(view::TouchTapAction::Redo));
+		tap->addItem(tr("Hide docks"), int(view::TouchTapAction::HideDocks));
 		tap->addItem(
-			tr("No action"), int(desktop::settings::TouchTapAction::Nothing));
-		tap->addItem(tr("Undo"), int(desktop::settings::TouchTapAction::Undo));
-		tap->addItem(tr("Redo"), int(desktop::settings::TouchTapAction::Redo));
+			tr("Toggle color picker"), int(view::TouchTapAction::ColorPicker));
+		tap->addItem(tr("Toggle eraser"), int(view::TouchTapAction::Eraser));
 		tap->addItem(
-			tr("Hide docks"),
-			int(desktop::settings::TouchTapAction::HideDocks));
+			tr("Toggle erase mode"), int(view::TouchTapAction::EraseMode));
 		tap->addItem(
-			tr("Toggle color picker"),
-			int(desktop::settings::TouchTapAction::ColorPicker));
-		tap->addItem(
-			tr("Toggle eraser"),
-			int(desktop::settings::TouchTapAction::Eraser));
-		tap->addItem(
-			tr("Toggle erase mode"),
-			int(desktop::settings::TouchTapAction::EraseMode));
-		tap->addItem(
-			tr("Toggle recolor mode"),
-			int(desktop::settings::TouchTapAction::RecolorMode));
+			tr("Toggle recolor mode"), int(view::TouchTapAction::RecolorMode));
 	}
 
 	settings.bindOneFingerTap(oneFingerTap, Qt::UserRole);
@@ -126,11 +119,9 @@ void Touch::initTapAndHoldActions(
 	QComboBox *oneFingerTapAndHold = new QComboBox;
 	for(QComboBox *tapAndHold : {oneFingerTapAndHold}) {
 		tapAndHold->addItem(
-			tr("No action"),
-			int(desktop::settings::TouchTapAndHoldAction::Nothing));
+			tr("No action"), int(view::TouchTapAndHoldAction::Nothing));
 		tapAndHold->addItem(
-			tr("Pick color"),
-			int(desktop::settings::TouchTapAndHoldAction::ColorPickMode));
+			tr("Pick color"), int(view::TouchTapAndHoldAction::ColorPickMode));
 	}
 
 	settings.bindOneFingerTapAndHold(oneFingerTapAndHold, Qt::UserRole);
@@ -146,38 +137,35 @@ void Touch::initTouchActions(
 	QComboBox *oneFingerTouch = new QComboBox;
 	oneFingerTouch->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	oneFingerTouch->addItem(
-		tr("No action"), int(desktop::settings::OneFingerTouchAction::Nothing));
+		tr("No action"), int(view::OneFingerTouchAction::Nothing));
+	oneFingerTouch->addItem(tr("Draw"), int(view::OneFingerTouchAction::Draw));
 	oneFingerTouch->addItem(
-		tr("Draw"), int(desktop::settings::OneFingerTouchAction::Draw));
+		tr("Pan canvas"), int(view::OneFingerTouchAction::Pan));
 	oneFingerTouch->addItem(
-		tr("Pan canvas"), int(desktop::settings::OneFingerTouchAction::Pan));
-	oneFingerTouch->addItem(
-		tr("Guess"), int(desktop::settings::OneFingerTouchAction::Guess));
+		tr("Guess"), int(view::OneFingerTouchAction::Guess));
 	settings.bindOneFingerTouch(oneFingerTouch, Qt::UserRole);
 	form->addRow(tr("One-finger touch:"), oneFingerTouch);
 
 	QComboBox *twoFingerPinch = new QComboBox;
 	twoFingerPinch->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	twoFingerPinch->addItem(
-		tr("No action"), int(desktop::settings::TwoFingerPinchAction::Nothing));
-	twoFingerPinch->addItem(
-		tr("Zoom"), int(desktop::settings::TwoFingerPinchAction::Zoom));
+		tr("No action"), int(view::TwoFingerPinchAction::Nothing));
+	twoFingerPinch->addItem(tr("Zoom"), int(view::TwoFingerPinchAction::Zoom));
 	settings.bindTwoFingerPinch(twoFingerPinch, Qt::UserRole);
 	form->addRow(tr("Two-finger pinch:"), twoFingerPinch);
 
 	QComboBox *twoFingerTwist = new QComboBox;
 	twoFingerTwist->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	twoFingerTwist->addItem(
-		tr("No action"), int(desktop::settings::TwoFingerPinchAction::Nothing));
+		tr("No action"), int(view::TwoFingerPinchAction::Nothing));
 	twoFingerTwist->addItem(
-		tr("Rotate canvas"),
-		int(desktop::settings::TwoFingerTwistAction::Rotate));
+		tr("Rotate canvas"), int(view::TwoFingerTwistAction::Rotate));
 	twoFingerTwist->addItem(
 		tr("Free rotate canvas"),
-		int(desktop::settings::TwoFingerTwistAction::RotateNoSnap));
+		int(view::TwoFingerTwistAction::RotateNoSnap));
 	twoFingerTwist->addItem(
 		tr("Ratchet rotate canvas"),
-		int(desktop::settings::TwoFingerTwistAction::RotateDiscrete));
+		int(view::TwoFingerTwistAction::RotateDiscrete));
 	settings.bindTwoFingerTwist(twoFingerTwist, Qt::UserRole);
 	form->addRow(tr("Two-finger twist:"), twoFingerTwist);
 

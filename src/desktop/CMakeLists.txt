@@ -269,7 +269,6 @@ target_sources(drawpile PRIVATE
 	scene/catchupitem.h
 	scene/colorpickitem.cpp
 	scene/colorpickitem.h
-	scene/hudaction.h
 	scene/hudhandler.cpp
 	scene/hudhandler.h
 	scene/lasertrailitem.cpp
@@ -368,8 +367,6 @@ target_sources(drawpile PRIVATE
 	utils/recents.h
 	utils/soundplayer.h
 	utils/tabletfilter.h
-	utils/touchhandler.cpp
-	utils/touchhandler.h
 	utils/widgetutils.cpp
 	utils/widgetutils.h
 	view/canvascontroller.cpp
@@ -380,7 +377,6 @@ target_sources(drawpile PRIVATE
 	view/canvasview.h
 	view/canvaswrapper.cpp
 	view/canvaswrapper.h
-	view/cursor.h
 	view/glcanvas.cpp
 	view/glcanvas.h
 	view/lock.cpp
@@ -389,6 +385,8 @@ target_sources(drawpile PRIVATE
 	view/softwarecanvas.h
 	view/viewwrapper.cpp
 	view/viewwrapper.h
+	view/widgettouchhandler.cpp
+	view/widgettouchhandler.h
 	widgets/artisticcolorwheel.cpp
 	widgets/artisticcolorwheel.h
 	widgets/brushpreview.cpp

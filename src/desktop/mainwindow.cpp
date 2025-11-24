@@ -88,6 +88,7 @@
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
+#include "libclient/view/enums.h"
 #include "libshared/net/netutils.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
@@ -4430,33 +4431,33 @@ void MainWindow::handleToggleAction(const HudAction &action)
 void MainWindow::handleTouchTapAction(int action)
 {
 	switch(action) {
-	case int(desktop::settings::TouchTapAction::Undo):
+	case int(view::TouchTapAction::Undo):
 		getAction("undo")->trigger();
 		break;
-	case int(desktop::settings::TouchTapAction::Redo):
+	case int(view::TouchTapAction::Redo):
 		getAction("redo")->trigger();
 		break;
-	case int(desktop::settings::TouchTapAction::HideDocks):
+	case int(view::TouchTapAction::HideDocks):
 		getAction("hidedocks")->trigger();
 		break;
-	case int(desktop::settings::TouchTapAction::ColorPicker):
+	case int(view::TouchTapAction::ColorPicker):
 		if(m_dockToolSettings->currentTool() == tools::Tool::PICKER) {
 			m_dockToolSettings->setPreviousTool();
 		} else {
 			m_dockToolSettings->setTool(tools::Tool::PICKER);
 		}
 		break;
-	case int(desktop::settings::TouchTapAction::Eraser):
+	case int(view::TouchTapAction::Eraser):
 		if(m_dockToolSettings->currentTool() == tools::Tool::ERASER) {
 			m_dockToolSettings->setPreviousTool();
 		} else {
 			m_dockToolSettings->setTool(tools::Tool::ERASER);
 		}
 		break;
-	case int(desktop::settings::TouchTapAction::EraseMode):
+	case int(view::TouchTapAction::EraseMode):
 		getAction("currenterasemode")->trigger();
 		break;
-	case int(desktop::settings::TouchTapAction::RecolorMode):
+	case int(view::TouchTapAction::RecolorMode):
 		getAction("currentrecolormode")->trigger();
 		break;
 	default:

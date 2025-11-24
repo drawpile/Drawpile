@@ -2,7 +2,7 @@
 #ifndef DESKTOP_SCENE_TOGGLEITEM_H
 #define DESKTOP_SCENE_TOGGLEITEM_H
 #include "desktop/scene/baseitem.h"
-#include "desktop/scene/hudaction.h"
+#include "libclient/view/hudaction.h"
 #include <QIcon>
 #include <QPainterPath>
 

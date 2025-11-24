@@ -4,10 +4,10 @@
 
 #include "desktop/scene/canvasview.h"
 #include "desktop/tabletinput.h"
-#include "desktop/view/cursor.h"
 #include "libclient/export/videoexporter.h"
 #include "libclient/settings.h"
 #include "libclient/tools/tool.h"
+#include "libclient/view/enums.h"
 
 #include <QAbstractButton>
 #include <QAbstractSlider>
@@ -49,46 +49,6 @@ enum class KineticScrollGesture : int {
 	Touch,
 };
 Q_ENUM_NS(KineticScrollGesture)
-
-enum class OneFingerTouchAction : int {
-	Nothing,
-	Pan,
-	Draw,
-	Guess,
-};
-Q_ENUM_NS(OneFingerTouchAction)
-
-enum class TwoFingerPinchAction : int {
-	Nothing,
-	Zoom,
-};
-Q_ENUM_NS(TwoFingerPinchAction)
-
-enum class TwoFingerTwistAction : int {
-	Nothing,
-	Rotate,
-	RotateNoSnap,
-	RotateDiscrete,
-};
-Q_ENUM_NS(TwoFingerTwistAction)
-
-enum class TouchTapAction : int {
-	Nothing,
-	Undo,
-	Redo,
-	HideDocks,
-	ColorPicker,
-	Eraser,
-	EraseMode,
-	RecolorMode,
-};
-Q_ENUM_NS(TouchTapAction)
-
-enum class TouchTapAndHoldAction : int {
-	Nothing,
-	ColorPickMode,
-};
-Q_ENUM_NS(TouchTapAndHoldAction)
 
 enum class SamplingRingVisibility : int {
 	Never,

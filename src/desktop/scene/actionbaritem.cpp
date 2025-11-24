@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/actionbaritem.h"
-#include "desktop/scene/hudaction.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/view/hudaction.h"
 #include <QAction>
 #include <QApplication>
 #include <QFont>

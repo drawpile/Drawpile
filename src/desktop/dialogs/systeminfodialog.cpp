@@ -7,8 +7,9 @@
 #include "desktop/tabletinput.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/glcanvas.h"
-#include "libclient/utils/statedatabase.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/utils/statedatabase.h"
+#include "libclient/view/enums.h"
 #include <QClipboard>
 #include <QDialogButtonBox>
 #include <QFont>
@@ -199,28 +200,35 @@ QString SystemInfoDialog::getSystemInfo() const
 						: QStringLiteral("no"));
 	info +=
 		QStringLiteral("One-finger touch action: %1\n")
-			.arg(QMetaEnum::fromType<desktop::settings::OneFingerTouchAction>()
-					 .valueToKey(settings.oneFingerTouch()));
+			.arg(
+				QMetaEnum::fromType<view::OneFingerTouchAction>().valueToKey(
+					settings.oneFingerTouch()));
 	info +=
 		QStringLiteral("Two-finger pinch action: %1\n")
-			.arg(QMetaEnum::fromType<desktop::settings::TwoFingerPinchAction>()
-					 .valueToKey(settings.twoFingerPinch()));
+			.arg(
+				QMetaEnum::fromType<view::TwoFingerPinchAction>().valueToKey(
+					settings.twoFingerPinch()));
 	info +=
 		QStringLiteral("Two-finger twist action: %1\n")
-			.arg(QMetaEnum::fromType<desktop::settings::TwoFingerTwistAction>()
-					 .valueToKey(settings.twoFingerTwist()));
+			.arg(
+				QMetaEnum::fromType<view::TwoFingerTwistAction>().valueToKey(
+					settings.twoFingerTwist()));
 	info += QStringLiteral("One-finger tap action: %1\n")
-				.arg(QMetaEnum::fromType<desktop::settings::TouchTapAction>()
-						 .valueToKey(settings.oneFingerTap()));
+				.arg(
+					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
+						settings.oneFingerTap()));
 	info += QStringLiteral("Two-finger tap action: %1\n")
-				.arg(QMetaEnum::fromType<desktop::settings::TouchTapAction>()
-						 .valueToKey(settings.twoFingerTap()));
+				.arg(
+					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
+						settings.twoFingerTap()));
 	info += QStringLiteral("Three-finger tap action: %1\n")
-				.arg(QMetaEnum::fromType<desktop::settings::TouchTapAction>()
-						 .valueToKey(settings.threeFingerTap()));
+				.arg(
+					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
+						settings.threeFingerTap()));
 	info += QStringLiteral("Four-finger tap action: %1\n")
-				.arg(QMetaEnum::fromType<desktop::settings::TouchTapAction>()
-						 .valueToKey(settings.fourFingerTap()));
+				.arg(
+					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
+						settings.fourFingerTap()));
 	info += QStringLiteral("Touch gestures: %1\n")
 				.arg(boolToYesNo(settings.touchGestures()));
 	info += QStringLiteral("\n");

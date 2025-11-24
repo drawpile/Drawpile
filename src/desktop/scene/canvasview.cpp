@@ -6,8 +6,7 @@
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
-#include "desktop/utils/touchhandler.h"
-#include "desktop/view/cursor.h"
+#include "desktop/view/widgettouchhandler.h"
 #include "desktop/widgets/notifbar.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -15,6 +14,7 @@
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/enums.h"
 #include "libclient/utils/cursors.h"
+#include "libclient/view/enums.h"
 #include "libshared/util/qtcompat.h"
 #include <QApplication>
 #include <QDateTime>
@@ -170,7 +170,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_flip(false)
 	, m_mirror(false)
 	, m_scene(nullptr)
-	, m_touch(new TouchHandler(this))
+	, m_touch(new view::WidgetTouchHandler(this))
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
 	, m_locked(false)
@@ -268,28 +268,28 @@ CanvasView::CanvasView(QWidget *parent)
 		this, &CanvasView::setShowTransformNotices);
 
 	connect(
-		m_touch, &TouchHandler::touchPressed, this,
+		m_touch, &view::WidgetTouchHandler::touchPressed, this,
 		&CanvasView::touchPressEvent, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchMoved, this, &CanvasView::touchMoveEvent,
-		Qt::DirectConnection);
+		m_touch, &view::WidgetTouchHandler::touchMoved, this,
+		&CanvasView::touchMoveEvent, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchReleased, this,
+		m_touch, &view::WidgetTouchHandler::touchReleased, this,
 		&CanvasView::touchReleaseEvent, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchScrolledBy, this, &CanvasView::scrollByF,
-		Qt::DirectConnection);
+		m_touch, &view::WidgetTouchHandler::touchScrolledBy, this,
+		&CanvasView::scrollByF, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchZoomedRotated, this,
+		m_touch, &view::WidgetTouchHandler::touchZoomedRotated, this,
 		&CanvasView::touchZoomRotate, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchTapActionActivated, this,
+		m_touch, &view::WidgetTouchHandler::touchTapActionActivated, this,
 		&CanvasView::touchTapActionActivated, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchColorPicked, this,
+		m_touch, &view::WidgetTouchHandler::touchColorPicked, this,
 		&CanvasView::touchColorPick, Qt::DirectConnection);
 	connect(
-		m_touch, &TouchHandler::touchColorPickFinished, this,
+		m_touch, &view::WidgetTouchHandler::touchColorPickFinished, this,
 		&CanvasView::finishColorPick, Qt::DirectConnection);
 }
 

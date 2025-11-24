@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DESKTOP_SCENE_HUDACTION_H
-#define DESKTOP_SCENE_HUDACTION_H
+#ifndef LIBCLIENT_VIEW_HUDACTION_H
+#define LIBCLIENT_VIEW_HUDACTION_H
 #include <QMetaType>
 #include <QPoint>
 

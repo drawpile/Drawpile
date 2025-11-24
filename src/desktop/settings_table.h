@@ -48,14 +48,6 @@
 #	define NATIVE_DIALOGS_SETTING_AVAILABLE
 #endif
 
-#ifndef ONE_FINGER_TOUCH_DEFAULT
-#	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
-#		define ONE_FINGER_TOUCH_DEFAULT desktop::settings::OneFingerTouchAction::Guess
-#	else
-#		define ONE_FINGER_TOUCH_DEFAULT desktop::settings::OneFingerTouchAction::Pan
-#	endif
-#endif
-
 #ifndef OVERRIDE_FONT_SIZE_DEFAULT
 #	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #		define OVERRIDE_FONT_SIZE_DEFAULT true
@@ -266,15 +258,15 @@ SETTING(notifSoundPrivateChat     , NotifSoundPrivateChat     , "notifications/p
 SETTING(notifSoundUnlock          , NotifSoundUnlock          , "notifications/unlock"                  , true)
 SETTING_GETSET(oneFingerTouch     , OneFingerTouch            , "settings/input/onefingertouch"         , int(ONE_FINGER_TOUCH_DEFAULT)
 	, &oneFingerTouch::get, &any::set)
-SETTING_GETSET(twoFingerPinch     , TwoFingerPinch            , "settings/input/twofingerpinch"         , int(TwoFingerPinchAction::Zoom)
+SETTING_GETSET(twoFingerPinch     , TwoFingerPinch            , "settings/input/twofingerpinch"         , int(view::TwoFingerPinchAction::Zoom)
 	, &twoFingerPinch::get, &any::set)
-SETTING_GETSET(twoFingerTwist     , TwoFingerTwist            , "settings/input/twofingertwist"         , int(TwoFingerTwistAction::Rotate)
+SETTING_GETSET(twoFingerTwist     , TwoFingerTwist            , "settings/input/twofingertwist"         , int(view::TwoFingerTwistAction::Rotate)
 	, &twoFingerTwist::get, &any::set)
-SETTING(oneFingerTap              , OneFingerTap              , "settings/input/onefingertap"           , int(TouchTapAction::Nothing))
-SETTING(twoFingerTap              , TwoFingerTap              , "settings/input/twofingertap"           , int(TouchTapAction::Undo))
-SETTING(threeFingerTap            , ThreeFingerTap            , "settings/input/threefingertap"         , int(TouchTapAction::Redo))
-SETTING(fourFingerTap             , FourFingerTap             , "settings/input/fourfingertap"          , int(TouchTapAction::HideDocks))
-SETTING(oneFingerTapAndHold       , OneFingerTapAndHold       , "settings/input/onefingertapandhold"    , int(TouchTapAndHoldAction::ColorPickMode))
+SETTING(oneFingerTap              , OneFingerTap              , "settings/input/onefingertap"           , int(view::TouchTapAction::Nothing))
+SETTING(twoFingerTap              , TwoFingerTap              , "settings/input/twofingertap"           , int(view::TouchTapAction::Undo))
+SETTING(threeFingerTap            , ThreeFingerTap            , "settings/input/threefingertap"         , int(view::TouchTapAction::Redo))
+SETTING(fourFingerTap             , FourFingerTap             , "settings/input/fourfingertap"          , int(view::TouchTapAction::HideDocks))
+SETTING(oneFingerTapAndHold       , OneFingerTapAndHold       , "settings/input/onefingertapandhold"    , int(view::TouchTapAndHoldAction::ColorPickMode))
 SETTING(tabletPressTimerDelay     , TabletPressTimerDelay     , "settings/input/tabletpresstimerdelay"  , 500)
 SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , false)
 SETTING(touchSmoothing            , TouchSmoothing            , "settings/input/touchsmoothing"         , 75)

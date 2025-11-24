@@ -3,9 +3,9 @@
 #include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
-#include "desktop/view/cursor.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/utils/customshortcutmodel.h"
+#include "libclient/view/enums.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>

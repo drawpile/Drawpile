@@ -907,8 +907,8 @@ static StartupOptions initApp(DrawpileApp &app)
 		// Disable finerpainting if this device is detected to have a stylus.
 		bool hasStylus = utils::androidHasStylusInput();
 		settings.setOneFingerTouch(
-			int(hasStylus ? desktop::settings::OneFingerTouchAction::Pan
-						  : desktop::settings::OneFingerTouchAction::Guess));
+			int(hasStylus ? view::OneFingerTouchAction::Pan
+						  : view::OneFingerTouchAction::Guess));
 	}
 
 	settings.bindCaptureVolumeRocker([](bool capture) {
