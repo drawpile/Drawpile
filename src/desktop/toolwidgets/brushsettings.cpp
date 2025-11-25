@@ -4,12 +4,11 @@ extern "C" {
 #include <dpmsg/blend_mode.h>
 }
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/brushes/brush.h"
-#include "libclient/settings.h"
+#include "libclient/config/config.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "ui_brushdock.h"
@@ -661,8 +660,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->blendModeManager = BlendModeManager::initBrush(
 		d->ui.blendmode, d->ui.erasemode, d->ui.alphaPreserve, d->ui.modeEraser,
 		this);
-	dpApp().settings().bindAutomaticAlphaPreserve(
-		d->blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	CFG_BIND_SET(
+		dpAppConfig(), AutomaticAlphaPreserve, d->blendModeManager,
+		BlendModeManager::setAutomaticAlphaPerserve);
 	connect(
 		d->blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&BrushSettings::updateBlendMode);
@@ -1782,7 +1782,8 @@ static const ToolProperties::RangedValue<int>
 		int(brushes::LastStabilizationMode)},
 	stabilizer = {QStringLiteral("stabilizer"), 0, 0, 1000},
 	smoothing = {
-		QStringLiteral("smoothing"), 0, 0, libclient::settings::maxSmoothing};
+		QStringLiteral("smoothing"), 0, 0,
+		tools::ToolController::MAX_SMOOTHING};
 static const ToolProperties::Value<bool>
 	finishStrokes = {QStringLiteral("finishstrokes"), true},
 	useBrushSampleCount = {QStringLiteral("usebrushsamplecount"), true};

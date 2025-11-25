@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host/listing.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "libclient/net/announcementlist.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/listservermodel.h"
@@ -65,7 +65,6 @@ Listing::Listing(QWidget *parent)
 		tr("Publicly visible ID for pretty invite links"));
 	listingLayout->addRow(tr("ID alias:"), m_idAliasEdit);
 
-	desktop::settings::Settings &settings = dpApp().settings();
 	m_announcementModel = new net::AnnouncementListModel(this);
 
 	QSortFilterProxyModel *announcementSortModel =
@@ -104,11 +103,12 @@ Listing::Listing(QWidget *parent)
 
 	updateEditSectionVisibility();
 
-	settings.bindLastSessionAutomatic(m_automaticBox);
-	settings.bindLastSessionTitle(m_titleEdit);
-	settings.bindLastIdAlias(m_idAliasEdit);
-	settings.bindListServers(this, &Listing::reloadAnnouncementMenu);
-	m_announcementModel->setAnnouncements(settings.lastListingUrls());
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_CHECKBOX(cfg, LastSessionAutomatic, m_automaticBox);
+	CFG_BIND_LINEEDIT(cfg, LastSessionTitle, m_titleEdit);
+	CFG_BIND_LINEEDIT(cfg, LastIdAlias, m_idAliasEdit);
+	CFG_BIND_NOTIFY(cfg, ListServers, this, Listing::reloadAnnouncementMenu);
+	m_announcementModel->setAnnouncements(cfg->getLastListingUrls());
 
 	connect(
 		m_titleEdit, &QLineEdit::textChanged, this, &Listing::checkNsfmTitle);
@@ -118,12 +118,12 @@ Listing::Listing(QWidget *parent)
 
 void Listing::reset(bool replaceAnnouncements)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setLastSessionAutomatic(true);
-	settings.setLastSessionTitle(QString());
-	settings.setLastIdAlias(QString());
+	config::Config *cfg = dpAppConfig();
+	cfg->setLastSessionAutomatic(true);
+	cfg->setLastSessionTitle(QString());
+	cfg->setLastIdAlias(QString());
 	if(replaceAnnouncements) {
-		settings.setLastListingUrls(QStringList());
+		cfg->setLastListingUrls(QStringList());
 		m_announcementModel->clear();
 	}
 }
@@ -257,7 +257,7 @@ bool Listing::isEditSectionVisible() const
 
 void Listing::reloadAnnouncementMenu()
 {
-	QVector<QVariantMap> listServers = dpApp().settings().listServers();
+	QVector<QVariantMap> listServers = dpAppConfig()->getListServers();
 	m_announcementModel->setKnownServers(listServers);
 
 	QMenu *addAnnouncementMenu = m_addAnnouncementButton->menu();
@@ -309,7 +309,7 @@ void Listing::removeSelectedAnnouncements()
 
 void Listing::persistAnnouncements()
 {
-	dpApp().settings().setLastListingUrls(m_announcementModel->announcements());
+	dpAppConfig()->setLastListingUrls(m_announcementModel->announcements());
 }
 
 void Listing::checkNsfmTitle(const QString &title)

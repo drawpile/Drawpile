@@ -7,19 +7,13 @@ class QDialogButtonBox;
 class QPushButton;
 class QFormLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class Tablet final : public Page {
 	Q_OBJECT
 public:
-	Tablet(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Tablet(config::Config *cfg, QWidget *parent = nullptr);
 
 	void createButtons(QDialogButtonBox *buttons);
 	void showButtons();
@@ -29,18 +23,18 @@ signals:
 
 protected:
 	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
 	void
-	initPressureCurve(desktop::settings::Settings &settings, QFormLayout *form);
+	initPressureCurve(config::Config *cfg, QFormLayout *form);
 
-	void initTablet(desktop::settings::Settings &settings, QFormLayout *form);
+	void initTablet(config::Config *cfg, QFormLayout *form);
 
 	QPushButton *m_tabletTesterButton = nullptr;
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

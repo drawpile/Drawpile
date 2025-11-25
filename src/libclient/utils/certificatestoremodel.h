@@ -12,8 +12,6 @@
 #include <optional>
 #include <utility>
 
-namespace libclient { namespace settings { class Settings; } }
-
 class CertificateStoreModel final : public QAbstractListModel
 {
 	Q_OBJECT

@@ -5,10 +5,8 @@
 
 class QVBoxLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace dialogs {
@@ -18,21 +16,12 @@ class Page : public QScrollArea {
 protected:
 	Page(QWidget *parent);
 
-	void init(desktop::settings::Settings &settings, bool stretch = true);
+	void init(config::Config *cfg, bool stretch = true);
 
-	virtual void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) = 0;
+	virtual void setUp(config::Config *cfg, QVBoxLayout *layout) = 0;
 
 	void disableKineticScrollingOnWidget(QWidget *widget);
 };
-
-
-// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
-namespace diagnostic_marker_private {
-class [[maybe_unused]] PageMarker : Page {
-	void setUp(desktop::settings::Settings &, QVBoxLayout *) override {}
-};
-}
 
 }
 }

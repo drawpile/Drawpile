@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host/session.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/imageresourcetextbrowser.h"
+#include "libclient/config/config.h"
 #include "libclient/net/server.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libshared/net/netutils.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -120,75 +121,74 @@ Session::Session(QWidget *parent)
 		m_serverInfo, &widgets::ImageResourceTextBrowser::anchorClicked, this,
 		&Session::followServerInfoLink);
 
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 #ifdef __EMSCRIPTEN__
 	QString hostpass = browser::getHostpassParam();
 	if(!hostpass.isEmpty()) {
-		settings.setLastSessionPassword(hostpass);
+		cfg->setLastSessionPassword(hostpass);
 	}
 #endif
-	if(settings.lastSessionPassword().trimmed().isEmpty()) {
-		generatePasswordWith(settings);
+	if(cfg->getLastSessionPassword().trimmed().isEmpty()) {
+		generatePasswordWith(cfg);
 	}
-	fixUpLastHostServer(settings);
-	settings.bindLastHostType(m_typeCombo, Qt::UserRole);
-	settings.bindLastHostType(this, &Session::updateType);
-	settings.bindLastSessionPassword(m_passwordEdit);
-	settings.bindLastNsfm(m_nsfmBox);
-	settings.bindLastKeepChat(m_keepChatBox);
-	settings.bindLastHostServer(m_serverCombo, Qt::UserRole);
-	settings.bindLastHostServer(this, &Session::updateServer);
-	settings.bindParentalControlsLevel(
-		this, [this](int level) {
-			bool allowNsfm = level < int(parentalcontrols::Level::NoJoin);
-			m_nsfmBox->setEnabled(allowNsfm);
-			m_nsfmBox->setVisible(allowNsfm);
-		});
+	fixUpLastHostServer(cfg);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, LastHostType, m_typeCombo);
+	CFG_BIND_SET(cfg, LastHostType, this, Session::updateType);
+	CFG_BIND_LINEEDIT(cfg, LastSessionPassword, m_passwordEdit);
+	CFG_BIND_CHECKBOX(cfg, LastNsfm, m_nsfmBox);
+	CFG_BIND_CHECKBOX(cfg, LastKeepChat, m_keepChatBox);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, LastHostServer, m_serverCombo);
+	CFG_BIND_SET(cfg, LastHostServer, this, Session::updateServer);
+	CFG_BIND_SET_FN(cfg, ParentalControlsLevel, this, [this](int level) {
+		bool allowNsfm = level < int(parentalcontrols::Level::NoJoin);
+		m_nsfmBox->setEnabled(allowNsfm);
+		m_nsfmBox->setVisible(allowNsfm);
+	});
 	updateAddressCombo();
 }
 
 void Session::reset()
 {
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	m_typeCombo->setCurrentIndex(0);
-	generatePasswordWith(settings);
-	settings.setLastNsfm(false);
-	settings.setLastKeepChat(false);
-	settings.setLastHostServer(0);
+	generatePasswordWith(cfg);
+	cfg->setLastNsfm(false);
+	cfg->setLastKeepChat(false);
+	cfg->setLastHostServer(0);
 }
 
 void Session::load(const QJsonObject &json)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	if(json[QStringLiteral("hosttype")] != QStringLiteral("public")) {
-		settings.setLastHostType(int(Type::Passworded));
+		cfg->setLastHostType(int(Type::Passworded));
 		QString password =
 			json[QStringLiteral("password")].toString().trimmed();
 		if(!password.isEmpty()) {
-			settings.setLastSessionPassword(password);
+			cfg->setLastSessionPassword(password);
 		}
 	} else {
-		settings.setLastHostType(int(Type::Public));
+		cfg->setLastHostType(int(Type::Public));
 		m_typeCombo->setCurrentIndex(1);
 	}
 
 	if(json.contains(QStringLiteral("nsfm"))) {
-		settings.setLastNsfm(json[QStringLiteral("nsfm")].toBool());
+		cfg->setLastNsfm(json[QStringLiteral("nsfm")].toBool());
 	}
 
 	if(json.contains(QStringLiteral("keepchat"))) {
-		settings.setLastKeepChat(json[QStringLiteral("keepchat")].toBool());
+		cfg->setLastKeepChat(json[QStringLiteral("keepchat")].toBool());
 	}
 
 	QString server = json[QStringLiteral("server")].toString();
 	if(server == QStringLiteral("pub.drawpile.net")) {
-		settings.setLastHostServer(SERVER_PUB);
+		cfg->setLastHostServer(SERVER_PUB);
 	} else if(server == QStringLiteral("builtin")) {
 #ifdef DP_HAVE_BUILTIN_SERVER
-		settings.setLastHostServer(SERVER_BUILTIN);
+		cfg->setLastHostServer(SERVER_BUILTIN);
 #endif
 	} else if(server == QStringLiteral("address")) {
-		settings.setLastHostServer(SERVER_ADDRESS);
+		cfg->setLastHostServer(SERVER_ADDRESS);
 		QString address = json[QStringLiteral("address")].toString().trimmed();
 		if(!address.isEmpty()) {
 			m_addressCombo->setEditText(address);
@@ -355,7 +355,7 @@ void Session::showServerPub()
 				tr("Sessions must comply with the rules, <a "
 				   "href=\"https://drawpile.net/pubrules\">click here to view "
 				   "them</a>."));
-	if(dpApp().settings().donationLinksEnabled()) {
+	if(dpAppConfig()->getDonationLinksEnabled()) {
 		text.append(
 			utils::toHtmlWithLink(
 				//: The [] will be turned into a clickable link! Keep them your
@@ -435,10 +435,10 @@ void Session::followServerInfoLink(const QUrl &url)
 
 void Session::generatePassword()
 {
-	generatePasswordWith(dpApp().settings());
+	generatePasswordWith(dpAppConfig());
 }
 
-void Session::generatePasswordWith(desktop::settings::Settings &settings)
+void Session::generatePasswordWith(config::Config *cfg)
 {
 	// Passwords are just a mechanism to facilitate invite-only sessions.
 	// They're not secret and are meant to be shared with anyone who wants to
@@ -447,15 +447,16 @@ void Session::generatePasswordWith(desktop::settings::Settings &settings)
 	QString password;
 	int length = QRandomGenerator::global()->bounded(8, 12);
 	for(int i = 0; i < length; ++i) {
-		password.append(characters[QRandomGenerator::global()->bounded(
-			0, characters.length())]);
+		password.append(
+			characters[QRandomGenerator::global()->bounded(
+				0, characters.length())]);
 	}
-	settings.setLastSessionPassword(password);
+	cfg->setLastSessionPassword(password);
 }
 
-void Session::fixUpLastHostServer(desktop::settings::Settings &settings)
+void Session::fixUpLastHostServer(config::Config *cfg)
 {
-	int lastHostServer = settings.lastHostServer();
+	int lastHostServer = cfg->getLastHostServer();
 	switch(lastHostServer) {
 	case SERVER_PUB:
 		break;
@@ -464,7 +465,7 @@ void Session::fixUpLastHostServer(desktop::settings::Settings &settings)
 		// on pub by entering its address, we switch the server combo to pub.
 		QString address = dpApp().recents().getMostRecentHostAddress();
 		if(address.isEmpty() || looksLikePub(address)) {
-			settings.setLastHostServer(SERVER_PUB);
+			cfg->setLastHostServer(SERVER_PUB);
 		}
 		break;
 	}
@@ -474,7 +475,7 @@ void Session::fixUpLastHostServer(desktop::settings::Settings &settings)
 #endif
 	default:
 		// Not a valid last server, fall back to pub.
-		settings.setLastHostServer(SERVER_PUB);
+		cfg->setLastHostServer(SERVER_PUB);
 		break;
 	}
 }

@@ -2,12 +2,12 @@
 #include "desktop/dialogs/shadeselectordialog.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/noscroll.h"
 #include "desktop/widgets/shadeselector.h"
+#include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
@@ -27,14 +27,14 @@ ShadeSelectorDialog::ShadeSelectorDialog(const QColor &color, QWidget *parent)
 	utils::makeModal(this);
 	resize(400, 600);
 
-	const desktop::settings::Settings &settings = dpApp().settings();
-	m_colorSpace = int(settings.colorWheelSpace());
+	config::Config *cfg = dpAppConfig();
+	m_colorSpace = cfg->getColorWheelSpace();
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	m_colorShadesEnabledBox =
 		new QCheckBox(tr("Show harmony swatches under color wheel"));
-	m_colorShadesEnabledBox->setChecked(settings.colorShadesEnabled());
+	m_colorShadesEnabledBox->setChecked(cfg->getColorShadesEnabled());
 	layout->addWidget(m_colorShadesEnabledBox);
 
 	m_stack = new QStackedWidget;
@@ -71,7 +71,7 @@ ShadeSelectorDialog::ShadeSelectorDialog(const QColor &color, QWidget *parent)
 	QVBoxLayout *configLayout = new QVBoxLayout(configWidget);
 	configLayout->setContentsMargins(0, 0, 0, 0);
 
-	m_rowsConfig = settings.colorShadesConfig();
+	m_rowsConfig = cfg->getColorShadesConfig();
 	if(m_rowsConfig.isEmpty()) {
 		m_rowsConfig = widgets::ShadeSelector::getDefaultConfig();
 	}
@@ -87,20 +87,20 @@ ShadeSelectorDialog::ShadeSelectorDialog(const QColor &color, QWidget *parent)
 
 	m_rowHeightSpinner = new KisSliderSpinBox;
 	m_rowHeightSpinner->setRange(4, 32);
-	m_rowHeightSpinner->setValue(settings.colorShadesRowHeight());
+	m_rowHeightSpinner->setValue(cfg->getColorShadesRowHeight());
 	m_rowHeightSpinner->setPrefix(tr("Row height: "));
 	m_rowHeightSpinner->setSuffix(tr("px"));
 	configLayout->addWidget(m_rowHeightSpinner);
 
 	m_columnCountSpinner = new KisSliderSpinBox;
 	m_columnCountSpinner->setRange(2, 50);
-	m_columnCountSpinner->setValue(settings.colorShadesColumnCount());
+	m_columnCountSpinner->setValue(cfg->getColorShadesColumnCount());
 	m_columnCountSpinner->setPrefix(tr("Colors per row: "));
 	configLayout->addWidget(m_columnCountSpinner);
 
 	m_borderThicknessSpinner = new KisSliderSpinBox;
 	m_borderThicknessSpinner->setRange(0, 8);
-	m_borderThicknessSpinner->setValue(settings.colorShadesBorderThickness());
+	m_borderThicknessSpinner->setValue(cfg->getColorShadesBorderThickness());
 	m_borderThicknessSpinner->setPrefix(tr("Border: "));
 	configLayout->addWidget(m_borderThicknessSpinner);
 
@@ -521,15 +521,14 @@ void ShadeSelectorDialog::pickColor()
 
 void ShadeSelectorDialog::saveToSettings()
 {
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	bool enabled = m_colorShadesEnabledBox->isChecked();
-	settings.setColorShadesEnabled(enabled);
+	cfg->setColorShadesEnabled(enabled);
 	if(enabled) {
-		settings.setColorShadesBorderThickness(
-			m_borderThicknessSpinner->value());
-		settings.setColorShadesColumnCount(m_columnCountSpinner->value());
-		settings.setColorShadesConfig(getConfig());
-		settings.setColorShadesRowHeight(m_rowHeightSpinner->value());
+		cfg->setColorShadesBorderThickness(m_borderThicknessSpinner->value());
+		cfg->setColorShadesColumnCount(m_columnCountSpinner->value());
+		cfg->setColorShadesConfig(getConfig());
+		cfg->setColorShadesRowHeight(m_rowHeightSpinner->value());
 	}
 }
 

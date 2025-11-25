@@ -4,10 +4,10 @@
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/filewrangler.h"
-#include "desktop/settings.h"
 #include "desktop/utils/listserverdelegate.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/config/config.h"
 #include "libclient/utils/certificatestoremodel.h"
 #include "libclient/utils/listservermodel.h"
 #include <QApplication>
@@ -27,14 +27,13 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Servers::Servers(
-	desktop::settings::Settings &settings, bool singleSession, QWidget *parent)
+Servers::Servers(config::Config *cfg, bool singleSession, QWidget *parent)
 	: QWidget(parent)
 {
 	QVBoxLayout *layout = new QVBoxLayout;
 	setLayout(layout);
 	if(!singleSession) {
-		initListingServers(settings, layout);
+		initListingServers(cfg, layout);
 	}
 #ifndef __EMSCRIPTEN__
 	utils::addFormSpacer(layout);
@@ -42,16 +41,15 @@ Servers::Servers(
 #endif
 }
 
-void Servers::initListingServers(
-	desktop::settings::Settings &settings, QVBoxLayout *form)
+void Servers::initListingServers(config::Config *cfg, QVBoxLayout *form)
 {
-	auto *serversLabel = new QLabel(tr("List servers:"));
+	QLabel *serversLabel = new QLabel(tr("List servers:"));
 	form->addWidget(serversLabel);
 
-	auto *servers = new QListView;
+	QListView *servers = new QListView;
 	serversLabel->setBuddy(servers);
-	auto *serversModel =
-		new sessionlisting::ListServerModel(settings, true, this);
+	sessionlisting::ListServerModel *serversModel =
+		new sessionlisting::ListServerModel(cfg, true, this);
 	servers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	servers->setModel(serversModel);
 	servers->setItemDelegate(new sessionlisting::ListServerDelegate(this));
@@ -104,10 +102,10 @@ void Servers::moveListServer(
 #ifndef __EMSCRIPTEN__
 void Servers::initKnownHosts(QVBoxLayout *form)
 {
-	auto *knownHostsLabel = new QLabel(tr("Known hosts:"));
+	QLabel *knownHostsLabel = new QLabel(tr("Known hosts:"));
 	form->addWidget(knownHostsLabel);
 
-	auto *knownHosts = new QListView;
+	QListView *knownHosts = new QListView;
 	form->addWidget(knownHosts, 1);
 	knownHostsLabel->setBuddy(knownHosts);
 	knownHosts->setAlternatingRowColors(true);
@@ -115,10 +113,10 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 	knownHosts->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	utils::bindKineticScrollingWith(
 		knownHosts, Qt::ScrollBarAlwaysOff, Qt ::ScrollBarAsNeeded);
-	auto *knownHostsModel = new CertificateStoreModel(this);
+	CertificateStoreModel *knownHostsModel = new CertificateStoreModel(this);
 	knownHosts->setModel(knownHostsModel);
 
-	auto *actions = listActions(
+	utils::EncapsulatedLayout *actions = listActions(
 		knownHosts, tr("Add"), tr("Import trusted certificate…"),
 		[=] {
 			importCertificates(knownHostsModel);
@@ -177,30 +175,14 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 	form->addLayout(actions);
 }
 
-static bool
-askToContinue(const QString &title, const QString &message, QWidget *parent)
-{
-	QMessageBox box(
-		QMessageBox::Warning, title, message, QMessageBox::Cancel, parent);
-	const auto *ok =
-		box.addButton(Servers::tr("Continue"), QMessageBox::AcceptRole);
-	box.setDefaultButton(QMessageBox::Cancel);
-#	ifndef __EMSCRIPTEN__
-	box.setWindowModality(Qt::WindowModal);
-#	endif
-	box.exec();
-	return box.clickedButton() == ok;
-}
-
 void Servers::importCertificates(CertificateStoreModel *model)
 {
-	const auto title = tr("Import certificates");
+	QString title = tr("Import certificates");
+	QStringList paths = FileWrangler(this).getImportCertificatePaths(title);
 
-	const auto paths = FileWrangler(this).getImportCertificatePaths(title);
-
-	for(const auto &path : paths) {
-		auto [index, error] = model->addCertificate(path, true);
-		if(!error.isEmpty() && !askToContinue(title, error, this)) {
+	for(const QString &path : paths) {
+		QString error = model->addCertificate(path, true).second;
+		if(!error.isEmpty() && !askToContinue(title, error)) {
 			model->revert();
 			return;
 		}
@@ -208,10 +190,22 @@ void Servers::importCertificates(CertificateStoreModel *model)
 	model->submit();
 }
 
+bool Servers::askToContinue(const QString &title, const QString &message)
+{
+	QMessageBox box(
+		QMessageBox::Warning, title, message, QMessageBox::Cancel, this);
+	QPushButton *ok =
+		box.addButton(Servers::tr("Continue"), QMessageBox::AcceptRole);
+	box.setDefaultButton(QMessageBox::Cancel);
+	box.setWindowModality(Qt::WindowModal);
+	box.exec();
+	return box.clickedButton() == ok;
+}
+
 void Servers::pinCertificates(
 	CertificateStoreModel *model, const QModelIndexList &indexes, bool pin)
 {
-	for(const auto &index : indexes) {
+	for(const QModelIndex &index : indexes) {
 		model->setData(index, pin, CertificateStoreModel::TrustedRole);
 	}
 	if(!model->submit()) {
@@ -227,17 +221,18 @@ void Servers::pinCertificates(
 void Servers::viewCertificate(
 	CertificateStoreModel *model, const QModelIndex &index)
 {
-	const auto host = model->data(index, Qt::DisplayRole).toString();
-	const auto cert = model->certificate(index);
+	QString host = model->data(index, Qt::DisplayRole).toString();
+	const std::optional<std::reference_wrapper<const QSslCertificate>> cert =
+		model->certificate(index);
 	if(!cert) {
 		return;
 	}
-	auto *cv = new CertificateView(host, *cert, this);
+	CertificateView *cv = new CertificateView(host, *cert, this);
 	cv->setWindowModality(Qt::WindowModal);
 	cv->setAttribute(Qt::WA_DeleteOnClose);
 	cv->show();
 }
 #endif
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}

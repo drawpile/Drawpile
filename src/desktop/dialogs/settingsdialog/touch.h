@@ -7,44 +7,34 @@ class QDialogButtonBox;
 class QFormLayout;
 class QPushButton;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class Touch final : public Page {
 	Q_OBJECT
 public:
-	Touch(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Touch(config::Config *cfg, QWidget *parent = nullptr);
 
 	void createButtons(QDialogButtonBox *buttons);
 	void showButtons();
 
-	static void addTouchPressureSettingTo(
-		desktop::settings::Settings &settings, QFormLayout *form);
+	static void
+	addTouchPressureSettingTo(config::Config *cfg, QFormLayout *form);
 
 signals:
 	void touchTesterRequested();
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
-	void initMode(desktop::settings::Settings &settings, QFormLayout *form);
+	void initMode(config::Config *cfg, QFormLayout *form);
 
-	void
-	initTapActions(desktop::settings::Settings &settings, QFormLayout *form);
+	void initTapActions(config::Config *cfg, QFormLayout *form);
 
-	void initTapAndHoldActions(
-		desktop::settings::Settings &settings, QFormLayout *form);
+	void initTapAndHoldActions(config::Config *cfg, QFormLayout *form);
 
-	void
-	initTouchActions(desktop::settings::Settings &settings, QFormLayout *form);
+	void initTouchActions(config::Config *cfg, QFormLayout *form);
 
 	QPushButton *m_touchTesterButton;
 };

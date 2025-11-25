@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/referenceview.h"
 #include "desktop/utils/qtguicompat.h"
-#include "libclient/settings.h"
 #include "libclient/utils/cursors.h"
+#include "libclient/view/zoom.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
@@ -187,7 +187,7 @@ void ReferenceView::setZoomAt(qreal zoom, const QPointF &point)
 void ReferenceView::zoomStepsAt(int steps, const QPointF &point)
 {
 	constexpr qreal eps = 1e-5;
-	const QVector<qreal> &zoomLevels = libclient::settings::getZoomLevels();
+	const QVector<qreal> &zoomLevels = view::getZoomLevels();
 	// This doesn't actually take the number of steps into account, it just
 	// zooms by a single step. But that works really well, so I'll leave it be.
 	if(steps > 0) {
@@ -249,12 +249,12 @@ void ReferenceView::setInteractionMode(InteractionMode interactionMode)
 
 qreal ReferenceView::zoomMin()
 {
-	return libclient::settings::getZoomMin();
+	return view::getZoomMin();
 }
 
 qreal ReferenceView::zoomMax()
 {
-	return libclient::settings::getZoomMax();
+	return view::getZoomMax();
 }
 
 void ReferenceView::resizeEvent(QResizeEvent *event)

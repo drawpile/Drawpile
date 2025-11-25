@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/view/canvasview.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasinterface.h"
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/glcanvas.h"
 #include "desktop/widgets/notifbar.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/eventlog.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QGestureEvent>
+#include <QIcon>
 #include <QMimeData>
 #include <QResizeEvent>
 #include <QScopedValueRollback>
@@ -55,9 +56,10 @@ CanvasView::CanvasView(
 		m_notificationBar, &widgets::NotificationBar::heightChanged,
 		controller->scene()->hud(), &HudHandler::setTopOffset);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindCanvasScrollBars(this, &CanvasView::setEnableScrollBars);
-	settings.bindTouchGestures(this, &CanvasView::setTouchUseGestureEvents);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET(cfg, CanvasScrollBars, this, CanvasView::setEnableScrollBars);
+	CFG_BIND_SET(
+		cfg, TouchGestures, this, CanvasView::setTouchUseGestureEvents);
 
 	connect(
 		m_controller, &CanvasController::scrollAreaChanged, this,

@@ -9,7 +9,6 @@ class KisCurveWidget;
 class QListWidget;
 class QListWidgetItem;
 class QPushButton;
-namespace desktop { namespace settings { class Settings; } }
 
 namespace dialogs {
 
@@ -34,8 +33,6 @@ private:
 
 	void loadPresets(const KisCubicCurve &current, bool linear);
 	void loadSavedPresets();
-	void convertInputPresetsToCurvePresets(desktop::settings::Settings &cfg);
-	static bool isLinearCurve(const QString &curveString);
 	void
 	loadFunctionPreset(bool linear, const QString &name, double (*f)(double));
 	void addPreset(const QString &name, int type, const KisCubicCurve &curve);

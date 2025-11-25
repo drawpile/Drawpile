@@ -2,10 +2,10 @@
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/net/banlistmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
@@ -293,13 +293,14 @@ void SessionSettingsDialog::closeEvent(QCloseEvent *event)
 
 void SessionSettingsDialog::reloadSettings()
 {
-	const auto listservers = sessionlisting::ListServerModel::listServers(
-		dpApp().settings().listServers(), false);
-	auto *addAnnouncementMenu = m_ui->addAnnouncement->menu();
+	const QVector<sessionlisting::ListServer> listservers =
+		sessionlisting::ListServerModel::listServers(
+			dpAppConfig()->getListServers(), false);
+	QMenu *addAnnouncementMenu = m_ui->addAnnouncement->menu();
 
 	addAnnouncementMenu->clear();
 
-	for(const auto &listserver : listservers) {
+	for(const sessionlisting::ListServer &listserver : listservers) {
 		if(listserver.publicListings) {
 			QAction *a = addAnnouncementMenu->addAction(
 				listserver.icon, listserver.name);

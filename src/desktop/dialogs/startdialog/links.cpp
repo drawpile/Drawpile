@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/links.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include <QDesktopServices>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -97,10 +97,11 @@ void Links::setUpLink(
 	layout()->addWidget(link);
 
 	if(index == DONATION_LINK_INDEX) {
-		dpApp().settings().bindDonationLinksEnabled(link, [link](bool enabled) {
-			link->setEnabled(enabled);
-			link->setVisible(enabled);
-		});
+		CFG_BIND_SET_FN(
+			dpAppConfig(), DonationLinksEnabled, link, [link](bool enabled) {
+				link->setEnabled(enabled);
+				link->setVisible(enabled);
+			});
 	}
 }
 

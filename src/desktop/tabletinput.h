@@ -15,6 +15,7 @@ class DrawpileApp;
 namespace tabletinput {
 Q_NAMESPACE
 
+// Replaced by tools::TabletInputMode
 enum class Mode : int {
 	Uninitialized, // Must be the first value, used for a range check.
 	KisTabletWinink,
@@ -29,23 +30,7 @@ enum class Mode : int {
 	Last = KisTabletWininkNonNative, // Must be equal to the last value, used
 									 // for a range check.
 };
-
 Q_ENUM_NS(Mode)
-
-enum class EraserAction {
-	Ignore,
-#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
-	Switch,
-#endif
-	Override,
-#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
-	Default = Override,
-#else
-	Default = Switch,
-#endif
-};
-
-Q_ENUM_NS(EraserAction)
 
 void init(DrawpileApp &app);
 

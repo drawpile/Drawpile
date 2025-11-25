@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "desktop/view/glcanvas.h"
+extern "C" {
+#include <dpengine/pixels.h>
+}
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
+#include "desktop/view/glcanvas.h"
 #include "libclient/canvas/tilecache.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/perf.h"
+#include "libclient/view/enums.h"
 #include <QMetaEnum>
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLFunctions>
@@ -1003,10 +1007,10 @@ GlCanvas::GlCanvas(CanvasController *controller, QWidget *parent)
 	d->controller = controller;
 	controller->setCanvasWidget(this);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindCheckerColor1(this, &GlCanvas::setCheckerColor1);
-	settings.bindCheckerColor2(this, &GlCanvas::setCheckerColor2);
-	settings.bindUseMipmaps(this, &GlCanvas::setShouldUseMipmaps);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET(cfg, CheckerColor1, this, GlCanvas::setCheckerColor1);
+	CFG_BIND_SET(cfg, CheckerColor2, this, GlCanvas::setCheckerColor2);
+	CFG_BIND_SET(cfg, UseMipmaps, this, GlCanvas::setShouldUseMipmaps);
 
 	connect(
 		controller, &CanvasController::clearColorChanged, this,
@@ -1104,12 +1108,12 @@ void GlCanvas::initializeGL()
 #ifdef CANVAS_IMPLEMENTATION_FALLBACK
 	// Calling OpenGL functions can crash if the driver is sufficiently bad.
 	// Set it to the default renderer temporarily so the user doesn't get stuck.
-	desktop::settings::Settings *settings = nullptr;
+	config::Config *cfg = nullptr;
 	int originalRenderCanvas = -1;
 	if(dpApp().isCanvasImplementationFromSettings()) {
 		constexpr int fallback = int(CANVAS_IMPLEMENTATION_FALLBACK);
-		settings = &dpApp().settings();
-		originalRenderCanvas = settings->renderCanvas();
+		cfg = dpAppConfig();
+		originalRenderCanvas = cfg->getRenderCanvas();
 		if(originalRenderCanvas == fallback) {
 			qCWarning(
 				lcDpGlCanvas, "Canvas implementation is already set to %d",
@@ -1118,8 +1122,8 @@ void GlCanvas::initializeGL()
 			qCDebug(
 				lcDpGlCanvas, "Reverting canvas implementation from %d to %d",
 				originalRenderCanvas, fallback);
-			settings->setRenderCanvas(fallback);
-			settings->trySubmit();
+			cfg->setRenderCanvas(fallback);
+			cfg->trySubmit();
 		}
 	}
 #endif
@@ -1232,11 +1236,11 @@ void GlCanvas::initializeGL()
 	d->dirty = Private::Dirty();
 
 #ifdef CANVAS_IMPLEMENTATION_FALLBACK
-	if(settings && originalRenderCanvas >= 0) {
+	if(cfg && originalRenderCanvas >= 0) {
 		qCDebug(
 			lcDpGlCanvas, "Restoring canvas implementation to %d",
 			originalRenderCanvas);
-		settings->setRenderCanvas(originalRenderCanvas);
+		cfg->setRenderCanvas(originalRenderCanvas);
 	}
 #endif
 }

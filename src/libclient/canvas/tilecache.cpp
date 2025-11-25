@@ -5,7 +5,7 @@ extern "C" {
 #include <dpengine/tile_iterator.h>
 }
 #include "libclient/canvas/tilecache.h"
-#include "libclient/settings.h"
+#include "libclient/view/enums.h"
 #include <QPainter>
 #include <QPixmap>
 #include <QtGlobal>
@@ -617,11 +617,10 @@ void TileCache::markAllTilesDirty()
 
 TileCache::BaseImpl *TileCache::instantiateImpl(int canvasImplementation)
 {
-	using libclient::settings::CanvasImplementation;
 	switch(canvasImplementation) {
-	case int(CanvasImplementation::OpenGl):
+	case int(view::CanvasImplementation::OpenGl):
 		return new GlCanvasImpl;
-	case int(CanvasImplementation::Software):
+	case int(view::CanvasImplementation::Software):
 		return new SoftwareCanvasImpl;
 	default:
 		return nullptr;

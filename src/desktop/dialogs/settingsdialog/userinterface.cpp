@@ -1,97 +1,97 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/dialogs/colordialog.h"
-#include "desktop/settings.h"
+#include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/config/config.h"
+#include "libclient/view/enums.h"
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDebug>
 #include <QFont>
 #include <QFormLayout>
 #include <QPair>
 #include <QPlainTextEdit>
+#include <QSettings>
 #include <QSurfaceFormat>
 #include <QtColorWidgets/ColorPreview>
 
 namespace dialogs {
 namespace settingsdialog {
 
-UserInterface::UserInterface(
-	desktop::settings::Settings &settings, QWidget *parent)
+UserInterface::UserInterface(config::Config *cfg, QWidget *parent)
 	: Page(parent)
 {
-	init(settings);
+	init(cfg);
 }
 
-void UserInterface::setUp(
-	desktop::settings::Settings &settings, QVBoxLayout *layout)
+void UserInterface::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
-	initRequiringRestart(settings, utils::addFormSection(layout));
+	initRequiringRestart(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	QFormLayout *form = utils::addFormSection(layout);
-	initInterfaceMode(settings, form);
-	initKineticScrolling(settings, utils::addFormSection(layout));
+	initInterfaceMode(cfg, form);
+	initKineticScrolling(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initMiscellaneous(settings, utils::addFormSection(layout));
+	initMiscellaneous(cfg, utils::addFormSection(layout));
 }
 
-void UserInterface::initInterfaceMode(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void UserInterface::initInterfaceMode(config::Config *cfg, QFormLayout *form)
 {
 	QButtonGroup *interfaceMode = utils::addRadioGroup(
 		form, tr("Interface mode:"), true,
-		{{tr("Dynamic"), int(desktop::settings::InterfaceMode::Dynamic)},
-		 {tr("Desktop"), int(desktop::settings::InterfaceMode::Desktop)},
-		 {tr("Small screen"),
-		  int(desktop::settings::InterfaceMode::SmallScreen)}});
-	settings.bindInterfaceMode(interfaceMode);
+		{{tr("Dynamic"), int(view::InterfaceMode::Dynamic)},
+		 {tr("Desktop"), int(view::InterfaceMode::Desktop)},
+		 {tr("Small screen"), int(view::InterfaceMode::SmallScreen)}});
+	CFG_BIND_BUTTONGROUP(cfg, InterfaceMode, interfaceMode);
 }
 
-void UserInterface::initKineticScrolling(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void UserInterface::initKineticScrolling(config::Config *cfg, QFormLayout *form)
 {
 	QComboBox *kineticScrollGesture = new QComboBox;
 	kineticScrollGesture->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
-	using desktop::settings::KineticScrollGesture;
 	QPair<QString, int> gestures[] = {
-		{tr("Disabled"), int(KineticScrollGesture::None)},
-		{tr("On left-click drag"), int(KineticScrollGesture::LeftClick)},
-		{tr("On middle-click drag"), int(KineticScrollGesture::MiddleClick)},
-		{tr("On right-click drag"), int(KineticScrollGesture::RightClick)},
-		{tr("On touch drag"), int(KineticScrollGesture::Touch)},
+		{tr("Disabled"), int(view::KineticScrollGesture::None)},
+		{tr("On left-click drag"), int(view::KineticScrollGesture::LeftClick)},
+		{tr("On middle-click drag"),
+		 int(view::KineticScrollGesture::MiddleClick)},
+		{tr("On right-click drag"),
+		 int(view::KineticScrollGesture::RightClick)},
+		{tr("On touch drag"), int(view::KineticScrollGesture::Touch)},
 	};
-	for(const auto &[name, value] : gestures) {
-		kineticScrollGesture->addItem(name, QVariant::fromValue(value));
+	for(const QPair<QString, int> &p : gestures) {
+		kineticScrollGesture->addItem(p.first, QVariant::fromValue(p.second));
 	}
 
-	settings.bindKineticScrollGesture(kineticScrollGesture, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, KineticScrollGesture, kineticScrollGesture);
 	form->addRow(tr("Kinetic scrolling:"), kineticScrollGesture);
 
 	KisSliderSpinBox *threshold = new KisSliderSpinBox;
 	threshold->setRange(0, 100);
 	threshold->setPrefix(tr("Threshold: "));
 	threshold->setBlockUpdateSignalOnDrag(true);
-	settings.bindKineticScrollThreshold(threshold);
+	CFG_BIND_SLIDERSPINBOX(cfg, KineticScrollThreshold, threshold);
 	form->addRow(nullptr, threshold);
 	disableKineticScrollingOnWidget(threshold);
 
 	QCheckBox *hideBars = new QCheckBox(tr("Hide scroll bars"));
-	settings.bindKineticScrollHideBars(hideBars);
+	CFG_BIND_CHECKBOX(cfg, KineticScrollHideBars, hideBars);
 	form->addRow(nullptr, hideBars);
 
-	settings.bindKineticScrollGesture(this, [threshold, hideBars](int gesture) {
-		bool enabled = gesture != int(KineticScrollGesture::None);
-		threshold->setEnabled(enabled);
-		threshold->setVisible(enabled);
-		hideBars->setEnabled(enabled);
-		hideBars->setVisible(enabled);
-	});
+	CFG_BIND_SET_FN(
+		cfg, KineticScrollGesture, this, ([threshold, hideBars](int gesture) {
+			bool enabled = gesture != int(view::KineticScrollGesture::None);
+			threshold->setEnabled(enabled);
+			threshold->setVisible(enabled);
+			hideBars->setEnabled(enabled);
+			hideBars->setVisible(enabled);
+		}));
 }
 
-void UserInterface::initMiscellaneous(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void UserInterface::initMiscellaneous(config::Config *cfg, QFormLayout *form)
 {
 	using color_widgets::ColorPreview;
 
@@ -117,79 +117,81 @@ void UserInterface::initMiscellaneous(
 	backgroundLayout->addStretch();
 	form->addRow(tr("Colors behind canvas:"), backgroundLayout);
 
-	settings.bindCanvasViewBackgroundColor(
-		this, [backgroundPreview](const QColor &color) {
+	CFG_BIND_SET_FN(
+		cfg, CanvasViewBackgroundColor, this,
+		[backgroundPreview](const QColor &color) {
 			backgroundPreview->setColor(color);
 		});
-	settings.bindCheckerColor1(this, [checker1Preview](const QColor &color) {
-		checker1Preview->setColor(color);
-	});
-	settings.bindCheckerColor2(this, [checker2Preview](const QColor &color) {
-		checker2Preview->setColor(color);
-	});
+	CFG_BIND_SET_FN(
+		cfg, CheckerColor1, this, [checker1Preview](const QColor &color) {
+			checker1Preview->setColor(color);
+		});
+	CFG_BIND_SET_FN(
+		cfg, CheckerColor2, this, [checker2Preview](const QColor &color) {
+			checker2Preview->setColor(color);
+		});
 
-	connect(backgroundPreview, &ColorPreview::clicked, this, [this, &settings] {
+	connect(backgroundPreview, &ColorPreview::clicked, this, [this, cfg] {
 		pickColor(
-			settings, &desktop::settings::Settings::canvasViewBackgroundColor,
-			&desktop::settings::Settings::setCanvasViewBackgroundColor,
-			CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT);
+			cfg, &config::Config::getCanvasViewBackgroundColor,
+			&config::Config::setCanvasViewBackgroundColor,
+			config::Config::defaultCanvasViewBackgroundColor());
 	});
-	connect(checker1Preview, &ColorPreview::clicked, this, [this, &settings] {
+	connect(checker1Preview, &ColorPreview::clicked, this, [this, cfg] {
 		pickColor(
-			settings, &desktop::settings::Settings::checkerColor1,
-			&desktop::settings::Settings::setCheckerColor1,
-			CHECKER_COLOR1_DEFAULT);
+			cfg, &config::Config::getCheckerColor1,
+			&config::Config::setCheckerColor1,
+			config::Config::defaultCheckerColor1());
 	});
-	connect(checker2Preview, &ColorPreview::clicked, this, [this, &settings] {
+	connect(checker2Preview, &ColorPreview::clicked, this, [this, cfg] {
 		pickColor(
-			settings, &desktop::settings::Settings::checkerColor2,
-			&desktop::settings::Settings::setCheckerColor2,
-			CHECKER_COLOR2_DEFAULT);
+			cfg, &config::Config::getCheckerColor2,
+			&config::Config::setCheckerColor2,
+			config::Config::defaultCheckerColor2());
 	});
 
 	QCheckBox *showTransformNotices =
 		new QCheckBox(tr("Zoom, rotate, mirror and flip notices"));
-	settings.bindShowTransformNotices(showTransformNotices);
+	CFG_BIND_CHECKBOX(cfg, ShowTransformNotices, showTransformNotices);
 	form->addRow(tr("On-canvas notices:"), showTransformNotices);
 
 	QCheckBox *showViewModeNotices = new QCheckBox(tr("View mode notices"));
-	settings.bindShowViewModeNotices(showViewModeNotices);
+	CFG_BIND_CHECKBOX(cfg, ShowViewModeNotices, showViewModeNotices);
 	form->addRow(nullptr, showViewModeNotices);
 
 	QCheckBox *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
-	settings.bindCanvasScrollBars(scrollBars);
+	CFG_BIND_CHECKBOX(cfg, CanvasScrollBars, scrollBars);
 	form->addRow(tr("Miscellaneous:"), scrollBars);
 
 	QCheckBox *promptCreate = new QCheckBox(tr("Prompt when creating layers"));
-	settings.bindPromptLayerCreate(promptCreate);
+	CFG_BIND_CHECKBOX(cfg, PromptLayerCreate, promptCreate);
 	form->addRow(nullptr, promptCreate);
 
 	QCheckBox *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
-	settings.bindConfirmLayerDelete(confirmDelete);
+	CFG_BIND_CHECKBOX(cfg, ConfirmLayerDelete, confirmDelete);
 	form->addRow(nullptr, confirmDelete);
 
 	QCheckBox *automaticAlphaPreserve = new QCheckBox(
 		tr("Automatically inherit and preserve alpha based on blend mode"));
-	settings.bindAutomaticAlphaPreserve(automaticAlphaPreserve);
+	CFG_BIND_CHECKBOX(cfg, AutomaticAlphaPreserve, automaticAlphaPreserve);
 	form->addRow(nullptr, automaticAlphaPreserve);
 
 	QCheckBox *longPress =
 		new QCheckBox(tr("Long-press to open context menus"));
-	settings.bindLongPressEnabled(longPress);
+	CFG_BIND_CHECKBOX(cfg, LongPressEnabled, longPress);
 	form->addRow(nullptr, longPress);
 
 #ifdef Q_OS_MACOS
 	QCheckBox *quitOnClose =
 		new QCheckBox(tr("Quit when last window is closed"));
-	settings.bindQuitOnLastWindowClosed(quitOnClose);
+	CFG_BIND_CHECKBOX(cfg, QuitOnLastWindowClosed, quitOnClose);
 	form->addRow(tr("macOS:"), quitOnClose);
 #endif
 }
 
-void UserInterface::initRequiringRestart(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void UserInterface::initRequiringRestart(config::Config *cfg, QFormLayout *form)
 {
-	QSettings *scalingSettings = settings.scalingSettings();
+	QSettings *scalingSettings = dpApp().scalingSettings();
 	QString scalingLabel = tr("Scaling:");
 
 	QCheckBox *overrideScaleFactor =
@@ -233,7 +235,7 @@ void UserInterface::initRequiringRestart(
 
 	QCheckBox *overrideFontSize =
 		new QCheckBox(tr("Override system font size"));
-	settings.bindOverrideFontSize(overrideFontSize);
+	CFG_BIND_CHECKBOX(cfg, OverrideFontSize, overrideFontSize);
 	form->addRow(tr("Font size:"), overrideFontSize);
 
 	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
@@ -241,9 +243,9 @@ void UserInterface::initRequiringRestart(
 	fontSize->setPrefix(tr("Font size: "));
 	fontSize->setSuffix(tr("pt"));
 	form->addRow(nullptr, fontSize);
-	settings.bindFontSize(fontSize);
-	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
-	settings.bindOverrideFontSize(fontSize, &QWidget::setVisible);
+	CFG_BIND_SLIDERSPINBOX(cfg, FontSize, fontSize);
+	CFG_BIND_SET(cfg, OverrideFontSize, fontSize, KisSliderSpinBox::setEnabled);
+	CFG_BIND_SET(cfg, OverrideFontSize, fontSize, KisSliderSpinBox::setVisible);
 	disableKineticScrollingOnWidget(fontSize);
 
 	QButtonGroup *vsyncButtons = utils::addRadioGroup(
@@ -275,18 +277,17 @@ void UserInterface::initRequiringRestart(
 }
 
 void UserInterface::pickColor(
-	desktop::settings::Settings &settings,
-	QColor (desktop::settings::Settings::*getColor)() const,
-	void (desktop::settings::Settings::*setColor)(QColor),
+	config::Config *cfg, QColor (config::Config::*getColor)() const,
+	void (config::Config::*setColor)(const QColor &),
 	const QColor &defaultColor)
 {
 	using color_widgets::ColorDialog;
 	ColorDialog *dlg =
-		dialogs::newDeleteOnCloseColorDialog((settings.*getColor)(), this);
+		dialogs::newDeleteOnCloseColorDialog((cfg->*getColor)(), this);
 	dlg->setAlphaEnabled(false);
 	dialogs::setColorDialogResetColor(dlg, defaultColor);
-	connect(dlg, &ColorDialog::accepted, this, [&settings, setColor, dlg] {
-		(settings.*setColor)(dlg->color());
+	connect(dlg, &ColorDialog::accepted, this, [cfg, setColor, dlg] {
+		(cfg->*setColor)(dlg->color());
 	});
 	dlg->show();
 }

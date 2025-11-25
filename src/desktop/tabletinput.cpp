@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/tabletinput.h"
 #include "desktop/main.h"
+#include "libclient/tools/enums.h"
 #include <QCoreApplication>
 #ifdef Q_OS_WIN
-#	include "desktop/settings.h"
+#	include "libclient/config/config.h"
 #	include "bundled/kis_tablet/kis_tablet_support_win.h"
 #	include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -11,6 +12,8 @@
 #		include <QtGui/private/qguiapplication_p.h>
 #	endif
 #endif
+
+using Mode = tools::TabletInputMode;
 
 namespace tabletinput {
 
@@ -66,7 +69,7 @@ static void enableQt6TabletInput(DrawpileApp &app, bool wintab)
 {
 	// See by qtbase tests/manual/qtabletevent/regular_widgets/main.cpp
 	using QWindowsApplication = QNativeInterface::Private::QWindowsApplication;
-	if (auto *wa = app.nativeInterface<QWindowsApplication>()) {
+	if(auto *wa = app.nativeInterface<QWindowsApplication>()) {
 		wa->setWinTabEnabled(wintab);
 		if(wa->isWinTabEnabled()) {
 			qDebug("Wintab enabled");
@@ -98,7 +101,7 @@ static void resetQtInput(DrawpileApp &app)
 void init(DrawpileApp &app)
 {
 #ifdef Q_OS_WIN
-	app.settings().bindTabletDriver([&](int mode) {
+	auto fn = [&app](int mode) {
 		resetKisTablet(app);
 		resetQtInput(app);
 		currentMode = Mode::Uninitialized;
@@ -134,7 +137,8 @@ void init(DrawpileApp &app)
 			break;
 		}
 		emit app.tabletDriverChanged();
-	});
+	};
+	CFG_BIND_SET_FN(app.config(), TabletDriver, &app, fn);
 #else
 	// Nothing to do on other platforms.
 	Q_UNUSED(app);

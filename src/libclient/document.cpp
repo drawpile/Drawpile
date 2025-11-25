@@ -11,12 +11,12 @@ extern "C" {
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/thumbnailerrunnable.h"
 #include "libclient/net/invitelistmodel.h"
 #include "libclient/net/login.h"
-#include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/transform.h"
@@ -43,31 +43,38 @@ extern "C" {
 #endif
 
 Document::Document(
-	int canvasImplementation, libclient::settings::Settings &settings,
-	QObject *parent)
+	int canvasImplementation, config::Config *cfg, QObject *parent)
 	: QObject(parent)
 	, m_canvasImplementation(canvasImplementation)
-	, m_settings(settings)
+	, m_cfg(cfg)
 {
 	// Initialize
 	m_client = new net::Client(this, this);
-	m_settings.bindMessageQueueDrainRate(
-		m_client, &net::Client::setSmoothDrainRate);
+	CFG_BIND_SET(
+		m_cfg, MessageQueueDrainRate, m_client,
+		net::Client::setSmoothDrainRate);
+
 	m_toolctrl = new tools::ToolController(m_client, this);
-	m_settings.bindSmoothing(
-		m_toolctrl, &tools::ToolController::setGlobalSmoothing);
-	m_settings.bindInterpolateInputs(
-		m_toolctrl, &tools::ToolController::setInterpolateInputs);
-	m_settings.bindMouseSmoothing(
-		m_toolctrl, &tools::ToolController::setMouseSmoothing);
-	m_settings.bindCancelDeselects(
-		m_toolctrl, &tools::ToolController::setCancelDeselects);
-	m_settings.bindSelectionColor(
-		m_toolctrl, &tools::ToolController::setSelectionMaskColor);
+	CFG_BIND_SET(
+		m_cfg, Smoothing, m_toolctrl,
+		tools::ToolController::setGlobalSmoothing);
+	CFG_BIND_SET(
+		m_cfg, InterpolateInputs, m_toolctrl,
+		tools::ToolController::setInterpolateInputs);
+	CFG_BIND_SET(
+		m_cfg, MouseSmoothing, m_toolctrl,
+		tools::ToolController::setMouseSmoothing);
+	CFG_BIND_SET(
+		m_cfg, CancelDeselects, m_toolctrl,
+		tools::ToolController::setCancelDeselects);
+	CFG_BIND_SET(
+		m_cfg, SelectionColor, m_toolctrl,
+		tools::ToolController::setSelectionMaskColor);
+
 	m_banlist = new net::BanlistModel(this);
 	m_authList = new net::AuthListModel(this);
 	m_announcementlist =
-		new net::AnnouncementListModel(settings.listServers(), this);
+		new net::AnnouncementListModel(m_cfg->getListServers(), this);
 	m_inviteList = new net::InviteListModel(this);
 	m_serverLog = new QStringListModel(this);
 
@@ -160,15 +167,11 @@ void Document::initCanvas()
 {
 	delete m_canvas;
 
-	m_canvas = new canvas::CanvasModel{
-		m_settings,
-		m_client->myId(),
-		m_canvasImplementation,
-		m_settings.engineFrameRate(),
-		m_settings.engineSnapshotCount(),
-		m_settings.engineSnapshotInterval() * 1000LL,
-		m_wantCanvasHistoryDump,
-		this};
+	m_canvas = new canvas::CanvasModel(
+		m_cfg, m_client->myId(), m_canvasImplementation,
+		m_cfg->getEngineFrameRate(), m_cfg->getEngineSnapshotCount(),
+		m_cfg->getEngineSnapshotInterval() * 1000LL, m_wantCanvasHistoryDump,
+		this);
 
 	m_toolctrl->setModel(m_canvas);
 
@@ -246,7 +249,7 @@ bool Document::loadBlank(
 	unmarkDirty();
 
 	m_canvas->loadBlank(
-		m_settings.engineUndoDepth(), size, background, initialLayerName,
+		m_cfg->getEngineUndoDepth(), size, background, initialLayerName,
 		initialTrackName);
 	clearPaths();
 	return true;
@@ -263,7 +266,7 @@ void Document::loadState(
 	} else {
 		unmarkDirty();
 	}
-	m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
+	m_canvas->loadCanvasState(m_cfg->getEngineUndoDepth(), canvasState);
 	setCurrentPath(path, type);
 	switch(type) {
 	case DP_SAVE_IMAGE_UNKNOWN:
@@ -537,7 +540,7 @@ void Document::onAutoresetQueried(int maxSize, const QString &payload)
 		// to communicate a low network quality to the server if it understands
 		// that or just put in a big delay in responding to the autoreset
 		// request, which should result in us not getting picked over others.
-		bool serverAutoReset = m_settings.serverAutoReset();
+		bool serverAutoReset = m_cfg->getServerAutoReset();
 		// Presence of a payload indicates that the server supports extended
 		// autoreset capabilities introduced in Drawpile 2.2.2.
 		if(!payload.isEmpty()) {
@@ -1009,7 +1012,8 @@ bool Document::checkPermission(int feature)
 	return m_canvas && m_canvas->checkPermission(feature);
 }
 
-void Document::setReconnectStatePrevious(int layerId, int trackId, int frameIndex)
+void Document::setReconnectStatePrevious(
+	int layerId, int trackId, int frameIndex)
 {
 	if(m_reconnectState) {
 		m_reconnectState->setPreviousLayerId(layerId);
@@ -1028,7 +1032,7 @@ void Document::autosave()
 {
 	if(!m_autosaveTimer->isActive()) {
 		int autosaveInterval =
-			qMax(0, m_settings.autoSaveIntervalMinutes() * 60000);
+			qMax(0, m_cfg->getAutoSaveIntervalMinutes() * 60000);
 		m_autosaveTimer->start(autosaveInterval);
 	}
 }
@@ -2058,7 +2062,7 @@ void Document::onThumbnailQueried(const QString &payload)
 {
 	qDebug("Server queried thumbnail");
 	if(m_canvas && m_client->isFullyCaughtUp()) {
-		bool serverAutoReset = m_settings.serverAutoReset();
+		bool serverAutoReset = m_cfg->getServerAutoReset();
 		QJsonArray pings;
 		for(qint64 ping : m_pingHistory) {
 			pings.append(qreal(ping) / 1000.0);

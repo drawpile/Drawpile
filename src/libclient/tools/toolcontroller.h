@@ -80,6 +80,19 @@ public:
 		virtual void finished() = 0;
 	};
 
+// On most platforms, tablet input comes at a very high precision and frequency,
+// so some smoothing is sensible by default. On Android (at least on a Samsung
+// Galaxy S6 Lite, a Samsung Galaxy S8 Ultra and reports from unknown devices)
+// the input is already pretty smooth though, so we'll leave it at zero there.
+#ifdef Q_OS_ANDROID
+	static constexpr int DEFAULT_SMOOTHING = 0;
+#else
+	static constexpr int DEFAULT_SMOOTHING = 3;
+#endif
+	static constexpr int MAX_SMOOTHING = 20;
+
+	static QString globalPressureCurveDefault;
+
 	explicit ToolController(net::Client *client, QObject *parent = nullptr);
 	~ToolController() override;
 

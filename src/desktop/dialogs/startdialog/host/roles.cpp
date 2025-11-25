@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host/roles.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "libclient/net/authlistmodel.h"
 #include <QCheckBox>
 #include <QFormLayout>
@@ -98,10 +98,10 @@ Roles::Roles(QWidget *parent)
 		m_trustedBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		&Roles::trustedBoxChanged);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindLastSessionOpPassword(m_operatorPasswordEdit);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_LINEEDIT(cfg, LastSessionOpPassword, m_operatorPasswordEdit);
 
-	QJsonDocument doc = QJsonDocument::fromJson(settings.lastSessionAuthList());
+	QJsonDocument doc = QJsonDocument::fromJson(cfg->getLastSessionAuthList());
 	if(doc.isArray()) {
 		m_authListModel->load(doc.array());
 	}
@@ -111,8 +111,8 @@ Roles::Roles(QWidget *parent)
 
 void Roles::reset(bool replaceAuth)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setLastSessionOpPassword(QString());
+	config::Config *cfg = dpAppConfig();
+	cfg->setLastSessionOpPassword(QString());
 	if(replaceAuth) {
 		m_authListModel->clear();
 	}
@@ -122,9 +122,9 @@ void Roles::reset(bool replaceAuth)
 
 void Roles::load(const QJsonObject &json, bool replaceAuth)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	if(json.contains(QStringLiteral("opword"))) {
-		settings.setLastSessionOpPassword(
+		cfg->setLastSessionOpPassword(
 			json[QStringLiteral("opword")].toString());
 	}
 	if(json.contains(QStringLiteral("auth"))) {
@@ -222,7 +222,7 @@ void Roles::updateAuthListVisibility()
 
 void Roles::saveAuthList()
 {
-	dpApp().settings().setLastSessionAuthList(
+	dpAppConfig()->setLastSessionAuthList(
 		QJsonDocument(authListToJson()).toJson(QJsonDocument::Compact));
 }
 

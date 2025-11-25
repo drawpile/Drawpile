@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/parentalcontrols/parentalcontrols.h"
-#include "libclient/settings.h"
+#include "libclient/config/config.h"
 
 #include <wpcapi.h>
 
@@ -14,9 +14,9 @@ static const IID IID_IWinParentalControls  = {0x28B4D88B,0xE072,0x49E6,{0x80,0x4
 
 static bool ACTIVE = false;
 
-void init(libclient::settings::Settings &settings)
+void init(config::Config *cfg)
 {
-	g_settings = &settings;
+	g_cfg = cfg;
 	qDebug("Initializing parental controls");
 
 	CoInitialize(nullptr);

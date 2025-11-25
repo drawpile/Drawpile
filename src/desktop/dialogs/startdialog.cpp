@@ -11,9 +11,9 @@
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "libshared/net/netutils.h"
 #include <QAction>
 #include <QButtonGroup>
@@ -419,8 +419,8 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	setMinimumSize(600, 350);
 	setSmallScreenMode(smallScreenMode);
 
-	const desktop::settings::Settings &settings = dpApp().settings();
-	QSize lastSize = settings.lastStartDialogSize();
+	config::Config *cfg = dpAppConfig();
+	QSize lastSize = cfg->getLastStartDialogSize();
 	resize(
 		lastSize.isValid() && utils::sizeFitsOnScreen(this, lastSize)
 			? lastSize
@@ -453,9 +453,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&m_news, &utils::News::updateAvailable, this, &StartDialog::setUpdate);
 	updateCheckForUpdatesButton(false);
 
-	if(!settings.welcomePageShown()) {
+	if(!cfg->getWelcomePageShown()) {
 		welcomePage->showFirstStartText();
-	} else if(settings.updateCheckEnabled()) {
+	} else if(cfg->getUpdateCheckEnabled()) {
 		m_news.check();
 	} else {
 		m_news.checkExisting();
@@ -536,7 +536,7 @@ void StartDialog::setSmallScreenMode(bool smallScreenMode)
 void StartDialog::resizeEvent(QResizeEvent *event)
 {
 	QDialog::resizeEvent(event);
-	dpApp().settings().setLastStartDialogSize(size());
+	dpAppConfig()->setLastStartDialogSize(size());
 }
 
 void StartDialog::addListServer()
@@ -734,7 +734,7 @@ void StartDialog::setHostEnabled(bool ok, bool webSocket, bool tcp)
 void StartDialog::followLink(const QString &fragment)
 {
 	if(fragment.compare("autoupdate", Qt::CaseInsensitive) == 0) {
-		dpApp().settings().setUpdateCheckEnabled(true);
+		dpAppConfig()->setUpdateCheckEnabled(true);
 #ifndef __EMSCRIPTEN__
 		m_checkForUpdatesButton->click();
 #endif
@@ -783,9 +783,9 @@ void StartDialog::rememberLastPage(int i)
 		bool ok;
 		int entry = page->property(ENTRY_PROPERTY_KEY).toInt(&ok);
 		if(ok && entry >= 0 && entry < Entry::Count) {
-			desktop::settings::Settings &settings = dpApp().settings();
-			settings.setLastStartDialogPage(entry);
-			settings.setLastStartDialogDateTime(
+			config::Config *cfg = dpAppConfig();
+			cfg->setLastStartDialogPage(entry);
+			cfg->setLastStartDialogDateTime(
 				QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 		}
 	}
@@ -857,11 +857,11 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 
 void StartDialog::guessPage()
 {
-	const desktop::settings::Settings &settings = dpApp().settings();
-	if(settings.welcomePageShown()) {
-		int lastPage = settings.lastStartDialogPage();
+	config::Config *cfg = dpAppConfig();
+	if(cfg->getWelcomePageShown()) {
+		int lastPage = cfg->getLastStartDialogPage();
 		QDateTime lastDateTime = QDateTime::fromString(
-			settings.lastStartDialogDateTime(), Qt::ISODate);
+			cfg->getLastStartDialogDateTime(), Qt::ISODate);
 		bool lastPageValid =
 			lastPage >= 0 && lastPage < Entry::Count &&
 			lastDateTime.isValid() &&

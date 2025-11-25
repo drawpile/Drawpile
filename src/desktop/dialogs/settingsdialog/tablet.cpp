@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/tablet.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/config/config.h"
+#include "libclient/tools/enums.h"
+#include "libclient/tools/toolcontroller.h"
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QFrame>
@@ -22,10 +25,10 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Tablet::Tablet(desktop::settings::Settings &settings, QWidget *parent)
+Tablet::Tablet(config::Config *cfg, QWidget *parent)
 	: Page(parent)
 {
-	init(settings);
+	init(cfg);
 }
 
 void Tablet::createButtons(QDialogButtonBox *buttons)
@@ -46,25 +49,25 @@ void Tablet::showButtons()
 	m_tabletTesterButton->setVisible(true);
 }
 
-void Tablet::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
+void Tablet::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
-	initTablet(settings, utils::addFormSection(layout));
+	initTablet(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initPressureCurve(settings, utils::addFormSection(layout));
+	initPressureCurve(cfg, utils::addFormSection(layout));
 }
 
-void Tablet::initPressureCurve(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Tablet::initPressureCurve(config::Config *cfg, QFormLayout *form)
 {
 	widgets::CurveWidget *curve = new widgets::CurveWidget(this);
 	curve->setAxisTitleLabels(tr("Stylus"), tr("Output"));
 	curve->setCurveSize(200, 200);
-	settings.bindGlobalPressureCurve(
-		curve, &widgets::CurveWidget::setCurveFromString);
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurve, curve,
+		widgets::CurveWidget::setCurveFromString);
 	connect(
-		curve, &widgets::CurveWidget::curveChanged, &settings,
-		[&settings](const KisCubicCurve &newCurve) {
-			settings.setGlobalPressureCurve(newCurve.toString());
+		curve, &widgets::CurveWidget::curveChanged, cfg,
+		[cfg](const KisCubicCurve &newCurve) {
+			cfg->setGlobalPressureCurve(newCurve.toString());
 		});
 	form->addRow(tr("Global pressure curve:"), curve);
 	disableKineticScrollingOnWidget(curve->curveWidget());
@@ -73,95 +76,92 @@ void Tablet::initPressureCurve(
 
 	QCheckBox *pressureCurveMode =
 		new QCheckBox(tr("Use separate curve for eraser tip"));
-	settings.bindGlobalPressureCurveMode(pressureCurveMode);
+	CFG_BIND_CHECKBOX(cfg, GlobalPressureCurveMode, pressureCurveMode);
 	form->addRow(tr("Eraser pressure curve:"), pressureCurveMode);
 
 	widgets::CurveWidget *eraserCurve = new widgets::CurveWidget(this);
 	eraserCurve->setAxisTitleLabels(tr("Eraser"), tr("Output"));
 	eraserCurve->setCurveSize(200, 200);
-	settings.bindGlobalPressureCurveEraser(
-		eraserCurve, &widgets::CurveWidget::setCurveFromString);
-	settings.bindGlobalPressureCurveMode(
-		eraserCurve, &widgets::CurveWidget::setVisible);
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurveEraser, eraserCurve,
+		widgets::CurveWidget::setCurveFromString);
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurveMode, eraserCurve,
+		widgets::CurveWidget::setVisible);
 	connect(
-		eraserCurve, &widgets::CurveWidget::curveChanged, &settings,
-		[&settings](const KisCubicCurve &newCurve) {
-			settings.setGlobalPressureCurveEraser(newCurve.toString());
+		eraserCurve, &widgets::CurveWidget::curveChanged, cfg,
+		[cfg](const KisCubicCurve &newCurve) {
+			cfg->setGlobalPressureCurveEraser(newCurve.toString());
 		});
 	form->addRow(nullptr, eraserCurve);
 	disableKineticScrollingOnWidget(eraserCurve->curveWidget());
 }
 
-void Tablet::initTablet(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 {
 #if defined(Q_OS_WIN)
 	QComboBox *driver = new QComboBox;
 	driver->addItem(
-		tr("Windows Ink"),
-		QVariant::fromValue(tabletinput::Mode::KisTabletWinink));
+		tr("Windows Ink"), int(tools::TabletInputMode::KisTabletWinink));
 	driver->addItem(
 		tr("Windows Ink Non-Native"),
-		QVariant::fromValue(tabletinput::Mode::KisTabletWininkNonNative));
-	driver->addItem(
-		tr("Wintab"), QVariant::fromValue(tabletinput::Mode::KisTabletWintab));
+		int(tools::TabletInputMode::KisTabletWininkNonNative));
+	driver->addItem(tr("Wintab"), int(tools::TabletInputMode::KisTabletWintab));
 	driver->addItem(
 		tr("Wintab Relative"),
-		QVariant::fromValue(tabletinput::Mode::KisTabletWintabRelativePenHack));
+		int(tools::TabletInputMode::KisTabletWintabRelativePenHack));
 #	if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	driver->addItem(tr("Qt5"), QVariant::fromValue(tabletinput::Mode::Qt5));
+	driver->addItem(tr("Qt5"), int(tools::TabletInputMode::Qt5));
 #	else
 	driver->addItem(
-		tr("Qt6 Windows Ink"),
-		QVariant::fromValue(tabletinput::Mode::Qt6Winink));
-	driver->addItem(
-		tr("Qt6 Wintab"), QVariant::fromValue(tabletinput::Mode::Qt6Wintab));
+		tr("Qt6 Windows Ink"), int(tools::TabletInputMode::Qt6Winink));
+	driver->addItem(tr("Qt6 Wintab"), int(tools::TabletInputMode::Qt6Wintab));
 #	endif
 
-	settings.bindTabletDriver(driver, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, TabletDriver, driver);
 #else
 	QLabel *driver =
 		new QLabel(QStringLiteral("Qt %1").arg(QString::fromUtf8(qVersion())));
 #endif
 	form->addRow(tr("Tablet driver:"), driver);
 
-	auto *pressure = new QCheckBox(tr("Enable pressure sensitivity"));
-	settings.bindTabletEvents(pressure);
+	QCheckBox *pressure = new QCheckBox(tr("Enable pressure sensitivity"));
+	CFG_BIND_CHECKBOX(cfg, TabletEvents, pressure);
 	form->addRow(tr("Pen pressure:"), pressure);
 
 #ifdef Q_OS_ANDROID
-	Touch::addTouchPressureSettingTo(settings, form);
+	Touch::addTouchPressureSettingTo(cfg, form);
 #endif
 
-	auto *smoothing = new KisSliderSpinBox;
-	smoothing->setMaximum(libclient::settings::maxSmoothing);
+	KisSliderSpinBox *smoothing = new KisSliderSpinBox;
+	smoothing->setMaximum(tools::ToolController::MAX_SMOOTHING);
 	smoothing->setPrefix(tr("Global smoothing: "));
-	settings.bindSmoothing(smoothing);
+	CFG_BIND_SLIDERSPINBOX(cfg, Smoothing, smoothing);
 	form->addRow(tr("Smoothing:"), smoothing);
 	disableKineticScrollingOnWidget(smoothing);
 
-	auto *mouseSmoothing = new QCheckBox(tr("Apply global smoothing to mouse"));
-	settings.bindMouseSmoothing(mouseSmoothing);
+	QCheckBox *mouseSmoothing =
+		new QCheckBox(tr("Apply global smoothing to mouse"));
+	CFG_BIND_CHECKBOX(cfg, MouseSmoothing, mouseSmoothing);
 	form->addRow(nullptr, mouseSmoothing);
 
-	auto *interpolate = new QCheckBox(tr("Compensate jagged curves"));
-	settings.bindInterpolateInputs(interpolate);
+	QCheckBox *interpolate = new QCheckBox(tr("Compensate jagged curves"));
+	CFG_BIND_CHECKBOX(cfg, InterpolateInputs, interpolate);
 	form->addRow(nullptr, interpolate);
 
-	auto *eraserAction = new QComboBox;
+	QComboBox *eraserAction = new QComboBox;
 	eraserAction->addItem(
-		tr("Treat as regular pen tip"), int(tabletinput::EraserAction::Ignore));
+		tr("Treat as regular pen tip"), int(tools::EraserAction::Ignore));
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	eraserAction->addItem(
-		tr("Switch to eraser slot"), int(tabletinput::EraserAction::Switch));
+		tr("Switch to eraser slot"), int(tools::EraserAction::Switch));
 #endif
 	eraserAction->addItem(
-		tr("Erase with current brush"),
-		int(tabletinput::EraserAction::Override));
-	settings.bindTabletEraserAction(eraserAction, Qt::UserRole);
+		tr("Erase with current brush"), int(tools::EraserAction::Override));
+	CFG_BIND_COMBOBOX_USER_INT(cfg, TabletEraserAction, eraserAction);
 	//: This refers to the eraser end tablet pen, not a tooltip or something.
 	form->addRow(tr("Eraser tip behavior:"), eraserAction);
 }
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}

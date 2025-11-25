@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/colorsliders.h"
 #include "desktop/docks/colorpalette.h"
+#include "desktop/docks/enums.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/config/config.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QButtonGroup>
@@ -80,6 +81,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
+	config::Config *cfg = dpAppConfig();
 	QMenu *menu = new QMenu(this);
 	QMenu *colorSpaceMenu = menu->addMenu(tr("Color space"));
 	QActionGroup *colorSpaceGroup = new QActionGroup(this);
@@ -88,10 +90,11 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->colorSpaceHsvAction->setCheckable(true);
 	colorSpaceGroup->addAction(d->colorSpaceHsvAction);
 	connect(
-		d->colorSpaceHsvAction, &QAction::toggled, this, [this](bool toggled) {
+		d->colorSpaceHsvAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorHSV);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorHSV));
 			}
 		});
 
@@ -99,10 +102,11 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->colorSpaceHslAction->setCheckable(true);
 	colorSpaceGroup->addAction(d->colorSpaceHslAction);
 	connect(
-		d->colorSpaceHslAction, &QAction::toggled, this, [this](bool toggled) {
+		d->colorSpaceHslAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorHSL);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorHSL));
 			}
 		});
 
@@ -110,14 +114,13 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->colorSpaceHclAction->setCheckable(true);
 	colorSpaceGroup->addAction(d->colorSpaceHclAction);
 	connect(
-		d->colorSpaceHclAction, &QAction::toggled, this, [this](bool toggled) {
+		d->colorSpaceHclAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorLCH);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorLCH));
 			}
 		});
-
-	desktop::settings::Settings &settings = dpApp().settings();
 
 	d->showAllSlidersAction = menu->addAction(tr("Show all sliders at once"));
 	d->showAllSlidersAction->setCheckable(true);
@@ -319,10 +322,10 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		d->lineEdit, &color_widgets::ColorLineEdit::colorEditingFinished, this,
 		&ColorSliderDock::updateFromLineEditFinished);
 
-	settings.bindColorSlidersShowAll(d->showAllSlidersAction);
-	settings.bindColorSlidersShowInput(d->showInputAction);
-	settings.bindColorWheelSpace(this, &ColorSliderDock::setColorSpace);
-	settings.bindColorSlidersMode(this, &ColorSliderDock::setMode);
+	CFG_BIND_ACTION(cfg, ColorSlidersShowAll, d->showAllSlidersAction);
+	CFG_BIND_ACTION(cfg, ColorSlidersShowInput, d->showInputAction);
+	CFG_BIND_SET(cfg, ColorWheelSpace, this, ColorSliderDock::setColorSpace);
+	CFG_BIND_SET(cfg, ColorSlidersMode, this, ColorSliderDock::setMode);
 	updateWidgetVisibilities();
 
 	connect(
@@ -332,7 +335,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		d->showInputAction, &QAction::toggled, this,
 		&ColorSliderDock::updateWidgetVisibilities);
 
-	settings.bindColorSwatchFlags(this, &ColorSliderDock::setSwatchFlags);
+	CFG_BIND_SET(cfg, ColorSwatchFlags, this, ColorSliderDock::setSwatchFlags);
 }
 
 ColorSliderDock::~ColorSliderDock()
@@ -489,7 +492,7 @@ void ColorSliderDock::setMode(int mode)
 	if(mode == 0 || mode == 1) {
 		QSignalBlocker blocker(d->group);
 		d->group->button(mode)->setChecked(true);
-		dpApp().settings().setColorSlidersMode(mode);
+		dpAppConfig()->setColorSlidersMode(mode);
 		updateWidgetVisibilities();
 	} else {
 		qWarning("Unknown color slider mode %d", mode);

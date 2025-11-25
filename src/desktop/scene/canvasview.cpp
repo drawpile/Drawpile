@@ -3,7 +3,6 @@
 #include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/hudhandler.h"
-#include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/view/widgettouchhandler.h"
@@ -11,10 +10,12 @@
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/enums.h"
 #include "libclient/utils/cursors.h"
 #include "libclient/view/enums.h"
+#include "libclient/view/zoom.h"
 #include "libshared/util/qtcompat.h"
 #include <QApplication>
 #include <QDateTime>
@@ -209,8 +210,8 @@ CanvasView::CanvasView(QWidget *parent)
 		&app, &DrawpileApp::eraserNear, this, &CanvasView::setEraserTipActive);
 #endif
 
-	desktop::settings::Settings &settings = app.settings();
-	settings.bindCanvasViewBackgroundColor(this, [this](QColor color) {
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET_FN(cfg, CanvasViewBackgroundColor, this, [this](QColor color) {
 		color.setAlpha(255);
 		setBackgroundBrush(color);
 		update();
@@ -224,48 +225,56 @@ CanvasView::CanvasView(QWidget *parent)
 		m_notificationBar, &NotificationBar::closeButtonClicked, this,
 		&CanvasView::dismissNotificationBar);
 
-	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
-	settings.bindTouchGestures(
-		this, &widgets::CanvasView::setTouchUseGestureEvents);
-	settings.bindRenderSmooth(this, &widgets::CanvasView::setRenderSmooth);
-	settings.bindRenderUpdateFull(
-		this, &widgets::CanvasView::setRenderUpdateFull);
-	settings.bindBrushCursor(this, &widgets::CanvasView::setBrushCursorStyle);
-	settings.bindEraseCursor(this, &widgets::CanvasView::setEraseCursorStyle);
-	settings.bindAlphaLockCursor(
-		this, &widgets::CanvasView::setAlphaLockCursorStyle);
-	settings.bindBrushOutlineWidth(
-		this, &widgets::CanvasView::setBrushOutlineWidth);
-	settings.bindTabletPressTimerDelay(
-		this, &CanvasView::setTabletEventTimerDelay);
+	CFG_BIND_SET(
+		cfg, TabletEvents, this, widgets::CanvasView::setTabletEnabled);
+	CFG_BIND_SET(
+		cfg, TouchGestures, this,
+		widgets::CanvasView::setTouchUseGestureEvents);
+	CFG_BIND_SET(cfg, RenderSmooth, this, widgets::CanvasView::setRenderSmooth);
+	CFG_BIND_SET(
+		cfg, RenderUpdateFull, this, widgets::CanvasView::setRenderUpdateFull);
+	CFG_BIND_SET(
+		cfg, BrushCursor, this, widgets::CanvasView::setBrushCursorStyle);
+	CFG_BIND_SET(
+		cfg, EraseCursor, this, widgets::CanvasView::setEraseCursorStyle);
+	CFG_BIND_SET(
+		cfg, AlphaLockCursor, this,
+		widgets::CanvasView::setAlphaLockCursorStyle);
+	CFG_BIND_SET(
+		cfg, BrushOutlineWidth, this,
+		widgets::CanvasView::setBrushOutlineWidth);
+	CFG_BIND_SET(
+		cfg, TabletPressTimerDelay, this, CanvasView::setTabletEventTimerDelay);
 
-	settings.bindGlobalPressureCurve(this, [=](QString serializedCurve) {
-		KisCubicCurve curve;
-		curve.fromString(serializedCurve);
-		setPressureCurve(curve);
-	});
-	settings.bindGlobalPressureCurveEraser(this, [=](QString serializedCurve) {
-		KisCubicCurve curve;
-		curve.fromString(serializedCurve);
-		setPressureCurveEraser(curve);
-	});
-	settings.bindGlobalPressureCurveMode(
-		this, &CanvasView::setPressureCurveMode);
+	CFG_BIND_SET_FN(
+		cfg, GlobalPressureCurve, this, [=](QString serializedCurve) {
+			KisCubicCurve curve;
+			curve.fromString(serializedCurve);
+			setPressureCurve(curve);
+		});
+	CFG_BIND_SET_FN(
+		cfg, GlobalPressureCurveEraser, this, [=](QString serializedCurve) {
+			KisCubicCurve curve;
+			curve.fromString(serializedCurve);
+			setPressureCurveEraser(curve);
+		});
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurveMode, this, CanvasView::setPressureCurveMode);
 
-	settings.bindCanvasShortcuts(
-		this, [=](desktop::settings::Settings::CanvasShortcutsType shortcuts) {
+	CFG_BIND_SET_FN(
+		cfg, CanvasShortcuts, this, [=](const QVariantMap &shortcuts) {
 			m_canvasShortcuts = CanvasShortcuts::load(shortcuts);
 		});
 
-	settings.bindCanvasScrollBars(this, [=](bool enabled) {
-		const auto policy =
+	CFG_BIND_SET_FN(cfg, CanvasScrollBars, this, [=](bool enabled) {
+		Qt::ScrollBarPolicy policy =
 			enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff;
 		setHorizontalScrollBarPolicy(policy);
 		setVerticalScrollBarPolicy(policy);
 	});
 
-	settings.bindShowTransformNotices(
-		this, &CanvasView::setShowTransformNotices);
+	CFG_BIND_SET(
+		cfg, ShowTransformNotices, this, CanvasView::setShowTransformNotices);
 
 	connect(
 		m_touch, &view::WidgetTouchHandler::touchPressed, this,
@@ -480,7 +489,7 @@ void CanvasView::zoomSteps(int steps)
 void CanvasView::zoomStepsAt(int steps, const QPointF &point)
 {
 	constexpr qreal eps = 1e-5;
-	const QVector<qreal> &zoomLevels = libclient::settings::getZoomLevels();
+	const QVector<qreal> &zoomLevels = view::getZoomLevels();
 	// This doesn't actually take the number of steps into account, it just
 	// zooms by a single step. But that works really well, so I'll leave it be.
 	if(steps > 0) {
@@ -489,8 +498,8 @@ void CanvasView::zoomStepsAt(int steps, const QPointF &point)
 			i++;
 		}
 		qreal level = zoomLevels[i];
-		qreal zoom = m_zoom > level - eps ? libclient::settings::getZoomMax()
-										  : qMax(m_zoom, level);
+		qreal zoom =
+			m_zoom > level - eps ? view::getZoomMax() : qMax(m_zoom, level);
 		setZoomAt(zoom, point);
 	} else if(steps < 0) {
 		int i = zoomLevels.size() - 1;
@@ -498,8 +507,8 @@ void CanvasView::zoomStepsAt(int steps, const QPointF &point)
 			i--;
 		}
 		qreal level = zoomLevels[i];
-		qreal zoom = m_zoom < level + eps ? libclient::settings::getZoomMin()
-										  : qMin(m_zoom, level);
+		qreal zoom =
+			m_zoom < level + eps ? view::getZoomMin() : qMin(m_zoom, level);
 		setZoomAt(zoom, point);
 	}
 }
@@ -639,9 +648,7 @@ void CanvasView::resetZoomCursor()
 
 void CanvasView::setZoomAt(qreal zoom, const QPointF &point)
 {
-	qreal newZoom = qBound(
-		libclient::settings::getZoomMin(), zoom,
-		libclient::settings::getZoomMax());
+	qreal newZoom = qBound(view::getZoomMin(), zoom, view::getZoomMax());
 	if(newZoom != m_zoom) {
 		QTransform matrix;
 		mirrorFlip(matrix, m_mirror, m_flip);

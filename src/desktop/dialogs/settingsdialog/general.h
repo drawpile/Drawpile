@@ -6,44 +6,34 @@
 class QFormLayout;
 class QLocale;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class General final : public Page {
 	Q_OBJECT
 public:
-	General(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	General(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
-	void initLanguage(desktop::settings::Settings &settings, QFormLayout *form);
+	void initLanguage(config::Config *cfg, QFormLayout *form);
 
 	static QString formatLanguage(const QLocale &locale);
 
-	void
-	initContributing(desktop::settings::Settings &settings, QFormLayout *form);
+	void initContributing(config::Config *cfg, QFormLayout *form);
 
-	void
-	initPerformance(desktop::settings::Settings &settings, QFormLayout *form);
+	void initPerformance(config::Config *cfg, QFormLayout *form);
 
-	void
-	initSnapshots(desktop::settings::Settings &settings, QFormLayout *form);
+	void initSnapshots(config::Config *cfg, QFormLayout *form);
 
-	void initTheme(desktop::settings::Settings &settings, QFormLayout *form);
+	void initTheme(config::Config *cfg, QFormLayout *form);
 
-	void initUndo(desktop::settings::Settings &settings, QFormLayout *form);
+	void initUndo(config::Config *cfg, QFormLayout *form);
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

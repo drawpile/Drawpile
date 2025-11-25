@@ -3,11 +3,11 @@
 #include "cmake-config/config.h"
 #include "desktop/main.h"
 #include "desktop/notifications.h"
-#include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/glcanvas.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/config/config.h"
 #include "libclient/utils/statedatabase.h"
 #include "libclient/view/enums.h"
 #include <QClipboard>
@@ -18,6 +18,7 @@
 #include <QNetworkProxy>
 #include <QPushButton>
 #include <QScreen>
+#include <QSettings>
 #include <QStringList>
 #include <QSurfaceFormat>
 #include <QSysInfo>
@@ -96,16 +97,15 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("\n");
 
 	DrawpileApp &app = dpApp();
-	desktop::settings::Settings &settings = app.settings();
-	info += QStringLiteral("Interface mode: %1\n")
-				.arg(QMetaEnum::fromType<desktop::settings::InterfaceMode>()
-						 .valueToKey(settings.interfaceMode()));
+	config::Config *cfg = app.config();
+	info += QStringLiteral("Interface mode: %1\n").arg(cfg->getInterfaceMode());
 	info += QStringLiteral("Device pixel ratio: %1\n").arg(devicePixelRatioF());
 	info +=
 		QStringLiteral("Scale factor rounding: %1\n")
-			.arg(QMetaEnum::fromType<Qt::HighDpiScaleFactorRoundingPolicy>()
-					 .valueToKey(int(app.highDpiScaleFactorRoundingPolicy())));
-	QSettings *scalingSettings = settings.scalingSettings();
+			.arg(
+				QMetaEnum::fromType<Qt::HighDpiScaleFactorRoundingPolicy>()
+					.valueToKey(int(app.highDpiScaleFactorRoundingPolicy())));
+	QSettings *scalingSettings = app.scalingSettings();
 	info += QStringLiteral("Override scaling setting: %1\n")
 				.arg(
 					scalingSettings
@@ -120,8 +120,8 @@ QString SystemInfoDialog::getSystemInfo() const
 						: QStringLiteral("disabled"));
 	info += QStringLiteral("Override font size: %1\n")
 				.arg(
-					settings.overrideFontSize()
-						? QStringLiteral("%1pt").arg(settings.fontSize())
+					cfg->getOverrideFontSize()
+						? QStringLiteral("%1pt").arg(cfg->getFontSize())
 						: QStringLiteral("disabled"));
 	info += QStringLiteral("Vertical sync setting: %1\n")
 				.arg(scalingSettings->value(QStringLiteral("vsync")).toInt());
@@ -145,14 +145,17 @@ QString SystemInfoDialog::getSystemInfo() const
 
 	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
 	info += QStringLiteral("Default format type %1 %2.%3 %4\n")
-				.arg(QMetaEnum::fromType<QSurfaceFormat::RenderableType>()
-						 .valueToKey(format.renderableType()))
+				.arg(
+					QMetaEnum::fromType<QSurfaceFormat::RenderableType>()
+						.valueToKey(format.renderableType()))
 				.arg(format.majorVersion())
 				.arg(format.minorVersion())
-				.arg(QMetaEnum::fromType<QSurfaceFormat::OpenGLContextProfile>()
-						 .valueToKey(format.profile()));
-	info += QStringLiteral("Default format buffer sizes: A=%1 R=%2 G=%3 B=%4 "
-						   "depth=%5 stencil=%6\n")
+				.arg(
+					QMetaEnum::fromType<QSurfaceFormat::OpenGLContextProfile>()
+						.valueToKey(format.profile()));
+	info += QStringLiteral(
+				"Default format buffer sizes: A=%1 R=%2 G=%3 B=%4 "
+				"depth=%5 stencil=%6\n")
 				.arg(format.alphaBufferSize())
 				.arg(format.redBufferSize())
 				.arg(format.greenBufferSize())
@@ -163,74 +166,73 @@ QString SystemInfoDialog::getSystemInfo() const
 				.arg(format.swapInterval());
 	info +=
 		QStringLiteral("Default format swap behavior: %1\n")
-			.arg(QMetaEnum::fromType<QSurfaceFormat::SwapBehavior>().valueToKey(
-				format.swapBehavior()));
+			.arg(
+				QMetaEnum::fromType<QSurfaceFormat::SwapBehavior>().valueToKey(
+					format.swapBehavior()));
 	info +=
 		QStringLiteral("Canvas renderer: %1\n")
 			.arg(
-				QMetaEnum::fromType<libclient::settings::CanvasImplementation>()
-					.valueToKey(dpApp().canvasImplementation()));
+				QMetaEnum::fromType<view::CanvasImplementation>().valueToKey(
+					dpApp().canvasImplementation()));
 	info += QStringLiteral("Render smoothing: %1\n")
-				.arg(boolToYesNo(settings.renderSmooth()));
+				.arg(boolToYesNo(cfg->getRenderSmooth()));
 	info += QStringLiteral("Pixel jitter prevention: %1\n")
-				.arg(boolToYesNo(settings.renderUpdateFull()));
+				.arg(boolToYesNo(cfg->getRenderUpdateFull()));
 	for(const QString &s : view::GlCanvas::getSystemInfo()) {
 		info += QStringLiteral("%1\n").arg(s);
 	}
 	info += QStringLiteral("\n");
 
 	info += QStringLiteral("Tablet events: %1\n")
-				.arg(boolToYesNo(settings.tabletEvents()));
+				.arg(boolToYesNo(cfg->getTabletEvents()));
 	info += QStringLiteral("Tablet driver: %1\n").arg(tabletinput::current());
 	info +=
-		QStringLiteral("Eraser action: %1\n")
-			.arg(QMetaEnum::fromType<tabletinput::EraserAction>().valueToKey(
-				settings.tabletEraserAction()));
+		QStringLiteral("Eraser action: %1\n").arg(cfg->getTabletEraserAction());
 	info += QStringLiteral("Compensate jagged curves: %1\n")
-				.arg(boolToYesNo(settings.interpolateInputs()));
+				.arg(boolToYesNo(cfg->getInterpolateInputs()));
 	info += QStringLiteral("Smoothe mouse and touch drawing: %1\n")
-				.arg(boolToYesNo(settings.mouseSmoothing()));
-	info += QStringLiteral("Global smoothing: %1\n").arg(settings.smoothing());
+				.arg(boolToYesNo(cfg->getMouseSmoothing()));
+	info += QStringLiteral("Global smoothing: %1\n").arg(cfg->getSmoothing());
 	info += QStringLiteral("Global pressure curve: \"%1\"\n")
-				.arg(settings.globalPressureCurve());
+				.arg(cfg->getGlobalPressureCurve());
 	info += QStringLiteral("Global eraser curve: \"%1\"\n")
 				.arg(
-					settings.globalPressureCurveMode()
-						? settings.globalPressureCurveEraser()
+					cfg->getGlobalPressureCurveMode()
+						? cfg->getGlobalPressureCurveEraser()
 						: QStringLiteral("no"));
 	info +=
 		QStringLiteral("One-finger touch action: %1\n")
 			.arg(
 				QMetaEnum::fromType<view::OneFingerTouchAction>().valueToKey(
-					settings.oneFingerTouch()));
+					cfg->getOneFingerTouch()));
 	info +=
 		QStringLiteral("Two-finger pinch action: %1\n")
 			.arg(
 				QMetaEnum::fromType<view::TwoFingerPinchAction>().valueToKey(
-					settings.twoFingerPinch()));
+					cfg->getTwoFingerPinch()));
 	info +=
 		QStringLiteral("Two-finger twist action: %1\n")
 			.arg(
 				QMetaEnum::fromType<view::TwoFingerTwistAction>().valueToKey(
-					settings.twoFingerTwist()));
+					cfg->getTwoFingerTwist()));
 	info += QStringLiteral("One-finger tap action: %1\n")
 				.arg(
 					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
-						settings.oneFingerTap()));
+						cfg->getOneFingerTap()));
 	info += QStringLiteral("Two-finger tap action: %1\n")
 				.arg(
 					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
-						settings.twoFingerTap()));
+						cfg->getTwoFingerTap()));
 	info += QStringLiteral("Three-finger tap action: %1\n")
 				.arg(
 					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
-						settings.threeFingerTap()));
+						cfg->getThreeFingerTap()));
 	info += QStringLiteral("Four-finger tap action: %1\n")
 				.arg(
 					QMetaEnum::fromType<view::TouchTapAction>().valueToKey(
-						settings.fourFingerTap()));
+						cfg->getFourFingerTap()));
 	info += QStringLiteral("Touch gestures: %1\n")
-				.arg(boolToYesNo(settings.touchGestures()));
+				.arg(boolToYesNo(cfg->getTouchGestures()));
 	info += QStringLiteral("\n");
 
 	int screenNumber = 1;
@@ -333,9 +335,10 @@ QString SystemInfoDialog::getSystemInfo() const
 					QNetworkProxy::SctpListeningCapability)));
 	info += QStringLiteral("\n");
 
-	info += QStringLiteral("Settings file path: %1\n").arg(settings.path());
+	info += QStringLiteral("Settings file path: %1\n").arg(cfg->path());
 	info += QStringLiteral("State database path: %1\n").arg(app.state().path());
-	info += QStringLiteral("Brush database path: %1\n").arg(app.brushPresets()->path());
+	info += QStringLiteral("Brush database path: %1\n")
+				.arg(app.brushPresets()->path());
 	info += QStringLiteral("\n");
 
 	info += QStringLiteral("END OF SYSTEM INFORMATION");

@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/settings.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QAssociativeIterable>
 #include <QCoreApplication>
 #include <QDebug>
@@ -24,51 +22,48 @@ Q_LOGGING_CATEGORY(lcDpSettings, "net.drawpile.settings", QtWarningMsg)
 template <typename From, typename To, typename Fn>
 static void registerConverter(Fn &&fn)
 {
-	const auto ok = QMetaType::registerConverter<From, To>(std::forward<Fn>(fn));
-	if (!ok) {
-		qCWarning(lcDpSettings)
-			<< "could not register converter from"
-			<< QMetaType::fromType<From>().name()
-			<< "to"
-			<< QMetaType::fromType<To>().name();
+	const auto ok =
+		QMetaType::registerConverter<From, To>(std::forward<Fn>(fn));
+	if(!ok) {
+		qCWarning(lcDpSettings) << "could not register converter from"
+								<< QMetaType::fromType<From>().name() << "to"
+								<< QMetaType::fromType<To>().name();
 	}
 }
 
-template <typename Value>
-static void registerListConverter()
+template <typename Value> static void registerListConverter()
 {
-	registerConverter<QVariantList, QVector<Value>>([](const QVariantList &list)
-	{
-		QVector<Value> result;
-		for (const auto &value : list) {
-			if (!value.canConvert<Value>()) {
-				qCWarning(lcDpSettings)
-					<< "could not convert" << value << "to"
-					<< QMetaType::fromType<Value>().name();
+	registerConverter<QVariantList, QVector<Value>>(
+		[](const QVariantList &list) {
+			QVector<Value> result;
+			for(const auto &value : list) {
+				if(!value.canConvert<Value>()) {
+					qCWarning(lcDpSettings)
+						<< "could not convert" << value << "to"
+						<< QMetaType::fromType<Value>().name();
+				}
+				result.append(value.value<Value>());
 			}
-			result.append(value.value<Value>());
-		}
-		return result;
-	});
+			return result;
+		});
 }
 
-template <typename Value>
-static void registerMapConverter()
+template <typename Value> static void registerMapConverter()
 {
-	registerConverter<QVariantMap, QMap<QString, Value>>([](const QVariantMap &map)
-	{
-		QMap<QString, Value> result;
-		for (auto entry = map.begin(); entry != map.end(); ++entry) {
-			const auto value = entry.value();
-			if (!value.canConvert<Value>()) {
-				qCWarning(lcDpSettings)
-					<< "could not convert" << value << "to"
-					<< QMetaType::fromType<Value>().name();
+	registerConverter<QVariantMap, QMap<QString, Value>>(
+		[](const QVariantMap &map) {
+			QMap<QString, Value> result;
+			for(auto entry = map.begin(); entry != map.end(); ++entry) {
+				const auto value = entry.value();
+				if(!value.canConvert<Value>()) {
+					qCWarning(lcDpSettings)
+						<< "could not convert" << value << "to"
+						<< QMetaType::fromType<Value>().name();
+				}
+				result.insert(entry.key(), value.value<Value>());
 			}
-			result.insert(entry.key(), value.value<Value>());
-		}
-		return result;
-	});
+			return result;
+		});
 }
 
 static void registerConverters()
@@ -79,15 +74,17 @@ static void registerConverters()
 	registerMapConverter<QHash<QString, QVariant>>();
 	registerConverter<QVariantMap, QMap<int, int>>([](const QVariantMap &map) {
 		QMap<int, int> result;
-		for (auto entry = map.begin(); entry != map.end(); ++entry) {
+		for(auto entry = map.begin(); entry != map.end(); ++entry) {
 			bool ok;
 			const auto key = entry.key().toInt(&ok);
-			if (!ok) {
-				qCWarning(lcDpSettings) << "could not convert" << key << "to int";
+			if(!ok) {
+				qCWarning(lcDpSettings)
+					<< "could not convert" << key << "to int";
 			}
 			const auto value = entry.value();
-			if (!value.canConvert<int>()) {
-				qCWarning(lcDpSettings) << "could not convert" << value << "to int";
+			if(!value.canConvert<int>()) {
+				qCWarning(lcDpSettings)
+					<< "could not convert" << value << "to int";
 			}
 			result.insert(key, value.toInt());
 		}
@@ -99,77 +96,6 @@ Q_COREAPP_STARTUP_FUNCTION(registerConverters)
 
 namespace libclient {
 namespace settings {
-
-static bool zoomLevelsHardware;
-static QVector<qreal> zoomLevels;
-
-qreal getZoomMin()
-{
-	if(zoomLevelsHardware) {
-		return 0.0078125;
-	} else {
-		return 0.05;
-	}
-}
-
-qreal getZoomMax()
-{
-	return 64.0;
-}
-
-qreal getZoomSoftMin()
-{
-	return 0.125;
-}
-
-qreal getZoomSoftMax()
-{
-	if(zoomLevelsHardware) {
-		return 32.0;
-	} else {
-		return 8.0;
-	}
-}
-
-
-const QVector<qreal> &getZoomLevels()
-{
-	if(zoomLevels.isEmpty()) {
-		if(zoomLevelsHardware) {
-			// This set of zoom levels gives slightly nicer interpolation
-			// results for mipmaps when scroll zooming. It computes the same
-			// zoom levels as Paint Tool SAIv2.
-
-			// Divisions per integer power; Also best as a power of 2.
-			const int substep = 4;
-			const int minlevel = round(log2(getZoomMin()) * substep);
-			const int maxlevel = round(log2(getZoomMax()) * substep);
-			// Set to 1 to have the same step count as SAI. Higher number makes
-			// scroll zoom faster.
-			const int step = 2;
-			for(int i = minlevel; i <= maxlevel; i += step) {
-				zoomLevels.append(pow(2, static_cast<double>(i) / substep));
-			}
-		} else {
-			// Zoom levels close to what Krita does, but nudged to cause less
-			// jitter in the software renderers.
-			zoomLevels = {
-				0.0625, 0.08, 0.125, 0.2, 0.25, 0.375, 0.5,	 0.75, 1.0,	 1.5,
-				2.0,	3.0,  4.0,	 6.0, 8.0,	12.0,  16.0, 24.0, 32.0, 48.0,
-			};
-		}
-	}
-	return zoomLevels;
-}
-
-void setZoomLevelsCanvasImplementation(int canvasImplementation)
-{
-	bool hardware = canvasImplementation == int(CanvasImplementation::OpenGl);
-	if(zoomLevelsHardware != hardware) {
-		zoomLevelsHardware = hardware;
-		zoomLevels.clear();
-	}
-}
 
 Settings::Settings(QObject *parent)
 	: QObject(parent)
@@ -185,9 +111,11 @@ Settings::~Settings()
 	}
 }
 
-static void cacheGroups(QSettings &settings, QSet<QString> &groupKeys, const QString &prefix = QString())
+static void cacheGroups(
+	QSettings &settings, QSet<QString> &groupKeys,
+	const QString &prefix = QString())
 {
-	for (const auto &group : settings.childGroups()) {
+	for(const auto &group : settings.childGroups()) {
 		QString key = prefix + group;
 		if(!groupKeys.contains(key)) {
 			groupKeys.insert(key);
@@ -207,8 +135,8 @@ void Settings::reset(const QString &path)
 	delete m_scalingSettings;
 	m_scalingSettings = nullptr;
 
-	if (!path.isEmpty()) {
-		new (&m_settings) QSettings(path, QSettings::IniFormat);
+	if(!path.isEmpty()) {
+		new(&m_settings) QSettings(path, QSettings::IniFormat);
 	} else {
 #ifdef Q_OS_WIN
 		// For whatever reason Qt does not provide a QSettings constructor that
@@ -216,10 +144,10 @@ void Settings::reset(const QString &path)
 		// swap
 		const auto oldFormat = QSettings::defaultFormat();
 		QSettings::setDefaultFormat(QSettings::IniFormat);
-		new (&m_settings) QSettings();
+		new(&m_settings) QSettings();
 		QSettings::setDefaultFormat(oldFormat);
 #else
-		new (&m_settings) QSettings();
+		new(&m_settings) QSettings();
 #endif
 	}
 
@@ -240,8 +168,7 @@ QSettings *Settings::scalingSettings()
 			m_resetPath.isEmpty()
 				? utils::paths::writablePath(
 					  QStandardPaths::GenericConfigLocation,
-					  QStringLiteral("drawpile"),
-					  QStringLiteral("scaling.ini"))
+					  QStringLiteral("drawpile"), QStringLiteral("scaling.ini"))
 				: QFileInfo(m_resetPath)
 					  .dir()
 					  .absoluteFilePath(QStringLiteral("scaling.ini"));
@@ -259,7 +186,7 @@ void Settings::revert()
 	// used when the value is retrieved
 	m_pending.clear();
 
-	for (const auto *setting : pending) {
+	for(const auto *setting : pending) {
 		(setting->notify)(*setting, *this);
 	}
 }
@@ -270,7 +197,8 @@ bool Settings::submit()
 	if(m_pending.isEmpty()) {
 		return true;
 	} else {
-		for (auto entry = m_pending.cbegin(); entry != m_pending.cend(); ++entry) {
+		for(auto entry = m_pending.cbegin(); entry != m_pending.cend();
+			++entry) {
 			const auto setting = entry.key();
 			const auto &newValue = entry.value();
 			(setting->set)(*setting, m_settings, newValue);
@@ -291,7 +219,7 @@ void Settings::trySubmit()
 QVariant Settings::get(const SettingMeta &setting) const
 {
 	QMutexLocker locker{&m_mutex};
-	if (m_pending.contains(&setting)) {
+	if(m_pending.contains(&setting)) {
 		return m_pending[&setting];
 	} else {
 		return (setting.get)(setting, m_settings);
@@ -301,7 +229,7 @@ QVariant Settings::get(const SettingMeta &setting) const
 bool Settings::set(const SettingMeta &setting, QVariant value)
 {
 	QMutexLocker locker{&m_mutex};
-	if (!m_pending.contains(&setting) || m_pending[&setting] != value) {
+	if(!m_pending.contains(&setting) || m_pending[&setting] != value) {
 		m_pending[&setting] = value;
 		(setting.notify)(setting, *this);
 		return true;
@@ -312,42 +240,45 @@ bool Settings::set(const SettingMeta &setting, QVariant value)
 
 QString formatSettingKey(const char *baseKey, int version)
 {
-	return version == 0
-		? baseKey
-		: QStringLiteral("v%1/%2").arg(version).arg(baseKey);
+	return version == 0 ? baseKey
+						: QStringLiteral("v%1/%2").arg(version).arg(baseKey);
 }
 
-std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version)
+std::optional<FoundKey>
+findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version)
 {
-	const auto groupKeys = settings.property("allGroupKeys").value<QSet<QString>>();
-	for (auto candidate = int(version); candidate > 0; --candidate) {
+	const auto groupKeys =
+		settings.property("allGroupKeys").value<QSet<QString>>();
+	for(auto candidate = int(version); candidate > 0; --candidate) {
 		const auto versionedKey = formatSettingKey(baseKey, candidate);
-		if (settings.contains(versionedKey)) {
-			return {{ SettingMeta::Version(candidate), versionedKey, false }};
+		if(settings.contains(versionedKey)) {
+			return {{SettingMeta::Version(candidate), versionedKey, false}};
 		}
-		if (groupKeys.contains(versionedKey)) {
-			return {{ SettingMeta::Version(candidate), versionedKey, true }};
+		if(groupKeys.contains(versionedKey)) {
+			return {{SettingMeta::Version(candidate), versionedKey, true}};
 		}
 	}
 
-	if (settings.contains(baseKey)) {
-		return {{ SettingMeta::Version::V0, baseKey, false }};
+	if(settings.contains(baseKey)) {
+		return {{SettingMeta::Version::V0, baseKey, false}};
 	}
-	if (groupKeys.contains(baseKey)) {
-		return {{ SettingMeta::Version::V0, baseKey, true }};
+	if(groupKeys.contains(baseKey)) {
+		return {{SettingMeta::Version::V0, baseKey, true}};
 	}
 
 	return {};
 }
 
-std::optional<FoundKey> findKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version)
+std::optional<FoundKey> findKeyExactVersion(
+	QSettings &settings, const char *baseKey, SettingMeta::Version version)
 {
-	const auto groupKeys = settings.property("allGroupKeys").value<QSet<QString>>();
+	const auto groupKeys =
+		settings.property("allGroupKeys").value<QSet<QString>>();
 	const auto versionedKey = formatSettingKey(baseKey, int(version));
 	if(settings.contains(versionedKey)) {
-		return {{ version, versionedKey, false }};
+		return {{version, versionedKey, false}};
 	} else if(groupKeys.contains(versionedKey)) {
-		return {{ version, versionedKey, true }};
+		return {{version, versionedKey, true}};
 	} else {
 		return {};
 	}
@@ -383,7 +314,7 @@ static bool hasOnlySizeChildKey(const QSettings &settings)
 
 static bool allChildGroupsIndexed(const QSettings &settings)
 {
-	for (const QString &itemKey : settings.childGroups()) {
+	for(const QString &itemKey : settings.childGroups()) {
 		bool ok;
 		int index = itemKey.toInt(&ok);
 		if(!ok || index < 1) {
@@ -399,176 +330,179 @@ static bool looksLikeListSetting(const QSettings &settings)
 }
 
 namespace any {
-	QVariant getGroup(QSettings &settings, const QString &key)
-	{
-		settings.beginGroup(key);
-		// Intuit if this looks like a list. This is really fragile because of
-		// how ambiguous Qt's settings format is. It should work unless there's
-		// ever an entry that could have a single integer "size" key though.
-		if (looksLikeListSetting(settings)) {
-			settings.endGroup();
-			return getList(settings, key);
-		}
-
-		QVariantMap map;
-		for (const auto &itemKey : settings.childGroups()) {
-			map.insert(itemKey, getGroup(settings, itemKey));
-		}
-		for (const auto &itemKey : settings.childKeys()) {
-			map.insert(itemKey, settings.value(itemKey));
-		}
+QVariant getGroup(QSettings &settings, const QString &key)
+{
+	settings.beginGroup(key);
+	// Intuit if this looks like a list. This is really fragile because of
+	// how ambiguous Qt's settings format is. It should work unless there's
+	// ever an entry that could have a single integer "size" key though.
+	if(looksLikeListSetting(settings)) {
 		settings.endGroup();
-		return map;
+		return getList(settings, key);
 	}
 
-	QVariant getList(QSettings &settings, const QString &key)
-	{
-		QVariantList list;
-		const auto size = settings.beginReadArray(key);
-		for (auto i = 1; i <= size; ++i) {
-			list.append(getGroup(settings, QString::number(i)));
-		}
-		settings.endArray();
-		return list;
+	QVariantMap map;
+	for(const auto &itemKey : settings.childGroups()) {
+		map.insert(itemKey, getGroup(settings, itemKey));
 	}
+	for(const auto &itemKey : settings.childKeys()) {
+		map.insert(itemKey, settings.value(itemKey));
+	}
+	settings.endGroup();
+	return map;
+}
 
-	QVariant get(const SettingMeta &meta, QSettings &settings)
-	{
-		if (const auto key = findKey(settings, meta.baseKey, meta.version)) {
-			if (key->isGroup) {
-				return getGroup(settings, key->key);
-			} else {
-				return settings.value(key->key);
-			}
+QVariant getList(QSettings &settings, const QString &key)
+{
+	QVariantList list;
+	const auto size = settings.beginReadArray(key);
+	for(auto i = 1; i <= size; ++i) {
+		list.append(getGroup(settings, QString::number(i)));
+	}
+	settings.endArray();
+	return list;
+}
+
+QVariant get(const SettingMeta &meta, QSettings &settings)
+{
+	if(const auto key = findKey(settings, meta.baseKey, meta.version)) {
+		if(key->isGroup) {
+			return getGroup(settings, key->key);
 		} else {
-			return meta.getDefaultValue();
+			return settings.value(key->key);
 		}
-	}
-
-	QVariant getExactVersion(const SettingMeta &meta, QSettings &settings)
-	{
-		if (const auto key = findKeyExactVersion(settings, meta.baseKey, meta.version)) {
-			if (key->isGroup) {
-				return getGroup(settings, key->key);
-			} else {
-				return settings.value(key->key);
-			}
-		} else {
-			return meta.getDefaultValue();
-		}
-	}
-
-	void setGroup(QSettings &settings, const QString &key, const QVariant &value)
-	{
-		const auto map = value.value<QAssociativeIterable>();
-
-		if (map.begin() == map.end()) {
-			removeSetting(settings, key);
-			return;
-		}
-
-		settings.beginGroup(key);
-		QSet<QString> keysToDelete;
-		for(const QString &childKey : settings.childKeys()) {
-			keysToDelete.insert(childKey);
-		}
-		for(const QString &childGroupKey : settings.childGroups()) {
-			keysToDelete.insert(childGroupKey);
-		}
-
-		for (auto entry = map.begin(); entry != map.end(); ++entry) {
-			QString mapKey = entry.key().toString();
-			keysToDelete.remove(mapKey);
-
-			QVariant mapValue = entry.value();
-			if (mapValue.canConvert<QVariantList>()) {
-				setList(settings, mapKey, mapValue);
-			} else if (mapValue.canConvert<QVariantMap>()) {
-				setGroup(settings, mapKey, mapValue);
-			} else {
-				settings.setValue(mapKey, mapValue);
-			}
-		}
-
-		for(const QString &keyToDelete : keysToDelete) {
-			settings.remove(keyToDelete);
-		}
-
-		settings.endGroup();
-		ensureGroup(settings, key);
-	}
-
-	void setList(QSettings &settings, const QString &key, const QVariant &value)
-	{
-		const auto list = value.value<QSequentialIterable>();
-
-		const auto size = list.size();
-		if (size == 0) {
-			removeSetting(settings, key);
-			return;
-		}
-
-		// QSettings only really supports lists of maps with `beginWriteArray`
-		// because it expects authors to use `setArrayIndex` for the index and
-		// then `setValue` requires a key, so if the list is not a list of maps
-		// we should just store it directly
-		if (!list.at(0).canConvert<QVariantMap>() && !list.at(0).canConvert<QVariantHash>()) {
-			settings.setValue(key, value);
-			return;
-		}
-
-		settings.beginWriteArray(key, size);
-		auto i = 1;
-		for (const auto &itemValue : list) {
-			const auto itemKey = QString::number(i++);
-			setGroup(settings, itemKey, itemValue);
-		}
-		settings.endArray();
-		ensureGroup(settings, key);
-	}
-
-	void forceSetKey(QSettings &settings, const QString &key, QVariant value)
-	{
-		// `QString` is convertible to `QStringList` for some reason,
-		// which is obviously not desired
-		if (compat::metaTypeFromVariant(value) != QMetaType::QString
-			&& compat::metaTypeFromVariant(value) != QMetaType::QByteArray
-			&& value.canConvert<QVariantList>()
-		) {
-			qCDebug(lcDpSettings) << "set list" << key;
-			setList(settings, key, value);
-		} else if (value.canConvert<QVariantMap>() || value.canConvert<QVariantHash>()) {
-			qCDebug(lcDpSettings) << "set group" << key;
-			setGroup(settings, key, value);
-		} else {
-			qCDebug(lcDpSettings) << "set value" << key << "to" << value;
-			settings.setValue(key, value);
-		}
-	}
-
-	void forceSet(const SettingMeta &meta, QSettings &settings, QVariant value)
-	{
-		const auto key = formatSettingKey(meta.baseKey, int(meta.version));
-		forceSetKey(settings, key, value);
-	}
-
-	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
-	{
-		const auto key = formatSettingKey(meta.baseKey, int(meta.version));
-		if (meta.version != SettingMeta::Version::V0 || value != meta.getDefaultValue()) {
-			forceSetKey(settings, key, value);
-		} else {
-			qCDebug(lcDpSettings) << "remove" << key;
-			removeSetting(settings, key);
-		}
+	} else {
+		return meta.getDefaultValue();
 	}
 }
 
-namespace parentalcontrolslevel {
-	QVariant get(const SettingMeta &meta, QSettings &settings)
-	{
-		return getEnumReplacedByInt<parentalcontrols::Level>(meta, settings);
+QVariant getExactVersion(const SettingMeta &meta, QSettings &settings)
+{
+	if(const auto key =
+		   findKeyExactVersion(settings, meta.baseKey, meta.version)) {
+		if(key->isGroup) {
+			return getGroup(settings, key->key);
+		} else {
+			return settings.value(key->key);
+		}
+	} else {
+		return meta.getDefaultValue();
 	}
+}
+
+void setGroup(QSettings &settings, const QString &key, const QVariant &value)
+{
+	const auto map = value.value<QAssociativeIterable>();
+
+	if(map.begin() == map.end()) {
+		removeSetting(settings, key);
+		return;
+	}
+
+	settings.beginGroup(key);
+	QSet<QString> keysToDelete;
+	for(const QString &childKey : settings.childKeys()) {
+		keysToDelete.insert(childKey);
+	}
+	for(const QString &childGroupKey : settings.childGroups()) {
+		keysToDelete.insert(childGroupKey);
+	}
+
+	for(auto entry = map.begin(); entry != map.end(); ++entry) {
+		QString mapKey = entry.key().toString();
+		keysToDelete.remove(mapKey);
+
+		QVariant mapValue = entry.value();
+		if(mapValue.canConvert<QVariantList>()) {
+			setList(settings, mapKey, mapValue);
+		} else if(mapValue.canConvert<QVariantMap>()) {
+			setGroup(settings, mapKey, mapValue);
+		} else {
+			settings.setValue(mapKey, mapValue);
+		}
+	}
+
+	for(const QString &keyToDelete : keysToDelete) {
+		settings.remove(keyToDelete);
+	}
+
+	settings.endGroup();
+	ensureGroup(settings, key);
+}
+
+void setList(QSettings &settings, const QString &key, const QVariant &value)
+{
+	const auto list = value.value<QSequentialIterable>();
+
+	const auto size = list.size();
+	if(size == 0) {
+		removeSetting(settings, key);
+		return;
+	}
+
+	// QSettings only really supports lists of maps with `beginWriteArray`
+	// because it expects authors to use `setArrayIndex` for the index and
+	// then `setValue` requires a key, so if the list is not a list of maps
+	// we should just store it directly
+	if(!list.at(0).canConvert<QVariantMap>() &&
+	   !list.at(0).canConvert<QVariantHash>()) {
+		settings.setValue(key, value);
+		return;
+	}
+
+	settings.beginWriteArray(key, size);
+	auto i = 1;
+	for(const auto &itemValue : list) {
+		const auto itemKey = QString::number(i++);
+		setGroup(settings, itemKey, itemValue);
+	}
+	settings.endArray();
+	ensureGroup(settings, key);
+}
+
+void forceSetKey(QSettings &settings, const QString &key, QVariant value)
+{
+	// `QString` is convertible to `QStringList` for some reason,
+	// which is obviously not desired
+	if(compat::metaTypeFromVariant(value) != QMetaType::QString &&
+	   compat::metaTypeFromVariant(value) != QMetaType::QByteArray &&
+	   value.canConvert<QVariantList>()) {
+		qCDebug(lcDpSettings) << "set list" << key;
+		setList(settings, key, value);
+	} else if(
+		value.canConvert<QVariantMap>() || value.canConvert<QVariantHash>()) {
+		qCDebug(lcDpSettings) << "set group" << key;
+		setGroup(settings, key, value);
+	} else {
+		qCDebug(lcDpSettings) << "set value" << key << "to" << value;
+		settings.setValue(key, value);
+	}
+}
+
+void forceSet(const SettingMeta &meta, QSettings &settings, QVariant value)
+{
+	const auto key = formatSettingKey(meta.baseKey, int(meta.version));
+	forceSetKey(settings, key, value);
+}
+
+void set(const SettingMeta &meta, QSettings &settings, QVariant value)
+{
+	const auto key = formatSettingKey(meta.baseKey, int(meta.version));
+	if(meta.version != SettingMeta::Version::V0 ||
+	   value != meta.getDefaultValue()) {
+		forceSetKey(settings, key, value);
+	} else {
+		qCDebug(lcDpSettings) << "remove" << key;
+		removeSetting(settings, key);
+	}
+}
+}
+
+namespace parentalcontrolslevel {
+QVariant get(const SettingMeta &meta, QSettings &settings)
+{
+	return getEnumReplacedByInt<parentalcontrols::Level>(meta, settings);
+}
 }
 
 #define DP_SETTINGS_BODY
@@ -582,5 +516,5 @@ void initializeTypes()
 #undef DP_SETTINGS_INIT
 }
 
-} // namespace settings
-} // namespace libclient
+}
+}

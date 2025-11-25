@@ -2,9 +2,9 @@
 #include "desktop/dialogs/startdialog/browse.h"
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/spanawaretreeview.h"
+#include "libclient/config/config.h"
 #include "libclient/net/sessionlistingmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/listservermodel.h"
@@ -188,17 +188,17 @@ Browse::Browse(QWidget *parent)
 	m_refreshTimer->setInterval(1000 * (REFRESH_INTERVAL_SECS + 1));
 	connect(m_refreshTimer, &QTimer::timeout, this, &Browse::periodicRefresh);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindFilterClosed(m_closedBox);
-	settings.bindFilterLocked(m_passwordBox);
-	settings.bindFilterNsfm(m_nsfmBox);
-	settings.bindFilterInactive(m_inactiveBox);
-	settings.bindFilterDuplicates(m_duplicatesBox);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_CHECKBOX(cfg, FilterClosed, m_closedBox);
+	CFG_BIND_CHECKBOX(cfg, FilterLocked, m_passwordBox);
+	CFG_BIND_CHECKBOX(cfg, FilterNsfm, m_nsfmBox);
+	CFG_BIND_CHECKBOX(cfg, FilterInactive, m_inactiveBox);
+	CFG_BIND_CHECKBOX(cfg, FilterDuplicates, m_duplicatesBox);
 
 	utils::initSortingHeader(
-		header, settings.lastBrowseSortColumn(),
-		settings.lastBrowseSortDirection() == 0 ? Qt::AscendingOrder
-												: Qt::DescendingOrder);
+		header, cfg->getLastBrowseSortColumn(),
+		cfg->getLastBrowseSortDirection() == 0 ? Qt::AscendingOrder
+											   : Qt::DescendingOrder);
 	connect(
 		header, &QHeaderView::sortIndicatorChanged, this, &Browse::saveSorting);
 
@@ -235,7 +235,8 @@ void Browse::activate()
 	updateJoinButton();
 	if(!m_activated) {
 		m_activated = true;
-		dpApp().settings().bindListServers(this, &Browse::updateListServers);
+		CFG_BIND_SET(
+			dpAppConfig(), ListServers, this, Browse::updateListServers);
 	}
 }
 
@@ -381,9 +382,9 @@ void Browse::cascadeSectionResize(int logicalIndex, int oldSize, int newSize)
 
 void Browse::saveSorting(int logicalIndex, Qt::SortOrder order)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setLastBrowseSortColumn(logicalIndex);
-	settings.setLastBrowseSortDirection(order == Qt::AscendingOrder ? 0 : 1);
+	config::Config *cfg = dpAppConfig();
+	cfg->setLastBrowseSortColumn(logicalIndex);
+	cfg->setLastBrowseSortDirection(order == Qt::AscendingOrder ? 0 : 1);
 }
 
 void Browse::refresh()
@@ -392,7 +393,7 @@ void Browse::refresh()
 
 	const QVector<sessionlisting::ListServer> &listservers =
 		sessionlisting::ListServerModel::listServers(
-			dpApp().settings().listServers(), true);
+			dpAppConfig()->getListServers(), true);
 	for(const sessionlisting::ListServer &ls : listservers) {
 		if(ls.publicListings && !m_refreshesInProgress.contains(ls.name)) {
 			QUrl url{ls.url};
@@ -434,7 +435,7 @@ void Browse::refreshServer(
 			qInfo(
 				"List server at %s is gone. Removing.",
 				qUtf8Printable(urlString));
-			sessionlisting::ListServerModel servers(dpApp().settings(), true);
+			sessionlisting::ListServerModel servers(dpAppConfig(), true);
 			if(servers.removeServer(urlString)) {
 				servers.submit();
 			}

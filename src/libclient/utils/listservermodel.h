@@ -4,10 +4,8 @@
 #include <QAbstractListModel>
 #include <QIcon>
 
-namespace libclient {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace sessionlisting {
@@ -32,8 +30,7 @@ public:
 	};
 
 	explicit ListServerModel(
-		libclient::settings::Settings &settings, bool includeReadOnly,
-		QObject *parent = nullptr);
+		config::Config *cfg, bool includeReadOnly, QObject *parent = nullptr);
 
 	void reload();
 
@@ -78,7 +75,7 @@ public slots:
 	bool submit() override;
 
 private:
-	libclient::settings::Settings &m_settings;
+	config::Config *m_cfg;
 	bool m_includeReadOnly;
 	QVector<ListServer> m_servers;
 };

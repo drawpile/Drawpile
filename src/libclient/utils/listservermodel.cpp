@@ -14,10 +14,9 @@
 namespace sessionlisting {
 
 ListServerModel::ListServerModel(
-	libclient::settings::Settings &settings, bool includeReadOnly,
-	QObject *parent)
+	config::Config *cfg, bool includeReadOnly, QObject *parent)
 	: QAbstractListModel(parent)
-	, m_settings(settings)
+	, m_cfg(cfg)
 	, m_includeReadOnly(includeReadOnly)
 {
 	reload();
@@ -25,7 +24,7 @@ ListServerModel::ListServerModel(
 
 void ListServerModel::reload()
 {
-	loadServers(m_settings.listServers(), m_includeReadOnly);
+	loadServers(m_cfg->getListServers(), m_includeReadOnly);
 }
 
 int ListServerModel::rowCount(const QModelIndex &parent) const
@@ -261,12 +260,12 @@ QVector<QVariantMap> ListServerModel::saveServers() const
 
 void ListServerModel::revert()
 {
-	loadServers(m_settings.listServers(), m_includeReadOnly);
+	loadServers(m_cfg->getListServers(), m_includeReadOnly);
 }
 
 bool ListServerModel::submit()
 {
-	m_settings.setListServers(saveServers());
+	m_cfg->setListServers(saveServers());
 	return true;
 }
 

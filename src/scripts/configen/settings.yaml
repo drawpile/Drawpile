@@ -1,0 +1,1139 @@
+settings:
+  # libclient
+
+  - id: autoSaveIntervalMinutes
+    type: 'int'
+    default: '5'
+    qsettings: 'settings/autosaveminutes'
+
+  - id: cancelDeselects
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/canceldeselects'
+
+  - id: checkerColor1
+    type: 'QColor'
+    default: 'QColor(100, 100, 100)'
+    qsettings: 'settings/checkercolor1'
+
+  - id: checkerColor2
+    type: 'QColor'
+    default: 'QColor(135, 135, 135)'
+    qsettings: 'settings/checkercolor2'
+
+  - id: engineFrameRate
+    type: 'int'
+    default: '60'
+    qsettings: 'settings/paintengine/fps'
+
+  - id: engineSnapshotCount
+    type: 'int'
+    default:
+      - value: '0'
+        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+      - value: '5'
+    qsettings: 'settings/paintengine/snapshotcount'
+
+  - id: engineSnapshotInterval
+    type: 'int'
+    default: '10'
+    qsettings: 'settings/paintengine/snapshotinterval'
+
+  - id: engineUndoDepth
+    type: 'int'
+    default: '60'
+    qsettings: 'settings/paintengine/undodepthlimit'
+
+  - id: interpolateInputs
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/input/interpolate'
+
+  - id: listServers
+    type: 'QVector<QVariantMap>'
+    default: 'QVector<QVariantMap>()'
+    qsettings: 'listservers'
+
+  - id: messageQueueDrainRate
+    type: 'int'
+    default: 'net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE'
+    qsettings: 'settings/messagequeuedrainrate'
+
+  - id: mouseSmoothing
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/input/mousesmoothing'
+
+  - id: networkProxyMode
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/networkproxymode'
+
+  - id: parentalControlsAutoTag
+    type: 'bool'
+    default: 'true'
+    qsettings: 'pc/autotag'
+
+  - id: parentalControlsForceCensor
+    type: 'bool'
+    default: 'false'
+    qsettings: 'pc/noUncensoring'
+
+  - id: parentalControlsLevel
+    type: 'int'
+    default: 'int(parentalcontrols::Level::Unrestricted)'
+    qsettings: 'pc/level'
+
+  - id: parentalControlsLocked
+    type: 'QByteArray'
+    default: 'QByteArray()'
+    qsettings: 'pc/locked'
+
+  - id: parentalControlsTags
+    type: 'QString'
+    default: 'parentalcontrols::defaultWordList()'
+    qsettings: 'pc/tagwords'
+
+  - id: selectionColor
+    type: 'QColor'
+    default: 'QColor(0, 170, 255)'
+    qsettings: 'settings/selectioncolor'
+
+  - id: serverAutoReset
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/server/autoreset'
+
+  - id: serverPort
+    type: 'int'
+    default: 'cmake_config::proto::port()'
+    qsettings: 'settings/server/port'
+
+  - id: serverTimeout
+    type: 'int'
+    default: '60'
+    qsettings: 'settings/server/timeout'
+
+  - id: smoothing
+    type: 'int'
+    default: 'tools::ToolController::DEFAULT_SMOOTHING'
+    qsettings: 'settings/input/smooth'
+
+  # desktop
+
+  - id: actionBar
+    type: 'int'
+    default: '1'
+    qsettings: 'settings/actionbar'
+
+  - id: actionBarLocation
+    type: 'int'
+    default: '3'
+    qsettings: 'settings/actionbarlocation'
+
+  - id: alphaLockCursor
+    type: 'int'
+    default: 'int(view::Cursor::SameAsBrush)'
+    qsettings: 'settings/alphalockcursor'
+
+  - id: androidStylusChecked
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/android/styluschecked'
+    condition: 'defined(Q_OS_ANDROID)'
+
+  - id: animationExportFormat
+    type: 'int'
+    default: '-1'
+    qsettings: 'animationexport/format'
+
+  - id: automaticAlphaPreserve
+    type: 'int'
+    default: '1'
+    qsettings: 'settings/automaticalphapreserve'
+
+  - id: brushCursor
+    type: 'int'
+    default: 'int(view::Cursor::TriangleRight)'
+    qsettings: 'settings/brushcursor'
+
+  - id: brushOutlineWidth
+    type: 'double'
+    default: '1.0'
+    qsettings: 'settings/brushoutlinewidth'
+
+  - id: brushPresetsAttach
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/brushpresetsattach'
+
+  - id: brushSlotCount
+    type: 'int'
+    default: '5'
+    qsettings: 'settings/brushslotcount'
+
+  - id: canvasScrollBars
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/canvasscrollbars'
+
+  - id: canvasShortcuts
+    type: 'QVariantMap'
+    default: 'QVariantMap()'
+    qsettings: 'settings/canvasshortcuts2'
+
+  - id: canvasViewBackgroundColor
+    type: 'QColor'
+    default: 'QColor(100, 100, 100)'
+    qsettings: 'settings/canvasviewbackgroundcolor'
+
+  - id: captureVolumeRocker
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/android/capturevolumerocker'
+    condition: 'defined(Q_OS_ANDROID)'
+
+  - id: colorCircleGamutMaskAngle
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/colorcircle/gamutmaskangle'
+
+  - id: colorCircleGamutMaskOpacity
+    type: 'double'
+    default: '0.75'
+    qsettings: 'settings/colorcircle/gamutmaskopacity'
+
+  - id: colorCircleGamutMaskPath
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/colorcircle/gamutmaskpath'
+
+  - id: colorCircleHueAngle
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/colorcircle/hueangle'
+
+  - id: colorCircleHueCount
+    type: 'int'
+    default: '16'
+    qsettings: 'settings/colorcircle/huecount'
+
+  - id: colorCircleHueLimit
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/colorcircle/huelimit'
+
+  - id: colorCircleSaturationCount
+    type: 'int'
+    default: '8'
+    qsettings: 'settings/colorcircle/saturationcount'
+
+  - id: colorCircleSaturationLimit
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/colorcircle/saturationlimit'
+
+  - id: colorCircleValueCount
+    type: 'int'
+    default: '10'
+    qsettings: 'settings/colorcircle/valuecount'
+
+  - id: colorCircleValueLimit
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/colorcircle/valuelimit'
+
+  - id: colorShadesBorderThickness
+    type: 'int'
+    default: '1'
+    qsettings: 'settings/colorshades/borderthickness'
+
+  - id: colorShadesColumnCount
+    type: 'int'
+    default: '11'
+    qsettings: 'settings/colorshades/columncount'
+
+  - id: colorShadesConfig
+    type: 'QVariantList'
+    default: 'QVariantList()'
+    qsettings: 'settings/colorshades/config'
+
+  - id: colorShadesEnabled
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/colorshades/enabled'
+
+  - id: colorShadesRowHeight
+    type: 'int'
+    default: '16'
+    qsettings: 'settings/colorshades/rowheight'
+
+  - id: colorSlidersMode
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/colorsliders/mode'
+
+  - id: colorSlidersShowAll
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/colorsliders/showall'
+
+  - id: colorSlidersShowInput
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/colorsliders/showinput'
+
+  - id: colorSwatchFlags
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/colorswatchflags'
+
+  - id: colorWheelAlign
+    type: 'int'
+    default: 'int(Qt::AlignVCenter)'
+    qsettings: 'settings/colorwheel/align'
+
+  - id: colorWheelAngle
+    type: 'int'
+    default: '1 /* color_widgets::ColorWheel::AngleEnum::AngleRotating */'
+    qsettings: 'settings/colorwheel/rotate'
+
+  - id: colorWheelMirror
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/colorwheel/mirror'
+
+  - id: colorWheelPreview
+    type: 'int'
+    default: '1'
+    qsettings: 'settings/colorwheel/preview'
+
+  - id: colorWheelShape
+    type: 'int'
+    default: '0 /* color_widgets::ColorWheel::ShapeEnum::ShapeTriangle */'
+    qsettings: 'settings/colorwheel/shape'
+
+  - id: colorWheelSpace
+    type: 'int'
+    default: '0 /* color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV */'
+    qsettings: 'settings/colorwheel/space'
+
+  - id: compactChat
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/compactchat'
+
+  - id: confirmLayerDelete
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/confirmlayerdelete'
+
+  - id: connectionNotification
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/android/connectionnotif'
+    condition: 'defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)'
+
+  - id: curvesPresets
+    type: 'QVector<QVariantMap>'
+    default: 'QVector<QVariantMap>()'
+    qsettings: 'curves/presets'
+
+  - id: debounceDelayMs
+    type: 'int'
+    default: '250'
+    qsettings: 'settings/debouncedelayms'
+
+  - id: donationLinksEnabled
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/donationlinksenabled'
+
+  - id: doubleTapAltToFocusCanvas
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/doubletapalttofocuscanvas'
+
+  - id: eraseCursor
+    type: 'int'
+    default: 'int(view::Cursor::SameAsBrush)'
+    qsettings: 'settings/erasecursor'
+
+  - id: filterClosed
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/filterclosed'
+
+  - id: filterDuplicates
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/filterduplicates'
+
+  - id: filterInactive
+    type: 'bool'
+    default: 'true'
+    qsettings: 'history/filterinactive'
+
+  - id: filterLocked
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/filterlocked'
+
+  - id: filterNsfm
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/filternsfw'
+
+  - id: flipbookUpscaling
+    type: 'bool'
+    default: 'true'
+    qsettings: 'flipbook/upscaling'
+
+  - id: flipbookWindow
+    type: 'QRect'
+    default: 'QRect()'
+    qsettings: 'flipbook/window'
+
+  - id: fontSize
+    type: 'int'
+    default: '-1'
+    qsettings: 'settings/fontSize'
+
+  - id: fourFingerTap
+    type: 'int'
+    default: 'int(view::TouchTapAction::HideDocks)'
+    qsettings: 'settings/input/fourfingertap'
+
+  - id: globalPressureCurve
+    type: 'QString'
+    default: 'tools::ToolController::globalPressureCurveDefault'
+    qsettings: 'settings/input/globalcurve'
+
+  - id: globalPressureCurveEraser
+    type: 'QString'
+    default: 'tools::ToolController::globalPressureCurveDefault'
+    qsettings: 'settings/input/globalcurveeraser'
+
+  - id: globalPressureCurveMode
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/input/globalcurvemode'
+
+  - id: hostEnableAdvanced
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/hostenableadvanced'
+
+  - id: ignoreCarrierGradeNat
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/cgnalert'
+
+  - id: inputPresets
+    type: 'QVector<QVariantMap>'
+    default: 'QVector<QVariantMap>()'
+    qsettings: 'inputpresets'
+
+  - id: insecurePasswordStorage
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/insecurepasswordstorage'
+
+  - id: interfaceMode
+    type: 'int'
+    default:
+      - value: 'int(view::InterfaceMode::Dynamic)'
+        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+      - value: 'int(view::InterfaceMode::Desktop)'
+    qsettings: 'settings/interfacemode'
+
+  - id: inviteIncludePassword
+    type: 'bool'
+    default: 'true'
+    qsettings: 'invites/includepassword'
+
+  - id: kineticScrollGesture
+    type: 'int'
+    default:
+      - value: 'int(view::KineticScrollGesture::LeftClick)'
+        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+      - value: 'int(view::KineticScrollGesture::None)'
+    qsettings: 'settings/kineticscroll/gesture'
+
+  - id: kineticScrollHideBars
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/kineticscroll/hidebars'
+
+  - id: kineticScrollThreshold
+    type: 'int'
+    default: '10'
+    qsettings: 'settings/kineticscroll/threshold'
+
+  - id: language
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/language'
+
+  - id: lastAnnounce
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/announce'
+
+  - id: lastAvatar
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/avatar'
+
+  - id: lastBrowseSortColumn
+    type: 'int'
+    default: '-1'
+    qsettings: 'history/browsesortcolumn'
+
+  - id: lastBrowseSortDirection
+    type: 'int'
+    default: '0'
+    qsettings: 'history/browsesortdirection'
+
+  - id: lastFileOpenPath
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'window/lastpath'
+
+  - id: lastFileOpenPaths
+    type: 'QVariantMap'
+    default: 'QVariantMap()'
+    qsettings: 'window/lastpaths'
+
+  - id: lastHostServer
+    type: 'int'
+    default: '-1'
+    qsettings: 'history/hostserver'
+
+  - id: lastHostType
+    type: 'int'
+    default: '0'
+    qsettings: 'history/hosttype'
+
+  - id: lastIdAlias
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/idalias'
+
+  - id: lastJoinAddress
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/joinaddress'
+
+  - id: lastKeepChat
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/keepchat'
+
+  - id: lastListingUrls
+    type: 'QStringList'
+    default: 'QStringList()'
+    qsettings: 'history/listingurls'
+
+  - id: lastNsfm
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/nsfm'
+
+  - id: lastPalette
+    type: 'int'
+    default: '0'
+    qsettings: 'history/lastpalette'
+
+  - id: lastSessionAuthList
+    type: 'QByteArray'
+    default: 'QByteArray()'
+    qsettings: 'history/sessionauthlist'
+
+  - id: lastSessionAutomatic
+    type: 'bool'
+    default: 'true'
+    qsettings: 'history/sessionautomatic'
+
+  - id: lastSessionBanList
+    type: 'QByteArray'
+    default: 'QByteArray()'
+    qsettings: 'history/sessionbanlist'
+
+  - id: lastSessionOpPassword
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/sessionoppassword'
+
+  - id: lastSessionPassword
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/sessionpassword'
+
+  - id: lastSessionPermissions
+    type: 'QVariantMap'
+    default: 'QVariantMap()'
+    qsettings: 'history/sessionpermissions'
+
+  - id: lastSessionTitle
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/sessiontitle'
+
+  - id: lastSessionUndoDepth
+    type: 'int'
+    default: '60'
+    qsettings: 'history/sessionundodepth'
+
+  - id: lastStartDialogDateTime
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/laststartdialogdatetime'
+
+  - id: lastStartDialogPage
+    type: 'int'
+    default: '-1'
+    qsettings: 'history/laststartdialogpage'
+
+  - id: lastStartDialogSize
+    type: 'QSize'
+    default: 'QSize()'
+    qsettings: 'history/laststartdialogsize'
+
+  - id: lastTool
+    type: 'int'
+    default: 'int(tools::Tool::Type::FREEHAND)'
+    qsettings: 'tools/tool'
+
+  - id: lastToolBackgroundColor
+    type: 'QColor'
+    default: 'QColor(Qt::white)'
+    qsettings: 'tools/backgroundcolor'
+
+  - id: lastToolColor
+    type: 'QColor'
+    default: 'QColor(Qt::black)'
+    qsettings: 'tools/color'
+
+  - id: lastUsername
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'history/username'
+
+  - id: lastWindowActions
+    type: 'QMap<QString, bool>'
+    default: 'QMap<QString, bool>()'
+    qsettings: 'window/actions'
+
+  - id: lastWindowDocks
+    type: 'QVariantMap'
+    default: 'QVariantMap()'
+    qsettings: 'window/docks'
+
+  - id: lastWindowMaximized
+    type: 'bool'
+    default: 'true'
+    qsettings: 'window/maximized'
+
+  - id: lastWindowPosition
+    type: 'QPoint'
+    default: 'QPoint()'
+    qsettings: 'window/pos'
+
+  - id: lastWindowSize
+    type: 'QSize'
+    default: 'QSize(800, 600)'
+    qsettings: 'window/size'
+
+  - id: lastWindowState
+    type: 'QByteArray'
+    default: 'QByteArray()'
+    qsettings: 'window/state'
+
+  - id: lastWindowViewState
+    type: 'QByteArray'
+    default: 'QByteArray()'
+    qsettings: 'window/viewstate'
+
+  - id: layerSketchOpacityPercent
+    type: 'int'
+    default: '75'
+    qsettings: 'layers/sketchopacitypercent'
+
+  - id: layerSketchTint
+    type: 'QColor'
+    default: 'QColor(62, 140, 236)'
+    qsettings: 'layers/sketchtint'
+
+  - id: layouts
+    type: 'QVector<QVariantMap>'
+    default: 'QVector<QVariantMap>()'
+    qsettings: 'layouts'
+
+  - id: layoutsVersion
+    type: 'int'
+    default: '0'
+    qsettings: 'layoutsversion'
+
+  - id: leftyMode
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/leftymode'
+
+  - id: longPressEnabled
+    type: 'bool'
+    default:
+      - value: 'true'
+        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+      - value: 'false'
+    qsettings: 'settings/longpress/enabled'
+
+  - id: mentionEnabled
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/mentions/enabled'
+
+  - id: mentionTriggerList
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/mentions/triggerlist'
+
+  - id: nativeDialogs
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/nativedialogs'
+    condition: 'defined(NATIVE_DIALOGS_SETTING_AVAILABLE)'
+
+  - id: navigatorRealtime
+    type: 'bool'
+    default: 'false'
+    qsettings: 'navigator/realtime'
+
+  - id: navigatorShowCursors
+    type: 'bool'
+    default: 'true'
+    qsettings: 'navigator/showcursors'
+
+  - id: newCanvasBackColor
+    type: 'QColor'
+    default: 'QColor(Qt::white)'
+    qsettings: 'history/newcolor'
+
+  - id: newCanvasSize
+    type: 'QSize'
+    default: 'QSize(2000, 2000)'
+    qsettings: 'history/newsize'
+
+  - id: notifFlashChat
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifflashes/chat'
+
+  - id: notifFlashDisconnect
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifflashes/disconnect'
+
+  - id: notifFlashLock
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifflashes/lock'
+
+  - id: notifFlashLogin
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifflashes/login'
+
+  - id: notifFlashLogout
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifflashes/logout'
+
+  - id: notifFlashPrivateChat
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifflashes/privatechat'
+
+  - id: notifFlashUnlock
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifflashes/unlock'
+
+  - id: notifPopupChat
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifpopups/chat'
+
+  - id: notifPopupDisconnect
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifpopups/disconnect'
+
+  - id: notifPopupLock
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifpopups/lock'
+
+  - id: notifPopupLogin
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifpopups/login'
+
+  - id: notifPopupLogout
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifpopups/logout'
+
+  - id: notifPopupPrivateChat
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifpopups/privatechat'
+
+  - id: notifPopupUnlock
+    type: 'bool'
+    default: 'false'
+    qsettings: 'notifpopups/unlock'
+
+  - id: notifSoundChat
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/chat'
+
+  - id: notifSoundDisconnect
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/disconnect'
+
+  - id: notifSoundLock
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/lock'
+
+  - id: notifSoundLogin
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/login'
+
+  - id: notifSoundLogout
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/logout'
+
+  - id: notifSoundPrivateChat
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/privatechat'
+
+  - id: notifSoundUnlock
+    type: 'bool'
+    default: 'true'
+    qsettings: 'notifications/unlock'
+
+  - id: oneFingerTap
+    type: 'int'
+    default: 'int(view::TouchTapAction::Nothing)'
+    qsettings: 'settings/input/onefingertap'
+
+  - id: oneFingerTapAndHold
+    type: 'int'
+    default: 'int(view::TouchTapAndHoldAction::ColorPickMode)'
+    qsettings: 'settings/input/onefingertapandhold'
+
+  - id: oneFingerTouch
+    type: 'int'
+    default: 'int(ONE_FINGER_TOUCH_DEFAULT)'
+    qsettings: 'settings/input/onefingertouch'
+
+  - id: onionSkinsFrameCount
+    type: 'int'
+    default: '8'
+    qsettings: 'onionskins/framecount'
+
+  - id: onionSkinsFrames
+    type: 'QMap<int, int>'
+    default: 'QMap<int, int>()'
+    qsettings: 'onionskins/frames'
+
+  - id: onionSkinsTintAbove
+    type: 'QColor'
+    default: 'QColor(51, 51, 255, 128)'
+    qsettings: 'onionskins/tintabove'
+
+  - id: onionSkinsTintBelow
+    type: 'QColor'
+    default: 'QColor(255, 51, 51, 128)'
+    qsettings: 'onionskins/tintbelow'
+
+  - id: onionSkinsWrap
+    type: 'bool'
+    default: 'true'
+    qsettings: 'onionskins/wrap'
+
+  - id: overrideFontSize
+    type: 'bool'
+    default:
+      - value: 'true'
+        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+      - value: 'false'
+    qsettings: 'settings/overridefontsize'
+
+  - id: parentalControlsHideLocked
+    type: 'bool'
+    default: 'false'
+    qsettings: 'pc/hidelocked'
+
+  - id: preferredExportFormat
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/preferredexportformat'
+
+  - id: preferredSaveFormat
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/preferredsaveformat'
+
+  - id: promptLayerCreate
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/promptlayercreate'
+
+  - id: quitOnLastWindowClosed
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/quitonlastwindowclosed'
+    condition: 'defined(Q_OS_MACOS)'
+
+  - id: recentFiles
+    type: 'QStringList'
+    default: 'QStringList()'
+    qsettings: 'history/recentfiles'
+
+  - id: recentHosts
+    type: 'QStringList'
+    default: 'QStringList()'
+    qsettings: 'history/recenthosts'
+
+  - id: recentRemoteHosts
+    type: 'QStringList'
+    default: 'QStringList()'
+    qsettings: 'history/recentremotehosts'
+
+  - id: renderCanvas
+    type: 'int'
+    default: 'int(view::CanvasImplementation::Default)'
+    qsettings: 'settings/render/canvas'
+
+  - id: renderSmooth
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/render/smooth'
+
+  - id: renderUpdateFull
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/render/updatefull'
+
+  - id: samplingRingVisibility
+    type: 'int'
+    default: 'int(view::SamplingRingVisibility::Always)'
+    qsettings: 'settings/colorpicker/samplingring'
+
+  - id: serverHideIp
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/hideServerIp'
+
+  - id: shareBrushSlotColor
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/sharebrushslotcolor'
+
+  - id: shortcuts
+    type: 'QVariantMap'
+    default: 'QVariantMap()'
+    qsettings: 'settings/shortcuts'
+
+  - id: showInviteDialogOnHost
+    type: 'bool'
+    default: 'true'
+    qsettings: 'invites/showdialogonhost'
+
+  - id: showNsfmWarningOnJoin
+    type: 'bool'
+    default: 'true'
+    qsettings: 'pc/shownsfmwarningonjoin'
+
+  - id: showTransformNotices
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/showtransformnotices'
+
+  - id: showTrayIcon
+    type: 'bool'
+    default: 'true'
+    qsettings: 'ui/trayicon'
+
+  - id: showViewModeNotices
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/showviewmodenotices'
+
+  - id: soundVolume
+    type: 'int'
+    default: '60'
+    qsettings: 'notifications/volume'
+
+  - id: tabletDriver
+    type: 'int'
+    default: 'int(tools::TabletInputMode::KisTabletWinink)'
+    qsettings: 'settings/input/tabletdriver'
+
+  - id: tabletEraserAction
+    type: 'int'
+    default: 'int(tools::EraserAction::Default)'
+    qsettings: 'settings/input/tableteraseraction'
+
+  - id: tabletEvents
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/input/tabletevents'
+
+  - id: tabletPressTimerDelay
+    type: 'int'
+    default: '500'
+    qsettings: 'settings/input/tabletpresstimerdelay'
+
+  - id: temporaryToolSwitch
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/tools/temporaryswitch'
+
+  - id: temporaryToolSwitchMs
+    type: 'int'
+    default: '250'
+    qsettings: 'settings/tools/temporaryswitchms'
+
+  - id: themePalette
+    type: 'QString'
+    default: 'QStringLiteral("kritadark.colors")'
+    qsettings: 'settings/theme/palette'
+
+  - id: themeStyle
+    type: 'QString'
+    default: 'QStringLiteral("Fusion")'
+    qsettings: 'settings/theme/style'
+
+  - id: threeFingerTap
+    type: 'int'
+    default: 'int(view::TouchTapAction::Redo)'
+    qsettings: 'settings/input/threefingertap'
+
+  - id: toolBarConfig
+    type: 'QVariantHash'
+    default: 'QVariantHash()'
+    qsettings: 'settings/toolbarconfig'
+
+  - id: toolToggle
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/tooltoggle'
+
+  - id: toolset
+    type: 'QMap<QString, QVariantHash>'
+    default: 'QMap<QString, QVariantHash>()'
+    qsettings: 'tools/toolset'
+
+  - id: touchDrawPressure
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/input/touchdrawpressure'
+
+  - id: touchGestures
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/input/touchgestures'
+
+  - id: touchSmoothing
+    type: 'int'
+    default: '75'
+    qsettings: 'settings/input/touchsmoothing'
+
+  - id: twoFingerPinch
+    type: 'int'
+    default: 'int(view::TwoFingerPinchAction::Zoom)'
+    qsettings: 'settings/input/twofingerpinch'
+
+  - id: twoFingerTap
+    type: 'int'
+    default: 'int(view::TouchTapAction::Undo)'
+    qsettings: 'settings/input/twofingertap'
+
+  - id: twoFingerTwist
+    type: 'int'
+    default: 'int(view::TwoFingerTwistAction::Rotate)'
+    qsettings: 'settings/input/twofingertwist'
+
+  - id: updateCheckEnabled
+    type: 'bool'
+    default: 'UPDATE_CHECK_DEFAULT'
+    default:
+      - value: 'false'
+        condition: 'DISABLE_UPDATE_CHECK_DEFAULT'
+      - value: 'true'
+    qsettings: 'settings/updatecheck'
+
+  - id: useMipmaps
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/usemipmaps'
+
+  - id: userMarkerPersistence
+    type: 'int'
+    default: '1000'
+    qsettings: 'settings/usermarkerpersistence'
+
+  - id: videoExportCustomFfmpeg
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'videoexport/customffmpeg'
+
+  - id: videoExportFfmpegPath
+    type: 'QString'
+    default: 'QString("ffmpeg")'
+    qsettings: 'videoexport/ffmpegpath'
+
+  - id: videoExportFormat
+    type: 'int'
+    default: '0 /* VideoExporter::Format::IMAGE_SERIES */'
+    qsettings: 'videoexport/format'
+
+  - id: videoExportFrameHeight
+    type: 'int'
+    default: '720'
+    qsettings: 'videoexport/frameheight'
+
+  - id: videoExportFrameRate
+    type: 'int'
+    default: '30'
+    qsettings: 'videoexport/fps'
+
+  - id: videoExportFrameWidth
+    type: 'int'
+    default: '1280'
+    qsettings: 'videoexport/framewidth'
+
+  - id: videoExportSizeChoice
+    type: 'int'
+    default: '0'
+    qsettings: 'videoexport/sizeChoice'
+
+  - id: welcomePageShown
+    type: 'bool'
+    default: 'false'
+    qsettings: 'history/welcomepageshown'
+
+  - id: writeLogFile
+    type: 'bool'
+    default: 'false'
+    qsettings: 'settings/logfile'
+

@@ -3,12 +3,12 @@
 #include "desktop/chat/chatwidgetpinnedarea.h"
 #include "desktop/chat/chatwindow.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/net/message.h"
 #include "libclient/utils/funstuff.h"
@@ -291,8 +291,8 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 
 	setPreserveMode(false);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindCompactChat(this, [this](bool compact) {
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET_FN(cfg, CompactChat, this, [this](bool compact) {
 		if(!COMPACT_ONLY) {
 			d->compactMode = compact;
 		}
@@ -301,8 +301,9 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 			d->compactAction->setChecked(compact);
 		}
 	});
-	settings.bindMentionEnabled(this, &ChatWidget::setMentionEnabled);
-	settings.bindMentionTriggerList(this, &ChatWidget::setMentionTriggerList);
+	CFG_BIND_SET(cfg, MentionEnabled, this, ChatWidget::setMentionEnabled);
+	CFG_BIND_SET(
+		cfg, MentionTriggerList, this, ChatWidget::setMentionTriggerList);
 }
 
 ChatWidget::~ChatWidget()
@@ -1125,7 +1126,7 @@ void ChatWidget::contextMenuAboutToShow()
 void ChatWidget::setCompactMode(bool compact)
 {
 	if(!COMPACT_ONLY) {
-		dpApp().settings().setCompactChat(compact);
+		dpAppConfig()->setCompactChat(compact);
 	}
 }
 

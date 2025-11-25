@@ -13,10 +13,8 @@ class QStyledItemDelegate;
 class QTabWidget;
 class QVBoxLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace dialogs {
@@ -28,7 +26,7 @@ class ShortcutFilterInput;
 class Shortcuts final : public QWidget {
 	Q_OBJECT
 public:
-	Shortcuts(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Shortcuts(config::Config *cfg, QWidget *parent = nullptr);
 
 	void initiateFixShortcutConflicts();
 	void initiateBrushShortcutChange(int presetId);
@@ -42,12 +40,11 @@ private:
 	static constexpr int CANVAS_TAB = 2;
 
 	QWidget *initActionShortcuts(
-		desktop::settings::Settings &settings,
-		QStyledItemDelegate *keySequenceDelegate);
+		config::Config *cfg, QStyledItemDelegate *keySequenceDelegate);
 
 	QWidget *initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate);
 
-	QWidget *initCanvasShortcuts(desktop::settings::Settings &settings);
+	QWidget *initCanvasShortcuts(config::Config *cfg);
 
 	void updateConflicts();
 	void updateTabTexts();
@@ -71,7 +68,7 @@ private:
 	bool m_updatingConflicts = false;
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

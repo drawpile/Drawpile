@@ -2,7 +2,6 @@
 #include "desktop/utils/recents.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "libclient/utils/statedatabase.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
@@ -11,6 +10,7 @@
 #include <QPair>
 #include <QRegularExpression>
 #include <QStringList>
+#include <QUrl>
 
 namespace utils {
 
@@ -34,10 +34,6 @@ Recents::Recents(StateDatabase &state)
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	createTables();
-#ifndef __EMSCRIPTEN__
-	migrateFilesFromSettings();
-	migrateHostsFromSettings();
-#endif
 }
 
 #ifndef __EMSCRIPTEN__
@@ -276,89 +272,20 @@ void Recents::createTables()
 {
 	drawdance::Query qry = m_state.query();
 #ifndef __EMSCRIPTEN__
-	qry.exec("create table if not exists recent_files ("
-			 "recent_file_id integer primary key not null,"
-			 "path text not null,"
-			 "weight integer not null)");
+	qry.exec(
+		"create table if not exists recent_files ("
+		"recent_file_id integer primary key not null,"
+		"path text not null,"
+		"weight integer not null)");
 #endif
-	qry.exec("create table if not exists recent_hosts ("
-			 "recent_host_id integer primary key not null,"
-			 "host text not null,"
-			 "port integer not null,"
-			 "flags integer not null,"
-			 "weight integer not null)");
+	qry.exec(
+		"create table if not exists recent_hosts ("
+		"recent_host_id integer primary key not null,"
+		"host text not null,"
+		"port integer not null,"
+		"flags integer not null,"
+		"weight integer not null)");
 }
-
-#ifndef __EMSCRIPTEN__
-
-void Recents::migrateFilesFromSettings()
-{
-	m_state.tx([this](drawdance::Query &qry) {
-		QString key = QStringLiteral("recents/filesmigratedfromsettings");
-		if(!m_state.getBoolWith(qry, key, false)) {
-			m_state.putWith(qry, key, true);
-			if(recentsFileCountWith(qry) != 0) {
-				return true;
-			}
-
-			if(!qry.prepare("insert into recent_files (path, weight) "
-							"values (?, ?)")) {
-				return false;
-			}
-
-			QStringList settingsRecentFiles = dpApp().settings().recentFiles();
-			int count = qMin(MAX_RECENT_FILES, settingsRecentFiles.size());
-			for(int i = 0; i < count; ++i) {
-				if(!qry.bind(0, settingsRecentFiles[i]) || !qry.bind(1, i) ||
-				   !qry.execPrepared()) {
-					return false;
-				}
-			}
-		}
-		return true;
-	});
-}
-
-void Recents::migrateHostsFromSettings()
-{
-	m_state.tx([this](drawdance::Query &qry) {
-		QString key = QStringLiteral("recents/hostsmigratedfromsettings");
-		if(!m_state.getBoolWith(qry, key, false)) {
-			m_state.putWith(qry, key, true);
-			if(recentHostCountWith(qry) != 0) {
-				return true;
-			}
-
-			if(!qry.prepare(
-				   "insert into recent_hosts (host, port, flags, weight) "
-				   "values (?, ?, ?, ?)")) {
-				return false;
-			}
-
-			QVector<Recents::Host> rhs;
-			desktop::settings::Settings &settings = dpApp().settings();
-			for(const QString &joinHost : settings.recentHosts()) {
-				collectSettingsHost(rhs, joinHost, true);
-			}
-			for(const QString &hostHost : settings.recentRemoteHosts()) {
-				collectSettingsHost(rhs, hostHost, false);
-			}
-
-			int count = qMin(MAX_RECENT_HOSTS, rhs.size());
-			for(int i = 0; i < count; ++i) {
-				const Recents::Host &rh = rhs[i];
-				if(!qry.bind(0, rh.host) || !qry.bind(1, rh.port) ||
-				   !qry.bind(2, packHostFlags(rh.joined, rh.hosted)) ||
-				   !qry.bind(3, i) || !qry.execPrepared()) {
-					return false;
-				}
-			}
-		}
-		return true;
-	});
-}
-
-#endif
 
 bool Recents::removeById(const QString &sql, int id)
 {

@@ -2,7 +2,7 @@
 #include "desktop/dialogs/videoexportdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
+#include "libclient/config/config.h"
 #include "libclient/export/ffmpegexporter.h"
 #include "libclient/export/imageseriesexporter.h"
 #include "libshared/util/qtcompat.h"
@@ -70,16 +70,17 @@ VideoExportDialog::VideoExportDialog(QWidget *parent)
 		m_ui->imageFormatChoice->addItem(fmt);
 	m_ui->imageFormatChoice->setCurrentText("png");
 
-	auto &settings = dpApp().settings();
-	settings.bindVideoExportFormat(m_ui->exportFormatChoice, std::nullopt);
-	settings.bindVideoExportFormat(this, &VideoExportDialog::updateUi);
-	settings.bindVideoExportFrameRate(m_ui->fps);
-	settings.bindVideoExportFrameRate(this, &VideoExportDialog::updateUi);
-	settings.bindVideoExportFrameWidth(m_ui->framewidth);
-	settings.bindVideoExportFrameHeight(m_ui->frameheight);
-	settings.bindVideoExportSizeChoice(m_ui->sizeChoice, std::nullopt);
-	settings.bindVideoExportFfmpegPath(m_ui->ffmpegPathEdit);
-	settings.bindVideoExportCustomFfmpeg(m_ui->ffmpegCustom);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_COMBOBOX_INDEX(cfg, VideoExportFormat, m_ui->exportFormatChoice);
+	CFG_BIND_NOTIFY(cfg, VideoExportFormat, this, VideoExportDialog::updateUi);
+	CFG_BIND_SPINBOX(cfg, VideoExportFrameRate, m_ui->fps);
+	CFG_BIND_NOTIFY(
+		cfg, VideoExportFrameRate, this, VideoExportDialog::updateUi);
+	CFG_BIND_SPINBOX(cfg, VideoExportFrameWidth, m_ui->framewidth);
+	CFG_BIND_SPINBOX(cfg, VideoExportFrameHeight, m_ui->frameheight);
+	CFG_BIND_COMBOBOX_INDEX(cfg, VideoExportSizeChoice, m_ui->sizeChoice);
+	CFG_BIND_LINEEDIT(cfg, VideoExportFfmpegPath, m_ui->ffmpegPathEdit);
+	CFG_BIND_PLAINTEXTEDIT(cfg, VideoExportCustomFfmpeg, m_ui->ffmpegCustom);
 	connect(
 		m_ui->ffmpegPathButton, &QAbstractButton::clicked, this,
 		&VideoExportDialog::chooseFfmpegPath);
@@ -126,7 +127,7 @@ void VideoExportDialog::chooseFfmpegPath()
 	QString ffmpegPath = QFileDialog::getOpenFileName(
 		this, tr("Choose ffmpeg path"), QString(), executableFilter);
 	if(!ffmpegPath.isEmpty()) {
-		dpApp().settings().setVideoExportFfmpegPath(ffmpegPath);
+		dpAppConfig()->setVideoExportFfmpegPath(ffmpegPath);
 	}
 }
 

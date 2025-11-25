@@ -3,7 +3,7 @@
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/resizedialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
+#include "libclient/config/config.h"
 #include "libclient/utils/images.h"
 #include <QFormLayout>
 #include <QLabel>
@@ -37,7 +37,7 @@ Create::Create(QWidget *parent)
 	m_heightSpinner->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 	layout->addRow(tr("Height:"), m_heightSpinner);
 
-	const DrawpileApp &app = dpApp();
+	DrawpileApp &app = dpApp();
 	QSize lastSize = app.safeNewCanvasSize();
 	bool lastSizeValid =
 		lastSize.isValid() && ResizeDialog::checkDimensions(
@@ -46,7 +46,7 @@ Create::Create(QWidget *parent)
 	m_heightSpinner->setValue(lastSizeValid ? lastSize.height() : 1080);
 
 	m_backgroundPreview =
-		makeBackgroundPreview(app.settings().newCanvasBackColor());
+		makeBackgroundPreview(app.config()->getNewCanvasBackColor());
 	layout->addRow(tr("Background:"), m_backgroundPreview);
 
 	m_errorLabel = new QLabel;
@@ -76,9 +76,9 @@ void Create::accept()
 {
 	QSize size{m_widthSpinner->value(), m_heightSpinner->value()};
 	QColor backgroundColor = m_backgroundPreview->color();
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setNewCanvasSize(size);
-	settings.setNewCanvasBackColor(backgroundColor);
+	config::Config *cfg = dpAppConfig();
+	cfg->setNewCanvasSize(size);
+	cfg->setNewCanvasBackColor(backgroundColor);
 	emit create(size, backgroundColor);
 }
 

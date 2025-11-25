@@ -67,10 +67,6 @@ private:
 	static constexpr int FLAG_HOSTED = 0x2;
 
 	void createTables();
-#ifndef __EMSCRIPTEN__
-	void migrateFilesFromSettings();
-	void migrateHostsFromSettings();
-#endif
 	bool removeById(const QString &sql, int id);
 
 	static void

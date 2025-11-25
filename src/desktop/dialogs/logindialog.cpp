@@ -4,10 +4,10 @@
 #include "desktop/dialogs/avatarimport.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/accountlistmodel.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/avatarlistmodel.h"
@@ -137,13 +137,14 @@ struct LoginDialog::Private {
 		sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 		sessions->setFilterKeyColumn(-1);
 
-		auto &settings = dpApp().settings();
-		settings.bindFilterNsfm(ui->showNsfw);
-		settings.bindFilterNsfm(
-			sessions, &SessionFilterProxyModel::setShowNsfm);
+		config::Config *cfg = dpAppConfig();
+		CFG_BIND_CHECKBOX(cfg, FilterNsfm, ui->showNsfw);
+		CFG_BIND_SET(
+			cfg, FilterNsfm, sessions, SessionFilterProxyModel::setShowNsfm);
 
-		if(settings.parentalControlsLocked().isEmpty()) {
-			settings.bindShowNsfmWarningOnJoin(ui->nsfmConfirmAgainBox);
+		if(cfg->getParentalControlsLocked().isEmpty()) {
+			CFG_BIND_CHECKBOX(
+				cfg, ShowNsfmWarningOnJoin, ui->nsfmConfirmAgainBox);
 		} else {
 			ui->nsfmConfirmAgainBox->hide();
 		}
@@ -242,17 +243,17 @@ struct LoginDialog::Private {
 
 	void restoreOldLogin()
 	{
-		const desktop::settings::Settings &settings = dpApp().settings();
-		ui->username->setText(getUsername(settings.lastUsername()));
-		restoreAvatar(settings.lastAvatar());
+		config::Config *cfg = dpAppConfig();
+		ui->username->setText(getUsername(cfg->getLastUsername()));
+		restoreAvatar(cfg->getLastAvatar());
 	}
 
 	void saveOldLogin(
 		const QString &host, const QString &username, const QString &password)
 	{
-		desktop::settings::Settings &settings = dpApp().settings();
-		settings.setLastUsername(ui->username->text());
-		settings.setLastAvatar(avatarFilename);
+		config::Config *cfg = dpAppConfig();
+		cfg->setLastUsername(ui->username->text());
+		cfg->setLastAvatar(avatarFilename);
 		if(!passwordReadFromKeychain) {
 			QString keychainSecretName =
 				buildOldKeychainSecretName(host, username);
@@ -261,7 +262,7 @@ struct LoginDialog::Private {
 			} else {
 				accounts->savePassword(
 					password, keychainSecretName,
-					settings.insecurePasswordStorage());
+					cfg->getInsecurePasswordStorage());
 			}
 		}
 	}
@@ -301,7 +302,7 @@ struct LoginDialog::Private {
 			} else {
 				accounts->savePassword(
 					password, keychainSecretName,
-					dpApp().settings().insecurePasswordStorage());
+					dpAppConfig()->getInsecurePasswordStorage());
 			}
 		}
 	}
@@ -540,7 +541,7 @@ LoginDialog::Private::setupAuthPage(bool usernameEnabled, bool passwordVisible)
 	ui->badPasswordLabel->setVisible(false);
 	ui->rememberPassword->setChecked(false);
 	bool canSavePasswords = AccountListModel::canSavePasswords(
-		dpApp().settings().insecurePasswordStorage());
+		dpAppConfig()->getInsecurePasswordStorage());
 #ifdef __EMSCRIPTEN__
 	// See LoginDialog::Private::haveRecentAccounts.
 	if(hasDrawpileExtAuth) {
@@ -655,7 +656,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 
 	connectLoginHandler(login);
 
-	d->restoreAvatar(dpApp().settings().lastAvatar());
+	d->restoreAvatar(dpAppConfig()->getLastAvatar());
 	selectCurrentAvatar();
 }
 
@@ -1191,8 +1192,8 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 void LoginDialog::onSessionConfirmationNeeded(
 	const QString &title, bool nsfm, bool autoJoin)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	if(nsfm && settings.showNsfmWarningOnJoin()) {
+	config::Config *cfg = dpAppConfig();
+	if(nsfm && cfg->getShowNsfmWarningOnJoin()) {
 		d->ui->nsfmConfirmTitle->setText(
 			QStringLiteral("<h1>%1</h1>").arg(title.toHtmlEscaped()));
 		d->autoJoin = autoJoin;

@@ -13,7 +13,7 @@ Page::Page(QWidget *parent)
 {
 }
 
-void Page::init(desktop::settings::Settings &settings, bool stretch)
+void Page::init(config::Config *cfg, bool stretch)
 {
 	setFrameStyle(QFrame::NoFrame);
 	utils::bindKineticScrolling(this);
@@ -27,7 +27,7 @@ void Page::init(desktop::settings::Settings &settings, bool stretch)
 	layout->setAlignment(Qt::AlignTop);
 	scroll->setLayout(layout);
 
-	setUp(settings, layout);
+	setUp(cfg, layout);
 
 	if(stretch) {
 		layout->addStretch(1);

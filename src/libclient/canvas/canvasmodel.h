@@ -13,15 +13,13 @@ class QJsonObject;
 struct DP_LocalStateAction;
 struct DP_Player;
 
+namespace config {
+class Config;
+}
+
 namespace drawdance {
 class CanvasState;
 class SelectionSet;
-}
-
-namespace libclient {
-namespace settings {
-class Settings;
-}
 }
 
 // Qt5 is very picky about types passed to QMetaType::invokeMethod, namespaces
@@ -57,10 +55,9 @@ public:
 	static constexpr uint8_t MAIN_SELECTION_ID = 1;
 
 	CanvasModel(
-		libclient::settings::Settings &settings, uint8_t localUserId,
-		int canvasImplementation, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
-		QObject *parent = nullptr);
+		config::Config *cfg, uint8_t localUserId, int canvasImplementation,
+		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
+		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 

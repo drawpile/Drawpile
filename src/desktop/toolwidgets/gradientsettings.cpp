@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/gradientsettings.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/config/config.h"
 #include "libclient/tools/gradient.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
@@ -455,8 +455,9 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 
 	m_blendModeManager = BlendModeManager::initFill(
 		m_blendModeCombo, m_alphaPreserveButton, this);
-	dpApp().settings().bindAutomaticAlphaPreserve(
-		m_blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	CFG_BIND_SET(
+		dpAppConfig(), AutomaticAlphaPreserve, m_blendModeManager,
+		BlendModeManager::setAutomaticAlphaPerserve);
 	connect(
 		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&GradientSettings::pushSettings);

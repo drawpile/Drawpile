@@ -2,11 +2,11 @@
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/palettewidget.h"
+#include "libclient/config/config.h"
 #include "libclient/tools/colorpicker.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
@@ -154,8 +154,9 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 		&ColorPickerSettings::pickFromScreen);
 #endif
 
-	dpApp().settings().bindSamplingRingVisibility(
-		this, &ColorPickerSettings::setSamplingRingVisibility);
+	CFG_BIND_SET(
+		dpAppConfig(), SamplingRingVisibility, this,
+		ColorPickerSettings::setSamplingRingVisibility);
 
 	return widget;
 }
@@ -251,7 +252,7 @@ void ColorPickerSettings::pickFromScreen()
 
 void ColorPickerSettings::onPreviewBoxClicked(bool checked)
 {
-	dpApp().settings().setSamplingRingVisibility(
+	dpAppConfig()->setSamplingRingVisibility(
 		checked ? int(view::SamplingRingVisibility::Always)
 				: int(view::SamplingRingVisibility::TouchOnly));
 }

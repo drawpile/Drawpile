@@ -30,17 +30,18 @@ namespace canvas {
 class CanvasModel;
 class ReconnectState;
 }
+
+namespace config {
+class Config;
+}
+
 namespace net {
 class AnnouncementListModel;
 class BanlistModel;
 class InviteListModel;
 class LoginHandler;
 }
-namespace libclient {
-namespace settings {
-class Settings;
-}
-}
+
 namespace tools {
 class ToolController;
 }
@@ -51,7 +52,7 @@ public:
 	enum class StreamResetState { None, Generating, Streaming };
 
 	explicit Document(
-		int canvasImplementation, libclient::settings::Settings &settings,
+		int canvasImplementation, config::Config *cfg,
 		QObject *parent = nullptr);
 
 	canvas::CanvasModel *canvas() const { return m_canvas; }
@@ -419,7 +420,7 @@ private:
 	net::InviteListModel *m_inviteList;
 	canvas::ReconnectState *m_reconnectState = nullptr;
 	QStringListModel *m_serverLog;
-	libclient::settings::Settings &m_settings;
+	config::Config *m_cfg;
 
 	QString m_originalRecordingFilename;
 	QString m_recordOnConnect;

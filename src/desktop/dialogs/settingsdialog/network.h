@@ -5,34 +5,26 @@
 
 class QFormLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class Network final : public Page {
 	Q_OBJECT
 public:
-	Network(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Network(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
 	void initAvatars(QVBoxLayout *layout);
 
-	void
-	initBuiltinServer(desktop::settings::Settings &settings, QFormLayout *form);
+	void initBuiltinServer(config::Config *cfg, QFormLayout *form);
 
-	void initNetwork(desktop::settings::Settings &settings, QFormLayout *form);
+	void initNetwork(config::Config *cfg, QFormLayout *form);
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

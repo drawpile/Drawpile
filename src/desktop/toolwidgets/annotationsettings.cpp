@@ -4,7 +4,6 @@ extern "C" {
 }
 #include "desktop/main.h"
 #include "desktop/scene/annotationitem.h"
-#include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
@@ -13,6 +12,7 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/annotations.h"
@@ -188,8 +188,9 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 		m_updatetimer, &QTimer::timeout, this,
 		&AnnotationSettings::saveChanges);
 
-	dpApp().settings().bindCanvasViewBackgroundColor(
-		this, &AnnotationSettings::setCanvasViewBackgroundColor);
+	CFG_BIND_SET(
+		dpAppConfig(), CanvasViewBackgroundColor, this,
+		AnnotationSettings::setCanvasViewBackgroundColor);
 
 	// Select a nice default font
 	QStringList defaultFonts;

@@ -3,8 +3,8 @@
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
+#include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -158,20 +158,25 @@ OnionSkinsDock::OnionSkinsDock(QWidget *parent)
 	});
 	titlebar->addStretch();
 
-	auto &settings = dpApp().settings();
-	settings.bindOnionSkinsWrap(d->wrapCheckBox);
-	settings.bindOnionSkinsWrap(this, &OnionSkinsDock::triggerUpdate);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_CHECKBOX(cfg, OnionSkinsWrap, d->wrapCheckBox);
+	CFG_BIND_NOTIFY(cfg, OnionSkinsWrap, this, OnionSkinsDock::triggerUpdate);
 
-	settings.bindOnionSkinsFrameCount(d->frameCountSpinner);
-	settings.bindOnionSkinsFrameCount(this, &OnionSkinsDock::frameCountChanged);
+	CFG_BIND_SPINBOX(cfg, OnionSkinsFrameCount, d->frameCountSpinner);
+	CFG_BIND_SET(
+		cfg, OnionSkinsFrameCount, this, OnionSkinsDock::frameCountChanged);
 
-	settings.bindOnionSkinsTintBelow(
-		d->belowPreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
-	settings.bindOnionSkinsTintBelow(this, &OnionSkinsDock::triggerUpdate);
+	CFG_BIND_OBJECT(
+		cfg, OnionSkinsTintBelow, d->belowPreview, &ColorPreview::setColor,
+		&ColorPreview::colorChanged);
+	CFG_BIND_NOTIFY(
+		cfg, OnionSkinsTintBelow, this, OnionSkinsDock::triggerUpdate);
 
-	settings.bindOnionSkinsTintAbove(
-		d->abovePreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
-	settings.bindOnionSkinsTintAbove(this, &OnionSkinsDock::triggerUpdate);
+	CFG_BIND_OBJECT(
+		cfg, OnionSkinsTintAbove, d->abovePreview, &ColorPreview::setColor,
+		&ColorPreview::colorChanged);
+	CFG_BIND_NOTIFY(
+		cfg, OnionSkinsTintAbove, this, OnionSkinsDock::triggerUpdate);
 }
 
 OnionSkinsDock::~OnionSkinsDock()
@@ -243,7 +248,7 @@ void OnionSkinsDock::buildWidget()
 	d->skinsAboveSliders.clear();
 	d->skinsBelowSliders.clear();
 
-	auto savedFrames = dpApp().settings().onionSkinsFrames();
+	QMap<int, int> savedFrames = dpAppConfig()->getOnionSkinsFrames();
 	for(int i = 0; i < d->frameCount * 2; ++i) {
 		if(i == d->frameCount) {
 			QFrame *line = new QFrame{widget};
@@ -288,15 +293,16 @@ void OnionSkinsDock::buildWidget()
 
 void OnionSkinsDock::onSliderValueChange(int frameNumber, int value)
 {
-	auto &settings = dpApp().settings();
-	auto savedFrames = settings.onionSkinsFrames();
-	savedFrames[frameNumber] = value;
-	settings.setOnionSkinsFrames(savedFrames);
+	config::Config *cfg = dpAppConfig();
+
+	QMap<int, int> savedFrames = cfg->getOnionSkinsFrames();
+	savedFrames.insert(frameNumber, value);
+	cfg->setOnionSkinsFrames(savedFrames);
 
 	if(d->debounceTimerId != 0) {
 		killTimer(d->debounceTimerId);
 	}
-	d->debounceTimerId = startTimer(settings.debounceDelayMs());
+	d->debounceTimerId = startTimer(cfg->getDebounceDelayMs());
 	showSliderValue(value);
 }
 

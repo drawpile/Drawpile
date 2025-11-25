@@ -9,7 +9,6 @@ extern "C" {
 #include "desktop/docks/layerlistdock.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
@@ -20,6 +19,7 @@ extern "C" {
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QComboBox>
@@ -147,9 +147,11 @@ LayerList::LayerList(QWidget *parent)
 	: DockBase(
 		  tr("Layers"), QString(), QIcon::fromTheme("layer-visible-on"), parent)
 {
+	config::Config *cfg = dpAppConfig();
+
 	m_debounceTimer = new QTimer{this};
 	m_debounceTimer->setSingleShot(true);
-	m_debounceTimer->setInterval(dpApp().settings().debounceDelayMs());
+	m_debounceTimer->setInterval(cfg->getDebounceDelayMs());
 	connect(m_debounceTimer, &QTimer::timeout, this, &LayerList::triggerUpdate);
 
 	auto *titlebar = new TitleWidget(this);
@@ -305,9 +307,9 @@ LayerList::LayerList(QWidget *parent)
 		&LayerList::showPropertiesOfIndex);
 	m_view->setItemDelegate(del);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindAutomaticAlphaPreserve(
-		this, &LayerList::setAutomaticAlphaPreserve);
+	CFG_BIND_SET(
+		cfg, AutomaticAlphaPreserve, this,
+		LayerList::setAutomaticAlphaPreserve);
 }
 
 
@@ -986,9 +988,9 @@ void LayerList::toggleLayerSketch()
 		int opacityPercent = 0;
 		QColor tint;
 		if(sketch) {
-			const desktop::settings::Settings &settings = dpApp().settings();
-			opacityPercent = settings.layerSketchOpacityPercent();
-			tint = settings.layerSketchTint();
+			const config::Config *cfg = dpAppConfig();
+			opacityPercent = cfg->getLayerSketchOpacityPercent();
+			tint = cfg->getLayerSketchTint();
 		}
 		for(int layerId : m_selectedIds) {
 			setLayerSketch(layerId, opacityPercent, tint);
@@ -1048,7 +1050,7 @@ void LayerList::changeLayerAcl(
 
 void LayerList::addOrPromptLayerOrGroup(bool group)
 {
-	if(dpApp().settings().promptLayerCreate()) {
+	if(dpAppConfig()->getPromptLayerCreate()) {
 		const canvas::LayerListModel *layers = m_canvas->layerlist();
 		if(layers->getAvailableLayerIds(1).isEmpty()) {
 			showOutOfIdsError(layers->layerIdLimit(), 1);
@@ -1521,7 +1523,7 @@ void LayerList::deleteSelected()
 		return;
 	}
 
-	if(dpApp().settings().confirmLayerDelete()) {
+	if(dpAppConfig()->getConfirmLayerDelete()) {
 		QStringList names;
 		names.reserve(count);
 		for(const QModelIndex &idx : indexes) {
@@ -2361,12 +2363,12 @@ void LayerList::triggerUpdate()
 		}
 
 		if(haveAnySketchUpdate) {
-			desktop::settings::Settings &settings = dpApp().settings();
+			config::Config *cfg = dpAppConfig();
 			if(haveSketchOpacityUpdate) {
-				settings.setLayerSketchOpacityPercent(m_updateSketchOpacity);
+				cfg->setLayerSketchOpacityPercent(m_updateSketchOpacity);
 			}
 			if(haveSketchTintUpdate) {
-				settings.setLayerSketchTint(m_updateSketchTint);
+				cfg->setLayerSketchTint(m_updateSketchTint);
 			}
 		}
 

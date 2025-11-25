@@ -7,8 +7,8 @@ extern "C" {
 #include "desktop/dialogs/startdialog/create.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "libclient/import/animationimporter.h"
 #include <QAction>
 #include <QApplication>
@@ -76,7 +76,7 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 #else
 
 	m_backgroundPreview = dialogs::startdialog::Create::makeBackgroundPreview(
-		dpApp().settings().newCanvasBackColor());
+		dpAppConfig()->getNewCanvasBackColor());
 	framesLayout->addRow(tr("Canvas Background:"), m_backgroundPreview);
 	connect(
 		m_backgroundPreview, &ColorPreview::clicked, this,
@@ -367,7 +367,7 @@ void AnimationImportDialog::runImport()
 #ifndef __EMSCRIPTEN__
 		case int(Source::Frames): {
 			QColor backgroundColor = m_backgroundPreview->color();
-			dpApp().settings().setNewCanvasBackColor(backgroundColor);
+			dpAppConfig()->setNewCanvasBackColor(backgroundColor);
 			importer = new impex::AnimationFramesImporter(
 				getFramesPaths(), backgroundColor, holdTime, framerate);
 			break;

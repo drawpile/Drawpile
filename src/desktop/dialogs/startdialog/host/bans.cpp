@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host/bans.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
+#include "libclient/config/config.h"
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QJsonDocument>
@@ -58,7 +58,7 @@ Bans::Bans(QWidget *parent)
 		m_removeButton, &QPushButton::clicked, this, &Bans::removeSelectedBans);
 
 	QJsonDocument doc =
-		QJsonDocument::fromJson(dpApp().settings().lastSessionBanList());
+		QJsonDocument::fromJson(dpAppConfig()->getLastSessionBanList());
 	if(doc.isArray()) {
 		loadBanList(doc.array());
 	} else {
@@ -177,7 +177,7 @@ void Bans::loadBanList(const QJsonArray &bans)
 
 void Bans::saveBanList()
 {
-	dpApp().settings().setLastSessionBanList(
+	dpAppConfig()->setLastSessionBanList(
 		QJsonDocument(banListToJson()).toJson(QJsonDocument::Compact));
 }
 

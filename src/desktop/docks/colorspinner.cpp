@@ -2,13 +2,14 @@
 #include "desktop/docks/colorspinner.h"
 #include "desktop/dialogs/shadeselectordialog.h"
 #include "desktop/docks/colorpalette.h"
+#include "desktop/docks/enums.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/shadeselector.h"
+#include "libclient/config/config.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QMenu>
@@ -93,6 +94,7 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
+	config::Config *cfg = dpAppConfig();
 	QMenu *menu = new QMenu(this);
 
 	QMenu *shapeMenu = menu->addMenu(tr("Shape"));
@@ -104,13 +106,12 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	shapeGroup->addAction(d->shapeRotatingTriangleAction);
 	connect(
 		d->shapeRotatingTriangleAction, &QAction::toggled, this,
-		[this](bool toggled) {
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				desktop::settings::Settings &settings = dpApp().settings();
-				settings.setColorWheelShape(
-					color_widgets::ColorWheel::ShapeTriangle);
-				settings.setColorWheelAngle(
-					color_widgets::ColorWheel::AngleRotating);
+				cfg->setColorWheelShape(
+					int(color_widgets::ColorWheel::ShapeTriangle));
+				cfg->setColorWheelAngle(
+					int(color_widgets::ColorWheel::AngleRotating));
 			}
 		});
 
@@ -119,13 +120,12 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	shapeGroup->addAction(d->shapeRotatingSquareAction);
 	connect(
 		d->shapeRotatingSquareAction, &QAction::toggled, this,
-		[this](bool toggled) {
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				desktop::settings::Settings &settings = dpApp().settings();
-				settings.setColorWheelShape(
-					color_widgets::ColorWheel::ShapeSquare);
-				settings.setColorWheelAngle(
-					color_widgets::ColorWheel::AngleRotating);
+				cfg->setColorWheelShape(
+					int(color_widgets::ColorWheel::ShapeSquare));
+				cfg->setColorWheelAngle(
+					int(color_widgets::ColorWheel::AngleRotating));
 			}
 		});
 
@@ -134,13 +134,12 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	shapeGroup->addAction(d->shapeFixedTriangleAction);
 	connect(
 		d->shapeFixedTriangleAction, &QAction::toggled, this,
-		[this](bool toggled) {
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				desktop::settings::Settings &settings = dpApp().settings();
-				settings.setColorWheelShape(
-					color_widgets::ColorWheel::ShapeTriangle);
-				settings.setColorWheelAngle(
-					color_widgets::ColorWheel::AngleFixed);
+				cfg->setColorWheelShape(
+					int(color_widgets::ColorWheel::ShapeTriangle));
+				cfg->setColorWheelAngle(
+					int(color_widgets::ColorWheel::AngleFixed));
 			}
 		});
 
@@ -149,13 +148,12 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	shapeGroup->addAction(d->shapeFixedSquareAction);
 	connect(
 		d->shapeFixedSquareAction, &QAction::toggled, this,
-		[this](bool toggled) {
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				desktop::settings::Settings &settings = dpApp().settings();
-				settings.setColorWheelShape(
-					color_widgets::ColorWheel::ShapeSquare);
-				settings.setColorWheelAngle(
-					color_widgets::ColorWheel::AngleFixed);
+				cfg->setColorWheelShape(
+					int(color_widgets::ColorWheel::ShapeSquare));
+				cfg->setColorWheelAngle(
+					int(color_widgets::ColorWheel::AngleFixed));
 			}
 		});
 
@@ -166,10 +164,11 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	d->colorSpaceHsvAction->setCheckable(true);
 	colorSpaceGroup->addAction(d->colorSpaceHsvAction);
 	connect(
-		d->colorSpaceHsvAction, &QAction::toggled, this, [this](bool toggled) {
+		d->colorSpaceHsvAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorHSV);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorHSV));
 			}
 		});
 
@@ -177,10 +176,11 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	d->colorSpaceHslAction->setCheckable(true);
 	colorSpaceGroup->addAction(d->colorSpaceHslAction);
 	connect(
-		d->colorSpaceHslAction, &QAction::toggled, this, [this](bool toggled) {
+		d->colorSpaceHslAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorHSL);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorHSL));
 			}
 		});
 
@@ -188,10 +188,11 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	d->colorSpaceHclAction->setCheckable(true);
 	colorSpaceGroup->addAction(d->colorSpaceHclAction);
 	connect(
-		d->colorSpaceHclAction, &QAction::toggled, this, [this](bool toggled) {
+		d->colorSpaceHclAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorLCH);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorLCH));
 			}
 		});
 
@@ -203,9 +204,9 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	directionGroup->addAction(d->directionAscendingAction);
 	connect(
 		d->directionAscendingAction, &QAction::toggled, this,
-		[this](bool toggled) {
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelMirror(true);
+				cfg->setColorWheelMirror(true);
 			}
 		});
 
@@ -214,9 +215,9 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	directionGroup->addAction(d->directionDescendingAction);
 	connect(
 		d->directionDescendingAction, &QAction::toggled, this,
-		[this](bool toggled) {
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelMirror(false);
+				cfg->setColorWheelMirror(false);
 			}
 		});
 
@@ -226,30 +227,33 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	d->alignTopAction = alignMenu->addAction(tr("Top"));
 	d->alignTopAction->setCheckable(true);
 	alignGroup->addAction(d->alignTopAction);
-	connect(d->alignTopAction, &QAction::toggled, this, [this](bool toggled) {
-		if(toggled && !d->updating) {
-			dpApp().settings().setColorWheelAlign(int(Qt::AlignTop));
-		}
-	});
+	connect(
+		d->alignTopAction, &QAction::toggled, this, [this, cfg](bool toggled) {
+			if(toggled && !d->updating) {
+				cfg->setColorWheelAlign(int(Qt::AlignTop));
+			}
+		});
 
 	d->alignCenterAction = alignMenu->addAction(tr("Center"));
 	d->alignCenterAction->setCheckable(true);
 	alignGroup->addAction(d->alignCenterAction);
 	connect(
-		d->alignCenterAction, &QAction::toggled, this, [this](bool toggled) {
+		d->alignCenterAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelAlign(int(Qt::AlignCenter));
+				cfg->setColorWheelAlign(int(Qt::AlignCenter));
 			}
 		});
 
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	d->previewAction = menu->addAction(tr("Preview selected color"));
 	d->previewAction->setCheckable(true);
-	connect(d->previewAction, &QAction::toggled, this, [this](bool toggled) {
-		if(!d->updating) {
-			dpApp().settings().setColorWheelPreview(toggled ? 1 : 0);
-		}
-	});
+	connect(
+		d->previewAction, &QAction::toggled, this, [this, cfg](bool toggled) {
+			if(!d->updating) {
+				cfg->setColorWheelPreview(toggled ? 1 : 0);
+			}
+		});
 #endif
 
 	menu->addSeparator();
@@ -320,18 +324,18 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 		d->colorwheel, &color_widgets::ColorWheel::customContextMenuRequested,
 		this, &ColorSpinnerDock::showContextMenu);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindColorWheelShape(this, &ColorSpinnerDock::setShape);
-	settings.bindColorWheelAngle(this, &ColorSpinnerDock::setAngle);
-	settings.bindColorWheelSpace(this, &ColorSpinnerDock::setColorSpace);
-	settings.bindColorWheelMirror(this, &ColorSpinnerDock::setMirror);
-	settings.bindColorWheelAlign(this, &ColorSpinnerDock::setAlign);
+	CFG_BIND_SET(cfg, ColorWheelShape, this, ColorSpinnerDock::setShape);
+	CFG_BIND_SET(cfg, ColorWheelAngle, this, ColorSpinnerDock::setAngle);
+	CFG_BIND_SET(cfg, ColorWheelSpace, this, ColorSpinnerDock::setColorSpace);
+	CFG_BIND_SET(cfg, ColorWheelMirror, this, ColorSpinnerDock::setMirror);
+	CFG_BIND_SET(cfg, ColorWheelAlign, this, ColorSpinnerDock::setAlign);
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
-	settings.bindColorWheelPreview(this, &ColorSpinnerDock::setPreview);
+	CFG_BIND_SET(cfg, ColorWheelPreview, this, ColorSpinnerDock::setPreview);
 #endif
-	settings.bindColorSwatchFlags(this, &ColorSpinnerDock::setSwatchFlags);
-	settings.bindColorShadesEnabled(d->showColorShadesAction);
-	settings.bindColorShadesEnabled(this, &ColorSpinnerDock::setShadesEnabled);
+	CFG_BIND_SET(cfg, ColorSwatchFlags, this, ColorSpinnerDock::setSwatchFlags);
+	CFG_BIND_ACTION(cfg, ColorShadesEnabled, d->showColorShadesAction);
+	CFG_BIND_SET(
+		cfg, ColorShadesEnabled, this, ColorSpinnerDock::setShadesEnabled);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -484,15 +488,19 @@ void ColorSpinnerDock::setShadesEnabled(bool shadesEnabled)
 		d->shadeSelector->setColor(d->colorwheel->color());
 		d->shadeSelector->setContextMenuPolicy(Qt::CustomContextMenu);
 
-		desktop::settings::Settings &settings = dpApp().settings();
-		settings.bindColorShadesConfig(
-			d->shadeSelector, &widgets::ShadeSelector::setConfig);
-		settings.bindColorShadesRowHeight(
-			d->shadeSelector, &widgets::ShadeSelector::setRowHeight);
-		settings.bindColorShadesColumnCount(
-			d->shadeSelector, &widgets::ShadeSelector::setColumnCount);
-		settings.bindColorShadesBorderThickness(
-			d->shadeSelector, &widgets::ShadeSelector::setBorderThickness);
+		config::Config *cfg = dpAppConfig();
+		CFG_BIND_SET(
+			cfg, ColorShadesConfig, d->shadeSelector,
+			widgets::ShadeSelector::setConfig);
+		CFG_BIND_SET(
+			cfg, ColorShadesRowHeight, d->shadeSelector,
+			widgets::ShadeSelector::setRowHeight);
+		CFG_BIND_SET(
+			cfg, ColorShadesColumnCount, d->shadeSelector,
+			widgets::ShadeSelector::setColumnCount);
+		CFG_BIND_SET(
+			cfg, ColorShadesBorderThickness, d->shadeSelector,
+			widgets::ShadeSelector::setBorderThickness);
 
 		widget()->layout()->addWidget(d->shadeSelector);
 

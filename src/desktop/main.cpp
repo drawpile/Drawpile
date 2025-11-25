@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/main.h"
 #include "cmake-config/config.h"
+#include "desktop/config/settingsconfig.h"
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/mainwindow.h"
 #include "desktop/notifications.h"
@@ -12,10 +13,12 @@
 #include "desktop/utils/recents.h"
 #include "dpcommon/platform_qt.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/utils/colorscheme.h"
 #include "libclient/utils/logging.h"
 #include "libclient/utils/statedatabase.h"
+#include "libclient/view/zoom.h"
 #include "libshared/net/netutils.h"
 #include "libshared/util/paths.h"
 #include <QCommandLineParser>
@@ -48,6 +51,7 @@
 #elif defined(Q_OS_ANDROID)
 #	include "libshared/util/androidutils.h"
 #elif defined(__EMSCRIPTEN__)
+#	include "libclient/tools/toolcontroller.h"
 #	include "libclient/wasmsupport.h"
 #endif
 #ifdef HAVE_PROXY_STYLE
@@ -67,6 +71,7 @@
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 	, m_settings(new desktop::settings::Settings(this))
+	, m_config(new config::SettingsConfig(m_settings, this))
 	, m_notifications(new notification::Notifications(this))
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}
@@ -274,7 +279,7 @@ void DrawpileApp::setThemePalette(const QString &themePalette)
 				newPalette = fusion->standardPalette();
 				fusion->deleteLater();
 			} else {
-				setThemePalette(THEME_PALETTE_DEFAULT);
+				setThemePalette(config::Config::defaultThemePalette());
 				return;
 			}
 		}
@@ -336,8 +341,8 @@ void DrawpileApp::initTheme()
 	themePaths.append(defaultThemePaths);
 	QIcon::setThemeSearchPaths(themePaths);
 
-	m_settings->bindThemeStyle(this, &DrawpileApp::setThemeStyle);
-	m_settings->bindThemePalette(this, &DrawpileApp::setThemePalette);
+	CFG_BIND_SET(m_config, ThemeStyle, this, DrawpileApp::setThemeStyle);
+	CFG_BIND_SET(m_config, ThemePalette, this, DrawpileApp::setThemePalette);
 	// If the theme is set to the default theme then the palette will not change
 	// and icon initialisation will be incomplete if it is not updated once here
 	updateThemeIcons();
@@ -345,35 +350,33 @@ void DrawpileApp::initTheme()
 
 void DrawpileApp::initCanvasImplementation(const QString &arg)
 {
-	using libclient::settings::CanvasImplementation;
 	int canvasImplementation;
 	if(QStringLiteral("system").compare(arg, Qt::CaseInsensitive) == 0) {
-		canvasImplementation = int(CanvasImplementation::Default);
+		canvasImplementation = int(view::CanvasImplementation::Default);
 	} else if(
 		QStringLiteral("qgraphicsview").compare(arg, Qt::CaseInsensitive) ==
 		0) {
-		canvasImplementation = int(CanvasImplementation::GraphicsView);
+		canvasImplementation = int(view::CanvasImplementation::GraphicsView);
 	} else if(QStringLiteral("opengl").compare(arg, Qt::CaseInsensitive) == 0) {
-		canvasImplementation = int(CanvasImplementation::OpenGl);
+		canvasImplementation = int(view::CanvasImplementation::OpenGl);
 	} else if(
 		QStringLiteral("software").compare(arg, Qt::CaseInsensitive) == 0) {
-		canvasImplementation = int(CanvasImplementation::Software);
+		canvasImplementation = int(view::CanvasImplementation::Software);
 	} else {
 		if(QStringLiteral("none").compare(arg, Qt::CaseInsensitive) != 0) {
 			qWarning("Unknown --renderer '%s'", qUtf8Printable(arg));
 		}
-		canvasImplementation = m_settings->renderCanvas();
+		canvasImplementation = m_config->getRenderCanvas();
 		m_canvasImplementationFromSettings = true;
 	}
 	m_canvasImplementation = getCanvasImplementationFor(canvasImplementation);
-	libclient::settings::setZoomLevelsCanvasImplementation(
-		m_canvasImplementation);
+	view::setZoomLevelsCanvasImplementation(m_canvasImplementation);
 }
 
 void DrawpileApp::initInterface()
 {
 	QFont font = QApplication::font();
-	int fontSize = m_settings->fontSize();
+	int fontSize = m_config->getFontSize();
 	if(fontSize <= 0) {
 		// We require a point size. Android uses a pixel size, which causes the
 		// point size to be reported as -1 and breaks several UI elements. But
@@ -386,24 +389,24 @@ void DrawpileApp::initInterface()
 		int pointSize = font.pointSize();
 		fontSize = pointSize <= 0 ? 9 : pointSize;
 #endif
-		m_settings->setFontSize(fontSize);
+		m_config->setFontSize(fontSize);
 	}
 
-	if(m_settings->overrideFontSize()) {
+	if(m_config->getOverrideFontSize()) {
 		font.setPointSize(fontSize);
 		QApplication::setFont(font);
 	}
 
-	m_settings->bindLongPressEnabled(this, &DrawpileApp::setLongPressEnabled);
+	CFG_BIND_SET(
+		m_config, LongPressEnabled, this, DrawpileApp::setLongPressEnabled);
 }
 
 int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
 {
-	using libclient::settings::CanvasImplementation;
 	switch(canvasImplementation) {
-	case int(CanvasImplementation::GraphicsView):
-	case int(CanvasImplementation::OpenGl):
-	case int(CanvasImplementation::Software):
+	case int(view::CanvasImplementation::GraphicsView):
+	case int(view::CanvasImplementation::OpenGl):
+	case int(view::CanvasImplementation::Software):
 		return canvasImplementation;
 	default:
 		return int(CANVAS_IMPLEMENTATION_DEFAULT);
@@ -421,7 +424,7 @@ QSize DrawpileApp::safeNewCanvasSize() const
 	// We don't load extremely small or extremely large sizes by default, since
 	// they have a high chance of causing confusion, being slow or even crashing
 	// weaker devices.
-	QSize size = m_settings->newCanvasSize();
+	QSize size = m_config->getNewCanvasSize();
 	return QSize(
 		qBound(400, size.width(), 10000), qBound(400, size.height(), 10000));
 }
@@ -604,7 +607,7 @@ void DrawpileApp::openBlank(
 		}
 	}
 	if(!backgroundColor.isValid()) {
-		backgroundColor = m_settings->newCanvasBackColor();
+		backgroundColor = m_config->getNewCanvasBackColor();
 	}
 	acquireWindow(restoreWindowPosition, false)
 		->newDocument(QSize(width, height), backgroundColor);
@@ -632,7 +635,7 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 MainWindow *DrawpileApp::openDefault(bool restoreWindowPosition)
 {
 	MainWindow *win = new MainWindow(restoreWindowPosition);
-	win->newDocument(safeNewCanvasSize(), m_settings->newCanvasBackColor());
+	win->newDocument(safeNewCanvasSize(), m_config->getNewCanvasBackColor());
 	return win;
 }
 
@@ -665,6 +668,16 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 			mw->deleteLater();
 		}
 	}
+}
+
+QSettings *DrawpileApp::scalingSettings()
+{
+	return m_settings->scalingSettings();
+}
+
+void DrawpileApp::resetSettingsPath(const QString &path)
+{
+	m_settings->reset(path);
 }
 
 static QStringList gatherPotentialLanguages(const QLocale &locale)
@@ -854,14 +867,18 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	if(parser.isSet(portableDataDir)) {
 		utils::paths::setWritablePath(parser.value(portableDataDir));
-		app.settings().reset(
+		app.resetSettingsPath(
 			utils::paths::writablePath(
 				QStandardPaths::AppConfigLocation, "drawpile.ini"));
 	}
 
 	app.initState();
-	desktop::settings::Settings &settings = app.settings();
-	settings.bindWriteLogFile(&utils::enableLogFile);
+
+	config::Config *cfg = app.config();
+	QObject::connect(
+		cfg, &config::Config::changeWriteLogFile, &utils::enableLogFile);
+	utils::enableLogFile(cfg->getWriteLogFile());
+
 	app.initTheme();
 	app.initCanvasImplementation(parser.value(renderer));
 	app.initInterface();
@@ -870,38 +887,39 @@ static StartupOptions initApp(DrawpileApp &app)
 		app.setAttribute(Qt::AA_DontUseNativeDialogs);
 	} else {
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
-		settings.bindNativeDialogs([&app](bool nativeDialogs) {
+		CFG_BIND_SET_FN(cfg, NativeDialogs, &app, [&app](bool nativeDialogs) {
 			app.setAttribute(Qt::AA_DontUseNativeDialogs, !nativeDialogs);
 		});
 #endif
 	}
 
 #ifdef Q_OS_ANDROID
-	if(!settings.androidStylusChecked()) {
+	if(!cfg->getAndroidStylusChecked()) {
 		// We'll flush the flag that we checked the input here in case we crash.
-		settings.setAndroidStylusChecked(true);
-		settings.trySubmit();
+		cfg->setAndroidStylusChecked(true);
+		cfg->trySubmit();
 		// Disable finerpainting if this device is detected to have a stylus.
 		bool hasStylus = utils::androidHasStylusInput();
-		settings.setOneFingerTouch(
+		cfg->setOneFingerTouch(
 			int(hasStylus ? view::OneFingerTouchAction::Pan
 						  : view::OneFingerTouchAction::Guess));
 	}
 
-	settings.bindCaptureVolumeRocker([](bool capture) {
-		if(capture) {
-			qputenv("QT_ANDROID_VOLUME_KEYS", "1");
-		} else {
-			qunsetenv("QT_ANDROID_VOLUME_KEYS");
-		}
-	});
+	CFG_BIND_SET_FN(cfg, CaptureVolumeRocker, &app, ([](bool capture) {
+						if(capture) {
+							qputenv("QT_ANDROID_VOLUME_KEYS", "1");
+						} else {
+							qunsetenv("QT_ANDROID_VOLUME_KEYS");
+						}
+					}));
 #endif
 
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
-	settings.bindQuitOnLastWindowClosed(
-		&app, &QApplication::setQuitOnLastWindowClosed);
+	CFG_BIND_SET(
+		cfg, QuitOnLastWindowClosed, &app,
+		DrawpileApp::setQuitOnLastWindowClosed);
 
 	// Global menu bar that is shown when no windows are open
 	MacMenu::instance();
@@ -916,14 +934,14 @@ static StartupOptions initApp(DrawpileApp &app)
 #endif
 
 	tabletinput::init(app);
-	parentalcontrols::init(settings);
+	parentalcontrols::init(cfg);
 
 #ifdef __EMSCRIPTEN__
 	QLocale locale(browser::getLocale());
 #else
 	// Set override locale from settings, use system locale if no override set.
 	QLocale locale = QLocale::c();
-	QString overrideLang = settings.language();
+	QString overrideLang = cfg->getLanguage();
 	if(!overrideLang.isEmpty()) {
 		locale = QLocale(overrideLang);
 	}
@@ -968,7 +986,7 @@ extern "C" int drawpileShouldPreventUnload()
 {
 	QApplication *app = qApp;
 	if(app) {
-		static_cast<DrawpileApp *>(app)->settings().trySubmit();
+		static_cast<DrawpileApp *>(app)->config()->trySubmit();
 		for(QWidget *widget : app->topLevelWidgets()) {
 			MainWindow *mw = qobject_cast<MainWindow *>(widget);
 			if(mw && mw->shouldPreventUnload()) {
@@ -1095,8 +1113,7 @@ static void startApplication(
 {
 	StartupOptions startupOptions = initApp(*app);
 
-	if(app->canvasImplementation() ==
-	   int(libclient::settings::CanvasImplementation::OpenGl)) {
+	if(app->canvasImplementation() == int(view::CanvasImplementation::OpenGl)) {
 		// OpenGL rendering format. 8 bit color, no alpha, no depth. Stencil
 		// buffer is needed for QPainter, without it, it can't manage to draw
 		// large paths and spams the warning log with "Painter path exceeds
@@ -1158,9 +1175,9 @@ static void startApplication(
 
 
 #ifdef Q_OS_ANDROID
-extern "C" JNIEXPORT void JNICALL
-Java_net_drawpile_android_DrawpileNative_processEvents(
-	JNIEnv *env, jobject obj, jint n)
+extern "C" JNIEXPORT void
+	JNICALL Java_net_drawpile_android_DrawpileNative_processEvents(
+		JNIEnv *env, jobject obj, jint n)
 {
 	Q_UNUSED(env);
 	Q_UNUSED(obj);
@@ -1211,7 +1228,7 @@ extern "C" void drawpileMain(int argc, char **argv)
 
 #ifdef __EMSCRIPTEN__
 	if(browser::hasLowPressurePen()) {
-		desktop::settings::globalPressureCurveDefault =
+		tools::ToolController::globalPressureCurveDefault =
 			QStringLiteral("0,0;0.48,0.96;0.5,1;1,1;");
 	}
 #endif

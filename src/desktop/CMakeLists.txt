@@ -62,6 +62,8 @@ target_sources(drawpile PRIVATE
 	chat/chatwindow.h
 	chat/useritemdelegate.cpp
 	chat/useritemdelegate.h
+	config/settingsconfig.cpp
+	config/settingsconfig.h
 	cursors/arrow.png
 	cursors/bucket.png
 	cursors/colorpicker.png
@@ -228,6 +230,7 @@ target_sources(drawpile PRIVATE
 	docks/colorspinner.h
 	docks/dockbase.cpp
 	docks/dockbase.h
+	docks/enums.h
 	docks/layeraclmenu.cpp
 	docks/layeraclmenu.h
 	docks/layerlistdelegate.cpp

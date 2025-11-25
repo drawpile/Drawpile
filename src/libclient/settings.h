@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef LIBCLIENT_SETTINGS_H
 #define LIBCLIENT_SETTINGS_H
-
 #include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/config/config.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/view/enums.h"
 #include "libshared/net/messagequeue.h"
-
 #include <QDebug>
 #include <QHash>
 #include <QLoggingCategory>
@@ -26,58 +24,14 @@ namespace settings {
 Q_NAMESPACE
 
 // For avoiding `-Wuseless-cast` in disgusting macro-generated default code
-template <typename To, typename From>
-To maybe_static_cast(From &from)
+template <typename To, typename From> To maybe_static_cast(From &from)
 {
-	if constexpr (std::is_same_v<To, From>) {
+	if constexpr(std::is_same_v<To, From>) {
 		return from;
 	} else {
 		return static_cast<To>(from);
 	}
 }
-
-enum class CanvasImplementation : int {
-	Default = 0,
-	GraphicsView = 1,
-	OpenGl = 2,
-	Software = 3,
-};
-Q_ENUM_NS(CanvasImplementation)
-
-#if defined(__EMSCRIPTEN__)
-#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
-		::libclient::settings::CanvasImplementation::OpenGl
-#	undef CANVAS_IMPLEMENTATION_FALLBACK
-#elif defined(Q_OS_ANDROID)
-#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
-		::libclient::settings::CanvasImplementation::OpenGl
-#	define CANVAS_IMPLEMENTATION_FALLBACK                                     \
-		::libclient::settings::CanvasImplementation::GraphicsView
-#else
-#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
-		::libclient::settings::CanvasImplementation::GraphicsView
-#	define CANVAS_IMPLEMENTATION_FALLBACK                                     \
-		::libclient::settings::CanvasImplementation::Default
-#endif
-
-// On most platforms, tablet input comes at a very high precision and frequency,
-// so some smoothing is sensible by default. On Android (at least on a Samsung
-// Galaxy S6 Lite, a Samsung Galaxy S8 Ultra and reports from unknown devices)
-// the input is already pretty smooth though, so we'll leave it at zero there.
-#ifdef Q_OS_ANDROID
-inline constexpr int defaultSmoothing = 0;
-#else
-inline constexpr int defaultSmoothing = 3;
-#endif
-
-inline constexpr int maxSmoothing = 20;
-
-qreal getZoomMin();
-qreal getZoomMax();
-qreal getZoomSoftMin();
-qreal getZoomSoftMax();
-const QVector<qreal> &getZoomLevels();
-void setZoomLevelsCanvasImplementation(int canvasImplementation);
 
 class Settings;
 
@@ -113,9 +67,9 @@ public:
 
 	QSettings *scalingSettings();
 
-#	define DP_SETTINGS_HEADER
-#	include "libclient/settings_table.h"
-#	undef DP_SETTINGS_HEADER
+#define DP_SETTINGS_HEADER
+#include "libclient/settings_table.h"
+#undef DP_SETTINGS_HEADER
 
 	void revert();
 	bool submit();
@@ -124,133 +78,6 @@ public:
 protected:
 	QVariant get(const SettingMeta &setting) const;
 	bool set(const SettingMeta &setting, QVariant value);
-
-	template <
-		typename T,
-		typename Object,
-		typename Receiver,
-		typename Signal = std::nullptr_t,
-		typename Self,
-		typename = std::enable_if_t<
-			std::is_invocable_v<Receiver, Object *, T>
-			|| std::is_invocable_v<Receiver, Object *>
-			|| std::is_invocable_v<Receiver, T>
-			|| std::is_invocable_v<Receiver>
-		>
-	>
-	inline auto bind(
-		T value, void (Self::*changed)(T), void (Self::*setter)(T),
-		Object *object, Receiver receiver, Signal signal = nullptr
-	)
-	{
-		// The Q_UNUSED in this function are necessary for old gcc, otherwise it
-		// raises errant warnings about unused but set parameters.
-		static_assert(std::is_base_of_v<Settings, Self>);
-
-		if constexpr (
-			std::is_member_function_pointer_v<Receiver>
-			&& std::is_invocable_v<Receiver, Object *, T>
-		) {
-			std::invoke(receiver, object, value);
-		} else if constexpr (
-			std::is_member_function_pointer_v<Receiver>
-			&& std::is_invocable_v<Receiver, Object *>
-		) {
-			Q_UNUSED(value);
-			std::invoke(receiver, object);
-		} else if constexpr (std::is_invocable_v<Receiver, T>) {
-			std::invoke(receiver, value);
-		} else {
-			Q_UNUSED(value);
-			std::invoke(receiver);
-		}
-
-		const auto connection = connect(static_cast<Self *>(this), changed, object, receiver);
-
-		if constexpr (
-			std::is_member_function_pointer_v<Signal>
-			&& std::is_invocable_v<Signal, Object *, T>
-		) {
-			return std::pair {
-				connection,
-				connect(object, signal, static_cast<Self *>(this), setter)
-			};
-		} else {
-			Q_UNUSED(signal);
-			Q_UNUSED(setter);
-			return connection;
-		}
-	}
-
-	template <
-		typename T,
-		typename Receiver,
-		typename Self,
-		typename = std::enable_if_t<
-			std::is_invocable_v<Receiver, T>
-			|| std::is_invocable_v<Receiver>
-		>
-	>
-	inline auto bind(T value, void (Self::*changed)(T), void (Self::*)(T), Receiver receiver)
-	{
-		static_assert(std::is_base_of_v<Settings, Self>);
-		if constexpr (std::is_invocable_v<Receiver, T>) {
-			std::invoke(receiver, value);
-		} else {
-			std::invoke(receiver);
-		}
-		return connect(static_cast<Self *>(this), changed, receiver);
-	}
-
-	template <
-		typename U,
-		typename T,
-		typename Object,
-		typename Receiver,
-		typename Signal = std::nullptr_t,
-		typename Self,
-		typename = std::enable_if_t<
-			std::is_invocable_v<Receiver, Object *, U>
-			|| std::is_invocable_v<Receiver, U>
-		>
-	>
-	inline auto bindAs(T initialValue, void (Self::*changed)(T), void (Self::*setter)(T), Object *object, Receiver receiver, Signal signal = nullptr)
-	{
-		static_assert(std::is_base_of_v<Settings, Self>);
-
-		QMetaObject::Connection connection;
-
-		if constexpr (
-			std::is_member_function_pointer_v<Receiver>
-			&& std::is_invocable_v<Receiver, Object *, U>
-		) {
-			std::invoke(receiver, object, U(initialValue));
-
-			connection = connect(static_cast<Self *>(this), changed, object, [=](T value) {
-				std::invoke(receiver, object, U(value));
-			});
-		} else {
-			std::invoke(receiver, initialValue);
-
-			connection = connect(static_cast<Self *>(this), changed, object, [=](T value) {
-				std::invoke(receiver, U(value));
-			});
-		}
-
-		if constexpr (
-			std::is_member_function_pointer_v<Signal>
-			&& std::is_invocable_v<Signal, Object *, U>
-		) {
-			return std::pair {
-				connection,
-				connect(object, signal, static_cast<Self *>(this), [=](U value) {
-					std::invoke(setter, static_cast<Self *>(this), T(value));
-				})
-			};
-		} else {
-			return connection;
-		}
-	}
 
 	mutable QSettings m_settings; // Annoying group interface requires mutable.
 	QHash<const SettingMeta *, QVariant> m_pending;
@@ -267,8 +94,11 @@ struct FoundKey {
 	bool isGroup;
 };
 
-std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version);
-std::optional<FoundKey> findKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version);
+std::optional<FoundKey>
+findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version);
+
+std::optional<FoundKey> findKeyExactVersion(
+	QSettings &settings, const char *baseKey, SettingMeta::Version version);
 
 template <typename T>
 QVariant getEnumReplacedByInt(const SettingMeta &meta, QSettings &settings)
@@ -292,20 +122,20 @@ QVariant getEnumReplacedByInt(const SettingMeta &meta, QSettings &settings)
 // These are exposed in the header only because libclient/desktop are split
 // so desktop-only settings need access to these too.
 namespace any {
-	QVariant get(const SettingMeta &meta, QSettings &settings);
-	QVariant getExactVersion(const SettingMeta &meta, QSettings &settings);
-	QVariant getGroup(QSettings &settings, const QString &key);
-	QVariant getList(QSettings &settings, const QString &key);
-	void forceSetKey(QSettings &settings, const QString &key, QVariant value);
-	void forceSet(const SettingMeta &meta, QSettings &settings, QVariant value);
-	void set(const SettingMeta &meta, QSettings &settings, QVariant value);
-	void setGroup(QSettings &settings, const QString &key, const QVariant &value);
-	void setList(QSettings &settings, const QString &key, const QVariant &value);
-} // namespace any
+QVariant get(const SettingMeta &meta, QSettings &settings);
+QVariant getExactVersion(const SettingMeta &meta, QSettings &settings);
+QVariant getGroup(QSettings &settings, const QString &key);
+QVariant getList(QSettings &settings, const QString &key);
+void forceSetKey(QSettings &settings, const QString &key, QVariant value);
+void forceSet(const SettingMeta &meta, QSettings &settings, QVariant value);
+void set(const SettingMeta &meta, QSettings &settings, QVariant value);
+void setGroup(QSettings &settings, const QString &key, const QVariant &value);
+void setList(QSettings &settings, const QString &key, const QVariant &value);
+}
 
 void initializeTypes();
 
-} // namespace settings
-} // namespace libclient
+}
+}
 
 #endif

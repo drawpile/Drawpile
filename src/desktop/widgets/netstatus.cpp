@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/widgets/netstatus.h"
+#include "cmake-config/config.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/netstats.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/popupmessage.h"
+#include "libclient/config/config.h"
 #include "libshared/util/whatismyip.h"
-
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
@@ -82,15 +81,16 @@ NetStatus::NetStatus(QWidget *parent)
 	QAction *hideServerAction = new QAction(tr("Hide address"), this);
 	hideServerAction->setCheckable(true);
 
-	auto &settings = dpApp().settings();
-	settings.bindServerHideIp(
-		hideServerAction,
-		[=](bool hide) {
-			hideServerAction->setChecked(hide);
-			m_hideServer = hide;
-			updateLabel();
-		},
-		&QAction::triggered);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET_FN(cfg, ServerHideIp, hideServerAction, [=](bool hide) {
+		hideServerAction->setChecked(hide);
+		m_hideServer = hide;
+		updateLabel();
+	});
+	connect(
+		hideServerAction, &QAction::triggered, cfg,
+		&config::Config::setServerHideIp);
+
 	m_label->addAction(hideServerAction);
 
 	// Show network statistics
@@ -479,9 +479,8 @@ void NetStatus::showNetStats()
 #ifndef __EMSCRIPTEN__
 void NetStatus::showCGNAlert()
 {
-	auto &settings = dpApp().settings();
-
-	if(!settings.ignoreCarrierGradeNat()) {
+	config::Config *cfg = dpAppConfig();
+	if(!cfg->getIgnoreCarrierGradeNat()) {
 		QMessageBox box(
 			QMessageBox::Warning, tr("Notice"),
 			tr("Your Internet Service Provider is using Carrier Grade NAT. "
@@ -492,7 +491,7 @@ void NetStatus::showCGNAlert()
 		box.setCheckBox(new QCheckBox(tr("Don't show this again")));
 		box.exec();
 
-		settings.setIgnoreCarrierGradeNat(box.checkBox()->isChecked());
+		cfg->setIgnoreCarrierGradeNat(box.checkBox()->isChecked());
 	}
 }
 #endif

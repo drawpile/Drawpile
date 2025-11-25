@@ -4,11 +4,11 @@ extern "C" {
 }
 #include "desktop/dialogs/flipbook.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/animationrenderer.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/viewmode.h"
 #include "ui_flipbook.h"
 #include <QAction>
@@ -71,9 +71,10 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 
 	d->upscaleAction = zoomMenu->addAction(tr("Upscale to fit view"));
 	d->upscaleAction->setCheckable(true);
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindFlipbookUpscaling(d->upscaleAction);
-	settings.bindFlipbookUpscaling(d->ui.view, &FlipbookView::setUpscaling);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_ACTION(cfg, FlipbookUpscaling, d->upscaleAction);
+	CFG_BIND_SET(
+		cfg, FlipbookUpscaling, d->ui.view, FlipbookView::setUpscaling);
 
 	connect(d->ui.rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(
@@ -105,7 +106,7 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	d->ui.speedSpinner->setExponentRatio(3.0);
 	d->ui.playButton->setFocus();
 
-	utils::setGeometryIfOnScreen(this, settings.flipbookWindow());
+	utils::setGeometryIfOnScreen(this, cfg->getFlipbookWindow());
 }
 
 Flipbook::~Flipbook()
@@ -119,7 +120,7 @@ bool Flipbook::event(QEvent *event)
 	switch(event->type()) {
 	case QEvent::Move:
 	case QEvent::Resize:
-		dpApp().settings().setFlipbookWindow(geometry());
+		dpAppConfig()->setFlipbookWindow(geometry());
 		break;
 	default: {
 	}

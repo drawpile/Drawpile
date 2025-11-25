@@ -2,11 +2,12 @@
 #include "desktop/view/canvascontroller.h"
 #include "desktop/main.h"
 #include "desktop/scene/hudhandler.h"
-#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/view/canvasinterface.h"
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/widgettouchhandler.h"
+#include "libclient/config/config.h"
+#include <QWidget>
 
 namespace view {
 
@@ -26,27 +27,34 @@ CanvasController::CanvasController(CanvasScene *scene, QObject *parent)
 		&CanvasController::setEraserTipActive);
 #endif
 
-	desktop::settings::Settings &settings = app.settings();
-	settings.bindCanvasViewBackgroundColor(
-		this, &CanvasController::setClearColor);
-	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
-	settings.bindTabletEvents(this, &CanvasController::setTabletEnabled);
-	settings.bindBrushOutlineWidth(this, &CanvasController::setOutlineWidth);
-	settings.bindGlobalPressureCurve(
-		this, &CanvasController::setSerializedPressureCurve);
-	settings.bindGlobalPressureCurveEraser(
-		this, &CanvasController::setSerializedPressureCurveEraser);
-	settings.bindGlobalPressureCurveMode(
-		this, &CanvasController::setPressureCurveMode);
-	settings.bindCanvasShortcuts(this, &CanvasController::setCanvasShortcuts);
-	settings.bindShowTransformNotices(
-		this, &CanvasController::setShowTransformNotices);
-	settings.bindBrushCursor(this, &CanvasController::setBrushCursorStyle);
-	settings.bindEraseCursor(this, &CanvasController::setEraseCursorStyle);
-	settings.bindAlphaLockCursor(
-		this, &CanvasController::setAlphaLockCursorStyle);
-	settings.bindTabletPressTimerDelay(
-		this, &CanvasController::setTabletEventTimerDelay);
+	config::Config *cfg = app.config();
+	CFG_BIND_SET(
+		cfg, CanvasViewBackgroundColor, this, CanvasController::setClearColor);
+	CFG_BIND_SET(cfg, RenderSmooth, this, CanvasController::setRenderSmooth);
+	CFG_BIND_SET(cfg, TabletEvents, this, CanvasController::setTabletEnabled);
+	CFG_BIND_SET(
+		cfg, BrushOutlineWidth, this, CanvasController::setOutlineWidth);
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurve, this,
+		CanvasController::setSerializedPressureCurve);
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurveEraser, this,
+		CanvasController::setSerializedPressureCurveEraser);
+	CFG_BIND_SET(
+		cfg, GlobalPressureCurveMode, this,
+		CanvasController::setPressureCurveMode);
+	CFG_BIND_SET(
+		cfg, CanvasShortcuts, this, CanvasController::setCanvasShortcuts);
+	CFG_BIND_SET(
+		cfg, ShowTransformNotices, this,
+		CanvasController::setShowTransformNotices);
+	CFG_BIND_SET(cfg, BrushCursor, this, CanvasController::setBrushCursorStyle);
+	CFG_BIND_SET(cfg, EraseCursor, this, CanvasController::setEraseCursorStyle);
+	CFG_BIND_SET(
+		cfg, AlphaLockCursor, this, CanvasController::setAlphaLockCursorStyle);
+	CFG_BIND_SET(
+		cfg, TabletPressTimerDelay, this,
+		CanvasController::setTabletEventTimerDelay);
 
 	connect(
 		m_scene->hud(), &HudHandler::currentActionBarChanged, this,

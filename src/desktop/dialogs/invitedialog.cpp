@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/invitedialog.h"
+#include "cmake-config/config.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/toolmessage.h"
+#include "libclient/config/config.h"
 #include "libclient/net/invitelistmodel.h"
 #include "libshared/net/netutils.h"
 #include "ui_invitedialog.h"
@@ -65,10 +66,11 @@ InviteDialog::InviteDialog(
 	d->ui.urlEdit->setWordWrapMode(QTextOption::WrapAnywhere);
 	d->ui.ipProgressBar->setVisible(false);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindInviteIncludePassword(d->ui.includePasswordBox);
-	settings.bindInviteIncludePassword(this, &InviteDialog::updateInviteLink);
-	settings.bindShowInviteDialogOnHost(d->ui.showOnHostBox);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_CHECKBOX(cfg, InviteIncludePassword, d->ui.includePasswordBox);
+	CFG_BIND_NOTIFY(
+		cfg, InviteIncludePassword, this, InviteDialog::updateInviteLink);
+	CFG_BIND_CHECKBOX(cfg, ShowInviteDialogOnHost, d->ui.showOnHostBox);
 
 	connect(
 		d->ui.copyButton, &QAbstractButton::clicked, this,

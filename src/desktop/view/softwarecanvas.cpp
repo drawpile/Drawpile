@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/view/softwarecanvas.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/tilecache.h"
+#include "libclient/config/config.h"
 #include "libclient/view/softwarecanvasrenderer.h"
 #include <QPaintEvent>
 #include <QPainter>
@@ -96,10 +96,11 @@ SoftwareCanvas::SoftwareCanvas(CanvasController *controller, QWidget *parent)
 	setAutoFillBackground(false);
 	setAttribute(Qt::WA_OpaquePaintEvent);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindCheckerColor1(this, &SoftwareCanvas::setCheckerColor1);
-	settings.bindCheckerColor2(this, &SoftwareCanvas::setCheckerColor2);
-	settings.bindRenderUpdateFull(this, &SoftwareCanvas::setRenderUpdateFull);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET(cfg, CheckerColor1, this, SoftwareCanvas::setCheckerColor1);
+	CFG_BIND_SET(cfg, CheckerColor2, this, SoftwareCanvas::setCheckerColor2);
+	CFG_BIND_SET(
+		cfg, RenderUpdateFull, this, SoftwareCanvas::setRenderUpdateFull);
 
 	connect(
 		controller, &CanvasController::clearColorChanged, this,

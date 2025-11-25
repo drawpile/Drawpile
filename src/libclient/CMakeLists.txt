@@ -46,6 +46,10 @@ target_sources(dpclient PRIVATE
 	canvas/transformmodel.h
 	canvas/userlist.cpp
 	canvas/userlist.h
+	config/config.cpp
+	config/config.h
+	config/memoryconfig.cpp
+	config/memoryconfig.h
 	parentalcontrols/parentalcontrols.cpp
 	parentalcontrols/parentalcontrols.h
 	drawdance/aclstate.cpp
@@ -247,6 +251,8 @@ target_sources(dpclient PRIVATE
 	view/softwarecanvasrenderer.h
 	view/touchhandler.cpp
 	view/touchhandler.h
+	view/zoom.cpp
+	view/zoom.h
 )
 
 if(ANDROID OR EMSCRIPTEN)

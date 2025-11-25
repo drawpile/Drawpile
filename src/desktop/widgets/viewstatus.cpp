@@ -4,7 +4,7 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/zoomslider.h"
-#include "libclient/settings.h"
+#include "libclient/view/zoom.h"
 #include "libshared/util/qtcompat.h"
 #include <QComboBox>
 #include <QEvent>
@@ -99,8 +99,8 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_zoomSlider->setMaximumWidth(200);
 	m_zoomSlider->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
-	m_zoomSlider->setMinimum(libclient::settings::getZoomMin() * 100.0);
-	m_zoomSlider->setMaximum(libclient::settings::getZoomMax() * 100.0);
+	m_zoomSlider->setMinimum(view::getZoomMin() * 100.0);
+	m_zoomSlider->setMaximum(view::getZoomMax() * 100.0);
 	m_zoomSlider->setExponentRatio(4.0);
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");
@@ -121,9 +121,9 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	m_zoomsMenu = new QMenu{m_zoomPreset};
 	m_zoomPreset->setMenu(m_zoomsMenu);
-	qreal zoomSoftMin = libclient::settings::getZoomSoftMin();
-	qreal zoomSoftMax = libclient::settings::getZoomSoftMax();
-	for(qreal zoomLevel : libclient::settings::getZoomLevels()) {
+	qreal zoomSoftMin = view::getZoomSoftMin();
+	qreal zoomSoftMax = view::getZoomSoftMax();
+	for(qreal zoomLevel : view::getZoomLevels()) {
 		if(zoomLevel >= zoomSoftMin && zoomLevel <= zoomSoftMax) {
 			QAction *zoomAction = m_zoomsMenu->addAction(
 				QStringLiteral("%1%").arg(zoomLevel * 100.0, 0, 'f', 2));

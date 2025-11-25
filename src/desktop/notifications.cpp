@@ -2,7 +2,7 @@
 #include "desktop/notifications.h"
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
-#include "desktop/settings.h"
+#include "libclient/config/config.h"
 #include "libshared/util/paths.h"
 #include <QDateTime>
 #include <QDebug>
@@ -49,24 +49,24 @@ void Notifications::notify(
 	}
 
 	qint64 now = QDateTime::currentMSecsSinceEpoch();
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	bool shouldPlay =
-		isSoundEnabled(settings, event) &&
+		isSoundEnabled(cfg, event) &&
 		(isPreview || isHighPriority(event) ||
 		 (now - m_lastSoundMsec >= SOUND_DELAY_MSEC && isPlayerAvailable()));
 	if(shouldPlay) {
-		int volume = settings.soundVolume();
+		int volume = cfg->getSoundVolume();
 		if(volume > 0) {
 			m_lastSoundMsec = now;
 			playSound(event, qBound(0, volume, 100));
 		}
 	}
 
-	if(mw && isPopupEnabled(settings, event)) {
+	if(mw && isPopupEnabled(cfg, event)) {
 		mw->showPopupMessage(message);
 	}
 
-	if(mw && isFlashEnabled(settings, event)) {
+	if(mw && isFlashEnabled(cfg, event)) {
 		QApplication::alert(mw);
 	}
 }
@@ -80,70 +80,67 @@ MainWindow *Notifications::getMainWindow(QWidget *widget)
 	return mw;
 }
 
-bool Notifications::isSoundEnabled(
-	const desktop::settings::Settings &settings, Event event)
+bool Notifications::isSoundEnabled(config::Config *cfg, Event event)
 {
 	switch(event) {
 	case Event::Chat:
-		return settings.notifSoundChat();
+		return cfg->getNotifSoundChat();
 	case Event::PrivateChat:
-		return settings.notifSoundPrivateChat();
+		return cfg->getNotifSoundPrivateChat();
 	case Event::Locked:
-		return settings.notifSoundLock();
+		return cfg->getNotifSoundLock();
 	case Event::Unlocked:
-		return settings.notifSoundUnlock();
+		return cfg->getNotifSoundUnlock();
 	case Event::Login:
-		return settings.notifSoundLogin();
+		return cfg->getNotifSoundLogin();
 	case Event::Logout:
-		return settings.notifSoundLogout();
+		return cfg->getNotifSoundLogout();
 	case Event::Disconnect:
-		return settings.notifSoundDisconnect();
+		return cfg->getNotifSoundDisconnect();
 	}
 	qWarning("Unknown sound event %d", int(event));
 	return false;
 }
 
-bool Notifications::isPopupEnabled(
-	const desktop::settings::Settings &settings, Event event)
+bool Notifications::isPopupEnabled(config::Config *cfg, Event event)
 {
 	switch(event) {
 	case Event::Chat:
-		return settings.notifPopupChat();
+		return cfg->getNotifPopupChat();
 	case Event::PrivateChat:
-		return settings.notifPopupPrivateChat();
+		return cfg->getNotifPopupPrivateChat();
 	case Event::Locked:
-		return settings.notifPopupLock();
+		return cfg->getNotifPopupLock();
 	case Event::Unlocked:
-		return settings.notifPopupUnlock();
+		return cfg->getNotifPopupUnlock();
 	case Event::Login:
-		return settings.notifPopupLogin();
+		return cfg->getNotifPopupLogin();
 	case Event::Logout:
-		return settings.notifPopupLogout();
+		return cfg->getNotifPopupLogout();
 	case Event::Disconnect:
-		return settings.notifPopupDisconnect();
+		return cfg->getNotifPopupDisconnect();
 	}
 	qWarning("Unknown popup event %d", int(event));
 	return false;
 }
 
-bool Notifications::isFlashEnabled(
-	const desktop::settings::Settings &settings, Event event)
+bool Notifications::isFlashEnabled(config::Config *cfg, Event event)
 {
 	switch(event) {
 	case Event::Chat:
-		return settings.notifFlashChat();
+		return cfg->getNotifFlashChat();
 	case Event::PrivateChat:
-		return settings.notifFlashPrivateChat();
+		return cfg->getNotifFlashPrivateChat();
 	case Event::Locked:
-		return settings.notifFlashLock();
+		return cfg->getNotifFlashLock();
 	case Event::Unlocked:
-		return settings.notifFlashUnlock();
+		return cfg->getNotifFlashUnlock();
 	case Event::Login:
-		return settings.notifFlashLogin();
+		return cfg->getNotifFlashLogin();
 	case Event::Logout:
-		return settings.notifFlashLogout();
+		return cfg->getNotifFlashLogout();
 	case Event::Disconnect:
-		return settings.notifFlashDisconnect();
+		return cfg->getNotifFlashDisconnect();
 	}
 	qWarning("Unknown flash event %d", int(event));
 	return false;

@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/artisticcolorwheeldialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/artisticcolorwheel.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/config/config.h"
 #include "libshared/util/paths.h"
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QDomDocument>
@@ -27,12 +28,12 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 	resize(350, 600);
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	const desktop::settings::Settings &settings = dpApp().settings();
 
 	QFormLayout *form = new QFormLayout;
 	layout->addLayout(form);
 
-	bool hueLimit = settings.colorCircleHueLimit();
+	config::Config *cfg = dpAppConfig();
+	bool hueLimit = cfg->getColorCircleHueLimit();
 	m_continuousHueBox = new QCheckBox;
 	m_continuousHueBox->setChecked(!hueLimit);
 	form->addRow(m_continuousHueBox);
@@ -40,7 +41,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 		m_continuousHueBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		this, &ArtisticColorWheelDialog::updateContinuousHue);
 
-	int hueCount = settings.colorCircleHueCount();
+	int hueCount = cfg->getColorCircleHueCount();
 	m_hueStepsSlider = new KisSliderSpinBox;
 	m_hueStepsSlider->setRange(
 		widgets::ArtisticColorWheel::HUE_COUNT_MIN,
@@ -52,7 +53,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 		m_hueStepsSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &ArtisticColorWheelDialog::updateHueSteps);
 
-	int hueAngle = settings.colorCircleHueAngle();
+	int hueAngle = cfg->getColorCircleHueAngle();
 	m_hueAngleSlider = new KisSliderSpinBox;
 	m_hueAngleSlider->setRange(0, 180);
 	m_hueAngleSlider->setValue(hueAngle);
@@ -64,7 +65,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 
 	utils::addFormSpacer(form);
 
-	bool saturationLimit = settings.colorCircleSaturationLimit();
+	bool saturationLimit = cfg->getColorCircleSaturationLimit();
 	m_continuousSaturationBox = new QCheckBox;
 	m_continuousSaturationBox->setChecked(!saturationLimit);
 	form->addRow(m_continuousSaturationBox);
@@ -73,7 +74,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 		COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		&ArtisticColorWheelDialog::updateContinuousSaturation);
 
-	int saturationCount = settings.colorCircleSaturationCount();
+	int saturationCount = cfg->getColorCircleSaturationCount();
 	m_saturationStepsSlider = new KisSliderSpinBox;
 	m_saturationStepsSlider->setRange(
 		widgets::ArtisticColorWheel::SATURATION_COUNT_MIN,
@@ -88,7 +89,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 
 	utils::addFormSpacer(form);
 
-	bool valueLimit = settings.colorCircleValueLimit();
+	bool valueLimit = cfg->getColorCircleValueLimit();
 	m_continuousValueBox = new QCheckBox;
 	m_continuousValueBox->setChecked(!valueLimit);
 	form->addRow(m_continuousValueBox);
@@ -96,7 +97,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 		m_continuousValueBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		this, &ArtisticColorWheelDialog::updateContinuousValue);
 
-	int valueCount = settings.colorCircleValueCount();
+	int valueCount = cfg->getColorCircleValueCount();
 	m_valueStepsSlider = new KisSliderSpinBox;
 	m_valueStepsSlider->setRange(
 		widgets::ArtisticColorWheel::VALUE_COUNT_MIN,
@@ -115,7 +116,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 	m_hueAngleSlider->setSuffix(tr("°"));
 
 	using ColorSpace = color_widgets::ColorWheel::ColorSpaceEnum;
-	ColorSpace colorSpace = ColorSpace(settings.colorWheelSpace());
+	ColorSpace colorSpace = ColorSpace(cfg->getColorWheelSpace());
 	if(colorSpace == ColorSpace::ColorLCH) {
 		m_continuousSaturationBox->setText(tr("Continuous chroma"));
 		m_saturationStepsSlider->setPrefix(tr("Chroma steps: "));
@@ -135,7 +136,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 
 	utils::addFormSpacer(form);
 
-	QString gamutMaskPath = settings.colorCircleGamutMaskPath();
+	QString gamutMaskPath = cfg->getColorCircleGamutMaskPath();
 	m_gamutMaskCombo = new QComboBox;
 	m_gamutMaskCombo->addItem(tr("None"));
 	loadGamutMasks();
@@ -153,7 +154,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 		m_gamutMaskCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &ArtisticColorWheelDialog::updateGamutMask);
 
-	int gamutMaskAngle = settings.colorCircleGamutMaskAngle();
+	int gamutMaskAngle = cfg->getColorCircleGamutMaskAngle();
 	m_gamutMaskAngleSlider = new KisSliderSpinBox;
 	m_gamutMaskAngleSlider->setPrefix(tr("Mask angle: "));
 	//: Degree symbol. Unless your language uses a different one, keep as-is.
@@ -168,7 +169,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ArtisticColorWheelDialog::updateGamutMaskAngle);
 
-	qreal gamutMaskOpacity = settings.colorCircleGamutMaskOpacity();
+	qreal gamutMaskOpacity = cfg->getColorCircleGamutMaskOpacity();
 	m_gamutMaskOpacitySlider = new KisSliderSpinBox;
 	m_gamutMaskOpacitySlider->setPrefix(tr("Mask opacity: "));
 	m_gamutMaskOpacitySlider->setSuffix(tr("%"));
@@ -387,19 +388,18 @@ void ArtisticColorWheelDialog::updateGamutMaskOpacity(int opacity)
 
 void ArtisticColorWheelDialog::saveSettings()
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setColorCircleHueLimit(!m_continuousHueBox->isChecked());
-	settings.setColorCircleHueCount(m_hueStepsSlider->value());
-	settings.setColorCircleHueAngle(m_hueAngleSlider->value());
-	settings.setColorCircleSaturationLimit(
-		!m_continuousSaturationBox->isChecked());
-	settings.setColorCircleSaturationCount(m_saturationStepsSlider->value());
-	settings.setColorCircleValueLimit(!m_continuousValueBox->isChecked());
-	settings.setColorCircleValueCount(m_valueStepsSlider->value());
-	settings.setColorCircleGamutMaskPath(
+	config::Config *cfg = dpAppConfig();
+	cfg->setColorCircleHueLimit(!m_continuousHueBox->isChecked());
+	cfg->setColorCircleHueCount(m_hueStepsSlider->value());
+	cfg->setColorCircleHueAngle(m_hueAngleSlider->value());
+	cfg->setColorCircleSaturationLimit(!m_continuousSaturationBox->isChecked());
+	cfg->setColorCircleSaturationCount(m_saturationStepsSlider->value());
+	cfg->setColorCircleValueLimit(!m_continuousValueBox->isChecked());
+	cfg->setColorCircleValueCount(m_valueStepsSlider->value());
+	cfg->setColorCircleGamutMaskPath(
 		m_gamutMaskCombo->currentData().toString());
-	settings.setColorCircleGamutMaskAngle(m_gamutMaskAngleSlider->value());
-	settings.setColorCircleGamutMaskOpacity(
+	cfg->setColorCircleGamutMaskAngle(m_gamutMaskAngleSlider->value());
+	cfg->setColorCircleGamutMaskOpacity(
 		m_gamutMaskOpacitySlider->value() / 100.0);
 }
 

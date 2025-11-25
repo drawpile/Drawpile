@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/touch.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/config/config.h"
 #include "libclient/view/enums.h"
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDebug>
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QPushButton>
@@ -16,10 +17,10 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Touch::Touch(desktop::settings::Settings &settings, QWidget *parent)
+Touch::Touch(config::Config *cfg, QWidget *parent)
 	: Page(parent)
 {
-	init(settings);
+	init(cfg);
 }
 
 void Touch::createButtons(QDialogButtonBox *buttons)
@@ -40,23 +41,22 @@ void Touch::showButtons()
 	m_touchTesterButton->setVisible(true);
 }
 
-void Touch::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
+void Touch::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
-	initMode(settings, utils::addFormSection(layout));
+	initMode(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initTouchActions(settings, utils::addFormSection(layout));
+	initTouchActions(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initTapActions(settings, utils::addFormSection(layout));
+	initTapActions(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initTapAndHoldActions(settings, utils::addFormSection(layout));
+	initTapAndHoldActions(cfg, utils::addFormSection(layout));
 }
 
-void Touch::addTouchPressureSettingTo(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Touch::addTouchPressureSettingTo(config::Config *cfg, QFormLayout *form)
 {
 	QCheckBox *touchDrawPressure =
 		new QCheckBox(tr("Enable pressure for touch drawing"));
-	settings.bindTouchDrawPressure(touchDrawPressure);
+	CFG_BIND_CHECKBOX(cfg, TouchDrawPressure, touchDrawPressure);
 	form->addRow(nullptr, touchDrawPressure);
 	form->addRow(
 		nullptr, utils::formNote(
@@ -64,7 +64,7 @@ void Touch::addTouchPressureSettingTo(
 						"work for finger drawing!")));
 }
 
-void Touch::initMode(desktop::settings::Settings &settings, QFormLayout *form)
+void Touch::initMode(config::Config *cfg, QFormLayout *form)
 {
 	QButtonGroup *touchMode = utils::addRadioGroup(
 		form, tr("Touch mode:"), true,
@@ -72,12 +72,11 @@ void Touch::initMode(desktop::settings::Settings &settings, QFormLayout *form)
 			{tr("Touchscreen"), false},
 			{tr("Gestures"), true},
 		});
-	settings.bindTouchGestures(touchMode);
-	addTouchPressureSettingTo(settings, form);
+	CFG_BIND_BUTTONGROUP_TYPE(cfg, TouchGestures, touchMode, bool);
+	addTouchPressureSettingTo(cfg, form);
 }
 
-void Touch::initTapActions(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Touch::initTapActions(config::Config *cfg, QFormLayout *form)
 {
 	QComboBox *oneFingerTap = new QComboBox;
 	QComboBox *twoFingerTap = new QComboBox;
@@ -98,14 +97,14 @@ void Touch::initTapActions(
 			tr("Toggle recolor mode"), int(view::TouchTapAction::RecolorMode));
 	}
 
-	settings.bindOneFingerTap(oneFingerTap, Qt::UserRole);
-	settings.bindTwoFingerTap(twoFingerTap, Qt::UserRole);
-	settings.bindThreeFingerTap(threeFingerTap, Qt::UserRole);
-	settings.bindFourFingerTap(fourFingerTap, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerTap, oneFingerTap);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, TwoFingerTap, twoFingerTap);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, ThreeFingerTap, threeFingerTap);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, FourFingerTap, fourFingerTap);
 
-	settings.bindTouchGestures(twoFingerTap, &QComboBox::setDisabled);
-	settings.bindTouchGestures(threeFingerTap, &QComboBox::setDisabled);
-	settings.bindTouchGestures(fourFingerTap, &QComboBox::setDisabled);
+	CFG_BIND_SET(cfg, TouchGestures, twoFingerTap, QComboBox::setDisabled);
+	CFG_BIND_SET(cfg, TouchGestures, threeFingerTap, QComboBox::setDisabled);
+	CFG_BIND_SET(cfg, TouchGestures, fourFingerTap, QComboBox::setDisabled);
 
 	form->addRow(tr("One-finger tap:"), oneFingerTap);
 	form->addRow(tr("Two-finger tap:"), twoFingerTap);
@@ -113,8 +112,7 @@ void Touch::initTapActions(
 	form->addRow(tr("Four-finger tap:"), fourFingerTap);
 }
 
-void Touch::initTapAndHoldActions(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Touch::initTapAndHoldActions(config::Config *cfg, QFormLayout *form)
 {
 	QComboBox *oneFingerTapAndHold = new QComboBox;
 	for(QComboBox *tapAndHold : {oneFingerTapAndHold}) {
@@ -124,15 +122,15 @@ void Touch::initTapAndHoldActions(
 			tr("Pick color"), int(view::TouchTapAndHoldAction::ColorPickMode));
 	}
 
-	settings.bindOneFingerTapAndHold(oneFingerTapAndHold, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerTapAndHold, oneFingerTapAndHold);
 
-	settings.bindTouchGestures(oneFingerTapAndHold, &QComboBox::setDisabled);
+	CFG_BIND_SET(
+		cfg, TouchGestures, oneFingerTapAndHold, QComboBox::setDisabled);
 
 	form->addRow(tr("One-finger tap and hold:"), oneFingerTapAndHold);
 }
 
-void Touch::initTouchActions(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Touch::initTouchActions(config::Config *cfg, QFormLayout *form)
 {
 	QComboBox *oneFingerTouch = new QComboBox;
 	oneFingerTouch->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -143,7 +141,7 @@ void Touch::initTouchActions(
 		tr("Pan canvas"), int(view::OneFingerTouchAction::Pan));
 	oneFingerTouch->addItem(
 		tr("Guess"), int(view::OneFingerTouchAction::Guess));
-	settings.bindOneFingerTouch(oneFingerTouch, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerTouch, oneFingerTouch);
 	form->addRow(tr("One-finger touch:"), oneFingerTouch);
 
 	QComboBox *twoFingerPinch = new QComboBox;
@@ -151,7 +149,7 @@ void Touch::initTouchActions(
 	twoFingerPinch->addItem(
 		tr("No action"), int(view::TwoFingerPinchAction::Nothing));
 	twoFingerPinch->addItem(tr("Zoom"), int(view::TwoFingerPinchAction::Zoom));
-	settings.bindTwoFingerPinch(twoFingerPinch, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, TwoFingerPinch, twoFingerPinch);
 	form->addRow(tr("Two-finger pinch:"), twoFingerPinch);
 
 	QComboBox *twoFingerTwist = new QComboBox;
@@ -166,7 +164,7 @@ void Touch::initTouchActions(
 	twoFingerTwist->addItem(
 		tr("Ratchet rotate canvas"),
 		int(view::TwoFingerTwistAction::RotateDiscrete));
-	settings.bindTwoFingerTwist(twoFingerTwist, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, TwoFingerTwist, twoFingerTwist);
 	form->addRow(tr("Two-finger twist:"), twoFingerTwist);
 
 	KisSliderSpinBox *touchSmoothing = new KisSliderSpinBox;
@@ -175,9 +173,9 @@ void Touch::initTouchActions(
 	touchSmoothing->setSuffix(tr("%"));
 	touchSmoothing->setBlockUpdateSignalOnDrag(true);
 	disableKineticScrollingOnWidget(touchSmoothing);
-	settings.bindTouchSmoothing(touchSmoothing);
+	CFG_BIND_SLIDERSPINBOX(cfg, TouchSmoothing, touchSmoothing);
 	form->addRow(nullptr, touchSmoothing);
 }
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}

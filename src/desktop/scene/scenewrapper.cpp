@@ -8,7 +8,6 @@
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/canvasview.h"
 #include "desktop/scene/hudhandler.h"
-#include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
@@ -17,6 +16,7 @@
 #include "desktop/widgets/canvasframe.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
+#include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
@@ -34,11 +34,13 @@ SceneWrapper::SceneWrapper(QWidget *parent)
 	m_scene->setBackgroundBrush(
 		parent->palette().brush(QPalette::Active, QPalette::Window));
 	m_view->setCanvas(m_scene);
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindUserMarkerPersistence(
-		m_scene, &CanvasScene::setUserMarkerPersistence);
-	settings.bindSamplingRingVisibility(
-		m_scene, &CanvasScene::setColorPickVisibility);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET(
+		cfg, UserMarkerPersistence, m_scene,
+		CanvasScene::setUserMarkerPersistence);
+	CFG_BIND_SET(
+		cfg, SamplingRingVisibility, m_scene,
+		CanvasScene::setColorPickVisibility);
 }
 
 QAbstractScrollArea *SceneWrapper::viewWidget() const

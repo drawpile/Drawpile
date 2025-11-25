@@ -3,8 +3,8 @@ extern "C" {
 #include <dpcommon/event_log.h>
 }
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/view/widgettouchhandler.h"
+#include "libclient/config/config.h"
 #include <QDateTime>
 #include <QGestureEvent>
 #include <QTimer>
@@ -14,24 +14,28 @@ namespace view {
 WidgetTouchHandler::WidgetTouchHandler(QObject *parent)
 	: TouchHandler(parent)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindTouchDrawPressure(
-		this, &WidgetTouchHandler::setTouchDrawPressureEnabled);
-	settings.bindOneFingerTouch(
-		this, &WidgetTouchHandler::setOneFingerTouchAction);
-	settings.bindTwoFingerPinch(
-		this, &WidgetTouchHandler::setTwoFingerPinchAction);
-	settings.bindTwoFingerTwist(
-		this, &WidgetTouchHandler::setTwoFingerTwistAction);
-	settings.bindOneFingerTap(this, &WidgetTouchHandler::setOneFingerTapAction);
-	settings.bindTwoFingerTap(this, &WidgetTouchHandler::setTwoFingerTapAction);
-	settings.bindThreeFingerTap(
-		this, &WidgetTouchHandler::setThreeFingerTapAction);
-	settings.bindFourFingerTap(
-		this, &WidgetTouchHandler::setFourFingerTapAction);
-	settings.bindOneFingerTapAndHold(
-		this, &WidgetTouchHandler::setOneFingerTapAndHoldAction);
-	settings.bindTouchSmoothing(this, &WidgetTouchHandler::setSmoothing);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET(
+		cfg, TouchDrawPressure, this,
+		WidgetTouchHandler::setTouchDrawPressureEnabled);
+	CFG_BIND_SET(
+		cfg, OneFingerTouch, this, WidgetTouchHandler::setOneFingerTouchAction);
+	CFG_BIND_SET(
+		cfg, TwoFingerPinch, this, WidgetTouchHandler::setTwoFingerPinchAction);
+	CFG_BIND_SET(
+		cfg, TwoFingerTwist, this, WidgetTouchHandler::setTwoFingerTwistAction);
+	CFG_BIND_SET(
+		cfg, OneFingerTap, this, WidgetTouchHandler::setOneFingerTapAction);
+	CFG_BIND_SET(
+		cfg, TwoFingerTap, this, WidgetTouchHandler::setTwoFingerTapAction);
+	CFG_BIND_SET(
+		cfg, ThreeFingerTap, this, WidgetTouchHandler::setThreeFingerTapAction);
+	CFG_BIND_SET(
+		cfg, FourFingerTap, this, WidgetTouchHandler::setFourFingerTapAction);
+	CFG_BIND_SET(
+		cfg, OneFingerTapAndHold, this,
+		WidgetTouchHandler::setOneFingerTapAndHoldAction);
+	CFG_BIND_SET(cfg, TouchSmoothing, this, WidgetTouchHandler::setSmoothing);
 }
 
 void WidgetTouchHandler::handleGesture(

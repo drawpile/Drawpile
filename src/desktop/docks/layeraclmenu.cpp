@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include <QActionGroup>
 
@@ -75,9 +75,10 @@ LayerAclMenu::LayerAclMenu(const LayerList::Actions &actions, QWidget *parent)
 	m_users = new QActionGroup(this);
 	m_users->setExclusive(false);
 
-	dpApp().settings().bindParentalControlsForceCensor(this, [=](bool force) {
-		m_censored->setDisabled(force);
-	});
+	CFG_BIND_SET_FN(
+		dpAppConfig(), ParentalControlsForceCensor, this, [=](bool force) {
+			m_censored->setDisabled(force);
+		});
 }
 
 void LayerAclMenu::setUserList(QAbstractItemModel *model)

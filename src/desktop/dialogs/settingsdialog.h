@@ -7,10 +7,8 @@ class QButtonGroup;
 class QDialogButtonBox;
 class QStackedWidget;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace dialogs {
@@ -40,7 +38,7 @@ private:
 	void hidePanelButtons(QDialogButtonBox *buttons);
 	void addPanel(QWidget *panel);
 
-	desktop::settings::Settings &m_settings;
+	config::Config *m_cfg;
 	QButtonGroup *m_group;
 	QStackedWidget *m_stack;
 };

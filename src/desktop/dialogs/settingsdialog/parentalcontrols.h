@@ -5,36 +5,27 @@
 
 class QVBoxLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class ParentalControls final : public Page {
 	Q_OBJECT
 public:
-	ParentalControls(
-		desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	ParentalControls(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
-	void
-	initBuiltIn(desktop::settings::Settings &settings, QVBoxLayout *layout);
+	void initBuiltIn(config::Config *cfg, QVBoxLayout *layout);
 	void initInfoBar(QVBoxLayout *layout);
 	void initOsManaged(QVBoxLayout *layout);
 	void toggleLock();
 
-	desktop::settings::Settings &m_settings;
+	config::Config *m_cfg;
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

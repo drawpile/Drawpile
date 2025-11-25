@@ -2,9 +2,9 @@
 #include "desktop/dialogs/layerproperties.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "libclient/net/message.h"
 #include "ui_layerproperties.h"
 #include <QButtonGroup>
@@ -53,7 +53,8 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 	m_ui->sketchTintBlueButton->setGroupPosition(
 		widgets::GroupedToolButton::GroupCenter);
 	m_ui->sketchTintBlueButton->setIcon(
-		utils::makeColorIconFor(this, LAYER_SKETCH_TINT_DEFAULT));
+		utils::makeColorIconFor(
+			this, config::Config::defaultLayerSketchTint()));
 
 	m_ui->sketchTintChangeButton->setGroupPosition(
 		widgets::GroupedToolButton::GroupRight);
@@ -82,7 +83,7 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 		m_ui->sketchTintBlueButton, &widgets::GroupedToolButton::clicked, this,
 		std::bind(
 			&LayerProperties::setSketchTintTo, this,
-			LAYER_SKETCH_TINT_DEFAULT));
+			config::Config::defaultLayerSketchTint()));
 	connect(
 		m_ui->sketchTintChangeButton, &widgets::GroupedToolButton::clicked,
 		this, &LayerProperties::showSketchTintColorPicker);
@@ -192,9 +193,9 @@ void LayerProperties::setLayerItem(
 		m_ui->blendMode, item.blend, item.group, item.isolated, item.clip,
 		m_automaticAlphaPreserve, m_compatibilityMode);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindAutomaticAlphaPreserve(
-		this, &LayerProperties::setAutomaticAlphaPerserve);
+	CFG_BIND_SET(
+		dpAppConfig(), AutomaticAlphaPreserve, this,
+		LayerProperties::setAutomaticAlphaPerserve);
 }
 
 void LayerProperties::updateLayerItem(
@@ -330,19 +331,19 @@ void LayerProperties::setSketchTintTo(const QColor &color)
 
 void LayerProperties::setSketchParamsFromSettings()
 {
-	const desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	m_ui->sketchMode->setChecked(false);
-	m_ui->sketchOpacitySlider->setValue(settings.layerSketchOpacityPercent());
-	m_ui->sketchTintPreview->setColor(settings.layerSketchTint());
+	m_ui->sketchOpacitySlider->setValue(cfg->getLayerSketchOpacityPercent());
+	m_ui->sketchTintPreview->setColor(cfg->getLayerSketchTint());
 }
 
 void LayerProperties::saveSketchParametersToSettings(
 	int opacityPercent, const QColor &tint)
 {
 	if(opacityPercent > 0) {
-		desktop::settings::Settings &settings = dpApp().settings();
-		settings.setLayerSketchOpacityPercent(opacityPercent);
-		settings.setLayerSketchTint(tint);
+		config::Config *cfg = dpAppConfig();
+		cfg->setLayerSketchOpacityPercent(opacityPercent);
+		cfg->setLayerSketchTint(tint);
 	}
 }
 

@@ -6,15 +6,26 @@
 #include <QPalette>
 #include <QVector>
 
+#ifdef Q_OS_ANDROID
+#	define SCALING_OVERRIDE_DEFAULT true
+#else
+#	define SCALING_OVERRIDE_DEFAULT false
+#endif
+
 class GlobalKeyEventFilter;
 class LongPressEventFilter;
 class MainWindow;
 class QCommandLineOption;
 class QCommandLineParser;
+class QSettings;
 class WinEventFilter;
 
 namespace brushes {
 class BrushPresetTagModel;
+}
+
+namespace config {
+class Config;
 }
 
 namespace desktop {
@@ -59,8 +70,9 @@ public:
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 
-	const desktop::settings::Settings &settings() const { return *m_settings; }
-	desktop::settings::Settings &settings() { return *m_settings; }
+	config::Config *config() { return m_config; }
+	QSettings *scalingSettings();
+	void resetSettingsPath(const QString &path);
 
 	notification::Notifications *notifications() { return m_notifications; }
 
@@ -119,6 +131,7 @@ protected:
 
 private:
 	desktop::settings::Settings *m_settings;
+	config::Config *m_config;
 	notification::Notifications *m_notifications;
 	int m_canvasImplementation;
 	bool m_canvasImplementationFromSettings = false;
@@ -144,11 +157,16 @@ private:
 	void setLongPressEnabled(bool enabled);
 };
 
-inline DrawpileApp &dpApp()
+static inline DrawpileApp &dpApp()
 {
 	DrawpileApp *app = static_cast<DrawpileApp *>(QCoreApplication::instance());
 	Q_ASSERT(app);
 	return *app;
+}
+
+static inline config::Config *dpAppConfig()
+{
+	return dpApp().config();
 }
 
 #endif

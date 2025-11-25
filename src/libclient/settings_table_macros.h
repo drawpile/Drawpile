@@ -1,19 +1,8 @@
 #ifdef SETTING_FULL
-#	undef SETTING_BIND
 #	undef SETTING_FULL
 #	undef SETTING_GETSET
 #	undef SETTING
-#elif defined(DP_SETTINGS_HEADER) || defined(DP_SETTINGS_BODY) || defined(DP_SETTINGS_REBIND) || defined(DP_SETTINGS_INIT)
-
-#	define SETTING_BIND(name, upperName) \
-	template <typename... Args> \
-	auto bind##upperName(Args &&... args) { \
-		return bind(name(), &Settings::name##Changed, &Settings::set##upperName, std::forward<Args>(args)...); \
-	} \
-	template <typename T, typename... Args> \
-	auto bind##upperName##As(Args &&... args) { \
-		return bindAs<T>(name(), &Settings::name##Changed, &Settings::set##upperName, std::forward<Args>(args)...); \
-	}
+#elif defined(DP_SETTINGS_HEADER) || defined(DP_SETTINGS_BODY) || defined(DP_SETTINGS_INIT)
 
 #	ifdef DP_SETTINGS_HEADER
 	#	define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
@@ -31,7 +20,6 @@
 				} \
 			} \
 			void set##upperName(upperName##Type value) { set(meta##upperName, QVariant::fromValue(value)); } \
-			SETTING_BIND(name, upperName) \
 			Q_SIGNAL void name##Changed(upperName##Type value);
 #	elif defined(DP_SETTINGS_BODY)
 #		define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
@@ -44,9 +32,6 @@
 			setter, \
 			notifier \
 		};
-#	elif defined(DP_SETTINGS_REBIND)
-#		define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
-			SETTING_BIND(name, upperName)
 #	elif defined(DP_SETTINGS_INIT)
 #		define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
 		getDefaultValue##upperName();
@@ -70,5 +55,5 @@
 			&::libclient::settings::any::set \
 		)
 #else
-#	error Missing DP_SETTINGS_HEADER or DP_SETTINGS_BODY or DP_SETTINGS_REBIND
+#	error "Missing DP_SETTINGS_HEADER or DP_SETTINGS_BODY or DP_SETTINGS_INIT"
 #endif

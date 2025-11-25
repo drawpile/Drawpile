@@ -5,34 +5,26 @@
 
 class QFormLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class Notifications final : public Page {
 	Q_OBJECT
 public:
-	Notifications(
-		desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Notifications(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
 #ifdef Q_OS_ANDROID
-	void initAndroid(desktop::settings::Settings &settings, QFormLayout *form);
+	void initAndroid(config::Config *cfg, QFormLayout *form);
 #endif
-	void initGrid(desktop::settings::Settings &settings, QVBoxLayout *layout);
-	void initOptions(desktop::settings::Settings &settings, QFormLayout *form);
+	void initGrid(config::Config *cfg, QVBoxLayout *layout);
+	void initOptions(config::Config *cfg, QFormLayout *form);
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

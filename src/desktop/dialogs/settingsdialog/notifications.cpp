@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/notifications.h"
-#include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/main.h"
 #include "desktop/notifications.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QGridLayout>
+#include <QLabel>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QToolButton>
@@ -20,36 +20,33 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Notifications::Notifications(
-	desktop::settings::Settings &settings, QWidget *parent)
+Notifications::Notifications(config::Config *cfg, QWidget *parent)
 	: Page(parent)
 {
-	init(settings);
+	init(cfg);
 }
 
-void Notifications::setUp(
-	desktop::settings::Settings &settings, QVBoxLayout *layout)
+void Notifications::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
 #if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
-	initAndroid(settings, utils::addFormSection(layout));
+	initAndroid(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 #endif
-	initGrid(settings, layout);
+	initGrid(cfg, layout);
 	utils::addFormSeparator(layout);
-	initOptions(settings, utils::addFormSection(layout));
+	initOptions(cfg, utils::addFormSection(layout));
 }
 
 #if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
-void Notifications::initAndroid(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Notifications::initAndroid(config::Config *cfg, QFormLayout *form)
 {
 	QCheckBox *connectionNotification =
 		new QCheckBox(tr("Display notification while connected to a session"));
 	form->addRow(tr("Network:"), connectionNotification);
-	connectionNotification->setChecked(settings.connectionNotification());
+	connectionNotification->setChecked(cfg->getConnectionNotification());
 	connect(
 		connectionNotification, &QCheckBox::clicked, this,
-		[this, connectionNotification, &settings](bool checked) {
+		[this, connectionNotification, cfg](bool checked) {
 			if(checked) {
 				connectionNotification->setEnabled(false);
 
@@ -63,14 +60,14 @@ void Notifications::initAndroid(
 					   "you a connection notification?"));
 				connect(
 					box, &QMessageBox::finished, this,
-					[connectionNotification, &settings](int result) {
+					[connectionNotification, cfg](int result) {
 						if(result == int(QMessageBox::Yes)) {
 							if(!utils::createConnectionNotificationChannel()) {
 								qWarning(
 									"Failed to create connection notification "
 									"channel");
 							}
-							settings.setConnectionNotification(true);
+							cfg->setConnectionNotification(true);
 							connectionNotification->setChecked(true);
 						} else {
 							connectionNotification->setChecked(false);
@@ -78,14 +75,13 @@ void Notifications::initAndroid(
 						connectionNotification->setEnabled(true);
 					});
 			} else {
-				settings.setConnectionNotification(false);
+				cfg->setConnectionNotification(false);
 			}
 		});
 }
 #endif
 
-void Notifications::initGrid(
-	desktop::settings::Settings &settings, QVBoxLayout *layout)
+void Notifications::initGrid(config::Config *cfg, QVBoxLayout *layout)
 {
 	QGridLayout *grid = new QGridLayout;
 
@@ -121,99 +117,77 @@ void Notifications::initGrid(
 		grid->addWidget(label, 0, column++, alignment);
 	}
 
-	using Settings = desktop::settings::Settings;
-	using Bind = std::pair<QMetaObject::Connection, QMetaObject::Connection> (
-		desktop::settings::Settings::*)(QCheckBox *&&args);
-	std::tuple<QString, Bind, Bind, Bind, notification::Event> sounds[] = {
-		{tr("Chat message"), &Settings::bindNotifSoundChat<QCheckBox *>,
-		 &Settings::bindNotifPopupChat<QCheckBox *>,
-		 &Settings::bindNotifFlashChat<QCheckBox *>, notification::Event::Chat},
-		{tr("Private message"),
-		 &Settings::bindNotifSoundPrivateChat<QCheckBox *>,
-		 &Settings::bindNotifPopupPrivateChat<QCheckBox *>,
-		 &Settings::bindNotifFlashPrivateChat<QCheckBox *>,
-		 notification::Event::PrivateChat},
-		{tr("User joined"), &Settings::bindNotifSoundLogin<QCheckBox *>,
-		 &Settings::bindNotifPopupLogin<QCheckBox *>,
-		 &Settings::bindNotifFlashLogin<QCheckBox *>,
-		 notification::Event::Login},
-		{tr("User left"), &Settings::bindNotifSoundLogout<QCheckBox *>,
-		 &Settings::bindNotifPopupLogout<QCheckBox *>,
-		 &Settings::bindNotifFlashLogout<QCheckBox *>,
-		 notification::Event::Logout},
-		{tr("Canvas locked"), &Settings::bindNotifSoundLock<QCheckBox *>,
-		 &Settings::bindNotifPopupLock<QCheckBox *>,
-		 &Settings::bindNotifFlashLock<QCheckBox *>,
-		 notification::Event::Locked},
-		{tr("Canvas unlocked"), &Settings::bindNotifSoundUnlock<QCheckBox *>,
-		 &Settings::bindNotifPopupUnlock<QCheckBox *>,
-		 &Settings::bindNotifFlashUnlock<QCheckBox *>,
-		 notification::Event::Unlocked},
-		{tr("Disconnected"), &Settings::bindNotifSoundDisconnect<QCheckBox *>,
-		 &Settings::bindNotifPopupDisconnect<QCheckBox *>,
-		 &Settings::bindNotifFlashDisconnect<QCheckBox *>,
-		 notification::Event::Disconnect},
-	};
+#define ADD_NOTIFICATION_ROW(TEXT, SETTING, EVENT)                             \
+	do {                                                                       \
+		QString text = tr(TEXT);                                               \
+                                                                               \
+		QLabel *label = new QLabel(this);                                      \
+		label->setText(TEXT);                                                  \
+		grid->addWidget(label, row, 0, Qt::AlignLeft);                         \
+                                                                               \
+		QCheckBox *soundBox = new QCheckBox(this);                             \
+		soundBox->setToolTip(std::get<1>(header[1]));                          \
+		CFG_BIND_CHECKBOX(cfg, NotifSound##SETTING, soundBox);                 \
+		grid->addWidget(soundBox, row, 1, Qt::AlignHCenter);                   \
+                                                                               \
+		QCheckBox *popupBox = new QCheckBox(this);                             \
+		popupBox->setToolTip(std::get<1>(header[2]));                          \
+		CFG_BIND_CHECKBOX(cfg, NotifPopup##SETTING, popupBox);                 \
+		grid->addWidget(popupBox, row, 2, Qt::AlignHCenter);                   \
+                                                                               \
+		QCheckBox *flashBox = new QCheckBox(this);                             \
+		flashBox->setToolTip(std::get<1>(header[3]));                          \
+		CFG_BIND_CHECKBOX(cfg, NotifFlash##SETTING, flashBox);                 \
+		grid->addWidget(flashBox, row, 3, Qt::AlignHCenter);                   \
+                                                                               \
+		QToolButton *preview = new QToolButton(this);                          \
+		preview->setText(tr("Preview event"));                                 \
+		preview->setToolTip(std::get<1>(header[4]));                           \
+		preview->setIcon(QIcon::fromTheme("media-playback-start"));            \
+		grid->addWidget(preview, row, 4, Qt::AlignHCenter);                    \
+                                                                               \
+		connect(preview, &QToolButton::clicked, [this, text] {                 \
+			dpApp().notifications()->preview(                                  \
+				this, notification::Event::EVENT, text);                       \
+		});                                                                    \
+                                                                               \
+		++row;                                                                 \
+	} while(0)
+
 	int row = 1;
-	for(auto [text, bindSound, bindPopup, bindFlash, event] : sounds) {
-		QLabel *label = new QLabel(this);
-		label->setText(text);
-		grid->addWidget(label, row, 0, Qt::AlignLeft);
+	ADD_NOTIFICATION_ROW("Chat message", Chat, Chat);
+	ADD_NOTIFICATION_ROW("Private message", PrivateChat, PrivateChat);
+	ADD_NOTIFICATION_ROW("User joined", Login, Login);
+	ADD_NOTIFICATION_ROW("User left", Logout, Logout);
+	ADD_NOTIFICATION_ROW("Canvas locked", Lock, Locked);
+	ADD_NOTIFICATION_ROW("Canvas unlocked", Unlock, Unlocked);
+	ADD_NOTIFICATION_ROW("Disconnected", Disconnect, Disconnect);
 
-		QCheckBox *soundBox = new QCheckBox(this);
-		soundBox->setToolTip(std::get<1>(header[1]));
-		((&settings)->*bindSound)(std::forward<QCheckBox *>(soundBox));
-		grid->addWidget(soundBox, row, 1, Qt::AlignHCenter);
+#undef ADD_NOTIFICATION_ROW
 
-		QCheckBox *popupBox = new QCheckBox(this);
-		popupBox->setToolTip(std::get<1>(header[2]));
-		((&settings)->*bindPopup)(std::forward<QCheckBox *>(popupBox));
-		grid->addWidget(popupBox, row, 2, Qt::AlignHCenter);
-
-		QCheckBox *flashBox = new QCheckBox(this);
-		flashBox->setToolTip(std::get<1>(header[3]));
-		((&settings)->*bindFlash)(std::forward<QCheckBox *>(flashBox));
-		grid->addWidget(flashBox, row, 3, Qt::AlignHCenter);
-
-		QToolButton *preview = new QToolButton(this);
-		preview->setText(tr("Preview event"));
-		preview->setToolTip(std::get<1>(header[4]));
-		preview->setIcon(QIcon::fromTheme("media-playback-start"));
-		grid->addWidget(preview, row, 4, Qt::AlignHCenter);
-
-		connect(
-			preview, &QToolButton::clicked,
-			[this, previewText = text, previewEvent = event] {
-				dpApp().notifications()->preview(
-					this, previewEvent, previewText);
-			});
-
-		++row;
-	}
 	layout->addLayout(grid);
 }
 
-void Notifications::initOptions(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Notifications::initOptions(config::Config *cfg, QFormLayout *form)
 {
 	KisSliderSpinBox *volume = new KisSliderSpinBox(this);
 	volume->setMaximum(100);
 	volume->setSuffix(tr("%"));
-	settings.bindSoundVolume(volume);
+	CFG_BIND_SLIDERSPINBOX(cfg, SoundVolume, volume);
 	form->addRow(tr("Sound volume:"), volume);
 	disableKineticScrollingOnWidget(volume);
 
 	QCheckBox *mentionEnabled =
 		new QCheckBox(tr("Use private message notification for mentions"));
-	settings.bindMentionEnabled(mentionEnabled);
+	CFG_BIND_CHECKBOX(cfg, MentionEnabled, mentionEnabled);
 	form->addRow(tr("Mentions:"), mentionEnabled);
 
 	QPlainTextEdit *triggerList = new QPlainTextEdit;
 	triggerList->setFixedHeight(100);
 	triggerList->setPlaceholderText(
 		tr("Additional triggers go here, one per line."));
-	settings.bindMentionTriggerList(triggerList);
-	settings.bindMentionEnabled(triggerList, &QWidget::setEnabled);
+	CFG_BIND_PLAINTEXTEDIT(cfg, MentionTriggerList, triggerList);
+	CFG_BIND_SET(cfg, MentionEnabled, triggerList, QWidget::setEnabled);
 	form->addRow(nullptr, triggerList);
 	form->addRow(
 		nullptr, utils::formNote(
@@ -223,5 +197,5 @@ void Notifications::initOptions(
 						"word or phrase per line, case doesn't matter.")));
 }
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}

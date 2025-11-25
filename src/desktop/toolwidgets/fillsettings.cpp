@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/fillsettings.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/selectionmodel.h"
+#include "libclient/config/config.h"
 #include "libclient/tools/floodfill.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
@@ -214,8 +214,9 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 
 	m_blendModeManager = BlendModeManager::initFill(
 		m_ui->blendModeCombo, m_ui->alphaPreserve, this);
-	dpApp().settings().bindAutomaticAlphaPreserve(
-		m_blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	CFG_BIND_SET(
+		dpAppConfig(), AutomaticAlphaPreserve, m_blendModeManager,
+		BlendModeManager::setAutomaticAlphaPerserve);
 	connect(
 		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&FillSettings::pushSettings);

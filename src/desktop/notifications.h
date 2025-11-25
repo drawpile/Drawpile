@@ -9,10 +9,8 @@
 class MainWindow;
 class QWidget;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace notification {
@@ -45,14 +43,11 @@ private:
 
 	static MainWindow *getMainWindow(QWidget *widget);
 
-	static bool
-	isSoundEnabled(const desktop::settings::Settings &settings, Event event);
+	static bool isSoundEnabled(config::Config *cfg, Event event);
 
-	static bool
-	isPopupEnabled(const desktop::settings::Settings &settings, Event event);
+	static bool isPopupEnabled(config::Config *cfg, Event event);
 
-	static bool
-	isFlashEnabled(const desktop::settings::Settings &settings, Event event);
+	static bool isFlashEnabled(config::Config *cfg, Event event);
 
 	void playSound(Event event, int volume);
 	QString getSound(Event event);

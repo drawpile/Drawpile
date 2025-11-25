@@ -4,11 +4,11 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/eventlog.h"
-#include "libclient/settings.h"
 #include "libclient/utils/cursors.h"
 #include "libclient/utils/qtguicompat.h"
 #include "libclient/view/enums.h"
 #include "libclient/view/touchhandler.h"
+#include "libclient/view/zoom.h"
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QGuiApplication>
@@ -237,9 +237,7 @@ void CanvasControllerBase::setZoom(qreal zoom)
 
 void CanvasControllerBase::setZoomAt(qreal zoom, const QPointF &point)
 {
-	qreal newZoom = qBound(
-		libclient::settings::getZoomMin(), zoom,
-		libclient::settings::getZoomMax());
+	qreal newZoom = qBound(getZoomMin(), zoom, getZoomMax());
 	if(newZoom != m_zoom) {
 		QTransform matrix;
 		mirrorFlip(matrix, m_mirror, m_flip);
@@ -322,7 +320,7 @@ void CanvasControllerBase::zoomSteps(int steps)
 void CanvasControllerBase::zoomStepsAt(int steps, const QPointF &point)
 {
 	constexpr qreal eps = 1e-5;
-	const QVector<qreal> &zoomLevels = libclient::settings::getZoomLevels();
+	const QVector<qreal> &zoomLevels = getZoomLevels();
 	// This doesn't actually take the number of steps into account, it just
 	// zooms by a single step. But that works really well, so I'll leave it be.
 	if(steps > 0) {
@@ -331,8 +329,7 @@ void CanvasControllerBase::zoomStepsAt(int steps, const QPointF &point)
 			i++;
 		}
 		qreal level = zoomLevels[i];
-		qreal zoom = m_zoom > level - eps ? libclient::settings::getZoomMax()
-										  : qMax(m_zoom, level);
+		qreal zoom = m_zoom > level - eps ? getZoomMax() : qMax(m_zoom, level);
 		setZoomAt(zoom, point);
 	} else if(steps < 0) {
 		int i = zoomLevels.size() - 1;
@@ -340,8 +337,7 @@ void CanvasControllerBase::zoomStepsAt(int steps, const QPointF &point)
 			i--;
 		}
 		qreal level = zoomLevels[i];
-		qreal zoom = m_zoom < level + eps ? libclient::settings::getZoomMin()
-										  : qMin(m_zoom, level);
+		qreal zoom = m_zoom < level + eps ? getZoomMin() : qMin(m_zoom, level);
 		setZoomAt(zoom, point);
 	}
 }
@@ -2485,9 +2481,7 @@ void CanvasControllerBase::setZoomToFit(Qt::Orientations orientations)
 		{
 			QSignalBlocker blocker(this);
 			QScopedValueRollback<bool> rollback(m_blockNotices, true);
-			qreal newZoom = qBound(
-				libclient::settings::getZoomMin(), scale,
-				libclient::settings::getZoomMax());
+			qreal newZoom = qBound(getZoomMin(), scale, getZoomMax());
 			updateCanvasTransform([&] {
 				m_pos += center * (newZoom - m_zoom);
 				m_zoom = newZoom;

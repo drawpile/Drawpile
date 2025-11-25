@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/imageresourcetextbrowser.h"
 #include "libclient/utils/listservermodel.h"
@@ -287,9 +286,9 @@ QImage AddServerDialog::getFallbackFavicon()
 void AddServerDialog::addServer()
 {
 	sessionlisting::ListServerModel *listServerModel =
-		d->listServerModel ? d->listServerModel
-						   : new sessionlisting::ListServerModel(
-								 dpApp().settings(), true, this);
+		d->listServerModel
+			? d->listServerModel
+			: new sessionlisting::ListServerModel(dpAppConfig(), true, this);
 
 	QString urlString = d->url.toString();
 	listServerModel->addServer(

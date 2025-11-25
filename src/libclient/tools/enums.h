@@ -23,6 +23,34 @@ enum class Capability : unsigned int {
 };
 Q_DECLARE_FLAGS(Capabilities, Capability)
 
+enum class TabletInputMode : int {
+	Uninitialized, // Must be the first value, used for a range check.
+	KisTabletWinink,
+	KisTabletWintab,
+	KisTabletWintabRelativePenHack,
+	// Only Qt6 allows for toggling between Windows Ink and Wintab (barely,
+	// through private headers), Qt5 always uses Windows Ink if it's available.
+	Qt6Winink,
+	Qt6Wintab,
+	Qt5,
+	KisTabletWininkNonNative,
+	Last = KisTabletWininkNonNative, // Must be equal to the last value, used
+									 // for a range check.
+};
+
+enum class EraserAction {
+	Ignore,
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
+	Switch,
+#endif
+	Override,
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
+	Default = Override,
+#else
+	Default = Switch,
+#endif
+};
+
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(tools::Capabilities)

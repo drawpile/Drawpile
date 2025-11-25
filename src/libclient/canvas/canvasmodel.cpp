@@ -12,8 +12,8 @@ extern "C" {
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include "libclient/drawdance/viewmode.h"
-#include "libclient/settings.h"
 #include "libclient/utils/identicon.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
@@ -33,18 +33,18 @@ struct CanvasModel::SaveLocalStateParams {
 };
 
 CanvasModel::CanvasModel(
-	libclient::settings::Settings &settings, uint8_t localUserId,
-	int canvasImplementation, int fps, int snapshotMaxCount,
-	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
+	config::Config *cfg, uint8_t localUserId, int canvasImplementation, int fps,
+	int snapshotMaxCount, long long snapshotMinDelayMs,
+	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 {
 	qRegisterMetaType<CanvasModelSetReconnectStateHistoryParams>();
 	qRegisterMetaType<CanvasModelSetLocalStateActionsParams>();
 
 	m_paintengine = new PaintEngine(
-		canvasImplementation, settings.checkerColor1(),
-		settings.checkerColor2(), settings.selectionColor(), fps,
-		snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
+		canvasImplementation, cfg->getCheckerColor1(), cfg->getCheckerColor2(),
+		cfg->getSelectionColor(), fps, snapshotMaxCount, snapshotMinDelayMs,
+		wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
@@ -107,15 +107,19 @@ CanvasModel::CanvasModel(
 		m_transform, &TransformModel::transformChanged, this,
 		&CanvasModel::updatePaintEngineTransform);
 
-	settings.bindEngineFrameRate(m_paintengine, &PaintEngine::setFps);
-	settings.bindEngineSnapshotCount(
-		m_paintengine, &PaintEngine::setSnapshotMaxCount);
-	settings.bindEngineSnapshotInterval(this, [this](int minDelaySec) {
-		m_paintengine->setSnapshotMinDelayMs(minDelaySec * 1000LL);
-	});
-	settings.bindCheckerColor1(m_paintengine, &PaintEngine::setCheckerColor1);
-	settings.bindCheckerColor2(m_paintengine, &PaintEngine::setCheckerColor2);
-	settings.bindSelectionColor(m_paintengine, &PaintEngine::setSelectionColor);
+	CFG_BIND_SET(cfg, EngineFrameRate, m_paintengine, PaintEngine::setFps);
+	CFG_BIND_SET(
+		cfg, EngineSnapshotCount, m_paintengine,
+		PaintEngine::setSnapshotMaxCount);
+	CFG_BIND_SET(
+		cfg, EngineSnapshotInterval, m_paintengine,
+		PaintEngine::setSnapshotMinDelaySec);
+	CFG_BIND_SET(
+		cfg, CheckerColor1, m_paintengine, PaintEngine::setCheckerColor1);
+	CFG_BIND_SET(
+		cfg, CheckerColor2, m_paintengine, PaintEngine::setCheckerColor2);
+	CFG_BIND_SET(
+		cfg, SelectionColor, m_paintengine, PaintEngine::setSelectionColor);
 
 	updatePaintEngineTransform();
 }

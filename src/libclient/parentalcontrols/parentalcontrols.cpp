@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/parentalcontrols/parentalcontrols.h"
-#include "libclient/settings.h"
+#include "libclient/config/config.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QPointer>
@@ -10,11 +10,11 @@
 
 namespace parentalcontrols {
 
-QPointer<libclient::settings::Settings> g_settings;
+QPointer<config::Config> g_cfg;
 
 Level level()
 {
-	int l = qBound(0, g_settings ? g_settings->parentalControlsLevel() : 0, int(Level::Restricted));
+	int l = qBound(0, g_cfg ? g_cfg->getParentalControlsLevel() : 0, int(Level::Restricted));
 	if(isOSActive())
 		l = qMax(int(Level::NoJoin), l);
 	return Level(l);
@@ -22,12 +22,12 @@ Level level()
 
 bool isLocked()
 {
-	return isOSActive() || (g_settings && !g_settings->parentalControlsLocked().isEmpty());
+	return isOSActive() || (g_cfg && !g_cfg->getParentalControlsLocked().isEmpty());
 }
 
 bool isLayerUncensoringBlocked()
 {
-	return isOSActive() || (g_settings && g_settings->parentalControlsForceCensor());
+	return isOSActive() || (g_cfg && g_cfg->getParentalControlsForceCensor());
 }
 
 QString defaultWordList()
@@ -37,10 +37,10 @@ QString defaultWordList()
 
 bool isNsfmTitle(const QString &title)
 {
-	if(!g_settings || !g_settings->parentalControlsAutoTag())
+	if(!g_cfg || !g_cfg->getParentalControlsAutoTag())
 		return false;
 
-	QString wordlist = g_settings->parentalControlsTags();
+	QString wordlist = g_cfg->getParentalControlsTags();
 	const auto words = compat::StringView{wordlist}.split(QRegularExpression("[\\s,]"), compat::SkipEmptyParts);
 
 	for(const auto word : words) {

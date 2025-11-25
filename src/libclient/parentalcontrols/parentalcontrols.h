@@ -6,7 +6,9 @@
 #include <QObject>
 #include <QPointer>
 
-namespace libclient { namespace settings { class Settings; } }
+namespace config {
+class Config;
+}
 
 class QString;
 
@@ -25,7 +27,7 @@ Q_ENUM_NS(Level)
 /**
  * Initialize OS parental controls integration
  */
-void init(libclient::settings::Settings &settings);
+void init(config::Config *cfg);
 
 /**
  * @brief Are parental controls active on the operating system level?
@@ -67,9 +69,8 @@ Level level();
  */
 bool isLayerUncensoringBlocked();
 
-extern QPointer<libclient::settings::Settings> g_settings;
+extern QPointer<config::Config> g_cfg;
 
 }
 
-#endif // LIBCLIENT_PARENTALCONTROLS_PARENTALCONTROLS_H
-
+#endif

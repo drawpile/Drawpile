@@ -2,8 +2,9 @@
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
+#include "libclient/view/enums.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include <QCheckBox>
@@ -103,49 +104,48 @@ private:
 namespace dialogs {
 namespace settingsdialog {
 
-General::General(desktop::settings::Settings &settings, QWidget *parent)
+General::General(config::Config *cfg, QWidget *parent)
 	: Page(parent)
 {
-	init(settings);
+	init(cfg);
 }
 
-void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
+void General::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
 	QFormLayout *themeLanguageSection = utils::addFormSection(layout);
-	initTheme(settings, themeLanguageSection);
+	initTheme(cfg, themeLanguageSection);
 #ifndef __EMSCRIPTEN__
-	initLanguage(settings, themeLanguageSection);
+	initLanguage(cfg, themeLanguageSection);
 #endif
 
 	utils::addFormSeparator(layout);
 
 	QFormLayout *canvasSection = utils::addFormSection(layout);
-	initContributing(settings, canvasSection);
+	initContributing(cfg, canvasSection);
 	utils::addFormSpacer(canvasSection);
-	initUndo(settings, canvasSection);
+	initUndo(cfg, canvasSection);
 	utils::addFormSpacer(canvasSection);
-	initSnapshots(settings, canvasSection);
+	initSnapshots(cfg, canvasSection);
 
 	utils::addFormSeparator(layout);
 
-	initPerformance(settings, utils::addFormSection(layout));
+	initPerformance(cfg, utils::addFormSection(layout));
 }
 
-void General::initLanguage(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void General::initLanguage(config::Config *cfg, QFormLayout *form)
 {
-	auto *language = new QComboBox;
+	QComboBox *language = new QComboBox;
 	language->addItem(tr("System"), QString());
 
 	const QLocale localeC = QLocale::c();
-	for(const auto *localeName : cmake_config::locales()) {
+	for(const char *localeName : cmake_config::locales()) {
 		QLocale locale(localeName);
 		if(locale != localeC) {
 			language->addItem(formatLanguage(locale), localeName);
 		}
 	}
 
-	settings.bindLanguage(language, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_STRING(cfg, Language, language);
 	form->addRow(tr("Language:"), language);
 	form->addRow(
 		nullptr, utils::formNote(
@@ -176,22 +176,19 @@ QString General::formatLanguage(const QLocale &locale)
 	}
 }
 
-void General::initContributing(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void General::initContributing(config::Config *cfg, QFormLayout *form)
 {
 	QCheckBox *enableContributing =
 		new QCheckBox(tr("Show contribution, donation and feedback links"));
-	settings.bindDonationLinksEnabled(enableContributing);
+	CFG_BIND_CHECKBOX(cfg, DonationLinksEnabled, enableContributing);
 	form->addRow(tr("Contributing:"), enableContributing);
 }
 
-void General::initPerformance(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void General::initPerformance(config::Config *cfg, QFormLayout *form)
 {
 	QComboBox *canvasImplementation = new QComboBox;
 	canvasImplementation->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
-	using libclient::settings::CanvasImplementation;
 	//: One of the canvas renderer options. "Qt" is a software framework.
 	QString graphicsViewName = tr("Qt Graphics View");
 	//: One of the canvas renderer options. Hardware meaning it uses the GPU.
@@ -200,27 +197,27 @@ void General::initPerformance(
 	QString softwareName = tr("Software");
 	QPair<QString, int> implementations[] = {
 		//: One of the canvas renderer options.
-		{tr("Default"), int(CanvasImplementation::Default)},
-		{graphicsViewName, int(CanvasImplementation::GraphicsView)},
-		{openGlName, int(CanvasImplementation::OpenGl)},
-		{softwareName, int(CanvasImplementation::Software)},
+		{tr("Default"), int(view::CanvasImplementation::Default)},
+		{graphicsViewName, int(view::CanvasImplementation::GraphicsView)},
+		{openGlName, int(view::CanvasImplementation::OpenGl)},
+		{softwareName, int(view::CanvasImplementation::Software)},
 	};
-	for(const auto &[name, value] : implementations) {
-		canvasImplementation->addItem(name, QVariant::fromValue(value));
+	for(const QPair<QString, int> &p : implementations) {
+		canvasImplementation->addItem(p.first, QVariant::fromValue(p.second));
 	}
 
-	settings.bindRenderCanvas(canvasImplementation, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_INT(cfg, RenderCanvas, canvasImplementation);
 	form->addRow(tr("Renderer:"), canvasImplementation);
 
 	QString currentName;
 	switch(dpApp().canvasImplementation()) {
-	case int(CanvasImplementation::GraphicsView):
+	case int(view::CanvasImplementation::GraphicsView):
 		currentName = graphicsViewName;
 		break;
-	case int(CanvasImplementation::OpenGl):
+	case int(view::CanvasImplementation::OpenGl):
 		currentName = openGlName;
 		break;
-	case int(CanvasImplementation::Software):
+	case int(view::CanvasImplementation::Software):
 		currentName = softwareName;
 		break;
 	default:
@@ -233,21 +230,21 @@ void General::initPerformance(
 									"you restart Drawpile.")
 									 .arg(currentName)));
 
-	auto *renderSmooth =
+	QCheckBox *renderSmooth =
 		new QCheckBox(tr("Interpolate when view is zoomed or rotated"));
-	settings.bindRenderSmooth(renderSmooth);
+	CFG_BIND_CHECKBOX(cfg, RenderSmooth, renderSmooth);
 	form->addRow(nullptr, renderSmooth);
 
-	auto *renderUpdateFull =
+	QCheckBox *renderUpdateFull =
 		new QCheckBox(tr("Prevent jitter at certain zoom and rotation levels"));
-	settings.bindRenderUpdateFull(renderUpdateFull);
+	CFG_BIND_CHECKBOX(cfg, RenderUpdateFull, renderUpdateFull);
 	form->addRow(nullptr, renderUpdateFull);
 
 	QCheckBox *useMipmaps =
 		new QCheckBox(tr("Improve zoom quality (hardware renderer only)"));
-	settings.bindUseMipmaps(useMipmaps);
+	CFG_BIND_CHECKBOX(cfg, UseMipmaps, useMipmaps);
 	form->addRow(nullptr, useMipmaps);
-	settings.bindRenderSmooth(useMipmaps, [useMipmaps](bool smooth) {
+	CFG_BIND_SET_FN(cfg, RenderSmooth, useMipmaps, [useMipmaps](bool smooth) {
 		useMipmaps->setEnabled(smooth);
 		useMipmaps->setVisible(smooth);
 	});
@@ -258,23 +255,26 @@ void General::initPerformance(
 			"Enabling these options may impact performance on some systems.")));
 }
 
-void General::initSnapshots(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void General::initSnapshots(config::Config *cfg, QFormLayout *form)
 {
-	auto *snapshotCount = new QSpinBox;
+	QSpinBox *snapshotCount = new QSpinBox;
 	snapshotCount->setRange(0, 99);
-	settings.bindEngineSnapshotCount(snapshotCount);
-	auto *snapshotCountLayout =
+	CFG_BIND_SPINBOX(cfg, EngineSnapshotCount, snapshotCount);
+	utils::EncapsulatedLayout *snapshotCountLayout =
 		utils::encapsulate(tr("Keep %1 canvas snapshots"), snapshotCount);
 	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Canvas snapshots:"), snapshotCountLayout);
 
-	auto *snapshotInterval = new QSpinBox;
+	QSpinBox *snapshotInterval = new QSpinBox;
 	snapshotInterval->setRange(1, 600);
 	snapshotInterval->setSingleStep(5);
-	settings.bindEngineSnapshotInterval(snapshotInterval);
-	settings.bindEngineSnapshotCount(snapshotInterval, &QSpinBox::setEnabled);
-	auto *snapshotIntervalLayout = utils::encapsulate(
+	CFG_BIND_SPINBOX(cfg, EngineSnapshotInterval, snapshotInterval);
+	CFG_BIND_SET_FN(
+		cfg, EngineSnapshotCount, snapshotInterval,
+		[snapshotInterval](int count) {
+			snapshotInterval->setEnabled(count != 0);
+		});
+	utils::EncapsulatedLayout *snapshotIntervalLayout = utils::encapsulate(
 		tr("Take one snapshot every %1 seconds"), snapshotInterval);
 	snapshotIntervalLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(nullptr, snapshotIntervalLayout);
@@ -288,21 +288,20 @@ void General::initSnapshots(
 	form->addRow(nullptr, utils::formNote(snapshotNote));
 }
 
-void General::initTheme(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void General::initTheme(config::Config *cfg, QFormLayout *form)
 {
-	auto *style = new QComboBox;
+	QComboBox *style = new QComboBox;
 	style->addItem(tr("System"), QString());
-	const auto styleNames = QStyleFactory::keys();
-	for(const auto &styleName : styleNames) {
+	const QStringList styleNames = QStyleFactory::keys();
+	for(const QString &styleName : styleNames) {
 		// Qt5 does not give a proper name for the macOS style
-		if(styleName == "macintosh") {
-			style->addItem("macOS", styleName);
+		if(styleName == QStringLiteral("macintosh")) {
+			style->addItem(QStringLiteral("macOS"), styleName);
 		} else {
 			style->addItem(styleName, styleName);
 		}
 	}
-	settings.bindThemeStyle(style, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_STRING(cfg, ThemeStyle, style);
 	form->addRow(tr("Style:"), style);
 
 	ThemeCollector themeCollector(
@@ -355,23 +354,23 @@ void General::initTheme(
 		}
 	}
 
-	themeCollector.handleTheme(settings.themePalette(), false);
+	themeCollector.handleTheme(cfg->getThemePalette(), false);
 
 	QComboBox *theme = themeCollector.makeWidget();
-	settings.bindThemePalette(theme, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_STRING(cfg, ThemePalette, theme);
 	form->addRow(tr("Color scheme:"), theme);
 }
 
-void General::initUndo(desktop::settings::Settings &settings, QFormLayout *form)
+void General::initUndo(config::Config *cfg, QFormLayout *form)
 {
-	auto *undoLimit = new QSpinBox;
+	QSpinBox *undoLimit = new QSpinBox;
 	undoLimit->setRange(3, 255);
-	settings.bindEngineUndoDepth(undoLimit);
-	auto *undoLimitLayout =
+	CFG_BIND_SPINBOX(cfg, EngineUndoDepth, undoLimit);
+	utils::EncapsulatedLayout *undoLimitLayout =
 		utils::encapsulate(tr("%1 offline undo levels by default"), undoLimit);
 	undoLimitLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Session history:"), undoLimitLayout);
 }
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}

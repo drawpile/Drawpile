@@ -14,6 +14,27 @@
 namespace view {
 Q_NAMESPACE
 
+enum class CanvasImplementation : int {
+	Default = 0,
+	GraphicsView = 1,
+	OpenGl = 2,
+	Software = 3,
+};
+Q_ENUM_NS(CanvasImplementation)
+
+#if defined(__EMSCRIPTEN__)
+#	define CANVAS_IMPLEMENTATION_DEFAULT ::view::CanvasImplementation::OpenGl
+#	undef CANVAS_IMPLEMENTATION_FALLBACK
+#elif defined(Q_OS_ANDROID)
+#	define CANVAS_IMPLEMENTATION_DEFAULT ::view::CanvasImplementation::OpenGl
+#	define CANVAS_IMPLEMENTATION_FALLBACK                                     \
+		::view::CanvasImplementation::GraphicsView
+#else
+#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
+		::view::CanvasImplementation::GraphicsView
+#	define CANVAS_IMPLEMENTATION_FALLBACK ::view::CanvasImplementation::Default
+#endif
+
 enum class Cursor : int {
 	Dot,
 	Cross,
@@ -25,6 +46,22 @@ enum class Cursor : int {
 	SameAsBrush = -1,
 };
 Q_ENUM_NS(Cursor)
+
+enum class InterfaceMode : int {
+	Dynamic,
+	Desktop,
+	SmallScreen,
+};
+Q_ENUM_NS(InterfaceMode)
+
+enum class KineticScrollGesture : int {
+	None,
+	LeftClick,
+	MiddleClick,
+	RightClick,
+	Touch,
+};
+Q_ENUM_NS(KineticScrollGesture)
 
 enum class OneFingerTouchAction : int {
 	Nothing,

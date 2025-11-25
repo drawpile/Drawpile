@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/utils/longpresseventfilter.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
+#include "libclient/config/config.h"
+#include "libclient/view/enums.h"
 #include <QAbstractButton>
 #include <QAbstractScrollArea>
 #include <QAbstractSlider>
@@ -33,8 +34,9 @@ LongPressEventFilter::LongPressEventFilter(QObject *parent)
 	connect(
 		m_timer, &QTimer::timeout, this,
 		&LongPressEventFilter::triggerLongPress);
-	dpApp().settings().bindKineticScrollGesture(
-		this, &LongPressEventFilter::setKineticScrollGesture);
+	CFG_BIND_SET(
+		dpAppConfig(), KineticScrollGesture, this,
+		LongPressEventFilter::setKineticScrollGesture);
 #ifdef Q_OS_ANDROID
 	m_longPressTimeout = utils::androidLongPressTimeout();
 #endif
@@ -184,8 +186,8 @@ int LongPressEventFilter::getKineticScrollDelay(QWidget *target) const
 	// tell you which Qt::Gesture was captured, which is completely useless.
 	// So we instead grab it from the settings, that should match anyway.
 	switch(m_kineticScrollGesture) {
-	case int(desktop::settings::KineticScrollGesture::Touch):
-	case int(desktop::settings::KineticScrollGesture::LeftClick):
+	case int(view::KineticScrollGesture::Touch):
+	case int(view::KineticScrollGesture::LeftClick):
 		break;
 	default:
 		return 0;

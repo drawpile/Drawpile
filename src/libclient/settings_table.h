@@ -1,54 +1,30 @@
 #include "libclient/settings_table_macros.h"
 
-#ifndef CHECKER_COLOR1_DEFAULT
-#   define CHECKER_COLOR1_DEFAULT QColor(100, 100, 100)
-#endif
-
-#ifndef CHECKER_COLOR2_DEFAULT
-#   define CHECKER_COLOR2_DEFAULT QColor(135, 135, 135)
-#endif
-
-#ifndef SELECTION_COLOR_DEFAULT
-#   define SELECTION_COLOR_DEFAULT QColor(0, 170, 255)
-#endif
-
-#ifndef ENGINE_UNDO_LIMIT_DEFAULT
-#	define ENGINE_UNDO_LIMIT_DEFAULT 60
-#endif
-
-#ifndef SNAPSHOT_COUNT_DEFAULT
-#   if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
-#       define SNAPSHOT_COUNT_DEFAULT 0
-#   else
-#       define SNAPSHOT_COUNT_DEFAULT 5
-#   endif
-#endif
-
 SETTING(_parentalControlsLevelDummy , _ParentalControlsLevelDummy , "_parentalcontrolsleveldummy"           , parentalcontrols::Level::Unrestricted)
-SETTING(autoSaveIntervalMinutes     , AutoSaveIntervalMinutes     , "settings/autosaveminutes"              , 5)
-SETTING(cancelDeselects             , CancelDeselects             , "settings/canceldeselects"              , true)
-SETTING(checkerColor1               , CheckerColor1               , "settings/checkercolor1"                , CHECKER_COLOR1_DEFAULT)
-SETTING(checkerColor2               , CheckerColor2               , "settings/checkercolor2"                , CHECKER_COLOR2_DEFAULT)
-SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , true)
-SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE)
-SETTING(mouseSmoothing              , MouseSmoothing              , "settings/input/mousesmoothing"         , false)
-SETTING(networkProxyMode            , NetworkProxyMode            , "settings/networkproxymode"             , 0)
-SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , true)
-SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncensoring"                      , false)
+SETTING(autoSaveIntervalMinutes     , AutoSaveIntervalMinutes     , "settings/autosaveminutes"              , config::Config::defaultAutoSaveIntervalMinutes())
+SETTING(cancelDeselects             , CancelDeselects             , "settings/canceldeselects"              , config::Config::defaultCancelDeselects())
+SETTING(checkerColor1               , CheckerColor1               , "settings/checkercolor1"                , config::Config::defaultCheckerColor1())
+SETTING(checkerColor2               , CheckerColor2               , "settings/checkercolor2"                , config::Config::defaultCheckerColor2())
+SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , config::Config::defaultInterpolateInputs())
+SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , config::Config::defaultMessageQueueDrainRate())
+SETTING(mouseSmoothing              , MouseSmoothing              , "settings/input/mousesmoothing"         , config::Config::defaultMouseSmoothing())
+SETTING(networkProxyMode            , NetworkProxyMode            , "settings/networkproxymode"             , config::Config::defaultNetworkProxyMode())
+SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , config::Config::defaultParentalControlsAutoTag())
+SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncensoring"                      , config::Config::defaultParentalControlsForceCensor())
 SETTING_GETSET_V(
-    V1, parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , int(parentalcontrols::Level::Unrestricted),
+    V1, parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , config::Config::defaultParentalControlsLevel(),
     &parentalcontrolslevel::get, &any::set)
-SETTING(parentalControlsLocked      , ParentalControlsLocked      , "pc/locked"                             , QByteArray())
-SETTING(parentalControlsTags        , ParentalControlsTags        , "pc/tagwords"                           , parentalcontrols::defaultWordList())
-SETTING(engineFrameRate             , EngineFrameRate             , "settings/paintengine/fps"              , 60)
-SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/paintengine/snapshotcount"    , SNAPSHOT_COUNT_DEFAULT)
-SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/paintengine/snapshotinterval" , 10)
-SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , ENGINE_UNDO_LIMIT_DEFAULT)
-SETTING(listServers                 , ListServers                 , "listservers"                           , QVector<QVariantMap>())
-SETTING(selectionColor              , SelectionColor              , "settings/selectioncolor"               , SELECTION_COLOR_DEFAULT)
-SETTING(serverAutoReset             , ServerAutoReset             , "settings/server/autoreset"             , true)
-SETTING(serverPort                  , ServerPort                  , "settings/server/port"                  , cmake_config::proto::port())
-SETTING(serverTimeout               , ServerTimeout               , "settings/server/timeout"               , 60)
-SETTING(smoothing                   , Smoothing                   , "settings/input/smooth"                 , defaultSmoothing)
+SETTING(parentalControlsLocked      , ParentalControlsLocked      , "pc/locked"                             , config::Config::defaultParentalControlsLocked())
+SETTING(parentalControlsTags        , ParentalControlsTags        , "pc/tagwords"                           , config::Config::defaultParentalControlsTags())
+SETTING(engineFrameRate             , EngineFrameRate             , "settings/paintengine/fps"              , config::Config::defaultEngineFrameRate())
+SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/paintengine/snapshotcount"    , config::Config::defaultEngineSnapshotCount())
+SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/paintengine/snapshotinterval" , config::Config::defaultEngineSnapshotInterval())
+SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , config::Config::defaultEngineUndoDepth())
+SETTING(listServers                 , ListServers                 , "listservers"                           , config::Config::defaultListServers())
+SETTING(selectionColor              , SelectionColor              , "settings/selectioncolor"               , config::Config::defaultSelectionColor())
+SETTING(serverAutoReset             , ServerAutoReset             , "settings/server/autoreset"             , config::Config::defaultServerAutoReset())
+SETTING(serverPort                  , ServerPort                  , "settings/server/port"                  , config::Config::defaultServerPort())
+SETTING(serverTimeout               , ServerTimeout               , "settings/server/timeout"               , config::Config::defaultServerTimeout())
+SETTING(smoothing                   , Smoothing                   , "settings/input/smooth"                 , config::Config::defaultSmoothing())
 
 #include "libclient/settings_table_macros.h"

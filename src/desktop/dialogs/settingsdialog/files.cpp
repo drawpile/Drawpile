@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/files.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDebug>
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QVBoxLayout>
@@ -12,32 +13,31 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Files::Files(desktop::settings::Settings &settings, QWidget *parent)
+Files::Files(config::Config *cfg, QWidget *parent)
 	: Page(parent)
 {
-	init(settings);
+	init(cfg);
 }
 
-void Files::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
+void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
-	initFormats(settings, utils::addFormSection(layout));
+	initFormats(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 #ifndef __EMSCRIPTEN__
-	initAutosave(settings, utils::addFormSection(layout));
+	initAutosave(cfg, utils::addFormSection(layout));
 #endif
-	initLogging(settings, utils::addFormSection(layout));
+	initLogging(cfg, utils::addFormSection(layout));
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
 	utils::addFormSeparator(layout);
-	initDialogs(settings, utils::addFormSection(layout));
+	initDialogs(cfg, utils::addFormSection(layout));
 #endif
 }
 
-void Files::initAutosave(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Files::initAutosave(config::Config *cfg, QFormLayout *form)
 {
 	QSpinBox *autosaveInterval = new QSpinBox;
 	autosaveInterval->setRange(1, 999);
-	settings.bindAutoSaveIntervalMinutes(autosaveInterval);
+	CFG_BIND_SPINBOX(cfg, AutoSaveIntervalMinutes, autosaveInterval);
 
 	utils::EncapsulatedLayout *snapshotCountLayout = utils::encapsulate(
 		tr("When enabled, save every %1 minutes"), autosaveInterval);
@@ -53,21 +53,19 @@ void Files::initAutosave(
 	form->addRow(nullptr, utils::formNote(autosaveNote));
 }
 
-void Files::initDialogs(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Files::initDialogs(config::Config *cfg, QFormLayout *form)
 {
 	QCheckBox *nativeDialogs =
 		new QCheckBox(tr("Use system file picker dialogs"));
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
-	settings.bindNativeDialogs(nativeDialogs);
+	CFG_BIND_CHECKBOX(cfg, NativeDialogs, nativeDialogs);
 #else
-	Q_UNUSED(settings);
+	Q_UNUSED(cfg);
 #endif
 	form->addRow(tr("Interface:"), nativeDialogs);
 }
 
-void Files::initFormats(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Files::initFormats(config::Config *cfg, QFormLayout *form)
 {
 	//: %1 is a file extension, like ".ora" or ".png"
 	QString defaultTemplate = tr("Default (%1)");
@@ -79,7 +77,8 @@ void Files::initFormats(
 		tr("OpenRaster (.ora)"), QStringLiteral("ora"));
 	preferredSaveFormat->addItem(
 		tr("Drawpile Canvas (.dpcs)"), QStringLiteral("dpcs"));
-	settings.bindPreferredSaveFormat(preferredSaveFormat, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_STRING(
+		cfg, PreferredSaveFormat, preferredSaveFormat);
 	form->addRow(tr("Preferred save format:"), preferredSaveFormat);
 
 	QComboBox *preferredExportFormat = new QComboBox;
@@ -95,15 +94,15 @@ void Files::initFormats(
 		tr("Drawpile Canvas (.dpcs)"), QStringLiteral("dpcs"));
 	preferredExportFormat->addItem(
 		tr("Photoshop Document (.psd)"), QStringLiteral("psd"));
-	settings.bindPreferredExportFormat(preferredExportFormat, Qt::UserRole);
+	CFG_BIND_COMBOBOX_USER_STRING(
+		cfg, PreferredExportFormat, preferredExportFormat);
 	form->addRow(tr("Preferred export format:"), preferredExportFormat);
 }
 
-void Files::initLogging(
-	desktop::settings::Settings &settings, QFormLayout *form)
+void Files::initLogging(config::Config *cfg, QFormLayout *form)
 {
 	QCheckBox *enableLogging = new QCheckBox(tr("Write debugging log to file"));
-	settings.bindWriteLogFile(enableLogging);
+	CFG_BIND_CHECKBOX(cfg, WriteLogFile, enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);
 }
 

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/parentalcontrols/parentalcontrols.h"
-#include "libclient/settings.h"
+#include "libclient/config/config.h"
 
 namespace parentalcontrols {
 
-void init(libclient::settings::Settings &settings)
+void init(config::Config *cfg)
 {
-	g_settings = &settings;
+	g_cfg = cfg;
 	// Dummy implementation -- no integration
 }
 

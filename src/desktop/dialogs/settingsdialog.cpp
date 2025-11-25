@@ -12,14 +12,15 @@
 #include "desktop/dialogs/settingsdialog/touch.h"
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include <QAction>
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSettings>
 #include <QStackedWidget>
 #include <QStyle>
 #include <QToolButton>
@@ -30,7 +31,7 @@ namespace dialogs {
 SettingsDialog::SettingsDialog(
 	bool singleSession, bool smallScreenMode, QWidget *parent)
 	: QDialog(parent)
-	, m_settings(dpApp().settings())
+	, m_cfg(dpAppConfig())
 {
 	setWindowTitle(tr("Preferences"));
 	resize(800, 600);
@@ -83,28 +84,28 @@ SettingsDialog::SettingsDialog(
 		std::tuple<const char *, QString, QWidget *, bool>>
 		panels = {
 			{"configure", tr("General"),
-			 new settingsdialog::General(m_settings, this), true},
+			 new settingsdialog::General(m_cfg, this), true},
 			{"window_", tr("User Interface"),
-			 new settingsdialog::UserInterface(m_settings, this), true},
+			 new settingsdialog::UserInterface(m_cfg, this), true},
 			{"input-tablet", tr("Tablet"),
-			 (tabletPage = new settingsdialog::Tablet(m_settings, this)), true},
+			 (tabletPage = new settingsdialog::Tablet(m_cfg, this)), true},
 			{"input-touchscreen", tr("Touch"),
-			 (touchPage = new settingsdialog::Touch(m_settings, this)), true},
-			{"tools", tr("Tools"), new settingsdialog::Tools(m_settings, this),
+			 (touchPage = new settingsdialog::Touch(m_cfg, this)), true},
+			{"tools", tr("Tools"), new settingsdialog::Tools(m_cfg, this),
 			 true},
 			{"document-open", tr("Files"),
-			 new settingsdialog::Files(m_settings, this), true},
+			 new settingsdialog::Files(m_cfg, this), true},
 			{"network-modem", tr("Network"),
-			 new settingsdialog::Network(m_settings, this), true},
+			 new settingsdialog::Network(m_cfg, this), true},
 			{"dialog-information", tr("Notifications"),
-			 new settingsdialog::Notifications(m_settings, this), true},
+			 new settingsdialog::Notifications(m_cfg, this), true},
 			{"network-server-database", tr("Servers"),
-			 new settingsdialog::Servers(m_settings, singleSession, this),
+			 new settingsdialog::Servers(m_cfg, singleSession, this),
 			 showServers},
 			{"input-keyboard", tr("Shortcuts"),
-			 new settingsdialog::Shortcuts(m_settings, this), true},
+			 new settingsdialog::Shortcuts(m_cfg, this), true},
 			{"flag", tr("Parental Controls"),
-			 new settingsdialog::ParentalControls(m_settings, this), true}};
+			 new settingsdialog::ParentalControls(m_cfg, this), true}};
 
 	auto *buttonLayout = new QVBoxLayout;
 	buttonLayout->setContentsMargins(0, 0, 0, 0);
@@ -192,8 +193,8 @@ SettingsDialog::SettingsDialog(
 
 SettingsDialog::~SettingsDialog()
 {
-	m_settings.trySubmit();
-	m_settings.scalingSettings()->sync();
+	m_cfg->trySubmit();
+	dpApp().scalingSettings()->sync();
 }
 
 void SettingsDialog::initiateFixShortcutConflicts()

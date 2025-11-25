@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/colorpalette.h"
+#include "desktop/docks/enums.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/palettewidget.h"
+#include "libclient/config/config.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 #include <QAction>
@@ -215,10 +216,10 @@ ColorPaletteDock::ColorPaletteDock(QWidget *parent)
 		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
 		&ColorPaletteDock::paletteChanged);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindLastPalette(
-		d->paletteChoiceBox,
-		[=](int index) {
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_OBJECT_FN(
+		cfg, LastPalette, d->paletteChoiceBox,
+		[this](int index) {
 			int lastPalette =
 				qBound(0, index, d->paletteChoiceBox->model()->rowCount());
 			if(lastPalette > 0) {
@@ -228,7 +229,7 @@ ColorPaletteDock::ColorPaletteDock(QWidget *parent)
 			}
 		},
 		QOverload<int>::of(&QComboBox::currentIndexChanged));
-	settings.bindColorSwatchFlags(this, &ColorPaletteDock::setSwatchFlags);
+	CFG_BIND_SET(cfg, ColorSwatchFlags, this, ColorPaletteDock::setSwatchFlags);
 }
 
 ColorPaletteDock::~ColorPaletteDock()
@@ -239,48 +240,48 @@ ColorPaletteDock::~ColorPaletteDock()
 
 void ColorPaletteDock::addSwatchOptionsToMenu(QMenu *menu, int flag)
 {
+	config::Config *cfg = dpAppConfig();
 	QMenu *historyMenu = menu->addMenu(tr("Color history"));
 
 	QAction *showThis = historyMenu->addAction(tr("Show on this dock"));
 	showThis->setCheckable(true);
-	connect(showThis, &QAction::triggered, showThis, [flag](bool checked) {
-		desktop::settings::Settings &settings = dpApp().settings();
-		int flags = settings.colorSwatchFlags();
+	connect(showThis, &QAction::triggered, showThis, [cfg, flag](bool checked) {
+		int flags = cfg->getColorSwatchFlags();
 		if(checked) {
 			flags &= ~flag;
 		} else {
 			flags |= flag;
 		}
-		settings.setColorSwatchFlags(flags);
+		cfg->setColorSwatchFlags(flags);
 	});
 
 	historyMenu->addSeparator();
 
 	QAction *showAll = historyMenu->addAction(tr("Show on all color docks"));
-	connect(showAll, &QAction::triggered, showAll, [] {
-		dpApp().settings().setColorSwatchFlags(0);
+	connect(showAll, &QAction::triggered, showAll, [cfg] {
+		cfg->setColorSwatchFlags(0);
 	});
 
 	QAction *hideAll = historyMenu->addAction(tr("Hide on all color docks"));
-	connect(hideAll, &QAction::triggered, hideAll, [] {
-		dpApp().settings().setColorSwatchFlags(-1);
+	connect(hideAll, &QAction::triggered, hideAll, [cfg] {
+		cfg->setColorSwatchFlags(-1);
 	});
 
 	QAction *showOnly = historyMenu->addAction(tr("Show only on this dock"));
-	connect(showOnly, &QAction::triggered, showOnly, [flag] {
-		dpApp().settings().setColorSwatchFlags(~flag);
+	connect(showOnly, &QAction::triggered, showOnly, [cfg, flag] {
+		cfg->setColorSwatchFlags(~flag);
 	});
 
 	QAction *hideOnly = historyMenu->addAction(tr("Hide only on this dock"));
-	connect(hideOnly, &QAction::triggered, hideOnly, [flag] {
-		dpApp().settings().setColorSwatchFlags(flag);
+	connect(hideOnly, &QAction::triggered, hideOnly, [cfg, flag] {
+		cfg->setColorSwatchFlags(flag);
 	});
 
 	connect(
 		historyMenu, &QMenu::aboutToShow, historyMenu,
-		[flag, showThis, showAll, hideAll, showOnly, hideOnly] {
+		[cfg, flag, showThis, showAll, hideAll, showOnly, hideOnly] {
 			QSignalBlocker blocker(showThis);
-			int flags = dpApp().settings().colorSwatchFlags();
+			int flags = cfg->getColorSwatchFlags();
 			showThis->setChecked((flags & flag) == 0);
 			showAll->setEnabled((flags & COLOR_SWATCH_NONE) != 0);
 			hideAll->setEnabled(

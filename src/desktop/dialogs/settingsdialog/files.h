@@ -7,29 +7,22 @@ class QDialogButtonBox;
 class QPushButton;
 class QFormLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class Files final : public Page {
 	Q_OBJECT
 public:
-	Files(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Files(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
-	void initFormats(desktop::settings::Settings &settings, QFormLayout *form);
-	void initAutosave(desktop::settings::Settings &settings, QFormLayout *form);
-	void initDialogs(desktop::settings::Settings &settings, QFormLayout *form);
-	void initLogging(desktop::settings::Settings &settings, QFormLayout *form);
+	void initFormats(config::Config *cfg, QFormLayout *form);
+	void initAutosave(config::Config *cfg, QFormLayout *form);
+	void initDialogs(config::Config *cfg, QFormLayout *form);
+	void initLogging(config::Config *cfg, QFormLayout *form);
 };
 
 }

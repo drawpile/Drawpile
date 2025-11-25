@@ -52,7 +52,7 @@ public:
 	bool isLocked() const { return m_activeReasons; }
 	QString description() const;
 
-	void setShowVewModeNotices(bool showViewModeNotices);
+	void setShowViewModeNotices(bool showViewModeNotices);
 
 signals:
 	void lockStateChanged(

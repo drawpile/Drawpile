@@ -74,14 +74,12 @@ class CanvasModel;
 class SelectionModel;
 }
 
-namespace drawdance {
-class CanvasState;
+namespace config {
+class Config;
 }
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace drawdance {
+class CanvasState;
 }
 
 namespace view {
@@ -398,7 +396,7 @@ private:
 	void showSelectionMaskColorPicker();
 
 	void readSettings(bool windowpos = true);
-	void restoreSettings(const desktop::settings::Settings &settings);
+	void restoreSettings(config::Config *cfg);
 	void initSmallScreenState();
 	void initDefaultDocks();
 	void setDefaultDockSizes();
@@ -436,7 +434,7 @@ private:
 	static bool isInitialSmallScreenMode();
 	void setLeftyMode(bool leftyMode);
 	void updateInterfaceMode();
-	bool shouldUseSmallScreenMode(const desktop::settings::Settings &settings);
+	bool shouldUseSmallScreenMode();
 	void switchInterfaceMode(bool smallScreenMode);
 	void updateSmallScreenToolBarVisibility();
 	bool shouldShowDialogMaximized() const;

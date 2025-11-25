@@ -2,10 +2,10 @@
 #include "desktop/dialogs/animationexportdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/config/config.h"
 #include "libclient/export/animationformat.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -49,7 +49,7 @@ AnimationExportDialog::AnimationExportDialog(
 		{tr("MP4 Video"), AnimationFormat::Mp4Vp9},
 		{tr("WEBM Video"), AnimationFormat::WebmVp8},
 	};
-	int lastFormat = dpApp().settings().animationExportFormat();
+	int lastFormat = dpAppConfig()->getAnimationExportFormat();
 	for(const QPair<QString, AnimationFormat> &p : formats) {
 		if(isAnimationFormatSupported(p.second)) {
 			int format = int(p.second);
@@ -443,7 +443,7 @@ void AnimationExportDialog::setCanvasFramerate(double framerate)
 void AnimationExportDialog::requestExport()
 {
 	int format = m_formatCombo->currentData().toInt();
-	dpApp().settings().setAnimationExportFormat(format);
+	dpAppConfig()->setAnimationExportFormat(format);
 	emit exportRequested(
 #ifndef __EMSCRIPTEN__
 		m_path,

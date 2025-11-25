@@ -3,7 +3,6 @@
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
@@ -16,6 +15,7 @@
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
+#include "libclient/config/config.h"
 #include "libclient/tools/enums.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
@@ -24,7 +24,6 @@
 #include <QLabel>
 #include <QStackedWidget>
 #include <QtColorWidgets/color_palette.hpp>
-#include <cmath>
 #include <utility>
 
 namespace docks {
@@ -272,10 +271,10 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	// Tool settings are only saved periodically currently, see TODO below.
 	// Mixing periodic and instantaneous saving causes some desynchronization
 	// with regards to tool slot colors, causing them to flicker when switching.
-	auto &settings = dpApp().settings();
-	setForegroundColor(settings.lastToolColor());
-	setBackgroundColor(settings.lastToolBackgroundColor());
-	selectTool(tools::Tool::Type(settings.lastTool()));
+	config::Config *cfg = dpAppConfig();
+	setForegroundColor(cfg->getLastToolColor());
+	setBackgroundColor(cfg->getLastToolBackgroundColor());
+	selectTool(tools::Tool::Type(cfg->getLastTool()));
 }
 
 ToolSettings::~ToolSettings()
@@ -285,26 +284,28 @@ ToolSettings::~ToolSettings()
 
 void ToolSettings::saveSettings()
 {
-	desktop::settings::Settings::ToolsetType toolset;
-	for(auto ts : std::as_const(d->toolSettings)) {
+	QMap<QString, QVariantHash> toolset;
+	for(const QSharedPointer<tools::ToolSettings> &ts :
+		std::as_const(d->toolSettings)) {
 		// If no UI was loaded then the settings could not have changed and
 		// there is no need to re-save them
 		if(ts->getUi()) {
 			// TODO: Tool settings should always be going to settings whenever
 			// they are changed, and should not create a separate object just to
 			// save
-			const auto saveTs = ts->saveToolSettings();
-			const auto [name, props] = saveTs.save();
-			if(!name.isEmpty()) {
-				toolset[name] = props;
+			const tools::ToolProperties saveTs = ts->saveToolSettings();
+			const std::pair<const QString &, const QVariantHash &> p =
+				saveTs.save();
+			if(!p.first.isEmpty()) {
+				toolset.insert(p.first, p.second);
 			}
 		}
 	}
-	auto &settings = dpApp().settings();
-	settings.setToolset(toolset);
-	settings.setLastToolColor(foregroundColor());
-	settings.setLastToolBackgroundColor(backgroundColor());
-	settings.setLastTool(int(currentTool()));
+	config::Config *cfg = dpAppConfig();
+	cfg->setToolset(toolset);
+	cfg->setLastToolColor(foregroundColor());
+	cfg->setLastToolBackgroundColor(backgroundColor());
+	cfg->setLastTool(int(currentTool()));
 }
 
 bool ToolSettings::currentToolAffectsCanvas() const
@@ -344,9 +345,11 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 				d->headerStack->addWidget(headerWidget);
 			}
 
-			const auto toolset = dpApp().settings().toolset();
-			ts->restoreToolSettings(tools::ToolProperties::load(
-				ts->toolType(), toolset[ts->toolType()]));
+			const QMap<QString, QVariantHash> toolset =
+				dpAppConfig()->getToolset();
+			ts->restoreToolSettings(
+				tools::ToolProperties::load(
+					ts->toolType(), toolset.value(ts->toolType())));
 		}
 		return ts;
 	} else

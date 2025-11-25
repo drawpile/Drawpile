@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/utils/widgetutils.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/longpresseventfilter.h"
 #include "desktop/utils/qtguicompat.h"
+#include "libclient/config/config.h"
+#include "libclient/view/enums.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
 #include <QButtonGroup>
@@ -248,7 +249,7 @@ KineticScroller::KineticScroller(
 	, m_scrollArea(parent)
 	, m_horizontalScrollBarPolicy(horizontalScrollBarPolicy)
 	, m_verticalScrollBarPolicy(verticalScrollBarPolicy)
-	, m_kineticScrollGesture(int(desktop::settings::KineticScrollGesture::None))
+	, m_kineticScrollGesture(int(view::KineticScrollGesture::None))
 	, m_kineticScrollSensitivity(-1)
 	, m_kineticScrollHideBars(false)
 {
@@ -532,16 +533,16 @@ bool KineticScroller::isKineticScrollingEnabled(
 {
 	QScroller::ScrollerGestureType gestureType;
 	switch(kineticScrollGesture) {
-	case int(desktop::settings::KineticScrollGesture::LeftClick):
+	case int(view::KineticScrollGesture::LeftClick):
 		gestureType = QScroller::LeftMouseButtonGesture;
 		break;
-	case int(desktop::settings::KineticScrollGesture::MiddleClick):
+	case int(view::KineticScrollGesture::MiddleClick):
 		gestureType = QScroller::MiddleMouseButtonGesture;
 		break;
-	case int(desktop::settings::KineticScrollGesture::RightClick):
+	case int(view::KineticScrollGesture::RightClick):
 		gestureType = QScroller::RightMouseButtonGesture;
 		break;
-	case int(desktop::settings::KineticScrollGesture::Touch):
+	case int(view::KineticScrollGesture::Touch):
 		gestureType = QScroller::TouchGesture;
 		break;
 	default:
@@ -843,17 +844,20 @@ KineticScroller *bindKineticScrollingWith(
 	Qt::ScrollBarPolicy verticalScrollBarPolicy)
 {
 	if(scrollArea) {
-		desktop::settings::Settings &settings = dpApp().settings();
+		config::Config *cfg = dpAppConfig();
 		KineticScroller *scroller = new KineticScroller(
 			scrollArea, horizontalScrollBarPolicy, verticalScrollBarPolicy,
-			settings.kineticScrollGesture(), settings.kineticScrollThreshold(),
-			settings.kineticScrollHideBars());
-		settings.bindKineticScrollGesture(
-			scroller, &KineticScroller::setKineticScrollGestureDelayed);
-		settings.bindKineticScrollThreshold(
-			scroller, &KineticScroller::setKineticScrollThresholdDelayed);
-		settings.bindKineticScrollHideBars(
-			scroller, &KineticScroller::setKineticScrollHideBarsDelayed);
+			cfg->getKineticScrollGesture(), cfg->getKineticScrollThreshold(),
+			cfg->getKineticScrollHideBars());
+		CFG_BIND_SET(
+			cfg, KineticScrollGesture, scroller,
+			KineticScroller::setKineticScrollGestureDelayed);
+		CFG_BIND_SET(
+			cfg, KineticScrollThreshold, scroller,
+			KineticScroller::setKineticScrollThresholdDelayed);
+		CFG_BIND_SET(
+			cfg, KineticScrollHideBars, scroller,
+			KineticScroller::setKineticScrollHideBarsDelayed);
 		return scroller;
 	} else {
 		return nullptr;

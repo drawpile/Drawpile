@@ -6,42 +6,29 @@
 class QFormLayout;
 class QVBoxLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class UserInterface final : public Page {
 	Q_OBJECT
 public:
-	UserInterface(
-		desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	UserInterface(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
-	void
-	initInterfaceMode(desktop::settings::Settings &settings, QFormLayout *form);
+	void initInterfaceMode(config::Config *cfg, QFormLayout *form);
 
-	void initKineticScrolling(
-		desktop::settings::Settings &settings, QFormLayout *form);
+	void initKineticScrolling(config::Config *cfg, QFormLayout *form);
 
-	void
-	initMiscellaneous(desktop::settings::Settings &settings, QFormLayout *form);
+	void initMiscellaneous(config::Config *cfg, QFormLayout *form);
 
-	void initRequiringRestart(
-		desktop::settings::Settings &settings, QFormLayout *form);
+	void initRequiringRestart(config::Config *cfg, QFormLayout *form);
 
 	void pickColor(
-		desktop::settings::Settings &settings,
-		QColor (desktop::settings::Settings::*getColor)() const,
-		void (desktop::settings::Settings::*setColor)(QColor),
+		config::Config *cfg, QColor (config::Config::*getColor)() const,
+		void (config::Config::*setColor)(const QColor &),
 		const QColor &defaultColor);
 };
 

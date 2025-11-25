@@ -12,10 +12,8 @@ class QModelIndex;
 class QSslCertificate;
 class QVBoxLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace sessionlisting {
@@ -28,13 +26,10 @@ namespace settingsdialog {
 class Servers final : public QWidget {
 	Q_OBJECT
 public:
-	Servers(
-		desktop::settings::Settings &settings, bool singleSession,
-		QWidget *parent = nullptr);
+	Servers(config::Config *cfg, bool singleSession, QWidget *parent = nullptr);
 
 private:
-	void initListingServers(
-		desktop::settings::Settings &settings, QVBoxLayout *layout);
+	void initListingServers(config::Config *cfg, QVBoxLayout *layout);
 
 	void addListServer(sessionlisting::ListServerModel *model);
 
@@ -47,6 +42,8 @@ private:
 
 	void importCertificates(CertificateStoreModel *model);
 
+	bool askToContinue(const QString &title, const QString &message);
+
 	void pinCertificates(
 		CertificateStoreModel *model, const QModelIndexList &indexes, bool pin);
 
@@ -55,7 +52,7 @@ private:
 #endif
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

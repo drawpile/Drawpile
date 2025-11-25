@@ -3,9 +3,9 @@
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
-#include "desktop/settings.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include <QMessageBox>
 #include <QUrl>
 
@@ -303,7 +303,8 @@ void MacMenu::quitAll()
 		}
 		if(!allClosed) {
 			// user cancelled quit
-			app.setQuitOnLastWindowClosed(app.settings().quitOnLastWindowClosed());
+			app.setQuitOnLastWindowClosed(
+				app.config()->getQuitOnLastWindowClosed());
 		}
 	}
 }

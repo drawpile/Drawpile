@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include "ui_layoutsdialog.h"
 #include <QByteArray>
+#include <QDebug>
 #include <QTimer>
 #include <QVector>
 
@@ -87,8 +88,8 @@ struct LayoutsDialog::Private {
 		, updateInProgress{false}
 	{
 		layouts.append(Layout{currentState});
-		desktop::settings::Settings &settings = dpApp().settings();
-		const auto savedLayouts = settings.layouts();
+		config::Config *cfg = dpAppConfig();
+		QVector<QVariantMap> savedLayouts = cfg->getLayouts();
 		Predefs predefs = getPredefs();
 		if(savedLayouts.isEmpty()) {
 			createDefaultLayouts(predefs);
@@ -100,7 +101,7 @@ struct LayoutsDialog::Private {
 				layouts.append(
 					Layout{savedLayout.value("title").toString(), state});
 			}
-			switch(settings.layoutsVersion()) {
+			switch(cfg->getLayoutsVersion()) {
 			case LAYOUTS_VERSION_2_2_0:
 				createLayouts2_3_0(predefs);
 				Q_FALLTHROUGH();
@@ -184,16 +185,16 @@ struct LayoutsDialog::Private {
 
 	void saveLayouts()
 	{
-		desktop::settings::Settings::LayoutsType savedLayouts;
+		QVector<QVariantMap> savedLayouts;
 		for(const Layout &layout : layouts) {
 			if(!layout.transient && !layout.deleted) {
 				savedLayouts.append(
 					{{"title", layout.title}, {"state", layout.state}});
 			}
 		}
-		desktop::settings::Settings &settings = dpApp().settings();
-		settings.setLayouts(savedLayouts);
-		settings.setLayoutsVersion(LAYOUTS_VERSION_CURRENT);
+		config::Config *cfg = dpAppConfig();
+		cfg->setLayouts(savedLayouts);
+		cfg->setLayoutsVersion(LAYOUTS_VERSION_CURRENT);
 	}
 
 	QListWidgetItem *selectedItem()

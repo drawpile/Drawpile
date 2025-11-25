@@ -9,8 +9,8 @@ extern "C" {
 #include "libclient/canvas/point.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
+#include "libclient/config/config.h"
 #include "libclient/net/client.h"
-#include "libclient/settings.h"
 #include "libclient/tools/annotation.h"
 #include "libclient/tools/beziertool.h"
 #include "libclient/tools/colorpicker.h"
@@ -30,6 +30,8 @@ extern "C" {
 #include "libshared/util/functionrunnable.h"
 
 namespace tools {
+
+QString ToolController::globalPressureCurveDefault = QStringLiteral("0,0;1,1;");
 
 ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent)
@@ -188,7 +190,7 @@ void ToolController::setSelectionMaskColor(const QColor &selectionMaskColor)
 		m_selectionMaskColor = selectionMaskColor;
 		m_selectionMaskColor.setAlpha(255);
 	} else {
-		m_selectionMaskColor = SELECTION_COLOR_DEFAULT;
+		m_selectionMaskColor = config::Config::defaultSelectionColor();
 	}
 }
 
@@ -483,8 +485,7 @@ void ToolController::updateSmoothing()
 	if(m_stabilizationMode == brushes::Smoothing) {
 		strength += m_smoothing;
 	}
-	m_effectiveSmoothing =
-		qBound(0, strength, libclient::settings::maxSmoothing);
+	m_effectiveSmoothing = qBound(0, strength, MAX_SMOOTHING);
 }
 
 void ToolController::setTransformParams(bool accurate, int interpolation)
@@ -678,9 +679,7 @@ void ToolController::setStrokeEngineParams(
 	drawdance::StrokeEngine &se, int stabilizerSampleCount, int smoothing)
 {
 	DP_StrokeEngineStrokeParams sesp = {
-		qBound(
-			0, m_globalSmoothing + smoothing,
-			libclient::settings::maxSmoothing),
+		qBound(0, m_globalSmoothing + smoothing, MAX_SMOOTHING),
 		stabilizerSampleCount,
 		m_interpolateInputs,
 		true,

@@ -2,14 +2,15 @@
 #include "desktop/docks/navigator.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/zoomslider.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/tilecache.h"
 #include "libclient/canvas/userlist.h"
-#include "libclient/settings.h"
+#include "libclient/config/config.h"
+#include "libclient/utils/qtguicompat.h"
+#include "libclient/view/zoom.h"
 #include <QAction>
 #include <QBoxLayout>
 #include <QDateTime>
@@ -20,6 +21,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QTimer>
+#include <QtMath>
 
 namespace docks {
 
@@ -510,8 +512,8 @@ Navigator::Navigator(QWidget *parent)
 	m_zoomSlider->setMinimumWidth(0);
 	m_zoomSlider->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
-	m_zoomSlider->setMinimum(libclient::settings::getZoomMin() * 100.0);
-	m_zoomSlider->setMaximum(libclient::settings::getZoomMax() * 100.0);
+	m_zoomSlider->setMinimum(view::getZoomMin() * 100.0);
+	m_zoomSlider->setMaximum(view::getZoomMax() * 100.0);
 	m_zoomSlider->setExponentRatio(4.0);
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");
@@ -543,17 +545,20 @@ Navigator::Navigator(QWidget *parent)
 	m_view->setContextMenuPolicy(Qt::ActionsContextMenu);
 	m_view->setMinimumHeight(32);
 
-	auto &settings = dpApp().settings();
-	settings.bindNavigatorShowCursors(showCursorsAction);
-	settings.bindNavigatorShowCursors(m_view, &NavigatorView::setShowCursors);
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_ACTION(cfg, NavigatorShowCursors, showCursorsAction);
+	CFG_BIND_SET(
+		cfg, NavigatorShowCursors, m_view, NavigatorView::setShowCursors);
 
-	settings.bindNavigatorRealtime(realtimeUpdateAction);
-	settings.bindNavigatorRealtime(m_view, &NavigatorView::setRealtimeUpdate);
+	CFG_BIND_ACTION(cfg, NavigatorRealtime, realtimeUpdateAction);
+	CFG_BIND_SET(
+		cfg, NavigatorRealtime, m_view, NavigatorView::setRealtimeUpdate);
 
-	settings.bindCanvasViewBackgroundColor(
-		m_view, &NavigatorView::setBackgroundColor);
-	settings.bindCheckerColor1(m_view, &NavigatorView::setCheckerColor1);
-	settings.bindCheckerColor2(m_view, &NavigatorView::setCheckerColor2);
+	CFG_BIND_SET(
+		cfg, CanvasViewBackgroundColor, m_view,
+		NavigatorView::setBackgroundColor);
+	CFG_BIND_SET(cfg, CheckerColor1, m_view, NavigatorView::setCheckerColor1);
+	CFG_BIND_SET(cfg, CheckerColor2, m_view, NavigatorView::setCheckerColor2);
 }
 
 void Navigator::setCanvasModel(canvas::CanvasModel *model)

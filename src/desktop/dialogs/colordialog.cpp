@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/config/config.h"
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -38,15 +38,16 @@ void showColorPickUnsupportedMessage(QWidget *parent)
 
 void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 {
-	auto &settings = dpApp().settings();
-	settings.bindColorWheelShape(dlg, [dlg](int shape) {
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET_FN(cfg, ColorWheelShape, dlg, [dlg](int shape) {
 		dlg->setWheelShape(color_widgets::ColorWheel::ShapeEnum(shape));
 	});
-	settings.bindColorWheelAngle(dlg, [dlg](int angle) {
+	CFG_BIND_SET_FN(cfg, ColorWheelAngle, dlg, [dlg](int angle) {
 		dlg->setWheelRotating(color_widgets::ColorWheel::AngleEnum(angle));
 	});
-	settings.bindColorWheelMirror(
-		dlg, &color_widgets::ColorDialog::setWheelMirrored);
+	CFG_BIND_SET(
+		cfg, ColorWheelMirror, dlg,
+		color_widgets::ColorDialog::setWheelMirrored);
 
 	color_widgets::ColorWheel *wheel =
 		dlg->findChild<color_widgets::ColorWheel *>(

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/filewrangler.h"
+#include "cmake-config/config.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/utils/scopedoverridecursor.h"
@@ -663,7 +664,7 @@ DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
 
 DP_SaveImageType FileWrangler::preferredSaveType()
 {
-	QString format = dpApp().settings().preferredSaveFormat();
+	QString format = dpAppConfig()->getPreferredSaveFormat();
 	if(format.isEmpty() || format == QStringLiteral("ora")) {
 		return DP_SAVE_IMAGE_ORA;
 	} else if(format == QStringLiteral("dpcs")) {
@@ -676,7 +677,7 @@ DP_SaveImageType FileWrangler::preferredSaveType()
 
 DP_SaveImageType FileWrangler::preferredExportType()
 {
-	QString format = dpApp().settings().preferredExportFormat();
+	QString format = dpAppConfig()->getPreferredExportFormat();
 	if(format.isEmpty() || format == QStringLiteral("png")) {
 		return DP_SAVE_IMAGE_PNG;
 	} else if(format == QStringLiteral("jpg")) {
@@ -770,7 +771,7 @@ QString FileWrangler::getCurrentPathOrUntitled(
 
 QString FileWrangler::getLastPath(LastPath type, const QString &ext)
 {
-	const auto paths = dpApp().settings().lastFileOpenPaths();
+	const auto paths = dpAppConfig()->getLastFileOpenPaths();
 	QString key = getLastPathKey(type);
 	QString filename = paths.value(key).toString();
 	qCDebug(
@@ -793,10 +794,10 @@ void FileWrangler::setLastPath(LastPath type, const QString &path)
 	qCDebug(
 		lcDpFileWrangler, "setLastPath type=%d path='%s' key='%s'", int(type),
 		qUtf8Printable(path), qUtf8Printable(key));
-	auto &settings = dpApp().settings();
-	auto paths = settings.lastFileOpenPaths();
-	paths[key] = path;
-	settings.setLastFileOpenPaths(paths);
+	config::Config *cfg = dpAppConfig();
+	QVariantMap paths = cfg->getLastFileOpenPaths();
+	paths.insert(key, path);
+	cfg->setLastFileOpenPaths(paths);
 }
 
 void FileWrangler::updateLastPath(LastPath type, const QString &path)
@@ -855,8 +856,9 @@ QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)
 		break;
 	default:
 		//: %1 will be a file extension, like .ora or .png or something.
-		path = QDir(QStandardPaths::writableLocation(
-						QStandardPaths::PicturesLocation))
+		path = QDir(
+				   QStandardPaths::writableLocation(
+					   QStandardPaths::PicturesLocation))
 				   .absoluteFilePath(tr("Untitled%1").arg(ext));
 		break;
 	}

@@ -5,39 +5,28 @@
 
 class QFormLayout;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
-}
-
 namespace dialogs {
 namespace settingsdialog {
 
 class Tools final : public Page {
 	Q_OBJECT
 public:
-	Tools(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Tools(config::Config *cfg, QWidget *parent = nullptr);
 
 protected:
-	void
-	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 
 private:
-	void
-	initColorSpace(desktop::settings::Settings &settings, QFormLayout *form);
+	void initColorSpace(config::Config *cfg, QFormLayout *form);
 
-	void
-	initCursors(desktop::settings::Settings &settings, QFormLayout *form);
+	void initCursors(config::Config *cfg, QFormLayout *form);
 
-	void initKeyboardShortcuts(
-		desktop::settings::Settings &settings, QFormLayout *form);
+	void initKeyboardShortcuts(config::Config *cfg, QFormLayout *form);
 
-	void
-	initSlots(desktop::settings::Settings &settings, QFormLayout *form);
+	void initSlots(config::Config *cfg, QFormLayout *form);
 };
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}
 
 #endif

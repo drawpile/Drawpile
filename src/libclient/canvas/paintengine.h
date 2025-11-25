@@ -54,7 +54,7 @@ public:
 
 	void setFps(int fps);
 	void setSnapshotMaxCount(int snapshotMaxCount);
-	void setSnapshotMinDelayMs(long long snapshotMinDelayMs);
+	void setSnapshotMinDelaySec(int snapshotMinDelaySec);
 	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 
 	/// Reset the paint engine to its default state

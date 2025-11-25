@@ -73,7 +73,7 @@ QString Lock::description() const
 	return m_descriptions.join('\n');
 }
 
-void Lock::setShowVewModeNotices(bool showViewModeNotices)
+void Lock::setShowViewModeNotices(bool showViewModeNotices)
 {
 	if(showViewModeNotices != m_showViewModeNotices) {
 		m_showViewModeNotices = showViewModeNotices;

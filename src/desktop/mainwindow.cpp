@@ -42,7 +42,6 @@
 #include "desktop/notifications.h"
 #include "desktop/scene/actionbaritem.h"
 #include "desktop/scene/hudhandler.h"
-#include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -72,6 +71,7 @@
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/drawdance/perf.h"
@@ -117,6 +117,8 @@
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QStyle>
+#include <QTabBar>
 #include <QTemporaryFile>
 #include <QTextEdit>
 #include <QThreadPool>
@@ -145,7 +147,6 @@ static constexpr auto CTRL_KEY = Qt::META;
 static constexpr auto CTRL_KEY = Qt::CTRL;
 #endif
 
-using desktop::settings::Settings;
 using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
@@ -221,8 +222,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #endif
 
 	// The document (initially empty)
-	desktop::settings::Settings &settings = dpApp().settings();
-	m_doc = new Document(dpApp().canvasImplementation(), settings, this);
+	config::Config *cfg = dpAppConfig();
+	m_doc = new Document(dpApp().canvasImplementation(), dpApp().config(), this);
 
 	// Set up the main window widgets
 	// The central widget consists of a custom status bar and a splitter
@@ -285,16 +286,17 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_chatbox = new widgets::ChatBox(m_doc, m_smallScreenMode, this);
 	m_splitter->addWidget(m_chatbox);
 
-	connect(m_chatbox, &widgets::ChatBox::reattachNowPlease, this, [this]() {
-		m_splitter->addWidget(m_chatbox);
-		QByteArray state = dpApp().settings().lastWindowViewState();
-		bool haveSplitterState =
-			!state.isEmpty() && m_splitter->restoreState(state);
-		if(!haveSplitterState || m_chatbox->isCollapsed()) {
-			int h = height();
-			m_splitter->setSizes({h * 2 / 3, h / 3});
-		}
-	});
+	connect(
+		m_chatbox, &widgets::ChatBox::reattachNowPlease, this, [this, cfg]() {
+			m_splitter->addWidget(m_chatbox);
+			QByteArray state = cfg->getLastWindowState();
+			bool haveSplitterState =
+				!state.isEmpty() && m_splitter->restoreState(state);
+			if(!haveSplitterState || m_chatbox->isCollapsed()) {
+				int h = height();
+				m_splitter->setSizes({h * 2 / 3, h / 3});
+			}
+		});
 
 	// Nice initial division between canvas and chat
 	{
@@ -548,8 +550,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 
 	// clang-format on
-	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this] {
-		if(dpApp().settings().doubleTapAltToFocusCanvas()) {
+	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this, cfg] {
+		if(cfg->getDoubleTapAltToFocusCanvas()) {
 			m_canvasView->viewWidget()->setFocus();
 		}
 	});
@@ -588,29 +590,31 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	dpApp().deleteAllMainWindowsExcept(this);
 #endif
 
-	settings.bindInterfaceMode(this, [this](bool) {
-		updateInterfaceMode();
-	});
-	settings.bindLeftyMode(this, &MainWindow::setLeftyMode);
-	settings.bindToolBarConfig(this, &MainWindow::setToolBarConfig);
-	settings.bindTemporaryToolSwitch(
-		this, &MainWindow::updateTemporaryToolSwitch);
-	settings.bindTemporaryToolSwitchMs(
-		this, &MainWindow::updateTemporaryToolSwitch);
-	settings.bindActionBar(this, &MainWindow::setActionBarSetting);
-	settings.bindActionBarLocation(this, &MainWindow::setActionBarLocation);
-	settings.bindAutomaticAlphaPreserve(
-		getAction("layerautomaticalphapreserve"));
-	settings.bindLeftyMode(getAction("smallscreenleftymode"));
-	settings.bindDonationLinksEnabled(
-		this, &MainWindow::setDonationLinkEnabled);
+	CFG_BIND_NOTIFY(cfg, InterfaceMode, this, MainWindow::updateInterfaceMode);
+	CFG_BIND_SET(cfg, LeftyMode, this, MainWindow::setLeftyMode);
+	CFG_BIND_SET(cfg, ToolBarConfig, this, MainWindow::setToolBarConfig);
+	CFG_BIND_NOTIFY(
+		cfg, TemporaryToolSwitch, this, MainWindow::updateTemporaryToolSwitch);
+	CFG_BIND_NOTIFY(
+		cfg, TemporaryToolSwitchMs, this,
+		MainWindow::updateTemporaryToolSwitch);
+	CFG_BIND_SET(cfg, ActionBar, this, MainWindow::setActionBarSetting);
+	CFG_BIND_SET(
+		cfg, ActionBarLocation, this, MainWindow::setActionBarLocation);
+	CFG_BIND_ACTION(
+		cfg, AutomaticAlphaPreserve, getAction("layerautomaticalphapreserve"));
+	CFG_BIND_ACTION(cfg, LeftyMode, getAction("smallscreenleftymode"));
+	CFG_BIND_SET(
+		cfg, DonationLinksEnabled, this, MainWindow::setDonationLinkEnabled);
 #ifndef __EMSCRIPTEN__
-	settings.bindPreferredSaveFormat(this, &MainWindow::setPreferredSaveFormat);
+	CFG_BIND_SET(
+		cfg, PreferredSaveFormat, this, MainWindow::setPreferredSaveFormat);
 #endif
-	settings.bindShowViewModeNotices(
-		m_viewLock, &view::Lock::setShowVewModeNotices);
-	settings.bindShowViewModeNotices(getAction("layerviewnotices"));
-	settings.trySubmit();
+	CFG_BIND_SET(
+		cfg, ShowViewModeNotices, m_viewLock,
+		view::Lock::setShowViewModeNotices);
+	CFG_BIND_ACTION(cfg, ShowViewModeNotices, getAction("layerviewnotices"));
+	cfg->trySubmit();
 
 	m_updatingInterfaceMode = false;
 	updateInterfaceMode();
@@ -668,7 +672,7 @@ MainWindow::~MainWindow()
 		delete child;
 	}
 
-	dpApp().settings().trySubmit();
+	dpAppConfig()->trySubmit();
 }
 
 // clang-format on
@@ -865,7 +869,7 @@ bool MainWindow::shouldPreventUnload() const
 void MainWindow::handleMouseLeave()
 {
 	m_canvasView->clearKeys();
-	dpApp().settings().trySubmit();
+	dpAppConfig()->trySubmit();
 }
 #endif
 
@@ -976,7 +980,7 @@ void MainWindow::prepareWindowReplacement()
 #endif
 	saveWindowState();
 	saveSplitterState();
-	dpApp().settings().trySubmit();
+	dpAppConfig()->trySubmit();
 }
 
 void MainWindow::createNewWindow(const std::function<void(MainWindow *)> &block)
@@ -1307,14 +1311,14 @@ void MainWindow::restoreViewMode(int viewMode, bool revealCensored)
  */
 void MainWindow::readSettings(bool windowpos)
 {
-	auto &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 
-	settings.bindTabletEraserAction(this, [=](int action) {
+	auto setEraserAction = [=](int action) {
 #if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 		m_canvasView->setEnableEraserOverride(
-			action == int(tabletinput::EraserAction::Override));
+			action == int(tools::EraserAction::Override));
 #else
-		if(action == int(tabletinput::EraserAction::Switch)) {
+		if(action == int(tools::EraserAction::Switch)) {
 			connect(
 				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
 				&docks::ToolSettings::switchToEraserSlot, Qt::UniqueConnection);
@@ -1323,7 +1327,7 @@ void MainWindow::readSettings(bool windowpos)
 				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
 				&docks::ToolSettings::switchToEraserSlot);
 		}
-		if(action == int(tabletinput::EraserAction::Override)) {
+		if(action == int(tools::EraserAction::Override)) {
 			connect(
 				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
 				&docks::ToolSettings::switchToEraserMode, Qt::UniqueConnection);
@@ -1333,23 +1337,26 @@ void MainWindow::readSettings(bool windowpos)
 				&docks::ToolSettings::switchToEraserMode);
 		}
 #endif
-	});
+	};
+	CFG_BIND_SET_FN(cfg, TabletEraserAction, this, setEraserAction);
 
 	// clang-format on
 	tools::BrushSettings *brushSettings = m_dockToolSettings->brushSettings();
-	settings.bindShareBrushSlotColor(
-		brushSettings, &tools::BrushSettings::setShareBrushSlotColor);
-	settings.bindBrushPresetsAttach(
-		brushSettings, &tools::BrushSettings::setBrushPresetsAttach);
+	CFG_BIND_SET(
+		cfg, ShareBrushSlotColor, brushSettings,
+		tools::BrushSettings::setShareBrushSlotColor);
+	CFG_BIND_SET(
+		cfg, BrushPresetsAttach, brushSettings,
+		tools::BrushSettings::setBrushPresetsAttach);
 
 	// Restore previously used window size and position
-	resize(settings.lastWindowSize());
+	resize(cfg->getLastWindowSize());
 	if(windowpos) {
-		utils::moveIfOnScreen(this, settings.lastWindowPosition());
+		utils::moveIfOnScreen(this, cfg->getLastWindowPosition());
 	}
 
 	// Show self
-	utils::showWindow(this, settings.lastWindowMaximized(), true);
+	utils::showWindow(this, cfg->getLastWindowMaximized(), true);
 
 	// The following state restoration requires the window to be resized, but Qt
 	// does that lazily on the next event loop iteration. So we forcefully flush
@@ -1359,23 +1366,24 @@ void MainWindow::readSettings(bool windowpos)
 	if(m_smallScreenMode) {
 		initSmallScreenState();
 	} else {
-		restoreSettings(settings);
+		restoreSettings(cfg);
 	}
 
 	connect(m_splitter, &QSplitter::splitterMoved, this, [=] {
 		m_saveSplitterDebounce.start();
 	});
-	// clang-format off
 
 	// Restore remembered actions
-	m_actionsConfig = settings.lastWindowActions();
-	for(auto *act : actions()) {
+	m_actionsConfig = cfg->getLastWindowActions();
+	for(QAction *act : actions()) {
 		if(act->isCheckable() && act->property("remembered").toBool()) {
-			act->setChecked(m_actionsConfig.value(act->objectName(), act->property("defaultValue").toBool()));
-			connect(act, &QAction::toggled, this, [=, &settings](bool checked) {
-				m_actionsConfig[act->objectName()] = checked;
-				settings.setLastWindowActions(m_actionsConfig);
-			});
+			act->setChecked(m_actionsConfig.value(
+				act->objectName(), act->property("defaultValue").toBool()));
+			connect(
+				act, &QAction::toggled, this, [this, act, cfg](bool checked) {
+					m_actionsConfig[act->objectName()] = checked;
+					cfg->setLastWindowActions(m_actionsConfig);
+				});
 		}
 	}
 
@@ -1385,8 +1393,8 @@ void MainWindow::readSettings(bool windowpos)
 	}
 
 	// Customize shortcuts
-	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
-	settings.bindBrushSlotCount(this, &MainWindow::setBrushSlotCount);
+	CFG_BIND_SET(cfg, Shortcuts, this, MainWindow::loadShortcuts);
+	CFG_BIND_SET(cfg, BrushSlotCount, this, MainWindow::setBrushSlotCount);
 
 #ifndef __EMSCRIPTEN__
 	// Restore recent files
@@ -1395,8 +1403,12 @@ void MainWindow::readSettings(bool windowpos)
 	}
 #endif
 
-	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
-	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);
+	connect(
+		&m_saveWindowDebounce, &QTimer::timeout, this,
+		&MainWindow::saveWindowState);
+	connect(
+		&m_saveSplitterDebounce, &QTimer::timeout, this,
+		&MainWindow::saveSplitterState);
 #ifdef SINGLE_MAIN_WINDOW
 	connect(
 		&m_refitWindowDebounce, &QTimer::timeout, this,
@@ -1406,8 +1418,9 @@ void MainWindow::readSettings(bool windowpos)
 	// QMainWindow produces no event when there is a change that would cause the
 	// serialised state to be different, so we will just have to make some
 	// guesses listening for relevant changes in the docked widgets.
-	for(auto *w : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
-		if (w->inherits("QDockWidget") || w->inherits("QToolBar")) {
+	for(QWidget *w :
+		findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(w->inherits("QDockWidget") || w->inherits("QToolBar")) {
 			w->installEventFilter(this);
 		}
 	}
@@ -1416,25 +1429,29 @@ void MainWindow::readSettings(bool windowpos)
 	startRefitWindowDebounce();
 }
 
-void MainWindow::restoreSettings(const desktop::settings::Settings &settings)
+void MainWindow::restoreSettings(config::Config *cfg)
 {
 	// Restore dock, toolbar and view states
-	if(const auto lastWindowState = settings.lastWindowState(); !lastWindowState.isEmpty()) {
+	const QByteArray lastWindowState = cfg->getLastWindowState();
+	if(!lastWindowState.isEmpty()) {
 		deactivateAllDocks();
-		restoreState(settings.lastWindowState());
+		restoreState(lastWindowState);
 	} else {
 		initDefaultDocks();
 	}
 
-	if(const auto lastWindowViewState = settings.lastWindowViewState(); !lastWindowViewState.isEmpty()) {
-		m_splitter->restoreState(settings.lastWindowViewState());
+	const QByteArray lastWindowViewState = cfg->getLastWindowViewState();
+	if(!lastWindowViewState.isEmpty()) {
+		m_splitter->restoreState(lastWindowViewState);
 		m_splitter->setHandleWidth(m_splitterOriginalHandleWidth);
 	}
 
-	const auto docksConfig = settings.lastWindowDocks();
-	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+	const QVariantMap docksConfig = cfg->getLastWindowDocks();
+	for(QDockWidget *dw :
+		findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 		if(!dw->objectName().isEmpty()) {
-			const auto dock = docksConfig.value(dw->objectName()).value<QVariantMap>();
+			const QVariantMap dock =
+				docksConfig.value(dw->objectName()).value<QVariantMap>();
 			if(dock.value("undockable", false).toBool()) {
 				dw->setFloating(true);
 				dw->setAllowedAreas(Qt::NoDockWidgetArea);
@@ -1446,7 +1463,8 @@ void MainWindow::restoreSettings(const desktop::settings::Settings &settings)
 void MainWindow::initSmallScreenState()
 {
 	initDefaultDocks();
-	for(QDockWidget *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+	for(QDockWidget *dw :
+		findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 		dw->hide();
 	}
 	m_splitter->setHandleWidth(0);
@@ -1469,7 +1487,6 @@ void MainWindow::initDefaultDocks()
 	dpApp().processEvents();
 }
 
-// clang-format on
 void MainWindow::setDefaultDockSizes()
 {
 	int leftWidth = 320, leftHeight = 220;
@@ -1528,7 +1545,7 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 
 	{
 		CustomShortcutModel shortcutsModel;
-		shortcutsModel.loadShortcuts(dpApp().settings().shortcuts());
+		shortcutsModel.loadShortcuts(dpAppConfig()->getShortcuts());
 		for(const CustomShortcut &shortcut :
 			shortcutsModel.getShortcutsMatching(keySequence)) {
 
@@ -1593,8 +1610,9 @@ void MainWindow::showSelectionMaskColorPicker()
 		dlg->activateWindow();
 		dlg->raise();
 	} else {
+		config::Config *cfg = dpAppConfig();
 		dlg = dialogs::newDeleteOnCloseColorDialog(
-			dpApp().settings().selectionColor(), this);
+			cfg->getSelectionColor(), this);
 		dlg->setPreviewDisplayMode(color_widgets::ColorPreview::SplitColor);
 		dlg->setAlphaEnabled(false);
 		dlg->setObjectName(objectName);
@@ -1603,13 +1621,14 @@ void MainWindow::showSelectionMaskColorPicker()
 			dlg->findChild<color_widgets::ColorPreview *>(
 				nullptr, Qt::FindChildrenRecursively);
 		if(preview) {
-			preview->setComparisonColor(SELECTION_COLOR_DEFAULT);
+			preview->setComparisonColor(
+				config::Config::defaultSelectionColor());
 		}
 
 		connect(
 			dlg, &color_widgets::ColorDialog::colorSelected, this,
-			[](const QColor &color) {
-				dpApp().settings().setSelectionColor(color);
+			[cfg](const QColor &color) {
+				cfg->setSelectionColor(color);
 			});
 		utils::showWindow(dlg, shouldShowDialogMaximized());
 	}
@@ -1624,7 +1643,7 @@ void MainWindow::saveSplitterState()
 	m_saveSplitterDebounce.stop();
 	if(!m_smallScreenMode && !m_chatbox->isCollapsed() &&
 	   !m_chatbox->isDetached()) {
-		dpApp().settings().setLastWindowViewState(m_splitter->saveState());
+		dpAppConfig()->setLastWindowViewState(m_splitter->saveState());
 	}
 }
 
@@ -1636,28 +1655,28 @@ void MainWindow::saveWindowState()
 	}
 	m_saveWindowDebounce.stop();
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setLastWindowPosition(normalGeometry().topLeft());
-	settings.setLastWindowSize(normalGeometry().size());
+	config::Config *cfg = dpAppConfig();
+	cfg->setLastWindowPosition(normalGeometry().topLeft());
+	cfg->setLastWindowSize(normalGeometry().size());
 	if(!m_smallScreenMode) {
-		settings.setLastWindowMaximized(
+		cfg->setLastWindowMaximized(
 			isMaximized() || windowState().testFlag(Qt::WindowFullScreen));
-		settings.setLastWindowState(
+		cfg->setLastWindowState(
 			m_hiddenDockState.isEmpty() ? saveState() : m_hiddenDockState);
 
 		// TODO: This should be separate from window state and happen only when
 		// dock states change
-		Settings::LastWindowDocksType docksConfig;
-		for(const auto *dw : findChildren<const QDockWidget *>(
+		QVariantMap docksConfig;
+		for(const QDockWidget *dw : findChildren<const QDockWidget *>(
 				QString(), Qt::FindDirectChildrenOnly)) {
 			if(!dw->objectName().isEmpty()) {
 				docksConfig[dw->objectName()] = QVariantMap{
-					{"undockable",
+					{QStringLiteral("undockable"),
 					 dw->isFloating() &&
 						 dw->allowedAreas() == Qt::NoDockWidgetArea}};
 			}
 		}
-		settings.setLastWindowDocks(docksConfig);
+		cfg->setLastWindowDocks(docksConfig);
 	}
 
 	m_dockToolSettings->saveSettings();
@@ -1837,16 +1856,15 @@ void MainWindow::showToolBarConfigDialog()
 		dlg->activateWindow();
 		dlg->raise();
 	} else {
+		config::Config *cfg = dpAppConfig();
 		dlg = new dialogs::ToolBarConfigDialog(
-			dpApp().settings().toolBarConfig(), m_drawingtools->actions(),
-			this);
+			cfg->getToolBarConfig(), m_drawingtools->actions(), this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->setObjectName(name);
-		connect(dlg, &dialogs::ToolBarConfigDialog::accepted, this, [dlg] {
-			desktop::settings::Settings &settings = dpApp().settings();
-			QVariantHash cfg = settings.toolBarConfig();
-			dlg->updateConfig(cfg);
-			settings.setToolBarConfig(cfg);
+		connect(dlg, &dialogs::ToolBarConfigDialog::accepted, this, [cfg, dlg] {
+			QVariantHash toolBarConfig = cfg->getToolBarConfig();
+			dlg->updateConfig(toolBarConfig);
+			cfg->setToolBarConfig(toolBarConfig);
 		});
 		utils::showWindow(dlg);
 	}
@@ -2016,7 +2034,7 @@ bool MainWindow::event(QEvent *event)
 			saveWindowState();
 		}
 		m_canvasView->clearKeys();
-		dpApp().settings().trySubmit();
+		dpAppConfig()->trySubmit();
 		break;
 	default:
 		break;
@@ -2964,6 +2982,7 @@ void MainWindow::toggleProfile()
 	}
 }
 
+// clang-format on
 void MainWindow::toggleTabletEventLog()
 {
 #ifdef __EMSCRIPTEN__
@@ -2985,7 +3004,8 @@ void MainWindow::toggleTabletEventLog()
 			f.remove();
 #endif
 		} else {
-			showErrorMessageWithDetails(tr("Error closing tablet event log."), DP_error());
+			showErrorMessageWithDetails(
+				tr("Error closing tablet event log."), DP_error());
 		}
 	} else {
 #ifndef __EMSCRIPTEN__
@@ -2993,30 +3013,44 @@ void MainWindow::toggleTabletEventLog()
 #endif
 		if(!path.isEmpty()) {
 			if(drawdance::EventLog::open(path)) {
-				DP_event_log_write_meta("Drawpile: %s", cmake_config::version());
+				DP_event_log_write_meta(
+					"Drawpile: %s", cmake_config::version());
 				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
-				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
-				DP_event_log_write_meta("Platform: %s", qUtf8Printable(QGuiApplication::platformName()));
+				DP_event_log_write_meta(
+					"OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
+				DP_event_log_write_meta(
+					"Platform: %s",
+					qUtf8Printable(QGuiApplication::platformName()));
 				DP_event_log_write_meta("Input: %s", tabletinput::current());
-				const desktop::settings::Settings &settings = dpApp().settings();
-				DP_event_log_write_meta("Tablet enabled: %d", settings.tabletEvents());
-				DP_event_log_write_meta("Tablet eraser action: %d", settings.tabletEraserAction());
-				DP_event_log_write_meta("One-finger touch action: %d", settings.oneFingerTouch());
-				DP_event_log_write_meta("Two-finger pinch action: %d", settings.twoFingerPinch());
-				DP_event_log_write_meta("Two-finger twist action: %d", settings.twoFingerTwist());
-				DP_event_log_write_meta("One-finger tap action: %d", settings.oneFingerTap());
-				DP_event_log_write_meta("Two-finger tap action: %d", settings.twoFingerTap());
-				DP_event_log_write_meta("Three-finger tap action: %d", settings.threeFingerTap());
-				DP_event_log_write_meta("Four-finger tap action: %d", settings.fourFingerTap());
-				DP_event_log_write_meta("Gestures: %d", settings.touchGestures());
+				config::Config *cfg = dpAppConfig();
+				DP_event_log_write_meta(
+					"Tablet enabled: %d", cfg->getTabletEvents());
+				DP_event_log_write_meta(
+					"Tablet eraser action: %d", cfg->getTabletEraserAction());
+				DP_event_log_write_meta(
+					"One-finger touch action: %d", cfg->getOneFingerTouch());
+				DP_event_log_write_meta(
+					"Two-finger pinch action: %d", cfg->getTwoFingerPinch());
+				DP_event_log_write_meta(
+					"Two-finger twist action: %d", cfg->getTwoFingerTwist());
+				DP_event_log_write_meta(
+					"One-finger tap action: %d", cfg->getOneFingerTap());
+				DP_event_log_write_meta(
+					"Two-finger tap action: %d", cfg->getTwoFingerTap());
+				DP_event_log_write_meta(
+					"Three-finger tap action: %d", cfg->getThreeFingerTap());
+				DP_event_log_write_meta(
+					"Four-finger tap action: %d", cfg->getFourFingerTap());
+				DP_event_log_write_meta(
+					"Gestures: %d", cfg->getTouchGestures());
 			} else {
-				showErrorMessageWithDetails(tr("Error opening tablet event log."), DP_error());
+				showErrorMessageWithDetails(
+					tr("Error opening tablet event log."), DP_error());
 			}
 		}
 	}
 }
 
-// clang-format on
 void MainWindow::showBrushSettingsDialogBrush()
 {
 	showBrushSettingsDialog(false);
@@ -3240,7 +3274,7 @@ void MainWindow::hostSession(const HostParams &params, int connectStrategy)
 	}
 
 	// Start server if hosting locally
-	const desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	if(!useremote) {
 #ifdef DP_HAVE_BUILTIN_SERVER
 		canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
@@ -3249,8 +3283,8 @@ void MainWindow::hostSession(const HostParams &params, int connectStrategy)
 
 		QString errorMessage;
 		bool serverStarted = server->start(
-			settings.serverPort(), settings.serverTimeout(),
-			settings.networkProxyMode(), &errorMessage);
+			cfg->getServerPort(), cfg->getServerTimeout(),
+			cfg->getNetworkProxyMode(), &errorMessage);
 		if(!serverStarted) {
 			utils::showWarning(this, tr("Host Session"), errorMessage);
 			delete server;
@@ -3342,7 +3376,7 @@ void MainWindow::hostSession(const HostParams &params, int connectStrategy)
 		shouldShowDialogMaximized());
 
 	m_doc->connectToServer(
-		settings.serverTimeout(), settings.networkProxyMode(),
+		cfg->getServerTimeout(), cfg->getNetworkProxyMode(),
 		net::resolveConnectStrategy(
 			connectStrategy, net::defaultConnectStrategy()),
 		login, !useremote);
@@ -3753,9 +3787,9 @@ void MainWindow::connectToSession(
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
-	const desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	m_doc->connectToServer(
-		settings.serverTimeout(), settings.networkProxyMode(),
+		cfg->getServerTimeout(), cfg->getNetworkProxyMode(),
 		net::resolveConnectStrategy(
 			connectStrategy, net::defaultConnectStrategy()),
 		login, false);
@@ -3932,7 +3966,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	if(m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
 	}
-	if(!join && dpApp().settings().showInviteDialogOnHost()) {
+	if(!join && dpAppConfig()->getShowInviteDialogOnHost()) {
 		invite();
 	}
 }
@@ -4490,7 +4524,7 @@ void MainWindow::selectTool(QAction *tool)
 	Q_ASSERT(idx < int(tools::Tool::Type::_LASTTOOL));
 	if(idx >= 0 && idx < int(tools::Tool::Type::_LASTTOOL)) {
 		if(m_dockToolSettings->currentTool() == idx) {
-			if(dpApp().settings().toolToggle())
+			if(dpAppConfig()->getToolToggle())
 				m_dockToolSettings->setPreviousTool();
 			m_tempToolSwitchShortcut->reset();
 		} else {
@@ -4503,9 +4537,12 @@ void MainWindow::selectTool(QAction *tool)
 // clang-format on
 void MainWindow::updateTemporaryToolSwitch()
 {
-	const desktop::settings::Settings &settings = dpApp().settings();
-	m_temporaryToolSwitchMs =
-		settings.temporaryToolSwitch() ? settings.temporaryToolSwitchMs() : -1;
+	config::Config *cfg = dpAppConfig();
+	if(cfg->getTemporaryToolSwitch()) {
+		m_temporaryToolSwitchMs = cfg->getTemporaryToolSwitchMs();
+	} else {
+		m_temporaryToolSwitchMs = -1;
+	}
 }
 // clang-format off
 
@@ -5245,7 +5282,7 @@ void MainWindow::about()
 			) +
 			QStringLiteral("<hr><p><b>%1</b> %2</p><p><b>%3</b> %4</p><p><b>%5</b> %6</p>")
 				.arg(tr("Settings File:"))
-				.arg(dpApp().settings().path().toHtmlEscaped())
+				.arg(dpAppConfig()->path().toHtmlEscaped())
 				.arg(tr("Tablet Input:"))
 				.arg(QCoreApplication::translate("tabletinput", tabletinput::current()))
 				.arg(tr("Primary screen:"))
@@ -5358,6 +5395,8 @@ void MainWindow::setupActions()
 {
 	Q_ASSERT(m_doc);
 	Q_ASSERT(m_dockLayers);
+
+	config::Config *cfg = dpAppConfig();
 
 	// Action groups
 	m_currentdoctools = new QActionGroup(this);
@@ -5828,7 +5867,7 @@ void MainWindow::setupActions()
 				"dialogs::settingsdialog::Tablet", "Windows Ink"))
 			.noDefaultShortcut()
 			.checkable()
-			.property("tabletdriver", int(tabletinput::Mode::KisTabletWinink)));
+			.property("tabletdriver", int(tools::TabletInputMode::KisTabletWinink)));
 	drivers.append(
 		makeAction(
 			"driverkistabletwindowsinknonnative",
@@ -5838,7 +5877,7 @@ void MainWindow::setupActions()
 			.checkable()
 			.property(
 				"tabletdriver",
-				int(tabletinput::Mode::KisTabletWininkNonNative)));
+				int(tools::TabletInputMode::KisTabletWininkNonNative)));
 	drivers.append(
 		makeAction(
 			"driverkistabletwintab",
@@ -5846,7 +5885,7 @@ void MainWindow::setupActions()
 				"dialogs::settingsdialog::Tablet", "Wintab"))
 			.noDefaultShortcut()
 			.checkable()
-			.property("tabletdriver", int(tabletinput::Mode::KisTabletWintab)));
+			.property("tabletdriver", int(tools::TabletInputMode::KisTabletWintab)));
 	drivers.append(
 		makeAction(
 			"driverkistabletwintabrelative",
@@ -5856,7 +5895,7 @@ void MainWindow::setupActions()
 			.checkable()
 			.property(
 				"tabletdriver",
-				int(tabletinput::Mode::KisTabletWintabRelativePenHack)));
+				int(tools::TabletInputMode::KisTabletWintabRelativePenHack)));
 #	if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	drivers.append(
 		makeAction(
@@ -5864,7 +5903,7 @@ void MainWindow::setupActions()
 							 "dialogs::settingsdialog::Tablet", "Qt5"))
 			.noDefaultShortcut()
 			.checkable()
-			.property("tabletdriver", int(tabletinput::Mode::Qt5)));
+			.property("tabletdriver", int(tools::TabletInputMode::Qt5)));
 #	else
 	drivers.append(
 		makeAction(
@@ -5873,7 +5912,7 @@ void MainWindow::setupActions()
 				"dialogs::settingsdialog::Tablet", "Qt6 Windows Ink"))
 			.noDefaultShortcut()
 			.checkable()
-			.property("tabletdriver", int(tabletinput::Mode::Qt6Winink)));
+			.property("tabletdriver", int(tools::TabletInputMode::Qt6Winink)));
 	drivers.append(
 		makeAction(
 			"driverqt6wintab",
@@ -5881,7 +5920,7 @@ void MainWindow::setupActions()
 				"dialogs::settingsdialog::Tablet", "Qt6 Wintab"))
 			.noDefaultShortcut()
 			.checkable()
-			.property("tabletdriver", int(tabletinput::Mode::Qt6Wintab)));
+			.property("tabletdriver", int(tools::TabletInputMode::Qt6Wintab)));
 #	endif
 #endif
 
@@ -5956,9 +5995,9 @@ void MainWindow::setupActions()
 #endif
 #ifdef Q_OS_WIN32
 	for(QAction *driver : drivers) {
-		connect(driver, &QAction::triggered, this, [this, driver](bool checked) {
+		connect(driver, &QAction::triggered, this, [this, cfg, driver](bool checked) {
 			if(checked) {
-				dpApp().settings().setTabletDriver(driver->property("tabletdriver").toInt());
+				cfg->setTabletDriver(driver->property("tabletdriver").toInt());
 			}
 		});
 	}
@@ -6025,8 +6064,8 @@ void MainWindow::setupActions()
 	for(QAction *driver : drivers) {
 		driverMenu->addAction(driver);
 	}
-	connect(driverMenu, &QMenu::aboutToShow, this, [this, drivers]() {
-		int mode = dpApp().settings().tabletDriver();
+	connect(driverMenu, &QMenu::aboutToShow, this, [this, cfg, drivers]() {
+		int mode = cfg->getTabletDriver();
 		for(QAction *driver : drivers) {
 			QSignalBlocker blocker(driver);
 			driver->setChecked(driver->property("tabletdriver").toInt() == mode);
@@ -6234,14 +6273,14 @@ void MainWindow::setupActions()
 		m_chatbox, &widgets::ChatBox::expandPlease, toggleChat,
 		&QAction::trigger);
 
-	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
+	connect(toggleChat, &QAction::triggered, this, [this, cfg](bool show) {
 		if(m_smallScreenMode) {
 			HudAction action;
 			action.type = HudAction::Type::ToggleChat;
 			handleToggleAction(action);
 		} else {
 			if(show) {
-				QByteArray state = dpApp().settings().lastWindowViewState();
+				QByteArray state = cfg->getLastWindowViewState();
 				if(!state.isEmpty()) {
 					m_splitter->restoreState(state);
 				}
@@ -6422,7 +6461,7 @@ void MainWindow::setupActions()
 		{tr("1 Hour", "user pointer stay time"), 3600000},
 		{tr("Forever", "user pointer stay time"), -1},
 	};
-	int userMarkerPersistence = dpApp().settings().userMarkerPersistence();
+	int userMarkerPersistence = cfg->getUserMarkerPersistence();
 	for(const QPair<QString, int> &p : stayTimeActions) {
 		QAction *action = stayTimeMenu->addAction(p.first);
 		action->setCheckable(true);
@@ -6430,9 +6469,9 @@ void MainWindow::setupActions()
 		action->setChecked(userMarkerPersistence == persistence);
 		stayTimeGroup->addAction(action);
 		connect(
-			action, &QAction::toggled, this, [persistence](bool checked) {
+			action, &QAction::toggled, this, [cfg, persistence](bool checked) {
 				if(checked) {
-					dpApp().settings().setUserMarkerPersistence(persistence);
+					cfg->setUserMarkerPersistence(persistence);
 				}
 			});
 	}
@@ -7616,8 +7655,8 @@ void MainWindow::setupActions()
 	layerViewNoticeMenu->addSeparator();
 	QAction *disableViewModeNotices = layerViewNoticeMenu->addAction(
 		QIcon::fromTheme("drawpile_close"), tr("Disable view mode notices"));
-	connect(disableViewModeNotices, &QAction::triggered, this, [this] {
-		dpApp().settings().setShowViewModeNotices(false);
+	connect(disableViewModeNotices, &QAction::triggered, this, [this, cfg] {
+		cfg->setShowViewModeNotices(false);
 		m_canvasView->showPopupNotice(
 			tr("Layer view mode notices disabled.\n"
 			   "You can re-enable them via the View menu or preferences."));
@@ -7726,8 +7765,9 @@ void MainWindow::setupHud()
 {
 	using drawingboard::ActionBarItem;
 	HudHandler *hud = m_canvasView->hud();
-	dpApp().settings().bindActionBarLocation(
-		hud, &HudHandler::setActionBarLocation);
+	CFG_BIND_SET(
+		dpAppConfig(), ActionBarLocation, hud,
+		HudHandler::setActionBarLocation);
 
 	QAction *locationMenuAction = new QAction(tr("Bar Location"), this);
 	locationMenuAction->setMenu(m_actionBarLocationMenu);
@@ -7835,7 +7875,7 @@ void MainWindow::setActionBarEnabled(bool enabled, bool updateSetting)
 		QSignalBlocker blocker(showactionbar);
 		showactionbar->setChecked(enabled);
 		if(updateSetting) {
-			dpApp().settings().setActionBar(enabled ? 1 : 0);
+			dpAppConfig()->setActionBar(enabled ? 1 : 0);
 		}
 	}
 }
@@ -7850,7 +7890,7 @@ void MainWindow::onActionBarLocationActionTriggered(QAction *action)
 {
 	int location = m_actionBarLocationMenu->actions().indexOf(action);
 	if(location != -1) {
-		dpApp().settings().setActionBarLocation(location);
+		dpAppConfig()->setActionBarLocation(location);
 	}
 }
 
@@ -8063,11 +8103,11 @@ void MainWindow::resetDefaultToolbars()
 
 bool MainWindow::isInitialSmallScreenMode()
 {
-	const desktop::settings::Settings &settings = dpApp().settings();
-	switch(settings.interfaceMode()) {
-	case int(desktop::settings::InterfaceMode::Desktop):
+	config::Config *cfg = dpAppConfig();
+	switch(cfg->getInterfaceMode()) {
+	case int(view::InterfaceMode::Desktop):
 		return false;
-	case int(desktop::settings::InterfaceMode::SmallScreen):
+	case int(view::InterfaceMode::SmallScreen):
 		return true;
 	default:
 		break;
@@ -8077,7 +8117,7 @@ bool MainWindow::isInitialSmallScreenMode()
 #ifdef SINGLE_MAIN_WINDOW
 	useScreenSize = true;
 #else
-	useScreenSize = settings.lastWindowMaximized();
+	useScreenSize = cfg->getLastWindowMaximized();
 #endif
 
 	QSize s;
@@ -8087,7 +8127,7 @@ bool MainWindow::isInitialSmallScreenMode()
 			s = screen->availableSize();
 		}
 	} else {
-		s = settings.lastWindowSize();
+		s = cfg->getLastWindowSize();
 	}
 	return utils::isSmallScreenModeSize(s);
 }
@@ -8118,8 +8158,7 @@ void MainWindow::updateInterfaceMode()
 	   !findChild<dialogs::LayoutsDialog *>(
 		   "layoutsdialog", Qt::FindDirectChildrenOnly)) {
 		QScopedValueRollback<bool> rollback(m_updatingInterfaceMode, true);
-		const desktop::settings::Settings &settings = dpApp().settings();
-		bool smallScreenMode = shouldUseSmallScreenMode(settings);
+		bool smallScreenMode = shouldUseSmallScreenMode();
 		if(smallScreenMode && !m_smallScreenMode) {
 			switchInterfaceMode(true);
 		} else if(!smallScreenMode && m_smallScreenMode) {
@@ -8128,13 +8167,12 @@ void MainWindow::updateInterfaceMode()
 	}
 }
 
-bool MainWindow::shouldUseSmallScreenMode(
-	const desktop::settings::Settings &settings)
+bool MainWindow::shouldUseSmallScreenMode()
 {
-	switch(settings.interfaceMode()) {
-	case int(desktop::settings::InterfaceMode::Desktop):
+	switch(dpAppConfig()->getInterfaceMode()) {
+	case int(view::InterfaceMode::Desktop):
 		return false;
-	case int(desktop::settings::InterfaceMode::SmallScreen):
+	case int(view::InterfaceMode::SmallScreen):
 		return true;
 	default:
 		return utils::isSmallScreenModeSize(size());
@@ -8193,7 +8231,7 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 		QByteArray stateToRestore;
 		stateToRestore.swap(m_desktopModeState);
 		if(stateToRestore.isEmpty()) {
-			stateToRestore = dpApp().settings().lastWindowState();
+			stateToRestore = dpAppConfig()->getLastWindowState();
 		}
 		if(stateToRestore.isEmpty()) {
 			setFreezeDocks(false);
@@ -8405,7 +8443,7 @@ void MainWindow::setDonationLinkEnabled(bool enabled)
 
 QString MainWindow::makeContributionInfoText()
 {
-	if(!dpApp().settings().donationLinksEnabled()) {
+	if(!dpAppConfig()->getDonationLinksEnabled()) {
 		return QString();
 	}
 

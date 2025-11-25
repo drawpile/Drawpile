@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+extern "C" {
+#include <dpengine/canvas_history.h>
+#include <dpmsg/acl.h>
+}
 #include "desktop/dialogs/startdialog/host/permissions.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/noscroll.h"
+#include "libclient/config/config.h"
+#include <QButtonGroup>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -115,8 +120,8 @@ Permissions::Permissions(QWidget *parent)
 	permissionsLayout->addLayout(featureGrid);
 
 	int row = 0;
-	desktop::settings::Settings &settings = dpApp().settings();
-	QVariantMap lastPermissions = settings.lastSessionPermissions();
+	config::Config *cfg = dpAppConfig();
+	QVariantMap lastPermissions = cfg->getLastSessionPermissions();
 	addPerm(
 		featureGrid, row, lastPermissions, m_permPutImage,
 		int(DP_FEATURE_PUT_IMAGE), QIcon::fromTheme("fill-color"),
@@ -183,14 +188,15 @@ Permissions::Permissions(QWidget *parent)
 
 	permissionsLayout->addStretch();
 
-	settings.bindLastSessionUndoDepth(m_undoLimitSpinner);
+	CFG_BIND_SPINBOX(cfg, LastSessionUndoDepth, m_undoLimitSpinner);
 }
 
 void Permissions::reset()
 {
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.setLastSessionUndoDepth(SESSION_UNDO_LIMIT_DEFAULT);
-	settings.setLastSessionPermissions(QVariantMap());
+	config::Config *cfg = dpAppConfig();
+	cfg->setLastSessionUndoDepth(config::Config::defaultLastSessionUndoDepth());
+	cfg->setLastSessionPermissions(
+		config::Config::defaultLastSessionPermissions());
 
 	for(QHash<int, Perm *>::key_value_iterator it = m_permsMap.keyValueBegin(),
 											   end = m_permsMap.keyValueEnd();
@@ -214,12 +220,12 @@ void Permissions::reset()
 
 void Permissions::load(const QJsonObject &json)
 {
-	desktop::settings::Settings &settings = dpApp().settings();
+	config::Config *cfg = dpAppConfig();
 	int undoLimit = json[QStringLiteral("undolimit")].toInt(-1);
 	if(undoLimit >= m_undoLimitSpinner->minimum()) {
-		settings.setLastSessionUndoDepth(undoLimit);
+		cfg->setLastSessionUndoDepth(undoLimit);
 	}
-	settings.setLastSessionPermissions(QVariantMap());
+	cfg->setLastSessionPermissions(QVariantMap());
 
 	for(QHash<int, Perm *>::key_value_iterator it = m_permsMap.keyValueBegin(),
 											   end = m_permsMap.keyValueEnd();
@@ -583,7 +589,7 @@ void Permissions::persist()
 		}
 	}
 
-	dpApp().settings().setLastSessionPermissions(permissions);
+	dpAppConfig()->setLastSessionPermissions(permissions);
 }
 
 QString Permissions::getAccessTierName(int tier)
@@ -604,8 +610,7 @@ QString Permissions::getFeatureLimitName(int featureLimit)
 
 QString Permissions::getFeatureLimitKey(int featureLimit, int tier)
 {
-	return QString::number(
-		((featureLimit + 1) * 1000) + ((tier + 1) * 100000));
+	return QString::number(((featureLimit + 1) * 1000) + ((tier + 1) * 100000));
 }
 
 int Permissions::getDefaultFeatureTier(int feature)

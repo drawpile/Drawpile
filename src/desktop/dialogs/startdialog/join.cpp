@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/join.h"
+#include "cmake-config/config.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/widgets/recentscroll.h"
+#include "libclient/config/config.h"
 #include "libshared/net/netutils.h"
 #include <QLabel>
 #include <QLineEdit>
+#include <QRegularExpression>
 #include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QUrlQuery>
@@ -50,7 +52,8 @@ Join::Join(QWidget *parent)
 		m_recentScroll, &widgets::RecentScroll::doubleClicked, this,
 		&Join::acceptAddress);
 
-	dpApp().settings().bindLastJoinAddress(m_addressEdit, &QLineEdit::setText);
+	CFG_BIND_SET(
+		dpAppConfig(), LastJoinAddress, m_addressEdit, QLineEdit::setText);
 }
 
 void Join::activate()
@@ -65,7 +68,7 @@ void Join::accept()
 {
 	QUrl url = getUrl();
 	if(url.isValid()) {
-		dpApp().settings().setLastJoinAddress(m_addressEdit->text().trimmed());
+		dpAppConfig()->setLastJoinAddress(m_addressEdit->text().trimmed());
 		emit join(url);
 	}
 }

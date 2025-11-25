@@ -5,17 +5,18 @@
 #include "desktop/dialogs/settingsdialog/proportionaltableview.h"
 #include "desktop/dialogs/settingsdialog/shortcutfilterinput.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/keysequenceedit.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/config/config.h"
 #include "libclient/utils/brushshortcutmodel.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libshared/util/qtcompat.h"
 #include <QAbstractItemView>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFormLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -69,7 +70,7 @@ private:
 
 }
 
-Shortcuts::Shortcuts(desktop::settings::Settings &settings, QWidget *parent)
+Shortcuts::Shortcuts(config::Config *cfg, QWidget *parent)
 	: QWidget(parent)
 	, m_shortcutConflictDebounce(100)
 {
@@ -86,7 +87,7 @@ Shortcuts::Shortcuts(desktop::settings::Settings &settings, QWidget *parent)
 	m_tabs = new QTabWidget;
 	Q_ASSERT(m_tabs->count() == ACTION_TAB);
 	m_tabs->addTab(
-		initActionShortcuts(settings, keySequenceDelegate),
+		initActionShortcuts(cfg, keySequenceDelegate),
 		QIcon::fromTheme("input-keyboard"), QString());
 	Q_ASSERT(m_tabs->count() == BRUSH_TAB);
 	m_tabs->addTab(
@@ -94,8 +95,7 @@ Shortcuts::Shortcuts(desktop::settings::Settings &settings, QWidget *parent)
 		QString());
 	Q_ASSERT(m_tabs->count() == CANVAS_TAB);
 	m_tabs->addTab(
-		initCanvasShortcuts(settings), QIcon::fromTheme("edit-image"),
-		QString());
+		initCanvasShortcuts(cfg), QIcon::fromTheme("edit-image"), QString());
 	layout->addWidget(m_tabs);
 
 	updateConflicts();
@@ -152,8 +152,7 @@ void Shortcuts::finishEditing()
 }
 
 QWidget *Shortcuts::initActionShortcuts(
-	desktop::settings::Settings &settings,
-	QStyledItemDelegate *keySequenceDelegate)
+	config::Config *cfg, QStyledItemDelegate *keySequenceDelegate)
 {
 	QWidget *widget = new QWidget;
 	QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -163,11 +162,11 @@ QWidget *Shortcuts::initActionShortcuts(
 	// not first-class models and I am not rewriting them right now, this is how
 	// it will be in order to get the “Restore defaults” hooked up to everything
 	m_actionShortcutsModel = shortcutsModel;
-	shortcutsModel->loadShortcuts(settings.shortcuts());
+	shortcutsModel->loadShortcuts(cfg->getShortcuts());
 	connect(
-		shortcutsModel, &QAbstractItemModel::dataChanged, &settings,
-		[=, &settings] {
-			settings.setShortcuts(shortcutsModel->saveShortcuts());
+		shortcutsModel, &QAbstractItemModel::dataChanged, cfg,
+		[cfg, shortcutsModel] {
+			cfg->setShortcuts(shortcutsModel->saveShortcuts());
 		});
 	connect(
 		&dpApp(), &DrawpileApp::shortcutsChanged, shortcutsModel,
@@ -189,12 +188,12 @@ QWidget *Shortcuts::initActionShortcuts(
 
 	QPushButton *restoreDefaults = new QPushButton(tr("Restore defaults…"));
 	restoreDefaults->setAutoDefault(false);
-	connect(restoreDefaults, &QPushButton::clicked, this, [=, &settings] {
+	connect(restoreDefaults, &QPushButton::clicked, this, [this, cfg] {
 		QMessageBox *box = utils::showQuestion(
 			this, tr("Restore Shortcut Defaults"),
 			tr("Really restore all shortcuts to their default values?"));
-		connect(box, &QMessageBox::accepted, this, [this, &settings] {
-			settings.setShortcuts({});
+		connect(box, &QMessageBox::accepted, this, [this, cfg] {
+			cfg->setShortcuts({});
 			m_actionShortcutsModel->loadShortcuts({});
 		});
 	});
@@ -252,7 +251,7 @@ QWidget *Shortcuts::initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate)
 static QModelIndex
 mapFromView(const QAbstractItemView *view, const QModelIndex &index)
 {
-	if(const auto *model =
+	if(const QAbstractProxyModel *model =
 		   qobject_cast<const QAbstractProxyModel *>(view->model())) {
 		return model->mapToSource(index);
 	}
@@ -262,7 +261,7 @@ mapFromView(const QAbstractItemView *view, const QModelIndex &index)
 static QModelIndex
 mapToView(const QAbstractItemView *view, const QModelIndex &index)
 {
-	if(const auto *model =
+	if(const QAbstractProxyModel *model =
 		   qobject_cast<const QAbstractProxyModel *>(view->model())) {
 		return model->mapFromSource(index);
 	}
@@ -282,7 +281,7 @@ static void execCanvasShortcutDialog(
 	QObject::connect(
 		editor, &dialogs::CanvasShortcutsDialog::accepted, view,
 		[editor, view, callback] {
-			auto row = std::invoke(callback, editor->shortcut());
+			QModelIndex row = std::invoke(callback, editor->shortcut());
 			if(row.isValid()) {
 				view->selectRow(mapToView(view, row).row());
 			}
@@ -290,17 +289,17 @@ static void execCanvasShortcutDialog(
 	editor->show();
 }
 
-QWidget *Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings)
+QWidget *Shortcuts::initCanvasShortcuts(config::Config *cfg)
 {
 	QWidget *widget = new QWidget;
 	QVBoxLayout *layout = new QVBoxLayout(widget);
 
 	m_canvasShortcutsModel = new CanvasShortcutsModel(this);
-	m_canvasShortcutsModel->loadShortcuts(settings.canvasShortcuts());
-	std::function<void()> updateModelFn = [=, &settings] {
-		settings.setCanvasShortcuts(m_canvasShortcutsModel->saveShortcuts());
+	m_canvasShortcutsModel->loadShortcuts(cfg->getCanvasShortcuts());
+	std::function<void()> updateModelFn = [this, cfg] {
+		cfg->setCanvasShortcuts(m_canvasShortcutsModel->saveShortcuts());
 	};
-	ON_ANY_MODEL_CHANGE(m_canvasShortcutsModel, &settings, updateModelFn);
+	ON_ANY_MODEL_CHANGE(m_canvasShortcutsModel, cfg, updateModelFn);
 
 	m_canvasTable = ProportionalTableView::make(
 		m_filter, int(CanvasShortcutsModel::FilterRole),
@@ -476,5 +475,5 @@ QString Shortcuts::searchResultText(const QString &text, int results)
 	return tr("%1 (%2)").arg(text).arg(results);
 }
 
-} // namespace settingsdialog
-} // namespace dialogs
+}
+}

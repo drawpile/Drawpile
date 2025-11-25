@@ -13,10 +13,8 @@ class QPushButton;
 class QStackedWidget;
 class QTextBrowser;
 
-namespace desktop {
-namespace settings {
-class Settings;
-}
+namespace config {
+class Config;
 }
 
 namespace utils {
@@ -74,8 +72,8 @@ private:
 	void followServerInfoLink(const QUrl &url);
 
 	static void generatePassword();
-	static void generatePasswordWith(desktop::settings::Settings &settings);
-	static void fixUpLastHostServer(desktop::settings::Settings &settings);
+	static void generatePasswordWith(config::Config *cfg);
+	static void fixUpLastHostServer(config::Config *cfg);
 	static bool looksLikePub(const QString &address);
 
 	QIcon m_drawpileIcon;

@@ -16,7 +16,7 @@ extern "C" {
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/net/message.h"
-#include "libclient/settings.h"
+#include "libclient/view/enums.h"
 #include "libshared/util/qtcompat.h"
 #include <QPainter>
 #include <QSet>
@@ -48,11 +48,9 @@ PaintEngine::PaintEngine(
 	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_useTileCache(
-		  canvasImplementation !=
-		  int(libclient::settings::CanvasImplementation::GraphicsView))
+		  canvasImplementation != int(view::CanvasImplementation::GraphicsView))
 	, m_tileCacheDirtyCheckOnTick(
-		  canvasImplementation ==
-		  int(libclient::settings::CanvasImplementation::Software))
+		  canvasImplementation == int(view::CanvasImplementation::Software))
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine(
@@ -110,9 +108,9 @@ void PaintEngine::setSnapshotMaxCount(int snapshotMaxCount)
 	m_snapshotQueue.setMaxCount(snapshotMaxCount);
 }
 
-void PaintEngine::setSnapshotMinDelayMs(long long snapshotMinDelayMs)
+void PaintEngine::setSnapshotMinDelaySec(int snapshotMinDelaySec)
 {
-	m_snapshotQueue.setMinDelayMs(snapshotMinDelayMs);
+	m_snapshotQueue.setMinDelayMs(snapshotMinDelaySec * 1000LL);
 }
 
 void PaintEngine::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include <QDesktopServices>
 #include <QTextBrowser>
@@ -9,7 +8,7 @@
 #ifdef __EMSCRIPTEN__
 #	include "libclient/wasmsupport.h"
 #else
-#	include "libclient/utils/news.h"
+#	include "libclient/config/config.h"
 #endif
 
 namespace dialogs {
@@ -34,7 +33,7 @@ Welcome::Welcome(QWidget *parent)
 void Welcome::activate()
 {
 #ifndef __EMSCRIPTEN__
-	dpApp().settings().setWelcomePageShown(true);
+	dpAppConfig()->setWelcomePageShown(true);
 #endif
 	emit showButtons();
 }

@@ -2,13 +2,14 @@
 #include "desktop/docks/colorcircle.h"
 #include "desktop/dialogs/artisticcolorwheeldialog.h"
 #include "desktop/docks/colorpalette.h"
+#include "desktop/docks/enums.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/artisticcolorwheel.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/config/config.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QMenu>
@@ -29,6 +30,7 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
+	config::Config *cfg = dpAppConfig();
 	QMenu *menu = new QMenu(this);
 
 	QAction *configureAction =
@@ -46,10 +48,11 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 	m_colorSpaceHsvAction->setCheckable(true);
 	colorSpaceGroup->addAction(m_colorSpaceHsvAction);
 	connect(
-		m_colorSpaceHsvAction, &QAction::toggled, this, [this](bool toggled) {
+		m_colorSpaceHsvAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !m_updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorHSV);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorHSV));
 			}
 		});
 
@@ -58,10 +61,11 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 	m_colorSpaceHslAction->setCheckable(true);
 	colorSpaceGroup->addAction(m_colorSpaceHslAction);
 	connect(
-		m_colorSpaceHslAction, &QAction::toggled, this, [this](bool toggled) {
+		m_colorSpaceHslAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !m_updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorHSL);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorHSL));
 			}
 		});
 
@@ -70,10 +74,11 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 	m_colorSpaceHclAction->setCheckable(true);
 	colorSpaceGroup->addAction(m_colorSpaceHclAction);
 	connect(
-		m_colorSpaceHclAction, &QAction::toggled, this, [this](bool toggled) {
+		m_colorSpaceHclAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
 			if(toggled && !m_updating) {
-				dpApp().settings().setColorWheelSpace(
-					color_widgets::ColorWheel::ColorLCH);
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorLCH));
 			}
 		});
 
@@ -82,11 +87,12 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 		QCoreApplication::translate(
 			"docks::ColorSpinnerDock", "Preview selected color"));
 	m_previewAction->setCheckable(true);
-	connect(m_previewAction, &QAction::toggled, this, [this](bool toggled) {
-		if(!m_updating) {
-			dpApp().settings().setColorWheelPreview(toggled ? 1 : 0);
-		}
-	});
+	connect(
+		m_previewAction, &QAction::toggled, this, [this, cfg](bool toggled) {
+			if(!m_updating) {
+				cfg->setColorWheelPreview(toggled ? 1 : 0);
+			}
+		});
 #endif
 
 	menu->addSeparator();
@@ -135,32 +141,41 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 #endif
 	setWidget(widget);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindColorCircleHueLimit(
-		m_wheel, &widgets::ArtisticColorWheel::setHueLimit);
-	settings.bindColorCircleHueCount(
-		m_wheel, &widgets::ArtisticColorWheel::setHueCount);
-	settings.bindColorCircleHueAngle(
-		m_wheel, &widgets::ArtisticColorWheel::setHueAngle);
-	settings.bindColorCircleSaturationLimit(
-		m_wheel, &widgets::ArtisticColorWheel::setSaturationLimit);
-	settings.bindColorCircleSaturationCount(
-		m_wheel, &widgets::ArtisticColorWheel::setSaturationCount);
-	settings.bindColorCircleValueLimit(
-		m_wheel, &widgets::ArtisticColorWheel::setValueLimit);
-	settings.bindColorCircleValueCount(
-		m_wheel, &widgets::ArtisticColorWheel::setValueCount);
-	settings.bindColorCircleGamutMaskPath(
-		m_wheel, &widgets::ArtisticColorWheel::setGamutMaskPath);
-	settings.bindColorCircleGamutMaskAngle(
-		m_wheel, &widgets::ArtisticColorWheel::setGamutMaskAngle);
-	settings.bindColorCircleGamutMaskOpacity(
-		m_wheel, &widgets::ArtisticColorWheel::setGamutMaskOpacity);
-	settings.bindColorWheelSpace(this, &ColorCircleDock::setColorSpace);
+	CFG_BIND_SET(
+		cfg, ColorCircleHueLimit, m_wheel,
+		widgets::ArtisticColorWheel::setHueLimit);
+	CFG_BIND_SET(
+		cfg, ColorCircleHueCount, m_wheel,
+		widgets::ArtisticColorWheel::setHueCount);
+	CFG_BIND_SET(
+		cfg, ColorCircleHueAngle, m_wheel,
+		widgets::ArtisticColorWheel::setHueAngle);
+	CFG_BIND_SET(
+		cfg, ColorCircleSaturationLimit, m_wheel,
+		widgets::ArtisticColorWheel::setSaturationLimit);
+	CFG_BIND_SET(
+		cfg, ColorCircleSaturationCount, m_wheel,
+		widgets::ArtisticColorWheel::setSaturationCount);
+	CFG_BIND_SET(
+		cfg, ColorCircleValueLimit, m_wheel,
+		widgets::ArtisticColorWheel::setValueLimit);
+	CFG_BIND_SET(
+		cfg, ColorCircleValueCount, m_wheel,
+		widgets::ArtisticColorWheel::setValueCount);
+	CFG_BIND_SET(
+		cfg, ColorCircleGamutMaskPath, m_wheel,
+		widgets::ArtisticColorWheel::setGamutMaskPath);
+	CFG_BIND_SET(
+		cfg, ColorCircleGamutMaskAngle, m_wheel,
+		widgets::ArtisticColorWheel::setGamutMaskAngle);
+	CFG_BIND_SET(
+		cfg, ColorCircleGamutMaskOpacity, m_wheel,
+		widgets::ArtisticColorWheel::setGamutMaskOpacity);
+	CFG_BIND_SET(cfg, ColorWheelSpace, this, ColorCircleDock::setColorSpace);
 #ifdef DP_COLOR_CIRCLE_ENABLE_PREVIEW
-	settings.bindColorWheelPreview(this, &ColorCircleDock::setPreview);
+	CFG_BIND_SET(cfg, ColorWheelPreview, this, ColorCircleDock::setPreview);
 #endif
-	settings.bindColorSwatchFlags(this, &ColorCircleDock::setSwatchFlags);
+	CFG_BIND_SET(cfg, ColorSwatchFlags, this, ColorCircleDock::setSwatchFlags);
 }
 
 void ColorCircleDock::setColor(const QColor &color)

@@ -2,7 +2,6 @@
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
@@ -10,6 +9,7 @@
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
+#include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -856,8 +856,9 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->blendModeManager = BlendModeManager::initBrush(
 		d->brushModeCombo, d->eraseModeCombo, d->preserveAlphaBox,
 		d->eraseModeBox, this);
-	dpApp().settings().bindAutomaticAlphaPreserve(
-		d->blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	CFG_BIND_SET(
+		dpAppConfig(), AutomaticAlphaPreserve, d->blendModeManager,
+		BlendModeManager::setAutomaticAlphaPerserve);
 	connect(
 		d->blendModeManager, &BlendModeManager::blendModeChanged,
 		[this](int blendMode, bool eraseMode) {
