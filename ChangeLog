@@ -1,5 +1,6 @@
 Unreleased Version 2.3.1-pre
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
+ * Fix: Make MyPaint brushes properly handle input values before the first point, after the last point and exactly on the point of a stair-step curve.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

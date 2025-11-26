@@ -143,6 +143,49 @@ mypaint_mapping_get_inputs_used_n(MyPaintMapping *self)
     return self->inputs_used;
 }
 
+// Drawpile patch: libmypaint's original input mapping function doesn't properly
+// handle input values that are before the first point or after the last point
+// of the curve, producing whacky values for them. It also doesn't correctly
+// handle inputs that exactly hit the value of a stair-step curve point, causing
+// it to interpolate between two points that are supposed to be on the same x.
+static float calculate_mapping_input(const ControlPoints *p, float input)
+{
+    int n = p->n;
+    assert(n > 0);
+
+    if (n == 1) {
+        // Only one values in the curve.
+        return p->yvalues[0];
+    }
+    else if (input <= p->xvalues[0]) {
+        // Before the first point.
+        return p->yvalues[0];
+    }
+    else if (input >= p->xvalues[n - 1]) {
+        // After the last point.
+        return p->yvalues[n - 1];
+    }
+    else {
+        // Find the section of the curve the input is in.
+        int i = 0;
+        while (p->xvalues[i + 1] < input) {
+            ++i;
+        }
+        // Linearly interpolate within the segment unless the two points are
+        // extremely close together (stair-step curve.)
+        float x0 = p->xvalues[i];
+        float y0 = p->yvalues[i];
+        float x1 = p->xvalues[i + 1];
+        float y1 = p->yvalues[i + 1];
+        if (x1 - x0 < 0.001 || y0 == y1) {
+            return y0;
+        }
+        else {
+            return (y1 * (input - x0) + y0 * (x1 - input)) / (x1 - x0);
+        }
+    }
+}
+
 float mypaint_mapping_calculate (MyPaintMapping * self, float * data)
 {
     int j;
@@ -154,34 +197,8 @@ float mypaint_mapping_calculate (MyPaintMapping * self, float * data)
 
     for (j=0; j<self->inputs; j++) {
       ControlPoints * p = self->pointsList + j;
-
-      if (p->n) {
-        float x, y;
-        x = data[j];
-
-        // find the segment with the slope that we need to use
-        float x0, y0, x1, y1;
-        x0 = p->xvalues[0];
-        y0 = p->yvalues[0];
-        x1 = p->xvalues[1];
-        y1 = p->yvalues[1];
-
-        int i;
-        for (i=2; i<p->n && x>x1; i++) {
-          x0 = x1;
-          y0 = y1;
-          x1 = p->xvalues[i];
-          y1 = p->yvalues[i];
-        }
-
-        if (x0 == x1 || y0 == y1) {
-          y = y0;
-        } else {
-          // linear interpolation
-          y = (y1*(x - x0) + y0*(x1 - x)) / (x1 - x0);
-        }
-
-        result += y;
+      if (p->n > 0) {
+        result += calculate_mapping_input(p, data[j]);
       }
     }
     return result;
