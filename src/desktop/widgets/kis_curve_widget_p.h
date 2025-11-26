@@ -68,7 +68,7 @@ public:
     enumState m_state;
 
     /* Drawpile patch */
-    bool m_linear = false;
+    int m_mode = MODE_CUBIC;
 
     inline void setState(enumState st);
     inline enumState state() const;

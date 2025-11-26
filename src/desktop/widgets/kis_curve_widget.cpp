@@ -202,14 +202,14 @@ bool KisCurveWidget::readOnly() const
     return d->m_readOnlyMode;
 }
 
-void KisCurveWidget::setLinear(bool linear)
+void KisCurveWidget::setMode(int mode)
 {
-	d->m_linear = linear;
+	d->m_mode = mode;
 }
 
-bool KisCurveWidget::linear() const
+int KisCurveWidget::mode() const
 {
-	return d->m_linear;
+	return d->m_mode;
 }
 
 void KisCurveWidget::keyPressEvent(QKeyEvent *e)
@@ -294,18 +294,24 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
 	QPolygonF poly;
 	p.setPen(QPen(palette().color(QPalette::WindowText), 1, Qt::SolidLine));
 	// Drawpile patch: linear graph for MyPaint brush settings.
-	if(d->m_linear) {
+	int mode = d->m_mode;
+	bool linearSegment = mode == MODE_LINEAR_SEGMENT;
+	if(linearSegment || mode == MODE_LINEAR) {
 		QList<QPointF> points = d->m_curve.points();
 		int count = points.count();
-		if(count == 0) {
+		if(count <= (linearSegment ? 0 : 1)) {
 			poly.append(QPointF(0.0, wHeight));
 			poly.append(QPointF(wWidth, 0.0));
 		} else {
-			poly.append(QPointF(0.0, (1.0 - points.first().y()) * wHeight));
+			if (!linearSegment) {
+				poly.append(QPointF(0.0, (1.0 - points.first().y()) * wHeight));
+			}
 			for(int i = 0; i < count; ++i) {
 				poly.append(QPointF(points[i].x() * wWidth, (1.0 - points[i].y()) * wHeight));
 			}
-			poly.append(QPointF(wWidth, (1.0 - points.last().y()) * wHeight));
+			if (!linearSegment) {
+				poly.append(QPointF(wWidth, (1.0 - points.last().y()) * wHeight));
+			}
 		}
 	} else {
 		for (x = 0 ; x < wWidth ; x++) {

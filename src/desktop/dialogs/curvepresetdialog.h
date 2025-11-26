@@ -17,7 +17,7 @@ class CurvePresetDialog final : public QDialog {
 	Q_OBJECT
 public:
 	CurvePresetDialog(
-		const KisCubicCurve &current, bool linear, QWidget *parent = nullptr);
+		const KisCubicCurve &current, int mode, QWidget *parent = nullptr);
 	~CurvePresetDialog() override;
 
 	KisCubicCurve curve() const;

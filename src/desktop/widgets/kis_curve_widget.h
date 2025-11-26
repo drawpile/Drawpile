@@ -37,6 +37,9 @@ class KisCurveWidget final : public QWidget
     Q_OBJECT
 
 public:
+    static constexpr int MODE_CUBIC = 0;
+    static constexpr int MODE_LINEAR = 1;
+    static constexpr int MODE_LINEAR_SEGMENT = 2;
 
     /**
      * Create a new curve widget with a default curve, that is a straight
@@ -74,8 +77,8 @@ public:
     void setReadOnly(bool readOnly);
     bool readOnly() const;
 
-    void setLinear(bool linear);
-    bool linear() const;
+    void setMode(int mode);
+    int mode() const;
 
 public slots:
 	/**

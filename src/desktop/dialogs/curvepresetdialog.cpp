@@ -15,14 +15,14 @@
 namespace dialogs {
 
 CurvePresetDialog::CurvePresetDialog(
-	const KisCubicCurve &current, bool linear, QWidget *parent)
+	const KisCubicCurve &current, int mode, QWidget *parent)
 	: QDialog(parent)
 {
 	setModal(true);
 
 	m_curveWidget = new KisCurveWidget{this};
 	m_curveWidget->setReadOnly(true);
-	m_curveWidget->setLinear(linear);
+	m_curveWidget->setMode(mode);
 	m_curveWidget->setFixedSize(300, 300);
 
 	m_presetList = new QListWidget{this};
@@ -63,6 +63,8 @@ CurvePresetDialog::CurvePresetDialog(
 		m_deleteButton, &QPushButton::clicked, this,
 		&CurvePresetDialog::deleteCurve);
 
+	bool linear = mode == KisCurveWidget::MODE_LINEAR ||
+				  mode == KisCurveWidget::MODE_LINEAR_SEGMENT;
 	loadPresets(current, linear);
 }
 

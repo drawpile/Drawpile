@@ -94,7 +94,9 @@ CurveWidget::CurveWidget(
 	m_yMinLabel = new QLabel{zero};
 
 	m_curve = new KisCurveWidget{this};
-	m_curve->setLinear(linear);
+	m_curve->setMode(
+		linear ? KisCurveWidget::MODE_LINEAR_SEGMENT
+			   : KisCurveWidget::MODE_CUBIC);
 	connect(
 		m_curve, &KisCurveWidget::curveChanged, this,
 		&CurveWidget::curveChanged);
@@ -222,10 +224,18 @@ void CurveWidget::setAxisValueLabels(
 void CurveWidget::copyCurve()
 {
 	QString curveString = m_curve->curve().toString();
+	QString prefix;
+	switch(m_curve->mode()) {
+	case KisCurveWidget::MODE_LINEAR:
+	case KisCurveWidget::MODE_LINEAR_SEGMENT:
+		prefix = QStringLiteral("L");
+		break;
+	default:
+		prefix = QStringLiteral("C");
+		break;
+	}
 	QGuiApplication::clipboard()->setText(
-		QStringLiteral("[%1:%2]")
-			.arg(m_curve->linear() ? "L" : "C")
-			.arg(curveString));
+		QStringLiteral("[%1:%2]").arg(prefix).arg(curveString));
 	ToolMessage::showText(tr("Curve copied to clipboard."));
 }
 
@@ -248,7 +258,7 @@ void CurveWidget::pasteCurve()
 void CurveWidget::loadCurve()
 {
 	dialogs::CurvePresetDialog *dlg = new dialogs::CurvePresetDialog(
-		m_curve->curve(), m_curve->linear(), this);
+		m_curve->curve(), m_curve->mode(), this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(dlg, &dialogs::CurvePresetDialog::accepted, this, [this, dlg] {
 		m_curve->setCurve(dlg->curve());
