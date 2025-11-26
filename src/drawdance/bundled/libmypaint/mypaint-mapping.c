@@ -144,26 +144,43 @@ mypaint_mapping_get_inputs_used_n(MyPaintMapping *self)
 }
 
 // Drawpile patch: libmypaint's original input mapping function doesn't properly
-// handle input values that are before the first point or after the last point
-// of the curve, producing whacky values for them. It also doesn't correctly
-// handle inputs that exactly hit the value of a stair-step curve point, causing
-// it to interpolate between two points that are supposed to be on the same x.
+// handle exactly hitting the value of a stair-step curve point, causing it to
+// interpolate between two points that are supposed to be on the same x. It also
+// handles values outside of the first and last points very strangely, but we
+// can't change that without breaking compatibility with existing brushes.
+static float interpolate_mapping_input(const ControlPoints *p, float input, int i)
+{
+    // Linearly interpolate within the segment unless the two points are
+    // extremely close together (stair-step curve.)
+    float x0 = p->xvalues[i];
+    float y0 = p->yvalues[i];
+    float x1 = p->xvalues[i + 1];
+    float y1 = p->yvalues[i + 1];
+    if (x1 - x0 < 0.001 || y0 == y1) {
+        return y0;
+    }
+    else {
+        return (y1 * (input - x0) + y0 * (x1 - input)) / (x1 - x0);
+    }
+}
+
 static float calculate_mapping_input(const ControlPoints *p, float input)
 {
     int n = p->n;
     assert(n > 0);
 
     if (n == 1) {
-        // Only one values in the curve.
+        // Only one value in the curve.
         return p->yvalues[0];
     }
     else if (input <= p->xvalues[0]) {
-        // Before the first point.
-        return p->yvalues[0];
+        // Before the first point. This result is wrong, but is how MyPaint
+        // calculated it and necessary for compatibility.
+        return interpolate_mapping_input(p, input, 0);
     }
     else if (input >= p->xvalues[n - 1]) {
-        // After the last point.
-        return p->yvalues[n - 1];
+        // After the last point. Also wrong the same way as above.
+        return interpolate_mapping_input(p, input, n - 2);
     }
     else {
         // Find the section of the curve the input is in.
@@ -171,18 +188,7 @@ static float calculate_mapping_input(const ControlPoints *p, float input)
         while (p->xvalues[i + 1] < input) {
             ++i;
         }
-        // Linearly interpolate within the segment unless the two points are
-        // extremely close together (stair-step curve.)
-        float x0 = p->xvalues[i];
-        float y0 = p->yvalues[i];
-        float x1 = p->xvalues[i + 1];
-        float y1 = p->yvalues[i + 1];
-        if (x1 - x0 < 0.001 || y0 == y1) {
-            return y0;
-        }
-        else {
-            return (y1 * (input - x0) + y0 * (x1 - input)) / (x1 - x0);
-        }
+        return interpolate_mapping_input(p, input, i);
     }
 }
 
