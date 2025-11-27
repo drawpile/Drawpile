@@ -20,6 +20,9 @@
 #include <QTouchEvent>
 #include <QWheelEvent>
 #include <cmath>
+#ifdef DP_CANVAS_CONTROLLER_HOVER_EVENTS
+#	include <QHoverEvent>
+#endif
 
 using utils::Cursors;
 
@@ -520,6 +523,49 @@ void CanvasControllerBase::clearKeys()
 			.setUpdateOutline()
 			.setResetCursor());
 }
+
+#ifdef DP_CANVAS_CONTROLLER_HOVER_EVENTS
+void CanvasControllerBase::handleHoverMove(QHoverEvent *event)
+{
+	QPointF posf = event->position();
+	bool touching = touchHandler()->isTouching();
+	Qt::KeyboardModifiers modifiers = event->modifiers();
+	QInputDevice::DeviceType deviceType = event->deviceType();
+	QPointingDevice::PointerType pointerType = event->pointerType();
+	bool tablet = deviceType == QInputDevice::DeviceType::Stylus ||
+				  deviceType == QInputDevice::DeviceType::Airbrush ||
+				  pointerType == QPointingDevice::PointerType::Pen ||
+				  pointerType == QPointingDevice::PointerType::Eraser;
+	DP_EVENT_LOG(
+		"hover_move spontaneous=%d x=%f y=%f modifiers=0x%x deviceType=%d "
+		"pointerType=%d tablet=%d penstate=%d touching=%d timestamp=%llu",
+		int(event->spontaneous()), posf.x(), posf.y(), unsigned(modifiers),
+		int(deviceType), int(pointerType), int(tablet), int(m_penState),
+		int(touching), qulonglong(event->timestamp()));
+
+	bool shouldHandle;
+	if(m_penState == PenState::Up) {
+		if(tablet) {
+			shouldHandle = m_tabletEnabled;
+		} else {
+			shouldHandle =
+				!touching && (!m_tabletEnabled || !isSyntheticHover(event));
+		}
+	} else {
+		shouldHandle = false;
+	}
+
+	if(shouldHandle) {
+		if(tablet) {
+			startTabletEventTimer();
+		}
+		event->accept();
+		penMoveEvent(
+			QDateTime::currentMSecsSinceEpoch(), posf, 0.0, 0.0, 0.0, 0.0,
+			modifiers);
+	}
+}
+#endif
 
 void CanvasControllerBase::handleMouseMove(QMouseEvent *event)
 {
@@ -2227,6 +2273,15 @@ bool CanvasControllerBase::isSyntheticTouch(QMouseEvent *event)
 	return false;
 #endif
 }
+
+#ifdef DP_CANVAS_CONTROLLER_HOVER_EVENTS
+bool CanvasControllerBase::isSyntheticHover(QHoverEvent *event)
+{
+	Q_UNUSED(event);
+	// TODO: Figure this one out on Windows.
+	return false;
+}
+#endif
 
 Qt::KeyboardModifiers
 CanvasControllerBase::getKeyboardModifiers(const QKeyEvent *event) const

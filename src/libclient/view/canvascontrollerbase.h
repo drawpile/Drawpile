@@ -20,6 +20,14 @@
 #include <QVector>
 #include <functional>
 
+// The code that deals with hover events is Qt6 only.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#	define DP_CANVAS_CONTROLLER_HOVER_EVENTS 1
+class QHoverEvent;
+#else
+#	undef DP_CANVAS_CONTROLLER_HOVER_EVENTS
+#endif
+
 class QAction;
 class QKeyEvent;
 class QMouseEvent;
@@ -109,6 +117,10 @@ public:
 	void handleLeave();
 	void handleFocusIn();
 	void clearKeys();
+
+#ifdef DP_CANVAS_CONTROLLER_HOVER_EVENTS
+	void handleHoverMove(QHoverEvent *event);
+#endif
 
 	void handleMouseMove(QMouseEvent *event);
 	void handleMousePress(QMouseEvent *event);
@@ -313,6 +325,9 @@ private:
 	QPointF wheelPosF(QWheelEvent *event) const;
 	static bool isSynthetic(QMouseEvent *event);
 	static bool isSyntheticTouch(QMouseEvent *event);
+#ifdef DP_CANVAS_CONTROLLER_HOVER_EVENTS
+	static bool isSyntheticHover(QHoverEvent *event);
+#endif
 
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *event) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *event) const;
