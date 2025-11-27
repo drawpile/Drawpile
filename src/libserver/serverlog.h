@@ -46,6 +46,7 @@ public:
 		BanImpEx,	// Session ban import and export
 		AdminChat,	// Messages sent to a connected admin chat
 		Invite,		// Invite-related events
+		Report,		// Session or user reports
 	};
 	Q_ENUM(Topic)
 
@@ -86,7 +87,11 @@ public:
 	//! Get the freeform message part
 	QString message() const { return m_message; }
 
-	bool isSensitive() const { return m_topic == Topic::ClientInfo; }
+	bool isSensitive() const
+	{
+		return m_topic == Topic::ClientInfo || m_topic == Topic::Report;
+	}
+
 	bool isKickOrBan() const
 	{
 		return m_topic == Topic::Kick || m_topic == Topic::Ban ||

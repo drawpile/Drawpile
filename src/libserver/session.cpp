@@ -2195,7 +2195,7 @@ void Session::sendAbuseReport(
 
 	reporter->log(
 		Log()
-			.about(Log::Level::Info, Log::Topic::Status)
+			.about(Log::Level::Info, Log::Topic::Report)
 			.message(QString("Abuse report about user %1 received: %2")
 						 .arg(aboutUser)
 						 .arg(message)));
@@ -2205,7 +2205,7 @@ void Session::sendAbuseReport(
 		// This shouldn't happen normally. If the URL is not configured,
 		// the server does not advertise the capability to receive reports.
 		log(Log()
-				.about(Log::Level::Warn, Log::Topic::Status)
+				.about(Log::Level::Warn, Log::Topic::Report)
 				.message(
 					"Cannot send abuse report: server URL not configured!"));
 		return;
@@ -2215,7 +2215,7 @@ void Session::sendAbuseReport(
 		// This can happen if reporting is disabled when a session is still in
 		// progress
 		log(Log()
-				.about(Log::Level::Warn, Log::Topic::Status)
+				.about(Log::Level::Warn, Log::Topic::Report)
 				.message("Cannot send abuse report: not enabled!"));
 		return;
 	}
@@ -2252,9 +2252,15 @@ void Session::sendAbuseReport(
 	QNetworkReply *reply =
 		networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-		if(reply->error() != QNetworkReply::NoError) {
+		if(reply->error() == QNetworkReply::NoError) {
+			// This is sent as a status topic so that it shows up in the event
+			// log. Other details are sensitive and so don't show up there.
 			log(Log()
-					.about(Log::Level::Warn, Log::Topic::Status)
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(QStringLiteral("Session was reported.")));
+		} else {
+			log(Log()
+					.about(Log::Level::Warn, Log::Topic::Report)
 					.message(
 						"Unable to send abuse report: " +
 						reply->errorString()));

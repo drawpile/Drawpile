@@ -67,7 +67,7 @@ QList<Log> DbLog::getLogEntries(
 	}
 
 	if(omitSensitive) {
-		sql += QStringLiteral(" and topic <> 'ClientInfo'");
+		sql += QStringLiteral(" and topic not in ('ClientInfo', 'Report')");
 	}
 
 	if(omitKicksAndBans) {
