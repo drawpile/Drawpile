@@ -34,7 +34,7 @@ namespace view {
 CanvasScene::CanvasScene(bool outline, QObject *parent)
 	: QGraphicsScene(parent)
 	, m_hud(new HudHandler(this, this))
-	, m_colorPickVisibility(ColorPickItem::defaultVisibility())
+	, m_colorPickVisibility(ColorPickRenderer::defaultVisibility())
 {
 	m_canvasGroup = new QGraphicsItemGroup;
 	addItem(m_canvasGroup);
@@ -375,7 +375,7 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 
 void CanvasScene::showColorPick(int source, const QPointF &pos)
 {
-	if(ColorPickItem::shouldShow(source, m_colorPickVisibility)) {
+	if(ColorPickRenderer::shouldShow(source, m_colorPickVisibility)) {
 		if(!m_colorPick) {
 			m_colorPick =
 				new ColorPickItem(m_foregroundColor, m_comparisonColor);

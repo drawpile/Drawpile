@@ -50,7 +50,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_selectionIgnored(false)
 	, m_showSelectionMask(false)
 	, m_userMarkerPersistence(1000)
-	, m_colorPickVisibility(ColorPickItem::defaultVisibility())
+	, m_colorPickVisibility(view::ColorPickRenderer::defaultVisibility())
 {
 	setItemIndexMethod(NoIndex);
 	setSceneRect(QRectF{0.0, 0.0, 1.0, 1.0});
@@ -673,7 +673,7 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 
 void CanvasScene::showColorPick(int source, const QPointF &pos)
 {
-	if(ColorPickItem::shouldShow(source, m_colorPickVisibility)) {
+	if(view::ColorPickRenderer::shouldShow(source, m_colorPickVisibility)) {
 		if(!m_colorPick) {
 			m_colorPick =
 				new ColorPickItem(m_foregroundColor, m_comparisonColor);

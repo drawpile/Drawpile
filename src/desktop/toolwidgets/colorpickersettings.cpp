@@ -10,6 +10,7 @@
 #include "libclient/tools/colorpicker.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
+#include "libclient/view/enums.h"
 #include "libshared/util/qtcompat.h"
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -251,14 +252,14 @@ void ColorPickerSettings::pickFromScreen()
 void ColorPickerSettings::onPreviewBoxClicked(bool checked)
 {
 	dpApp().settings().setSamplingRingVisibility(
-		checked ? int(desktop::settings::SamplingRingVisibility::Always)
-				: int(desktop::settings::SamplingRingVisibility::TouchOnly));
+		checked ? int(view::SamplingRingVisibility::Always)
+				: int(view::SamplingRingVisibility::TouchOnly));
 }
 
 void ColorPickerSettings::setSamplingRingVisibility(int visibility)
 {
 	m_previewBox->setChecked(
-		visibility == int(desktop::settings::SamplingRingVisibility::Always));
+		visibility == int(view::SamplingRingVisibility::Always));
 }
 
 }

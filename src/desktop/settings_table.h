@@ -289,7 +289,7 @@ SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentr
 SETTING(renderCanvas              , RenderCanvas              , "settings/render/canvas"                , int(libclient::settings::CanvasImplementation::Default))
 SETTING(renderSmooth              , RenderSmooth              , "settings/render/smooth"                , true)
 SETTING(renderUpdateFull          , RenderUpdateFull          , "settings/render/updatefull"            , false)
-SETTING(samplingRingVisibility    , SamplingRingVisibility    , "settings/colorpicker/samplingring"     , int(SamplingRingVisibility::Always))
+SETTING(samplingRingVisibility    , SamplingRingVisibility    , "settings/colorpicker/samplingring"     , int(view::SamplingRingVisibility::Always))
 SETTING(serverHideIp              , ServerHideIp              , "settings/hideServerIp"                 , false)
 SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/sharebrushslotcolor"          , false)
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())

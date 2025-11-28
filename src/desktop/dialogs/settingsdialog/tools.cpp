@@ -129,14 +129,14 @@ void Tools::initCursors(
 	QCheckBox *samplingRing = new QCheckBox(tr("Show sampling ring"));
 	samplingRing->setChecked(
 		settings.samplingRingVisibility() ==
-		int(desktop::settings::SamplingRingVisibility::Always));
+		int(view::SamplingRingVisibility::Always));
 	connect(
 		samplingRing, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		[&settings](compat::CheckBoxState state) {
 			settings.setSamplingRingVisibility(
 				state == Qt::Unchecked
-					? int(desktop::settings::SamplingRingVisibility::TouchOnly)
-					: int(desktop::settings::SamplingRingVisibility::Always));
+					? int(view::SamplingRingVisibility::TouchOnly)
+					: int(view::SamplingRingVisibility::Always));
 		});
 	form->addRow(tr("Color picker:"), samplingRing);
 }

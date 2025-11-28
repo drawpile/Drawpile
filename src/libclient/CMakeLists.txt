@@ -239,6 +239,8 @@ target_sources(dpclient PRIVATE
 	utils/wasmpersistence.h
 	view/canvascontrollerbase.cpp
 	view/canvascontrollerbase.h
+	view/colorpickrenderer.cpp
+	view/colorpickrenderer.h
 	view/enums.h
 	view/hudaction.h
 	view/softwarecanvasrenderer.cpp

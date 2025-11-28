@@ -2,13 +2,11 @@
 #ifndef DESKTOP_COLORPICKITEM_H
 #define DESKTOP_COLORPICKITEM_H
 #include "desktop/scene/baseitem.h"
+#include "libclient/view/colorpickrenderer.h"
 #include <QColor>
-#include <QPixmap>
-#include <QPainterPath>
 
 namespace drawingboard {
 
-// Emulated bitmap cursor for platforms like Emscripten that don't support them.
 class ColorPickItem final : public BaseItem {
 public:
 	enum { Type = ColorPickType };
@@ -24,33 +22,20 @@ public:
 	void setColor(const QColor &color);
 	void setComparisonColor(const QColor &comparisonColor);
 
-	static bool shouldShow(int source, int visibility);
-	static int defaultVisibility();
-
 protected:
 	void paint(
 		QPainter *painter, const QStyleOptionGraphicsItem *option,
 		QWidget *widget = nullptr) override;
 
 private:
-	static constexpr int SIZE = 200;
-
-	const QPainterPath &getPath(qreal penWidth, const QRectF &cacheRect);
-
-	static QColor sanitizeColor(const QColor &color);
-
 	static QRect bounds()
 	{
-		int offset = SIZE / -2;
-		return QRect(offset, offset, SIZE, SIZE);
+		int size = view::ColorPickRenderer::SIZE;
+		int offset = size / -2;
+		return QRect(offset, offset, size, size);
 	}
 
-	QColor m_color;
-	QColor m_comparisonColor;
-	QPixmap m_cache;
-	QRectF m_pathCacheRect;
-	qreal m_pathPenWidth = 0.0;
-	QPainterPath m_path;
+	view::ColorPickRenderer m_renderer;
 };
 
 }

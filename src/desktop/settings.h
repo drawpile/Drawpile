@@ -50,13 +50,6 @@ enum class KineticScrollGesture : int {
 };
 Q_ENUM_NS(KineticScrollGesture)
 
-enum class SamplingRingVisibility : int {
-	Never,
-	TouchOnly,
-	Always,
-};
-Q_ENUM_NS(SamplingRingVisibility)
-
 enum class ThemePalette : int {
 	System,
 	Light,

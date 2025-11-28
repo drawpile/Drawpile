@@ -66,6 +66,13 @@ enum class TouchTapAndHoldAction : int {
 };
 Q_ENUM_NS(TouchTapAndHoldAction)
 
+enum class SamplingRingVisibility : int {
+	Never,
+	TouchOnly,
+	Always,
+};
+Q_ENUM_NS(SamplingRingVisibility)
+
 }
 
 #endif
