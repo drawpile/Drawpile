@@ -11,7 +11,7 @@
 union DP_Pixel8;
 
 namespace view {
-class SoftwareCanvas;
+class SoftwareCanvasRenderer;
 }
 
 namespace canvas {
@@ -81,7 +81,7 @@ class TileCache final {
 	// placed into the texture. In the software canvas, it's a null pointer and
 	// softwareCanvasPixmap() is instead used to retrieve the rendered image.
 	using OnTileFn = std::function<void(const QRect &rect, const void *pixels)>;
-	friend class view::SoftwareCanvas;
+	friend class view::SoftwareCanvasRenderer;
 
 public:
 	struct RenderResult {

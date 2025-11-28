@@ -241,6 +241,8 @@ target_sources(dpclient PRIVATE
 	view/canvascontrollerbase.h
 	view/enums.h
 	view/hudaction.h
+	view/softwarecanvasrenderer.cpp
+	view/softwarecanvasrenderer.h
 	view/touchhandler.cpp
 	view/touchhandler.h
 )

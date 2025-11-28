@@ -4,10 +4,9 @@
 #include "desktop/settings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
-#include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/tilecache.h"
-#include <QPaintEngine>
+#include "libclient/view/softwarecanvasrenderer.h"
 #include <QPaintEvent>
 #include <QPainter>
 
@@ -69,26 +68,6 @@ struct SoftwareCanvas::Private {
 		}
 	}
 
-	bool isCheckersVisible()
-	{
-		canvas::CanvasModel *canvasModel = controller->canvasModel();
-		return canvasModel && canvasModel->paintEngine()->checkersVisible();
-	}
-
-	const QBrush &getCheckerBrush()
-	{
-		if(checkerBrush.style() == Qt::NoBrush) {
-			QPixmap checkerTexture(64, 64);
-			QPainter painter(&checkerTexture);
-			painter.fillRect(0, 0, 32, 32, checkerColor1);
-			painter.fillRect(32, 0, 32, 32, checkerColor2);
-			painter.fillRect(0, 32, 32, 32, checkerColor2);
-			painter.fillRect(32, 32, 32, 32, checkerColor1);
-			checkerBrush.setTexture(checkerTexture);
-		}
-		return checkerBrush;
-	}
-
 	void paint(QPainter *painter, const QRect &rect, const QRegion &region)
 	{
 		qCDebug(
@@ -97,98 +76,13 @@ struct SoftwareCanvas::Private {
 			region.rectCount(), rect.left(), rect.top(), rect.right(),
 			rect.bottom());
 
-		painter->setPen(Qt::NoPen);
-		painter->setBrush(Qt::NoBrush);
 		painter->setClipRegion(region);
-		painter->setCompositionMode(QPainter::CompositionMode_Source);
-		painter->setRenderHint(QPainter::Antialiasing, false);
-		painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-		painter->fillRect(rect, controller->clearColor());
-
-		if(controller->isCanvasVisible()) {
-			bool shouldRenderSmooth = controller->shouldRenderSmooth();
-			if(shouldRenderSmooth) {
-				painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-			}
-
-			bool checkersVisible = isCheckersVisible();
-			bool pixelGridVisible = controller->pixelGridScale() > 0.0;
-			controller->withTileCache([&](canvas::TileCache &tileCache) {
-				using Cell = canvas::PixmapGrid::Cell;
-				const QVector<Cell> *cells = tileCache.pixmapCells();
-				if(cells && !cells->isEmpty()) {
-					painter->save();
-					const QTransform &tf = controller->transform();
-					QRectF canvasRect =
-						QRectF(QPointF(0.0, 0.0), QSizeF(tileCache.size()));
-
-					if(checkersVisible) {
-						painter->setBrush(getCheckerBrush());
-						painter->drawPolygon(tf.map(canvasRect));
-						painter->setCompositionMode(
-							QPainter::CompositionMode_SourceOver);
-						painter->setBrush(Qt::NoBrush);
-					}
-
-					painter->setTransform(tf);
-					QRectF exposedBase = controller->invertedTransform()
-											 .map(QRectF(rect))
-											 .boundingRect();
-
-					for(const Cell &cell : *cells) {
-						QRect exposed =
-							exposedBase.intersected(QRectF(cell.rect))
-								.toAlignedRect();
-						painter->drawPixmap(
-							exposed, cell.pixmap,
-							exposed.translated(-cell.rect.topLeft()));
-					}
-
-					if(pixelGridVisible) {
-						QPen pen;
-						const QPaintEngine *pe = painter->paintEngine();
-						if(pe->hasFeature(QPaintEngine::BlendModes)) {
-							pen.setColor(QColor(32, 32, 32));
-							painter->setCompositionMode(
-								QPainter::CompositionMode_Difference);
-						} else {
-							pen.setColor(QColor(160, 160, 160));
-							painter->setCompositionMode(
-								QPainter::CompositionMode_Source);
-						}
-						pen.setCosmetic(true);
-						painter->setPen(pen);
-
-						QRect exposed =
-							exposedBase.intersected(canvasRect).toAlignedRect();
-						int left = exposed.left();
-						int right = exposed.right() + 1;
-						int top = exposed.top();
-						int bottom = exposed.bottom() + 1;
-						for(int x = left; x < right; ++x) {
-							painter->drawLine(x, top, x, bottom);
-						}
-						for(int y = top; y < bottom; ++y) {
-							painter->drawLine(left, y, right, y);
-						}
-					}
-
-					painter->restore();
-				}
-			});
-
-			if(shouldRenderSmooth) {
-				painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-			}
-		}
-		painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+		renderer.paint(controller, painter, rect);
 		controller->scene()->render(painter);
 	}
 
 	CanvasController *controller;
-	QColor checkerColor1;
-	QColor checkerColor2;
-	QBrush checkerBrush;
+	SoftwareCanvasRenderer renderer;
 	bool renderUpdateFull = false;
 };
 
@@ -287,15 +181,13 @@ void SoftwareCanvas::paintEvent(QPaintEvent *event)
 
 void SoftwareCanvas::setCheckerColor1(const QColor &color)
 {
-	d->checkerColor1 = color;
-	d->checkerBrush = QBrush();
+	d->renderer.setCheckerColor1(color);
 	update();
 }
 
 void SoftwareCanvas::setCheckerColor2(const QColor &color)
 {
-	d->checkerColor2 = color;
-	d->checkerBrush = QBrush();
+	d->renderer.setCheckerColor2(color);
 	update();
 }
 
