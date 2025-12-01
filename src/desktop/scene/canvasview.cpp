@@ -929,6 +929,9 @@ void CanvasView::resetCursor()
 		case int(view::Cursor::Eraser):
 			setViewportCursor(Cursors::eraser());
 			break;
+		case int(view::Cursor::Blank):
+			setViewportCursor(Qt::BlankCursor);
+			break;
 		default:
 			setViewportCursor(Cursors::triangleRight());
 			break;

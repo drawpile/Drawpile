@@ -3,6 +3,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make MyPaint brushes properly handle input values exactly on the point of a stair-step curve. Thanks Blozzom for testing.
  * Fix: Don't show MyPaint curves as continuing in a straight line outside the first and last point, sincet they don't.
  * Server Fix: Only show the fact that a session was reported in the event log, but leave the details to only be visible to the server owners. Thanks Liz for reporting.
+ * Feature: Allow setting a blank brush cursor in the tools preferences. Thanks mixnmatt for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

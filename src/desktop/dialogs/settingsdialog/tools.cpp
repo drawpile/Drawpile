@@ -106,7 +106,8 @@ void Tools::initCursors(
 		}
 
 		for(const auto &[name, value] :
-			{std::pair{tr("Dot"), view::Cursor::Dot},
+			{std::pair{tr("Blank"), view::Cursor::Blank},
+			 std::pair{tr("Dot"), view::Cursor::Dot},
 			 std::pair{tr("Crosshair"), view::Cursor::Cross},
 			 std::pair{tr("Arrow"), view::Cursor::Arrow},
 			 std::pair{

@@ -11,6 +11,7 @@ enum class Cursor : int {
 	TriangleRight,
 	TriangleLeft,
 	Eraser,
+	Blank,
 	SameAsBrush = -1,
 };
 
