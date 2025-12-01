@@ -156,7 +156,7 @@ static float interpolate_mapping_input(const ControlPoints *p, float input, int 
     float y0 = p->yvalues[i];
     float x1 = p->xvalues[i + 1];
     float y1 = p->yvalues[i + 1];
-    if (x1 - x0 < 0.001 || y0 == y1) {
+    if (x1 - x0 < 0.00001 || y0 == y1) {
         return y0;
     }
     else {
