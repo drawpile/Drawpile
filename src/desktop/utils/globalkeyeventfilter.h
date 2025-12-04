@@ -12,6 +12,10 @@ public:
 	explicit GlobalKeyEventFilter(QObject *parent = nullptr);
 
 signals:
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
+	void tabletProximityChanged(bool enter, bool eraser);
+	void eraserNear(bool near);
+#endif
 	void focusCanvas();
 
 protected:
@@ -19,9 +23,17 @@ protected:
 
 private:
 	void checkCanvasFocus(QKeyEvent *event);
+	void updateEraserNear(bool eraserNear);
 
 	long long m_lastAltPress;
 	unsigned long long m_lastAltInternalTimestamp;
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
+	bool m_eraserNear = false;
+	bool m_tabletDown = false;
+	bool m_anyTabletProximityEventsReceived = false;
+	bool m_sawPenTip = false;
+	bool m_sawEraserTip = false;
+#endif
 };
 
 #endif

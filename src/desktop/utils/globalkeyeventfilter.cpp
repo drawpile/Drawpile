@@ -20,6 +20,54 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 		checkCanvasFocus(ke);
 		break;
 	}
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
+	case QEvent::TabletEnterProximity: {
+		m_anyTabletProximityEventsReceived = true;
+		QTabletEvent *te = static_cast<QTabletEvent *>(event);
+		bool eraser = compat::isEraser(*te);
+		emit tabletProximityChanged(true, eraser);
+		updateEraserNear(eraser);
+		return true;
+	}
+	case QEvent::TabletLeaveProximity: {
+		m_anyTabletProximityEventsReceived = true;
+		QTabletEvent *te = static_cast<QTabletEvent *>(event);
+		bool eraser = compat::isEraser(*te);
+		emit tabletProximityChanged(false, eraser);
+		if(eraser) {
+			updateEraserNear(false);
+		}
+		return true;
+	}
+	case QEvent::TabletPress:
+		m_tabletDown = true;
+		break;
+	case QEvent::TabletMove:
+		// Workaround for tablets that don't send proximity events. Only do this
+		// if no proximity events have been received (to avoid conflicting
+		// information), the tablet is not pressed down (to evade tablets that
+		// don't give the necessary information when hovering) and we actually
+		// saw both a pen and an eraser tip at some point (to avoid being
+		// perpetually stuck erasing.)
+		if(!m_anyTabletProximityEventsReceived && !m_tabletDown) {
+			QTabletEvent *te = static_cast<QTabletEvent *>(event);
+			bool eraser = compat::isEraser(*te);
+
+			if (eraser) {
+				m_sawEraserTip = true;
+			} else {
+				m_sawPenTip = true;
+			}
+
+			if(m_sawPenTip && m_sawEraserTip) {
+				updateEraserNear(eraser);
+			}
+		}
+		break;
+	case QEvent::TabletRelease:
+		m_tabletDown = false;
+		break;
+#endif
 	default:
 		break;
 	}
@@ -44,3 +92,13 @@ void GlobalKeyEventFilter::checkCanvasFocus(QKeyEvent *event)
 		}
 	}
 }
+
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
+void GlobalKeyEventFilter::updateEraserNear(bool near)
+{
+	if(near != m_eraserNear) {
+		m_eraserNear = near;
+		emit eraserNear(near);
+	}
+}
+#endif

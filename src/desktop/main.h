@@ -6,6 +6,7 @@
 #include <QPalette>
 #include <QVector>
 
+class GlobalKeyEventFilter;
 class LongPressEventFilter;
 class MainWindow;
 class QCommandLineOption;
@@ -127,11 +128,11 @@ private:
 	QString m_language;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;
+	GlobalKeyEventFilter *m_globalEventFilter;
 #ifdef Q_OS_WIN
 	WinEventFilter *m_winEventFilter;
 #endif
 	LongPressEventFilter *m_longPressEventFilter = nullptr;
-	bool m_wasEraserNear = false;
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 	QStringList m_newProcessArgs;
 #endif
@@ -141,10 +142,6 @@ private:
 	QPalette loadPalette(const QString &file);
 
 	MainWindow *acquireWindow(bool restoreWindowPosition, bool singleSession);
-
-#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
-	void updateEraserNear(bool near);
-#endif
 
 	void setLongPressEnabled(bool enabled);
 };

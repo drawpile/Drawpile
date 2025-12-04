@@ -95,11 +95,19 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	drawdance::DrawContextPool::init();
 	utils::Cursors::init();
 
-	GlobalKeyEventFilter *filter = new GlobalKeyEventFilter{this};
-	installEventFilter(filter);
+	m_globalEventFilter = new GlobalKeyEventFilter{this};
+	installEventFilter(m_globalEventFilter);
 	connect(
-		filter, &GlobalKeyEventFilter::focusCanvas, this,
+		m_globalEventFilter, &GlobalKeyEventFilter::focusCanvas, this,
 		&DrawpileApp::focusCanvas);
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
+	connect(
+		m_globalEventFilter, &GlobalKeyEventFilter::tabletProximityChanged,
+		this, &DrawpileApp::tabletProximityChanged);
+	connect(
+		m_globalEventFilter, &GlobalKeyEventFilter::eraserNear, this,
+		&DrawpileApp::eraserNear);
+#endif
 #ifdef Q_OS_WIN
 	installNativeEventFilter(m_winEventFilter);
 #endif
@@ -121,35 +129,10 @@ void DrawpileApp::initState()
 	m_recents = new utils::Recents{*m_state};
 }
 
-/**
- * Handle tablet proximity events. When the eraser is brought near
- * the tablet surface, switch to eraser tool on all windows.
- * When the tip leaves the surface, switch back to whatever tool
- * we were using before. The browser does not report proximity events.
- *
- * Also, on MacOS we must also handle the Open File event.
- */
 bool DrawpileApp::event(QEvent *e)
 {
 	switch(e->type()) {
-#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
-	case QEvent::TabletEnterProximity: {
-		QTabletEvent *te = static_cast<QTabletEvent *>(e);
-		bool eraser = te->pointerType() == compat::PointerType::Eraser;
-		emit tabletProximityChanged(true, eraser);
-		updateEraserNear(eraser);
-		return true;
-	}
-	case QEvent::TabletLeaveProximity: {
-		QTabletEvent *te = static_cast<QTabletEvent *>(e);
-		bool eraser = te->pointerType() == compat::PointerType::Eraser;
-		emit tabletProximityChanged(false, eraser);
-		if(eraser) {
-			updateEraserNear(false);
-		}
-		return true;
-	}
-#endif
+
 
 	case QEvent::FileOpen: {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent *>(e);
@@ -189,16 +172,6 @@ bool DrawpileApp::event(QEvent *e)
 
 	return QApplication::event(e);
 }
-
-#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
-void DrawpileApp::updateEraserNear(bool near)
-{
-	if(near != m_wasEraserNear) {
-		m_wasEraserNear = near;
-		emit eraserNear(near);
-	}
-}
-#endif
 
 void DrawpileApp::setLongPressEnabled(bool enabled)
 {
