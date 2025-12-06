@@ -450,6 +450,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_doc->toolCtrl(), &tools::ToolController::toolStateChanged, this,
 		&MainWindow::setToolState, Qt::QueuedConnection);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::statusTextRequested,
+		m_viewStatusBar, &widgets::ViewStatusBar::showToolMessage);
 	// clang-format off
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);

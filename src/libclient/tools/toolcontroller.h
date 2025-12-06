@@ -287,6 +287,7 @@ signals:
 	void toolSwitchRequested(tools::Tool::Type tool);
 	void showMessageRequested(const QString &message);
 	void toolNoticeRequested(const QString &text);
+	void statusTextRequested(const QString &text);
 	void deleteAnnotationRequested(int annotationId);
 
 	void freehandMessagesAvailable();

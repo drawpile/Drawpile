@@ -303,11 +303,13 @@ void RectangleSelection::offsetSelection(const QPoint &offset)
 void RectangleSelection::cancelSelection()
 {
 	removeSelectionPreview();
+	emit m_owner.statusTextRequested(QString());
 }
 
 net::MessageList RectangleSelection::endSelection(uint8_t contextId)
 {
 	removeSelectionPreview();
+	emit m_owner.statusTextRequested(QString());
 
 	QRect area;
 	QImage mask;
@@ -343,13 +345,30 @@ net::MessageList RectangleSelection::endSelection(uint8_t contextId)
 void RectangleSelection::updateRectangleSelectionPreview()
 {
 	QPainterPath path;
+	QString statusText;
 	if(antiAlias()) {
 		QRectF rect = getRectF();
+		statusText = QStringLiteral("(%1, %2) - (%3, %4) | %5x%6")
+						 .arg(
+							 QString::number(rect.left(), 'f', 1),
+							 QString::number(rect.top(), 'f', 1),
+							 QString::number(rect.right(), 'f', 1),
+							 QString::number(rect.bottom(), 'f', 1),
+							 QString::number(rect.width(), 'f', 1),
+							 QString::number(rect.height(), 'f', 1));
 		if(!rect.isEmpty()) {
 			path.addRect(rect);
 		}
 	} else {
 		QRect rect = getRect();
+		statusText =
+			QStringLiteral("(%1, %2) - (%3, %4) | %5x%6")
+				.arg(
+					QString::number(rect.left()), QString::number(rect.top()),
+					QString::number(rect.right()),
+					QString::number(rect.bottom()),
+					QString::number(rect.width()),
+					QString::number(rect.height()));
 		if(!rect.isEmpty()) {
 			path.addRect(rect);
 		}
@@ -360,6 +379,8 @@ void RectangleSelection::updateRectangleSelectionPreview()
 	} else {
 		updateSelectionPreview(path);
 	}
+
+	emit m_owner.statusTextRequested(statusText);
 }
 
 QRect RectangleSelection::getRect() const

@@ -17,6 +17,8 @@ public:
 	void setLatency(qint64 latency);
 	void setCoordinates(const QPointF &coordinates);
 
+	void showToolMessage(const QString &message);
+
 private slots:
 	void updateMessage(const QString &message);
 

@@ -31,6 +31,15 @@ void ViewStatusBar::setCoordinates(const QPointF &coordinates)
 	showCoordinatesMessage();
 }
 
+void ViewStatusBar::showToolMessage(const QString &message)
+{
+	if(message.isEmpty()) {
+		clearMessage();
+	} else {
+		showMessage(message);
+	}
+}
+
 void ViewStatusBar::updateMessage(const QString &message)
 {
 	m_showStatusMessage = m_settingStatusMessage || message.isEmpty();
