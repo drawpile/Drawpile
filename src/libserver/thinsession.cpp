@@ -957,7 +957,7 @@ bool ThinSession::checkStreamedResetStart(const QString &cause)
 								.arg(
 									cause, QString::number(tsc->id()),
 									QString::number(historyPosition),
-									QString::number(historyPosition))));
+									QString::number(resetStreamStartIndex))));
 			}
 			return false;
 		}

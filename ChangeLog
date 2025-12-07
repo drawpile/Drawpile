@@ -6,6 +6,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow setting a blank brush cursor in the tools preferences. Thanks mixnmatt for suggesting.
  * Fix: Work around tablets not reporting when the eraser is brought near. Thanks Lauwenmark for reporting.
  * Feature: Show rectangle selection extents in the status bar. Thanks Mercia for suggesting.
+ * Server Fix: Log streamed resets being blocked properly. Thanks grimsley for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
