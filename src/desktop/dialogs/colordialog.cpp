@@ -39,9 +39,14 @@ void showColorPickUnsupportedMessage(QWidget *parent)
 void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 {
 	auto &settings = dpApp().settings();
-	settings.bindColorWheelShape(dlg, &color_widgets::ColorDialog::setWheelShape);
-	settings.bindColorWheelAngle(dlg, &color_widgets::ColorDialog::setWheelRotating);
-	settings.bindColorWheelMirror(dlg, &color_widgets::ColorDialog::setWheelMirrored);
+	settings.bindColorWheelShape(dlg, [dlg](int shape) {
+		dlg->setWheelShape(color_widgets::ColorWheel::ShapeEnum(shape));
+	});
+	settings.bindColorWheelAngle(dlg, [dlg](int angle) {
+		dlg->setWheelRotating(color_widgets::ColorWheel::AngleEnum(angle));
+	});
+	settings.bindColorWheelMirror(
+		dlg, &color_widgets::ColorDialog::setWheelMirrored);
 
 	color_widgets::ColorWheel *wheel =
 		dlg->findChild<color_widgets::ColorWheel *>(
@@ -99,10 +104,12 @@ void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 	}
 }
 
-void setColorDialogResetColor(color_widgets::ColorDialog *dlg, const QColor &color)
+void setColorDialogResetColor(
+	color_widgets::ColorDialog *dlg, const QColor &color)
 {
-	color_widgets::ColorPreview *preview = dlg->findChild<color_widgets::ColorPreview *>(
-		QStringLiteral("preview"), Qt::FindDirectChildrenOnly);
+	color_widgets::ColorPreview *preview =
+		dlg->findChild<color_widgets::ColorPreview *>(
+			QStringLiteral("preview"), Qt::FindDirectChildrenOnly);
 	if(preview) {
 		preview->setComparisonColor(color);
 		preview->setDisplayMode(color_widgets::ColorPreview::SplitColor);

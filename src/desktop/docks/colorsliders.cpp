@@ -22,6 +22,7 @@
 #include <QtColorWidgets/color_line_edit.hpp>
 #include <QtColorWidgets/color_names.hpp>
 #include <QtColorWidgets/color_utils.hpp>
+#include <QtColorWidgets/color_wheel.hpp>
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
 
@@ -438,12 +439,11 @@ void ColorSliderDock::updateFromLineEditFinished(const QColor &color)
 	}
 }
 
-void ColorSliderDock::setColorSpace(
-	color_widgets::ColorWheel::ColorSpaceEnum colorSpace)
+void ColorSliderDock::setColorSpace(int colorSpace)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
 	switch(colorSpace) {
-	case color_widgets::ColorWheel::ColorHSL:
+	case int(color_widgets::ColorWheel::ColorHSL):
 		d->colorSpaceHslAction->setChecked(true);
 		d->colorSpace = color_widgets::ColorWheel::ColorHSL;
 		//: The "Hue" H of HSL.
@@ -455,7 +455,7 @@ void ColorSliderDock::setColorSpace(
 		//: Color space HSL (hue, saturation, lightness)
 		d->hsvButton->setText(tr("HSL"));
 		break;
-	case color_widgets::ColorWheel::ColorLCH:
+	case int(color_widgets::ColorWheel::ColorLCH):
 		d->colorSpaceHclAction->setChecked(true);
 		d->colorSpace = color_widgets::ColorWheel::ColorLCH;
 		//: The "Hue" H of HCL.

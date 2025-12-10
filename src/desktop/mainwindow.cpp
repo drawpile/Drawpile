@@ -5958,7 +5958,7 @@ void MainWindow::setupActions()
 	for(QAction *driver : drivers) {
 		connect(driver, &QAction::triggered, this, [this, driver](bool checked) {
 			if(checked) {
-				dpApp().settings().setTabletDriver(tabletinput::Mode(driver->property("tabletdriver").toInt()));
+				dpApp().settings().setTabletDriver(driver->property("tabletdriver").toInt());
 			}
 		});
 	}
@@ -6026,10 +6026,10 @@ void MainWindow::setupActions()
 		driverMenu->addAction(driver);
 	}
 	connect(driverMenu, &QMenu::aboutToShow, this, [this, drivers]() {
-		tabletinput::Mode mode = dpApp().settings().tabletDriver();
+		int mode = dpApp().settings().tabletDriver();
 		for(QAction *driver : drivers) {
 			QSignalBlocker blocker(driver);
-			driver->setChecked(driver->property("tabletdriver").toInt() == int(mode));
+			driver->setChecked(driver->property("tabletdriver").toInt() == mode);
 		}
 	});
 #endif

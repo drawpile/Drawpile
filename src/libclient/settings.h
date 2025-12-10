@@ -87,6 +87,7 @@ struct SettingMeta final {
 		V1,
 		V2,
 		V3,
+		V4,
 	};
 
 	Version version;
@@ -267,7 +268,7 @@ struct FoundKey {
 };
 
 std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version);
-std::optional<FoundKey> findtKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version);
+std::optional<FoundKey> findKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version);
 
 // These are exposed in the header only because libclient/desktop are split
 // so desktop-only settings need access to these too.

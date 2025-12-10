@@ -78,8 +78,9 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 		});
 
 #ifdef DP_COLOR_CIRCLE_ENABLE_PREVIEW
-	m_previewAction = menu->addAction(QCoreApplication::translate(
-		"docks::ColorSpinnerDock", "Preview selected color"));
+	m_previewAction = menu->addAction(
+		QCoreApplication::translate(
+			"docks::ColorSpinnerDock", "Preview selected color"));
 	m_previewAction->setCheckable(true);
 	connect(m_previewAction, &QAction::toggled, this, [this](bool toggled) {
 		if(!m_updating) {
@@ -188,16 +189,15 @@ void ColorCircleDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 	m_lastUsedColor = pal.count() == 0 ? m_wheel->color() : pal.colorAt(0);
 }
 
-void ColorCircleDock::setColorSpace(
-	color_widgets::ColorWheel::ColorSpaceEnum colorSpace)
+void ColorCircleDock::setColorSpace(int colorSpace)
 {
 	QScopedValueRollback<bool> guard(m_updating, true);
 	switch(colorSpace) {
-	case color_widgets::ColorWheel::ColorHSL:
+	case int(color_widgets::ColorWheel::ColorHSL):
 		m_colorSpaceHslAction->setChecked(true);
 		m_wheel->setColorSpace(color_widgets::ColorWheel::ColorHSL);
 		break;
-	case color_widgets::ColorWheel::ColorLCH:
+	case int(color_widgets::ColorWheel::ColorLCH):
 		m_colorSpaceHclAction->setChecked(true);
 		m_wheel->setColorSpace(color_widgets::ColorWheel::ColorLCH);
 		break;

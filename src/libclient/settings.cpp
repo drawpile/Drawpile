@@ -340,7 +340,7 @@ std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, Settin
 	return {};
 }
 
-std::optional<FoundKey> findtKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version)
+std::optional<FoundKey> findKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version)
 {
 	const auto groupKeys = settings.property("allGroupKeys").value<QSet<QString>>();
 	const auto versionedKey = formatSettingKey(baseKey, int(version));
@@ -447,7 +447,7 @@ namespace any {
 
 	QVariant getExactVersion(const SettingMeta &meta, QSettings &settings)
 	{
-		if (const auto key = findtKeyExactVersion(settings, meta.baseKey, meta.version)) {
+		if (const auto key = findKeyExactVersion(settings, meta.baseKey, meta.version)) {
 			if (key->isGroup) {
 				return getGroup(settings, key->key);
 			} else {

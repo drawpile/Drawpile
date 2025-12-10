@@ -2,7 +2,6 @@
 #ifndef DESKTOP_DOCKS_COLORSPINNER_H
 #define DESKTOP_DOCKS_COLORSPINNER_H
 #include "desktop/docks/dockbase.h"
-#include <QtColorWidgets/color_wheel.hpp>
 
 // TODO: On Android, the color popup ends up blocking inputs to the main window.
 // We're disabling it for now, but presumably this can be fixed, since a similar
@@ -37,9 +36,9 @@ public slots:
 	void setColor(const QColor &color);
 	void setColorFromShades(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
-	void setShape(color_widgets::ColorWheel::ShapeEnum shape);
-	void setAngle(color_widgets::ColorWheel::AngleEnum angle);
-	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
+	void setShape(int shape);
+	void setAngle(int angle);
+	void setColorSpace(int colorSpace);
 	void setMirror(bool mirror);
 	void setAlign(int align);
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW

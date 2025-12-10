@@ -3,7 +3,6 @@
 #define DESKTOP_DIALOGS_ARTISTICCOLORWHEELDIALOG
 #include "desktop/utils/qtguicompat.h"
 #include <QDialog>
-#include <QtColorWidgets/ColorWheel>
 
 class KisSliderSpinBox;
 class QCheckBox;
@@ -19,8 +18,6 @@ namespace dialogs {
 class ArtisticColorWheelDialog : public QDialog {
 	Q_OBJECT
 public:
-	using ColorSpace = color_widgets::ColorWheel::ColorSpaceEnum;
-
 	explicit ArtisticColorWheelDialog(QWidget *parent = nullptr);
 
 private:

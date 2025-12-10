@@ -98,39 +98,39 @@ static void resetQtInput(DrawpileApp &app)
 void init(DrawpileApp &app)
 {
 #ifdef Q_OS_WIN
-	app.settings().bindTabletDriver([&](Mode mode) {
+	app.settings().bindTabletDriver([&](int mode) {
 		resetKisTablet(app);
 		resetQtInput(app);
 		currentMode = Mode::Uninitialized;
 		switch(mode) {
-		case Mode::KisTabletWinink:
+		case int(Mode::KisTabletWinink):
 			enableKisTabletWinink(app, true);
 			break;
-		case Mode::KisTabletWininkNonNative:
+		case int(Mode::KisTabletWininkNonNative):
 			enableKisTabletWinink(app, false);
 			break;
-		case Mode::KisTabletWintab:
+		case int(Mode::KisTabletWintab):
 			enableKisTabletWintab(false);
 			break;
-		case Mode::KisTabletWintabRelativePenHack:
+		case int(Mode::KisTabletWintabRelativePenHack):
 			enableKisTabletWintab(true);
 			break;
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		case Mode::Qt5:
-		case Mode::Qt6Winink:
+		case int(Mode::Qt5):
+		case int(Mode::Qt6Winink):
 			enableQt6TabletInput(app, false);
 			break;
-		case Mode::Qt6Wintab:
+		case int(Mode::Qt6Wintab):
 			enableQt6TabletInput(app, true);
 			break;
 #	else
-		case Mode::Qt5:
-		case Mode::Qt6Winink:
-		case Mode::Qt6Wintab:
+		case int(Mode::Qt5):
+		case int(Mode::Qt6Winink):
+		case int(Mode::Qt6Wintab):
 			currentMode = Mode::Qt5;
 			break;
 #	endif
-		case Mode::Uninitialized:
+		default:
 			break;
 		}
 		emit app.tabletDriverChanged();

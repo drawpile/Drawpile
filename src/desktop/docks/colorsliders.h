@@ -4,7 +4,6 @@
 #define COLORSLIDERDOCK_H
 
 #include "desktop/docks/dockbase.h"
-#include <QtColorWidgets/color_wheel.hpp>
 
 namespace color_widgets {
 class ColorPalette;
@@ -30,7 +29,7 @@ private slots:
 	void updateFromHsvSpinbox();
 	void updateFromLineEdit(const QColor &color);
 	void updateFromLineEditFinished(const QColor &color);
-	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
+	void setColorSpace(int colorSpace);
 	void setMode(int mode);
 	void updateWidgetVisibilities();
 

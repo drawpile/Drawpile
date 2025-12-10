@@ -4,15 +4,101 @@
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDir>
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QString>
 #include <QStyleFactory>
 #include <QVBoxLayout>
 #include <QWidget>
+
+namespace {
+struct Theme {
+	QString value;
+	QString name;
+
+	bool operator<(const Theme &other) const
+	{
+		return name.compare(other.name, Qt::CaseInsensitive) < 0;
+	}
+};
+
+class ThemeCollector {
+public:
+	ThemeCollector(
+		QString &&notFoundTemplate, QHash<QString, QString> &&themeNames)
+		: m_notFoundTemplate(std::move(notFoundTemplate))
+		, m_themeNames(std::move(themeNames))
+	{
+	}
+
+	void addInternalTheme(const QString &value, const QString &name)
+	{
+		Q_ASSERT(!m_addedThemeValues.contains(value));
+		m_addedThemeValues.insert(value);
+		m_internalThemes.append({value, name});
+	}
+
+	void handleTheme(const QString &value, bool found = true)
+	{
+		if(!m_addedThemeValues.contains(value)) {
+			m_addedThemeValues.insert(value);
+
+			QString name;
+			bool builtin = isBuiltinTheme(value, name);
+			Theme theme = {value, found ? name : m_notFoundTemplate.arg(name)};
+			if(builtin) {
+				m_builtinThemes.append(theme);
+			} else {
+				m_customThemes.append(theme);
+			}
+		}
+	}
+
+	QComboBox *makeWidget()
+	{
+		std::sort(m_builtinThemes.begin(), m_builtinThemes.end());
+		std::sort(m_customThemes.begin(), m_customThemes.end());
+		QComboBox *combo = new QComboBox;
+		addThemesTo(combo, m_internalThemes);
+		addThemesTo(combo, m_builtinThemes);
+		addThemesTo(combo, m_customThemes);
+		return combo;
+	}
+
+private:
+	bool isBuiltinTheme(const QString &value, QString &outName)
+	{
+		QHash<QString, QString>::const_iterator it =
+			m_themeNames.constFind(value);
+		if(it == m_themeNames.constEnd()) {
+			outName = value;
+			return false;
+		} else {
+			outName = *it;
+			return true;
+		}
+	}
+
+	static void addThemesTo(QComboBox *combo, const QVector<Theme> &themes)
+	{
+		for(const Theme &theme : themes) {
+			combo->addItem(theme.name, theme.value);
+		}
+	}
+
+	QString m_notFoundTemplate;
+	QHash<QString, QString> m_themeNames;
+	QSet<QString> m_addedThemeValues;
+	QVector<Theme> m_internalThemes;
+	QVector<Theme> m_builtinThemes;
+	QVector<Theme> m_customThemes;
+};
+}
 
 namespace dialogs {
 namespace settingsdialog {
@@ -219,27 +305,59 @@ void General::initTheme(
 	settings.bindThemeStyle(style, Qt::UserRole);
 	form->addRow(tr("Style:"), style);
 
-	auto *theme = new QComboBox;
-	QPair<desktop::settings::ThemePalette, QString> themes[] = {
-		{desktop::settings::ThemePalette::System, tr("System")},
-		{desktop::settings::ThemePalette::Light, tr("Light")},
-		{desktop::settings::ThemePalette::Dark, tr("Dark")},
-		{desktop::settings::ThemePalette::KritaBright, tr("Krita Bright")},
-		{desktop::settings::ThemePalette::KritaDark, tr("Krita Dark")},
-		{desktop::settings::ThemePalette::KritaDarker, tr("Krita Darker")},
-		{desktop::settings::ThemePalette::Fusion, tr("Qt Fusion")},
-		{desktop::settings::ThemePalette::BlueApatite, tr("Blue Apatite")},
-		{desktop::settings::ThemePalette::HotdogStand, tr("Hotdog Stand")},
-		{desktop::settings::ThemePalette::Indigo, tr("Indigo")},
-		{desktop::settings::ThemePalette::OceanDeep, tr("Ocean Deep")},
-		{desktop::settings::ThemePalette::PoolTable, tr("Pool Table")},
-		{desktop::settings::ThemePalette::RoseQuartz, tr("Rose Quartz")},
-		{desktop::settings::ThemePalette::Rust, tr("Rust")},
-		{desktop::settings::ThemePalette::Watermelon, tr("Watermelon")},
-	};
-	for(const QPair<desktop::settings::ThemePalette, QString> &p : themes) {
-		theme->addItem(p.second, QVariant::fromValue(p.first));
+	ThemeCollector themeCollector(
+		//: %1 is the name of a theme, whose file was not found.
+		tr("%1 (not found)"),
+		{
+			//: The name for a color scheme that's blueish green.
+			{QStringLiteral("blueapatite.colors"), tr("Blue Apatite")},
+			//: The name for a color scheme that's yellow and red.
+			{QStringLiteral("hotdogstand.colors"), tr("Hotdog Stand")},
+			//: The name for a color scheme that's purple.
+			{QStringLiteral("indigo.colors"), tr("Indigo")},
+			//: The name for a color scheme. "Krita" is a name.
+			{QStringLiteral("kritabright.colors"), tr("Krita Bright")},
+			//: The name for a color scheme. "Krita" is a name.
+			{QStringLiteral("kritadark.colors"), tr("Krita Dark")},
+			//: The name for a color scheme. "Krita" is a name.
+			{QStringLiteral("kritadarker.colors"), tr("Krita Darker")},
+			//: The name for a color scheme that is dark like the night.
+			{QStringLiteral("nightmode.colors"), tr("Night Mode")},
+			//: The name for a color scheme that's a deep blue.
+			{QStringLiteral("oceandeep.colors"), tr("Ocean Deep")},
+			//: The name for a color scheme that's green and orange.
+			{QStringLiteral("pooltable.colors"), tr("Pool Table")},
+			//: The name for a color scheme that's light and pink.
+			{QStringLiteral("rosequartz.colors"), tr("Rose Quartz")},
+			//: The name for a color scheme that's orange and brown.
+			{QStringLiteral("rust.colors"), tr("Rust")},
+			//: The name for a color scheme that's green and pink.
+			{QStringLiteral("watermelon.colors"), tr("Watermelon")},
+		});
+
+	//: The name for the system color scheme.
+	themeCollector.addInternalTheme(QStringLiteral("system"), tr("System"));
+#ifdef Q_OS_MACOS
+	//: The name for the light system color scheme.
+	themeCollector.addInternalTheme(QStringLiteral("light"), tr("Light"));
+	//: The name for the dark system color scheme.
+	themeCollector.addInternalTheme(QStringLiteral("dark"), tr("Dark"));
+#endif
+	//: The name of a color theme. Qt and Fusion are names.
+	themeCollector.addInternalTheme(QStringLiteral("fusion"), tr("Qt Fusion"));
+
+	for(const QString &dataPath : utils::paths::dataPaths()) {
+		QDir dir(dataPath);
+		dir.setNameFilters({QStringLiteral("*.colors")});
+		dir.setFilter(QDir::Files | QDir::Readable);
+		for(const QString &entry : dir.entryList()) {
+			themeCollector.handleTheme(entry);
+		}
 	}
+
+	themeCollector.handleTheme(settings.themePalette(), false);
+
+	QComboBox *theme = themeCollector.makeWidget();
 	settings.bindThemePalette(theme, Qt::UserRole);
 	form->addRow(tr("Color scheme:"), theme);
 }

@@ -69,7 +69,7 @@
 #endif
 
 #ifndef THEME_PALETTE_DEFAULT
-#	define THEME_PALETTE_DEFAULT ThemePalette::KritaDark
+#	define THEME_PALETTE_DEFAULT QString("kritadark.colors")
 #endif
 
 #ifndef THEME_STYLE_DEFAULT
@@ -93,11 +93,15 @@
 	 COLOR_SWATCH_NO_SLIDERS | COLOR_SWATCH_NO_SPINNER)
 
 SETTING(_brushCursorDummy         , _BrushCursorDummy         , "_brushcursordummy"                     , widgets::CanvasView::BrushCursor::Dot)
+SETTING(_colorWheelAngleDummy     , _ColorWheelAngleDummy     , "_colorwheelangledummy"                 , color_widgets::ColorWheel::AngleEnum::AngleRotating)
+SETTING(_colorWheelShapeDummy     , _ColorWheelShapeDummy     , "_colorwheelshapedummy"                 , color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
+SETTING(_themePaletteDummy        , _ThemePaletteDummy        , "_themepalettedummy"                    , desktop::settings::ThemePalette::System)
+SETTING(_videoExporterFormatDummy , _VideoExporterFormatDummy , "_videoexporterformatdummy"             , VideoExporter::Format::IMAGE_SERIES)
 SETTING(actionBar                 , ActionBar                 , "settings/actionbar"                    , 1)
 SETTING(actionBarLocation         , ActionBarLocation         , "settings/actionbarlocation"            , 3)
 SETTING_GETSET_V(
 	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , int(view::Cursor::SameAsBrush),
-	&viewCursor::get, &viewCursor::set)
+	&any::get, &viewCursor::set)
 #ifdef Q_OS_ANDROID
 SETTING_GETSET_V(
 	V1, androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false,
@@ -107,7 +111,7 @@ SETTING(animationExportFormat     , AnimationExportFormat     , "animationexport
 SETTING(automaticAlphaPreserve    , AutomaticAlphaPreserve    , "settings/automaticalphapreserve"       , int(1))
 SETTING_GETSET_V(
 	V1, brushCursor               , BrushCursor               , "settings/brushcursor"                  , int(view::Cursor::TriangleRight),
-	&viewCursor::get, &viewCursor::set)
+	&any::get, &viewCursor::set)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
 SETTING(brushPresetsAttach        , BrushPresetsAttach        , "settings/brushpresetsattach"           , true)
 SETTING(brushSlotCount            , BrushSlotCount            , "settings/brushslotcount"               , 5)
@@ -136,12 +140,18 @@ SETTING(colorSlidersShowAll       , ColorSlidersShowAll       , "settings/colors
 SETTING(colorSlidersShowInput     , ColorSlidersShowInput     , "settings/colorsliders/showinput"       , true)
 SETTING(colorSlidersMode          , ColorSlidersMode          , "settings/colorsliders/mode"            , 0)
 SETTING(colorSwatchFlags          , ColorSwatchFlags          , "settings/colorswatchflags"             , 0)
-SETTING(colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , color_widgets::ColorWheel::AngleEnum::AngleRotating)
+SETTING_GETSET_V(
+	V1, colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , int(color_widgets::ColorWheel::AngleEnum::AngleRotating),
+	&colorWheelAngle::get, &any::set)
 SETTING(colorWheelAlign           , ColorWheelAlign           , "settings/colorwheel/align"             , int(Qt::AlignVCenter))
 SETTING(colorWheelMirror          , ColorWheelMirror          , "settings/colorwheel/mirror"            , true)
 SETTING(colorWheelPreview         , ColorWheelPreview         , "settings/colorwheel/preview"           , 1)
-SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorwheel/shape"             , color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
-SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV)
+SETTING_GETSET_V(
+	V1, colorWheelShape           , ColorWheelShape           , "settings/colorwheel/shape"             , int(color_widgets::ColorWheel::ShapeEnum::ShapeTriangle),
+	&colorWheelShape::get, &any::set)
+SETTING_GETSET_V(
+	V1, colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , int(color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV),
+	&colorWheelSpace::get, &any::set)
 SETTING(compactChat               , CompactChat               , "history/compactchat"                   , false)
 SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , false)
 #if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
@@ -156,7 +166,7 @@ SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpre
 SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , true)
 SETTING_GETSET_V(
 	V1, eraseCursor               , EraseCursor               , "settings/erasecursor"                  , int(view::Cursor::SameAsBrush),
-	&viewCursor::get, &viewCursor::set)
+	&any::get, &viewCursor::set)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)
 SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , false)
 SETTING(filterInactive            , FilterInactive            , "history/filterinactive"                , true)
@@ -207,7 +217,9 @@ SETTING(lastSessionUndoDepth      , LastSessionUndoDepth      , "history/session
 SETTING(lastStartDialogPage       , LastStartDialogPage       , "history/laststartdialogpage"           , -1)
 SETTING(lastStartDialogSize       , LastStartDialogSize       , "history/laststartdialogsize"           , QSize())
 SETTING(lastStartDialogDateTime   , LastStartDialogDateTime   , "history/laststartdialogdatetime"       , QString())
-SETTING(lastTool                  , LastTool                  , "tools/tool"                            , tools::Tool::Type::FREEHAND)
+SETTING_GETSET_V(
+	V1, lastTool                  , LastTool                  , "tools/tool"                            , int(tools::Tool::Type::FREEHAND),
+	&lastTool::get, &any::set)
 SETTING(lastToolBackgroundColor   , LastToolBackgroundColor   , "tools/backgroundcolor"                 , QColor(Qt::white))
 SETTING(lastToolColor             , LastToolColor             , "tools/color"                           , QColor(Qt::black))
 SETTING(lastUsername              , LastUsername              , "history/username"                      , QString())
@@ -299,17 +311,20 @@ SETTING(showTransformNotices      , ShowTransformNotices      , "settings/showtr
 SETTING(showViewModeNotices       , ShowViewModeNotices       , "settings/showviewmodenotices"          , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
-SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
-	, &tabletDriver::get, &tabletDriver::set)
+SETTING_GETSET_V(
+	V1, tabletDriver              , TabletDriver              , "settings/input/tabletdriver"           , int(tabletinput::Mode::KisTabletWinink),
+	&tabletDriver::get, &any::set)
 SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , int(tabletinput::EraserAction::Default)
 	, &tabletEraserAction::get, &tabletEraserAction::set)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
 SETTING(temporaryToolSwitch       , TemporaryToolSwitch       , "settings/tools/temporaryswitch"        , true)
 SETTING(temporaryToolSwitchMs     , TemporaryToolSwitchMs     , "settings/tools/temporaryswitchms"      , 250)
-SETTING_GETSET_V(V3, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
-	, &any::get	      , &themePalette::set)
-SETTING_FULL(V2, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
-	, &any::get       , &any::set, &themeStyle::notify)
+SETTING_GETSET_V(
+	V4, themePalette              , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT,
+	&themePalette::get, &any::set)
+SETTING_FULL(
+	V2, themeStyle                , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT,
+	&any::get, &any::set, &themeStyle::notify)
 SETTING(toolBarConfig             , ToolBarConfig             , "settings/toolbarconfig"                , QVariantHash())
 SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , true)
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
@@ -319,11 +334,11 @@ SETTING(useMipmaps                , UseMipmaps                , "settings/usemip
 SETTING(userMarkerPersistence     , UserMarkerPersistence     , "settings/usermarkerpersistence"        , 1000)
 SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , QString())
 SETTING(videoExportFfmpegPath     , VideoExportFfmpegPath     , "videoexport/ffmpegpath"                , QString("ffmpeg"))
-SETTING(videoExportFormat         , VideoExportFormat         , "videoexport/formatchoice"              , VideoExporter::Format::IMAGE_SERIES)
+SETTING(videoExportFormat         , VideoExportFormat         , "videoexport/format"                    , int(VideoExporter::Format::IMAGE_SERIES))
 SETTING(videoExportFrameHeight    , VideoExportFrameHeight    , "videoexport/frameheight"               , 720)
 SETTING(videoExportFrameRate      , VideoExportFrameRate      , "videoexport/fps"                       , 30)
 SETTING(videoExportFrameWidth     , VideoExportFrameWidth     , "videoexport/framewidth"                , 1280)
-SETTING(videoExportSizeChoice     , VideoExportSizeChoice     , "videoexport/sizeChoice"                , 0) // TODO: Enum
+SETTING(videoExportSizeChoice     , VideoExportSizeChoice     , "videoexport/sizeChoice"                , 0)
 SETTING(welcomePageShown          , WelcomePageShown          , "history/welcomepageshown"              , false)
 SETTING(writeLogFile              , WriteLogFile              , "settings/logfile"                      , false)
 

@@ -226,87 +226,78 @@ void DrawpileApp::setThemeStyle(const QString &themeStyle)
 	QCoreApplication::sendEvent(this, &event);
 }
 
-void DrawpileApp::setThemePalette(int themePalette)
+void DrawpileApp::setThemePalette(const QString &themePalette)
 {
-	using desktop::settings::ThemePalette;
-	QPalette newPalette;
-
-	switch(themePalette) {
-	case int(ThemePalette::System):
+	if(themePalette == QStringLiteral("system")) {
 #ifdef Q_OS_MACOS
 		macui::setNativeAppearance(macui::Appearance::System);
 #endif
 		setPalette(m_originalSystemPalette);
 		return;
-	case int(ThemePalette::Dark):
+	}
+
 #ifdef Q_OS_MACOS
+	if(themePalette == QStringLiteral("dark")) {
 		if(macui::setNativeAppearance(macui::Appearance::Dark)) {
 			setPalette(QPalette());
-			return;
+		} else {
+			setThemePalette(QStringLiteral("nightmode.colors"));
 		}
-#endif
-		newPalette = loadPalette(QStringLiteral("nightmode.colors"));
-		break;
-	case int(ThemePalette::Light):
-#ifdef Q_OS_MACOS
+		return;
+	}
+
+	if(themePalette == QStringLiteral("light")) {
 		if(macui::setNativeAppearance(macui::Appearance::Light)) {
 			setPalette(QPalette());
-			return;
+		} else {
+			setThemePalette(QStringLiteral("kritabright.colors"));
 		}
+		return;
+	}
 #endif
-		[[fallthrough]];
-	case int(ThemePalette::KritaBright):
-		newPalette = loadPalette(QStringLiteral("kritabright.colors"));
-		break;
-	case int(ThemePalette::KritaDark):
-		newPalette = loadPalette(QStringLiteral("kritadark.colors"));
-		break;
-	case int(ThemePalette::KritaDarker):
-		newPalette = loadPalette(QStringLiteral("kritadarker.colors"));
-		break;
-	case int(ThemePalette::Fusion): {
+
+	QPalette newPalette;
+	if(themePalette == QStringLiteral("fusion")) {
 #ifdef Q_OS_MACOS
 		// Fusion palette will adapt itself to whether the system appearance is
 		// light or dark, so we need to reset that or else it will incorrectly
 		// inherit the dark mode of the previous palette
 		macui::setNativeAppearance(macui::Appearance::System);
 #endif
-		if(compat::styleName(*style()) == QStringLiteral("Fusion")) {
-			newPalette = style()->standardPalette();
-		} else if(
-			const auto fusion =
-				std::unique_ptr<QStyle>(QStyleFactory::create("Fusion"))) {
-			newPalette = fusion->standardPalette();
+		QStyle *currentStyle = style();
+		if(currentStyle &&
+		   compat::styleName(*currentStyle) == QStringLiteral("Fusion")) {
+			newPalette = currentStyle->standardPalette();
+		} else {
+			QStyle *fusion = QStyleFactory::create(QStringLiteral("Fusion"));
+			if(fusion) {
+				newPalette = fusion->standardPalette();
+				fusion->deleteLater();
+			} else {
+				setThemePalette(THEME_PALETTE_DEFAULT);
+				return;
+			}
 		}
-		break;
-	}
-	case int(ThemePalette::HotdogStand):
-		newPalette = loadPalette(QStringLiteral("hotdogstand.colors"));
-		break;
-	case int(ThemePalette::Indigo):
-		newPalette = loadPalette(QStringLiteral("indigo.colors"));
-		break;
-	case int(ThemePalette::PoolTable):
-		newPalette = loadPalette(QStringLiteral("pooltable.colors"));
-		break;
-	case int(ThemePalette::Rust):
-		newPalette = loadPalette(QStringLiteral("rust.colors"));
-		break;
-	case int(ThemePalette::BlueApatite):
-		newPalette = loadPalette(QStringLiteral("blueapatite.colors"));
-		break;
-	case int(ThemePalette::OceanDeep):
-		newPalette = loadPalette(QStringLiteral("oceandeep.colors"));
-		break;
-	case int(ThemePalette::RoseQuartz):
-		newPalette = loadPalette(QStringLiteral("rosequartz.colors"));
-		break;
-	case int(ThemePalette::Watermelon):
-		newPalette = loadPalette(QStringLiteral("watermelon.colors"));
-		break;
+	} else {
+		QString path = utils::paths::locateDataFile(themePalette);
+		if(path.isEmpty()) {
+			qWarning(
+				"Could not find palette file %s", qUtf8Printable(themePalette));
+			path = utils::paths::locateDataFile(
+				QStringLiteral("kritadark.colors"));
+			if(path.isEmpty()) {
+				qWarning(
+					"Could not find fallback palette file %s",
+					qUtf8Printable(themePalette));
+				setThemePalette(QStringLiteral("system"));
+				return;
+			}
+		}
+		newPalette = colorscheme::loadFromFile(path);
 	}
 
 	setPalette(newPalette);
+
 #ifdef Q_OS_MACOS
 	// If the macOS theme is used with custom palettes, it is necessary to
 	// adjust the native appearance to match since some controls (e.g. combobox)
@@ -318,17 +309,6 @@ void DrawpileApp::setThemePalette(int themePalette)
 		macui::setNativeAppearance(macui::Appearance::Light);
 	}
 #endif
-}
-
-QPalette DrawpileApp::loadPalette(const QString &fileName)
-{
-	QString path = utils::paths::locateDataFile(fileName);
-	if(path.isEmpty()) {
-		qWarning("Could not find palette file %s", qUtf8Printable(fileName));
-		return QPalette();
-	} else {
-		return colorscheme::loadFromFile(path);
-	}
 }
 
 void DrawpileApp::updateThemeIcons()
@@ -357,10 +337,7 @@ void DrawpileApp::initTheme()
 	QIcon::setThemeSearchPaths(themePaths);
 
 	m_settings->bindThemeStyle(this, &DrawpileApp::setThemeStyle);
-	m_settings->bindThemePalette(
-		this, [this](desktop::settings::ThemePalette themePalette) {
-			setThemePalette(int(themePalette));
-		});
+	m_settings->bindThemePalette(this, &DrawpileApp::setThemePalette);
 	// If the theme is set to the default theme then the palette will not change
 	// and icon initialisation will be incomplete if it is not updated once here
 	updateThemeIcons();

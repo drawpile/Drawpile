@@ -15,6 +15,7 @@
 #include <QFormLayout>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QtColorWidgets/ColorWheel>
 
 namespace dialogs {
 
@@ -112,7 +113,9 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 	m_hueAngleSlider->setPrefix(tr("Hue angle: "));
 	//: Degree symbol. Unless your language uses a different one, keep as-is.
 	m_hueAngleSlider->setSuffix(tr("°"));
-	ColorSpace colorSpace = settings.colorWheelSpace();
+
+	using ColorSpace = color_widgets::ColorWheel::ColorSpaceEnum;
+	ColorSpace colorSpace = ColorSpace(settings.colorWheelSpace());
 	if(colorSpace == ColorSpace::ColorLCH) {
 		m_continuousSaturationBox->setText(tr("Continuous chroma"));
 		m_saturationStepsSlider->setPrefix(tr("Chroma steps: "));

@@ -15,6 +15,7 @@
 #include <QMouseEvent>
 #include <QScopedValueRollback>
 #include <QVBoxLayout>
+#include <QtColorWidgets/color_wheel.hpp>
 #include <QtColorWidgets/swatch.hpp>
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 #	include "desktop/widgets/colorpopup.h"
@@ -404,31 +405,31 @@ void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 		pal.count() == 0 ? d->colorwheel->color() : pal.colorAt(0);
 }
 
-void ColorSpinnerDock::setShape(color_widgets::ColorWheel::ShapeEnum shape)
+void ColorSpinnerDock::setShape(int shape)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
-	d->colorwheel->setSelectorShape(shape);
+	d->colorwheel->setSelectorShape(
+		color_widgets::ColorWheel::ShapeEnum(shape));
 	updateShapeAction();
 }
 
-void ColorSpinnerDock::setAngle(color_widgets::ColorWheel::AngleEnum angle)
+void ColorSpinnerDock::setAngle(int angle)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
 	d->colorwheel->setRotatingSelector(
-		angle != color_widgets::ColorWheel::AngleFixed);
+		angle != int(color_widgets::ColorWheel::AngleFixed));
 	updateShapeAction();
 }
 
-void ColorSpinnerDock::setColorSpace(
-	color_widgets::ColorWheel::ColorSpaceEnum colorSpace)
+void ColorSpinnerDock::setColorSpace(int colorSpace)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
 	switch(colorSpace) {
-	case color_widgets::ColorWheel::ColorHSL:
+	case int(color_widgets::ColorWheel::ColorHSL):
 		d->colorSpaceHslAction->setChecked(true);
 		d->colorwheel->setColorSpace(color_widgets::ColorWheel::ColorHSL);
 		break;
-	case color_widgets::ColorWheel::ColorLCH:
+	case int(color_widgets::ColorWheel::ColorLCH):
 		d->colorSpaceHclAction->setChecked(true);
 		d->colorwheel->setColorSpace(color_widgets::ColorWheel::ColorLCH);
 		break;

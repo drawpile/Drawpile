@@ -29,6 +29,48 @@ using libclient::settings::SettingMeta;
 using libclient::settings::findKey;
 namespace any = libclient::settings::any;
 
+namespace {
+template <typename T>
+static QVariant getV0EnumToV1Int(const SettingMeta &meta, QSettings &settings)
+{
+	std::optional<libclient::settings::FoundKey> intFoundKey =
+		findKeyExactVersion(settings, meta.baseKey, meta.version);
+	if (intFoundKey.has_value()) {
+		return settings.value(intFoundKey->key);
+	}
+
+	std::optional<libclient::settings::FoundKey> enumFoundKey =
+		findKeyExactVersion(settings, meta.baseKey, SettingMeta::Version::V0);
+	if (enumFoundKey.has_value()) {
+		QVariant enumValue = settings.value(enumFoundKey->key);
+		return int(enumValue.value<T>());
+	}
+
+	return meta.getDefaultValue();
+}
+}
+
+namespace colorWheelAngle {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		return getV0EnumToV1Int<color_widgets::ColorWheel::AngleEnum>(meta, settings);
+	}
+}
+
+namespace colorWheelShape {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		return getV0EnumToV1Int<color_widgets::ColorWheel::ShapeEnum>(meta, settings);
+	}
+}
+
+namespace colorWheelSpace {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		return getV0EnumToV1Int<color_widgets::ColorWheel::ColorSpaceEnum>(meta, settings);
+	}
+}
+
 namespace debounceDelayMs {
 	int bounded(const QVariant &value)
 	{
@@ -64,6 +106,13 @@ namespace lastHostServer {
 		}
 
 		return 1;
+	}
+}
+
+namespace lastTool {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		return getV0EnumToV1Int<tools::Tool::Type>(meta, settings);
 	}
 }
 
@@ -221,59 +270,18 @@ namespace twoFingerTwist {
 namespace tabletDriver {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		using tabletinput::Mode;
-
-		auto mode = meta.getDefaultValue().value<Mode>();
-		if (findKey(settings, meta.baseKey, meta.version)) {
-			mode = any::get(meta, settings).value<Mode>();
-		} else if (const auto inkKey = findKey(settings, "settings/input/windowsink", SettingMeta::Version::V0)) {
-			const auto useInk = settings.value(inkKey->key).toBool();
-			const auto modeKey = findKey(settings, "settings/input/relativepenhack", SettingMeta::Version::V0);
-			const auto relativeMode = modeKey
-				? settings.value(modeKey->key).toBool()
-				: false;
-
-			mode = Mode::KisTabletWintab;
-			if (relativeMode) {
-				mode = Mode::KisTabletWintabRelativePenHack;
-			} else if (useInk) {
-				mode = Mode::KisTabletWinink;
-			}
-		}
-
+		QVariant value = getV0EnumToV1Int<tabletinput::Mode>(meta, settings);
+		switch(value.toInt()) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		if (mode == Mode::Qt5) {
-			mode = Mode::Qt6Winink;
-		}
+		case int(tabletinput::Mode::Qt5):
+			return int(tabletinput::Mode::Qt6Winink);
 #else
-		if (mode == Mode::Qt6Winink || mode == Mode::Qt6Wintab) {
-			mode = Mode::Qt5;
-		}
+		case int(tabletinput::Mode::Qt6Winink):
+		case int(tabletinput::Mode::Qt6Wintab):
+			return int(tabletinput::Mode::Qt5);
 #endif
-
-		return QVariant::fromValue(mode);
-	}
-
-	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
-	{
-		any::forceSet(meta, settings, value);
-
-		if (const auto oldKey = findKey(settings, "settings/input/windowsink", SettingMeta::Version::V0)) {
-			const auto mode = value.value<tabletinput::Mode>();
-			auto useInk = false;
-			auto relativeMode = false;
-			switch (mode) {
-			case tabletinput::Mode::KisTabletWintabRelativePenHack:
-				relativeMode = true;
-				break;
-			case tabletinput::Mode::Qt6Winink:
-			case tabletinput::Mode::KisTabletWinink:
-				useInk = true;
-				break;
-			default: {}
-			}
-			settings.setValue(oldKey->key, useInk);
-			settings.setValue("settings/input/relativepenhack", relativeMode);
+		default:
+			return value;
 		}
 	}
 }
@@ -326,17 +334,61 @@ void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 }
 
 namespace themePalette {
-	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		using Key = std::optional<libclient::settings::FoundKey>;
-		any::forceSet(meta, settings, value);
-		if (Key oldKey = findKey(settings, meta.baseKey, SettingMeta::Version::V2)) {
-			ThemePalette oldValue = value.value<ThemePalette>();
-			if(int(oldValue) > int(ThemePalette::HotdogStand)) {
-				oldValue = THEME_PALETTE_DEFAULT;
-			}
-			settings.setValue(oldKey->key, QVariant::fromValue(oldValue));
+		std::optional<libclient::settings::FoundKey> stringFoundKey =
+			findKeyExactVersion(settings, meta.baseKey, meta.version);
+		if (stringFoundKey.has_value()) {
+			return settings.value(stringFoundKey->key);
 		}
+
+		std::optional<libclient::settings::FoundKey> enumFoundKey =
+			findKey(settings, meta.baseKey, SettingMeta::Version::V3);
+		if (enumFoundKey.has_value()) {
+			QVariant enumValue = settings.value(enumFoundKey->key);
+			switch(enumValue.value<desktop::settings::ThemePalette>()) {
+			case desktop::settings::ThemePalette::System:
+				return QStringLiteral("system");
+			case desktop::settings::ThemePalette::Light:
+#ifdef Q_OS_MACOS
+				return QStringLiteral("light");
+#else
+				return QStringLiteral("kritabright.colors");
+#endif
+			case desktop::settings::ThemePalette::Dark:
+#ifdef Q_OS_MACOS
+				return QStringLiteral("dark");
+#else
+				return QStringLiteral("nightmode.colors");
+#endif
+			case desktop::settings::ThemePalette::KritaBright:
+				return QStringLiteral("kritabright.colors");
+			case desktop::settings::ThemePalette::KritaDark:
+				return QStringLiteral("kritadark.colors");
+			case desktop::settings::ThemePalette::KritaDarker:
+				return QStringLiteral("kritadarker.colors");
+			case desktop::settings::ThemePalette::Fusion:
+				return QStringLiteral("fusion");
+			case desktop::settings::ThemePalette::HotdogStand:
+				return QStringLiteral("hotdogstand.colors");
+			case desktop::settings::ThemePalette::Indigo:
+				return QStringLiteral("indigo.colors");
+			case desktop::settings::ThemePalette::PoolTable:
+				return QStringLiteral("pooltable.colors");
+			case desktop::settings::ThemePalette::Rust:
+				return QStringLiteral("rust.colors");
+			case desktop::settings::ThemePalette::BlueApatite:
+				return QStringLiteral("blueapatite.colors");
+			case desktop::settings::ThemePalette::OceanDeep:
+				return QStringLiteral("oceandeep.colors");
+			case desktop::settings::ThemePalette::RoseQuartz:
+				return QStringLiteral("rosequartz.colors");
+			case desktop::settings::ThemePalette::Watermelon:
+				return QStringLiteral("watermelon.colors");
+			}
+		}
+
+		return meta.getDefaultValue();
 	}
 }
 
@@ -350,25 +402,10 @@ namespace themeStyle {
 }
 
 namespace viewCursor {
-	QVariant get(const SettingMeta &meta, QSettings &settings)
-	{
-		using Key = std::optional<libclient::settings::FoundKey>;
-		if (Key currentKey = findKey(settings, meta.baseKey, meta.version)) {
-			return settings.value(currentKey->key).toInt();
-		} else if (Key oldKey = findKey(settings, meta.baseKey, SettingMeta::Version::V0)) {
-			return int(settings.value(currentKey->key).value<widgets::CanvasView::BrushCursor>());
-		} else {
-			return meta.getDefaultValue().toInt();
-		}
-	}
-
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 	{
-		using Key = std::optional<libclient::settings::FoundKey>;
 		any::forceSet(meta, settings, value);
-		if (Key oldKey = findKey(settings, meta.baseKey, SettingMeta::Version::V0)) {
-			settings.setValue(oldKey->key, QVariant::fromValue(widgets::CanvasView::BrushCursor(value.toInt())));
-		}
+		settings.remove(meta.baseKey);
 	}
 }
 

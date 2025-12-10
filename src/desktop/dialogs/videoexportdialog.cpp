@@ -29,13 +29,13 @@ VideoExportDialog::VideoExportDialog(QWidget *parent)
 	m_ui->setupUi(this);
 
 	m_ui->exportFormatChoice->addItem(
-		tr("Image Series"), VideoExporter::IMAGE_SERIES);
+		tr("Image Series"), int(VideoExporter::IMAGE_SERIES));
 	m_ui->exportFormatChoice->addItem(
-		tr("MP4 Video"), VideoExporter::FFMPEG_MP4);
+		tr("MP4 Video"), int(VideoExporter::FFMPEG_MP4));
 	m_ui->exportFormatChoice->addItem(
-		tr("WebM Video"), VideoExporter::FFMPEG_WEBM);
+		tr("WebM Video"), int(VideoExporter::FFMPEG_WEBM));
 	m_ui->exportFormatChoice->addItem(
-		tr("Custom FFmpeg Command"), VideoExporter::FFMPEG_CUSTOM);
+		tr("Custom FFmpeg Command"), int(VideoExporter::FFMPEG_CUSTOM));
 
 	QStandardItemModel *sizes = new QStandardItemModel(this);
 	sizes->appendRow(sizeItem(tr("Original"), QVariant(false)));

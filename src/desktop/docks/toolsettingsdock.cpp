@@ -275,7 +275,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	auto &settings = dpApp().settings();
 	setForegroundColor(settings.lastToolColor());
 	setBackgroundColor(settings.lastToolBackgroundColor());
-	selectTool(settings.lastTool());
+	selectTool(tools::Tool::Type(settings.lastTool()));
 }
 
 ToolSettings::~ToolSettings()
@@ -304,7 +304,7 @@ void ToolSettings::saveSettings()
 	settings.setToolset(toolset);
 	settings.setLastToolColor(foregroundColor());
 	settings.setLastToolBackgroundColor(backgroundColor());
-	settings.setLastTool(currentTool());
+	settings.setLastTool(int(currentTool()));
 }
 
 bool ToolSettings::currentToolAffectsCanvas() const

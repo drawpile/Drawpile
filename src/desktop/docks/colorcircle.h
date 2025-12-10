@@ -37,7 +37,7 @@ public:
 
 	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
-	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
+	void setColorSpace(int colorSpace);
 
 #ifdef DP_COLOR_CIRCLE_ENABLE_PREVIEW
 	void setPreview(int preview);

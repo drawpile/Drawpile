@@ -41,7 +41,7 @@ public:
 	void initState();
 
 	void setThemeStyle(const QString &themeStyle);
-	void setThemePalette(int themePalette);
+	void setThemePalette(const QString &themePalette);
 	void initTheme();
 	void initCanvasImplementation(const QString &arg);
 	void initInterface();
@@ -138,8 +138,6 @@ private:
 #endif
 
 	void updateThemeIcons();
-
-	QPalette loadPalette(const QString &file);
 
 	MainWindow *acquireWindow(bool restoreWindowPosition, bool singleSession);
 
