@@ -270,6 +270,25 @@ struct FoundKey {
 std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version);
 std::optional<FoundKey> findKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version);
 
+template <typename T>
+QVariant getEnumReplacedByInt(const SettingMeta &meta, QSettings &settings)
+{
+	std::optional<libclient::settings::FoundKey> intFoundKey =
+		findKeyExactVersion(settings, meta.baseKey, meta.version);
+	if(intFoundKey.has_value()) {
+		return settings.value(intFoundKey->key);
+	}
+
+	std::optional<libclient::settings::FoundKey> enumFoundKey = findKey(
+		settings, meta.baseKey, SettingMeta::Version(int(meta.version) - 1));
+	if(enumFoundKey.has_value()) {
+		QVariant enumValue = settings.value(enumFoundKey->key);
+		return int(enumValue.value<T>());
+	}
+
+	return meta.getDefaultValue();
+}
+
 // These are exposed in the header only because libclient/desktop are split
 // so desktop-only settings need access to these too.
 namespace any {

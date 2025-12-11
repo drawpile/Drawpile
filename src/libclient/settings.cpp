@@ -564,6 +564,13 @@ namespace any {
 	}
 }
 
+namespace parentalcontrolslevel {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		return getEnumReplacedByInt<parentalcontrols::Level>(meta, settings);
+	}
+}
+
 #define DP_SETTINGS_BODY
 #include "libclient/settings_table.h"
 #undef DP_SETTINGS_BODY

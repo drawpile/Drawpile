@@ -139,8 +139,8 @@ Session::Session(QWidget *parent)
 	settings.bindLastHostServer(m_serverCombo, Qt::UserRole);
 	settings.bindLastHostServer(this, &Session::updateServer);
 	settings.bindParentalControlsLevel(
-		this, [this](parentalcontrols::Level level) {
-			bool allowNsfm = level < parentalcontrols::Level::NoJoin;
+		this, [this](int level) {
+			bool allowNsfm = level < int(parentalcontrols::Level::NoJoin);
 			m_nsfmBox->setEnabled(allowNsfm);
 			m_nsfmBox->setVisible(allowNsfm);
 		});

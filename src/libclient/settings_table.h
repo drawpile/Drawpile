@@ -24,6 +24,7 @@
 #   endif
 #endif
 
+SETTING(_parentalControlsLevelDummy , _ParentalControlsLevelDummy , "_parentalcontrolsleveldummy"           , parentalcontrols::Level::Unrestricted)
 SETTING(autoSaveIntervalMinutes     , AutoSaveIntervalMinutes     , "settings/autosaveminutes"              , 5)
 SETTING(cancelDeselects             , CancelDeselects             , "settings/canceldeselects"              , true)
 SETTING(checkerColor1               , CheckerColor1               , "settings/checkercolor1"                , CHECKER_COLOR1_DEFAULT)
@@ -34,7 +35,9 @@ SETTING(mouseSmoothing              , MouseSmoothing              , "settings/in
 SETTING(networkProxyMode            , NetworkProxyMode            , "settings/networkproxymode"             , 0)
 SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , true)
 SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncensoring"                      , false)
-SETTING(parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , parentalcontrols::Level::Unrestricted)
+SETTING_GETSET_V(
+    V1, parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , int(parentalcontrols::Level::Unrestricted),
+    &parentalcontrolslevel::get, &any::set)
 SETTING(parentalControlsLocked      , ParentalControlsLocked      , "pc/locked"                             , QByteArray())
 SETTING(parentalControlsTags        , ParentalControlsTags        , "pc/tagwords"                           , parentalcontrols::defaultWordList())
 SETTING(engineFrameRate             , EngineFrameRate             , "settings/paintengine/fps"              , 60)

@@ -29,45 +29,24 @@ using libclient::settings::SettingMeta;
 using libclient::settings::findKey;
 namespace any = libclient::settings::any;
 
-namespace {
-template <typename T>
-static QVariant getV0EnumToV1Int(const SettingMeta &meta, QSettings &settings)
-{
-	std::optional<libclient::settings::FoundKey> intFoundKey =
-		findKeyExactVersion(settings, meta.baseKey, meta.version);
-	if (intFoundKey.has_value()) {
-		return settings.value(intFoundKey->key);
-	}
-
-	std::optional<libclient::settings::FoundKey> enumFoundKey =
-		findKeyExactVersion(settings, meta.baseKey, SettingMeta::Version::V0);
-	if (enumFoundKey.has_value()) {
-		QVariant enumValue = settings.value(enumFoundKey->key);
-		return int(enumValue.value<T>());
-	}
-
-	return meta.getDefaultValue();
-}
-}
-
 namespace colorWheelAngle {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		return getV0EnumToV1Int<color_widgets::ColorWheel::AngleEnum>(meta, settings);
+		return libclient::settings::getEnumReplacedByInt<color_widgets::ColorWheel::AngleEnum>(meta, settings);
 	}
 }
 
 namespace colorWheelShape {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		return getV0EnumToV1Int<color_widgets::ColorWheel::ShapeEnum>(meta, settings);
+		return libclient::settings::getEnumReplacedByInt<color_widgets::ColorWheel::ShapeEnum>(meta, settings);
 	}
 }
 
 namespace colorWheelSpace {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		return getV0EnumToV1Int<color_widgets::ColorWheel::ColorSpaceEnum>(meta, settings);
+		return libclient::settings::getEnumReplacedByInt<color_widgets::ColorWheel::ColorSpaceEnum>(meta, settings);
 	}
 }
 
@@ -112,7 +91,7 @@ namespace lastHostServer {
 namespace lastTool {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		return getV0EnumToV1Int<tools::Tool::Type>(meta, settings);
+		return libclient::settings::getEnumReplacedByInt<tools::Tool::Type>(meta, settings);
 	}
 }
 
@@ -270,7 +249,7 @@ namespace twoFingerTwist {
 namespace tabletDriver {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
-		QVariant value = getV0EnumToV1Int<tabletinput::Mode>(meta, settings);
+		QVariant value = libclient::settings::getEnumReplacedByInt<tabletinput::Mode>(meta, settings);
 		switch(value.toInt()) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		case int(tabletinput::Mode::Qt5):

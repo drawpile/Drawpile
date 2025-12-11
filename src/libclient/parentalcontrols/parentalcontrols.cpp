@@ -14,7 +14,7 @@ QPointer<libclient::settings::Settings> g_settings;
 
 Level level()
 {
-	int l = qBound(0, g_settings ? int(g_settings->parentalControlsLevel()) : 0, int(Level::Restricted));
+	int l = qBound(0, g_settings ? g_settings->parentalControlsLevel() : 0, int(Level::Restricted));
 	if(isOSActive())
 		l = qMax(int(Level::NoJoin), l);
 	return Level(l);
