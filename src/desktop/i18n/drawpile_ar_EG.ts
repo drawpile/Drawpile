@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مكافحة التجاوز</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -134,7 +134,7 @@
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعيين مصدر التعبئة</translation>
     </message>
     <message>
         <location line="-326"/>
@@ -619,12 +619,12 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يفتقر تنسيق PSD إلى دعم للتعليقات التوضيحية، والجدول الزمني للرسوم المتحركة، وبعض أنماط المزج. إذا كنت تريد الاحتفاظ بهذه الميزات بشكل صحيح، فيجب عليك الحفظ بتنسيق مختلف</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">سيقوم التنسيق المحدد بحفظ صورة مدموجة. إذا كنت تريد الاحتفاظ بالطبقات، والتعليقات التوضيحية، والجدول الزمني للرسوم المتحركة، فيجب عليك الحفظ بتنسيق مختلف</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -832,17 +832,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">المزيد…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختيار</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">تغيير الحجم</translation>
+        <translation type="unfinished">تحويل</translation>
     </message>
 </context>
 <context>
@@ -855,7 +855,7 @@
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished">ضع علامة على البلاط بأكمله</translation>
+        <translation type="unfinished">تحديد البلاطات الكاملة</translation>
     </message>
 </context>
 <context>
@@ -1080,22 +1080,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>وراثة الشفافية</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">قص على الطبقة السفلى</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>دمج الشفافية</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حجب المحتوى (رقابة شخصية)</translation>
     </message>
 </context>
 <context>
@@ -1123,7 +1123,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished">يمكن ترتيب أرصفة Drawpile بحرية. يمكنك استخدام View &gt; Docks &gt; Arrange Docks للسماح لك بسحبها بسهولة أكبر. تأكد من أن ترتيبك يناسب الدقة التي اخترتها، وإلا فقد يتم دفع بعض عناصر التحكم خارج الشاشة.</translation>
+        <translation>يمكن ترتيب أشرطة أدوات Drawpile بحرية. يمكنك استخدام [عرض &gt; أشرطة الأدوات &gt; ترتيب أشرطة الأدوات] لسحبها بسهولة أكبر. تأكد من أن الترتيب يناسب دقة شاشتك، وإلا فقد يتم دفع بعض عناصر التحكم خارج الشاشة.</translation>
     </message>
 </context>
 <context>
@@ -1262,7 +1262,8 @@ Subrange: [%3, %4]</source>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>هذه الجلسة مُستضافة على خادم آخر، وسيتم توجيهك إليه.
+&gt; لتجنب هذه الخطوة الإضافية في المستقبل، استخدم صفحة التصفح أو رابطًا مباشرًا للجلسة بدلاً من ذلك.</translation>
     </message>
     <message>
         <location line="-612"/>
