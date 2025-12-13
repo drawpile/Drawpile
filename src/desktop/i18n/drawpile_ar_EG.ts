@@ -1517,7 +1517,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished">سيُفتح ملفّ تمّ تعديله لاحقا، و تُغلق هذه النّافذة.</translation>
+        <translation>سيُفتح ملفّ تمّ تعديله لاحقا، و تُغلق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1527,7 +1527,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-1422"/>
         <source>Open</source>
-        <translation type="unfinished">افتح</translation>
+        <translation>افتح</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1567,17 +1567,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+80"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished">حاول توازي الادوات القديمة...</translation>
+        <translation>وضع التوافق</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>نسخة قديمة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم استضافة هذه الجلسة باستخدام إصدار أحدث من Drawpile. لن ترى أي تأثير عندما يستخدم الأشخاص ميزات أحدث لا يمتلكها إصدارك بعد، ولن تتمكن من ضغط أو إعادة تعيين اللوحة.
+&gt; تحقق من &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; للحصول على التحديثات.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1688,18 +1689,19 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>لديك تغييرات غير محفوظة، هل تريد حفظها قبل إعادة الاتصال؟</translation>
     </message>
     <message>
         <location line="-2211"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم التبديل إلى وضع عرض الإطارات.
+&gt; يمكنك الخروج منه عبر قائمة [عرض] أو [المخطط الزمني].</translation>
     </message>
     <message>
         <location line="+2203"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل اكتمل التنزيل بنجاح؟</translation>
     </message>
     <message>
         <location line="+3"/>
