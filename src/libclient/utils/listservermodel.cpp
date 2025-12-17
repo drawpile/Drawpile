@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "libclient/settings.h"
 #include "libclient/utils/listservermodel.h"
+#include "libclient/settings.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
-#include <dpcommon/platform_qt.h>
-#include <QImage>
 #include <QBuffer>
 #include <QCryptographicHash>
-#include <QFile>
 #include <QDir>
+#include <QFile>
+#include <QImage>
 #include <QSslSocket>
+#include <dpcommon/platform_qt.h>
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(libclient::settings::Settings &settings, bool includeReadOnly, QObject *parent)
+ListServerModel::ListServerModel(
+	libclient::settings::Settings &settings, bool includeReadOnly,
+	QObject *parent)
 	: QAbstractListModel(parent)
 	, m_settings(settings)
 	, m_includeReadOnly(includeReadOnly)
@@ -29,9 +30,11 @@ void ListServerModel::reload()
 
 int ListServerModel::rowCount(const QModelIndex &parent) const
 {
-	if(parent.isValid())
+	if(parent.isValid()) {
 		return 0;
-	return m_servers.size();
+	} else {
+		return m_servers.size();
+	}
 }
 
 QVariant ListServerModel::data(const QModelIndex &index, int role) const
@@ -39,18 +42,23 @@ QVariant ListServerModel::data(const QModelIndex &index, int role) const
 	if(index.isValid() && index.row() >= 0 && index.row() < m_servers.size()) {
 		const ListServer &srv = m_servers.at(index.row());
 		switch(role) {
-		case Qt::DisplayRole: return srv.name;
-		case Qt::DecorationRole: return srv.icon;
-		case Qt::ToolTipRole: return QString("%1\n\n%2\n\nURL: %3\nRead-only: %4, public: %5").arg(
-			srv.name,
-			srv.description,
-			srv.url,
-			srv.readonly ? QStringLiteral("yes") : QStringLiteral("no"),
-			srv.publicListings ? QStringLiteral("yes") : QStringLiteral("no")
-			);
-		case UrlRole: return srv.url;
-		case DescriptionRole: return srv.description;
-		case PublicListRole: return srv.publicListings;
+		case Qt::DisplayRole:
+			return srv.name;
+		case Qt::DecorationRole:
+			return srv.icon;
+		case Qt::ToolTipRole:
+			return QString("%1\n\n%2\n\nURL: %3\nRead-only: %4, public: %5")
+				.arg(
+					srv.name, srv.description, srv.url,
+					srv.readonly ? QStringLiteral("yes") : QStringLiteral("no"),
+					srv.publicListings ? QStringLiteral("yes")
+									   : QStringLiteral("no"));
+		case UrlRole:
+			return srv.url;
+		case DescriptionRole:
+			return srv.description;
+		case PublicListRole:
+			return srv.publicListings;
 		}
 	}
 	return QVariant();
@@ -62,7 +70,7 @@ bool ListServerModel::moveServer(int sourceRow, int destinationChild)
 		return false;
 	}
 
-	int destinationRow = qBound(0, destinationChild, m_servers.size()-1);
+	int destinationRow = qBound(0, destinationChild, m_servers.size() - 1);
 	if(sourceRow == destinationRow) {
 		return false;
 	}
@@ -77,36 +85,36 @@ bool ListServerModel::moveServer(int sourceRow, int destinationChild)
 
 bool ListServerModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-	if(parent.isValid())
+	if(parent.isValid()) {
 		return false;
+	}
 
-	if(row<0 || count<=0 || row+count>m_servers.count())
+	if(row < 0 || count <= 0 || row + count > m_servers.size()) {
 		return false;
+	}
 
-	beginRemoveRows(parent, row, row+count-1);
-	while(count-->0) m_servers.removeAt(row);
+	beginRemoveRows(parent, row, row + count - 1);
+	while(count-- > 0) {
+		m_servers.removeAt(row);
+	}
 	endRemoveRows();
 	return true;
 }
 
-bool ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub)
+bool ListServerModel::addServer(
+	const QString &name, const QString &url, const QString &description,
+	bool readonly, bool pub)
 {
-	const ListServer lstSrv {
-			QIcon(),
-			QString(),
-			name,
-			url,
-			description,
-			readonly,
-			pub,
-		};
+	const ListServer lstSrv{
+		QIcon(), QString(), name, url, description, readonly, pub,
+	};
 
 	// First check if a server with this URL already exists
-	for(int i=0;i<m_servers.size();++i) {
+	for(int i = 0; i < m_servers.size(); ++i) {
 		if(m_servers.at(i).url == url) {
 			// Already exists! Update data instead of adding
 			m_servers[i] = lstSrv;
-			const auto idx = index(i);
+			QModelIndex idx = index(i);
 			emit dataChanged(idx, idx);
 			return false;
 		}
@@ -114,7 +122,7 @@ bool ListServerModel::addServer(const QString &name, const QString &url, const Q
 
 	// No? Then add it
 	beginInsertRows(QModelIndex(), m_servers.size(), m_servers.size());
-	m_servers << lstSrv;
+	m_servers.append(lstSrv);
 	endInsertRows();
 	return true;
 }
@@ -123,15 +131,16 @@ bool ListServerModel::removeServer(const QString &url)
 {
 	// Find the server
 	int found = -1;
-	for(int i=0;i<m_servers.size();++i) {
+	for(int i = 0; i < m_servers.size(); ++i) {
 		if(m_servers[i].url == url) {
 			found = i;
 			break;
 		}
 	}
 
-	if(found < 0)
+	if(found < 0) {
 		return false;
+	}
 
 	removeRow(found);
 
@@ -144,10 +153,11 @@ QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	// Make sure the icon is not huge
 	QImage scaledIcon;
 
-	if(icon.width() > 128 || icon.height() > 128)
+	if(icon.width() > 128 || icon.height() > 128) {
 		scaledIcon = icon.scaled(QSize(128, 128), Qt::KeepAspectRatio);
-	else
+	} else {
 		scaledIcon = icon;
+	}
 
 	// Serialize icon in PNG format
 	QByteArray data;
@@ -163,10 +173,11 @@ QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 
 	// Find the server
 	bool saved = false;
-	for(int i=0;i<m_servers.size();++i) {
+	for(int i = 0; i < m_servers.size(); ++i) {
 		ListServer &s = m_servers[i];
-		if(s.url != url)
+		if(s.url != url) {
 			continue;
+		}
 
 		s.iconName = iconName;
 		s.icon = iconData;
@@ -175,7 +186,8 @@ QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 			saved = true;
 			QFile f(utils::paths::writablePath("favicons/", s.iconName));
 			if(!f.open(DP_QT_WRITE_FLAGS)) {
-				qWarning() << "Unable to open" << f.fileName() << f.errorString();
+				qWarning() << "Unable to open" << f.fileName()
+						   << f.errorString();
 			} else {
 				f.write(data);
 				f.close();
@@ -186,17 +198,18 @@ QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	return iconData;
 }
 
-QVector<ListServer> ListServerModel::listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly)
+QVector<ListServer> ListServerModel::listServers(
+	const QVector<QVariantMap> &cfg, bool includeReadOnly)
 {
 	QVector<ListServer> list;
 
-	const QString iconPath = utils::paths::writablePath("favicons/");
-	for(const auto &item : cfg) {
+	QString iconPath = utils::paths::writablePath("favicons/");
+	for(const QVariantMap &item : cfg) {
 		if(item.isEmpty()) {
 			continue; // Old Drawpile versions leave voids sometimes.
 		}
 
-		ListServer ls {
+		ListServer ls{
 			QIcon(),
 			item.value("icon").toString(),
 			item.value("name").toString(),
@@ -206,20 +219,23 @@ QVector<ListServer> ListServerModel::listServers(const QVector<QVariantMap> &cfg
 			item.value("public", true).toBool(),
 		};
 
-		if(ls.readonly && !includeReadOnly)
+		if(ls.readonly && !includeReadOnly) {
 			continue;
+		}
 
-		if(ls.iconName == "drawpile")
+		if(ls.iconName == "drawpile") {
 			ls.icon = QIcon(":/icons/drawpile.png");
-		else if(!ls.iconName.isEmpty())
+		} else if(!ls.iconName.isEmpty()) {
 			ls.icon = QIcon(iconPath + ls.iconName);
+		}
 
-		list << ls;
+		list.append(ls);
 	}
 	return list;
 }
 
-void ListServerModel::loadServers(const QVector<QVariantMap> &cfg, bool includeReadOnly)
+void ListServerModel::loadServers(
+	const QVector<QVariantMap> &cfg, bool includeReadOnly)
 {
 	beginResetModel();
 	m_servers = listServers(cfg, includeReadOnly);
@@ -229,15 +245,15 @@ void ListServerModel::loadServers(const QVector<QVariantMap> &cfg, bool includeR
 QVector<QVariantMap> ListServerModel::saveServers() const
 {
 	QVector<QVariantMap> cfg;
-	for(int i=0;i<m_servers.size();++i) {
+	for(int i = 0; i < m_servers.size(); ++i) {
 		const ListServer &s = m_servers.at(i);
 		cfg.append({
-			{ "name", s.name },
-			{ "url", s.url },
-			{ "description", s.description },
-			{ "icon", s.iconName },
-			{ "readonly", s.readonly },
-			{ "public", s.publicListings },
+			{"name", s.name},
+			{"url", s.url},
+			{"description", s.description},
+			{"icon", s.iconName},
+			{"readonly", s.readonly},
+			{"public", s.publicListings},
 		});
 	}
 	return cfg;

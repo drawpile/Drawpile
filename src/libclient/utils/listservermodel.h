@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef LISTSERVERMODEL_H
-#define LISTSERVERMODEL_H
-
+#ifndef LIBCLIENT_UTILS_LISTSERVERMODEL_H
+#define LIBCLIENT_UTILS_LISTSERVERMODEL_H
 #include <QAbstractListModel>
 #include <QIcon>
 
-namespace libclient { namespace settings { class Settings; } }
+namespace libclient {
+namespace settings {
+class Settings;
+}
+}
 
 namespace sessionlisting {
 
@@ -20,8 +22,7 @@ struct ListServer {
 	bool publicListings;
 };
 
-class ListServerModel final : public QAbstractListModel
-{
+class ListServerModel final : public QAbstractListModel {
 	Q_OBJECT
 public:
 	enum ListServeroles {
@@ -30,12 +31,15 @@ public:
 		PublicListRole,
 	};
 
-	explicit ListServerModel(libclient::settings::Settings &settings, bool includeReadOnly, QObject *parent=nullptr);
+	explicit ListServerModel(
+		libclient::settings::Settings &settings, bool includeReadOnly,
+		QObject *parent = nullptr);
 
 	void reload();
 
-	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	bool removeRows(int row, int count, const QModelIndex &parent) override;
 
@@ -45,7 +49,9 @@ public:
 	 * @brief Add a new server to the list
 	 * @return false if an existing item was updated instead of added
 	 */
-	bool addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub);
+	bool addServer(
+		const QString &name, const QString &url, const QString &description,
+		bool readonly, bool pub);
 
 	/**
 	 * @brief Remove the server with the given URL
@@ -57,7 +63,8 @@ public:
 	QIcon setFavicon(const QString &url, const QImage &icon);
 
 	//! Get all configured list servers
-	static QVector<ListServer> listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly);
+	static QVector<ListServer>
+	listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly);
 
 private:
 	//! Load server list from the settings file
