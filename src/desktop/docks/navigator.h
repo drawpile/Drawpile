@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef Navigator_H
-#define Navigator_H
-
+#ifndef DESKTOP_DOCKS_NAVIGATOR_H
+#define DESKTOP_DOCKS_NAVIGATOR_H
 #include "desktop/docks/dockbase.h"
 
 class QMenu;
@@ -12,21 +10,20 @@ class CanvasModel;
 class PaintEngine;
 }
 
-namespace widgets{
+namespace widgets {
 class GroupedToolButton;
 class ZoomSlider;
 }
 
 namespace docks {
 
-class NavigatorView final : public QWidget
-{
+class NavigatorView final : public QWidget {
 	Q_OBJECT
 public:
 	NavigatorView(QWidget *parent);
 
 	void setCanvasModel(canvas::CanvasModel *model);
-	void setViewFocus(const QPolygonF& rect);
+	void setViewFocus(const QPolygonF &rect);
 	void setShowCursors(bool showCursors);
 	void setRealtimeUpdate(bool realtime);
 	void setBackgroundColor(const QColor &backgroundColor);
@@ -34,7 +31,7 @@ public:
 	void setCheckerColor2(const QColor &checkerColor2);
 
 signals:
-	void focusMoved(const QPointF& to);
+	void focusMoved(const QPointF &to);
 	void wheelZoom(int steps);
 
 protected:
@@ -43,8 +40,8 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void wheelEvent(QWheelEvent *event) override;
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+	void showEvent(QShowEvent *event) override;
+	void hideEvent(QHideEvent *event) override;
 
 private slots:
 	void onChange(const QRect &rect = QRect{});
@@ -89,18 +86,16 @@ private:
 };
 
 //! Navigator dock widget
-class Navigator final : public DockBase
-{
+class Navigator final : public DockBase {
 	Q_OBJECT
 public:
 	Navigator(QWidget *parent);
-	~Navigator() override;
 
 	void setCanvasModel(canvas::CanvasModel *model);
 
 public slots:
 	//! Move the view focus rectangle
-	void setViewFocus(const QPolygonF& rect);
+	void setViewFocus(const QPolygonF &rect);
 
 	//! Set the current angle and zoom
 	void setViewTransformation(qreal zoom, qreal angle);
@@ -109,7 +104,7 @@ private slots:
 	void updateZoom(double value);
 
 signals:
-	void focusMoved(const QPointF& to);
+	void focusMoved(const QPointF &to);
 	void wheelZoom(int steps);
 	void zoomChanged(qreal newZoom);
 
@@ -122,4 +117,4 @@ private:
 
 }
 
-#endif // Navigator_H
+#endif

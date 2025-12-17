@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/navigator.h"
+#include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/widgets/groupedtoolbutton.h"
@@ -10,18 +10,16 @@
 #include "libclient/canvas/tilecache.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/settings.h"
-#include "desktop/docks/titlewidget.h"
-
+#include <QAction>
+#include <QBoxLayout>
+#include <QDateTime>
 #include <QIcon>
+#include <QMenu>
 #include <QMouseEvent>
-#include <QTimer>
+#include <QPaintEngine>
 #include <QPainter>
 #include <QPainterPath>
-#include <QPaintEngine>
-#include <QAction>
-#include <QDateTime>
-#include <QBoxLayout>
-#include <QMenu>
+#include <QTimer>
 
 namespace docks {
 
@@ -29,7 +27,7 @@ static QPixmap makeCursorBackground(const int avatarSize)
 {
 	const int PADDING = 4;
 	const int ARROW = 4;
-	const QSize s { avatarSize + PADDING*2, avatarSize + PADDING*2 + ARROW };
+	const QSize s(avatarSize + PADDING * 2, avatarSize + PADDING * 2 + ARROW);
 
 	QPixmap pixmap(s);
 	pixmap.fill(Qt::transparent);
@@ -37,17 +35,18 @@ static QPixmap makeCursorBackground(const int avatarSize)
 	QPainter painter(&pixmap);
 	painter.setRenderHint(QPainter::Antialiasing);
 
-	QPainterPath p(QPointF(s.width()/2, s.height()));
-	p.lineTo(s.width()/2 + ARROW, s.height() - ARROW);
+	QPainterPath p(QPointF(s.width() / 2, s.height()));
+	p.lineTo(s.width() / 2 + ARROW, s.height() - ARROW);
 	p.lineTo(s.width() - PADDING, s.height() - ARROW);
-	p.quadTo(s.width(), s.height() - ARROW, s.width(), s.height() - ARROW - PADDING);
+	p.quadTo(
+		s.width(), s.height() - ARROW, s.width(), s.height() - ARROW - PADDING);
 	p.lineTo(s.width(), PADDING);
 	p.quadTo(s.width(), 0, s.width() - PADDING, 0);
 	p.lineTo(PADDING, 0);
 	p.quadTo(0, 0, 0, PADDING);
 	p.lineTo(0, s.height() - PADDING - ARROW);
 	p.quadTo(0, s.height() - ARROW, PADDING, s.height() - ARROW);
-	p.lineTo(s.width()/2 - ARROW, s.height() - ARROW);
+	p.lineTo(s.width() / 2 - ARROW, s.height() - ARROW);
 	p.closeSubpath();
 
 	painter.fillPath(p, Qt::black);
@@ -56,12 +55,15 @@ static QPixmap makeCursorBackground(const int avatarSize)
 }
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QWidget(parent), m_model(nullptr), m_zoomWheelDelta(0),
-	  m_showCursors(true)
+	: QWidget(parent)
+	, m_model(nullptr)
+	, m_zoomWheelDelta(0)
+	, m_showCursors(true)
 {
 	m_refreshTimer = new QTimer(this);
 	setRealtimeUpdate(false);
-	connect(m_refreshTimer, &QTimer::timeout, this, &NavigatorView::refreshCache);
+	connect(
+		m_refreshTimer, &QTimer::timeout, this, &NavigatorView::refreshCache);
 
 	// Draw the marker background
 	m_cursorBackground = makeCursorBackground(16);
@@ -160,9 +162,6 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
 	}
 }
 
-/**
- * Start dragging the view focus
- */
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
 	if(event->button() != Qt::RightButton && !m_cache.isNull()) {
@@ -170,9 +169,6 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-/**
- * Drag the view focus
- */
 void NavigatorView::mouseMoveEvent(QMouseEvent *event)
 {
 	mousePressEvent(event);
@@ -215,11 +211,7 @@ void NavigatorView::hideEvent(QHideEvent *event)
 	}
 }
 
-/**
- * The focus rectangle represents the visible area in the
- * main viewport.
- */
-void NavigatorView::setViewFocus(const QPolygonF& rect)
+void NavigatorView::setViewFocus(const QPolygonF &rect)
 {
 	m_focusRect = rect;
 	update();
@@ -402,22 +394,21 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	pen.setWidth(2.0 * devicePixelRatioF());
 	painter.setPen(pen);
 
-	const auto canvasSize = m_model->size();
-	const qreal xscale = scaledSize.width() / qreal(canvasSize.width());
-	const qreal yscale = scaledSize.height() / qreal(canvasSize.height());
+	QSize canvasSize = m_model->size();
+	qreal xscale = scaledSize.width() / qreal(canvasSize.width());
+	qreal yscale = scaledSize.height() / qreal(canvasSize.height());
 	painter.translate(canvasRect.topLeft());
 	painter.scale(xscale, yscale);
 	painter.drawPolygon(m_focusRect);
 
 	// Draw top-side marker line
-	if(qAbs(m_focusRect[0].y() - m_focusRect[1].y()) >= 1.0 || m_focusRect[0].x() > m_focusRect[1].x()) {
-		const QLineF normal { m_focusRect[3], m_focusRect[0] };
-		QLineF top {m_focusRect[0], m_focusRect[1]};
+	if(qAbs(m_focusRect[0].y() - m_focusRect[1].y()) >= 1.0 ||
+	   m_focusRect[0].x() > m_focusRect[1].x()) {
+		const QLineF normal{m_focusRect[3], m_focusRect[0]};
+		QLineF top{m_focusRect[0], m_focusRect[1]};
 		const auto s = (5.0 / xscale) / normal.length();
 		top.translate(
-		    (normal.x2() - normal.x1()) * s,
-		    (normal.y2() - normal.y1()) * s
-		);
+			(normal.x2() - normal.x1()) * s, (normal.y2() - normal.y1()) * s);
 		painter.drawLine(top);
 	}
 
@@ -436,36 +427,39 @@ void NavigatorView::paintEvent(QPaintEvent *)
 			}
 
 			const QPoint viewPoint = QPoint(
-				cursor.pos.x() * xscale + canvasRect.x() - m_cursorBackground.width() / 2,
-				cursor.pos.y() * yscale + canvasRect.y() - m_cursorBackground.height()
-			);
+				cursor.pos.x() * xscale + canvasRect.x() -
+					m_cursorBackground.width() / 2,
+				cursor.pos.y() * yscale + canvasRect.y() -
+					m_cursorBackground.height());
 
 			painter.drawPixmap(viewPoint, m_cursorBackground);
 			painter.setRenderHint(QPainter::SmoothPixmapTransform);
 			painter.drawPixmap(
 				QRect(
 					viewPoint + QPoint(
-						m_cursorBackground.width()/2 - cursor.avatar.width()/4,
-						m_cursorBackground.width()/2 - cursor.avatar.height()/4
-					),
-					cursor.avatar.size() / 2
-				),
-				cursor.avatar
-			);
+									m_cursorBackground.width() / 2 -
+										cursor.avatar.width() / 4,
+									m_cursorBackground.width() / 2 -
+										cursor.avatar.height() / 4),
+					cursor.avatar.size() / 2),
+				cursor.avatar);
 		}
 	}
 }
 
-void NavigatorView::onCursorMove(unsigned int flags, int userId, int layer, int x, int y)
+void NavigatorView::onCursorMove(
+	unsigned int flags, int userId, int layer, int x, int y)
 {
 	Q_UNUSED(layer);
 
-	if(!m_showCursors || !(flags & DP_USER_CURSOR_FLAG_VALID))
+	if(!m_showCursors || !(flags & DP_USER_CURSOR_FLAG_VALID)) {
 		return;
+	}
 
 	// Never show the local user's cursor in the navigator
-	if(userId == m_model->localUserId())
+	if(userId == m_model->localUserId()) {
 		return;
+	}
 
 	for(UserCursor &uc : m_cursors) {
 		if(uc.id == userId) {
@@ -476,12 +470,9 @@ void NavigatorView::onCursorMove(unsigned int flags, int userId, int layer, int 
 	}
 
 	const canvas::User user = m_model->userlist()->getUserById(userId);
-	m_cursors << UserCursor {
-		user.avatar,
-		QPoint(x, y),
-		QDateTime::currentMSecsSinceEpoch(),
-		userId
-	};
+	m_cursors.append(
+		{user.avatar, QPoint(x, y), QDateTime::currentMSecsSinceEpoch(),
+		 userId});
 }
 
 QPointF NavigatorView::getFocusPoint(const QPointF &eventPoint)
@@ -490,16 +481,12 @@ QPointF NavigatorView::getFocusPoint(const QPointF &eventPoint)
 	QSize canvasSize = m_model->size();
 	qreal xscale = s.width() / qreal(canvasSize.width());
 	qreal yscale = s.height() / qreal(canvasSize.height());
-	QPoint offset { width()/2 - s.width()/2, height()/2 - s.height()/2 };
-	return QPointF{
+	QPoint offset(width() / 2 - s.width() / 2, height() / 2 - s.height() / 2);
+	return QPointF(
 		(eventPoint.x() - offset.x()) / xscale,
-		(eventPoint.y() - offset.y()) / yscale
-	};
+		(eventPoint.y() - offset.y()) / yscale);
 }
 
-/**
- * Construct the navigator dock widget.
- */
 Navigator::Navigator(QWidget *parent)
 	: DockBase(
 		  tr("Navigator"), QString(), QIcon::fromTheme("zoom-fit-none"), parent)
@@ -514,13 +501,15 @@ Navigator::Navigator(QWidget *parent)
 	m_view->setFocusPolicy(Qt::ClickFocus);
 	setWidget(m_view);
 
-	m_resetZoomButton = new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
+	m_resetZoomButton =
+		new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
 	m_resetZoomButton->setIcon(QIcon::fromTheme("zoom-original"));
 	titlebar->addCustomWidget(m_resetZoomButton);
 
 	m_zoomSlider = new widgets::ZoomSlider(this);
 	m_zoomSlider->setMinimumWidth(0);
-	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
+	m_zoomSlider->setSizePolicy(
+		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 	m_zoomSlider->setMinimum(libclient::settings::getZoomMin() * 100.0);
 	m_zoomSlider->setMaximum(libclient::settings::getZoomMax() * 100.0);
 	m_zoomSlider->setExponentRatio(4.0);
@@ -531,8 +520,14 @@ Navigator::Navigator(QWidget *parent)
 
 	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
-	connect(m_resetZoomButton, &widgets::GroupedToolButton::clicked, this, [this] { emit zoomChanged(1.0); });
-	connect(m_zoomSlider, QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this, &Navigator::updateZoom);
+	connect(
+		m_resetZoomButton, &widgets::GroupedToolButton::clicked, this, [this] {
+			emit zoomChanged(1.0);
+		});
+	connect(
+		m_zoomSlider,
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
+		&Navigator::updateZoom);
 	connect(
 		m_zoomSlider, &widgets::ZoomSlider::zoomStepped, this,
 		&Navigator::wheelZoom, Qt::QueuedConnection);
@@ -561,16 +556,12 @@ Navigator::Navigator(QWidget *parent)
 	settings.bindCheckerColor2(m_view, &NavigatorView::setCheckerColor2);
 }
 
-Navigator::~Navigator()
-{
-}
-
 void Navigator::setCanvasModel(canvas::CanvasModel *model)
 {
 	m_view->setCanvasModel(model);
 }
 
-void Navigator::setViewFocus(const QPolygonF& rect)
+void Navigator::setViewFocus(const QPolygonF &rect)
 {
 	m_view->setViewFocus(rect);
 }
@@ -591,4 +582,3 @@ void Navigator::setViewTransformation(qreal zoom, qreal angle)
 }
 
 }
-
