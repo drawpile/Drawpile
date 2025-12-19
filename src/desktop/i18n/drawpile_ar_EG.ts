@@ -1823,7 +1823,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>تحتوي اللوحة التي حاولت إعادة ضبطها على بيانات كثيرة جدًا، والحد الأقصى لحجم البيانات على الخادم هو %1 ميجابايت.</translation>
     </message>
     <message>
         <location line="+3"/>
