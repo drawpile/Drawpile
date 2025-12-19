@@ -5,8 +5,8 @@ set -ueo pipefail
 
 if ! command -v cbindgen &> /dev/null; then
     echo 1>&2
-    echo 'bindgen not found, you probably need to install it first:' 1>&2
-    echo '    cargo install --force --locked bindgen-cli' 1>&2
+    echo 'cbindgen not found, you probably need to install it first:' 1>&2
+    echo '    cargo install --force --locked cbindgen' 1>&2
     echo 1>&2
     exit 1
 fi
