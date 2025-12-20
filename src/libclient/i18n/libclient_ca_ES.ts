@@ -941,7 +941,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation>edat</translation>
+        <translation>Edat</translation>
     </message>
     <message>
         <location line="+169"/>
