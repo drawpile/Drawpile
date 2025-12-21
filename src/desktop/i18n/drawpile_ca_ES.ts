@@ -837,7 +837,7 @@
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1721,13 +1721,13 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Baixada</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Finestra nova</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -2672,7 +2672,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation>Invertir</translation>
+        <translation>Inverteix</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2701,7 +2701,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>gira -90</translation>
     </message>
     <message>
         <location line="+3"/>
