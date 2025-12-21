@@ -2600,7 +2600,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+125"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation>Canviar taxa de fotogrames (FPS)...</translation>
     </message>
     <message>
         <location line="+24"/>
