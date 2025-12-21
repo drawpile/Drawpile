@@ -2701,13 +2701,13 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation>gira -90</translation>
+        <translation>Gira -90º</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation>gira +90</translation>
+        <translation>Gira +90º</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -3989,7 +3989,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation>Obre…</translation>
+        <translation>&amp;Obre…</translation>
     </message>
     <message>
         <location line="+3"/>
