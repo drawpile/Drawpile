@@ -3989,7 +3989,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre…</translation>
     </message>
     <message>
         <location line="+3"/>
