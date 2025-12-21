@@ -1315,7 +1315,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si no reviseu els vostres documents, tots els canvis es perdran</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2042,7 +2042,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa com a ORA</translation>
     </message>
     <message>
         <location line="+13"/>
