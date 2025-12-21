@@ -134,7 +134,7 @@
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix com a font d&apos;emplenament</translation>
     </message>
     <message>
         <location line="-326"/>
