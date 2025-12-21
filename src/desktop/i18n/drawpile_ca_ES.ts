@@ -2707,7 +2707,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>gira +90</translation>
     </message>
     <message>
         <location line="+28"/>
