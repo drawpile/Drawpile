@@ -134,7 +134,7 @@
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation>Estableix com a font d&apos;emplenament</translation>
+        <translation>Estableix la font d&apos;emplenament</translation>
     </message>
     <message>
         <location line="-326"/>
@@ -1320,7 +1320,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Revisar canvis…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2042,7 +2042,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation>Desa com a ORA</translation>
+        <translation>&amp;Desa com a ORA…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2340,7 +2340,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la barra d&apos;accions de selecció</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2600,7 +2600,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+125"/>
         <source>Change Frame Range or FPS...</source>
-        <translation>Canviar taxa de fotogrames (FPS)...</translation>
+        <translation type="unfinished">Canviar taxa de fotogrames o FPS...</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2661,7 +2661,7 @@ You can re-enable them via the View menu or preferences.</source>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Localització de la barra</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2672,7 +2672,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Invertir</translation>
     </message>
     <message>
         <location line="+3"/>
