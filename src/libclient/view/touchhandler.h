@@ -104,6 +104,7 @@ private:
 		bool isSingleTouch() const { return m_spotsById.size() == 1; }
 		bool isMultiTouch() const { return m_spotsById.size() > 1; }
 		bool isSpotsChanged() const { return m_spotsChanged; }
+		int lastTouchPoints() const { return m_lastTouchPoints; }
 		int maxTouchPoints() const { return m_maxTouchPoints; }
 		const QList<TouchSpot> &spots() { return m_spots; }
 		const QPointF &currentCenter() const { return m_currentCenter; }
@@ -116,6 +117,7 @@ private:
 		QPointF m_currentCenter;
 		QPointF m_previousCenter;
 		QPointF m_anchorCenter;
+		int m_lastTouchPoints = 0;
 		int m_maxTouchPoints = 0;
 		bool m_previousCenterValid = true;
 		bool m_anchorCenterValid = true;
@@ -141,6 +143,8 @@ private:
 
 	void flushTouchDrawBuffer();
 	void emitTapAction(int action);
+
+	static bool shouldExecuteTap(bool cancel, int lastTouchPoints);
 
 	bool m_touching = false;
 	bool m_touchDragging = false;

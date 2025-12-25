@@ -375,16 +375,17 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
 	} else {
+		int lastTouchPoints = m_touchState.lastTouchPoints();
 		int maxTouchPoints = m_touchState.maxTouchPoints();
 		DP_EVENT_LOG(
-			"touch_tap_%s maxTouchPoints=%d touching=%d type=%d device=%s "
-			"points=%s timestamp=%llu",
-			cancel ? "cancel" : "end", maxTouchPoints, int(m_touching),
-			compat::touchDeviceType(event),
+			"touch_tap_%s lastTouchPoints=%d maxTouchPoints=%d touching=%d "
+			"type=%d device=%s points=%s timestamp=%llu",
+			cancel ? "cancel" : "end", lastTouchPoints, maxTouchPoints,
+			int(m_touching), compat::touchDeviceType(event),
 			qUtf8Printable(compat::touchDeviceName(event)),
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
-		if(!cancel) {
+		if(shouldExecuteTap(cancel, lastTouchPoints)) {
 			if(maxTouchPoints == 1) {
 				emitOneFingerTapAction();
 			} else if(maxTouchPoints == 2) {
@@ -548,6 +549,7 @@ void TouchHandler::TouchState::update(QTouchEvent *event)
 		m_previousCenterValid = true;
 		m_anchorCenterValid = true;
 	} else {
+		m_lastTouchPoints = pointsCount;
 		if(pointsCount > m_maxTouchPoints) {
 			m_maxTouchPoints = pointsCount;
 		}
@@ -736,6 +738,20 @@ void TouchHandler::emitTapAction(int action)
 	if(action != int(view::TouchTapAction::Nothing)) {
 		emit touchTapActionActivated(action);
 	}
+}
+
+bool TouchHandler::shouldExecuteTap(bool cancel, int lastTouchPoints)
+{
+	// Some Android devices eat gestures with more than two fingers
+	// unconditionally, even if the user disables them on the system level.
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+	if(lastTouchPoints > 2) {
+		return true;
+	}
+#else
+	Q_UNUSED(lastTouchPoints);
+#endif
+	return !cancel;
 }
 
 }
