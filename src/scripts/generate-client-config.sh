@@ -37,7 +37,14 @@ status "Generating code from $settings_file"
 python "$generator_dir/configen.py" '../libclient/config' '../desktop/config' "$settings_file"
 
 status "Formatting generated code"
-if ! clang-format -i ../{libclient/config/{,memory}config,desktop/config/settingsconfig}.{cpp,h}; then
+if ! clang-format -i \
+        ../libclient/config/config.cpp \
+        ../libclient/config/config.h \
+        ../libclient/config/memoryconfig.cpp \
+        ../libclient/config/memoryconfig.h \
+        ../desktop/config/settingsconfig.cpp \
+        ../desktop/config/settingsconfig.h; \
+        then
     echo 2>&1
     echo '### Code formatting failed!' 2>&1
     echo '###' 2>&1
