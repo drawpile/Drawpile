@@ -234,12 +234,6 @@ public:
 	virtual void setAlphaLockCursor(int value) = 0;
 	static int defaultAlphaLockCursor();
 
-#if defined(Q_OS_ANDROID)
-	virtual bool getAndroidStylusChecked() const = 0;
-	virtual void setAndroidStylusChecked(bool value) = 0;
-	static bool defaultAndroidStylusChecked();
-#endif
-
 	virtual int getAnimationExportFormat() const = 0;
 	virtual void setAnimationExportFormat(int value) = 0;
 	static int defaultAnimationExportFormat();
@@ -1124,9 +1118,6 @@ Q_SIGNALS:
 	void changeActionBar(int value);
 	void changeActionBarLocation(int value);
 	void changeAlphaLockCursor(int value);
-#if defined(Q_OS_ANDROID)
-	void changeAndroidStylusChecked(bool value);
-#endif
 	void changeAnimationExportFormat(int value);
 	void changeAutoSaveIntervalMinutes(int value);
 	void changeAutomaticAlphaPreserve(int value);

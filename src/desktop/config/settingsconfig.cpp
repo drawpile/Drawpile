@@ -19,12 +19,6 @@ SettingsConfig::SettingsConfig(
 	connect(
 		m_settings, &desktop::settings::Settings::alphaLockCursorChanged, this,
 		&SettingsConfig::changeAlphaLockCursor, Qt::DirectConnection);
-#if defined(Q_OS_ANDROID)
-	connect(
-		m_settings, &desktop::settings::Settings::androidStylusCheckedChanged,
-		this, &SettingsConfig::changeAndroidStylusChecked,
-		Qt::DirectConnection);
-#endif
 	connect(
 		m_settings, &desktop::settings::Settings::animationExportFormatChanged,
 		this, &SettingsConfig::changeAnimationExportFormat,
@@ -800,18 +794,6 @@ void SettingsConfig::setAlphaLockCursor(int value)
 {
 	m_settings->setAlphaLockCursor(value);
 }
-
-#if defined(Q_OS_ANDROID)
-bool SettingsConfig::getAndroidStylusChecked() const
-{
-	return m_settings->androidStylusChecked();
-}
-
-void SettingsConfig::setAndroidStylusChecked(bool value)
-{
-	m_settings->setAndroidStylusChecked(value);
-}
-#endif
 
 int SettingsConfig::getAnimationExportFormat() const
 {

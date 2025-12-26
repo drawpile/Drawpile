@@ -31,11 +31,6 @@ public:
 	int getAlphaLockCursor() const override;
 	void setAlphaLockCursor(int value) override;
 
-#if defined(Q_OS_ANDROID)
-	bool getAndroidStylusChecked() const override;
-	void setAndroidStylusChecked(bool value) override;
-#endif
-
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 

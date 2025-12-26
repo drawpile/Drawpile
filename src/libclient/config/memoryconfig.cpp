@@ -58,21 +58,6 @@ void MemoryConfig::setAlphaLockCursor(int value)
 	}
 }
 
-#if defined(Q_OS_ANDROID)
-bool MemoryConfig::getAndroidStylusChecked() const
-{
-	return m_androidStylusChecked;
-}
-
-void MemoryConfig::setAndroidStylusChecked(bool value)
-{
-	if(value != m_androidStylusChecked) {
-		m_androidStylusChecked = value;
-		Q_EMIT changeAndroidStylusChecked(m_androidStylusChecked);
-	}
-}
-#endif
-
 int MemoryConfig::getAnimationExportFormat() const
 {
 	return m_animationExportFormat;

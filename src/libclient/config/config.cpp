@@ -36,13 +36,6 @@ int Config::defaultAlphaLockCursor()
 	return int(view::Cursor::SameAsBrush);
 }
 
-#if defined(Q_OS_ANDROID)
-bool Config::defaultAndroidStylusChecked()
-{
-	return false;
-}
-#endif
-
 int Config::defaultAnimationExportFormat()
 {
 	return -1;

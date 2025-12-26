@@ -210,6 +210,13 @@ CanvasView::CanvasView(QWidget *parent)
 		&app, &DrawpileApp::eraserNear, this, &CanvasView::setEraserTipActive);
 #endif
 
+	connect(
+		&app, &DrawpileApp::tabletEventReceived, m_touch,
+		&view::WidgetTouchHandler::onTabletEventReceived);
+	if(app.anyTabletEventsReceived()) {
+		m_touch->onTabletEventReceived();
+	}
+
 	config::Config *cfg = dpAppConfig();
 	CFG_BIND_SET_FN(cfg, CanvasViewBackgroundColor, this, [this](QColor color) {
 		color.setAlpha(255);
@@ -1234,7 +1241,6 @@ void CanvasView::onPenMove(
 
 void CanvasView::startTabletEventTimer()
 {
-	m_touch->onTabletEventReceived();
 	if(m_tabletEventTimerDelay > 0) {
 		m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
 	}

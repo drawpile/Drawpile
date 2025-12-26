@@ -27,6 +27,13 @@ CanvasController::CanvasController(CanvasScene *scene, QObject *parent)
 		&CanvasController::setEraserTipActive);
 #endif
 
+	connect(
+		&app, &DrawpileApp::tabletEventReceived, m_touchHandler,
+		&WidgetTouchHandler::onTabletEventReceived);
+	if(app.anyTabletEventsReceived()) {
+		m_touchHandler->onTabletEventReceived();
+	}
+
 	config::Config *cfg = app.config();
 	CFG_BIND_SET(
 		cfg, CanvasViewBackgroundColor, this, CanvasController::setClearColor);

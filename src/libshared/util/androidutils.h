@@ -44,7 +44,6 @@ private:
 	QJniObject m_wifiLock;
 };
 
-bool androidHasStylusInput();
 int androidLongPressTimeout();
 
 #ifdef DRAWPILE_USE_CONNECT_SERVICE

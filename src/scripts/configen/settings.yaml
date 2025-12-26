@@ -136,12 +136,6 @@ settings:
     default: 'int(view::Cursor::SameAsBrush)'
     qsettings: 'settings/alphalockcursor'
 
-  - id: androidStylusChecked
-    type: 'bool'
-    default: 'false'
-    qsettings: 'settings/android/styluschecked'
-    condition: 'defined(Q_OS_ANDROID)'
-
   - id: animationExportFormat
     type: 'int'
     default: '-1'

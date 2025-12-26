@@ -22,6 +22,7 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 	}
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	case QEvent::TabletEnterProximity: {
+		onTabletEventReceived();
 		m_anyTabletProximityEventsReceived = true;
 		QTabletEvent *te = static_cast<QTabletEvent *>(event);
 		bool eraser = compat::isEraser(*te);
@@ -30,6 +31,7 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 		return true;
 	}
 	case QEvent::TabletLeaveProximity: {
+		onTabletEventReceived();
 		m_anyTabletProximityEventsReceived = true;
 		QTabletEvent *te = static_cast<QTabletEvent *>(event);
 		bool eraser = compat::isEraser(*te);
@@ -39,10 +41,16 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 		}
 		return true;
 	}
+#endif
 	case QEvent::TabletPress:
+		onTabletEventReceived();
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 		m_tabletDown = true;
+#endif
 		break;
 	case QEvent::TabletMove:
+		onTabletEventReceived();
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 		// Workaround for tablets that don't send proximity events. Only do this
 		// if no proximity events have been received (to avoid conflicting
 		// information), the tablet is not pressed down (to evade tablets that
@@ -53,7 +61,7 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 			QTabletEvent *te = static_cast<QTabletEvent *>(event);
 			bool eraser = compat::isEraser(*te);
 
-			if (eraser) {
+			if(eraser) {
 				m_sawEraserTip = true;
 			} else {
 				m_sawPenTip = true;
@@ -63,11 +71,14 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 				updateEraserNear(eraser);
 			}
 		}
+#endif
 		break;
 	case QEvent::TabletRelease:
+		onTabletEventReceived();
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 		m_tabletDown = false;
-		break;
 #endif
+		break;
 	default:
 		break;
 	}

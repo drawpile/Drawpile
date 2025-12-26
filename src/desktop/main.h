@@ -96,6 +96,8 @@ public:
 
 	QSize safeNewCanvasSize() const;
 
+	bool anyTabletEventsReceived() const;
+
 	// Returns a pair of (pixel size, physical size) of the primary screen.
 	static QPair<QSize, QSizeF> screenResolution();
 
@@ -116,6 +118,7 @@ public:
 	static bool isEnvTrue(const char *key);
 
 signals:
+	void tabletEventReceived();
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	void tabletProximityChanged(bool enter, bool eraser);
 	void eraserNear(bool near);

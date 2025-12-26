@@ -24,11 +24,6 @@ public:
 	int getAlphaLockCursor() const override;
 	void setAlphaLockCursor(int value) override;
 
-#if defined(Q_OS_ANDROID)
-	bool getAndroidStylusChecked() const override;
-	void setAndroidStylusChecked(bool value) override;
-#endif
-
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
@@ -695,9 +690,6 @@ private:
 	int m_actionBar = defaultActionBar();
 	int m_actionBarLocation = defaultActionBarLocation();
 	int m_alphaLockCursor = defaultAlphaLockCursor();
-#if defined(Q_OS_ANDROID)
-	bool m_androidStylusChecked = defaultAndroidStylusChecked();
-#endif
 	int m_animationExportFormat = defaultAnimationExportFormat();
 	int m_autoSaveIntervalMinutes = defaultAutoSaveIntervalMinutes();
 	int m_automaticAlphaPreserve = defaultAutomaticAlphaPreserve();

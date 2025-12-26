@@ -257,6 +257,7 @@ protected:
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
 	void setShowTransformNotices(bool showTransformNotices);
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
+	void onTabletEventReceived();
 	void resetTabletDriver();
 	void setEraserTipActive(bool eraserTipActive);
 

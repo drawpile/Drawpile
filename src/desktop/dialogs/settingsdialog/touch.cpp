@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/touch.h"
+#include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
@@ -132,17 +133,37 @@ void Touch::initTapAndHoldActions(config::Config *cfg, QFormLayout *form)
 
 void Touch::initTouchActions(config::Config *cfg, QFormLayout *form)
 {
+	QString drawText = tr("Draw");
+	QString panText = tr("Pan canvas");
+	QString guessTemplate = tr("Automatic (%1)");
 	QComboBox *oneFingerTouch = new QComboBox;
 	oneFingerTouch->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 	oneFingerTouch->addItem(
 		tr("No action"), int(view::OneFingerTouchAction::Nothing));
-	oneFingerTouch->addItem(tr("Draw"), int(view::OneFingerTouchAction::Draw));
+	oneFingerTouch->addItem(drawText, int(view::OneFingerTouchAction::Draw));
+	oneFingerTouch->addItem(panText, int(view::OneFingerTouchAction::Pan));
 	oneFingerTouch->addItem(
-		tr("Pan canvas"), int(view::OneFingerTouchAction::Pan));
-	oneFingerTouch->addItem(
-		tr("Guess"), int(view::OneFingerTouchAction::Guess));
+		//: Option for the one-finger touch gesture. %1 is either "Draw" or "Pan
+		//: canvas", depending on whether Drawpile has detected a stylus.
+		guessTemplate.arg(drawText), int(view::OneFingerTouchAction::Guess));
 	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerTouch, oneFingerTouch);
 	form->addRow(tr("One-finger touch:"), oneFingerTouch);
+
+	auto updateOneFingerTouchGuessActionText =
+		[oneFingerTouch, guessPanText = guessTemplate.arg(panText)] {
+			int i = oneFingerTouch->findData(
+				int(view::OneFingerTouchAction::Guess));
+			if(i != -1) {
+				oneFingerTouch->setItemText(i, guessPanText);
+			}
+		};
+	DrawpileApp &app = dpApp();
+	connect(
+		&app, &DrawpileApp::tabletEventReceived, this,
+		updateOneFingerTouchGuessActionText);
+	if(app.anyTabletEventsReceived()) {
+		updateOneFingerTouchGuessActionText();
+	}
 
 	QComboBox *twoFingerPinch = new QComboBox;
 	twoFingerPinch->setSizeAdjustPolicy(QComboBox::AdjustToContents);

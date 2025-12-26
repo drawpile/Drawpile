@@ -1506,7 +1506,6 @@ void CanvasControllerBase::clearHudHover()
 
 void CanvasControllerBase::startTabletEventTimer()
 {
-	touchHandler()->onTabletEventReceived();
 	if(m_tabletEventTimerDelay > 0) {
 		m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
 	}

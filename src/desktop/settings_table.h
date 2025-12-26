@@ -12,11 +12,6 @@ SETTING(actionBarLocation         , ActionBarLocation         , "settings/action
 SETTING_GETSET_V(
 	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , config::Config::defaultAlphaLockCursor(),
 	&any::get, &viewCursor::set)
-#ifdef Q_OS_ANDROID
-SETTING_GETSET_V(
-	V1, androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , config::Config::defaultAndroidStylusChecked(),
-	any::getExactVersion, &any::set)
-#endif
 SETTING(animationExportFormat     , AnimationExportFormat     , "animationexport/format"                , config::Config::defaultAnimationExportFormat())
 SETTING(automaticAlphaPreserve    , AutomaticAlphaPreserve    , "settings/automaticalphapreserve"       , config::Config::defaultAutomaticAlphaPreserve())
 SETTING_GETSET_V(

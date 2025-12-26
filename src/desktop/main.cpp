@@ -103,8 +103,8 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	m_globalEventFilter = new GlobalKeyEventFilter{this};
 	installEventFilter(m_globalEventFilter);
 	connect(
-		m_globalEventFilter, &GlobalKeyEventFilter::focusCanvas, this,
-		&DrawpileApp::focusCanvas);
+		m_globalEventFilter, &GlobalKeyEventFilter::tabletEventReceived, this,
+		&DrawpileApp::tabletEventReceived);
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	connect(
 		m_globalEventFilter, &GlobalKeyEventFilter::tabletProximityChanged,
@@ -113,6 +113,9 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 		m_globalEventFilter, &GlobalKeyEventFilter::eraserNear, this,
 		&DrawpileApp::eraserNear);
 #endif
+	connect(
+		m_globalEventFilter, &GlobalKeyEventFilter::focusCanvas, this,
+		&DrawpileApp::focusCanvas);
 #ifdef Q_OS_WIN
 	installNativeEventFilter(m_winEventFilter);
 #endif
@@ -427,6 +430,11 @@ QSize DrawpileApp::safeNewCanvasSize() const
 	QSize size = m_config->getNewCanvasSize();
 	return QSize(
 		qBound(400, size.width(), 10000), qBound(400, size.height(), 10000));
+}
+
+bool DrawpileApp::anyTabletEventsReceived() const
+{
+	return m_globalEventFilter->anyTabletEventsReceived();
 }
 
 QPair<QSize, QSizeF> DrawpileApp::screenResolution()
@@ -894,17 +902,6 @@ static StartupOptions initApp(DrawpileApp &app)
 	}
 
 #ifdef Q_OS_ANDROID
-	if(!cfg->getAndroidStylusChecked()) {
-		// We'll flush the flag that we checked the input here in case we crash.
-		cfg->setAndroidStylusChecked(true);
-		cfg->trySubmit();
-		// Disable finerpainting if this device is detected to have a stylus.
-		bool hasStylus = utils::androidHasStylusInput();
-		cfg->setOneFingerTouch(
-			int(hasStylus ? view::OneFingerTouchAction::Pan
-						  : view::OneFingerTouchAction::Guess));
-	}
-
 	CFG_BIND_SET_FN(cfg, CaptureVolumeRocker, &app, ([](bool capture) {
 						if(capture) {
 							qputenv("QT_ANDROID_VOLUME_KEYS", "1");
