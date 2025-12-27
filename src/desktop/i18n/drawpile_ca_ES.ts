@@ -134,7 +134,7 @@
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix la font d&apos;emplenament</translation>
     </message>
     <message>
         <location line="-326"/>
@@ -837,7 +837,7 @@
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1315,12 +1315,12 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si no reviseu els vostres documents, tots els canvis es perdran</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Revisar canvis…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1721,13 +1721,13 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Baixada</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Finestra nova</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -2042,7 +2042,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Desa com a ORA…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2340,7 +2340,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la barra d&apos;accions de selecció</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2600,7 +2600,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+125"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canviar taxa de fotogrames o FPS...</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2661,7 +2661,7 @@ You can re-enable them via the View menu or preferences.</source>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Localització de la barra</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2672,7 +2672,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Inverteix</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2701,13 +2701,13 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gira -90º</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gira +90º</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -3989,7 +3989,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Obre…</translation>
     </message>
     <message>
         <location line="+3"/>
