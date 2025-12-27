@@ -1,0 +1,124 @@
+Description: Treat motion events as tablet events when they come from an
+appropriate pointer input, not as mouse events. Hover events on Wacom tablets
+come in like this, which previously sort of worked, but caused really horrible
+interactions with pen buttons only activating when you held them and pressed
+the pen down, with the middle button never releasing after lifting the pen. Now
+they properly press and release when actuating the buttons.
+
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -480,6 +480,41 @@ namespace QtAndroidInput
+         }
+     }
+ 
++    static void dispatchTabletMotionEvent(MotionEventWrapper &ev, QTabletEvent::PointerType pointerType)
++    {
++        const size_t historySize = ev.getHistorySize();
++        for (size_t historicalIndex = 0; historicalIndex < historySize; ++historicalIndex) {
++            const float tiltRot =
++                ev.getHistoricalAxisValue(AMOTION_EVENT_AXIS_TILT, 0, historicalIndex);
++            const float orientation = ev.getHistoricalAxisValue(
++                AMOTION_EVENT_AXIS_ORIENTATION, 0, historicalIndex);
++
++            const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
++            const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
++
++            const float orientationDegrees = qRadiansToDegrees(orientation);
++
++            tabletEvent(ev.getDeviceId(), ev.getHistoricalEventTimeMs(historicalIndex),
++                        ev.getActionMasked(), pointerType, ev.getButtonState(),
++                        ev.getHistoricalX(historicalIndex),
++                        ev.getHistoricalY(historicalIndex),
++                        ev.getHistoricalPressure(historicalIndex), tiltX, tiltY,
++                        orientationDegrees, ev.getMetaState());
++        }
++
++        const float tiltRot = ev.getAxisValue(AMOTION_EVENT_AXIS_TILT);
++        const float orientation = ev.getAxisValue(AMOTION_EVENT_AXIS_ORIENTATION);
++
++        const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
++        const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
++
++        const float orientationDegrees = qRadiansToDegrees(orientation);
++
++        tabletEvent(ev.getDeviceId(), ev.getEventTimeMs(), ev.getActionMasked(),
++                    pointerType, ev.getButtonState(), ev.getX(), ev.getY(),
++                    ev.getPressure(), tiltX, tiltY, orientationDegrees, ev.getMetaState());
++    }
++
+     static void dispatchMotionEvent(JNIEnv *env, jobject /*thiz*/, jint /*winId*/,
+                                     jboolean isTouchEvent, jobject motionEventJava)
+     {
+@@ -490,37 +525,7 @@ namespace QtAndroidInput
+         if (isTouchEvent) {
+             const QTabletEvent::PointerType pointerType = getPointerType(ev.getToolType(0));
+             if (tabletEventSupported && pointerType != QTabletEvent::UnknownPointer) {
+-                const size_t historySize = ev.getHistorySize();
+-                for (size_t historicalIndex = 0; historicalIndex < historySize; ++historicalIndex) {
+-                    const float tiltRot =
+-                        ev.getHistoricalAxisValue(AMOTION_EVENT_AXIS_TILT, 0, historicalIndex);
+-                    const float orientation = ev.getHistoricalAxisValue(
+-                        AMOTION_EVENT_AXIS_ORIENTATION, 0, historicalIndex);
+-
+-                    const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
+-                    const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
+-
+-                    const float orientationDegrees = qRadiansToDegrees(orientation);
+-
+-                    tabletEvent(ev.getDeviceId(), ev.getHistoricalEventTimeMs(historicalIndex),
+-                                ev.getActionMasked(), pointerType, ev.getButtonState(),
+-                                ev.getHistoricalX(historicalIndex),
+-                                ev.getHistoricalY(historicalIndex),
+-                                ev.getHistoricalPressure(historicalIndex), tiltX, tiltY,
+-                                orientationDegrees, ev.getMetaState());
+-                }
+-
+-                const float tiltRot = ev.getAxisValue(AMOTION_EVENT_AXIS_TILT);
+-                const float orientation = ev.getAxisValue(AMOTION_EVENT_AXIS_ORIENTATION);
+-
+-                const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
+-                const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
+-
+-                const float orientationDegrees = qRadiansToDegrees(orientation);
+-
+-                tabletEvent(ev.getDeviceId(), ev.getEventTimeMs(), ev.getActionMasked(),
+-                            pointerType, ev.getButtonState(), ev.getX(), ev.getY(),
+-                            ev.getPressure(), tiltX, tiltY, orientationDegrees, ev.getMetaState());
++                 dispatchTabletMotionEvent(ev, pointerType);
+             } else {
+                 const int historySize = ev.getHistorySize();
+                 // batched ones
+@@ -558,19 +563,25 @@ namespace QtAndroidInput
+                 break;
+ 
+             case AMOTION_EVENT_ACTION_HOVER_MOVE:
+-            case AMOTION_EVENT_ACTION_MOVE:
+-                if (ev.getToolType(0) == AMOTION_EVENT_TOOL_TYPE_MOUSE) {
++            case AMOTION_EVENT_ACTION_MOVE: {
++                int toolType = ev.getToolType(0);
++                if (toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE) {
+                     mouseMove((int)ev.getX(), (int)ev.getY(), ev.getMetaState());
+                 } else {
+-                    QPoint delta = QPoint(ev.getX(), ev.getY()) - m_mouseDownPos;
+-                    if (fabs(delta.x()) > 5 || fabs(delta.y()) > 5) {
+-                        mouseMove((int)ev.getX(), (int)ev.getY(), ev.getMetaState());
+-                        m_mouseDownPos.rx() = (int)ev.getX();
+-                        m_mouseDownPos.ry() = (int)ev.getY();
++                    const QTabletEvent::PointerType pointerType = getPointerType(toolType);
++                    if (tabletEventSupported && pointerType != QTabletEvent::UnknownPointer) {
++                         dispatchTabletMotionEvent(ev, pointerType);
++                    } else {
++                        QPoint delta = QPoint(ev.getX(), ev.getY()) - m_mouseDownPos;
++                        if (fabs(delta.x()) > 5 || fabs(delta.y()) > 5) {
++                            mouseMove((int)ev.getX(), (int)ev.getY(), ev.getMetaState());
++                            m_mouseDownPos.rx() = (int)ev.getX();
++                            m_mouseDownPos.ry() = (int)ev.getY();
++                        }
+                     }
+                 }
+                 break;
+-
++            }
+             case AMOTION_EVENT_ACTION_SCROLL:
+                 mouseWheel((int)ev.getX(), (int)ev.getY(),
+                            ev.getAxisValue(AMOTION_EVENT_AXIS_HSCROLL),

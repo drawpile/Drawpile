@@ -365,6 +365,7 @@ if(KRITA_QT)
 				qtbase:patches/qtglobal_patched_define.diff
 				qtbase:patches/androidinputfocus-qt5-krita.diff
 				qtbase:patches/android-fallbackpaths-qt5-krita.diff
+				qtbase:patches/android-wacom-qt5-krita.diff
 				TARGET_BITS=64@qtbase:patches/android-16k-alignment-qt5-krita.diff
 	)
 else()
