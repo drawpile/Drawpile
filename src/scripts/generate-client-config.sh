@@ -34,7 +34,7 @@ PYTHONPATH="$generator_dir"
 export PYTHONPATH
 
 status "Generating code from $settings_file"
-python "$generator_dir/configen.py" '../libclient/config' '../desktop/config' "$settings_file"
+python "$generator_dir/configen.py" '../libclient' '../desktop' "$settings_file"
 
 status "Formatting generated code"
 if ! clang-format -i \
@@ -42,8 +42,10 @@ if ! clang-format -i \
         ../libclient/config/config.h \
         ../libclient/config/memoryconfig.cpp \
         ../libclient/config/memoryconfig.h \
+        ../libclient/settings_table.h \
         ../desktop/config/settingsconfig.cpp \
-        ../desktop/config/settingsconfig.h; \
+        ../desktop/config/settingsconfig.h \
+        ../desktop/settings_table.h; \
         then
     echo 2>&1
     echo '### Code formatting failed!' 2>&1

@@ -18,7 +18,14 @@ class Setting:
         self.type = data["type"]
         self.default = data["default"]
         self.qsettings = data.get("qsettings")
+        self.legacy_package = data["legacy_package"]
+        self.legacy_version = data.get("legacy_version", 0)
+        self.legacy_get = data.get("legacy_get")
+        self.legacy_set = data.get("legacy_set")
+        self.legacy_notify = data.get("legacy_notify")
         self.condition = data.get("condition")
+        if self.legacy_package not in ("desktop", "libclient"):
+            raise ValueError(f"{self.id}: unknown legacy_package '{self.legacy_package}'")
 
     @property
     def capitalized_id(self):
@@ -87,6 +94,28 @@ class Setting:
     def default_signature(self, prefix=""):
         return f"{self.default_prefix}{prefix}{self.default_name}()"
 
+    @property
+    def has_legacy_get_set(self):
+        return self.legacy_get is not None or self.legacy_set is not None
+
+    @property
+    def legacy_get_ref(self):
+        if self.legacy_get is None:
+            return "&any::get"
+        else:
+            return f"&{self.legacy_get}"
+
+    @property
+    def legacy_set_ref(self):
+        if self.legacy_set is None:
+            return "&any::set"
+        else:
+            return f"&{self.legacy_set}"
+
+    @property
+    def legacy_notify_ref(self):
+        return f"&{self.legacy_notify}"
+
 
 def parse_settings(path):
     with open(path) as fh:
@@ -141,17 +170,43 @@ if __name__ == "__main__":
     settings = parse_settings(input_path)
 
     targets = [
-        (libclient_output_dir, "config.h"),
-        (libclient_output_dir, "config.cpp"),
-        (libclient_output_dir, "memoryconfig.h"),
-        (libclient_output_dir, "memoryconfig.cpp"),
-        (desktop_output_dir, "settingsconfig.h"),
-        (desktop_output_dir, "settingsconfig.cpp"),
+        (
+            "config.h.jinja",
+            os.path.join(libclient_output_dir, "config/config.h"),
+        ),
+        (
+            "config.cpp.jinja",
+            os.path.join(libclient_output_dir, "config/config.cpp"),
+        ),
+        (
+            "memoryconfig.h.jinja",
+            os.path.join(libclient_output_dir, "config/memoryconfig.h"),
+        ),
+        (
+            "memoryconfig.cpp.jinja",
+            os.path.join(libclient_output_dir, "config/memoryconfig.cpp"),
+        ),
+        (
+            "libclient_settings_table.h.jinja",
+            os.path.join(libclient_output_dir, "settings_table.h"),
+        ),
+        (
+            "settingsconfig.h.jinja",
+            os.path.join(desktop_output_dir, "config/settingsconfig.h"),
+        ),
+        (
+            "settingsconfig.cpp.jinja",
+            os.path.join(desktop_output_dir, "config/settingsconfig.cpp"),
+        ),
+        (
+            "desktop_settings_table.h.jinja",
+            os.path.join(desktop_output_dir, "settings_table.h"),
+        ),
     ]
 
-    for (output_dir, target) in targets:
-        template = load_template(os.path.join(script_dir, f"{target}.jinja"))
+    for template_file, output_path in targets:
+        template = load_template(os.path.join(script_dir, template_file))
         stream = template.stream(settings=settings)
-        with open(os.path.join(output_dir, target), "w") as fh:
+        with open(output_path, "w") as fh:
             stream.dump(fh)
             fh.write("\n")

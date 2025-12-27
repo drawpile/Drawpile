@@ -5,26 +5,31 @@ settings:
     type: 'int'
     default: '5'
     qsettings: 'settings/autosaveminutes'
+    legacy_package: 'libclient'
 
   - id: cancelDeselects
     type: 'bool'
     default: 'true'
     qsettings: 'settings/canceldeselects'
+    legacy_package: 'libclient'
 
   - id: checkerColor1
     type: 'QColor'
     default: 'QColor(100, 100, 100)'
     qsettings: 'settings/checkercolor1'
+    legacy_package: 'libclient'
 
   - id: checkerColor2
     type: 'QColor'
     default: 'QColor(135, 135, 135)'
     qsettings: 'settings/checkercolor2'
+    legacy_package: 'libclient'
 
   - id: engineFrameRate
     type: 'int'
     default: '60'
     qsettings: 'settings/paintengine/fps'
+    legacy_package: 'libclient'
 
   - id: engineSnapshotCount
     type: 'int'
@@ -33,91 +38,111 @@ settings:
         condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
       - value: '5'
     qsettings: 'settings/paintengine/snapshotcount'
+    legacy_package: 'libclient'
 
   - id: engineSnapshotInterval
     type: 'int'
     default: '10'
     qsettings: 'settings/paintengine/snapshotinterval'
+    legacy_package: 'libclient'
 
   - id: engineUndoDepth
     type: 'int'
     default: '60'
     qsettings: 'settings/paintengine/undodepthlimit'
+    legacy_package: 'libclient'
 
   - id: interpolateInputs
     type: 'bool'
     default: 'true'
     qsettings: 'settings/input/interpolate'
+    legacy_package: 'libclient'
 
   - id: listServers
     type: 'QVector<QVariantMap>'
     default: 'QVector<QVariantMap>()'
     qsettings: 'listservers'
+    legacy_package: 'libclient'
 
   - id: messageQueueDrainRate
     type: 'int'
     default: 'net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE'
     qsettings: 'settings/messagequeuedrainrate'
+    legacy_package: 'libclient'
 
   - id: mouseSmoothing
     type: 'bool'
     default: 'false'
     qsettings: 'settings/input/mousesmoothing'
+    legacy_package: 'libclient'
 
   - id: networkProxyMode
     type: 'int'
     default: '0'
     qsettings: 'settings/networkproxymode'
+    legacy_package: 'libclient'
 
   - id: parentalControlsAutoTag
     type: 'bool'
     default: 'true'
     qsettings: 'pc/autotag'
+    legacy_package: 'libclient'
 
   - id: parentalControlsForceCensor
     type: 'bool'
     default: 'false'
     qsettings: 'pc/noUncensoring'
+    legacy_package: 'libclient'
 
   - id: parentalControlsLevel
     type: 'int'
     default: 'int(parentalcontrols::Level::Unrestricted)'
     qsettings: 'pc/level'
+    legacy_package: 'libclient'
+    legacy_version: 1
+    legacy_get: 'parentalcontrolslevel::get'
 
   - id: parentalControlsLocked
     type: 'QByteArray'
     default: 'QByteArray()'
     qsettings: 'pc/locked'
+    legacy_package: 'libclient'
 
   - id: parentalControlsTags
     type: 'QString'
     default: 'parentalcontrols::defaultWordList()'
     qsettings: 'pc/tagwords'
+    legacy_package: 'libclient'
 
   - id: selectionColor
     type: 'QColor'
     default: 'QColor(0, 170, 255)'
     qsettings: 'settings/selectioncolor'
+    legacy_package: 'libclient'
 
   - id: serverAutoReset
     type: 'bool'
     default: 'true'
     qsettings: 'settings/server/autoreset'
+    legacy_package: 'libclient'
 
   - id: serverPort
     type: 'int'
     default: 'cmake_config::proto::port()'
     qsettings: 'settings/server/port'
+    legacy_package: 'libclient'
 
   - id: serverTimeout
     type: 'int'
     default: '60'
     qsettings: 'settings/server/timeout'
+    legacy_package: 'libclient'
 
   - id: smoothing
     type: 'int'
     default: 'tools::ToolController::DEFAULT_SMOOTHING'
     qsettings: 'settings/input/smooth'
+    legacy_package: 'libclient'
 
   # desktop
 
@@ -125,313 +150,389 @@ settings:
     type: 'int'
     default: '1'
     qsettings: 'settings/actionbar'
+    legacy_package: 'desktop'
 
   - id: actionBarLocation
     type: 'int'
     default: '3'
     qsettings: 'settings/actionbarlocation'
+    legacy_package: 'desktop'
 
   - id: alphaLockCursor
     type: 'int'
     default: 'int(view::Cursor::SameAsBrush)'
     qsettings: 'settings/alphalockcursor'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_set: viewCursor::set
 
   - id: animationExportFormat
     type: 'int'
     default: '-1'
     qsettings: 'animationexport/format'
+    legacy_package: 'desktop'
 
   - id: automaticAlphaPreserve
     type: 'int'
     default: '1'
     qsettings: 'settings/automaticalphapreserve'
+    legacy_package: 'desktop'
 
   - id: brushCursor
     type: 'int'
     default: 'int(view::Cursor::TriangleRight)'
     qsettings: 'settings/brushcursor'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_set: viewCursor::set
 
   - id: brushOutlineWidth
     type: 'double'
     default: '1.0'
     qsettings: 'settings/brushoutlinewidth'
+    legacy_package: 'desktop'
 
   - id: brushPresetsAttach
     type: 'bool'
     default: 'true'
     qsettings: 'settings/brushpresetsattach'
+    legacy_package: 'desktop'
 
   - id: brushSlotCount
     type: 'int'
     default: '5'
     qsettings: 'settings/brushslotcount'
+    legacy_package: 'desktop'
 
   - id: canvasScrollBars
     type: 'bool'
     default: 'true'
     qsettings: 'settings/canvasscrollbars'
+    legacy_package: 'desktop'
 
   - id: canvasShortcuts
     type: 'QVariantMap'
     default: 'QVariantMap()'
     qsettings: 'settings/canvasshortcuts2'
+    legacy_package: 'desktop'
 
   - id: canvasViewBackgroundColor
     type: 'QColor'
     default: 'QColor(100, 100, 100)'
     qsettings: 'settings/canvasviewbackgroundcolor'
+    legacy_package: 'desktop'
 
   - id: captureVolumeRocker
     type: 'bool'
     default: 'true'
     qsettings: 'settings/android/capturevolumerocker'
+    legacy_package: 'desktop'
     condition: 'defined(Q_OS_ANDROID)'
 
   - id: colorCircleGamutMaskAngle
     type: 'int'
     default: '0'
     qsettings: 'settings/colorcircle/gamutmaskangle'
+    legacy_package: 'desktop'
 
   - id: colorCircleGamutMaskOpacity
     type: 'double'
     default: '0.75'
     qsettings: 'settings/colorcircle/gamutmaskopacity'
+    legacy_package: 'desktop'
 
   - id: colorCircleGamutMaskPath
     type: 'QString'
     default: 'QString()'
     qsettings: 'settings/colorcircle/gamutmaskpath'
+    legacy_package: 'desktop'
 
   - id: colorCircleHueAngle
     type: 'int'
     default: '0'
     qsettings: 'settings/colorcircle/hueangle'
+    legacy_package: 'desktop'
 
   - id: colorCircleHueCount
     type: 'int'
     default: '16'
     qsettings: 'settings/colorcircle/huecount'
+    legacy_package: 'desktop'
 
   - id: colorCircleHueLimit
     type: 'bool'
     default: 'false'
     qsettings: 'settings/colorcircle/huelimit'
+    legacy_package: 'desktop'
 
   - id: colorCircleSaturationCount
     type: 'int'
     default: '8'
     qsettings: 'settings/colorcircle/saturationcount'
+    legacy_package: 'desktop'
 
   - id: colorCircleSaturationLimit
     type: 'bool'
     default: 'false'
     qsettings: 'settings/colorcircle/saturationlimit'
+    legacy_package: 'desktop'
 
   - id: colorCircleValueCount
     type: 'int'
     default: '10'
     qsettings: 'settings/colorcircle/valuecount'
+    legacy_package: 'desktop'
 
   - id: colorCircleValueLimit
     type: 'bool'
     default: 'false'
     qsettings: 'settings/colorcircle/valuelimit'
+    legacy_package: 'desktop'
 
   - id: colorShadesBorderThickness
     type: 'int'
     default: '1'
     qsettings: 'settings/colorshades/borderthickness'
+    legacy_package: 'desktop'
 
   - id: colorShadesColumnCount
     type: 'int'
     default: '11'
     qsettings: 'settings/colorshades/columncount'
+    legacy_package: 'desktop'
 
   - id: colorShadesConfig
     type: 'QVariantList'
     default: 'QVariantList()'
     qsettings: 'settings/colorshades/config'
+    legacy_package: 'desktop'
 
   - id: colorShadesEnabled
     type: 'bool'
     default: 'false'
     qsettings: 'settings/colorshades/enabled'
+    legacy_package: 'desktop'
 
   - id: colorShadesRowHeight
     type: 'int'
     default: '16'
     qsettings: 'settings/colorshades/rowheight'
+    legacy_package: 'desktop'
 
   - id: colorSlidersMode
     type: 'int'
     default: '0'
     qsettings: 'settings/colorsliders/mode'
+    legacy_package: 'desktop'
 
   - id: colorSlidersShowAll
     type: 'bool'
     default: 'false'
     qsettings: 'settings/colorsliders/showall'
+    legacy_package: 'desktop'
 
   - id: colorSlidersShowInput
     type: 'bool'
     default: 'true'
     qsettings: 'settings/colorsliders/showinput'
+    legacy_package: 'desktop'
 
   - id: colorSwatchFlags
     type: 'int'
     default: '0'
     qsettings: 'settings/colorswatchflags'
+    legacy_package: 'desktop'
 
   - id: colorWheelAlign
     type: 'int'
     default: 'int(Qt::AlignVCenter)'
     qsettings: 'settings/colorwheel/align'
+    legacy_package: 'desktop'
 
   - id: colorWheelAngle
     type: 'int'
     default: '1 /* color_widgets::ColorWheel::AngleEnum::AngleRotating */'
     qsettings: 'settings/colorwheel/rotate'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: colorWheelAngle::get
 
   - id: colorWheelMirror
     type: 'bool'
     default: 'true'
     qsettings: 'settings/colorwheel/mirror'
+    legacy_package: 'desktop'
 
   - id: colorWheelPreview
     type: 'int'
     default: '1'
     qsettings: 'settings/colorwheel/preview'
+    legacy_package: 'desktop'
 
   - id: colorWheelShape
     type: 'int'
     default: '0 /* color_widgets::ColorWheel::ShapeEnum::ShapeTriangle */'
     qsettings: 'settings/colorwheel/shape'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: colorWheelShape::get
 
   - id: colorWheelSpace
     type: 'int'
     default: '0 /* color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV */'
     qsettings: 'settings/colorwheel/space'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: colorWheelSpace::get
 
   - id: compactChat
     type: 'bool'
     default: 'false'
     qsettings: 'history/compactchat'
+    legacy_package: 'desktop'
 
   - id: confirmLayerDelete
     type: 'bool'
     default: 'false'
     qsettings: 'settings/confirmlayerdelete'
+    legacy_package: 'desktop'
 
   - id: connectionNotification
     type: 'bool'
     default: 'false'
     qsettings: 'settings/android/connectionnotif'
+    legacy_package: 'desktop'
     condition: 'defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)'
 
   - id: curvesPresets
     type: 'QVector<QVariantMap>'
     default: 'QVector<QVariantMap>()'
     qsettings: 'curves/presets'
+    legacy_package: 'desktop'
 
   - id: debounceDelayMs
     type: 'int'
     default: '250'
     qsettings: 'settings/debouncedelayms'
+    legacy_package: 'desktop'
+    legacy_get: 'debounceDelayMs::get'
+    legacy_set: 'debounceDelayMs::set'
 
   - id: donationLinksEnabled
     type: 'bool'
     default: 'true'
     qsettings: 'settings/donationlinksenabled'
+    legacy_package: 'desktop'
 
   - id: doubleTapAltToFocusCanvas
     type: 'bool'
     default: 'true'
     qsettings: 'settings/doubletapalttofocuscanvas'
+    legacy_package: 'desktop'
 
   - id: eraseCursor
     type: 'int'
     default: 'int(view::Cursor::SameAsBrush)'
     qsettings: 'settings/erasecursor'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_set: viewCursor::set
 
   - id: filterClosed
     type: 'bool'
     default: 'false'
     qsettings: 'history/filterclosed'
+    legacy_package: 'desktop'
 
   - id: filterDuplicates
     type: 'bool'
     default: 'false'
     qsettings: 'history/filterduplicates'
+    legacy_package: 'desktop'
 
   - id: filterInactive
     type: 'bool'
     default: 'true'
     qsettings: 'history/filterinactive'
+    legacy_package: 'desktop'
 
   - id: filterLocked
     type: 'bool'
     default: 'false'
     qsettings: 'history/filterlocked'
+    legacy_package: 'desktop'
 
   - id: filterNsfm
     type: 'bool'
     default: 'false'
     qsettings: 'history/filternsfw'
+    legacy_package: 'desktop'
 
   - id: flipbookUpscaling
     type: 'bool'
     default: 'true'
     qsettings: 'flipbook/upscaling'
+    legacy_package: 'desktop'
 
   - id: flipbookWindow
     type: 'QRect'
     default: 'QRect()'
     qsettings: 'flipbook/window'
+    legacy_package: 'desktop'
 
   - id: fontSize
     type: 'int'
     default: '-1'
     qsettings: 'settings/fontSize'
+    legacy_package: 'desktop'
 
   - id: fourFingerTap
     type: 'int'
     default: 'int(view::TouchTapAction::HideDocks)'
     qsettings: 'settings/input/fourfingertap'
+    legacy_package: 'desktop'
 
   - id: globalPressureCurve
     type: 'QString'
     default: 'tools::ToolController::globalPressureCurveDefault'
     qsettings: 'settings/input/globalcurve'
+    legacy_package: 'desktop'
 
   - id: globalPressureCurveEraser
     type: 'QString'
     default: 'tools::ToolController::globalPressureCurveDefault'
     qsettings: 'settings/input/globalcurveeraser'
+    legacy_package: 'desktop'
 
   - id: globalPressureCurveMode
     type: 'int'
     default: '0'
     qsettings: 'settings/input/globalcurvemode'
+    legacy_package: 'desktop'
 
   - id: hostEnableAdvanced
     type: 'bool'
     default: 'false'
     qsettings: 'history/hostenableadvanced'
+    legacy_package: 'desktop'
 
   - id: ignoreCarrierGradeNat
     type: 'bool'
     default: 'false'
     qsettings: 'history/cgnalert'
+    legacy_package: 'desktop'
 
   - id: inputPresets
     type: 'QVector<QVariantMap>'
     default: 'QVector<QVariantMap>()'
     qsettings: 'inputpresets'
+    legacy_package: 'desktop'
 
   - id: insecurePasswordStorage
     type: 'bool'
     default: 'false'
     qsettings: 'settings/insecurepasswordstorage'
+    legacy_package: 'desktop'
 
   - id: interfaceMode
     type: 'int'
@@ -440,11 +541,15 @@ settings:
         condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
       - value: 'int(view::InterfaceMode::Desktop)'
     qsettings: 'settings/interfacemode'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: 'any::getExactVersion'
 
   - id: inviteIncludePassword
     type: 'bool'
     default: 'true'
     qsettings: 'invites/includepassword'
+    legacy_package: 'desktop'
 
   - id: kineticScrollGesture
     type: 'int'
@@ -453,226 +558,274 @@ settings:
         condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
       - value: 'int(view::KineticScrollGesture::None)'
     qsettings: 'settings/kineticscroll/gesture'
+    legacy_package: 'desktop'
 
   - id: kineticScrollHideBars
     type: 'bool'
     default: 'false'
     qsettings: 'settings/kineticscroll/hidebars'
+    legacy_package: 'desktop'
 
   - id: kineticScrollThreshold
     type: 'int'
     default: '10'
     qsettings: 'settings/kineticscroll/threshold'
+    legacy_package: 'desktop'
 
   - id: language
     type: 'QString'
     default: 'QString()'
     qsettings: 'settings/language'
+    legacy_package: 'desktop'
 
   - id: lastAnnounce
     type: 'bool'
     default: 'false'
     qsettings: 'history/announce'
+    legacy_package: 'desktop'
 
   - id: lastAvatar
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/avatar'
+    legacy_package: 'desktop'
 
   - id: lastBrowseSortColumn
     type: 'int'
     default: '-1'
     qsettings: 'history/browsesortcolumn'
+    legacy_package: 'desktop'
 
   - id: lastBrowseSortDirection
     type: 'int'
     default: '0'
     qsettings: 'history/browsesortdirection'
+    legacy_package: 'desktop'
 
   - id: lastFileOpenPath
     type: 'QString'
     default: 'QString()'
     qsettings: 'window/lastpath'
+    legacy_package: 'desktop'
 
   - id: lastFileOpenPaths
     type: 'QVariantMap'
     default: 'QVariantMap()'
     qsettings: 'window/lastpaths'
+    legacy_package: 'desktop'
 
   - id: lastHostServer
     type: 'int'
     default: '-1'
     qsettings: 'history/hostserver'
+    legacy_package: 'desktop'
+    legacy_get: 'lastHostServer::get'
 
   - id: lastHostType
     type: 'int'
     default: '0'
     qsettings: 'history/hosttype'
+    legacy_package: 'desktop'
 
   - id: lastIdAlias
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/idalias'
+    legacy_package: 'desktop'
 
   - id: lastJoinAddress
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/joinaddress'
+    legacy_package: 'desktop'
 
   - id: lastKeepChat
     type: 'bool'
     default: 'false'
     qsettings: 'history/keepchat'
+    legacy_package: 'desktop'
 
   - id: lastListingUrls
     type: 'QStringList'
     default: 'QStringList()'
     qsettings: 'history/listingurls'
+    legacy_package: 'desktop'
 
   - id: lastNsfm
     type: 'bool'
     default: 'false'
     qsettings: 'history/nsfm'
+    legacy_package: 'desktop'
 
   - id: lastPalette
     type: 'int'
     default: '0'
     qsettings: 'history/lastpalette'
+    legacy_package: 'desktop'
 
   - id: lastSessionAuthList
     type: 'QByteArray'
     default: 'QByteArray()'
     qsettings: 'history/sessionauthlist'
+    legacy_package: 'desktop'
 
   - id: lastSessionAutomatic
     type: 'bool'
     default: 'true'
     qsettings: 'history/sessionautomatic'
+    legacy_package: 'desktop'
 
   - id: lastSessionBanList
     type: 'QByteArray'
     default: 'QByteArray()'
     qsettings: 'history/sessionbanlist'
+    legacy_package: 'desktop'
 
   - id: lastSessionOpPassword
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/sessionoppassword'
+    legacy_package: 'desktop'
 
   - id: lastSessionPassword
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/sessionpassword'
+    legacy_package: 'desktop'
 
   - id: lastSessionPermissions
     type: 'QVariantMap'
     default: 'QVariantMap()'
     qsettings: 'history/sessionpermissions'
+    legacy_package: 'desktop'
 
   - id: lastSessionTitle
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/sessiontitle'
+    legacy_package: 'desktop'
 
   - id: lastSessionUndoDepth
     type: 'int'
     default: '60'
     qsettings: 'history/sessionundodepth'
+    legacy_package: 'desktop'
 
   - id: lastStartDialogDateTime
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/laststartdialogdatetime'
+    legacy_package: 'desktop'
 
   - id: lastStartDialogPage
     type: 'int'
     default: '-1'
     qsettings: 'history/laststartdialogpage'
+    legacy_package: 'desktop'
 
   - id: lastStartDialogSize
     type: 'QSize'
     default: 'QSize()'
     qsettings: 'history/laststartdialogsize'
+    legacy_package: 'desktop'
 
   - id: lastTool
     type: 'int'
     default: 'int(tools::Tool::Type::FREEHAND)'
     qsettings: 'tools/tool'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: 'lastTool::get'
 
   - id: lastToolBackgroundColor
     type: 'QColor'
     default: 'QColor(Qt::white)'
     qsettings: 'tools/backgroundcolor'
+    legacy_package: 'desktop'
 
   - id: lastToolColor
     type: 'QColor'
     default: 'QColor(Qt::black)'
     qsettings: 'tools/color'
+    legacy_package: 'desktop'
 
   - id: lastUsername
     type: 'QString'
     default: 'QString()'
     qsettings: 'history/username'
+    legacy_package: 'desktop'
 
   - id: lastWindowActions
     type: 'QMap<QString, bool>'
     default: 'QMap<QString, bool>()'
     qsettings: 'window/actions'
+    legacy_package: 'desktop'
 
   - id: lastWindowDocks
     type: 'QVariantMap'
     default: 'QVariantMap()'
     qsettings: 'window/docks'
+    legacy_package: 'desktop'
 
   - id: lastWindowMaximized
     type: 'bool'
     default: 'true'
     qsettings: 'window/maximized'
+    legacy_package: 'desktop'
 
   - id: lastWindowPosition
     type: 'QPoint'
     default: 'QPoint()'
     qsettings: 'window/pos'
+    legacy_package: 'desktop'
 
   - id: lastWindowSize
     type: 'QSize'
     default: 'QSize(800, 600)'
     qsettings: 'window/size'
+    legacy_package: 'desktop'
 
   - id: lastWindowState
     type: 'QByteArray'
     default: 'QByteArray()'
     qsettings: 'window/state'
+    legacy_package: 'desktop'
 
   - id: lastWindowViewState
     type: 'QByteArray'
     default: 'QByteArray()'
     qsettings: 'window/viewstate'
+    legacy_package: 'desktop'
 
   - id: layerSketchOpacityPercent
     type: 'int'
     default: '75'
     qsettings: 'layers/sketchopacitypercent'
+    legacy_package: 'desktop'
 
   - id: layerSketchTint
     type: 'QColor'
     default: 'QColor(62, 140, 236)'
     qsettings: 'layers/sketchtint'
+    legacy_package: 'desktop'
 
   - id: layouts
     type: 'QVector<QVariantMap>'
     default: 'QVector<QVariantMap>()'
     qsettings: 'layouts'
+    legacy_package: 'desktop'
 
   - id: layoutsVersion
     type: 'int'
     default: '0'
     qsettings: 'layoutsversion'
+    legacy_package: 'desktop'
 
   - id: leftyMode
     type: 'bool'
     default: 'false'
     qsettings: 'settings/leftymode'
+    legacy_package: 'desktop'
 
   - id: longPressEnabled
     type: 'bool'
@@ -681,187 +834,230 @@ settings:
         condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
       - value: 'false'
     qsettings: 'settings/longpress/enabled'
+    legacy_package: 'desktop'
 
   - id: mentionEnabled
     type: 'bool'
     default: 'true'
     qsettings: 'settings/mentions/enabled'
+    legacy_package: 'desktop'
 
   - id: mentionTriggerList
     type: 'QString'
     default: 'QString()'
     qsettings: 'settings/mentions/triggerlist'
+    legacy_package: 'desktop'
 
   - id: nativeDialogs
     type: 'bool'
     default: 'true'
     qsettings: 'settings/nativedialogs'
+    legacy_package: 'desktop'
     condition: 'defined(NATIVE_DIALOGS_SETTING_AVAILABLE)'
 
   - id: navigatorRealtime
     type: 'bool'
     default: 'false'
     qsettings: 'navigator/realtime'
+    legacy_package: 'desktop'
 
   - id: navigatorShowCursors
     type: 'bool'
     default: 'true'
     qsettings: 'navigator/showcursors'
+    legacy_package: 'desktop'
 
   - id: newCanvasBackColor
     type: 'QColor'
     default: 'QColor(Qt::white)'
     qsettings: 'history/newcolor'
+    legacy_package: 'desktop'
+    legacy_get: 'newCanvasBackColor::get'
 
   - id: newCanvasSize
     type: 'QSize'
     default: 'QSize(2000, 2000)'
     qsettings: 'history/newsize'
+    legacy_package: 'desktop'
+    legacy_get: 'newCanvasSize::get'
 
   - id: notifFlashChat
     type: 'bool'
     default: 'true'
     qsettings: 'notifflashes/chat'
+    legacy_package: 'desktop'
 
   - id: notifFlashDisconnect
     type: 'bool'
     default: 'true'
     qsettings: 'notifflashes/disconnect'
+    legacy_package: 'desktop'
 
   - id: notifFlashLock
     type: 'bool'
     default: 'false'
     qsettings: 'notifflashes/lock'
+    legacy_package: 'desktop'
 
   - id: notifFlashLogin
     type: 'bool'
     default: 'false'
     qsettings: 'notifflashes/login'
+    legacy_package: 'desktop'
 
   - id: notifFlashLogout
     type: 'bool'
     default: 'false'
     qsettings: 'notifflashes/logout'
+    legacy_package: 'desktop'
 
   - id: notifFlashPrivateChat
     type: 'bool'
     default: 'true'
     qsettings: 'notifflashes/privatechat'
+    legacy_package: 'desktop'
 
   - id: notifFlashUnlock
     type: 'bool'
     default: 'false'
     qsettings: 'notifflashes/unlock'
+    legacy_package: 'desktop'
 
   - id: notifPopupChat
     type: 'bool'
     default: 'false'
     qsettings: 'notifpopups/chat'
+    legacy_package: 'desktop'
 
   - id: notifPopupDisconnect
     type: 'bool'
     default: 'true'
     qsettings: 'notifpopups/disconnect'
+    legacy_package: 'desktop'
 
   - id: notifPopupLock
     type: 'bool'
     default: 'false'
     qsettings: 'notifpopups/lock'
+    legacy_package: 'desktop'
 
   - id: notifPopupLogin
     type: 'bool'
     default: 'true'
     qsettings: 'notifpopups/login'
+    legacy_package: 'desktop'
 
   - id: notifPopupLogout
     type: 'bool'
     default: 'true'
     qsettings: 'notifpopups/logout'
+    legacy_package: 'desktop'
 
   - id: notifPopupPrivateChat
     type: 'bool'
     default: 'false'
     qsettings: 'notifpopups/privatechat'
+    legacy_package: 'desktop'
 
   - id: notifPopupUnlock
     type: 'bool'
     default: 'false'
     qsettings: 'notifpopups/unlock'
+    legacy_package: 'desktop'
 
   - id: notifSoundChat
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/chat'
+    legacy_package: 'desktop'
 
   - id: notifSoundDisconnect
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/disconnect'
+    legacy_package: 'desktop'
 
   - id: notifSoundLock
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/lock'
+    legacy_package: 'desktop'
 
   - id: notifSoundLogin
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/login'
+    legacy_package: 'desktop'
 
   - id: notifSoundLogout
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/logout'
+    legacy_package: 'desktop'
 
   - id: notifSoundPrivateChat
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/privatechat'
+    legacy_package: 'desktop'
 
   - id: notifSoundUnlock
     type: 'bool'
     default: 'true'
     qsettings: 'notifications/unlock'
+    legacy_package: 'desktop'
 
   - id: oneFingerTap
     type: 'int'
     default: 'int(view::TouchTapAction::Nothing)'
     qsettings: 'settings/input/onefingertap'
+    legacy_package: 'desktop'
 
   - id: oneFingerTapAndHold
     type: 'int'
     default: 'int(view::TouchTapAndHoldAction::ColorPickMode)'
     qsettings: 'settings/input/onefingertapandhold'
+    legacy_package: 'desktop'
 
   - id: oneFingerTouch
     type: 'int'
     default: 'int(ONE_FINGER_TOUCH_DEFAULT)'
     qsettings: 'settings/input/onefingertouch'
+    legacy_package: 'desktop'
+    legacy_get: 'oneFingerTouch::get'
 
   - id: onionSkinsFrameCount
     type: 'int'
     default: '8'
     qsettings: 'onionskins/framecount'
+    legacy_package: 'desktop'
 
   - id: onionSkinsFrames
     type: 'QMap<int, int>'
     default: 'QMap<int, int>()'
     qsettings: 'onionskins/frames'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: 'onionSkinsFrames::get'
+    legacy_set: 'onionSkinsFrames::set'
 
   - id: onionSkinsTintAbove
     type: 'QColor'
     default: 'QColor(51, 51, 255, 128)'
     qsettings: 'onionskins/tintabove'
+    legacy_package: 'desktop'
 
   - id: onionSkinsTintBelow
     type: 'QColor'
     default: 'QColor(255, 51, 51, 128)'
     qsettings: 'onionskins/tintbelow'
+    legacy_package: 'desktop'
 
   - id: onionSkinsWrap
     type: 'bool'
     default: 'true'
     qsettings: 'onionskins/wrap'
+    legacy_package: 'desktop'
 
   - id: overrideFontSize
     type: 'bool'
@@ -870,202 +1066,252 @@ settings:
         condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
       - value: 'false'
     qsettings: 'settings/overridefontsize'
+    legacy_package: 'desktop'
 
   - id: parentalControlsHideLocked
     type: 'bool'
     default: 'false'
     qsettings: 'pc/hidelocked'
+    legacy_package: 'desktop'
 
   - id: preferredExportFormat
     type: 'QString'
     default: 'QString()'
     qsettings: 'settings/preferredexportformat'
+    legacy_package: 'desktop'
 
   - id: preferredSaveFormat
     type: 'QString'
     default: 'QString()'
     qsettings: 'settings/preferredsaveformat'
+    legacy_package: 'desktop'
 
   - id: promptLayerCreate
     type: 'bool'
     default: 'false'
     qsettings: 'settings/promptlayercreate'
+    legacy_package: 'desktop'
 
   - id: quitOnLastWindowClosed
     type: 'bool'
     default: 'true'
     qsettings: 'settings/quitonlastwindowclosed'
+    legacy_package: 'desktop'
     condition: 'defined(Q_OS_MACOS)'
 
   - id: recentFiles
     type: 'QStringList'
     default: 'QStringList()'
     qsettings: 'history/recentfiles'
+    legacy_package: 'desktop'
 
   - id: recentHosts
     type: 'QStringList'
     default: 'QStringList()'
     qsettings: 'history/recenthosts'
+    legacy_package: 'desktop'
 
   - id: recentRemoteHosts
     type: 'QStringList'
     default: 'QStringList()'
     qsettings: 'history/recentremotehosts'
+    legacy_package: 'desktop'
 
   - id: renderCanvas
     type: 'int'
     default: 'int(view::CanvasImplementation::Default)'
     qsettings: 'settings/render/canvas'
+    legacy_package: 'desktop'
 
   - id: renderSmooth
     type: 'bool'
     default: 'true'
     qsettings: 'settings/render/smooth'
+    legacy_package: 'desktop'
 
   - id: renderUpdateFull
     type: 'bool'
     default: 'false'
     qsettings: 'settings/render/updatefull'
+    legacy_package: 'desktop'
 
   - id: samplingRingVisibility
     type: 'int'
     default: 'int(view::SamplingRingVisibility::Always)'
     qsettings: 'settings/colorpicker/samplingring'
+    legacy_package: 'desktop'
 
   - id: serverHideIp
     type: 'bool'
     default: 'false'
     qsettings: 'settings/hideServerIp'
+    legacy_package: 'desktop'
 
   - id: shareBrushSlotColor
     type: 'bool'
     default: 'false'
     qsettings: 'settings/sharebrushslotcolor'
+    legacy_package: 'desktop'
 
   - id: shortcuts
     type: 'QVariantMap'
     default: 'QVariantMap()'
     qsettings: 'settings/shortcuts'
+    legacy_package: 'desktop'
 
   - id: showInviteDialogOnHost
     type: 'bool'
     default: 'true'
     qsettings: 'invites/showdialogonhost'
+    legacy_package: 'desktop'
 
   - id: showNsfmWarningOnJoin
     type: 'bool'
     default: 'true'
     qsettings: 'pc/shownsfmwarningonjoin'
+    legacy_package: 'desktop'
 
   - id: showTransformNotices
     type: 'bool'
     default: 'true'
     qsettings: 'settings/showtransformnotices'
+    legacy_package: 'desktop'
 
   - id: showTrayIcon
     type: 'bool'
     default: 'true'
     qsettings: 'ui/trayicon'
+    legacy_package: 'desktop'
 
   - id: showViewModeNotices
     type: 'bool'
     default: 'true'
     qsettings: 'settings/showviewmodenotices'
+    legacy_package: 'desktop'
 
   - id: soundVolume
     type: 'int'
     default: '60'
     qsettings: 'notifications/volume'
+    legacy_package: 'desktop'
 
   - id: tabletDriver
     type: 'int'
     default: 'int(tools::TabletInputMode::KisTabletWinink)'
     qsettings: 'settings/input/tabletdriver'
+    legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: 'tabletDriver::get'
 
   - id: tabletEraserAction
     type: 'int'
     default: 'int(tools::EraserAction::Default)'
     qsettings: 'settings/input/tableteraseraction'
+    legacy_package: 'desktop'
+    legacy_get: 'tabletEraserAction::get'
+    legacy_set: 'tabletEraserAction::set'
 
   - id: tabletEvents
     type: 'bool'
     default: 'true'
     qsettings: 'settings/input/tabletevents'
+    legacy_package: 'desktop'
 
   - id: tabletPressTimerDelay
     type: 'int'
     default: '500'
     qsettings: 'settings/input/tabletpresstimerdelay'
+    legacy_package: 'desktop'
 
   - id: temporaryToolSwitch
     type: 'bool'
     default: 'true'
     qsettings: 'settings/tools/temporaryswitch'
+    legacy_package: 'desktop'
 
   - id: temporaryToolSwitchMs
     type: 'int'
     default: '250'
     qsettings: 'settings/tools/temporaryswitchms'
+    legacy_package: 'desktop'
 
   - id: themePalette
     type: 'QString'
     default: 'QStringLiteral("kritadark.colors")'
     qsettings: 'settings/theme/palette'
+    legacy_package: 'desktop'
+    legacy_version: 4
+    legacy_get: 'themePalette::get'
 
   - id: themeStyle
     type: 'QString'
     default: 'QStringLiteral("Fusion")'
     qsettings: 'settings/theme/style'
+    legacy_package: 'desktop'
+    legacy_version: 2
+    legacy_notify: 'themeStyle::notify'
 
   - id: threeFingerTap
     type: 'int'
     default: 'int(view::TouchTapAction::Redo)'
     qsettings: 'settings/input/threefingertap'
+    legacy_package: 'desktop'
 
   - id: toolBarConfig
     type: 'QVariantHash'
     default: 'QVariantHash()'
     qsettings: 'settings/toolbarconfig'
+    legacy_package: 'desktop'
 
   - id: toolToggle
     type: 'bool'
     default: 'true'
     qsettings: 'settings/tooltoggle'
+    legacy_package: 'desktop'
 
   - id: toolset
     type: 'QMap<QString, QVariantHash>'
     default: 'QMap<QString, QVariantHash>()'
     qsettings: 'tools/toolset'
+    legacy_package: 'desktop'
 
   - id: touchDrawPressure
     type: 'bool'
     default: 'false'
     qsettings: 'settings/input/touchdrawpressure'
+    legacy_package: 'desktop'
 
   - id: touchGestures
     type: 'bool'
     default: 'false'
     qsettings: 'settings/input/touchgestures'
+    legacy_package: 'desktop'
 
   - id: touchSmoothing
     type: 'int'
     default: '75'
     qsettings: 'settings/input/touchsmoothing'
+    legacy_package: 'desktop'
 
   - id: twoFingerPinch
     type: 'int'
     default: 'int(view::TwoFingerPinchAction::Zoom)'
     qsettings: 'settings/input/twofingerpinch'
+    legacy_package: 'desktop'
+    legacy_get: 'twoFingerPinch::get'
 
   - id: twoFingerTap
     type: 'int'
     default: 'int(view::TouchTapAction::Undo)'
     qsettings: 'settings/input/twofingertap'
+    legacy_package: 'desktop'
 
   - id: twoFingerTwist
     type: 'int'
     default: 'int(view::TwoFingerTwistAction::Rotate)'
     qsettings: 'settings/input/twofingertwist'
+    legacy_package: 'desktop'
+    legacy_get: 'twoFingerTwist::get'
 
   - id: updateCheckEnabled
     type: 'bool'
@@ -1075,59 +1321,70 @@ settings:
         condition: 'DISABLE_UPDATE_CHECK_DEFAULT'
       - value: 'true'
     qsettings: 'settings/updatecheck'
+    legacy_package: 'desktop'
 
   - id: useMipmaps
     type: 'bool'
     default: 'false'
     qsettings: 'settings/usemipmaps'
+    legacy_package: 'desktop'
 
   - id: userMarkerPersistence
     type: 'int'
     default: '1000'
     qsettings: 'settings/usermarkerpersistence'
+    legacy_package: 'desktop'
 
   - id: videoExportCustomFfmpeg
     type: 'QString'
     default: 'QString()'
     qsettings: 'videoexport/customffmpeg'
+    legacy_package: 'desktop'
 
   - id: videoExportFfmpegPath
     type: 'QString'
     default: 'QString("ffmpeg")'
     qsettings: 'videoexport/ffmpegpath'
+    legacy_package: 'desktop'
 
   - id: videoExportFormat
     type: 'int'
     default: '0 /* VideoExporter::Format::IMAGE_SERIES */'
     qsettings: 'videoexport/format'
+    legacy_package: 'desktop'
 
   - id: videoExportFrameHeight
     type: 'int'
     default: '720'
     qsettings: 'videoexport/frameheight'
+    legacy_package: 'desktop'
 
   - id: videoExportFrameRate
     type: 'int'
     default: '30'
     qsettings: 'videoexport/fps'
+    legacy_package: 'desktop'
 
   - id: videoExportFrameWidth
     type: 'int'
     default: '1280'
     qsettings: 'videoexport/framewidth'
+    legacy_package: 'desktop'
 
   - id: videoExportSizeChoice
     type: 'int'
     default: '0'
     qsettings: 'videoexport/sizeChoice'
+    legacy_package: 'desktop'
 
   - id: welcomePageShown
     type: 'bool'
     default: 'false'
     qsettings: 'history/welcomepageshown'
+    legacy_package: 'desktop'
 
   - id: writeLogFile
     type: 'bool'
     default: 'false'
     qsettings: 'settings/logfile'
-
+    legacy_package: 'desktop'
