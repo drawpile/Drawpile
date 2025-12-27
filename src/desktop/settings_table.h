@@ -1,249 +1,658 @@
 #include "libclient/settings_table_macros.h"
 
-SETTING(_brushCursorDummy         , _BrushCursorDummy         , "_brushcursordummy"                     , widgets::CanvasView::BrushCursor::Dot)
-SETTING(_colorWheelAngleDummy     , _ColorWheelAngleDummy     , "_colorwheelangledummy"                 , color_widgets::ColorWheel::AngleEnum::AngleRotating)
-SETTING(_colorWheelShapeDummy     , _ColorWheelShapeDummy     , "_colorwheelshapedummy"                 , color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
-SETTING(_tabletInputModeDummy     , _TabletInputModeDummy     , "_tabletinputmodedummy"                 , tabletinput::Mode::KisTabletWinink)
-SETTING(_toolsTypeDummy           , _ToolsTypeDummy           , "_toolstypedummy"                       , tools::Tool::Type::FREEHAND)
-SETTING(_themePaletteDummy        , _ThemePaletteDummy        , "_themepalettedummy"                    , desktop::settings::ThemePalette::System)
-SETTING(_videoExporterFormatDummy , _VideoExporterFormatDummy , "_videoexporterformatdummy"             , VideoExporter::Format::IMAGE_SERIES)
-SETTING(actionBar                 , ActionBar                 , "settings/actionbar"                    , config::Config::defaultActionBar())
-SETTING(actionBarLocation         , ActionBarLocation         , "settings/actionbarlocation"            , config::Config::defaultActionBarLocation())
+SETTING(
+	_brushCursorDummy, _BrushCursorDummy, "_brushcursordummy",
+	widgets::CanvasView::BrushCursor::Dot)
+SETTING(
+	_colorWheelAngleDummy, _ColorWheelAngleDummy, "_colorwheelangledummy",
+	color_widgets::ColorWheel::AngleEnum::AngleRotating)
+SETTING(
+	_colorWheelShapeDummy, _ColorWheelShapeDummy, "_colorwheelshapedummy",
+	color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
+SETTING(
+	_tabletInputModeDummy, _TabletInputModeDummy, "_tabletinputmodedummy",
+	tabletinput::Mode::KisTabletWinink)
+SETTING(
+	_toolsTypeDummy, _ToolsTypeDummy, "_toolstypedummy",
+	tools::Tool::Type::FREEHAND)
+SETTING(
+	_themePaletteDummy, _ThemePaletteDummy, "_themepalettedummy",
+	desktop::settings::ThemePalette::System)
+SETTING(
+	_videoExporterFormatDummy, _VideoExporterFormatDummy,
+	"_videoexporterformatdummy", VideoExporter::Format::IMAGE_SERIES)
+SETTING(
+	actionBar, ActionBar, "settings/actionbar",
+	config::Config::defaultActionBar())
+SETTING(
+	actionBarLocation, ActionBarLocation, "settings/actionbarlocation",
+	config::Config::defaultActionBarLocation())
 SETTING_GETSET_V(
-	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , config::Config::defaultAlphaLockCursor(),
-	&any::get, &viewCursor::set)
-SETTING(animationExportFormat     , AnimationExportFormat     , "animationexport/format"                , config::Config::defaultAnimationExportFormat())
-SETTING(automaticAlphaPreserve    , AutomaticAlphaPreserve    , "settings/automaticalphapreserve"       , config::Config::defaultAutomaticAlphaPreserve())
+	V1, alphaLockCursor, AlphaLockCursor, "settings/alphalockcursor",
+	config::Config::defaultAlphaLockCursor(), &any::get, &viewCursor::set)
+SETTING(
+	animationExportFormat, AnimationExportFormat, "animationexport/format",
+	config::Config::defaultAnimationExportFormat())
+SETTING(
+	automaticAlphaPreserve, AutomaticAlphaPreserve,
+	"settings/automaticalphapreserve",
+	config::Config::defaultAutomaticAlphaPreserve())
 SETTING_GETSET_V(
-	V1, brushCursor               , BrushCursor               , "settings/brushcursor"                  , config::Config::defaultBrushCursor(),
-	&any::get, &viewCursor::set)
-SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , config::Config::defaultBrushOutlineWidth())
-SETTING(brushPresetsAttach        , BrushPresetsAttach        , "settings/brushpresetsattach"           , config::Config::defaultBrushPresetsAttach())
-SETTING(brushSlotCount            , BrushSlotCount            , "settings/brushslotcount"               , config::Config::defaultBrushSlotCount())
-SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , config::Config::defaultCanvasViewBackgroundColor())
-SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvasscrollbars"             , config::Config::defaultCanvasScrollBars())
-SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvasshortcuts2"             , config::Config::defaultCanvasShortcuts())
-#ifdef Q_OS_ANDROID
-SETTING(captureVolumeRocker       , CaptureVolumeRocker       , "settings/android/capturevolumerocker"  , config::Config::defaultCaptureVolumeRocker())
+	V1, brushCursor, BrushCursor, "settings/brushcursor",
+	config::Config::defaultBrushCursor(), &any::get, &viewCursor::set)
+SETTING(
+	brushOutlineWidth, BrushOutlineWidth, "settings/brushoutlinewidth",
+	config::Config::defaultBrushOutlineWidth())
+SETTING(
+	brushPresetsAttach, BrushPresetsAttach, "settings/brushpresetsattach",
+	config::Config::defaultBrushPresetsAttach())
+SETTING(
+	brushSlotCount, BrushSlotCount, "settings/brushslotcount",
+	config::Config::defaultBrushSlotCount())
+SETTING(
+	canvasScrollBars, CanvasScrollBars, "settings/canvasscrollbars",
+	config::Config::defaultCanvasScrollBars())
+SETTING(
+	canvasShortcuts, CanvasShortcuts, "settings/canvasshortcuts2",
+	config::Config::defaultCanvasShortcuts())
+SETTING(
+	canvasViewBackgroundColor, CanvasViewBackgroundColor,
+	"settings/canvasviewbackgroundcolor",
+	config::Config::defaultCanvasViewBackgroundColor())
+#if defined(Q_OS_ANDROID)
+SETTING(
+	captureVolumeRocker, CaptureVolumeRocker,
+	"settings/android/capturevolumerocker",
+	config::Config::defaultCaptureVolumeRocker())
 #endif
-SETTING(colorCircleGamutMaskAngle , ColorCircleGamutMaskAngle , "settings/colorcircle/gamutmaskangle"   , config::Config::defaultColorCircleGamutMaskAngle())
-SETTING(colorCircleGamutMaskPath  , ColorCircleGamutMaskPath  , "settings/colorcircle/gamutmaskpath"    , config::Config::defaultColorCircleGamutMaskPath())
-SETTING(colorCircleGamutMaskOpacity,ColorCircleGamutMaskOpacity,"settings/colorcircle/gamutmaskopacity" , config::Config::defaultColorCircleGamutMaskOpacity())
-SETTING(colorCircleHueAngle       , ColorCircleHueAngle       , "settings/colorcircle/hueangle"         , config::Config::defaultColorCircleHueAngle())
-SETTING(colorCircleHueCount       , ColorCircleHueCount       , "settings/colorcircle/huecount"         , config::Config::defaultColorCircleHueCount())
-SETTING(colorCircleHueLimit       , ColorCircleHueLimit       , "settings/colorcircle/huelimit"         , config::Config::defaultColorCircleHueLimit())
-SETTING(colorCircleSaturationCount, ColorCircleSaturationCount, "settings/colorcircle/saturationcount"  , config::Config::defaultColorCircleSaturationCount())
-SETTING(colorCircleSaturationLimit, ColorCircleSaturationLimit, "settings/colorcircle/saturationlimit"  , config::Config::defaultColorCircleSaturationLimit())
-SETTING(colorCircleValueCount     , ColorCircleValueCount     , "settings/colorcircle/valuecount"       , config::Config::defaultColorCircleValueCount())
-SETTING(colorCircleValueLimit     , ColorCircleValueLimit     , "settings/colorcircle/valuelimit"       , config::Config::defaultColorCircleValueLimit())
-SETTING(colorShadesConfig         , ColorShadesConfig         , "settings/colorshades/config"           , config::Config::defaultColorShadesConfig())
-SETTING(colorShadesEnabled        , ColorShadesEnabled        , "settings/colorshades/enabled"          , config::Config::defaultColorShadesEnabled())
-SETTING(colorShadesBorderThickness, ColorShadesBorderThickness, "settings/colorshades/borderthickness"  , config::Config::defaultColorShadesBorderThickness())
-SETTING(colorShadesColumnCount    , ColorShadesColumnCount    , "settings/colorshades/columncount"      , config::Config::defaultColorShadesColumnCount())
-SETTING(colorShadesRowHeight      , ColorShadesRowHeight      , "settings/colorshades/rowheight"        , config::Config::defaultColorShadesRowHeight())
-SETTING(colorSlidersShowAll       , ColorSlidersShowAll       , "settings/colorsliders/showall"         , config::Config::defaultColorSlidersShowAll())
-SETTING(colorSlidersShowInput     , ColorSlidersShowInput     , "settings/colorsliders/showinput"       , config::Config::defaultColorSlidersShowInput())
-SETTING(colorSlidersMode          , ColorSlidersMode          , "settings/colorsliders/mode"            , config::Config::defaultColorSlidersMode())
-SETTING(colorSwatchFlags          , ColorSwatchFlags          , "settings/colorswatchflags"             , config::Config::defaultColorSwatchFlags())
+SETTING(
+	colorCircleGamutMaskAngle, ColorCircleGamutMaskAngle,
+	"settings/colorcircle/gamutmaskangle",
+	config::Config::defaultColorCircleGamutMaskAngle())
+SETTING(
+	colorCircleGamutMaskOpacity, ColorCircleGamutMaskOpacity,
+	"settings/colorcircle/gamutmaskopacity",
+	config::Config::defaultColorCircleGamutMaskOpacity())
+SETTING(
+	colorCircleGamutMaskPath, ColorCircleGamutMaskPath,
+	"settings/colorcircle/gamutmaskpath",
+	config::Config::defaultColorCircleGamutMaskPath())
+SETTING(
+	colorCircleHueAngle, ColorCircleHueAngle, "settings/colorcircle/hueangle",
+	config::Config::defaultColorCircleHueAngle())
+SETTING(
+	colorCircleHueCount, ColorCircleHueCount, "settings/colorcircle/huecount",
+	config::Config::defaultColorCircleHueCount())
+SETTING(
+	colorCircleHueLimit, ColorCircleHueLimit, "settings/colorcircle/huelimit",
+	config::Config::defaultColorCircleHueLimit())
+SETTING(
+	colorCircleSaturationCount, ColorCircleSaturationCount,
+	"settings/colorcircle/saturationcount",
+	config::Config::defaultColorCircleSaturationCount())
+SETTING(
+	colorCircleSaturationLimit, ColorCircleSaturationLimit,
+	"settings/colorcircle/saturationlimit",
+	config::Config::defaultColorCircleSaturationLimit())
+SETTING(
+	colorCircleValueCount, ColorCircleValueCount,
+	"settings/colorcircle/valuecount",
+	config::Config::defaultColorCircleValueCount())
+SETTING(
+	colorCircleValueLimit, ColorCircleValueLimit,
+	"settings/colorcircle/valuelimit",
+	config::Config::defaultColorCircleValueLimit())
+SETTING(
+	colorShadesBorderThickness, ColorShadesBorderThickness,
+	"settings/colorshades/borderthickness",
+	config::Config::defaultColorShadesBorderThickness())
+SETTING(
+	colorShadesColumnCount, ColorShadesColumnCount,
+	"settings/colorshades/columncount",
+	config::Config::defaultColorShadesColumnCount())
+SETTING(
+	colorShadesConfig, ColorShadesConfig, "settings/colorshades/config",
+	config::Config::defaultColorShadesConfig())
+SETTING(
+	colorShadesEnabled, ColorShadesEnabled, "settings/colorshades/enabled",
+	config::Config::defaultColorShadesEnabled())
+SETTING(
+	colorShadesRowHeight, ColorShadesRowHeight,
+	"settings/colorshades/rowheight",
+	config::Config::defaultColorShadesRowHeight())
+SETTING(
+	colorSlidersMode, ColorSlidersMode, "settings/colorsliders/mode",
+	config::Config::defaultColorSlidersMode())
+SETTING(
+	colorSlidersShowAll, ColorSlidersShowAll, "settings/colorsliders/showall",
+	config::Config::defaultColorSlidersShowAll())
+SETTING(
+	colorSlidersShowInput, ColorSlidersShowInput,
+	"settings/colorsliders/showinput",
+	config::Config::defaultColorSlidersShowInput())
+SETTING(
+	colorSwatchFlags, ColorSwatchFlags, "settings/colorswatchflags",
+	config::Config::defaultColorSwatchFlags())
+SETTING(
+	colorWheelAlign, ColorWheelAlign, "settings/colorwheel/align",
+	config::Config::defaultColorWheelAlign())
 SETTING_GETSET_V(
-	V1, colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , config::Config::defaultColorWheelAngle(),
-	&colorWheelAngle::get, &any::set)
-SETTING(colorWheelAlign           , ColorWheelAlign           , "settings/colorwheel/align"             , config::Config::defaultColorWheelAlign())
-SETTING(colorWheelMirror          , ColorWheelMirror          , "settings/colorwheel/mirror"            , config::Config::defaultColorWheelMirror())
-SETTING(colorWheelPreview         , ColorWheelPreview         , "settings/colorwheel/preview"           , config::Config::defaultColorWheelPreview())
+	V1, colorWheelAngle, ColorWheelAngle, "settings/colorwheel/rotate",
+	config::Config::defaultColorWheelAngle(), &colorWheelAngle::get, &any::set)
+SETTING(
+	colorWheelMirror, ColorWheelMirror, "settings/colorwheel/mirror",
+	config::Config::defaultColorWheelMirror())
+SETTING(
+	colorWheelPreview, ColorWheelPreview, "settings/colorwheel/preview",
+	config::Config::defaultColorWheelPreview())
 SETTING_GETSET_V(
-	V1, colorWheelShape           , ColorWheelShape           , "settings/colorwheel/shape"             , config::Config::defaultColorWheelShape(),
-	&colorWheelShape::get, &any::set)
+	V1, colorWheelShape, ColorWheelShape, "settings/colorwheel/shape",
+	config::Config::defaultColorWheelShape(), &colorWheelShape::get, &any::set)
 SETTING_GETSET_V(
-	V1, colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , config::Config::defaultColorWheelSpace(),
-	&colorWheelSpace::get, &any::set)
-SETTING(compactChat               , CompactChat               , "history/compactchat"                   , config::Config::defaultCompactChat())
-SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , config::Config::defaultConfirmLayerDelete())
+	V1, colorWheelSpace, ColorWheelSpace, "settings/colorwheel/space",
+	config::Config::defaultColorWheelSpace(), &colorWheelSpace::get, &any::set)
+SETTING(
+	compactChat, CompactChat, "history/compactchat",
+	config::Config::defaultCompactChat())
+SETTING(
+	confirmLayerDelete, ConfirmLayerDelete, "settings/confirmlayerdelete",
+	config::Config::defaultConfirmLayerDelete())
 #if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
-SETTING(connectionNotification    , ConnectionNotification    , "settings/android/connectionnotif"      , config::Config::defaultConnectionNotification())
+SETTING(
+	connectionNotification, ConnectionNotification,
+	"settings/android/connectionnotif",
+	config::Config::defaultConnectionNotification())
 #endif
-SETTING_GETSET(debounceDelayMs    , DebounceDelayMs           , "settings/debouncedelayms"              , config::Config::defaultDebounceDelayMs()
-	, &debounceDelayMs::get, &debounceDelayMs::set)
-SETTING(donationLinksEnabled      , DonationLinksEnabled      , "settings/donationlinksenabled"         , config::Config::defaultDonationLinksEnabled())
-SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked"                         , config::Config::defaultParentalControlsHideLocked())
-SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , config::Config::defaultCurvesPresets())
-SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , config::Config::defaultDoubleTapAltToFocusCanvas())
+SETTING(
+	curvesPresets, CurvesPresets, "curves/presets",
+	config::Config::defaultCurvesPresets())
+SETTING_GETSET(
+	debounceDelayMs, DebounceDelayMs, "settings/debouncedelayms",
+	config::Config::defaultDebounceDelayMs(), &debounceDelayMs::get,
+	&debounceDelayMs::set)
+SETTING(
+	donationLinksEnabled, DonationLinksEnabled, "settings/donationlinksenabled",
+	config::Config::defaultDonationLinksEnabled())
+SETTING(
+	doubleTapAltToFocusCanvas, DoubleTapAltToFocusCanvas,
+	"settings/doubletapalttofocuscanvas",
+	config::Config::defaultDoubleTapAltToFocusCanvas())
 SETTING_GETSET_V(
-	V1, eraseCursor               , EraseCursor               , "settings/erasecursor"                  , config::Config::defaultEraseCursor(),
-	&any::get, &viewCursor::set)
-SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , config::Config::defaultFilterClosed())
-SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , config::Config::defaultFilterDuplicates())
-SETTING(filterInactive            , FilterInactive            , "history/filterinactive"                , config::Config::defaultFilterInactive())
-SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , config::Config::defaultFilterLocked())
-SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , config::Config::defaultFilterNsfm())
-SETTING(flipbookUpscaling         , FlipbookUpscaling         , "flipbook/upscaling"                    , config::Config::defaultFlipbookUpscaling())
-SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , config::Config::defaultFlipbookWindow())
-SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , config::Config::defaultOverrideFontSize())
-SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , config::Config::defaultFontSize())
-SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , config::Config::defaultGlobalPressureCurve())
-SETTING(globalPressureCurveEraser , GlobalPressureCurveEraser , "settings/input/globalcurveeraser"      , config::Config::defaultGlobalPressureCurveEraser())
-SETTING(globalPressureCurveMode   , GlobalPressureCurveMode   , "settings/input/globalcurvemode"        , config::Config::defaultGlobalPressureCurveMode())
-SETTING(hostEnableAdvanced        , HostEnableAdvanced        , "history/hostenableadvanced"            , config::Config::defaultHostEnableAdvanced())
-SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , config::Config::defaultIgnoreCarrierGradeNat())
-SETTING(inputPresets              , InputPresets              , "inputpresets"                          , config::Config::defaultInputPresets())
-SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , config::Config::defaultInsecurePasswordStorage())
+	V1, eraseCursor, EraseCursor, "settings/erasecursor",
+	config::Config::defaultEraseCursor(), &any::get, &viewCursor::set)
+SETTING(
+	filterClosed, FilterClosed, "history/filterclosed",
+	config::Config::defaultFilterClosed())
+SETTING(
+	filterDuplicates, FilterDuplicates, "history/filterduplicates",
+	config::Config::defaultFilterDuplicates())
+SETTING(
+	filterInactive, FilterInactive, "history/filterinactive",
+	config::Config::defaultFilterInactive())
+SETTING(
+	filterLocked, FilterLocked, "history/filterlocked",
+	config::Config::defaultFilterLocked())
+SETTING(
+	filterNsfm, FilterNsfm, "history/filternsfw",
+	config::Config::defaultFilterNsfm())
+SETTING(
+	flipbookUpscaling, FlipbookUpscaling, "flipbook/upscaling",
+	config::Config::defaultFlipbookUpscaling())
+SETTING(
+	flipbookWindow, FlipbookWindow, "flipbook/window",
+	config::Config::defaultFlipbookWindow())
+SETTING(
+	fontSize, FontSize, "settings/fontSize", config::Config::defaultFontSize())
+SETTING(
+	fourFingerTap, FourFingerTap, "settings/input/fourfingertap",
+	config::Config::defaultFourFingerTap())
+SETTING(
+	globalPressureCurve, GlobalPressureCurve, "settings/input/globalcurve",
+	config::Config::defaultGlobalPressureCurve())
+SETTING(
+	globalPressureCurveEraser, GlobalPressureCurveEraser,
+	"settings/input/globalcurveeraser",
+	config::Config::defaultGlobalPressureCurveEraser())
+SETTING(
+	globalPressureCurveMode, GlobalPressureCurveMode,
+	"settings/input/globalcurvemode",
+	config::Config::defaultGlobalPressureCurveMode())
+SETTING(
+	hostEnableAdvanced, HostEnableAdvanced, "history/hostenableadvanced",
+	config::Config::defaultHostEnableAdvanced())
+SETTING(
+	ignoreCarrierGradeNat, IgnoreCarrierGradeNat, "history/cgnalert",
+	config::Config::defaultIgnoreCarrierGradeNat())
+SETTING(
+	inputPresets, InputPresets, "inputpresets",
+	config::Config::defaultInputPresets())
+SETTING(
+	insecurePasswordStorage, InsecurePasswordStorage,
+	"settings/insecurepasswordstorage",
+	config::Config::defaultInsecurePasswordStorage())
 SETTING_GETSET_V(
-	V1, interfaceMode             , InterfaceMode             , "settings/interfacemode"                , config::Config::defaultInterfaceMode(),
-	&any::getExactVersion, &any::set)
-SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , config::Config::defaultInviteIncludePassword())
-SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , config::Config::defaultKineticScrollGesture())
-SETTING(kineticScrollThreshold    , KineticScrollThreshold    , "settings/kineticscroll/threshold"      , config::Config::defaultKineticScrollThreshold())
-SETTING(kineticScrollHideBars     , KineticScrollHideBars     , "settings/kineticscroll/hidebars"       , config::Config::defaultKineticScrollHideBars())
-SETTING(language                  , Language                  , "settings/language"                     , config::Config::defaultLanguage())
-SETTING(lastAnnounce              , LastAnnounce              , "history/announce"                      , config::Config::defaultLastAnnounce())
-SETTING(lastAvatar                , LastAvatar                , "history/avatar"                        , config::Config::defaultLastAvatar())
-SETTING(lastBrowseSortColumn      , LastBrowseSortColumn      , "history/browsesortcolumn"              , config::Config::defaultLastBrowseSortColumn())
-SETTING(lastBrowseSortDirection   , LastBrowseSortDirection   , "history/browsesortdirection"           , config::Config::defaultLastBrowseSortDirection())
-SETTING(lastFileOpenPath          , LastFileOpenPath          , "window/lastpath"                       , config::Config::defaultLastFileOpenPath())
-SETTING(lastFileOpenPaths         , LastFileOpenPaths         , "window/lastpaths"                      , config::Config::defaultLastFileOpenPaths())
-SETTING_GETSET(lastHostServer     , LastHostServer            , "history/hostserver"                    , config::Config::defaultLastHostServer(),
-	&lastHostServer::get, &any::set)
-SETTING(lastHostType             , LastHostType              , "history/hosttype"                       , config::Config::defaultLastHostType())
-SETTING(lastIdAlias               , LastIdAlias               , "history/idalias"                       , config::Config::defaultLastIdAlias())
-SETTING(lastJoinAddress           , LastJoinAddress           , "history/joinaddress"                   , config::Config::defaultLastJoinAddress())
-SETTING(lastKeepChat              , LastKeepChat              , "history/keepchat"                      , config::Config::defaultLastKeepChat())
-SETTING(lastListingUrls           , LastListingUrls           , "history/listingurls"                   , config::Config::defaultLastListingUrls())
-SETTING(lastNsfm                  , LastNsfm                  , "history/nsfm"                          , config::Config::defaultLastNsfm())
-SETTING(lastPalette               , LastPalette               , "history/lastpalette"                   , config::Config::defaultLastPalette())
-SETTING(lastSessionAuthList       , LastSessionAuthList       , "history/sessionauthlist"               , config::Config::defaultLastSessionAuthList())
-SETTING(lastSessionAutomatic      , LastSessionAutomatic      , "history/sessionautomatic"              , config::Config::defaultLastSessionAutomatic())
-SETTING(lastSessionBanList        , LastSessionBanList        , "history/sessionbanlist"                , config::Config::defaultLastSessionBanList())
-SETTING(lastSessionOpPassword     , LastSessionOpPassword     , "history/sessionoppassword"             , config::Config::defaultLastSessionOpPassword())
-SETTING(lastSessionPassword       , LastSessionPassword       , "history/sessionpassword"               , config::Config::defaultLastSessionPassword())
-SETTING(lastSessionPermissions    , LastSessionPermissions    , "history/sessionpermissions"            , config::Config::defaultLastSessionPermissions())
-SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , config::Config::defaultLastSessionTitle())
-SETTING(lastSessionUndoDepth      , LastSessionUndoDepth      , "history/sessionundodepth"              , config::Config::defaultLastSessionUndoDepth())
-SETTING(lastStartDialogPage       , LastStartDialogPage       , "history/laststartdialogpage"           , config::Config::defaultLastStartDialogPage())
-SETTING(lastStartDialogSize       , LastStartDialogSize       , "history/laststartdialogsize"           , config::Config::defaultLastStartDialogSize())
-SETTING(lastStartDialogDateTime   , LastStartDialogDateTime   , "history/laststartdialogdatetime"       , config::Config::defaultLastStartDialogDateTime())
+	V1, interfaceMode, InterfaceMode, "settings/interfacemode",
+	config::Config::defaultInterfaceMode(), &any::getExactVersion, &any::set)
+SETTING(
+	inviteIncludePassword, InviteIncludePassword, "invites/includepassword",
+	config::Config::defaultInviteIncludePassword())
+SETTING(
+	kineticScrollGesture, KineticScrollGesture,
+	"settings/kineticscroll/gesture",
+	config::Config::defaultKineticScrollGesture())
+SETTING(
+	kineticScrollHideBars, KineticScrollHideBars,
+	"settings/kineticscroll/hidebars",
+	config::Config::defaultKineticScrollHideBars())
+SETTING(
+	kineticScrollThreshold, KineticScrollThreshold,
+	"settings/kineticscroll/threshold",
+	config::Config::defaultKineticScrollThreshold())
+SETTING(
+	language, Language, "settings/language", config::Config::defaultLanguage())
+SETTING(
+	lastAnnounce, LastAnnounce, "history/announce",
+	config::Config::defaultLastAnnounce())
+SETTING(
+	lastAvatar, LastAvatar, "history/avatar",
+	config::Config::defaultLastAvatar())
+SETTING(
+	lastBrowseSortColumn, LastBrowseSortColumn, "history/browsesortcolumn",
+	config::Config::defaultLastBrowseSortColumn())
+SETTING(
+	lastBrowseSortDirection, LastBrowseSortDirection,
+	"history/browsesortdirection",
+	config::Config::defaultLastBrowseSortDirection())
+SETTING(
+	lastFileOpenPath, LastFileOpenPath, "window/lastpath",
+	config::Config::defaultLastFileOpenPath())
+SETTING(
+	lastFileOpenPaths, LastFileOpenPaths, "window/lastpaths",
+	config::Config::defaultLastFileOpenPaths())
+SETTING_GETSET(
+	lastHostServer, LastHostServer, "history/hostserver",
+	config::Config::defaultLastHostServer(), &lastHostServer::get, &any::set)
+SETTING(
+	lastHostType, LastHostType, "history/hosttype",
+	config::Config::defaultLastHostType())
+SETTING(
+	lastIdAlias, LastIdAlias, "history/idalias",
+	config::Config::defaultLastIdAlias())
+SETTING(
+	lastJoinAddress, LastJoinAddress, "history/joinaddress",
+	config::Config::defaultLastJoinAddress())
+SETTING(
+	lastKeepChat, LastKeepChat, "history/keepchat",
+	config::Config::defaultLastKeepChat())
+SETTING(
+	lastListingUrls, LastListingUrls, "history/listingurls",
+	config::Config::defaultLastListingUrls())
+SETTING(lastNsfm, LastNsfm, "history/nsfm", config::Config::defaultLastNsfm())
+SETTING(
+	lastPalette, LastPalette, "history/lastpalette",
+	config::Config::defaultLastPalette())
+SETTING(
+	lastSessionAuthList, LastSessionAuthList, "history/sessionauthlist",
+	config::Config::defaultLastSessionAuthList())
+SETTING(
+	lastSessionAutomatic, LastSessionAutomatic, "history/sessionautomatic",
+	config::Config::defaultLastSessionAutomatic())
+SETTING(
+	lastSessionBanList, LastSessionBanList, "history/sessionbanlist",
+	config::Config::defaultLastSessionBanList())
+SETTING(
+	lastSessionOpPassword, LastSessionOpPassword, "history/sessionoppassword",
+	config::Config::defaultLastSessionOpPassword())
+SETTING(
+	lastSessionPassword, LastSessionPassword, "history/sessionpassword",
+	config::Config::defaultLastSessionPassword())
+SETTING(
+	lastSessionPermissions, LastSessionPermissions,
+	"history/sessionpermissions",
+	config::Config::defaultLastSessionPermissions())
+SETTING(
+	lastSessionTitle, LastSessionTitle, "history/sessiontitle",
+	config::Config::defaultLastSessionTitle())
+SETTING(
+	lastSessionUndoDepth, LastSessionUndoDepth, "history/sessionundodepth",
+	config::Config::defaultLastSessionUndoDepth())
+SETTING(
+	lastStartDialogDateTime, LastStartDialogDateTime,
+	"history/laststartdialogdatetime",
+	config::Config::defaultLastStartDialogDateTime())
+SETTING(
+	lastStartDialogPage, LastStartDialogPage, "history/laststartdialogpage",
+	config::Config::defaultLastStartDialogPage())
+SETTING(
+	lastStartDialogSize, LastStartDialogSize, "history/laststartdialogsize",
+	config::Config::defaultLastStartDialogSize())
 SETTING_GETSET_V(
-	V1, lastTool                  , LastTool                  , "tools/tool"                            , config::Config::defaultLastTool(),
+	V1, lastTool, LastTool, "tools/tool", config::Config::defaultLastTool(),
 	&lastTool::get, &any::set)
-SETTING(lastToolBackgroundColor   , LastToolBackgroundColor   , "tools/backgroundcolor"                 , config::Config::defaultLastToolBackgroundColor())
-SETTING(lastToolColor             , LastToolColor             , "tools/color"                           , config::Config::defaultLastToolColor())
-SETTING(lastUsername              , LastUsername              , "history/username"                      , config::Config::defaultLastUsername())
-SETTING(lastWindowActions         , LastWindowActions         , "window/actions"                        , config::Config::defaultLastWindowActions())
-SETTING(lastWindowDocks           , LastWindowDocks           , "window/docks"                          , config::Config::defaultLastWindowDocks())
-SETTING(lastWindowMaximized       , LastWindowMaximized       , "window/maximized"                      , config::Config::defaultLastWindowMaximized())
-SETTING(lastWindowPosition        , LastWindowPosition        , "window/pos"                            , config::Config::defaultLastWindowPosition())
-SETTING(lastWindowSize            , LastWindowSize            , "window/size"                           , config::Config::defaultLastWindowSize())
-SETTING(lastWindowState           , LastWindowState           , "window/state"                          , config::Config::defaultLastWindowState())
-SETTING(lastWindowViewState       , LastWindowViewState       , "window/viewstate"                      , config::Config::defaultLastWindowViewState())
-SETTING(layerSketchOpacityPercent , LayerSketchOpacityPercent , "layers/sketchopacitypercent"           , config::Config::defaultLayerSketchOpacityPercent())
-SETTING(layerSketchTint           , LayerSketchTint           , "layers/sketchtint"                     , config::Config::defaultLayerSketchTint())
-SETTING(layouts                   , Layouts                   , "layouts"                               , config::Config::defaultLayouts())
-SETTING(layoutsVersion            , LayoutsVersion            , "layoutsversion"                        , config::Config::defaultLayoutsVersion())
-SETTING(leftyMode                 , LeftyMode                 , "settings/leftymode"                    , config::Config::defaultLeftyMode())
-SETTING(longPressEnabled          , LongPressEnabled          , "settings/longpress/enabled"            , config::Config::defaultLongPressEnabled())
-SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , config::Config::defaultMentionEnabled())
-SETTING(mentionTriggerList        , MentionTriggerList        , "settings/mentions/triggerlist"         , config::Config::defaultMentionTriggerList())
-#ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
-SETTING(nativeDialogs             , NativeDialogs             , "settings/nativedialogs"                , config::Config::defaultNativeDialogs())
+SETTING(
+	lastToolBackgroundColor, LastToolBackgroundColor, "tools/backgroundcolor",
+	config::Config::defaultLastToolBackgroundColor())
+SETTING(
+	lastToolColor, LastToolColor, "tools/color",
+	config::Config::defaultLastToolColor())
+SETTING(
+	lastUsername, LastUsername, "history/username",
+	config::Config::defaultLastUsername())
+SETTING(
+	lastWindowActions, LastWindowActions, "window/actions",
+	config::Config::defaultLastWindowActions())
+SETTING(
+	lastWindowDocks, LastWindowDocks, "window/docks",
+	config::Config::defaultLastWindowDocks())
+SETTING(
+	lastWindowMaximized, LastWindowMaximized, "window/maximized",
+	config::Config::defaultLastWindowMaximized())
+SETTING(
+	lastWindowPosition, LastWindowPosition, "window/pos",
+	config::Config::defaultLastWindowPosition())
+SETTING(
+	lastWindowSize, LastWindowSize, "window/size",
+	config::Config::defaultLastWindowSize())
+SETTING(
+	lastWindowState, LastWindowState, "window/state",
+	config::Config::defaultLastWindowState())
+SETTING(
+	lastWindowViewState, LastWindowViewState, "window/viewstate",
+	config::Config::defaultLastWindowViewState())
+SETTING(
+	layerSketchOpacityPercent, LayerSketchOpacityPercent,
+	"layers/sketchopacitypercent",
+	config::Config::defaultLayerSketchOpacityPercent())
+SETTING(
+	layerSketchTint, LayerSketchTint, "layers/sketchtint",
+	config::Config::defaultLayerSketchTint())
+SETTING(layouts, Layouts, "layouts", config::Config::defaultLayouts())
+SETTING(
+	layoutsVersion, LayoutsVersion, "layoutsversion",
+	config::Config::defaultLayoutsVersion())
+SETTING(
+	leftyMode, LeftyMode, "settings/leftymode",
+	config::Config::defaultLeftyMode())
+SETTING(
+	longPressEnabled, LongPressEnabled, "settings/longpress/enabled",
+	config::Config::defaultLongPressEnabled())
+SETTING(
+	mentionEnabled, MentionEnabled, "settings/mentions/enabled",
+	config::Config::defaultMentionEnabled())
+SETTING(
+	mentionTriggerList, MentionTriggerList, "settings/mentions/triggerlist",
+	config::Config::defaultMentionTriggerList())
+#if defined(NATIVE_DIALOGS_SETTING_AVAILABLE)
+SETTING(
+	nativeDialogs, NativeDialogs, "settings/nativedialogs",
+	config::Config::defaultNativeDialogs())
 #endif
-SETTING(navigatorRealtime         , NavigatorRealtime         , "navigator/realtime"                    , config::Config::defaultNavigatorRealtime())
-SETTING(navigatorShowCursors      , NavigatorShowCursors      , "navigator/showcursors"                 , config::Config::defaultNavigatorShowCursors())
-SETTING_GETSET(newCanvasBackColor , NewCanvasBackColor        , "history/newcolor"                      , config::Config::defaultNewCanvasBackColor(),
-	&newCanvasBackColor::get, &any::set)
-SETTING_GETSET(newCanvasSize      , NewCanvasSize             , "history/newsize"                       , config::Config::defaultNewCanvasSize(),
-	&newCanvasSize::get, &any::set)
-SETTING(notifFlashChat            , NotifFlashChat            , "notifflashes/chat"                     , config::Config::defaultNotifFlashChat())
-SETTING(notifFlashDisconnect      , NotifFlashDisconnect      , "notifflashes/disconnect"               , config::Config::defaultNotifFlashDisconnect())
-SETTING(notifFlashLock            , NotifFlashLock            , "notifflashes/lock"                     , config::Config::defaultNotifFlashLock())
-SETTING(notifFlashLogin           , NotifFlashLogin           , "notifflashes/login"                    , config::Config::defaultNotifFlashLogin())
-SETTING(notifFlashLogout          , NotifFlashLogout          , "notifflashes/logout"                   , config::Config::defaultNotifFlashLogout())
-SETTING(notifFlashPrivateChat     , NotifFlashPrivateChat     , "notifflashes/privatechat"              , config::Config::defaultNotifFlashPrivateChat())
-SETTING(notifFlashUnlock          , NotifFlashUnlock          , "notifflashes/unlock"                   , config::Config::defaultNotifFlashUnlock())
-SETTING(notifPopupChat            , NotifPopupChat            , "notifpopups/chat"                      , config::Config::defaultNotifPopupChat())
-SETTING(notifPopupDisconnect      , NotifPopupDisconnect      , "notifpopups/disconnect"                , config::Config::defaultNotifPopupDisconnect())
-SETTING(notifPopupLock            , NotifPopupLock            , "notifpopups/lock"                      , config::Config::defaultNotifPopupLock())
-SETTING(notifPopupLogin           , NotifPopupLogin           , "notifpopups/login"                     , config::Config::defaultNotifPopupLogin())
-SETTING(notifPopupLogout          , NotifPopupLogout          , "notifpopups/logout"                    , config::Config::defaultNotifPopupLogout())
-SETTING(notifPopupPrivateChat     , NotifPopupPrivateChat     , "notifpopups/privatechat"               , config::Config::defaultNotifPopupPrivateChat())
-SETTING(notifPopupUnlock          , NotifPopupUnlock          , "notifpopups/unlock"                    , config::Config::defaultNotifPopupUnlock())
-SETTING(notifSoundChat            , NotifSoundChat            , "notifications/chat"                    , config::Config::defaultNotifSoundChat())
-SETTING(notifSoundDisconnect      , NotifSoundDisconnect      , "notifications/disconnect"              , config::Config::defaultNotifSoundDisconnect())
-SETTING(notifSoundLock            , NotifSoundLock            , "notifications/lock"                    , config::Config::defaultNotifSoundLock())
-SETTING(notifSoundLogin           , NotifSoundLogin           , "notifications/login"                   , config::Config::defaultNotifSoundLogin())
-SETTING(notifSoundLogout          , NotifSoundLogout          , "notifications/logout"                  , config::Config::defaultNotifSoundLogout())
-SETTING(notifSoundPrivateChat     , NotifSoundPrivateChat     , "notifications/privatechat"             , config::Config::defaultNotifSoundPrivateChat())
-SETTING(notifSoundUnlock          , NotifSoundUnlock          , "notifications/unlock"                  , config::Config::defaultNotifSoundUnlock())
-SETTING_GETSET(oneFingerTouch     , OneFingerTouch            , "settings/input/onefingertouch"         , config::Config::defaultOneFingerTouch()
-	, &oneFingerTouch::get, &any::set)
-SETTING_GETSET(twoFingerPinch     , TwoFingerPinch            , "settings/input/twofingerpinch"         , config::Config::defaultTwoFingerPinch()
-	, &twoFingerPinch::get, &any::set)
-SETTING_GETSET(twoFingerTwist     , TwoFingerTwist            , "settings/input/twofingertwist"         , config::Config::defaultTwoFingerTwist()
-	, &twoFingerTwist::get, &any::set)
-SETTING(oneFingerTap              , OneFingerTap              , "settings/input/onefingertap"           , config::Config::defaultOneFingerTap())
-SETTING(twoFingerTap              , TwoFingerTap              , "settings/input/twofingertap"           , config::Config::defaultTwoFingerTap())
-SETTING(threeFingerTap            , ThreeFingerTap            , "settings/input/threefingertap"         , config::Config::defaultThreeFingerTap())
-SETTING(fourFingerTap             , FourFingerTap             , "settings/input/fourfingertap"          , config::Config::defaultFourFingerTap())
-SETTING(oneFingerTapAndHold       , OneFingerTapAndHold       , "settings/input/onefingertapandhold"    , config::Config::defaultOneFingerTapAndHold())
-SETTING(tabletPressTimerDelay     , TabletPressTimerDelay     , "settings/input/tabletpresstimerdelay"  , config::Config::defaultTabletPressTimerDelay())
-SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , config::Config::defaultTouchGestures())
-SETTING(touchSmoothing            , TouchSmoothing            , "settings/input/touchsmoothing"         , config::Config::defaultTouchSmoothing())
-SETTING(onionSkinsFrameCount      , OnionSkinsFrameCount      , "onionskins/framecount"                 , config::Config::defaultOnionSkinsFrameCount())
+SETTING(
+	navigatorRealtime, NavigatorRealtime, "navigator/realtime",
+	config::Config::defaultNavigatorRealtime())
+SETTING(
+	navigatorShowCursors, NavigatorShowCursors, "navigator/showcursors",
+	config::Config::defaultNavigatorShowCursors())
+SETTING_GETSET(
+	newCanvasBackColor, NewCanvasBackColor, "history/newcolor",
+	config::Config::defaultNewCanvasBackColor(), &newCanvasBackColor::get,
+	&any::set)
+SETTING_GETSET(
+	newCanvasSize, NewCanvasSize, "history/newsize",
+	config::Config::defaultNewCanvasSize(), &newCanvasSize::get, &any::set)
+SETTING(
+	notifFlashChat, NotifFlashChat, "notifflashes/chat",
+	config::Config::defaultNotifFlashChat())
+SETTING(
+	notifFlashDisconnect, NotifFlashDisconnect, "notifflashes/disconnect",
+	config::Config::defaultNotifFlashDisconnect())
+SETTING(
+	notifFlashLock, NotifFlashLock, "notifflashes/lock",
+	config::Config::defaultNotifFlashLock())
+SETTING(
+	notifFlashLogin, NotifFlashLogin, "notifflashes/login",
+	config::Config::defaultNotifFlashLogin())
+SETTING(
+	notifFlashLogout, NotifFlashLogout, "notifflashes/logout",
+	config::Config::defaultNotifFlashLogout())
+SETTING(
+	notifFlashPrivateChat, NotifFlashPrivateChat, "notifflashes/privatechat",
+	config::Config::defaultNotifFlashPrivateChat())
+SETTING(
+	notifFlashUnlock, NotifFlashUnlock, "notifflashes/unlock",
+	config::Config::defaultNotifFlashUnlock())
+SETTING(
+	notifPopupChat, NotifPopupChat, "notifpopups/chat",
+	config::Config::defaultNotifPopupChat())
+SETTING(
+	notifPopupDisconnect, NotifPopupDisconnect, "notifpopups/disconnect",
+	config::Config::defaultNotifPopupDisconnect())
+SETTING(
+	notifPopupLock, NotifPopupLock, "notifpopups/lock",
+	config::Config::defaultNotifPopupLock())
+SETTING(
+	notifPopupLogin, NotifPopupLogin, "notifpopups/login",
+	config::Config::defaultNotifPopupLogin())
+SETTING(
+	notifPopupLogout, NotifPopupLogout, "notifpopups/logout",
+	config::Config::defaultNotifPopupLogout())
+SETTING(
+	notifPopupPrivateChat, NotifPopupPrivateChat, "notifpopups/privatechat",
+	config::Config::defaultNotifPopupPrivateChat())
+SETTING(
+	notifPopupUnlock, NotifPopupUnlock, "notifpopups/unlock",
+	config::Config::defaultNotifPopupUnlock())
+SETTING(
+	notifSoundChat, NotifSoundChat, "notifications/chat",
+	config::Config::defaultNotifSoundChat())
+SETTING(
+	notifSoundDisconnect, NotifSoundDisconnect, "notifications/disconnect",
+	config::Config::defaultNotifSoundDisconnect())
+SETTING(
+	notifSoundLock, NotifSoundLock, "notifications/lock",
+	config::Config::defaultNotifSoundLock())
+SETTING(
+	notifSoundLogin, NotifSoundLogin, "notifications/login",
+	config::Config::defaultNotifSoundLogin())
+SETTING(
+	notifSoundLogout, NotifSoundLogout, "notifications/logout",
+	config::Config::defaultNotifSoundLogout())
+SETTING(
+	notifSoundPrivateChat, NotifSoundPrivateChat, "notifications/privatechat",
+	config::Config::defaultNotifSoundPrivateChat())
+SETTING(
+	notifSoundUnlock, NotifSoundUnlock, "notifications/unlock",
+	config::Config::defaultNotifSoundUnlock())
+SETTING(
+	oneFingerTap, OneFingerTap, "settings/input/onefingertap",
+	config::Config::defaultOneFingerTap())
+SETTING(
+	oneFingerTapAndHold, OneFingerTapAndHold,
+	"settings/input/onefingertapandhold",
+	config::Config::defaultOneFingerTapAndHold())
+SETTING_GETSET(
+	oneFingerTouch, OneFingerTouch, "settings/input/onefingertouch",
+	config::Config::defaultOneFingerTouch(), &oneFingerTouch::get, &any::set)
+SETTING(
+	onionSkinsFrameCount, OnionSkinsFrameCount, "onionskins/framecount",
+	config::Config::defaultOnionSkinsFrameCount())
 SETTING_GETSET_V(
-	V1, onionSkinsFrames          , OnionSkinsFrames          , "onionskins/frames"                     , config::Config::defaultOnionSkinsFrames(),
-	&onionSkinsFrames::get, &onionSkinsFrames::set)
-SETTING(onionSkinsTintAbove       , OnionSkinsTintAbove       , "onionskins/tintabove"                  , config::Config::defaultOnionSkinsTintAbove())
-SETTING(onionSkinsTintBelow       , OnionSkinsTintBelow       , "onionskins/tintbelow"                  , config::Config::defaultOnionSkinsTintBelow())
-SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap"                       , config::Config::defaultOnionSkinsWrap())
-SETTING(promptLayerCreate         , PromptLayerCreate         , "settings/promptlayercreate"            , config::Config::defaultPromptLayerCreate())
-SETTING(preferredExportFormat     , PreferredExportFormat     , "settings/preferredexportformat"        , config::Config::defaultPreferredExportFormat())
-SETTING(preferredSaveFormat       , PreferredSaveFormat       , "settings/preferredsaveformat"          , config::Config::defaultPreferredSaveFormat())
-#ifdef Q_OS_MACOS
-SETTING(quitOnLastWindowClosed    , QuitOnLastWindowClosed    , "settings/quitonlastwindowclosed"       , config::Config::defaultQuitOnLastWindowClosed())
+	V1, onionSkinsFrames, OnionSkinsFrames, "onionskins/frames",
+	config::Config::defaultOnionSkinsFrames(), &onionSkinsFrames::get,
+	&onionSkinsFrames::set)
+SETTING(
+	onionSkinsTintAbove, OnionSkinsTintAbove, "onionskins/tintabove",
+	config::Config::defaultOnionSkinsTintAbove())
+SETTING(
+	onionSkinsTintBelow, OnionSkinsTintBelow, "onionskins/tintbelow",
+	config::Config::defaultOnionSkinsTintBelow())
+SETTING(
+	onionSkinsWrap, OnionSkinsWrap, "onionskins/wrap",
+	config::Config::defaultOnionSkinsWrap())
+SETTING(
+	overrideFontSize, OverrideFontSize, "settings/overridefontsize",
+	config::Config::defaultOverrideFontSize())
+SETTING(
+	parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked",
+	config::Config::defaultParentalControlsHideLocked())
+SETTING(
+	preferredExportFormat, PreferredExportFormat,
+	"settings/preferredexportformat",
+	config::Config::defaultPreferredExportFormat())
+SETTING(
+	preferredSaveFormat, PreferredSaveFormat, "settings/preferredsaveformat",
+	config::Config::defaultPreferredSaveFormat())
+SETTING(
+	promptLayerCreate, PromptLayerCreate, "settings/promptlayercreate",
+	config::Config::defaultPromptLayerCreate())
+#if defined(Q_OS_MACOS)
+SETTING(
+	quitOnLastWindowClosed, QuitOnLastWindowClosed,
+	"settings/quitonlastwindowclosed",
+	config::Config::defaultQuitOnLastWindowClosed())
 #endif
-SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , config::Config::defaultRecentFiles())
-SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , config::Config::defaultRecentHosts())
-SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , config::Config::defaultRecentRemoteHosts())
-SETTING(renderCanvas              , RenderCanvas              , "settings/render/canvas"                , config::Config::defaultRenderCanvas())
-SETTING(renderSmooth              , RenderSmooth              , "settings/render/smooth"                , config::Config::defaultRenderSmooth())
-SETTING(renderUpdateFull          , RenderUpdateFull          , "settings/render/updatefull"            , config::Config::defaultRenderUpdateFull())
-SETTING(samplingRingVisibility    , SamplingRingVisibility    , "settings/colorpicker/samplingring"     , config::Config::defaultSamplingRingVisibility())
-SETTING(serverHideIp              , ServerHideIp              , "settings/hideServerIp"                 , config::Config::defaultServerHideIp())
-SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/sharebrushslotcolor"          , config::Config::defaultShareBrushSlotColor())
-SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , config::Config::defaultShortcuts())
-SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdialogonhost"              , config::Config::defaultShowInviteDialogOnHost())
-SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , config::Config::defaultShowNsfmWarningOnJoin())
-SETTING(showTransformNotices      , ShowTransformNotices      , "settings/showtransformnotices"         , config::Config::defaultShowTransformNotices())
-SETTING(showViewModeNotices       , ShowViewModeNotices       , "settings/showviewmodenotices"          , config::Config::defaultShowViewModeNotices())
-SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , config::Config::defaultShowTrayIcon())
-SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , config::Config::defaultSoundVolume())
+SETTING(
+	recentFiles, RecentFiles, "history/recentfiles",
+	config::Config::defaultRecentFiles())
+SETTING(
+	recentHosts, RecentHosts, "history/recenthosts",
+	config::Config::defaultRecentHosts())
+SETTING(
+	recentRemoteHosts, RecentRemoteHosts, "history/recentremotehosts",
+	config::Config::defaultRecentRemoteHosts())
+SETTING(
+	renderCanvas, RenderCanvas, "settings/render/canvas",
+	config::Config::defaultRenderCanvas())
+SETTING(
+	renderSmooth, RenderSmooth, "settings/render/smooth",
+	config::Config::defaultRenderSmooth())
+SETTING(
+	renderUpdateFull, RenderUpdateFull, "settings/render/updatefull",
+	config::Config::defaultRenderUpdateFull())
+SETTING(
+	samplingRingVisibility, SamplingRingVisibility,
+	"settings/colorpicker/samplingring",
+	config::Config::defaultSamplingRingVisibility())
+SETTING(
+	serverHideIp, ServerHideIp, "settings/hideServerIp",
+	config::Config::defaultServerHideIp())
+SETTING(
+	shareBrushSlotColor, ShareBrushSlotColor, "settings/sharebrushslotcolor",
+	config::Config::defaultShareBrushSlotColor())
+SETTING(
+	shortcuts, Shortcuts, "settings/shortcuts",
+	config::Config::defaultShortcuts())
+SETTING(
+	showInviteDialogOnHost, ShowInviteDialogOnHost, "invites/showdialogonhost",
+	config::Config::defaultShowInviteDialogOnHost())
+SETTING(
+	showNsfmWarningOnJoin, ShowNsfmWarningOnJoin, "pc/shownsfmwarningonjoin",
+	config::Config::defaultShowNsfmWarningOnJoin())
+SETTING(
+	showTransformNotices, ShowTransformNotices, "settings/showtransformnotices",
+	config::Config::defaultShowTransformNotices())
+SETTING(
+	showTrayIcon, ShowTrayIcon, "ui/trayicon",
+	config::Config::defaultShowTrayIcon())
+SETTING(
+	showViewModeNotices, ShowViewModeNotices, "settings/showviewmodenotices",
+	config::Config::defaultShowViewModeNotices())
+SETTING(
+	soundVolume, SoundVolume, "notifications/volume",
+	config::Config::defaultSoundVolume())
 SETTING_GETSET_V(
-	V1, tabletDriver              , TabletDriver              , "settings/input/tabletdriver"           , config::Config::defaultTabletDriver(),
-	&tabletDriver::get, &any::set)
-SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , config::Config::defaultTabletEraserAction()
-	, &tabletEraserAction::get, &tabletEraserAction::set)
-SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , config::Config::defaultTabletEvents())
-SETTING(temporaryToolSwitch       , TemporaryToolSwitch       , "settings/tools/temporaryswitch"        , config::Config::defaultTemporaryToolSwitch())
-SETTING(temporaryToolSwitchMs     , TemporaryToolSwitchMs     , "settings/tools/temporaryswitchms"      , config::Config::defaultTemporaryToolSwitchMs())
+	V1, tabletDriver, TabletDriver, "settings/input/tabletdriver",
+	config::Config::defaultTabletDriver(), &tabletDriver::get, &any::set)
+SETTING_GETSET(
+	tabletEraserAction, TabletEraserAction, "settings/input/tableteraseraction",
+	config::Config::defaultTabletEraserAction(), &tabletEraserAction::get,
+	&tabletEraserAction::set)
+SETTING(
+	tabletEvents, TabletEvents, "settings/input/tabletevents",
+	config::Config::defaultTabletEvents())
+SETTING(
+	tabletPressTimerDelay, TabletPressTimerDelay,
+	"settings/input/tabletpresstimerdelay",
+	config::Config::defaultTabletPressTimerDelay())
+SETTING(
+	temporaryToolSwitch, TemporaryToolSwitch, "settings/tools/temporaryswitch",
+	config::Config::defaultTemporaryToolSwitch())
+SETTING(
+	temporaryToolSwitchMs, TemporaryToolSwitchMs,
+	"settings/tools/temporaryswitchms",
+	config::Config::defaultTemporaryToolSwitchMs())
 SETTING_GETSET_V(
-	V4, themePalette              , ThemePalette              , "settings/theme/palette"                , config::Config::defaultThemePalette(),
-	&themePalette::get, &any::set)
+	V4, themePalette, ThemePalette, "settings/theme/palette",
+	config::Config::defaultThemePalette(), &themePalette::get, &any::set)
 SETTING_FULL(
-	V2, themeStyle                , ThemeStyle                , "settings/theme/style"                  , config::Config::defaultThemeStyle(),
-	&any::get, &any::set, &themeStyle::notify)
-SETTING(toolBarConfig             , ToolBarConfig             , "settings/toolbarconfig"                , config::Config::defaultToolBarConfig())
-SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , config::Config::defaultToolToggle())
-SETTING(toolset                   , Toolset                   , "tools/toolset"                         , config::Config::defaultToolset())
-SETTING(touchDrawPressure         , TouchDrawPressure         , "settings/input/touchdrawpressure"      , config::Config::defaultTouchDrawPressure())
-SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , config::Config::defaultUpdateCheckEnabled())
-SETTING(useMipmaps                , UseMipmaps                , "settings/usemipmaps"                   , config::Config::defaultUseMipmaps())
-SETTING(userMarkerPersistence     , UserMarkerPersistence     , "settings/usermarkerpersistence"        , config::Config::defaultUserMarkerPersistence())
-SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , config::Config::defaultVideoExportCustomFfmpeg())
-SETTING(videoExportFfmpegPath     , VideoExportFfmpegPath     , "videoexport/ffmpegpath"                , config::Config::defaultVideoExportFfmpegPath())
-SETTING(videoExportFormat         , VideoExportFormat         , "videoexport/format"                    , config::Config::defaultVideoExportFormat())
-SETTING(videoExportFrameHeight    , VideoExportFrameHeight    , "videoexport/frameheight"               , config::Config::defaultVideoExportFrameHeight())
-SETTING(videoExportFrameRate      , VideoExportFrameRate      , "videoexport/fps"                       , config::Config::defaultVideoExportFrameRate())
-SETTING(videoExportFrameWidth     , VideoExportFrameWidth     , "videoexport/framewidth"                , config::Config::defaultVideoExportFrameWidth())
-SETTING(videoExportSizeChoice     , VideoExportSizeChoice     , "videoexport/sizeChoice"                , config::Config::defaultVideoExportSizeChoice())
-SETTING(welcomePageShown          , WelcomePageShown          , "history/welcomepageshown"              , config::Config::defaultWelcomePageShown())
-SETTING(writeLogFile              , WriteLogFile              , "settings/logfile"                      , config::Config::defaultWriteLogFile())
+	V2, themeStyle, ThemeStyle, "settings/theme/style",
+	config::Config::defaultThemeStyle(), &any::get, &any::set,
+	&themeStyle::notify)
+SETTING(
+	threeFingerTap, ThreeFingerTap, "settings/input/threefingertap",
+	config::Config::defaultThreeFingerTap())
+SETTING(
+	toolBarConfig, ToolBarConfig, "settings/toolbarconfig",
+	config::Config::defaultToolBarConfig())
+SETTING(
+	toolToggle, ToolToggle, "settings/tooltoggle",
+	config::Config::defaultToolToggle())
+SETTING(toolset, Toolset, "tools/toolset", config::Config::defaultToolset())
+SETTING(
+	touchDrawPressure, TouchDrawPressure, "settings/input/touchdrawpressure",
+	config::Config::defaultTouchDrawPressure())
+SETTING(
+	touchGestures, TouchGestures, "settings/input/touchgestures",
+	config::Config::defaultTouchGestures())
+SETTING(
+	touchSmoothing, TouchSmoothing, "settings/input/touchsmoothing",
+	config::Config::defaultTouchSmoothing())
+SETTING_GETSET(
+	twoFingerPinch, TwoFingerPinch, "settings/input/twofingerpinch",
+	config::Config::defaultTwoFingerPinch(), &twoFingerPinch::get, &any::set)
+SETTING(
+	twoFingerTap, TwoFingerTap, "settings/input/twofingertap",
+	config::Config::defaultTwoFingerTap())
+SETTING_GETSET(
+	twoFingerTwist, TwoFingerTwist, "settings/input/twofingertwist",
+	config::Config::defaultTwoFingerTwist(), &twoFingerTwist::get, &any::set)
+SETTING(
+	updateCheckEnabled, UpdateCheckEnabled, "settings/updatecheck",
+	config::Config::defaultUpdateCheckEnabled())
+SETTING(
+	useMipmaps, UseMipmaps, "settings/usemipmaps",
+	config::Config::defaultUseMipmaps())
+SETTING(
+	userMarkerPersistence, UserMarkerPersistence,
+	"settings/usermarkerpersistence",
+	config::Config::defaultUserMarkerPersistence())
+SETTING(
+	videoExportCustomFfmpeg, VideoExportCustomFfmpeg,
+	"videoexport/customffmpeg",
+	config::Config::defaultVideoExportCustomFfmpeg())
+SETTING(
+	videoExportFfmpegPath, VideoExportFfmpegPath, "videoexport/ffmpegpath",
+	config::Config::defaultVideoExportFfmpegPath())
+SETTING(
+	videoExportFormat, VideoExportFormat, "videoexport/format",
+	config::Config::defaultVideoExportFormat())
+SETTING(
+	videoExportFrameHeight, VideoExportFrameHeight, "videoexport/frameheight",
+	config::Config::defaultVideoExportFrameHeight())
+SETTING(
+	videoExportFrameRate, VideoExportFrameRate, "videoexport/fps",
+	config::Config::defaultVideoExportFrameRate())
+SETTING(
+	videoExportFrameWidth, VideoExportFrameWidth, "videoexport/framewidth",
+	config::Config::defaultVideoExportFrameWidth())
+SETTING(
+	videoExportSizeChoice, VideoExportSizeChoice, "videoexport/sizeChoice",
+	config::Config::defaultVideoExportSizeChoice())
+SETTING(
+	welcomePageShown, WelcomePageShown, "history/welcomepageshown",
+	config::Config::defaultWelcomePageShown())
+SETTING(
+	writeLogFile, WriteLogFile, "settings/logfile",
+	config::Config::defaultWriteLogFile())
 
 #include "libclient/settings_table_macros.h"
