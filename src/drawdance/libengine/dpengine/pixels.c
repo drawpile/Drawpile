@@ -3859,9 +3859,9 @@ static BGRf mix_oklab(Lab dst_okl, Lab src_okl, Fix15 ab, Fix15 aso)
     };
 
     BGRf mix_rgb = oklab_to_linear_srgb(mix_okl);
-    return (BGRf){linear_to_srgb(clampf(mix_rgb.b)),
-                  linear_to_srgb(clampf(mix_rgb.g)),
-                  linear_to_srgb(clampf(mix_rgb.r))};
+    return (BGRf){clampf(linear_to_srgb(mix_rgb.b)),
+                  clampf(linear_to_srgb(mix_rgb.g)),
+                  clampf(linear_to_srgb(mix_rgb.r))};
 }
 
 static BGRf blend_oklab_mask(DP_Pixel15 dp, Lab src_okl, Fix15 ab, Fix15 aso)
