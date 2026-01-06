@@ -1126,6 +1126,7 @@ static bool ps_exec_step(DP_Project *prj, sqlite3_stmt *stmt, bool *out_error)
 {
     int step_result = sqlite3_step(stmt);
     if (step_result == SQLITE_ROW) {
+        *out_error = false;
         return true;
     }
     else if (step_result == SQLITE_DONE) {
