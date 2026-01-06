@@ -185,11 +185,7 @@ int LongPressEventFilter::getKineticScrollDelay(QWidget *target) const
 	// QScroller has no sane way of retrieving the gesture type, it can only
 	// tell you which Qt::Gesture was captured, which is completely useless.
 	// So we instead grab it from the settings, that should match anyway.
-	switch(m_kineticScrollGesture) {
-	case int(view::KineticScrollGesture::Touch):
-	case int(view::KineticScrollGesture::LeftClick):
-		break;
-	default:
+	if(m_kineticScrollGesture != int(view::KineticScrollGesture::LeftClick)) {
 		return 0;
 	}
 
