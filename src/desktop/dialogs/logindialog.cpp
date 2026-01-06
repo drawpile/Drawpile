@@ -338,7 +338,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	Q_ASSERT(newMode != Mode::Redirect);
 	if(lateRedirect && newMode != Mode::Loading) {
 		if(redirectMode == Mode::Redirect) {
-			 loginDialog->adjustSize(400, 350, true);
+			loginDialog->adjustSize(400, 350, true);
 		}
 		redirectMode = newMode;
 		newMode = Mode::Redirect;
@@ -381,10 +381,10 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		extauthurl.clear();
 		page = setupAuthPage(true, false);
 		ui->loginPromptLabel->setText(ui->authModePromptLabel->text());
-		ui->loginPromptLabel->setStyleSheet(
-			QStringLiteral("background: #4d4d4d;"
-						   "color: #fcfcfc;"
-						   "padding: 16px"));
+		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
+			"background: #4d4d4d;"
+			"color: #fcfcfc;"
+			"padding: 16px"));
 		break;
 	case Mode::AuthLogin:
 		extauthurl.clear();
@@ -909,9 +909,9 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	d->ui->methodExtAuthButton->setIcon(
 		d->hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
 
-	QString drawpileSignupLink =
-		QStringLiteral("<a href=\"https://drawpile.net/accounts/signup/\""
-					   ">drawpile.net</a>");
+	QString drawpileSignupLink = QStringLiteral(
+		"<a href=\"https://drawpile.net/accounts/signup/\""
+		">drawpile.net</a>");
 	QString methodExplanation;
 	if(loginInfo.isEmpty()) {
 		if(d->hasDrawpileExtAuth) {
@@ -1051,15 +1051,15 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 {
 	ui->loginPromptLabel->setText(prompt);
 	if(extauthurl.isValid()) {
-		ui->loginPromptLabel->setStyleSheet(
-			QStringLiteral("background: #3498db;"
-						   "color: #fcfcfc;"
-						   "padding: 16px"));
+		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
+			"background: #3498db;"
+			"color: #fcfcfc;"
+			"padding: 16px"));
 	} else {
-		ui->loginPromptLabel->setStyleSheet(
-			QStringLiteral("background: #fdbc4b;"
-						   "color: #31363b;"
-						   "padding: 16px"));
+		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
+			"background: #fdbc4b;"
+			"color: #31363b;"
+			"padding: 16px"));
 	}
 }
 
