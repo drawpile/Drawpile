@@ -2270,7 +2270,7 @@ static void cfs_tile_job_sublayer_tile(DP_ProjectCanvasFromSnapshotTileJob *job,
                                        int thread_index)
 {
     DP_ProjectCanvasFromSnapshotContext *c = job->header.c;
-    int sublayer_index = job->header.layer_index;
+    int sublayer_index = job->header.sublayer_index;
     DP_ASSERT(sublayer_index >= 0);
 
     int sublayer_id =
@@ -3086,7 +3086,7 @@ static bool cfs_read_subtiles(DP_ProjectCanvasFromSnapshotContext *c,
     DP_Project *prj = c->prj;
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj, "select sublayer_index, tile_index, repeat, pixels "
-             "from snapshot_tiles where snapshot_id = ?");
+             "from snapshot_sublayer_tiles where snapshot_id = ?");
     if (!stmt) {
         return false;
     }

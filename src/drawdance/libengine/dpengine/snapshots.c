@@ -623,7 +623,7 @@ static void sublayer_content_to_reset_image(struct DP_ResetImageContext *c,
             int sub_index = (*in_out_sub_index)++;
             DP_LayerContent *sub_lc = DP_layer_list_entry_content_noinc(
                 DP_layer_list_at_noinc(sub_ll, i));
-            layer_to_reset_image(c, layer_id, layer_index, sub_index, sub_id,
+            layer_to_reset_image(c, layer_index, layer_id, sub_index, sub_id,
                                  parent_index, parent_id, sub_lp, 0);
             tiles_to_reset_image(c, sub_lc, layer_index, layer_id, sub_index,
                                  sub_id, DP_pixel15_zero(), false);
