@@ -1011,9 +1011,10 @@ void LoginDialog::onLoginMethodMismatch(
 							  .arg(d->extauthurl.host())
 							  .toHtmlEscaped();
 		} else if(method == net::LoginHandler::LoginMethod::Guest) {
-			explanation = tr("This username doesn't belong an account on %1.")
-							  .arg(d->extauthurl.host())
-							  .toHtmlEscaped();
+			explanation =
+				tr("This username doesn't belong to an account on %1.")
+					.arg(d->extauthurl.host())
+					.toHtmlEscaped();
 		} else if(method == net::LoginHandler::LoginMethod::Auth) {
 			explanation =
 				tr("This username belongs to a server account, you "
