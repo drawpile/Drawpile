@@ -36,6 +36,7 @@
 #include "draw_context.h"
 #include "layer_content.h"
 #include "pixels.h"
+#include "tile.h"
 #include "tile_iterator.h"
 #include "user_cursors.h"
 #include <dpcommon/atomic.h>
@@ -293,6 +294,58 @@ static bool needs_mask_lc(int top, int left, int diameter,
     return false;
 }
 
+static void clear_mask_outside(DP_Rect rect, DP_Rect inner, int diameter,
+                               uint16_t *mask)
+{
+    for (int y = rect.y1; y < inner.y1; ++y) {
+        int dst_y = y - rect.y1;
+        for (int dst_x = 0; dst_x < diameter; ++dst_x) {
+            mask[dst_y * diameter + dst_x] = 0;
+        }
+    }
+
+    if (rect.x1 < inner.x1) {
+        if (rect.x2 > inner.x2) {
+            for (int y = inner.y1; y <= inner.y2; ++y) {
+                int dst_y = y - rect.y1;
+                for (int x = rect.x1; x < inner.x1; ++x) {
+                    int dst_x = x - rect.x1;
+                    mask[dst_y * diameter + dst_x] = 0;
+                }
+                for (int x = inner.x2 + 1; x <= rect.x2; ++x) {
+                    int dst_x = x - rect.x1;
+                    mask[dst_y * diameter + dst_x] = 0;
+                }
+            }
+        }
+        else {
+            for (int y = inner.y1; y <= inner.y2; ++y) {
+                int dst_y = y - rect.y1;
+                for (int x = rect.x1; x < inner.x1; ++x) {
+                    int dst_x = x - rect.x1;
+                    mask[dst_y * diameter + dst_x] = 0;
+                }
+            }
+        }
+    }
+    else if (rect.x2 > inner.x2) {
+        for (int y = inner.y1; y <= inner.y2; ++y) {
+            int dst_y = y - rect.y1;
+            for (int x = inner.x2 + 1; x <= rect.x2; ++x) {
+                int dst_x = x - rect.x1;
+                mask[dst_y * diameter + dst_x] = 0;
+            }
+        }
+    }
+
+    for (int y = inner.y2 + 1; y <= rect.y2; ++y) {
+        int dst_y = y - rect.y1;
+        for (int dst_x = 0; dst_x < diameter; ++dst_x) {
+            mask[dst_y * diameter + dst_x] = 0;
+        }
+    }
+}
+
 static void apply_mask_lc(int top, int left, int diameter, uint16_t *mask,
                           DP_LayerContent *mask_lc)
 {
@@ -300,6 +353,11 @@ static void apply_mask_lc(int top, int left, int diameter, uint16_t *mask,
     DP_TileIterator ti =
         DP_tile_iterator_make(DP_layer_content_width(mask_lc),
                               DP_layer_content_height(mask_lc), rect);
+
+    if (!DP_rect_equal(rect, ti.area)) {
+        clear_mask_outside(rect, ti.area, diameter, mask);
+    }
+
     while (DP_tile_iterator_next(&ti)) {
         DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
         DP_Tile *t = DP_layer_content_tile_at_noinc(mask_lc, ti.col, ti.row);
@@ -335,6 +393,11 @@ static void apply_mask_lc_into(int top, int left, int diameter,
     DP_TileIterator ti =
         DP_tile_iterator_make(DP_layer_content_width(mask_lc),
                               DP_layer_content_height(mask_lc), rect);
+
+    if (!DP_rect_equal(rect, ti.area)) {
+        clear_mask_outside(rect, ti.area, diameter, dst_mask);
+    }
+
     while (DP_tile_iterator_next(&ti)) {
         DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
         DP_Tile *t = DP_layer_content_tile_at_noinc(mask_lc, ti.col, ti.row);

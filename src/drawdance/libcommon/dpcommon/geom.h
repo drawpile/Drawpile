@@ -197,6 +197,11 @@ DP_INLINE DP_Rect DP_rect_translate(DP_Rect rect, int tx, int ty)
     return result;
 }
 
+DP_INLINE bool DP_rect_equal(DP_Rect a, DP_Rect b)
+{
+    return a.x1 == b.x1 && a.x2 == b.x2 && a.y1 == b.y1 && a.y2 == b.y2;
+}
+
 DP_INLINE DP_Rect DP_rect_union(DP_Rect a, DP_Rect b)
 {
     DP_ASSERT(DP_rect_valid(a));
