@@ -1162,6 +1162,297 @@ static void ps_clear_bindings(DP_Project *prj, sqlite3_stmt *stmt)
 }
 
 
+static void project_save_try_detach(DP_Project *prj)
+{
+    sqlite3 *db = prj->db;
+    char *errmsg;
+    int exec_result = sqlite3_exec(db, "detach sav", NULL, NULL, &errmsg);
+    if (!is_ok(exec_result)) {
+        DP_warn("Error %d detaching save database: %s", exec_result,
+                fallback_db_error(db, errmsg));
+    }
+}
+
+static int project_save_attach(DP_Project *prj, const char *path)
+{
+    sqlite3_stmt *attach_stmt = ps_prepare_ephemeral(prj, "attach ? as sav");
+    if (!attach_stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_text(prj, attach_stmt, 1, path)) {
+        sqlite3_finalize(attach_stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    int step_result = sqlite3_step(attach_stmt);
+    sqlite3_finalize(attach_stmt);
+    if (!is_ok(step_result)) {
+        return DP_PROJECT_SAVE_ERROR_OPEN;
+    }
+
+    return 0;
+}
+
+static long long project_save_append_session_id(DP_Project *prj)
+{
+    // A save can be appended if there is already a session with the same source
+    // param, which is a UUID in practice. That session must also be the last
+    // one in that file, otherwise opening it would not load what was saved. It
+    // usually shouldn't happen that you end up in a situation where it is not
+    // the last, since the user would have to append from different canvases.
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select ss.session_id sid, ms.session_id mid\n"
+             "from sav.sessions ss\n"
+             "left join main.sessions ms\n"
+             "    on ms.session_id = ?\n"
+             "    and ss.source_param = ms.source_param\n"
+             "order by ss.session_id desc\n"
+             "limit 1");
+    if (!stmt || !ps_bind_int64(prj, stmt, 1, prj->session_id)) {
+        return -1LL;
+    }
+
+    bool error;
+    long long session_id;
+    if (ps_exec_step(prj, stmt, &error)) {
+        long long save_session_id = sqlite3_column_int64(stmt, 0);
+        long long main_session_id = sqlite3_column_int64(stmt, 1);
+        if (save_session_id > 0LL && main_session_id > 0LL) {
+            session_id = save_session_id;
+        }
+        else {
+            session_id = 0LL;
+        }
+    }
+    else if (error) {
+        session_id = -1LL;
+    }
+    else {
+        session_id = 0LL;
+    }
+
+    sqlite3_finalize(stmt);
+    return session_id;
+}
+
+static int project_save_new_session(DP_Project *prj,
+                                    long long *out_save_session_id)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "insert into sav.sessions (source_type, "
+             "source_param, protocol, flags, opened_at)\n"
+             "select source_type, source_param, protocol, flags, opened_at\n"
+             "from main.sessions where session_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, prj->session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, out_save_session_id);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
+static int project_save_copy_messages(DP_Project *prj, unsigned int flags,
+                                      long long save_session_id,
+                                      long long last_sequence_id)
+{
+    if (flags & DP_PROJECT_SAVE_FLAG_NO_MESSAGES) {
+        DP_debug("Not saving messages");
+        return 0;
+    }
+
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj,
+        "insert into sav.messages (session_id, sequence_id, recorded_at,\n"
+        "flags, type, context_id, body)\n"
+        "select ?, sequence_id, recorded_at, flags, type, context_id, body\n"
+        "from main.messages where session_id = ? and sequence_id > ?\n"
+        "order by sequence_id");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_session_id)
+                && ps_bind_int64(prj, stmt, 2, prj->session_id)
+                && ps_bind_int64(prj, stmt, 3, last_sequence_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    DP_debug("Copied %lld message(s)", sqlite3_changes64(prj->db));
+    return 0;
+}
+
+static int project_save_close_session(DP_Project *prj,
+                                      long long save_session_id,
+                                      long long snapshot_id)
+{
+    static_assert(DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED == 1,
+                  "session closed flag matches query");
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "update sav.sessions\n"
+                                  "set flags = flags | 1,\n"
+                                  "    closed_at = unixepoch('subsec'),\n"
+                                  "    thumbnail = (\n"
+                                  "        select thumbnail\n"
+                                  "        from sav.snapshots\n"
+                                  "        where snapshot_id = ?)\n"
+                                  "where session_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id)
+                && ps_bind_int64(prj, stmt, 2, save_session_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    DP_debug("Updated %lld session(s) on close", sqlite3_changes64(prj->db));
+    return 0;
+}
+
+static int project_save_to_attached(DP_Project *prj, unsigned int flags)
+{
+    sqlite3 *db = prj->db;
+    if (sqlite3_db_readonly(prj->db, "sav")) {
+        DP_error_set("Database is read-only");
+        return DP_PROJECT_SAVE_ERROR_READ_ONLY;
+    }
+
+    bool ok;
+    int sql_result;
+    PRAGMA_SETUP(db, "sav.", ok, sql_result);
+    if (!ok) {
+        if (sql_result == SQLITE_BUSY) {
+            return DP_PROJECT_SAVE_ERROR_LOCKED;
+        }
+        else {
+            return DP_PROJECT_SAVE_ERROR_SETUP;
+        }
+    }
+
+    bool empty;
+    IS_EMPTY_DB(db, "sav.", ok, empty, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_READ_EMPTY;
+    }
+
+    if (empty) {
+        INIT_HEADER(db, "sav.", false, ok, sql_result);
+        if (!ok) {
+            return DP_PROJECT_SAVE_ERROR_HEADER_WRITE;
+        }
+    }
+
+    int header_result;
+    CHECK_HEADER(db, "sav.", false, header_result, sql_result);
+    if (header_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_HEADER_MISMATCH;
+    }
+
+    APPLY_MIGRATIONS_IN_TX(db, "sav.", ok, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_MIGRATION;
+    }
+
+    PRAGMA_READY(db, "sav.", ok, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_SETUP;
+    }
+
+    long long append_session_id = project_save_append_session_id(prj);
+    long long save_session_id;
+    long long last_sequence_id;
+    if (append_session_id < 0LL) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+    else if (append_session_id == 0LL) {
+        last_sequence_id = 0LL;
+        int new_session_result =
+            project_save_new_session(prj, &save_session_id);
+        if (new_session_result != 0) {
+            return new_session_result;
+        }
+        DP_debug("Saving to new session id %lld", save_session_id);
+    }
+    else {
+        // TODO implement
+        DP_warn("Not implemented");
+        return DP_PROJECT_SAVE_ERROR_UNKNOWN;
+    }
+
+    int copy_messages_result = project_save_copy_messages(
+        prj, flags, save_session_id, last_sequence_id);
+    if (copy_messages_result != 0) {
+        return copy_messages_result;
+    }
+
+    long long snapshot_id = 0LL;
+    // TODO implement
+
+    return project_save_close_session(prj, save_session_id, snapshot_id);
+}
+
+int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
+                    unsigned int flags,
+                    bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
+                    void *thumb_write_user)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (!cs) {
+        DP_error_set("No canvas state given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (!path) {
+        DP_error_set("No path given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (prj->session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_SAVE_ERROR_NO_SESSION;
+    }
+
+    int attach_result = project_save_attach(prj, path);
+    if (attach_result != 0) {
+        return attach_result;
+    }
+
+    int save_result = project_save_to_attached(prj, flags);
+    project_save_try_detach(prj);
+    return save_result;
+}
+
+
 long long DP_project_session_id(DP_Project *prj)
 {
     DP_ASSERT(prj);
@@ -1777,18 +2068,17 @@ int DP_project_snapshot_discard_all_except(DP_Project *prj,
                                            long long snapshot_id)
 {
     DP_ASSERT(prj);
-    DP_ASSERT(snapshot_id > 0LL);
 
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT == 2,
+                  "persistent snapshot flag matches query");
     sqlite3_stmt *stmt =
         ps_prepare_ephemeral(prj, "select snapshot_id from snapshots "
-                                  "where snapshot_id <> ? and (flags & ?) = 0");
+                                  "where snapshot_id <> ? and (flags & 2) = 0");
     if (!stmt) {
         return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_PREPARE;
     }
 
-    bool bind_ok =
-        ps_bind_int64(prj, stmt, 1, snapshot_id)
-        && ps_bind_int64(prj, stmt, 2, DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT);
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
     if (!bind_ok) {
         sqlite3_finalize(stmt);
         return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ;
@@ -4129,12 +4419,6 @@ static DP_ProjectPlaybackHandleFn playback_get_handle_fn(int type)
     }
 }
 
-static DP_TransientTimeline *get_local_track_transient_timeline(void *user)
-{
-    DP_TransientCanvasState *tcs = user;
-    return DP_transient_canvas_state_transient_timeline(tcs, 0);
-}
-
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                            struct DP_ProjectPlaybackContext *c)
 {
@@ -4303,27 +4587,7 @@ canvas_from_snapshot_playback(DP_Project *prj, DP_DrawContext *dc,
         cs = NULL;
     }
     else {
-        cs = DP_canvas_history_get(ch);
-
-        bool has_local_layers = DP_local_state_layer_state_count(ls) != 0;
-        bool has_local_tracks = DP_local_state_track_state_count(ls) != 0;
-        if (has_local_layers || has_local_tracks) {
-            DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-            DP_canvas_state_decref(cs);
-
-            if (has_local_layers) {
-                DP_local_state_layer_states_apply(ls, tcs, dc, false, NULL,
-                                                  NULL);
-            }
-
-            if (has_local_tracks) {
-                DP_local_state_track_states_apply(
-                    ls, DP_transient_canvas_state_timeline_noinc(tcs),
-                    get_local_track_transient_timeline, tcs);
-            }
-
-            cs = DP_transient_canvas_state_persist(tcs);
-        }
+        cs = DP_local_state_apply_dec(ls, DP_canvas_history_get(ch), dc);
     }
 
     DP_local_state_free(ls);

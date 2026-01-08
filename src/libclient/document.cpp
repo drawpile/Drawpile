@@ -15,6 +15,7 @@ extern "C" {
 #include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/export/projectsaver.h"
 #include "libclient/export/thumbnailerrunnable.h"
 #include "libclient/net/invitelistmodel.h"
 #include "libclient/net/login.h"
@@ -1084,18 +1085,48 @@ void Document::saveCanvasState(
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
-		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr);
 	if(isCurrentState && (!exported || type == DP_SAVE_IMAGE_ORA ||
 						  type == DP_SAVE_IMAGE_PROJECT_CANVAS ||
 						  type == DP_SAVE_IMAGE_PROJECT)) {
 		unmarkDirty();
 	}
-	connect(
-		saver, &CanvasSaverRunnable::saveComplete, this,
-		&Document::onCanvasSaved);
-	emit canvasSaveStarted();
-	QThreadPool::globalInstance()->start(saver);
+
+	Q_EMIT canvasSaveStarted();
+
+	// Saving to project files integrates with project recording, since it also
+	// stores the recorded messages. So if auto-recording is running, we take a
+	// different path here if possible.
+	bool shouldSaveThroughPaintEngine =
+		isCurrentState && type == DP_SAVE_IMAGE_PROJECT && m_canvas &&
+		m_canvas->isProjectRecording();
+	if(shouldSaveThroughPaintEngine) {
+		ProjectSaver *projectSaver = new ProjectSaver(path);
+		connect(
+			projectSaver, &ProjectSaver::saveSucceeded, this,
+			&Document::onSaveSucceeded);
+		connect(
+			projectSaver, &ProjectSaver::saveCancelled, this,
+			&Document::onSaveCancelled);
+		connect(
+			projectSaver, &ProjectSaver::saveFailed, this,
+			&Document::onSaveFailed);
+		net::Message msg = projectSaver->getProjectSaveRequestMessage();
+		m_canvas->paintEngine()->receiveMessages(false, 1, &msg);
+	} else {
+		CanvasSaverRunnable *canvasSaver = new CanvasSaverRunnable(
+			canvasState, type, path,
+			m_canvas ? m_canvas->paintEngine() : nullptr);
+		connect(
+			canvasSaver, &CanvasSaverRunnable::saveSucceeded, this,
+			&Document::onSaveSucceeded);
+		connect(
+			canvasSaver, &CanvasSaverRunnable::saveCancelled, this,
+			&Document::onSaveCancelled);
+		connect(
+			canvasSaver, &CanvasSaverRunnable::saveFailed, this,
+			&Document::onSaveFailed);
+		QThreadPool::globalInstance()->start(canvasSaver);
+	}
 
 	if(m_canvas) {
 		m_canvas->addProjectRecordingMetadataSource(
@@ -1133,15 +1164,24 @@ void Document::exportTemplate(const QString &path)
 	emit templateExported(errorMessage);
 }
 
-void Document::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
+void Document::onSaveSucceeded(qint64 elapsedMsec)
 {
 	m_saveInProgress = false;
+	Q_EMIT canvasSaved(QString(), elapsedMsec);
+}
 
-	if(!errorMessage.isEmpty()) {
-		markDirty();
-	}
+void Document::onSaveCancelled()
+{
+	m_saveInProgress = false;
+	markDirty();
+	Q_EMIT canvasSaved(QString(), -1);
+}
 
-	emit canvasSaved(errorMessage, elapsedMsec);
+void Document::onSaveFailed(const QString &errorMessage)
+{
+	m_saveInProgress = false;
+	markDirty();
+	Q_EMIT canvasSaved(errorMessage, -1);
 }
 
 drawdance::RecordStartResult Document::startRecording(const QString &filename)

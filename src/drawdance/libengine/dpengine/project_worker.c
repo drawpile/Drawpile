@@ -3,6 +3,7 @@
 #include "canvas_state.h"
 #include "image.h"
 #include "project.h"
+#include "save_enums.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
@@ -60,6 +61,7 @@ typedef enum DP_ProjectWorkerCommandType {
     DP_PROJECT_WORKER_COMMAND_SNAPSHOT_FINISH,
     DP_PROJECT_WORKER_COMMAND_THUMBNAIL_MAKE,
     DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
+    DP_PROJECT_WORKER_COMMAND_SAVE,
 } DP_ProjectWorkerCommandType;
 
 typedef struct DP_ProjectWorkerCommand {
@@ -122,6 +124,14 @@ typedef struct DP_ProjectWorkerCommand {
         struct {
             unsigned int file_id;
         } session_times_update;
+        struct {
+            DP_ProjectWorkerSaveStartFn start_fn;
+            DP_ProjectWorkerSaveFinishFn finish_fn;
+            void *user;
+            char *path;
+            DP_CanvasState *cs;
+            unsigned int file_id;
+        } save;
     };
 } DP_ProjectWorkerCommand;
 
@@ -473,6 +483,35 @@ static void handle_session_times_update(DP_ProjectWorker *pw,
     }
 }
 
+static void handle_save(DP_ProjectWorker *pw, unsigned int file_id,
+                        const char *path, DP_CanvasState *cs,
+                        DP_ProjectWorkerSaveStartFn start_fn,
+                        DP_ProjectWorkerSaveFinishFn finish_fn, void *user)
+{
+    if (start_fn) {
+        start_fn(user);
+    }
+
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_warn("Not saving file id %u, currently open is %u", file_id,
+                open_file_id);
+        DP_canvas_state_decref(cs);
+        if (finish_fn) {
+            finish_fn(user, DP_SAVE_RESULT_CANCEL);
+        }
+        return;
+    }
+
+    int result = DP_project_save();
+
+    DP_canvas_state_decref(cs);
+
+    if (finish_fn) {
+        finish_fn(user, DP_SAVE_RESULT_INTERNAL_ERROR);
+    }
+}
+
 static void handle_command(DP_ProjectWorker *pw,
                            const DP_ProjectWorkerCommand *command)
 {
@@ -579,6 +618,13 @@ static void handle_command(DP_ProjectWorker *pw,
         DP_PROJECT_WORKER_DEBUG("handle session times update %u",
                                 command->session_times_update.file_id);
         handle_session_times_update(pw, command->session_times_update.file_id);
+        return;
+    case DP_PROJECT_WORKER_COMMAND_SAVE:
+        DP_PROJECT_WORKER_DEBUG("handle save %u path '%s'",
+                                command->save.file_id, command->save.path);
+        handle_session_save(pw, command->save.file_id, command->save.path,
+                            command->save.cs, command->save.start_fn,
+                            command->save.finish_fn, command->save.user);
         return;
     }
     DP_warn("Unhandled project worker command %d", (int)command->type);
@@ -840,4 +886,18 @@ void DP_project_worker_session_times_update(DP_ProjectWorker *pw,
     push_command(pw, (DP_ProjectWorkerCommand){
                          DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
                          .session_times_update = {file_id}});
+}
+
+void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
+                                  const char *path, DP_CanvasState *cs,
+                                  DP_ProjectWorkerSaveStartFn start_fn,
+                                  DP_ProjectWorkerSaveFinishFn finish_fn,
+                                  void *user)
+{
+    DP_ASSERT(pw);
+    DP_ASSERT(path);
+    push_command(
+        pw, (DP_ProjectWorkerCommand){DP_PROJECT_WORKER_COMMAND_SAVE,
+                                      .save = {start_fn, finish_fn, user,
+                                               DP_strdup(path), cs, file_id}});
 }

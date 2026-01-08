@@ -1031,8 +1031,7 @@ static bool get_local_track_state(const DP_LocalTrackState *track_states,
 
 void DP_local_state_track_states_apply(
     DP_LocalState *ls, DP_Timeline *tl,
-    DP_TransientTimeline *(*get_transient_timeline_fn)(void *),
-    void *user)
+    DP_TransientTimeline *(*get_transient_timeline_fn)(void *), void *user)
 {
     int lts_count = DP_size_to_int(ls->track_states.used);
     const DP_LocalTrackState *track_states = ls->track_states.elements;
@@ -1058,6 +1057,41 @@ void DP_local_state_track_states_apply(
     }
 }
 
+static DP_TransientTimeline *get_local_track_transient_timeline(void *user)
+{
+    DP_TransientCanvasState *tcs = user;
+    return DP_transient_canvas_state_transient_timeline(tcs, 0);
+}
+
+DP_CanvasState *DP_local_state_apply_dec(DP_LocalState *ls,
+                                         DP_CanvasState *cs_or_null,
+                                         DP_DrawContext *dc)
+{
+    DP_ASSERT(ls);
+    if (cs_or_null) {
+        bool has_local_layers = ls->layer_states.used != 0;
+        bool has_local_tracks = ls->track_states.used != 0;
+        if (has_local_layers || has_local_tracks) {
+            DP_TransientCanvasState *tcs =
+                DP_transient_canvas_state_new(cs_or_null);
+            DP_canvas_state_decref(cs_or_null);
+
+            if (has_local_layers) {
+                DP_local_state_layer_states_apply(ls, tcs, dc, false, NULL,
+                                                  NULL);
+            }
+
+            if (has_local_tracks) {
+                DP_local_state_track_states_apply(
+                    ls, DP_transient_canvas_state_timeline_noinc(tcs),
+                    get_local_track_transient_timeline, tcs);
+            }
+
+            return DP_transient_canvas_state_persist(tcs);
+        }
+    }
+    return cs_or_null;
+}
 
 static void set_body(size_t size, unsigned char *out, void *user)
 {

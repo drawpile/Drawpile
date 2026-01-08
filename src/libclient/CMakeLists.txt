@@ -116,6 +116,8 @@ target_sources(dpclient PRIVATE
 	export/animationsaverrunnable.h
 	export/canvassaverrunnable.cpp
 	export/canvassaverrunnable.h
+	export/projectsaver.cpp
+	export/projectsaver.h
 	export/thumbnailerrunnable.cpp
 	export/thumbnailerrunnable.h
 	import/animationimporter.cpp

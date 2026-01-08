@@ -24,8 +24,10 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasHistoryReconnectState DP_CanvasHistoryReconnectState;
+typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_LocalStateAction DP_LocalStateAction;
 typedef struct DP_Message DP_Message;
+typedef struct DP_ProjectWorker DP_ProjectWorker;
 
 typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_RESET,
@@ -47,11 +49,15 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_LOCAL_STATE_SAVE,
     DP_MSG_INTERNAL_TYPE_PROJECT_METADATA_REQUEST,
     DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST,
+    DP_MSG_INTERNAL_TYPE_PROJECT_SAVE_REQUEST,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
 typedef void (*DP_LocalStateSaveCallback)(void *user,
                                           const DP_LocalStateAction *);
+
+typedef void (*DP_ProjectSaveRequestCallback)(void *, DP_CanvasState *,
+                                              DP_ProjectWorker *, unsigned int);
 
 
 typedef struct DP_MsgInternal DP_MsgInternal;
@@ -111,6 +117,11 @@ DP_msg_internal_project_metadata_request_new(unsigned int context_id);
 DP_Message *
 DP_msg_internal_project_snapshot_request_new(unsigned int context_id);
 
+DP_Message *
+DP_msg_internal_project_save_request_new(unsigned int context_id,
+                                         DP_ProjectSaveRequestCallback callback,
+                                         void *user);
+
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
 
 
@@ -148,6 +159,11 @@ DP_LocalStateSaveCallback
 DP_msg_internal_local_state_save_callback(DP_MsgInternal *mi);
 
 void *DP_msg_internal_local_state_save_user(DP_MsgInternal *mi);
+
+DP_ProjectSaveRequestCallback
+DP_msg_internal_project_save_request_callback(DP_MsgInternal *mi);
+
+void *DP_msg_internal_project_save_request_user(DP_MsgInternal *mi);
 
 
 #endif
