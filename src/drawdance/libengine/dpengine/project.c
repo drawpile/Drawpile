@@ -719,6 +719,28 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
     return NULL;
 }
 
+static sqlite3_stmt *pps_prepare(DP_Project *prj,
+                                 DP_ProjectPersistentStatement pps)
+{
+    DP_ASSERT(prj);
+    DP_ASSERT(pps >= 0);
+    DP_ASSERT(pps < DP_PROJECT_STATEMENT_COUNT);
+
+    sqlite3_stmt *stmt = prj->stmts[pps];
+    if (stmt) {
+        return stmt;
+    }
+
+    stmt = prepare(prj->db, pps_sql(pps), SQLITE_PREPARE_PERSISTENT, NULL);
+    if (stmt) {
+        prj->stmts[pps] = stmt;
+        return stmt;
+    }
+    else {
+        return NULL;
+    }
+}
+
 static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
                                          bool snapshot_only)
 {
@@ -840,27 +862,6 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
         }
     }
 
-    sqlite3_stmt *stmts[DP_PROJECT_STATEMENT_COUNT];
-    bool have_project_stmts = !snapshot_only && !read_only;
-    if (have_project_stmts) {
-        for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
-            sqlite3_stmt *stmt =
-                prepare(db, pps_sql((DP_ProjectPersistentStatement)i),
-                        SQLITE_PREPARE_PERSISTENT, &sql_result);
-            if (stmt) {
-                stmts[i] = stmt;
-            }
-            else {
-                for (int j = 0; j < i; ++j) {
-                    sqlite3_finalize(stmts[j]);
-                }
-                try_close_db(db);
-                return make_open_error(DP_PROJECT_OPEN_ERROR_PREPARE,
-                                       sql_result);
-            }
-        }
-    }
-
     DP_Project *prj = DP_malloc(sizeof(*prj));
     prj->db = db;
     prj->session_id = 0LL;
@@ -876,13 +877,8 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
     for (int i = 0; i < DP_PROJECT_SNAPSHOT_STATEMENT_COUNT; ++i) {
         prj->snapshot.stmts[i] = NULL;
     }
-    if (have_project_stmts) {
-        memcpy(prj->stmts, stmts, sizeof(stmts));
-    }
-    else {
-        for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
-            prj->stmts[i] = NULL;
-        }
+    for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
+        prj->stmts[i] = NULL;
     }
     return (DP_ProjectOpenResult){prj, 0, SQLITE_OK};
 }
@@ -990,11 +986,6 @@ DP_ProjectVerifyStatus DP_project_verify(DP_Project *prj, unsigned int flags)
 static sqlite3_stmt *ps_prepare_ephemeral(DP_Project *prj, const char *sql)
 {
     return prepare(prj->db, sql, 0, NULL);
-}
-
-static sqlite3_stmt *ps_prepare_persistent(DP_Project *prj, const char *sql)
-{
-    return prepare(prj->db, sql, SQLITE_PREPARE_PERSISTENT, NULL);
 }
 
 static bool ps_bind_null(DP_Project *prj, sqlite3_stmt *stmt, int param)
@@ -1267,7 +1258,11 @@ static int record_message(DP_Project *prj, long long session_id,
                           unsigned int flags, int type, unsigned int context_id,
                           const void *body_or_null, size_t length)
 {
-    sqlite3_stmt *stmt = prj->stmts[DP_PROJECT_STATEMENT_MESSAGE_RECORD];
+    sqlite3_stmt *stmt = pps_prepare(prj, DP_PROJECT_STATEMENT_MESSAGE_RECORD);
+    if (!stmt) {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_PREPARE;
+    }
+
     bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
                  && ps_bind_int64(prj, stmt, 2, ++prj->sequence_id)
                  && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
@@ -1391,24 +1386,31 @@ static const char *snapshot_sql(DP_ProjectSnapshotPersistentStatement psps)
     return NULL;
 }
 
-static void snapshot_try_discard(DP_Project *prj, long long snapshot_id)
+static sqlite3_stmt *
+snapshot_prepare(DP_Project *prj, DP_ProjectSnapshotPersistentStatement psps)
 {
-    sqlite3_stmt *stmt;
-    const char *sql = "delete from snapshots where snapshot_id = ?";
-    if (sqlite3_prepare_v3(prj->db, sql, -1, 0, &stmt, NULL) == SQLITE_OK) {
-        if (sqlite3_bind_int64(stmt, 1, snapshot_id) == SQLITE_OK) {
-            if (sqlite3_step(stmt) != SQLITE_DONE) {
-                DP_warn("Error executing snapshot discard %lld", snapshot_id);
-            }
-        }
-        else {
-            DP_warn("Error binding snapshot discard %lld", snapshot_id);
-        }
+    DP_ASSERT(prj);
+    DP_ASSERT(psps >= 0);
+    DP_ASSERT(psps < DP_PROJECT_SNAPSHOT_STATEMENT_COUNT);
+
+    sqlite3_stmt *stmt = prj->snapshot.stmts[psps];
+    if (stmt) {
+        return stmt;
+    }
+
+    stmt =
+        prepare(prj->db, snapshot_sql(psps), SQLITE_PREPARE_PERSISTENT, NULL);
+    if (!stmt) {
+        return NULL;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, prj->snapshot.id)) {
         sqlite3_finalize(stmt);
+        return NULL;
     }
-    else {
-        DP_warn("Error preparing snapshot discard %lld", snapshot_id);
-    }
+
+    prj->snapshot.stmts[psps] = stmt;
+    return stmt;
 }
 
 static long long project_snapshot_open(DP_Project *prj, unsigned int flags)
@@ -1442,22 +1444,6 @@ static long long project_snapshot_open(DP_Project *prj, unsigned int flags)
     }
 
     DP_ASSERT(snapshot_id > 0);
-    for (int i = 0; i < DP_PROJECT_SNAPSHOT_STATEMENT_COUNT; ++i) {
-        prj->snapshot.stmts[i] = ps_prepare_persistent(
-            prj, snapshot_sql((DP_ProjectSnapshotPersistentStatement)i));
-        if (!prj->snapshot.stmts[i]
-            || !ps_bind_int64(prj, prj->snapshot.stmts[i], 1, snapshot_id)) {
-            for (int j = 0; j < i; ++j) {
-                sqlite3_finalize(prj->snapshot.stmts[j]);
-                prj->snapshot.stmts[j] = NULL;
-            }
-            snapshot_try_discard(prj, snapshot_id);
-            DP_mutex_free(mutex);
-            return DP_PROJECT_SNAPSHOT_OPEN_ERROR_PREPARE;
-        }
-    }
-
-    DP_ASSERT(snapshot_id > 0);
     prj->snapshot.id = snapshot_id;
     prj->snapshot.sequence_id = 0LL;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_READY;
@@ -1488,7 +1474,11 @@ static int record_snapshot_message(DP_Project *prj, unsigned int flags,
                                    const void *body_or_null, size_t length)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_MESSAGE];
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_MESSAGE);
+    if (!stmt) {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_PREPARE;
+    }
+
     bool write_ok = ps_bind_int64(prj, stmt, 2, ++prj->snapshot.sequence_id)
                  && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
                  && ps_bind_int(prj, stmt, 4, type)
@@ -1770,8 +1760,8 @@ static bool snapshot_write_metadata_int(DP_Project *prj,
                                         long long value)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA];
-    return ps_bind_int(prj, stmt, 2, (int)id)
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA);
+    return stmt && ps_bind_int(prj, stmt, 2, (int)id)
         && ps_bind_int64(prj, stmt, 3, value) && ps_exec_write(prj, stmt, NULL);
 }
 
@@ -1828,8 +1818,9 @@ static bool snapshot_handle_background(DP_Project *prj,
                                        const DP_ResetEntryBackground *reb)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA];
-    return ps_bind_int(prj, stmt, 2,
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA);
+    return stmt
+        && ps_bind_int(prj, stmt, 2,
                        (int)DP_PROJECT_SNAPSHOT_METADATA_BACKGROUND_TILE)
         && ps_bind_blob(prj, stmt, 3, reb->data, reb->size)
         && ps_exec_write(prj, stmt, NULL);
@@ -1839,7 +1830,11 @@ static bool snapshot_insert_layer(DP_Project *prj,
                                   const DP_ResetEntryLayer *rel)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_LAYER];
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_LAYER);
+    if (!stmt) {
+        return false;
+    }
+
     DP_LayerProps *lp = rel->lp;
     DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
     size_t title_length;
@@ -1875,9 +1870,9 @@ static bool snapshot_insert_sublayer(DP_Project *prj,
     DP_ASSERT(prj->snapshot.merge_sublayers);
     prj->snapshot.has_sublayers = true;
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER];
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER);
     DP_LayerProps *lp = rel->lp;
-    return ps_bind_int(prj, stmt, 2, rel->sublayer_index)
+    return stmt && ps_bind_int(prj, stmt, 2, rel->sublayer_index)
         && ps_bind_int(prj, stmt, 3, rel->layer_index)
         && ps_bind_int(prj, stmt, 4, rel->sublayer_id)
         && ps_bind_int(prj, stmt, 5, DP_layer_props_blend_mode(lp))
@@ -1904,8 +1899,8 @@ static bool snapshot_insert_layer_tile(DP_Project *prj,
     DP_ASSERT(ret->size != 0);
     DP_ASSERT(ret->data);
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TILE];
-    return ps_bind_int(prj, stmt, 2, ret->layer_index)
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TILE);
+    return stmt && ps_bind_int(prj, stmt, 2, ret->layer_index)
         && ps_bind_int(prj, stmt, 3, ret->tile_index)
         && ps_bind_int64(prj, stmt, 4, ret->context_id)
         && ps_bind_int(prj, stmt, 5, ret->tile_run - 1)
@@ -1920,9 +1915,9 @@ static bool snapshot_insert_sublayer_tile(DP_Project *prj,
     DP_ASSERT(ret->tile_run > 0);
     DP_ASSERT(ret->size != 0);
     DP_ASSERT(ret->data);
-    sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER_TILE];
-    return ps_bind_int(prj, stmt, 2, ret->sublayer_index)
+    sqlite3_stmt *stmt = snapshot_prepare(
+        prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER_TILE);
+    return stmt && ps_bind_int(prj, stmt, 2, ret->sublayer_index)
         && ps_bind_int(prj, stmt, 3, ret->tile_index)
         && ps_bind_int(prj, stmt, 4, ret->tile_run - 1)
         && ps_bind_blob(prj, stmt, 5, ret->data, ret->size)
@@ -1963,7 +1958,7 @@ snapshot_handle_selection_tile(DP_Project *prj,
     sqlite3_stmt *stmt =
         prj->snapshot
             .stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE];
-    return ps_bind_int(prj, stmt, 2, rest->selection_id)
+    return stmt && ps_bind_int(prj, stmt, 2, rest->selection_id)
         && ps_bind_int64(prj, stmt, 3, rest->context_id)
         && ps_bind_int(prj, stmt, 4, rest->tile_index)
         && ps_bind_blob_or_null(prj, stmt, 5, data, size)
@@ -1974,7 +1969,11 @@ static bool snapshot_handle_annotation(DP_Project *prj,
                                        const DP_ResetEntryAnnotation *rea)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_ANNOTATION];
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_ANNOTATION);
+    if (!stmt) {
+        return false;
+    }
+
     DP_Annotation *a = rea->a;
     size_t text_length;
     const char *text = DP_annotation_text(a, &text_length);
@@ -2002,7 +2001,11 @@ static bool snapshot_handle_track(DP_Project *prj,
                                   const DP_ResetEntryTrack *ret)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TRACK];
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TRACK);
+    if (!stmt) {
+        return false;
+    }
+
     DP_Track *t = ret->t;
     size_t title_length;
     const char *title = DP_track_title(t, &title_length);
@@ -2026,7 +2029,7 @@ static bool snapshot_insert_key_frame_layers(DP_Project *prj,
             prj->snapshot
                 .stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME_LAYER];
 
-        bool bind_ok = ps_bind_int(prj, stmt, 2, ref->track_index)
+        bool bind_ok = stmt && ps_bind_int(prj, stmt, 2, ref->track_index)
                     && ps_bind_int(prj, stmt, 3, ref->frame_index);
         if (!bind_ok) {
             return false;
@@ -2049,7 +2052,11 @@ static bool snapshot_handle_frame(DP_Project *prj,
                                   const DP_ResetEntryFrame *ref)
 {
     sqlite3_stmt *stmt =
-        prj->snapshot.stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME];
+        snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME);
+    if (!stmt) {
+        return stmt;
+    }
+
     DP_KeyFrame *kf = ref->kf;
     size_t title_length;
     const char *title = DP_key_frame_title(kf, &title_length);
