@@ -138,7 +138,7 @@ public:
 	bool isRecording() const;
 
 	bool startProjectRecording(
-		config::Config *cfg, int sourceType, bool requestThumbnail = true);
+		config::Config *cfg, int sourceType, bool requestMetadata = true);
 	bool cancelProjectRecording();
 	bool discardProjectRecording();
 	bool discardProjectRecordingReinit();
@@ -150,7 +150,7 @@ public:
 
 	void unblockProjectRecordingErrors();
 
-	void requestProjectRecordingThumbnail();
+	void requestProjectRecordingMetadata();
 
 	void addProjectRecordingMetadataSource(
 		int sourceType, const QString &sourceParam);

@@ -323,10 +323,10 @@ DP_Message *DP_msg_internal_local_state_save_new(
 }
 
 DP_Message *
-DP_msg_internal_project_thumbail_request_new(unsigned int context_id)
+DP_msg_internal_project_metadata_request_new(unsigned int context_id)
 {
     return msg_internal_new(context_id,
-                            DP_MSG_INTERNAL_TYPE_PROJECT_THUMBAIL_REQUEST,
+                            DP_MSG_INTERNAL_TYPE_PROJECT_METADATA_REQUEST,
                             sizeof(DP_MsgInternal));
 }
 

@@ -713,7 +713,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(
 		this, &MainWindow::initialCatchupFinished, canvas,
-		&canvas::CanvasModel::requestProjectRecordingThumbnail);
+		&canvas::CanvasModel::requestProjectRecordingMetadata);
 
 	canvas::AclState *aclState = canvas->aclState();
 	connect(

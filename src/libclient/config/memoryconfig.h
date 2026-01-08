@@ -33,11 +33,11 @@ public:
 	bool getAutoRecordJoin() const override;
 	void setAutoRecordJoin(bool value) override;
 
+	int getAutoRecordMetadataIntervalMinutes() const override;
+	void setAutoRecordMetadataIntervalMinutes(int value) override;
+
 	int getAutoRecordSnapshotIntervalMinutes() const override;
 	void setAutoRecordSnapshotIntervalMinutes(int value) override;
-
-	int getAutoRecordThumbnailIntervalMinutes() const override;
-	void setAutoRecordThumbnailIntervalMinutes(int value) override;
 
 	int getAutomaticAlphaPreserve() const override;
 	void setAutomaticAlphaPreserve(int value) override;
@@ -702,10 +702,10 @@ private:
 	int m_animationExportFormat = defaultAnimationExportFormat();
 	bool m_autoRecordHost = defaultAutoRecordHost();
 	bool m_autoRecordJoin = defaultAutoRecordJoin();
+	int m_autoRecordMetadataIntervalMinutes =
+		defaultAutoRecordMetadataIntervalMinutes();
 	int m_autoRecordSnapshotIntervalMinutes =
 		defaultAutoRecordSnapshotIntervalMinutes();
-	int m_autoRecordThumbnailIntervalMinutes =
-		defaultAutoRecordThumbnailIntervalMinutes();
 	int m_automaticAlphaPreserve = defaultAutomaticAlphaPreserve();
 	int m_brushCursor = defaultBrushCursor();
 	double m_brushOutlineWidth = defaultBrushOutlineWidth();

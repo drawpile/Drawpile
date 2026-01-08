@@ -40,6 +40,7 @@ struct DP_ProjectWorker {
     DP_Semaphore *sem;
     DP_Thread *thread;
     DP_Project *prj;
+    DP_ProjectSessionTimes pst;
     unsigned int last_file_id;
     unsigned int open_file_id;
     long long open_snapshot_id;
@@ -58,6 +59,7 @@ typedef enum DP_ProjectWorkerCommandType {
     DP_PROJECT_WORKER_COMMAND_SNAPSHOT_MESSAGE_RECORD,
     DP_PROJECT_WORKER_COMMAND_SNAPSHOT_FINISH,
     DP_PROJECT_WORKER_COMMAND_THUMBNAIL_MAKE,
+    DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
 } DP_ProjectWorkerCommandType;
 
 typedef struct DP_ProjectWorkerCommand {
@@ -117,6 +119,9 @@ typedef struct DP_ProjectWorkerCommand {
             DP_CanvasState *cs;
             unsigned int file_id;
         } thumbnail_make;
+        struct {
+            unsigned int file_id;
+        } session_times_update;
     };
 } DP_ProjectWorkerCommand;
 
@@ -213,6 +218,7 @@ static void handle_session_open(DP_ProjectWorker *pw, unsigned int file_id,
     if (result == 0) {
         DP_PROJECT_WORKER_DEBUG("opened session %lld",
                                 DP_project_session_id(prj));
+        pw->pst = DP_project_session_times_null();
     }
     else {
         emit_event(pw, (DP_ProjectWorkerEvent){
@@ -443,6 +449,30 @@ static void handle_thumbnail_make(DP_ProjectWorker *pw, unsigned int file_id,
     }
 }
 
+static void handle_session_times_update(DP_ProjectWorker *pw,
+                                        unsigned int file_id)
+{
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_warn(
+            "Not updating session times on file id %u, currently open is %u",
+            file_id, open_file_id);
+        return;
+    }
+
+    int result = DP_project_session_times_update(pw->prj, &pw->pst);
+    if (result == 0) {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
+                           .own_work_minutes = pw->pst.own_work_minutes});
+    }
+    else {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
+                           .error = {file_id, -1, DP_error()}});
+    }
+}
+
 static void handle_command(DP_ProjectWorker *pw,
                            const DP_ProjectWorkerCommand *command)
 {
@@ -545,6 +575,11 @@ static void handle_command(DP_ProjectWorker *pw,
         handle_thumbnail_make(pw, command->thumbnail_make.file_id,
                               command->thumbnail_make.cs);
         return;
+    case DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE:
+        DP_PROJECT_WORKER_DEBUG("handle session times update %u",
+                                command->session_times_update.file_id);
+        handle_session_times_update(pw, command->session_times_update.file_id);
+        return;
     }
     DP_warn("Unhandled project worker command %d", (int)command->type);
 }
@@ -607,6 +642,7 @@ DP_project_worker_new(DP_ProjectWorkerHandleEventFn handle_event_fn,
         sem,
         NULL,
         NULL,
+        DP_project_session_times_null(),
         0u,
         0u,
         0LL,
@@ -795,4 +831,13 @@ void DP_project_worker_thumbnail_make_noinc(DP_ProjectWorker *pw,
         DP_PROJECT_WORKER_DEBUG("no thumb_write_fn for thumbnail_make %u",
                                 file_id);
     }
+}
+
+void DP_project_worker_session_times_update(DP_ProjectWorker *pw,
+                                            unsigned int file_id)
+{
+    DP_ASSERT(pw);
+    push_command(pw, (DP_ProjectWorkerCommand){
+                         DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
+                         .session_times_update = {file_id}});
 }

@@ -237,7 +237,7 @@ public:
 	void startProjectRecording(DP_ProjectWorker *pw, unsigned int fileId);
 	bool stopProjectRecording();
 	bool isProjectRecording() const;
-	void enqueueProjectThumbnailRequest();
+	void enqueueProjectMetadataRequest();
 	void enqueueProjectSnapshotRequest();
 
 	bool hasPlayback() const;

@@ -246,13 +246,13 @@ public:
 	virtual void setAutoRecordJoin(bool value) = 0;
 	static bool defaultAutoRecordJoin();
 
+	virtual int getAutoRecordMetadataIntervalMinutes() const = 0;
+	virtual void setAutoRecordMetadataIntervalMinutes(int value) = 0;
+	static int defaultAutoRecordMetadataIntervalMinutes();
+
 	virtual int getAutoRecordSnapshotIntervalMinutes() const = 0;
 	virtual void setAutoRecordSnapshotIntervalMinutes(int value) = 0;
 	static int defaultAutoRecordSnapshotIntervalMinutes();
-
-	virtual int getAutoRecordThumbnailIntervalMinutes() const = 0;
-	virtual void setAutoRecordThumbnailIntervalMinutes(int value) = 0;
-	static int defaultAutoRecordThumbnailIntervalMinutes();
 
 	virtual int getAutomaticAlphaPreserve() const = 0;
 	virtual void setAutomaticAlphaPreserve(int value) = 0;
@@ -1133,8 +1133,8 @@ Q_SIGNALS:
 	void changeAnimationExportFormat(int value);
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
+	void changeAutoRecordMetadataIntervalMinutes(int value);
 	void changeAutoRecordSnapshotIntervalMinutes(int value);
-	void changeAutoRecordThumbnailIntervalMinutes(int value);
 	void changeAutomaticAlphaPreserve(int value);
 	void changeBrushCursor(int value);
 	void changeBrushOutlineWidth(double value);

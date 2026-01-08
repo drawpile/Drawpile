@@ -264,8 +264,9 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
     }
 }
 
-static void handle_internal_project_worker_thumbnail_request(DP_PaintEngine *pe)
+static void handle_internal_project_worker_metadata_request(DP_PaintEngine *pe)
 {
+    DP_project_worker_session_times_update(pe->record.pw, pe->record.file_id);
     DP_CanvasState *cs = DP_canvas_history_get(pe->ch);
     if (cs) {
         DP_project_worker_thumbnail_make_noinc(pe->record.pw,
@@ -421,9 +422,9 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
                             DP_msg_internal_local_state_save_callback(mi),
                             DP_msg_internal_local_state_save_user(mi));
         break;
-    case DP_MSG_INTERNAL_TYPE_PROJECT_THUMBAIL_REQUEST:
+    case DP_MSG_INTERNAL_TYPE_PROJECT_METADATA_REQUEST:
         handle_internal_project_worker_request(
-            pe, handle_internal_project_worker_thumbnail_request);
+            pe, handle_internal_project_worker_metadata_request);
         break;
     case DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST:
         handle_internal_project_worker_request(

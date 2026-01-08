@@ -20,6 +20,8 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_MESSAGE_RECORD_ERROR,
     DP_PROJECT_WORKER_EVENT_SNAPSHOT_ERROR,
     DP_PROJECT_WORKER_EVENT_THUMBNAIL_MAKE_ERROR,
+    DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
+    DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
 } DP_ProjectWorkerEventType;
 
 typedef struct DP_ProjectWorkerEventError {
@@ -33,6 +35,7 @@ typedef struct DP_ProjectWorkerEvent {
     union {
         unsigned int sync_id;
         long long session_id;
+        long long own_work_minutes;
         DP_ProjectWorkerEventError error;
     } DP_ANONYMOUS(data);
 } DP_ProjectWorkerEvent;
@@ -108,5 +111,8 @@ void DP_project_worker_snapshot_finish(DP_ProjectWorker *pw,
 void DP_project_worker_thumbnail_make_noinc(DP_ProjectWorker *pw,
                                             unsigned int file_id,
                                             DP_CanvasState *cs);
+
+void DP_project_worker_session_times_update(DP_ProjectWorker *pw,
+                                            unsigned int file_id);
 
 #endif

@@ -62,9 +62,9 @@ Message makeInternalLocalStateSaveMessage(
 Message makeInternalPaintSyncMessage(
 	uint8_t contextId, void (*callback)(void *), void *user);
 
-Message makeInternalProjectSnapshotRequestMessage(uint8_t contextId);
+Message makeInternalProjectMetadataRequestMessage(uint8_t contextId);
 
-Message makeInternalProjectThumbnailRequestMessage(uint8_t contextId);
+Message makeInternalProjectSnapshotRequestMessage(uint8_t contextId);
 
 Message makeInternalResetMessage(uint8_t contextId);
 

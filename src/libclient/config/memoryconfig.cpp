@@ -97,6 +97,20 @@ void MemoryConfig::setAutoRecordJoin(bool value)
 	}
 }
 
+int MemoryConfig::getAutoRecordMetadataIntervalMinutes() const
+{
+	return m_autoRecordMetadataIntervalMinutes;
+}
+
+void MemoryConfig::setAutoRecordMetadataIntervalMinutes(int value)
+{
+	if(value != m_autoRecordMetadataIntervalMinutes) {
+		m_autoRecordMetadataIntervalMinutes = value;
+		Q_EMIT changeAutoRecordMetadataIntervalMinutes(
+			m_autoRecordMetadataIntervalMinutes);
+	}
+}
+
 int MemoryConfig::getAutoRecordSnapshotIntervalMinutes() const
 {
 	return m_autoRecordSnapshotIntervalMinutes;
@@ -108,20 +122,6 @@ void MemoryConfig::setAutoRecordSnapshotIntervalMinutes(int value)
 		m_autoRecordSnapshotIntervalMinutes = value;
 		Q_EMIT changeAutoRecordSnapshotIntervalMinutes(
 			m_autoRecordSnapshotIntervalMinutes);
-	}
-}
-
-int MemoryConfig::getAutoRecordThumbnailIntervalMinutes() const
-{
-	return m_autoRecordThumbnailIntervalMinutes;
-}
-
-void MemoryConfig::setAutoRecordThumbnailIntervalMinutes(int value)
-{
-	if(value != m_autoRecordThumbnailIntervalMinutes) {
-		m_autoRecordThumbnailIntervalMinutes = value;
-		Q_EMIT changeAutoRecordThumbnailIntervalMinutes(
-			m_autoRecordThumbnailIntervalMinutes);
 	}
 }
 

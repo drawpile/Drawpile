@@ -55,6 +55,7 @@
 
 typedef enum DP_ProjectPersistentStatement {
     DP_PROJECT_STATEMENT_MESSAGE_RECORD,
+    DP_PROJECT_STATEMENT_SESSION_TIMES_SELECT,
     DP_PROJECT_STATEMENT_COUNT,
 } DP_ProjectPersistentStatement;
 
@@ -708,11 +709,16 @@ static void try_rollback(sqlite3 *db)
 
 static const char *pps_sql(DP_ProjectPersistentStatement pps)
 {
+    static_assert(DP_PROJECT_MESSAGE_FLAG_OWN == 1,
+                  "message own flag matches query");
     switch (pps) {
     case DP_PROJECT_STATEMENT_MESSAGE_RECORD:
         return "insert into messages (session_id, sequence_id, recorded_at, "
                "flags, type, context_id, body) values (?, ?, "
                "unixepoch('subsec'), ?, ?, ?, ?)";
+    case DP_PROJECT_STATEMENT_SESSION_TIMES_SELECT:
+        return "select sequence_id, recorded_at from messages "
+               "where session_id = ? and sequence_id > ? and (flags & 1) <> 0";
     case DP_PROJECT_STATEMENT_COUNT:
         break;
     }
@@ -1331,6 +1337,79 @@ int DP_project_message_internal_record(DP_Project *prj, int type,
 
     return record_message(prj, session_id, flags, type, context_id,
                           body_or_null, size);
+}
+
+
+DP_ProjectSessionTimes DP_project_session_times_null(void)
+{
+    return (DP_ProjectSessionTimes){0LL, 0LL, 0.0};
+}
+
+static bool has_minute_passed(double last_recorded_at, double recorded_at)
+{
+    if (last_recorded_at <= recorded_at) {
+        return (recorded_at - last_recorded_at) >= 60.0;
+    }
+    else {
+        DP_warn("Recorded time went backwards, from %f to %f", last_recorded_at,
+                recorded_at);
+        return true; // Assume a minute passed to get back on track,
+    }
+}
+
+int DP_project_session_times_update(DP_Project *prj,
+                                    DP_ProjectSessionTimes *pst)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_MISUSE;
+    }
+
+    if (!pst) {
+        DP_error_set("No project session times given");
+        return DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_MISUSE;
+    }
+
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_NOT_OPEN;
+    }
+
+    sqlite3_stmt *stmt =
+        pps_prepare(prj, DP_PROJECT_STATEMENT_SESSION_TIMES_SELECT);
+    if (!stmt) {
+        return DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_PREPARE;
+    }
+
+    long long last_sequence_id = pst->last_sequence_id;
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                && ps_bind_int64(prj, stmt, 2, last_sequence_id);
+    if (!bind_ok) {
+        return DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_PREPARE;
+    }
+
+    long long own_work_minutes_to_add = 0LL;
+    double last_recorded_at = pst->last_recorded_at;
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        last_sequence_id = sqlite3_column_int64(stmt, 0);
+        double recorded_at = sqlite3_column_double(stmt, 1);
+        if (has_minute_passed(last_recorded_at, recorded_at)) {
+            last_recorded_at = recorded_at;
+            ++own_work_minutes_to_add;
+        }
+    }
+
+    if (error) {
+        return DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_QUERY;
+    }
+
+    pst->own_work_minutes += own_work_minutes_to_add;
+    pst->last_sequence_id = last_sequence_id;
+    pst->last_recorded_at = last_recorded_at;
+    return 0;
 }
 
 

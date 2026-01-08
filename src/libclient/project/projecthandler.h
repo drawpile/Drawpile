@@ -40,9 +40,9 @@ public:
 	// when one occurs. Call this to re-enable error emitting.
 	void unblockErrors();
 
-	void startThumbnailTimer();
-	void stopThumbnailTimer();
-	bool isThumbnailTimerReady() const;
+	void startMetadataTimer();
+	void stopMetadataTimer();
+	bool isMetadataTimerReady() const;
 
 	void startSnapshotTimer();
 	void stopSnapshotTimer();
@@ -54,7 +54,7 @@ public:
 	void addMetadataSource(int sourceType, const QString &sourceParam);
 
 Q_SIGNALS:
-	void thumbnailRequested();
+	void metadataRequested();
 	void snapshotRequested();
 	// The following signals are emitted from the worker thread, use
 	// Qt::QueuedConnection to attach to them.
@@ -64,7 +64,7 @@ private:
 	static constexpr int TIMER_INTERVAL_MINUTES_MIN = 1;
 	static constexpr int TIMER_INTERVAL_MINUTES_MAX = 1440;
 
-	void setThumbnailTimerIntervalMinutes(int thumbnailTimerIntervalMinutes);
+	void setMetadataTimerIntervalMinutes(int metadataTimerIntervalMinutes);
 	void setSnapshotTimerIntervalMinutes(int snapshotTimerIntervalMinutes);
 
 	static void
@@ -91,9 +91,9 @@ private:
 	static QString searchAvailableProjectPath();
 
 	DP_ProjectWorker *m_pw = nullptr;
-	int m_thumbnailTimerIntervalMinutes = 0;
+	int m_metadataTimerIntervalMinutes = 0;
 	int m_snapshotTimerIntervalMinutes = 0;
-	QTimer *m_thumbnailTimer = nullptr;
+	QTimer *m_metadataTimer = nullptr;
 	QTimer *m_snapshotTimer = nullptr;
 	QString m_path;
 	QString m_metadataPath;

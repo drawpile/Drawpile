@@ -31,13 +31,13 @@ SettingsConfig::SettingsConfig(
 		&SettingsConfig::changeAutoRecordJoin, Qt::DirectConnection);
 	connect(
 		m_settings,
-		&desktop::settings::Settings::autoRecordSnapshotIntervalMinutesChanged,
-		this, &SettingsConfig::changeAutoRecordSnapshotIntervalMinutes,
+		&desktop::settings::Settings::autoRecordMetadataIntervalMinutesChanged,
+		this, &SettingsConfig::changeAutoRecordMetadataIntervalMinutes,
 		Qt::DirectConnection);
 	connect(
 		m_settings,
-		&desktop::settings::Settings::autoRecordThumbnailIntervalMinutesChanged,
-		this, &SettingsConfig::changeAutoRecordThumbnailIntervalMinutes,
+		&desktop::settings::Settings::autoRecordSnapshotIntervalMinutesChanged,
+		this, &SettingsConfig::changeAutoRecordSnapshotIntervalMinutes,
 		Qt::DirectConnection);
 	connect(
 		m_settings, &desktop::settings::Settings::automaticAlphaPreserveChanged,
@@ -837,6 +837,16 @@ void SettingsConfig::setAutoRecordJoin(bool value)
 	m_settings->setAutoRecordJoin(value);
 }
 
+int SettingsConfig::getAutoRecordMetadataIntervalMinutes() const
+{
+	return m_settings->autoRecordMetadataIntervalMinutes();
+}
+
+void SettingsConfig::setAutoRecordMetadataIntervalMinutes(int value)
+{
+	m_settings->setAutoRecordMetadataIntervalMinutes(value);
+}
+
 int SettingsConfig::getAutoRecordSnapshotIntervalMinutes() const
 {
 	return m_settings->autoRecordSnapshotIntervalMinutes();
@@ -845,16 +855,6 @@ int SettingsConfig::getAutoRecordSnapshotIntervalMinutes() const
 void SettingsConfig::setAutoRecordSnapshotIntervalMinutes(int value)
 {
 	m_settings->setAutoRecordSnapshotIntervalMinutes(value);
-}
-
-int SettingsConfig::getAutoRecordThumbnailIntervalMinutes() const
-{
-	return m_settings->autoRecordThumbnailIntervalMinutes();
-}
-
-void SettingsConfig::setAutoRecordThumbnailIntervalMinutes(int value)
-{
-	m_settings->setAutoRecordThumbnailIntervalMinutes(value);
 }
 
 int SettingsConfig::getAutomaticAlphaPreserve() const

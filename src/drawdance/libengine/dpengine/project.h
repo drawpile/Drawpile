@@ -106,6 +106,12 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_CANVAS_LOAD_WARN_HISTORY_ERROR         (-1304)
 #define DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR           (-1305)
 
+#define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_UNKNOWN  (-1400)
+#define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_MISUSE   (-1401)
+#define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_NOT_OPEN (-1402)
+#define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_PREPARE  (-1403)
+#define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_QUERY    (-1404)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -168,6 +174,12 @@ typedef struct DP_ProjectRecoveryInfo {
     long long own_work_minutes;
 } DP_ProjectRecoveryInfo;
 
+typedef struct DP_ProjectSessionTimes {
+    long long own_work_minutes;
+    long long last_sequence_id;
+    double last_recorded_at;
+} DP_ProjectSessionTimes;
+
 // Warning handler when loading a canvas. The warn parameter is one of the
 // DP_PROJECT_CANVAS_LOAD_WARN_* constants. Return true if loading should be
 // cancelled, false to keep going. If cancelling, you should call DP_error_set
@@ -216,6 +228,12 @@ int DP_project_message_internal_record(DP_Project *prj, int type,
                                        unsigned int context_id,
                                        const void *body_or_null, size_t size,
                                        unsigned int flags);
+
+
+DP_ProjectSessionTimes DP_project_session_times_null(void);
+
+int DP_project_session_times_update(DP_Project *prj,
+                                    DP_ProjectSessionTimes *pst);
 
 
 // Opens a snapshot to record messages to. Returns a positive snapshot id on

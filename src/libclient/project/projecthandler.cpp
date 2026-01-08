@@ -26,8 +26,8 @@ ProjectHandler::ProjectHandler(config::Config *cfg, QObject *parent)
 	: QObject(parent)
 {
 	CFG_BIND_SET(
-		cfg, AutoRecordThumbnailIntervalMinutes, this,
-		ProjectHandler::setThumbnailTimerIntervalMinutes);
+		cfg, AutoRecordMetadataIntervalMinutes, this,
+		ProjectHandler::setMetadataTimerIntervalMinutes);
 	CFG_BIND_SET(
 		cfg, AutoRecordSnapshotIntervalMinutes, this,
 		ProjectHandler::setSnapshotTimerIntervalMinutes);
@@ -90,12 +90,12 @@ bool ProjectHandler::startProjectRecording(
 
 	paintEngine->startProjectRecording(m_pw, m_fileId);
 
-	m_thumbnailTimer = new QTimer(this);
-	m_thumbnailTimer->setTimerType(Qt::VeryCoarseTimer);
-	m_thumbnailTimer->setSingleShot(true);
+	m_metadataTimer = new QTimer(this);
+	m_metadataTimer->setTimerType(Qt::VeryCoarseTimer);
+	m_metadataTimer->setSingleShot(true);
 	connect(
-		m_thumbnailTimer, &QTimer::timeout, this,
-		&ProjectHandler::thumbnailRequested);
+		m_metadataTimer, &QTimer::timeout, this,
+		&ProjectHandler::metadataRequested);
 
 	m_snapshotTimer = new QTimer(this);
 	m_snapshotTimer->setTimerType(Qt::VeryCoarseTimer);
@@ -115,9 +115,9 @@ bool ProjectHandler::stopProjectRecording(
 	}
 
 	qCDebug(lcDpProjectWorker, "Cancel project recording");
-	delete m_thumbnailTimer;
+	delete m_metadataTimer;
 	delete m_snapshotTimer;
-	m_thumbnailTimer = nullptr;
+	m_metadataTimer = nullptr;
 	m_snapshotTimer = nullptr;
 	paintEngine->stopProjectRecording();
 	DP_project_worker_close(m_pw, m_fileId);
@@ -149,27 +149,26 @@ bool ProjectHandler::stopProjectRecording(
 	return true;
 }
 
-void ProjectHandler::startThumbnailTimer()
+void ProjectHandler::startMetadataTimer()
 {
-	if(isThumbnailTimerReady()) {
+	if(isMetadataTimerReady()) {
 		qCDebug(
 			lcDpProjectWorker, "Starting thumbnail timer with %d minute(s)",
-			m_thumbnailTimerIntervalMinutes);
-		m_thumbnailTimer->start(
-			minutesToMsecs(m_thumbnailTimerIntervalMinutes));
+			m_metadataTimerIntervalMinutes);
+		m_metadataTimer->start(minutesToMsecs(m_metadataTimerIntervalMinutes));
 	}
 }
 
-void ProjectHandler::stopThumbnailTimer()
+void ProjectHandler::stopMetadataTimer()
 {
-	if(m_thumbnailTimer) {
-		m_thumbnailTimer->stop();
+	if(m_metadataTimer) {
+		m_metadataTimer->stop();
 	}
 }
 
-bool ProjectHandler::isThumbnailTimerReady() const
+bool ProjectHandler::isMetadataTimerReady() const
 {
-	return m_thumbnailTimer && !m_thumbnailTimer->isActive();
+	return m_metadataTimer && !m_metadataTimer->isActive();
 }
 
 void ProjectHandler::startSnapshotTimer()
@@ -226,12 +225,12 @@ void ProjectHandler::addMetadataSource(
 	}
 }
 
-void ProjectHandler::setThumbnailTimerIntervalMinutes(
-	int thumbnailTimerIntervalMinutes)
+void ProjectHandler::setMetadataTimerIntervalMinutes(
+	int metadataTimerIntervalMinutes)
 {
 	setTimerIntervalMinutes(
-		thumbnailTimerIntervalMinutes, m_thumbnailTimerIntervalMinutes,
-		m_thumbnailTimer);
+		metadataTimerIntervalMinutes, m_metadataTimerIntervalMinutes,
+		m_metadataTimer);
 }
 
 void ProjectHandler::setSnapshotTimerIntervalMinutes(
@@ -335,6 +334,15 @@ void ProjectHandler::handleEvent(const DP_ProjectWorkerEvent *event)
 		qCWarning(
 			lcDpProjectWorker, "Error %d generating thumbnail: %s",
 			int(event->data.error.error), event->data.error.message);
+		return;
+	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR:
+		qCWarning(
+			lcDpProjectWorker, "Error %d updating session times: %s",
+			int(event->data.error.error), event->data.error.message);
+		return;
+	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE:
+		setMetadatum(
+			QStringLiteral("own_work_minutes"), event->data.own_work_minutes);
 		return;
 	}
 	qCWarning(lcDpProjectWorker, "Unhandled event type %d", int(type));

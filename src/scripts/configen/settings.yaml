@@ -19,6 +19,15 @@ settings:
       Whether to automatically record ("autosave") when joining a session by
       default.
 
+  - id: autoRecordMetadataIntervalMinutes
+    type: 'int'
+    default: '4'
+    qsettings: 'settings/autorecord/metadatainterval'
+    legacy_package: 'libclient'
+    comment: |
+      Time in minutes between creating thumbnails and updating the work time
+      during automatic recording ("autosaving").
+
   - id: autoRecordSnapshotIntervalMinutes
     type: 'int'
     default: '10'
@@ -29,15 +38,6 @@ settings:
       ("autosaving"). All messages are recorded as well, so autosaving is sort
       of instantaneous, this is just the interval between taking snapshots
       where the playback can start from more quickly.
-
-  - id: autoRecordThumbnailIntervalMinutes
-    type: 'int'
-    default: '4'
-    qsettings: 'settings/autorecord/thumbnailinterval'
-    legacy_package: 'libclient'
-    comment: |
-      Time in minutes between creating thumbnails during automatic recording
-      ("autosaving").
 
   - id: cancelDeselects
     type: 'bool'

@@ -639,9 +639,9 @@ bool PaintEngine::isProjectRecording() const
 	return m_paintEngine.isProjectRecording();
 }
 
-void PaintEngine::enqueueProjectThumbnailRequest()
+void PaintEngine::enqueueProjectMetadataRequest()
 {
-	net::Message msg = net::makeInternalProjectThumbnailRequestMessage(0);
+	net::Message msg = net::makeInternalProjectMetadataRequestMessage(0);
 	receiveMessages(false, 1, &msg);
 }
 

@@ -40,11 +40,11 @@ public:
 	bool getAutoRecordJoin() const override;
 	void setAutoRecordJoin(bool value) override;
 
+	int getAutoRecordMetadataIntervalMinutes() const override;
+	void setAutoRecordMetadataIntervalMinutes(int value) override;
+
 	int getAutoRecordSnapshotIntervalMinutes() const override;
 	void setAutoRecordSnapshotIntervalMinutes(int value) override;
-
-	int getAutoRecordThumbnailIntervalMinutes() const override;
-	void setAutoRecordThumbnailIntervalMinutes(int value) override;
 
 	int getAutomaticAlphaPreserve() const override;
 	void setAutomaticAlphaPreserve(int value) override;

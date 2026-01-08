@@ -251,24 +251,24 @@ void CanvasModel::handleCommands(int count, const net::Message *msgs)
 
 		bool dirtyReady = !m_dirty;
 
-		bool projectThumbnailTimerReady;
+		bool projectMetadataTimerReady;
 		bool projectSnapshotTimerReady;
 		if(m_projectHandler) {
-			projectThumbnailTimerReady =
-				m_projectHandler->isThumbnailTimerReady();
+			projectMetadataTimerReady =
+				m_projectHandler->isMetadataTimerReady();
 			projectSnapshotTimerReady =
 				m_projectHandler->isSnapshotTimerReady();
 		} else {
-			projectThumbnailTimerReady = false;
+			projectMetadataTimerReady = false;
 			projectSnapshotTimerReady = false;
 		}
 
-		bool needsDirtyCheck = dirtyReady || projectThumbnailTimerReady ||
+		bool needsDirtyCheck = dirtyReady || projectMetadataTimerReady ||
 							   projectSnapshotTimerReady;
 		if(needsDirtyCheck && net::anyMessageDirtiesCanvas(count, msgs)) {
 
-			if(projectThumbnailTimerReady) {
-				m_projectHandler->startThumbnailTimer();
+			if(projectMetadataTimerReady) {
+				m_projectHandler->startMetadataTimer();
 			}
 
 			if(projectSnapshotTimerReady) {
@@ -656,7 +656,7 @@ bool CanvasModel::isRecording() const
 }
 
 bool CanvasModel::startProjectRecording(
-	config::Config *cfg, int sourceType, bool requestThumbnail)
+	config::Config *cfg, int sourceType, bool requestMetadata)
 {
 	if(m_projectHandler) {
 		Q_EMIT projectRecordingErrorOccurred(
@@ -671,8 +671,8 @@ bool CanvasModel::startProjectRecording(
 
 	m_projectHandler = new project::ProjectHandler(cfg, this);
 	connect(
-		m_projectHandler, &project::ProjectHandler::thumbnailRequested,
-		m_paintengine, &PaintEngine::enqueueProjectThumbnailRequest);
+		m_projectHandler, &project::ProjectHandler::metadataRequested,
+		m_paintengine, &PaintEngine::enqueueProjectMetadataRequest);
 	connect(
 		m_projectHandler, &project::ProjectHandler::snapshotRequested,
 		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
@@ -691,8 +691,8 @@ bool CanvasModel::startProjectRecording(
 		return false;
 	}
 
-	if(requestThumbnail) {
-		requestProjectRecordingThumbnail();
+	if(requestMetadata) {
+		requestProjectRecordingMetadata();
 	}
 
 	Q_EMIT projectRecordingStarted();
@@ -734,11 +734,11 @@ void CanvasModel::unblockProjectRecordingErrors()
 	}
 }
 
-void CanvasModel::requestProjectRecordingThumbnail()
+void CanvasModel::requestProjectRecordingMetadata()
 {
 	if(m_projectHandler) {
-		m_projectHandler->stopThumbnailTimer();
-		m_paintengine->enqueueProjectThumbnailRequest();
+		m_projectHandler->stopMetadataTimer();
+		m_paintengine->enqueueProjectMetadataRequest();
 	}
 }
 

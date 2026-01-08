@@ -12,13 +12,13 @@ SETTING(
 	autoRecordJoin, AutoRecordJoin, "settings/autorecord/join",
 	config::Config::defaultAutoRecordJoin())
 SETTING(
+	autoRecordMetadataIntervalMinutes, AutoRecordMetadataIntervalMinutes,
+	"settings/autorecord/metadatainterval",
+	config::Config::defaultAutoRecordMetadataIntervalMinutes())
+SETTING(
 	autoRecordSnapshotIntervalMinutes, AutoRecordSnapshotIntervalMinutes,
 	"settings/autorecord/snapshotinterval",
 	config::Config::defaultAutoRecordSnapshotIntervalMinutes())
-SETTING(
-	autoRecordThumbnailIntervalMinutes, AutoRecordThumbnailIntervalMinutes,
-	"settings/autorecord/thumbnailinterval",
-	config::Config::defaultAutoRecordThumbnailIntervalMinutes())
 SETTING(
 	cancelDeselects, CancelDeselects, "settings/canceldeselects",
 	config::Config::defaultCancelDeselects())
