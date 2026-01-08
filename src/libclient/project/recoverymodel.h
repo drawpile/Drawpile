@@ -29,9 +29,12 @@ public:
 	qint64 fileSize() const;
 	const QDateTime &mtime() const;
 	const QPixmap &thumbnail() const;
+	long long ownWorkMinutes() const;
 	const QString &errorMessage() const { return m_errorMessage; }
 
 private:
+	void loadMetadata() const;
+
 	QFileInfo m_fileInfo;
 	QString m_path;
 	QString m_baseName;
@@ -40,10 +43,12 @@ private:
 	mutable QDateTime m_mtime;
 	mutable QString m_errorMessage;
 	mutable QPixmap m_thumbnail;
+	mutable long long m_ownWorkMinutes = -1LL;
 	mutable bool m_statusLoaded = false;
 	mutable bool m_thumbnailLoaded = false;
 	mutable bool m_fileSizeLoaded = false;
 	mutable bool m_mtimeLoaded = false;
+	mutable bool m_metadataLoaded = false;
 };
 
 class RecoveryModel final : public QAbstractItemModel {

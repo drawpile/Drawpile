@@ -6,6 +6,7 @@ extern "C" {
 #include <QDir>
 #include <QHash>
 #include <algorithm>
+#include <libshared/util/database.h>
 
 namespace project {
 
@@ -71,6 +72,34 @@ const QPixmap &RecoveryEntry::thumbnail() const
 		}
 	}
 	return m_thumbnail;
+}
+
+long long RecoveryEntry::ownWorkMinutes() const
+{
+	loadMetadata();
+	return m_ownWorkMinutes;
+}
+
+void RecoveryEntry::loadMetadata() const
+{
+	if(!m_metadataLoaded) {
+		m_metadataLoaded = true;
+
+		drawdance::Database db;
+		bool openOk = db.open(
+			m_path + QStringLiteral(".meta"),
+			QStringLiteral("autosave metadata"));
+		if(openOk) {
+			drawdance::Query qry = db.query();
+
+			if(qry.prepare("select value from metadata where name = ?")) {
+				if(qry.bind(0, "own_work_minutes") && qry.execPrepared() &&
+				   qry.next()) {
+					m_ownWorkMinutes = qry.columnInt64(0);
+				}
+			}
+		}
+	}
 }
 
 

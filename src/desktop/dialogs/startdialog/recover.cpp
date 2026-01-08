@@ -158,9 +158,31 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 	bool canRecover = true;
 	bool canRemove = true;
 	switch(entry.status()) {
-	case project::RecoveryStatus::Available:
-		statusLabel->setText(tr("Available for recovery"));
+	case project::RecoveryStatus::Available: {
+		QString workTime;
+		long long ownWorkMinutes = entry.ownWorkMinutes();
+		if(ownWorkMinutes >= 0LL) {
+			int minutes = int(ownWorkMinutes % 60LL);
+			QString minutesString = tr("%n minute(s)", nullptr, minutes);
+			if(ownWorkMinutes < 60LL) {
+				workTime = minutesString;
+			} else {
+				int hours = int(ownWorkMinutes / 60LL);
+				QString hoursString = tr("%n hour(s)", nullptr, hours);
+				// %1 is hours, %2 is minutes. So this turns into something like
+				// "approximately 1 hour and 15 minutes".
+				workTime = tr("approximately %1 and %2");
+			}
+		} else {
+			//: Part of "Work time: unknown", when Drawpile can't figure out how
+			//: long you've worked on an autosave file.
+			workTime = tr("unknown");
+		}
+		//: How long you've worked on an autosave file. %1 is either a time span
+		//: like "1 hour and 15 minutes" or "unknown".
+		statusLabel->setText(tr("Work time: %1").arg(workTime));
 		break;
+	}
 	case project::RecoveryStatus::Locked:
 		statusLabel->setText(tr("Locked by another process"));
 		canRemove = false;
