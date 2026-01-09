@@ -171,7 +171,8 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 				QString hoursString = tr("%n hour(s)", nullptr, hours);
 				// %1 is hours, %2 is minutes. So this turns into something like
 				// "approximately 1 hour and 15 minutes".
-				workTime = tr("approximately %1 and %2");
+				workTime = tr("approximately %1 and %2")
+							   .arg(hoursString, minutesString);
 			}
 		} else {
 			//: Part of "Work time: unknown", when Drawpile can't figure out how
