@@ -18,7 +18,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make stylus buttons on Xiaomi devices act as right and middle clicks instead of page up and page down. Can be toggled in the tablet preferences. This is a patch to Qt.
  * Fix: Make lines not come out all jaggy on Xiaomi devices by ignoring the (wrong) tablet position history. Can be toggled in the tablet preferences. This is a patch to Qt.
  * Fix: Default the global pressure curve on Xiaomi devices to be really steep, because their stylus has a similarly high threshold as Apple Pencils do.
- * Fix: Add "Low-Pressure Stylus (Apple, Xiaomi)" as a preset option for the global pressure curve.
+ * Fix: Add "Anti-Strain" and "Low-Pressure Stylus (Apple, Xiaomi)" as a preset options for the global pressure curve.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

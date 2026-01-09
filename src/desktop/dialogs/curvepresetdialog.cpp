@@ -184,6 +184,13 @@ void CurvePresetDialog::loadPresets(
 			//: curves that make sense for their styluses by default.
 			tr("Low-Pressure Stylus (Apple, Xiaomi)"), Builtin,
 			lowPressureCurve);
+
+		KisCubicCurve antiStrainCurve;
+		antiStrainCurve.fromString(
+			QStringLiteral("0,0;0.353014,0.500314;0.849246,1;1,1;"));
+		//: This refers to a stylus pressure curve that is steeper than the
+		//: default so that you don't have to strain to press the stylus down.
+		addPreset(tr("Anti-Strain"), Builtin, antiStrainCurve);
 	}
 	addPreset(tr("Linear"), Builtin, KisCubicCurve{{{0.0, 0.0}, {1.0, 1.0}}});
 	addPreset(tr("Current (unsaved)"), Unsaved, current);
