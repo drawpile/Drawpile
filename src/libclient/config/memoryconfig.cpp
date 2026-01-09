@@ -58,6 +58,39 @@ void MemoryConfig::setAlphaLockCursor(int value)
 	}
 }
 
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+bool MemoryConfig::getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const
+{
+	return m_androidWorkaroundEmulateMouseButtonsForPageUpDown;
+}
+
+void MemoryConfig::setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(
+	bool value)
+{
+	if(value != m_androidWorkaroundEmulateMouseButtonsForPageUpDown) {
+		m_androidWorkaroundEmulateMouseButtonsForPageUpDown = value;
+		Q_EMIT changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown(
+			m_androidWorkaroundEmulateMouseButtonsForPageUpDown);
+	}
+}
+#endif
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+bool MemoryConfig::getAndroidWorkaroundIgnoreHistoricTabletEvents() const
+{
+	return m_androidWorkaroundIgnoreHistoricTabletEvents;
+}
+
+void MemoryConfig::setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value)
+{
+	if(value != m_androidWorkaroundIgnoreHistoricTabletEvents) {
+		m_androidWorkaroundIgnoreHistoricTabletEvents = value;
+		Q_EMIT changeAndroidWorkaroundIgnoreHistoricTabletEvents(
+			m_androidWorkaroundIgnoreHistoricTabletEvents);
+	}
+}
+#endif
+
 int MemoryConfig::getAnimationExportFormat() const
 {
 	return m_animationExportFormat;

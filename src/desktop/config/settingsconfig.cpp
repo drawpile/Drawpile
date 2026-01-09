@@ -19,6 +19,25 @@ SettingsConfig::SettingsConfig(
 	connect(
 		m_settings, &desktop::settings::Settings::alphaLockCursorChanged, this,
 		&SettingsConfig::changeAlphaLockCursor, Qt::DirectConnection);
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::
+			androidWorkaroundEmulateMouseButtonsForPageUpDownChanged,
+		this,
+		&SettingsConfig::
+			changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown,
+		Qt::DirectConnection);
+#endif
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::
+			androidWorkaroundIgnoreHistoricTabletEventsChanged,
+		this,
+		&SettingsConfig::changeAndroidWorkaroundIgnoreHistoricTabletEvents,
+		Qt::DirectConnection);
+#endif
 	connect(
 		m_settings, &desktop::settings::Settings::animationExportFormatChanged,
 		this, &SettingsConfig::changeAnimationExportFormat,
@@ -806,6 +825,32 @@ void SettingsConfig::setAlphaLockCursor(int value)
 {
 	m_settings->setAlphaLockCursor(value);
 }
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+bool SettingsConfig::getAndroidWorkaroundEmulateMouseButtonsForPageUpDown()
+	const
+{
+	return m_settings->androidWorkaroundEmulateMouseButtonsForPageUpDown();
+}
+
+void SettingsConfig::setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(
+	bool value)
+{
+	m_settings->setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(value);
+}
+#endif
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+bool SettingsConfig::getAndroidWorkaroundIgnoreHistoricTabletEvents() const
+{
+	return m_settings->androidWorkaroundIgnoreHistoricTabletEvents();
+}
+
+void SettingsConfig::setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value)
+{
+	m_settings->setAndroidWorkaroundIgnoreHistoricTabletEvents(value);
+}
+#endif
 
 int SettingsConfig::getAnimationExportFormat() const
 {

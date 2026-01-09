@@ -7,6 +7,7 @@
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/view/enums.h"
 #include "libshared/net/messagequeue.h"
+#include <QCoreApplication>
 #include <QDebug>
 #include <QHash>
 #include <QLoggingCategory>

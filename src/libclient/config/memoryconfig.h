@@ -24,6 +24,17 @@ public:
 	int getAlphaLockCursor() const override;
 	void setAlphaLockCursor(int value) override;
 
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+	bool getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const override;
+	void
+	setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value) override;
+#endif
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+	bool getAndroidWorkaroundIgnoreHistoricTabletEvents() const override;
+	void setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value) override;
+#endif
+
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
@@ -699,6 +710,14 @@ private:
 	int m_actionBar = defaultActionBar();
 	int m_actionBarLocation = defaultActionBarLocation();
 	int m_alphaLockCursor = defaultAlphaLockCursor();
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+	bool m_androidWorkaroundEmulateMouseButtonsForPageUpDown =
+		defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown();
+#endif
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+	bool m_androidWorkaroundIgnoreHistoricTabletEvents =
+		defaultAndroidWorkaroundIgnoreHistoricTabletEvents();
+#endif
 	int m_animationExportFormat = defaultAnimationExportFormat();
 	bool m_autoRecordHost = defaultAutoRecordHost();
 	bool m_autoRecordJoin = defaultAutoRecordJoin();

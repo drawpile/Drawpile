@@ -5,6 +5,20 @@
 SETTING(
 	_parentalControlsLevelDummy, _ParentalControlsLevelDummy,
 	"_parentalcontrolsleveldummy", parentalcontrols::Level::Unrestricted)
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+SETTING(
+	androidWorkaroundEmulateMouseButtonsForPageUpDown,
+	AndroidWorkaroundEmulateMouseButtonsForPageUpDown,
+	"settings/androidworkaround/emulatemousebuttonsforpageupdown",
+	config::Config::defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown())
+#endif
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+SETTING(
+	androidWorkaroundIgnoreHistoricTabletEvents,
+	AndroidWorkaroundIgnoreHistoricTabletEvents,
+	"settings/androidworkaround/ignorehistorictabletevents",
+	config::Config::defaultAndroidWorkaroundIgnoreHistoricTabletEvents())
+#endif
 SETTING(
 	autoRecordHost, AutoRecordHost, "settings/autorecord/host",
 	config::Config::defaultAutoRecordHost())

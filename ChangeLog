@@ -15,6 +15,8 @@ Unreleased Version 2.3.1-pre
  * Feature: Replace autosave mechanism with more robust auto-recording. Work in progress.
  * Fix: Make setting kinetic scrolling to touch drag not trigger long-presses immediately on Android.
  * Fix: Properly clear invalid selection areas when masking brush strokes (shouldn't happen in the first place though.)
+ * Fix: Make stylus buttons on Xiaomi devices act as right and middle clicks instead of page up and page down. Can be toggled in the tablet preferences. This is a patch to Qt.
+ * Fix: Make lines not come out all jaggy on Xiaomi devices by ignoring the (wrong) tablet position history. Can be toggled in the tablet preferences. This is a patch to Qt.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

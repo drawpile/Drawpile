@@ -9,6 +9,7 @@
 #include "libclient/tools/toolcontroller.h"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QFrame>
@@ -147,7 +148,29 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 
 	QCheckBox *interpolate = new QCheckBox(tr("Compensate jagged curves"));
 	CFG_BIND_CHECKBOX(cfg, InterpolateInputs, interpolate);
-	form->addRow(nullptr, interpolate);
+	form->addRow(tr("Workarounds:"), interpolate);
+
+#ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN
+	QCheckBox *pageUpDownWorkaround =
+		//: Xiaomi is a brand that makes Android tablets. This is a setting for
+		//: a workaround that matters for those tablets.
+		new QCheckBox(tr("Translate stylus buttons to clicks (Xiaomi)"));
+	CFG_BIND_CHECKBOX(
+		cfg, AndroidWorkaroundEmulateMouseButtonsForPageUpDown,
+		pageUpDownWorkaround);
+	form->addRow(nullptr, pageUpDownWorkaround);
+#endif
+
+#ifdef KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS
+	QCheckBox *ignoreHistoricTabletEventsWorkaround =
+		//: Xiaomi is a brand that makes Android tablets. This is a setting for
+		//: a workaround that matters for those tablets.
+		new QCheckBox(tr("Disregard position history (Xiaomi)"));
+	CFG_BIND_CHECKBOX(
+		cfg, AndroidWorkaroundIgnoreHistoricTabletEvents,
+		ignoreHistoricTabletEventsWorkaround);
+	form->addRow(nullptr, ignoreHistoricTabletEventsWorkaround);
+#endif
 
 	QComboBox *eraserAction = new QComboBox;
 	eraserAction->addItem(

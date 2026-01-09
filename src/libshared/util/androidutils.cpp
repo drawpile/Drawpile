@@ -153,6 +153,22 @@ int androidLongPressTimeout()
 	}
 }
 
+bool androidLooksLikeXiaomiDevice()
+{
+	static int looksLikeXiaomiDeviceResult;
+	if(looksLikeXiaomiDeviceResult == 0) {
+		QJniEnvironment env;
+		jboolean value = QJniObject::callStaticMethod<jboolean>(
+			"net/drawpile/android/MainActivity", "looksLikeXiaomiDevice", "()Z");
+		if(clearException(env) || !value) {
+			looksLikeXiaomiDeviceResult = -1;
+		} else {
+			looksLikeXiaomiDeviceResult = 1;
+		}
+	}
+	return looksLikeXiaomiDeviceResult > 0;
+}
+
 #ifdef DRAWPILE_USE_CONNECT_SERVICE
 bool createConnectionNotificationChannel()
 {

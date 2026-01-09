@@ -1,0 +1,273 @@
+Description: Xiaomi workarounds.
+
+On Xiaomi devices, pressing stylus buttons inputs page up and page down instead
+of mouse buttons like a normal stylus. This patch allows enabling a workaround
+that translates those keys into right and middle mouse button presses instead.
+
+The historic tablet events are garbage there as well. They just connect the
+"real" points with a straight line and do absolutely no pressure interpolation.
+The result is a pretty much guaranteed jagged line. This patch adds a
+workaround that ignores the historic events altogether.
+
+The workarounds are enabled by setting a flag on QCoreApplication, similar to
+how application attributes work, but kept in a separate field to not interfere
+with Qt's normal operation.
+
+--- a/src/corelib/kernel/qcoreapplication.cpp
++++ b/src/corelib/kernel/qcoreapplication.cpp
+@@ -363,6 +363,8 @@ quint64 QCoreApplicationPrivate::attribs =
+     (1 << Qt::AA_SynthesizeMouseForUnhandledTouchEvents) |
+     (1 << Qt::AA_SynthesizeMouseForUnhandledTabletEvents);
+ 
++quint64 QCoreApplicationPrivate::kritaAttribs = 0;
++
+ struct QCoreApplicationData {
+     QCoreApplicationData() noexcept {
+         applicationNameSet = false;
+@@ -992,6 +994,21 @@ bool QCoreApplication::testAttribute(Qt::ApplicationAttribute attribute)
+ }
+ 
+ 
++void QCoreApplication::setKritaAttribute(unsigned int attribute, bool on)
++{
++    if (on) {
++        QCoreApplicationPrivate::kritaAttribs |= UINT64_C(1) << attribute;
++    } else {
++        QCoreApplicationPrivate::kritaAttribs &= ~(UINT64_C(1) << attribute);
++    }
++}
++
++bool QCoreApplication::testKritaAttribute(unsigned int attribute)
++{
++    return QCoreApplicationPrivate::testKritaAttribute(attribute);
++}
++
++
+ #ifndef QT_NO_QOBJECT
+ 
+ /*!
+--- a/src/corelib/kernel/qcoreapplication.h
++++ b/src/corelib/kernel/qcoreapplication.h
+@@ -69,6 +69,26 @@ class QAbstractNativeEventFilter;
+ 
+ #define qApp QCoreApplication::instance()
+ 
++// Attributes to enable Krita-specific behavior. Keep these as macros for the
++// sake of #ifdef-ability, that way we don't need to duplicate any versioning
++// and platform logic and just check whether the constant exists.
++
++// Xiaomi workaround. The stylus inputs page up and page down keys for its
++// buttons. Turn those into proper right and middle clicks instead.
++#ifdef Q_OS_ANDROID
++#   define KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN 0u
++#endif
++
++// Xiaomi workaround. The historic motion events for tablet inputs are complete
++// garbage, they just connect the "real" events with a straight line. We have to
++// ignore them to get a chance at smoothing them out, otherwise it looks like
++// the user is *actually* inputting a really jaggy curve.
++#ifdef Q_OS_ANDROID
++#   define KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS 1u
++#endif
++
++// End of Krita attributes.
++
+ class Q_CORE_EXPORT QCoreApplication
+ #ifndef QT_NO_QOBJECT
+     : public QObject
+@@ -101,6 +121,9 @@ public:
+     static void setAttribute(Qt::ApplicationAttribute attribute, bool on = true);
+     static bool testAttribute(Qt::ApplicationAttribute attribute);
+ 
++    static void setKritaAttribute(unsigned int attribute, bool on = true);
++    static bool testKritaAttribute(unsigned int attribute);
++
+     static void setOrganizationDomain(const QString &orgDomain);
+     static QString organizationDomain();
+     static void setOrganizationName(const QString &orgName);
+--- a/src/corelib/kernel/qcoreapplication_p.h
++++ b/src/corelib/kernel/qcoreapplication_p.h
+@@ -187,7 +187,9 @@ public:
+ 
+     static bool setuidAllowed;
+     static quint64 attribs;
++    static quint64 kritaAttribs;
+     static inline bool testAttribute(uint flag) { return attribs & (UINT64_C(1) << flag); }
++    static inline bool testKritaAttribute(uint flag) { return kritaAttribs & (UINT64_C(1) << flag); }
+     static int app_compile_version;
+ 
+     void processCommandLineArguments();
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -75,6 +75,19 @@
+     static QPointer<QWindow> m_mouseGrabber;
+     static int m_mouseActionButton;
+ 
++    static bool m_haveLastTablet = false;
++    static int m_lastTabletDeviceId;
++    static int m_lastTabletPointerType;
++    static float m_lastTabletX;
++    static float m_lastTabletY;
++    static float m_lastTabletPressure;
++    static float m_lastTabletTiltX;
++    static float m_lastTabletTiltY;
++    static float m_lastTabletRotation;
++    static long m_lastTabletTime;
++    static bool m_emulatedPageUpPressed = false;
++    static bool m_emulatedPageDownPressed = false;
++
+     void updateSelection(int selStart, int selEnd, int candidatesStart, int candidatesEnd)
+     {
+ #ifdef QT_DEBUG_ANDROID_IM_PROTOCOL
+@@ -426,6 +439,17 @@
+         qDebug() << action << pointerType << buttonState << '@' << x << y << "pressure" << pressure << ": buttons" << buttons;
+ #endif
+ 
++        m_haveLastTablet = true;
++        m_lastTabletDeviceId = deviceId;
++        m_lastTabletPointerType = pointerType;
++        m_lastTabletX = x;
++        m_lastTabletY = y;
++        m_lastTabletPressure = pressure;
++        m_lastTabletTiltX = tiltX;
++        m_lastTabletTiltY = tiltY;
++        m_lastTabletRotation = rotation;
++        m_lastTabletTime = time;
++
+         QWindowSystemInterface::handleTabletEvent(tlw, ulong(time),
+             localPos, globalPosF, QTabletEvent::Stylus, pointerType,
+             buttons, pressure, tiltX, tiltY, 0., rotation, 0, deviceId, mapAndroidModifiers(modifiers));
+@@ -482,24 +506,28 @@
+ 
+     static void dispatchTabletMotionEvent(MotionEventWrapper &ev, QTabletEvent::PointerType pointerType)
+     {
+-        const size_t historySize = ev.getHistorySize();
+-        for (size_t historicalIndex = 0; historicalIndex < historySize; ++historicalIndex) {
+-            const float tiltRot =
+-                ev.getHistoricalAxisValue(AMOTION_EVENT_AXIS_TILT, 0, historicalIndex);
+-            const float orientation = ev.getHistoricalAxisValue(
+-                AMOTION_EVENT_AXIS_ORIENTATION, 0, historicalIndex);
+-
+-            const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
+-            const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
+-
+-            const float orientationDegrees = qRadiansToDegrees(orientation);
+-
+-            tabletEvent(ev.getDeviceId(), ev.getHistoricalEventTimeMs(historicalIndex),
+-                        ev.getActionMasked(), pointerType, ev.getButtonState(),
+-                        ev.getHistoricalX(historicalIndex),
+-                        ev.getHistoricalY(historicalIndex),
+-                        ev.getHistoricalPressure(historicalIndex), tiltX, tiltY,
+-                        orientationDegrees, ev.getMetaState());
++        // Xiaomi tablets report complete garbage as their tablet events, they're just the "real"
++        // points connected with a straight line and no pressure interpolation at all.
++        if (!QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)) {
++            const size_t historySize = ev.getHistorySize();
++            for (size_t historicalIndex = 0; historicalIndex < historySize; ++historicalIndex) {
++                const float tiltRot =
++                    ev.getHistoricalAxisValue(AMOTION_EVENT_AXIS_TILT, 0, historicalIndex);
++                const float orientation = ev.getHistoricalAxisValue(
++                    AMOTION_EVENT_AXIS_ORIENTATION, 0, historicalIndex);
++
++                const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
++                const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
++
++                const float orientationDegrees = qRadiansToDegrees(orientation);
++
++                tabletEvent(ev.getDeviceId(), ev.getHistoricalEventTimeMs(historicalIndex),
++                            ev.getActionMasked(), pointerType, ev.getButtonState(),
++                            ev.getHistoricalX(historicalIndex),
++                            ev.getHistoricalY(historicalIndex),
++                            ev.getHistoricalPressure(historicalIndex), tiltX, tiltY,
++                            orientationDegrees, ev.getMetaState());
++            }
+         }
+ 
+         const float tiltRot = ev.getAxisValue(AMOTION_EVENT_AXIS_TILT);
+@@ -1016,24 +1044,74 @@
+         return unicode ? QString(QChar(unicode)) : QString();
+     }
+ 
++    // Xiaomi insanity, their stylus buttons input page up and down key presses.
++    static bool emulateTabletButtonsFromPageUpAndPageDown(
++        int key, jint modifier, jboolean autoRepeat, bool down)
++    {
++        if (!QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)) {
++            return false;
++        }
++
++        if ((m_emulatedPageUpPressed || m_emulatedPageDownPressed) && autoRepeat) {
++            return true;
++        }
++
++        if (!m_haveLastTablet) {
++            return false;
++        }
++
++        int buttonState;
++        switch (key) {
++        case 0x0000005c: // KEYCODE_PAGE_UP
++            buttonState = AMOTION_EVENT_BUTTON_STYLUS_SECONDARY;
++            m_emulatedPageUpPressed = down;
++            break;
++        case 0x0000005d: // KEYCODE_PAGE_DOWN
++            buttonState = AMOTION_EVENT_BUTTON_STYLUS_PRIMARY;
++            m_emulatedPageDownPressed = down;
++            break;
++        default:
++            return false;
++        }
++
++        tabletEvent(
++            m_lastTabletDeviceId,
++            m_lastTabletTime,
++            down ? AMOTION_EVENT_ACTION_DOWN : AMOTION_EVENT_ACTION_UP,
++            m_lastTabletPointerType,
++            buttonState,
++            m_lastTabletX,
++            m_lastTabletY,
++            m_lastTabletPressure,
++            m_lastTabletTiltX,
++            m_lastTabletTiltY,
++            m_lastTabletRotation,
++            modifier);
++        return true;
++    }
++
+     static void keyDown(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
+     {
+-        QWindowSystemInterface::handleKeyEvent(0,
+-                                               QEvent::KeyPress,
+-                                               mapAndroidKey(key),
+-                                               mapAndroidModifiers(modifier),
+-                                               toString(unicode),
+-                                               autoRepeat);
++        if (!emulateTabletButtonsFromPageUpAndPageDown(key, modifier, autoRepeat, true)) {
++            QWindowSystemInterface::handleKeyEvent(0,
++                                                   QEvent::KeyPress,
++                                                   mapAndroidKey(key),
++                                                   mapAndroidModifiers(modifier),
++                                                   toString(unicode),
++                                                   autoRepeat);
++        }
+     }
+ 
+     static void keyUp(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
+     {
+-        QWindowSystemInterface::handleKeyEvent(0,
+-                                               QEvent::KeyRelease,
+-                                               mapAndroidKey(key),
+-                                               mapAndroidModifiers(modifier),
+-                                               toString(unicode),
+-                                               autoRepeat);
++        if (!emulateTabletButtonsFromPageUpAndPageDown(key, modifier, autoRepeat, false)) {
++            QWindowSystemInterface::handleKeyEvent(0,
++                                                   QEvent::KeyRelease,
++                                                   mapAndroidKey(key),
++                                                   mapAndroidModifiers(modifier),
++                                                   toString(unicode),
++                                                   autoRepeat);
++        }
+     }
+ 
+     static void keyboardVisibilityChanged(JNIEnv */*env*/, jobject /*thiz*/, jboolean visibility)

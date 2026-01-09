@@ -46,6 +46,8 @@ private:
 
 int androidLongPressTimeout();
 
+bool androidLooksLikeXiaomiDevice();
+
 #ifdef DRAWPILE_USE_CONNECT_SERVICE
 bool createConnectionNotificationChannel();
 bool shoulShowPostNotificationsRationale();

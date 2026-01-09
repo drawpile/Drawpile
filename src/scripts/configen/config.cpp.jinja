@@ -6,6 +6,9 @@
 #include "libclient/settings.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libshared/net/messagequeue.h"
+#ifdef Q_OS_ANDROID
+#   include "libshared/util/androidutils.h"
+#endif
 
 namespace config {
 

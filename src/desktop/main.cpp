@@ -911,6 +911,26 @@ static StartupOptions initApp(DrawpileApp &app)
 					}));
 #endif
 
+#ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN
+	CFG_BIND_SET_FN(
+		cfg, AndroidWorkaroundEmulateMouseButtonsForPageUpDown, &app,
+		([](bool enabled) {
+			QCoreApplication::setKritaAttribute(
+				KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN,
+				enabled);
+		}));
+#endif
+
+#ifdef KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS
+	CFG_BIND_SET_FN(
+		cfg, AndroidWorkaroundIgnoreHistoricTabletEvents, &app,
+		([](bool enabled) {
+			QCoreApplication::setKritaAttribute(
+				KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS,
+				enabled);
+		}));
+#endif
+
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);

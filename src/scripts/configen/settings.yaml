@@ -1,6 +1,33 @@
 settings:
   # libclient
 
+  - id: androidWorkaroundEmulateMouseButtonsForPageUpDown
+    type: 'bool'
+    default:
+      - value: 'utils::androidLooksLikeXiaomiDevice()'
+        condition: 'defined(Q_OS_ANDROID)'
+      - value: 'false'
+    qsettings: 'settings/androidworkaround/emulatemousebuttonsforpageupdown'
+    legacy_package: 'libclient'
+    condition: 'defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)'
+    comment: |
+      Xiaomi workaround. Their stylus inputs page up and down keys for its
+      buttons. This workaround turns them into mouse button presses instead.
+
+  - id: androidWorkaroundIgnoreHistoricTabletEvents
+    type: 'bool'
+    default:
+      - value: 'utils::androidLooksLikeXiaomiDevice()'
+        condition: 'defined(Q_OS_ANDROID)'
+      - value: 'false'
+    qsettings: 'settings/androidworkaround/ignorehistorictabletevents'
+    legacy_package: 'libclient'
+    condition: 'defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)'
+    comment: |
+      Xiaomi workaround. Their historic tablet events are garbage, they just
+      connect the "real" events with a straight line. This workaround ignores
+      those.
+
   - id: autoRecordHost
     type: 'bool'
     default: 'false'

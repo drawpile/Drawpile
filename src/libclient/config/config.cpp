@@ -6,6 +6,9 @@
 #include "libclient/settings.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libshared/net/messagequeue.h"
+#ifdef Q_OS_ANDROID
+#	include "libshared/util/androidutils.h"
+#endif
 
 namespace config {
 
@@ -35,6 +38,28 @@ int Config::defaultAlphaLockCursor()
 {
 	return int(view::Cursor::SameAsBrush);
 }
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+bool Config::defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown()
+{
+#	if defined(Q_OS_ANDROID)
+	return utils::androidLooksLikeXiaomiDevice();
+#	else
+	return false;
+#	endif
+}
+#endif
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+bool Config::defaultAndroidWorkaroundIgnoreHistoricTabletEvents()
+{
+#	if defined(Q_OS_ANDROID)
+	return utils::androidLooksLikeXiaomiDevice();
+#	else
+	return false;
+#	endif
+}
+#endif
 
 int Config::defaultAnimationExportFormat()
 {

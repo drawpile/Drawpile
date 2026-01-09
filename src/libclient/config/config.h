@@ -4,6 +4,7 @@
 #define LIBCLIENT_CONFIG_CONFIG_H
 #include <QByteArray>
 #include <QColor>
+#include <QCoreApplication>
 #include <QMap>
 #include <QObject>
 #include <QRect>
@@ -233,6 +234,20 @@ public:
 	virtual int getAlphaLockCursor() const = 0;
 	virtual void setAlphaLockCursor(int value) = 0;
 	static int defaultAlphaLockCursor();
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+	virtual bool
+	getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const = 0;
+	virtual void
+	setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value) = 0;
+	static bool defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown();
+#endif
+
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+	virtual bool getAndroidWorkaroundIgnoreHistoricTabletEvents() const = 0;
+	virtual void setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value) = 0;
+	static bool defaultAndroidWorkaroundIgnoreHistoricTabletEvents();
+#endif
 
 	virtual int getAnimationExportFormat() const = 0;
 	virtual void setAnimationExportFormat(int value) = 0;
@@ -1130,6 +1145,12 @@ Q_SIGNALS:
 	void changeActionBar(int value);
 	void changeActionBarLocation(int value);
 	void changeAlphaLockCursor(int value);
+#if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
+	void changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value);
+#endif
+#if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
+	void changeAndroidWorkaroundIgnoreHistoricTabletEvents(bool value);
+#endif
 	void changeAnimationExportFormat(int value);
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
