@@ -33,6 +33,9 @@ namespace tools {
 
 QString ToolController::globalPressureCurveDefault = QStringLiteral("0,0;1,1;");
 
+const QString ToolController::lowPressurePenCurve =
+	QStringLiteral("0,0;0.48,0.96;0.5,1;1,1;");
+
 ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent)
 	, m_toolbox{}

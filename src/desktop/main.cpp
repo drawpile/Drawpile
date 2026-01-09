@@ -15,6 +15,7 @@
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/global.h"
+#include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/colorscheme.h"
 #include "libclient/utils/logging.h"
 #include "libclient/utils/statedatabase.h"
@@ -51,7 +52,6 @@
 #elif defined(Q_OS_ANDROID)
 #	include "libshared/util/androidutils.h"
 #elif defined(__EMSCRIPTEN__)
-#	include "libclient/tools/toolcontroller.h"
 #	include "libclient/wasmsupport.h"
 #endif
 #ifdef HAVE_PROXY_STYLE
@@ -1243,12 +1243,17 @@ extern "C" void drawpileMain(int argc, char **argv)
 	QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, false);
 	QApplication::setAttribute(Qt::AA_CompressTabletEvents, false);
 
-#ifdef __EMSCRIPTEN__
-	if(browser::hasLowPressurePen()) {
-		tools::ToolController::globalPressureCurveDefault =
-			QStringLiteral("0,0;0.48,0.96;0.5,1;1,1;");
-	}
+#if defined(__EMSCRIPTEN__)
+	bool hasLowPressurePen = browser::hasLowPressurePen();
+#elif defined(Q_OS_ANDROID)
+	bool hasLowPressurePen = utils::androidLooksLikeXiaomiDevice();
+#else
+	bool hasLowPressurePen = false;
 #endif
+	if(hasLowPressurePen) {
+		tools::ToolController::globalPressureCurveDefault =
+			tools::ToolController::lowPressurePenCurve;
+	}
 
 	int vsync = 0;
 #ifdef Q_OS_MACOS

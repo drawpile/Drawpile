@@ -92,6 +92,7 @@ public:
 	static constexpr int MAX_SMOOTHING = 20;
 
 	static QString globalPressureCurveDefault;
+	static const QString lowPressurePenCurve;
 
 	explicit ToolController(net::Client *client, QObject *parent = nullptr);
 	~ToolController() override;
