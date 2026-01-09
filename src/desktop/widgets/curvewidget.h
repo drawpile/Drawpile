@@ -18,7 +18,7 @@ public:
 	explicit CurveWidget(QWidget *parent = nullptr);
 
 	CurveWidget(
-		const QString &xTitle, const QString &yTitle, bool,
+		const QString &xTitle, const QString &yTitle, bool linear,
 		QWidget *parent = nullptr);
 
 	~CurveWidget() override;
@@ -47,6 +47,8 @@ public:
 		const QString &xMin, const QString &xMax, const QString &yMin,
 		const QString &yMax);
 
+	void setPressure(bool pressure) { m_pressure = pressure; }
+
 signals:
 	void curveChanged(const KisCubicCurve &curve);
 
@@ -68,6 +70,7 @@ private:
 	QPushButton *m_copyButton;
 	QPushButton *m_pasteButton;
 	QPushButton *m_presetsButton;
+	bool m_pressure = false;
 };
 
 }

@@ -258,7 +258,7 @@ void CurveWidget::pasteCurve()
 void CurveWidget::loadCurve()
 {
 	dialogs::CurvePresetDialog *dlg = new dialogs::CurvePresetDialog(
-		m_curve->curve(), m_curve->mode(), this);
+		m_curve->curve(), m_curve->mode(), m_pressure, this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(dlg, &dialogs::CurvePresetDialog::accepted, this, [this, dlg] {
 		m_curve->setCurve(dlg->curve());

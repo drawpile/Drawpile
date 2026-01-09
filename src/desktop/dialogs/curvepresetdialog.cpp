@@ -4,6 +4,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include "libclient/config/config.h"
+#include "libclient/tools/toolcontroller.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -15,7 +16,7 @@
 namespace dialogs {
 
 CurvePresetDialog::CurvePresetDialog(
-	const KisCubicCurve &current, int mode, QWidget *parent)
+	const KisCubicCurve &current, int mode, bool pressure, QWidget *parent)
 	: QDialog(parent)
 {
 	setModal(true);
@@ -65,7 +66,7 @@ CurvePresetDialog::CurvePresetDialog(
 
 	bool linear = mode == KisCurveWidget::MODE_LINEAR ||
 				  mode == KisCurveWidget::MODE_LINEAR_SEGMENT;
-	loadPresets(current, linear);
+	loadPresets(current, linear, pressure);
 }
 
 CurvePresetDialog::~CurvePresetDialog() {}
@@ -168,12 +169,22 @@ void CurvePresetDialog::deleteCurve()
 	}
 }
 
-void CurvePresetDialog::loadPresets(const KisCubicCurve &current, bool linear)
+void CurvePresetDialog::loadPresets(
+	const KisCubicCurve &current, bool linear, bool pressure)
 {
 	loadSavedPresets();
 	loadFunctionPreset(linear, tr("Smooth Out"), quadraticOut);
 	loadFunctionPreset(linear, tr("Smooth In"), quadraticIn);
 	loadFunctionPreset(linear, tr("Smooth"), quadraticInOut);
+	if(pressure) {
+		KisCubicCurve lowPressureCurve;
+		lowPressureCurve.fromString(tools::ToolController::lowPressurePenCurve);
+		addPreset(
+			//: Apple and Xiaomi are brands. This is referring to pressure
+			//: curves that make sense for their styluses by default.
+			tr("Low-Pressure Stylus (Apple, Xiaomi)"), Builtin,
+			lowPressureCurve);
+	}
 	addPreset(tr("Linear"), Builtin, KisCubicCurve{{{0.0, 0.0}, {1.0, 1.0}}});
 	addPreset(tr("Current (unsaved)"), Unsaved, current);
 	m_presetList->setCurrentRow(0);

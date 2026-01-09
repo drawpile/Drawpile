@@ -62,6 +62,7 @@ void Tablet::initPressureCurve(config::Config *cfg, QFormLayout *form)
 	widgets::CurveWidget *curve = new widgets::CurveWidget(this);
 	curve->setAxisTitleLabels(tr("Stylus"), tr("Output"));
 	curve->setCurveSize(200, 200);
+	curve->setPressure(true);
 	CFG_BIND_SET(
 		cfg, GlobalPressureCurve, curve,
 		widgets::CurveWidget::setCurveFromString);
@@ -83,6 +84,7 @@ void Tablet::initPressureCurve(config::Config *cfg, QFormLayout *form)
 	widgets::CurveWidget *eraserCurve = new widgets::CurveWidget(this);
 	eraserCurve->setAxisTitleLabels(tr("Eraser"), tr("Output"));
 	eraserCurve->setCurveSize(200, 200);
+	eraserCurve->setPressure(true);
 	CFG_BIND_SET(
 		cfg, GlobalPressureCurveEraser, eraserCurve,
 		widgets::CurveWidget::setCurveFromString);

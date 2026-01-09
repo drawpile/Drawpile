@@ -16,7 +16,8 @@ class CurvePresetDialog final : public QDialog {
 	Q_OBJECT
 public:
 	CurvePresetDialog(
-		const KisCubicCurve &current, int mode, QWidget *parent = nullptr);
+		const KisCubicCurve &current, int mode, bool pressure,
+		QWidget *parent = nullptr);
 	~CurvePresetDialog() override;
 
 	KisCubicCurve curve() const;
@@ -31,7 +32,7 @@ private:
 	enum { CurveRole = Qt::UserRole, TypeRole };
 	enum { Unsaved, Saved, Builtin };
 
-	void loadPresets(const KisCubicCurve &current, bool linear);
+	void loadPresets(const KisCubicCurve &current, bool linear, bool pressure);
 	void loadSavedPresets();
 	void
 	loadFunctionPreset(bool linear, const QString &name, double (*f)(double));
