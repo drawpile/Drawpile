@@ -145,7 +145,7 @@ int androidLongPressTimeout()
 {
 	QJniEnvironment env;
 	jint value = QJniObject::callStaticMethod<jint>(
-		"net/drawpile/android/MainActivity", "getLongPressTimeout", "()");
+		"net/drawpile/android/MainActivity", "getLongPressTimeout", "()I");
 	if(clearException(env) || value <= 0) {
 		return 500;
 	} else {
