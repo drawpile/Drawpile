@@ -92,7 +92,8 @@ public:
 	static constexpr int MAX_SMOOTHING = 20;
 
 	static QString globalPressureCurveDefault;
-	static const QString lowPressurePenCurve;
+	static const QString appleStylusPressureCurve;
+	static const QString xiaomiStylusPressureCurve;
 
 	explicit ToolController(net::Client *client, QObject *parent = nullptr);
 	~ToolController() override;

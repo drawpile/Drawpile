@@ -1244,16 +1244,16 @@ extern "C" void drawpileMain(int argc, char **argv)
 	QApplication::setAttribute(Qt::AA_CompressTabletEvents, false);
 
 #if defined(__EMSCRIPTEN__)
-	bool hasLowPressurePen = browser::hasLowPressurePen();
-#elif defined(Q_OS_ANDROID)
-	bool hasLowPressurePen = utils::androidLooksLikeXiaomiDevice();
-#else
-	bool hasLowPressurePen = false;
-#endif
-	if(hasLowPressurePen) {
+	if(browser::hasLowPressurePen()) {
 		tools::ToolController::globalPressureCurveDefault =
-			tools::ToolController::lowPressurePenCurve;
+			tools::ToolController::appleStylusPressureCurve;
 	}
+#elif defined(Q_OS_ANDROID)
+	if(utils::androidLooksLikeXiaomiDevice()) {
+		tools::ToolController::globalPressureCurveDefault =
+			tools::ToolController::xiaomiStylusPressureCurve;
+	}
+#endif
 
 	int vsync = 0;
 #ifdef Q_OS_MACOS

@@ -177,13 +177,17 @@ void CurvePresetDialog::loadPresets(
 	loadFunctionPreset(linear, tr("Smooth In"), quadraticIn);
 	loadFunctionPreset(linear, tr("Smooth"), quadraticInOut);
 	if(pressure) {
-		KisCubicCurve lowPressureCurve;
-		lowPressureCurve.fromString(tools::ToolController::lowPressurePenCurve);
-		addPreset(
-			//: Apple and Xiaomi are brands. This is referring to pressure
-			//: curves that make sense for their styluses by default.
-			tr("Low-Pressure Stylus (Apple, Xiaomi)"), Builtin,
-			lowPressureCurve);
+		KisCubicCurve xiaomiStylusCurve;
+		xiaomiStylusCurve.fromString(
+			tools::ToolController::xiaomiStylusPressureCurve);
+		//: Xiaomi is a brand of Android devices.
+		addPreset(tr("Xiaomi Stylus"), Builtin, xiaomiStylusCurve);
+
+		KisCubicCurve appleStylusCurve;
+		appleStylusCurve.fromString(
+			tools::ToolController::appleStylusPressureCurve);
+		//: Apple is referring to the brand, not the fruit.
+		addPreset(tr("Apple Pencil"), Builtin, appleStylusCurve);
 
 		KisCubicCurve antiStrainCurve;
 		antiStrainCurve.fromString(
