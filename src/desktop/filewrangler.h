@@ -144,6 +144,8 @@ private:
 	bool
 	confirmFlatten(Document *doc, QString &path, DP_SaveImageType &type) const;
 
+	bool confirmOverwrite(const QString &path) const;
+
 	static QString
 	guessExtension(const QString &selectedFilter, const QString &fallbackExt);
 
@@ -207,13 +209,13 @@ private:
 		const QString &title, LastPath type, const QString &ext,
 		utils::FileFormatOptions formats, QString *selectedFilter = nullptr,
 		std::optional<QString> lastPath = {},
-		QString *outIntendedName = nullptr) const;
+		QString *outIntendedName = nullptr, bool confirmOverwrite = true) const;
 
 	QString showSaveFileDialogFilters(
 		const QString &title, LastPath type, const QString &ext,
 		const QStringList &filters, QString *selectedFilter = nullptr,
 		std::optional<QString> lastPath = {},
-		QString *outIntendedName = nullptr) const;
+		QString *outIntendedName = nullptr, bool confirmOverwrite = true) const;
 
 	void showOpenFileContentDialog(
 		const QString &title, LastPath type, const QStringList &filters,

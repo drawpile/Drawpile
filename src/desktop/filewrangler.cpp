@@ -14,6 +14,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QImageReader>
 #include <QLoggingCategory>
 #include <QMessageBox>
@@ -238,23 +239,28 @@ QString FileWrangler::saveImageAs(
 		replaceExtension(lastPath, extension);
 	}
 
-	QString intendedName;
-	QString filename = showSaveFileDialogFilters(
-		exported ? tr("Export Image") : tr("Save Image"), LastPath::IMAGE,
-		extension, filters, &selectedFilter, lastPath, &intendedName);
-	bool haveFilename = !filename.isEmpty();
-	DP_SaveImageType type =
-		haveFilename ? guessType(intendedName) : DP_SAVE_IMAGE_UNKNOWN;
+	while(true) {
+		QString intendedName;
+		QString filename = showSaveFileDialogFilters(
+			exported ? tr("Export Image") : tr("Save Image"), LastPath::IMAGE,
+			extension, filters, &selectedFilter, lastPath, &intendedName,
+			false);
+		bool haveFilename = !filename.isEmpty();
+		DP_SaveImageType type =
+			haveFilename ? guessType(intendedName) : DP_SAVE_IMAGE_UNKNOWN;
 
-	if(haveFilename && (exported || confirmFlatten(doc, filename, type))) {
-		qCDebug(
-			lcDpFileWrangler, "Saving canvas as '%s'",
-			qUtf8Printable(filename));
-		doc->saveCanvasAs(filename, type, exported);
-		return filename;
-	} else {
-		qCDebug(lcDpFileWrangler, "Not saving canvas");
-		return QString{};
+		if(haveFilename && (exported || confirmFlatten(doc, filename, type))) {
+			if(confirmOverwrite(filename)) {
+				qCDebug(
+					lcDpFileWrangler, "Saving canvas as '%s'",
+					qUtf8Printable(filename));
+				doc->saveCanvasAs(filename, type, exported);
+				return filename;
+			}
+		} else {
+			qCDebug(lcDpFileWrangler, "Not saving canvas");
+			return QString{};
+		}
 	}
 }
 
@@ -626,6 +632,31 @@ bool FileWrangler::confirmFlatten(
 		return true;
 	} else {
 		// Save the file as-is.
+		return true;
+	}
+#endif
+}
+
+bool FileWrangler::confirmOverwrite(const QString &path) const
+{
+	// On Android, the operating system creates the file for us, so it
+	// will always exist at this point. In practice, it will always be a
+	// new file, because the OS refuses to overwrite files.
+#ifdef Q_OS_ANDROID
+	Q_UNUSED(path);
+	return true;
+#else
+	QFileInfo fileInfo(path);
+	if(fileInfo.exists()) {
+		QMessageBox box(
+			QMessageBox::Question, tr("Replace Image"),
+			tr("The file %1 already exists, do you want to replace it?")
+				.arg(fileInfo.fileName()),
+			QMessageBox::Yes | QMessageBox::No, parentWidget());
+		box.button(QMessageBox::Yes)->setText(tr("Yes, replace"));
+		box.button(QMessageBox::No)->setText(tr("No, keep"));
+		return box.exec() == QMessageBox::Yes;
+	} else {
 		return true;
 	}
 #endif
@@ -1112,17 +1143,19 @@ QString FileWrangler::showOpenFileDialogFilters(
 QString FileWrangler::showSaveFileDialog(
 	const QString &title, LastPath type, const QString &ext,
 	utils::FileFormatOptions formats, QString *selectedFilter,
-	std::optional<QString> lastPath, QString *outIntendedName) const
+	std::optional<QString> lastPath, QString *outIntendedName,
+	bool confirmOverwrite) const
 {
 	return showSaveFileDialogFilters(
 		title, type, ext, utils::fileFormatFilterList(formats), selectedFilter,
-		lastPath, outIntendedName);
+		lastPath, outIntendedName, confirmOverwrite);
 }
 
 QString FileWrangler::showSaveFileDialogFilters(
 	const QString &title, LastPath type, const QString &ext,
 	const QStringList &filters, QString *selectedFilter,
-	std::optional<QString> lastPath, QString *outIntendedName) const
+	std::optional<QString> lastPath, QString *outIntendedName,
+	bool confirmOverwrite) const
 {
 	qCDebug(
 		lcDpFileWrangler, "showSaveFileDialog type=%d ext='%s' lastPath='%s'",
@@ -1134,6 +1167,7 @@ QString FileWrangler::showSaveFileDialogFilters(
 #ifdef Q_OS_ANDROID
 	Q_UNUSED(title);
 	Q_UNUSED(ext);
+	Q_UNUSED(confirmOverwrite);
 
 	QFileDialog fileDialog(parentWidget());
 	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -1184,12 +1218,22 @@ QString FileWrangler::showSaveFileDialogFilters(
 	if(selectedFilter) {
 		selectedNameFilter = *selectedFilter;
 	}
-	filename =
-		QFileDialog::getSaveFileName(
-			parentWidget(), title,
-			lastPath.has_value() ? lastPath.value() : getLastPath(type, ext),
-			filters.join(QStringLiteral(";;")), &selectedNameFilter)
-			.trimmed();
+
+	{
+		QString dir =
+			lastPath.has_value() ? lastPath.value() : getLastPath(type, ext);
+
+		QFileDialog::Options options;
+		if(!confirmOverwrite) {
+			options.setFlag(QFileDialog::DontConfirmOverwrite);
+		}
+
+		filename =
+			QFileDialog::getSaveFileName(
+				parentWidget(), title, dir, filters.join(QStringLiteral(";;")),
+				&selectedNameFilter, options)
+				.trimmed();
+	}
 #endif
 
 	if(filename.isEmpty()) {

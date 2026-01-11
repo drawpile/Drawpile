@@ -19,6 +19,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make lines not come out all jaggy on Xiaomi devices by ignoring the (wrong) tablet position history. Can be toggled in the tablet preferences. This is a patch to Qt.
  * Fix: Default the global pressure curve on Xiaomi devices to be really steep, because their stylus has a similarly high threshold as Apple Pencils do.
  * Fix: Add "Anti-Strain", "Apple Pencil" and "Xiaomi Stylus" as a preset options for the global pressure curve.
+ * Fix: When saving a file, ask whether to overwrite it after confirming the format to avoid overwriting files unquestioned.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
