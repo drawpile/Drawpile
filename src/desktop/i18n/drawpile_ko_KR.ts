@@ -684,7 +684,7 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
