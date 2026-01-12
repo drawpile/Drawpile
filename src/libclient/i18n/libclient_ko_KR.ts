@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>아바타 없음</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>아바타 추가…</translation>
     </message>
 </context>
 <context>
@@ -19,222 +19,222 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>메모리 할당에 실패했습니다. 일부 브라우저에서는 새로 고침 시 이 문제가 발생할 수 있습니다. 이 페이지와 브라우저를 완전히 닫은 후 다시 시도하세요.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>메모리가 할당되었지만 브라우저가 지원함에도 불구하고 SharedArrayBuffer가 아닙니다. 설정을 변경해야 할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 로고</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>drawpile.net 로그인</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>애플리케이션 불러오는 중</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>시작하는 중…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>시작 중입니다, 잠시만 기다려 주세요…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>리소스 불러오는 중</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>불러오는 중, 시간이 다소 걸릴 수 있습니다…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>준비 중</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>초기화 중입니다, 시간이 다소 걸릴 수 있습니다…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 시작에 실패했습니다: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 중…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>치명적인 오류:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>이는 보통 브라우저가 오래되었거나 채팅 애플리케이션 등에서 제공하는 내장 브라우저로 페이지를 보고 있기 때문에 발생합니다, 정상적으로 열기 위해 브라우저에서 직접 여셔야 합니다, 자세한 내용은 &lt;a href=&quot;#&quot;&gt;이 도움말 페이지&lt;/a&gt;를 확인하세요.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>잘못된 세션 링크입니다.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>이곳에 도달한 경로가 유효한 Drawpile 세션 링크가 아닙니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;앱 내 브라우저:&lt;/strong&gt; Drawpile을 앱 내 브라우저에서 연 것으로 보입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;앱 내 브라우저:&lt;/strong&gt; %1의 앱 내 브라우저에서 Drawpile을 연 것으로 보입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>이는 보통 제대로 작동하지 않으므로, 대신 실제 웹 브라우저에서 이 페이지를 열어 주세요.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않을 수 있는 브라우저:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;호환되지 않을 수 있는 브라우저:&lt;/strong&gt; Linux의 Firefox는 모든 시스템에서 필압 펜을 지원하지 않습니다, 필압이 작동하지 않는 경우 다른 브라우저를 사용하거나 &lt;a href=&quot;#&quot;&gt;기본 Linux 애플리케이션&lt;/a&gt;을 사용하는 것을 고려해 보세요.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;호환되지 않는 브라우저:&lt;/strong&gt; Windows의 Firefox는 Drawpile 실행에 일부 문제가 있습니다. 텍스트 입력 및 Ctrl+Z로 실행 취소가 제대로 작동하지 않을 수 있습니다. 다른 브라우저를 사용하거나 &lt;a href=&quot;#&quot;&gt;기본 Windows 애플리케이션&lt;/a&gt;을 사용하는 것을 고려해 보세요.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;호환되지 않는 브라우저:&lt;/strong&gt; %1의 Chrome은 Drawpile 실행에 일부 문제가 있습니다. 이는 실제로 다른 껍데기에서 실행되는 시스템 브라우저(Safari)이기 때문에, 컨트롤이 화면 밖으로 벗어나는 문제가 발생합니다. 대신 시스템 브라우저(Safari)를 직접 사용하는 것을 고려해 보세요.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>언어:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>여기에서 펜 필압을 테스트하세요</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>마우스 입력이 감지되었습니다, 펜이 아닙니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>터치 입력이 감지되었습니다, 펜이 아닙니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>입력이 감지되었지만, 펜이 아닙니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>펜 필압이 감지되었습니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>펜이 감지되었지만, 필압 변화가 없습니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트를 확인하는 중…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트 확인이 차단되었습니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;경고:&lt;/strong&gt; 이 설치본은 버전 &lt;code&gt;%1&lt;/code&gt;로 &lt;strong&gt;오래되었습니다&lt;/strong&gt;, 최신 버전인 &lt;code&gt;%2&lt;/code&gt;가 아닙니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>페이지를 새로 고쳐 보세요. 그래도 아무 변화가 없다면 서버 소유자에게 업데이트를 요청하세요.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;경고:&lt;/strong&gt; 설치본이 최신 상태인지 여부를 확인할 수 없습니다. 버전 &lt;code&gt;%1&lt;/code&gt;로 오래되었을 수 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>페이지를 새로 고쳐 보세요. 그래도 아무 변화가 없다면 서버 소유자에게 문의하거나, 문제를 확인해 줄 수 있는 사람과 연락하는 방법에 대해서는 &lt;a href=&quot;#&quot;&gt;drawpile.net의 도움말 페이지&lt;/a&gt;를 확인하세요.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>계속 진행할 수는 있지만, 일부 기능이 제대로 작동하지 않을 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>시작</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>계속 시작</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>버전:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>안정판 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>베타 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>참여하려는 세션에는 Drawpile 베타 버전이 필요합니다.</translation>
     </message>
 </context>
 <context>
@@ -243,23 +243,23 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>충돌</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (충돌)</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>단축키</translation>
     </message>
 </context>
 <context>
@@ -267,32 +267,32 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+89"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>잘못된 인자입니다, 이는 Drawpile의 버그일 가능성이 높습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되지 않는 형식입니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스를 하나의 평면 이미지로 병합할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 쓰기 위해 열 수 없습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>저장 작업에 실패했지만, 파일이 부분적으로 작성되었을 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>저장 중 내부 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
