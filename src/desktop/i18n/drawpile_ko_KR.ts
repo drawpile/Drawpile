@@ -574,7 +574,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>참조 이미지</translation>
     </message>
     <message>
         <location line="+173"/>
