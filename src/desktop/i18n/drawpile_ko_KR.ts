@@ -584,7 +584,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>WEBM 동영상 내보내기</translation>
+        <translation>WebM 동영상 내보내기</translation>
     </message>
     <message>
         <location line="+7"/>
