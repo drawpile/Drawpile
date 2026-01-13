@@ -1107,67 +1107,67 @@ Select a regular layer instead.</source>
     <message>
         <location line="-108"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation>어둡게</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighten</source>
-        <translation type="unfinished"></translation>
+        <translation>밝게</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Subtract</source>
-        <translation type="unfinished"></translation>
+        <translation>빼기</translation>
     </message>
     <message>
         <location line="-114"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>지우기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>색 지우기</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Hard Light</source>
-        <translation>더 밝게</translation>
+        <translation>하드 라이트</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Soft Light</source>
-        <translation>부드러운 빛</translation>
+        <translation>소프트 라이트</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>선형 번</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>선형 라이트</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>색조</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>채도</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>광도</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>색상</translation>
     </message>
 </context>
 <context>
@@ -1175,7 +1175,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값</translation>
     </message>
 </context>
 <context>
@@ -1183,7 +1183,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-128"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>전체</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1193,17 +1193,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 여부에 관계없이 모든 브러시를 보여줍니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>아무런 태그도 부여되지 않은 브러시를 보여줍니다.</translation>
     </message>
     <message>
         <location line="+198"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값</translation>
     </message>
     <message>
         <location line="+18"/>
