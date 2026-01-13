@@ -1274,57 +1274,57 @@ Select a regular layer instead.</source>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 파일 &apos;%1&apos;에 JSON 개체가 포함되어 있지 않습니다</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 파일 &apos;%1&apos;의 버전 %d은(는) 유효하지 않습니다</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 파일 &apos;%1&apos;에 유효하지 않은 &apos;color&apos; 설정이 있습니다</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 파일 &apos;%1&apos;에 더 이상 사용되지 않는 &apos;%2&apos; 설정이 있습니다</translation>
     </message>
     <message>
         <location line="+133"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>내보낸 브러시가 없습니다</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>order.conf를 내보낼 수 없습니다</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 쓰기 오류: %2</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 &apos;%1&apos;를 내보낼 수 없습니다</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 %1이(가) 누락되었습니다</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 &apos;%1&apos;를 내보낼 수 없습니다</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 썸네일 &apos;%1&apos;를 내보낼 수 없습니다</translation>
     </message>
 </context>
 <context>
@@ -1456,7 +1456,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>차단한 사람:</translation>
     </message>
 </context>
 <context>
@@ -1464,232 +1464,232 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 %2님에 의해 차단되었습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 %2님에 의해 추방되었습니다.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 서버에 의해 운영자로 지정되었습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 %2님에 의해 운영자로 지정되었습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 서버 관리자가 생성한 초대 코드를 통해 운영자가 되었습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 %2님이 생성한 초대 코드를 통해 운영자가 되었습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 %1님의 운영자 권한을 회수했습니다.</translation>
     </message>
     <message>
         <location line="-644"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>추방당했습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님에 의해 추방당했습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 오류 발생: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 종료됩니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>세션이 종료되었습니다: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>연결이 끊어졌습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>연결 끊어짐: %1</translation>
     </message>
     <message>
         <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>중재자만 일반 차단 목록을 내보낼 수 있습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 오류.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버에는 암호화된 차단 목록 내보내기가 설정되어 있지 않습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 암호화된 차단 목록 내보내기를 지원하지 않습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 가져오기 데이터를 읽을 수 없습니다. 다른 서버에서 내보낸 데이터일 가능성이 높습니다. 차단 목록은 내보낸 서버와 동일한 서버로만 가져올 수 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>가져오기 데이터가 올바르지 않습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>가져오기 데이터 형식이 잘못되었습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버에는 암호화된 차단 목록 가져오기가 설정되어 있지 않습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 암호화된 차단 목록 가져오기를 지원하지 않습니다.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 관리자에 의해 세션 비밀번호가 제거되었습니다. 이 서버는 공개 세션에서 웹 브라우저 접속을 허용하지 않으므로, 브라우저 사용자의 연결이 끊어집니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님에 의해 세션 비밀번호가 제거되었습니다. 이 서버는 공개 세션에서 웹 브라우저 접속을 허용하지 않으므로, 브라우저 사용자의 연결이 끊어집니다.</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 서버 관리자가 생성한 초대 코드를 통해 신뢰 상태가 되었습니다.</translation>
     </message>
     <message>
         <location line="+134"/>
         <source> / </source>
         <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2님이 %1님의 운영자 권한을 회수했습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 용량이 가득 찼습니다! 계속 그리려면 운영자가 세션을 초기화하여 용량을 줄여야 합니다. 이 작업은 &apos;세션 &gt; 초기화&apos;를 통해 수행할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 초기화가 취소되었습니다! 운영자가 수동으로 캔버스 잠금을 해제하고 세션을 초기화해야 합니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 초기화에 실패했습니다! 운영자가 수동으로 캔버스 잠금을 해제하고 세션을 초기화해야 합니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 초기화를 준비 중입니다! 잠시만 기다려 주십시오. 곧 다시 이용할 수 있습니다…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 세션 초기화를 준비 중입니다! 잠시만 기다려 주십시오. 곧 다시 이용할 수 있습니다…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 캔버스를 압축 중입니다! 잠시만 기다려 주십시오. 곧 다시 이용할 수 있습니다…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 캔버스를 교체 중입니다! 잠시만 기다려 주십시오. 곧 다시 이용할 수 있습니다…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 캔버스를 이전 상태로 되돌리는 중입니다! 잠시만 기다려 주십시오. 곧 다시 이용할 수 있습니다…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>중재자(%1)에 의해 세션이 종료되었습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>관리자에 의해 세션이 종료됨: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>중재자(%1)에 의해 세션이 종료됨: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 서버에 의해 신뢰 상태가 되었습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 %2님에 의해 신뢰 상태가 되었습니다.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1님이 %2님이 생성한 초대 코드를 통해 신뢰 상태가 되었습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 %1님의 신뢰 상태를 해제했습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2님이 %1님의 신뢰 상태를 해제했습니다.</translation>
     </message>
 </context>
 <context>
@@ -1697,60 +1697,60 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 코드가 없습니다. &apos;생성&apos;을 클릭하여 추가하세요.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%2님이 %1에 사용함</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%2님이 %1에 생성함</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>운영자 및 신뢰됨</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>운영자</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>신뢰됨</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>코드</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>생성자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>역할</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>사용 횟수</translation>
     </message>
 </context>
 <context>
@@ -1759,7 +1759,7 @@ Select a regular layer instead.</source>
         <location filename="../net/login.cpp" line="+126"/>
         <location line="+752"/>
         <source>Invalid state</source>
-        <translation type="unfinished"></translation>
+        <translation>잘못된 상태</translation>
     </message>
     <message>
         <location line="-687"/>
@@ -1771,235 +1771,235 @@ Select a regular layer instead.</source>
         <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않는 서버</translation>
     </message>
     <message>
         <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished"></translation>
+        <translation>서버의 Drawpile 버전이 다릅니다!</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>리디렉션을 허용하지 않는 서버로 리디렉션되었습니다: %1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 세션 참가를 위한 로그인 방법을 제공하지 않습니다!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 세션 호스팅을 위한 로그인 방법을 제공하지 않습니다!</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 지원되지 않는 소켓에서 STARTTLS를 요구합니다.</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 정보를 가져오지 못했습니다</translation>
     </message>
     <message>
         <location line="+69"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 찾기 실패</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않는 리디렉션</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>순환 리디렉션</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation type="unfinished"></translation>
+        <translation>리디렉션이 너무 많음</translation>
     </message>
     <message>
         <location line="+108"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 게스트 로그인을 허용하지 않습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot;(으)로 로그인하려면 비밀번호가 필요합니다</translation>
     </message>
     <message>
         <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>인증 서버 오류: %1</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>그룹 멤버십이 필요합니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>예상치 못한 외부 인증 응답: %1</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>올바르지 않은 ident intent 응답입니다.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 설정 오류: 올바르지 않은 외부 인증 URL</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되지 않는 외부 인증 URL 스킴</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 두 개의 서로 다른 외부 인증 URL을 보고했습니다</translation>
     </message>
     <message>
         <location line="+199"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>새 버전</translation>
     </message>
     <message>
         <location line="-42"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>세션이 아직 시작되지 않았습니다!</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>자녀 보호 기능에 의해 차단됨</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>다른 Drawpile 버전(%1)의 세션이 진행 중입니다!</translation>
     </message>
     <message>
         <location line="+233"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>이 종류의 소켓에서는 TLS가 지원되지 않습니다</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS 오류 무시 상태를 설정할 수 없습니다</translation>
     </message>
     <message>
         <location line="+32"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>호스트 %1의 SSL 인증서가 올바르지 않습니다</translation>
     </message>
     <message>
         <location line="-1049"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>고정된 인증서가 있는 호스트에서 보안 모드가 활성화되지 않았습니다!</translation>
     </message>
     <message>
         <location line="+727"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 버전 %1</translation>
     </message>
     <message>
         <location line="+304"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>고정된 인증서가 변경되었습니다!</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>취소됨</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>세션을 찾을 수 없습니다!</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation>올바르지 않은 사용자 이름입니다!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 잠겨 있습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation>이미 사용 중인 이름입니다!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished"></translation>
+        <translation>세션이 닫혀 있습니다!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 가득 찼습니다!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>호스팅 권한이 없습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션에서 차단되었습니다!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 별칭이 이미 예약되어 있습니다!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>일반적으로 Drawpile 버전이 너무 낮음을 의미합니다. 업데이트가 필요하신가요?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>세션을 찾을 수 없습니다. 종료되었거나 초대 링크가 변경되었을 수 있습니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 직접 링크를 통한 세션 참가만 허용합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>올바르지 않은 호스트 이름입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>이곳에서는 공개 세션을 호스팅할 수 없으며, 개인 세션만 허용됩니다. 세션 탭에서 공개를 개인으로 전환할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>클라이언트가 명령을 직렬화하는 데 실패했습니다</translation>
     </message>
 </context>
 <context>
@@ -2007,141 +2007,141 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(제목 없음)</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (호환되지 않음)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (호환 모드)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (minor incompatibility)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (사소한 호환성 문제)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (완전 호환)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>비공개 목록</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않는 버전</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>닫힘 (웹 브라우저 참가 허용 안 함)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>닫힘 (WebSocket 참가 허용 안 함)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>닫힘 (게스트 로그인 차단됨)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>닫힘 (새 로그인 차단됨)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 비밀번호 필요함</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>미성년자에게 부적합함 (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 그리는 중인 사용자 수를 알 수 없음</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n명의 사용자가 그리는 중</numerusform>
         </translation>
     </message>
     <message>
         <location line="+70"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>제목</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation>시작한 사람</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>활성</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>세션이 가득 찼거나 닫혀 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>계정이 필요합니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>웹 브라우저를 통한 참가를 허용하지 않습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>WebSockets를 통한 참가를 허용하지 않습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>더 최신 버전의 Drawpile로 호스팅되고 있습니다. 업데이트가 필요합니다. 만약 업데이트가 없다면 개발 버전으로 호스팅 중일 수 있습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않는 이전 버전의 Drawpile로 호스팅되고 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않는 프로토콜로 호스팅되고 있습니다.</translation>
     </message>
 </context>
 <context>
@@ -2149,7 +2149,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>프록시를 사용할 의도가 없다면 Drawpile 환경 설정의 &apos;네트워크&apos; 탭에서 네트워크 프록시를 비활성화할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2164,34 +2164,34 @@ Select a regular layer instead.</source>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 쓰기 오류</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 쓰기 오류: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 연결 시간 초과됨</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Received invalid data</source>
-        <translation type="unfinished"></translation>
+        <translation>올바르지 않은 데이터를 수신함</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>소켓 오류 %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (오류 %2)</translation>
     </message>
 </context>
 <context>
@@ -2199,7 +2199,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/freehand.cpp" line="+146"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>넘침 방지 기능을 사용하려면 채우기 소스 레이어가 필요합니다.</translation>
     </message>
 </context>
 <context>
@@ -2207,7 +2207,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>그라데이션을 만들려면 드래그해야 합니다.</translation>
     </message>
 </context>
 <context>
@@ -2215,27 +2215,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+423"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역을 변형할 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스가 없습니다.</translation>
     </message>
     <message>
         <location line="-253"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>해당 변형을 수행할 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역을 스탬프로 찍을 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>변형할 선택 영역이 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -2243,7 +2243,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값</translation>
     </message>
 </context>
 <context>
