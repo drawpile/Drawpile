@@ -1332,57 +1332,57 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>중재자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>운영자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>신뢰 가능자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>등록된 자</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>온라인</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>오프라인</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>유저</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>타입</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>상태</translation>
     </message>
     <message>
         <location line="+190"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>서버</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>유저 #%1</translation>
     </message>
 </context>
 <context>
@@ -1391,13 +1391,13 @@ Select a regular layer instead.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>프레임 %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>프레임 %1</translation>
     </message>
 </context>
 <context>
@@ -1405,27 +1405,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>중재자</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>운영자</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>신뢰 가능</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>유저</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>역할</translation>
     </message>
 </context>
 <context>
@@ -1434,23 +1434,23 @@ Select a regular layer instead.</source>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>유저</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>IP 주소</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>클라이언트 정보</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2154,12 +2154,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크상 오류 읽힘</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크상 오류 읽힘: %1</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2305,22 +2305,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 web.drawpile.net의 공식 클라이언트을 사용하고 있지 않습니다. 대부분의 서버는 타 방식의 접속을 허용하지 않습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 주소가 유효한 WebSocket URL 형식이 아닙니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>올바른 도메인 이름이 아닌 IP 주소로 서버 연결을 시도하고 있습니다. 이 방식은 브라우저에서 별도로 허용하지 않으면 정상적으로 연결되지 않습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 웹 브라우저를 통한 접속을 지원하지 않을 수도 있습니다.</translation>
     </message>
 </context>
 </TS>
