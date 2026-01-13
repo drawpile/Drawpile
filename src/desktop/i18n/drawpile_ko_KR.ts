@@ -1319,7 +1319,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>변경사항 검토…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1338,61 +1338,61 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+120"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>세션에서 연결을 끊습니다</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>저장되지 않은 변경사항을 잃습니다</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>녹화를 중지합니다</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>재생을 폐기합니다</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>그렇게 하면 %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>그렇게 하면 %1 및 %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>그렇게 하면 %1, %2 및 %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>그렇게 하면 %1, %2, %3 및 %4.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>계속하시겠습니까?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>예, 계속</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>아니요, 취소</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -1404,12 +1404,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="-2433"/>
         <location line="+4420"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>다시 내보내기</translation>
     </message>
     <message>
         <location line="-4416"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1로 다시 내보내기</translation>
     </message>
     <message>
         <location line="+483"/>
@@ -1498,22 +1498,22 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+113"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>새로 만들기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>새 캔버스를 만들고 이 창을 닫으려 합니다.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>최근 파일 열기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>최근 파일을 열고 이 창을 닫으려 합니다.</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1528,7 +1528,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>새 파일을 열고 이 창을 닫으려 합니다.</translation>
     </message>
     <message>
         <location line="+1614"/>
@@ -1568,12 +1568,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+6"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>오래된 버전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션은 더 최신 버전의 Drawpile로 호스팅되었습니다. 다른 사용자가 아직 당신의 버전에 없는 새 기능을 사용할 때 그 효과가 보이지 않으며, 캔버스를 압축하거나 재설정할 수 없습니다. 업데이트는 &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt;에서 확인하십시오.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1659,7 +1659,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+195"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>이미 세션에 연결되어 있습니다! 호스트하려면 먼저 연결을 끊으십시오.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1679,54 +1679,55 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+198"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>다시 연결</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>저장되지 않은 변경사항이 있습니다, 다시 연결하기 전에 저장하시겠습니까?</translation>
     </message>
     <message>
         <location line="-2211"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>프레임 보기 모드로 전환했습니다.
+보기 메뉴 또는 타임라인에서 나갈 수 있습니다.</translation>
     </message>
     <message>
         <location line="+2203"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드가 성공적으로 완료되었습니까?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>저장되지 않은 변경사항이 있습니다, 다시 연결하기 전에 다운로드하시겠습니까?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>저장되지 않은 변경사항이 있습니다, 다시 연결하기 전에 저장하시겠습니까, 아니면 새 창에서 다시 연결하시겠습니까?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>아니요, 다시 시도</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>예, 다시 연결</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>새 창</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -1772,12 +1773,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="-3410"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 참가</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>새 세션에 연결하고 이 창을 닫으려 합니다.</translation>
     </message>
     <message>
         <location line="+181"/>
@@ -1812,33 +1813,33 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스에 데이터가 너무 많습니다, 서버 제한은 %1 MB입니다. 레이어를 일부 병합하거나 삭제하여 캔버스를 단순화하십시오.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>재설정하려는 캔버스에 데이터가 너무 많습니다, 서버 제한은 %1 MB입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>재설정 이미지가 너무 큼</translation>
     </message>
     <message>
         <location line="+444"/>
         <source>Cr&amp;op canvas to transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>변형에 맞게 캔버스 자르기…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역에 맞게 캔버스 자르기…</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>이미지를 불러올 수 없습니다: %1.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1929,7 +1930,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>디버그 덤프를 열고 이 창을 닫으려 합니다.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1984,7 +1985,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>탭에 아이콘 표시</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2036,12 +2037,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>DPCS로 다&amp;른 이름으로 저장…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>ORA로 다&amp;른 이름으로 저장…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2214,22 +2215,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+163"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>그리기 도구 모음 구성…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>항상 측면 도구 모음 표시</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>항상 하단 도구 모음 표시</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>왼손잡이 모드</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2329,82 +2330,82 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 마스크 &amp;색상 설정…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 마스크의 색조를 변경합니다</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 표시</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>왼쪽 위</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 왼쪽 위</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>위</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 위</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>오른쪽 위</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 오른쪽 위</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>왼쪽 아래</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 왼쪽 아래</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>아래</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 아래</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>오른쪽 아래</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 오른쪽 아래</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>화면에 맞추기(&amp;F)</translation>
     </message>
     <message>
         <location line="+170"/>
@@ -2419,7 +2420,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 내 보기 모드 알림</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -2459,7 +2460,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Selection Action Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄 위치</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2469,72 +2470,72 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 자동 상속</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>혼합 모드에 따라 알파를 상속하고 유지합니다</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Alpha lock layer for you</source>
-        <translation type="unfinished"></translation>
+        <translation>나에게 레이어 알파 잠금</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>검열 레이어</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Block layer (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>차단 레이어(나에게 검열)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 전체 잠금</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 내용 잠금</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 속성 잠금</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 위치 잠금</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 체크 상태 전환(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>모두 체크(&amp;C)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>모두 체크 해제(&amp;U)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 색상 표시</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금(&amp;L)</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -2549,17 +2550,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+27"/>
         <source>Selection Lightness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 밝기를 알파로</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection Darkness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 어두움을 알파로</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cr&amp;op canvas to selection/transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택/변형에 맞게 캔버스 자르기…</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -2584,42 +2585,42 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Dra&amp;w on Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역에 그리기(&amp;W)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역으로 스트로크/올가미 채우기 마스킹(&amp;K)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 스트로크를 선택 마스크 안에 유지합니다</translation>
     </message>
     <message>
         <location line="+125"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation>프레임 범위 또는 FPS 변경...</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Increase Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 트랙의 노출 늘리기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Increase Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>보이는 모든 트랙의 노출 늘리기</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Decrease Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 트랙의 노출 줄이기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Decrease Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>보이는 모든 트랙의 노출 줄이기</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2639,7 +2640,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Key Frame Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 색상 표시</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2649,35 +2650,36 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+679"/>
         <source>Disable view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>보기 모드 알림 비활성화</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 보기 모드 알림이 비활성화되었습니다.
+보기 메뉴 또는 환경설정에서 다시 활성화할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>표시줄 위치</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disable This Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>이 표시줄 비활성화</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>반전</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand/Shrink</source>
         <extracomment>Refers to expanding or shrinking the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>확장/축소</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2688,37 +2690,38 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>미러</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>뒤집기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>-90° 회전</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+90° 회전</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 작업 표시줄이 비활성화되었습니다.
+보기 메뉴에서 다시 활성화할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+604"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>버그를 보고하거나 기능을 제안하려면, [여기를 확인하십시오].</translation>
     </message>
     <message>
         <location line="-2526"/>
@@ -2749,67 +2752,67 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="-4230"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation type="unfinished"></translation>
+        <translation>요청한 브러시는 다른 사용자가 사용할 수 없도록 되어 있습니다.</translation>
     </message>
     <message>
         <location line="+584"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 로드 시간 %1:%2.%3</translation>
     </message>
     <message>
         <location line="+204"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>이미지 저장 시간 %1:%2.%3</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 내보내기 실패</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션을 내보낼 수 없습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션을 내보냈습니다</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 내보내기 시간 %1:%2.%3</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+17"/>
         <location line="+11"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일이 비어 있습니다.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Error setting up download.</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 설정 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error performing download.</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 수행 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션은 더 이전 버전의 Drawpile로 호스팅되었습니다. 레이어 클리핑, 일부 혼합 모드, 선택 마스크 안에서 그리기 등 여러 기능을 사용할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+528"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 크기가 너무 커서 호스팅할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+596"/>
@@ -2834,7 +2837,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1640"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>독 배치</translation>
     </message>
     <message>
         <location line="+543"/>
@@ -3049,7 +3052,7 @@ You can re-enable it via the View menu.</source>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 &amp;스케치 모드 전환</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
@@ -3084,7 +3087,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어를 선택 영역으로(&amp;L)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3320,22 +3323,22 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+62"/>
         <source>Lass&amp;o Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>올가미 채우기(&amp;O)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill enclosed areas</source>
-        <translation type="unfinished"></translation>
+        <translation>둘러싸인 영역 채우기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>그라디언트(&amp;G)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 영역 안에 그라디언트를 만듭니다</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3391,17 +3394,17 @@ You can re-enable it via the View menu.</source>
         <location line="+32"/>
         <source>%1 and Deselect</source>
         <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 및 선택 해제</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Switch tool to %1 and deselect at once</source>
-        <translation type="unfinished"></translation>
+        <translation>도구를 %1로 전환하고 동시에 선택을 해제합니다</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Deselect Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 해제 단축키</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3416,12 +3419,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 유지 전환</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>재색칠 모드/알파 유지 전환</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3446,22 +3449,22 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+10"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 불투명도 줄이기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 불투명도 늘리기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decrease Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 경도 줄이기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 경도 늘리기</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3511,7 +3514,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+82"/>
         <source>Tool blend mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 혼합 모드: %1</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -3988,27 +3991,27 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>열기(&amp;O)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Start…</source>
-        <translation type="unfinished"></translation>
+        <translation>시작(&amp;S)…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>&amp;Host…</source>
-        <translation type="unfinished"></translation>
+        <translation>호스트(&amp;H)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Join…</source>
-        <translation type="unfinished"></translation>
+        <translation>참가(&amp;J)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>찾아보기(&amp;B)…</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4027,17 +4030,17 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+247"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>없음</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 표시 해제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 표시 해제</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4047,12 +4050,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 파란색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame blue</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 파란색으로 표시</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4062,57 +4065,57 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 초록색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame green</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 초록색으로 표시</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>노란색</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 노란색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 노란색으로 표시</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>주황색</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 주황색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame orange</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 주황색으로 표시</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>갈색</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 갈색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame brown</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 갈색으로 표시</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4122,42 +4125,42 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 빨간색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame red</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 빨간색으로 표시</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>보라색</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 보라색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame purple</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 보라색으로 표시</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>회색</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 회색으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 회색으로 표시</translation>
     </message>
 </context>
 <context>
@@ -4331,12 +4334,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>올가미 채우기</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>그라디언트</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4575,12 +4578,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+32"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>새 참가 차단</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>참가에 등록된 계정 필요</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4598,41 +4601,41 @@ You can re-enable it via the View menu.</source>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>운영자: </translation>
     </message>
     <message>
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>신뢰됨: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>피그먼트 및 OKLAB 브러시:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>등록됨: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 크기 제한:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>모두: </translation>
     </message>
     <message>
         <location line="-30"/>
@@ -4713,7 +4716,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+112"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 개수 제한:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -4723,7 +4726,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>차단 관리는 운영자만 할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -4821,7 +4824,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>렌더링</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5267,7 +5270,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>플립북에서 미리보기 중인 내용으로 입력을 설정합니다</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5401,12 +5404,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../dialogs/animationpropertiesdialog.cpp" line="+19"/>
         <source>Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 속성</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5416,12 +5419,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+10"/>
         <source>First frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>첫 프레임:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Last frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>마지막 프레임:</translation>
     </message>
 </context>
 <context>
@@ -5429,99 +5432,99 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+24"/>
         <source>Color Circle Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 원 설정</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 색조</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>색조 단계: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>색조 각도: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 채도</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>채도 단계: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 휘도</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>휘도 단계: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 포화도</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>포화도 단계: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 명도</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>명도 단계: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 값</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>값 단계: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>없음</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>색역 마스크:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>마스크 각도: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>마스크 불투명도: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5532,49 +5535,49 @@ You can re-enable it via the View menu.</source>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>강조가 있는 대기</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>대기 삼색 조합</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>보색</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>강조가 있는 지배 색조</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>변형된 삼색 조합</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>분할</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>분할 보색</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>사색 조합</translation>
     </message>
 </context>
 <context>
@@ -5589,7 +5592,7 @@ You can re-enable it via the View menu.</source>
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>이미지를 읽을 수 없습니다: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5680,12 +5683,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>세션의 다른 사용자가 이 브러시를 사용할 수 있도록 허용</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>공유:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5763,25 +5766,25 @@ You can re-enable it via the View menu.</source>
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>직접 누적</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>간접 워시</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>간접 소프트(Drawpile 2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>간접 누적(Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5807,12 +5810,12 @@ You can re-enable it via the View menu.</source>
         <location line="+19"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+22"/>
         <source>Pixel art input</source>
-        <translation type="unfinished"></translation>
+        <translation>픽셀 아트 입력</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>즉시 픽셀을 그릴 수 있도록 모든 스무딩과 안정화를 비활성화합니다.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5872,17 +5875,17 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="-482"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>넘침 방지</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Anti-overflow fill settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>넘침 방지 채우기 설정.</translation>
     </message>
     <message>
         <location line="+397"/>
         <source>Enable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>넘침 방지 활성화</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5950,23 +5953,24 @@ You can re-enable it via the View menu.</source>
         <location line="-451"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="-13"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>투명도와 함께 문지르기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>이를 활성화하면 문지르기가 알파 채널을 고려합니다.
+이를 비활성화하면 동작이 Drawpile 2.3 이전과 같이 되돌아갑니다.</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>지터: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>최소 지터: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6007,7 +6011,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>크기, 불투명도, 경도, 문지르기, 지터의 최대 속도를 한 번에 설정합니다.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -6017,7 +6021,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>크기, 불투명도, 경도, 문지르기, 지터의 최대 거리를 한 번에 설정합니다.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -6027,44 +6031,45 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+98"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>간접 페인트 모드에서는 사용할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>간접 페인트 모드이거나 일반 이외의 혼합 모드를 사용할 때는 사용할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>간접 페인트 모드이거나 마커 또는 더 큰 밀도 혼합 모드를 사용할 때는 사용할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>문지르기 동기화(느리지만 더 정확함)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 옵션은 브러시가 자신의 스트로크가 끝날 때까지 기다리게 하여, 스스로를 정확하게 문지르도록 합니다.
+빠른 스트로크가 문지르기 시 아티팩트를 만들면, 이를 활성화하면 도움이 될 수 있습니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+9"/>
         <source>Pixel-perfect</source>
-        <translation type="unfinished"></translation>
+        <translation>픽셀 완벽</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>L자 형태의 곡선을 방지합니다, 주로 작은 픽셀 브러시에 유용합니다.</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>스트로크 중심에 무작위 오프셋을 적용합니다.</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -6074,12 +6079,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+182"/>
         <source>The session you&apos;re in is hosted with an older version of Drawpile, anti-overflow is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 세션은 이전 버전의 Drawpile로 호스팅되어, 넘침 방지를 사용할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-overflow makes brush strokes stay inside of lines automatically. Set your lines layer as the fill source and then draw on another layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>넘침 방지는 브러시 스트로크가 선 안에 자동으로 머물게 합니다. 선 레이어를 채우기 소스로 설정한 다음 다른 레이어에 그리십시오.</translation>
     </message>
     <message>
         <location line="-683"/>
@@ -6089,7 +6094,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-427"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 유지</translation>
     </message>
     <message>
         <location line="+935"/>
@@ -6152,17 +6157,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+81"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>블렌딩: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>최소 블렌딩: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>블렌딩</translation>
     </message>
     <message>
         <location line="+141"/>
@@ -6949,7 +6954,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>서로 위에 여러 dab를 혼합하여 도입되는 비선형성을 보정합니다. 이 보정은 일반적으로 수행되듯 압력이 opaque_multiply에 매핑될 때 선형(&quot;자연&quot;) 압력 반응을 얻도록 합니다. 0.9는 표준 스트로크에 적합하며, 브러시가 많이 흩어지면 더 작게, dabs_per_second를 사용하면 더 크게 설정하십시오.
+0.0 위의 opaque 값은 개별 dab에 대한 것입니다
+1.0 위의 opaque 값은 최종 브러시 스트로크에 대한 것으로, 스트로크 중 각 픽셀이 평균적으로 (dabs_per_radius*2)개의 brushdab을 받는다고 가정합니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6958,14 +6965,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>기본 브러시 반경(로그)
+ 0.7은 2 픽셀
+ 3.0은 20 픽셀</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>단단한 브러시 원형 테두리(0으로 설정하면 아무것도 그리지 않습니다). 최대 경도에 도달하려면 픽셀 페더를 비활성화해야 합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6975,7 +6984,10 @@ This setting is responsible to stop painting when there is zero pressure. This i
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>이 설정은 필요할 때 dab를 더 흐리게 만들어 픽셀 계단 효과(앨리어싱)를 방지하도록 경도를 낮춥니다.
+ 0.0 비활성화(매우 강한 지우개와 픽셀 브러시용)
+ 1.0 1픽셀 블러(좋은 값)
+ 5.0 눈에 띄는 블러, 얇은 스트로크는 사라집니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6989,7 +7001,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>위와 동일하지만, 실제로 그려진 반경을 사용하며 이는 동적으로 변경될 수 있습니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7005,7 +7017,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>각 dab의 반경을 무작위로 변경합니다. 반경 설정에서 by_random 입력으로도 할 수 있습니다. 여기서 수행하면 두 가지 차이가 있습니다:
+1) 큰 반경의 dab가 더 투명해지도록 opaque 값이 보정됩니다
+2) dabs_per_actual_radius가 보는 실제 반경은 변경되지 않습니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7013,14 +7027,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>정밀 속도 입력이 실제 속도를 얼마나 느리게 따라가는지
+0.0 속도 변화에 즉시 반응(권장하지는 않지만 시도해 보십시오)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&apos;정밀 속도 필터&apos;와 동일하지만, 범위가 다릅니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7030,14 +7045,17 @@ This setting is responsible to stop painting when there is zero pressure. This i
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>이는 극단적인 물리적 속도에 대한 &apos;정밀 속도&apos; 입력의 반응을 변경합니다. &apos;정밀 속도&apos;가 반경에 매핑되어 있을 때 차이가 가장 잘 보입니다.
+-8.0 매우 빠른 속도에서도 &apos;정밀 속도&apos;가 크게 증가하지 않습니다
++8.0 매우 빠른 속도에서 &apos;정밀 속도&apos;가 크게 증가합니다
+매우 느린 속도에서는 반대로 동작합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>전체 속도에 대한 &apos;정밀 속도 감마&apos;와 동일</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7047,7 +7065,10 @@ For very slow speed the opposite happens.</source>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>각 dab가 그려지는 위치에 무작위 오프셋을 추가합니다
+ 0.0 비활성화
+ 1.0 표준 편차는 기본 반경 1개입니다
+&lt;0.0 음수 값은 지터를 생성하지 않습니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7057,42 +7078,45 @@ For very slow speed the opposite happens.</source>
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>포인터 속도에 따라 위치를 변경합니다
+= 0 비활성화
+&gt; 0 포인터가 이동하는 위치에 그립니다
+&lt; 0 포인터가 출발한 위치에 그립니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>커서가 움직임을 멈출 때 오프셋이 0으로 돌아가는 속도</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>포인터 추적 속도를 느리게 합니다. 0은 비활성화이며, 값이 높을수록 커서 움직임의 지터를 더 많이 제거합니다. 부드럽고 만화 같은 외곽선을 그리는 데 유용합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>위와 유사하지만 brushdab 수준에서 동작합니다(brushdab이 시간에 의존하지 않으면 경과 시간을 무시합니다)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>마우스 포인터에 무작위성을 추가합니다, 이는 보통 무작위 방향으로 많은 작은 선을 생성합니다, &apos;느린 추적&apos;과 함께 시도해 보십시오</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>색상 값(밝기, 강도)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7102,7 +7126,10 @@ For very slow speed the opposite happens.</source>
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>브러시를 선택할 때, 색상을 브러시가 저장될 때의 색으로 복원할 수 있습니다.
+ 0.0 이 브러시를 선택해도 활성 색상을 변경하지 않습니다
+ 0.5 활성 색상을 브러시 색상 쪽으로 변경합니다
+ 1.0 선택 시 활성 색상을 브러시 색상으로 설정합니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7112,7 +7139,10 @@ For very slow speed the opposite happens.</source>
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>색조를 변경합니다.
+-0.1 시계 방향으로 약간 색조 이동
+ 0.0 비활성화
+ 0.5 반시계 방향으로 180도 색조 이동</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7122,7 +7152,10 @@ For very slow speed the opposite happens.</source>
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL 색상 모델을 사용하여 색상의 명도를 변경합니다.
+-1.0 더 검게
+ 0.0 비활성화
+ 1.0 더 하얗게</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7132,7 +7165,10 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL 색상 모델을 사용하여 채도를 변경합니다.
+-1.0 더 회색빛
+ 0.0 비활성화
+ 1.0 더 선명하게</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7142,7 +7178,10 @@ For very slow speed the opposite happens.</source>
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV 색상 모델을 사용하여 색상 값(밝기, 강도)을 변경합니다. HSV 변경은 HSL보다 먼저 적용됩니다.
+-1.0 더 어둡게
+ 0.0 비활성화
+ 1.0 더 밝게</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7152,7 +7191,10 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV 색상 모델을 사용하여 채도를 변경합니다. HSV 변경은 HSL보다 먼저 적용됩니다.
+-1.0 더 회색빛
+ 0.0 비활성화
+ 1.0 더 선명하게</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7162,7 +7204,10 @@ For very slow speed the opposite happens.</source>
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>브러시 색상 대신 문지르기 색상으로 칠합니다. 문지르기 색상은 칠하고 있는 색으로 서서히 바뀝니다.
+ 0.0 문지르기 색상을 사용하지 않습니다
+ 0.5 문지르기 색상을 브러시 색상과 섞습니다
+ 1.0 문지르기 색상만 사용합니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7172,7 +7217,10 @@ For very slow speed the opposite happens.</source>
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>문지르기 색상이 칠하고 있는 색으로 얼마나 빠르게 바뀌는지 제어합니다.
+0.0 문지르기 색상을 즉시 업데이트(잦은 색상 확인으로 CPU 사이클이 더 필요함)
+0.5 문지르기 색상을 일정하게 캔버스 색상 쪽으로 변경
+1.0 문지르기 색상을 변경하지 않음</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7183,7 +7231,11 @@ For very slow speed the opposite happens.</source>
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>문지르기용 색상을 가져오는 원의 반경을 수정합니다.
+ 0.0 브러시 반경 사용
+-0.7 브러시 반경의 절반(빠르지만 항상 직관적이지는 않음)
++0.7 브러시 반경의 2배
++1.6 브러시 반경의 5배(성능 저하)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7193,21 +7245,24 @@ For very slow speed the opposite happens.</source>
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>이 도구가 지우개처럼 동작하는 정도
+ 0.0 일반 페인팅
+ 1.0 표준 지우개
+ 0.5 픽셀이 50% 투명도 쪽으로 이동합니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>스트로크를 시작하는 데 필요한 압력의 정도입니다. 이는 스트로크 입력에만 영향을 줍니다. MyPaint는 그리기를 시작하는 데 최소 압력을 필요로 하지 않습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>스트로크 입력이 1.0에 도달할 때까지 얼마나 이동해야 하는지입니다. 이 값은 로그이며(음수 값은 과정을 반대로 만들지 않습니다).</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7216,7 +7271,9 @@ For very slow speed the opposite happens.</source>
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>스트로크 입력이 1.0에 머무르는 시간을 정의합니다. 이후에는 스트로크가 아직 완료되지 않았더라도 0.0으로 재설정되고 다시 증가하기 시작합니다.
+2.0은 0.0에서 1.0으로 이동하는 데 걸리는 시간의 2배를 의미합니다
+9.9 이상은 무한을 의미합니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7224,7 +7281,8 @@ For very slow speed the opposite happens.</source>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>사용자 정의 입력을 이 값으로 설정합니다. 둔화가 적용된 경우, 이 값 쪽으로 이동합니다(아래 참조). 아이디어는 이 입력이 압력/속도/기타의 혼합에 의존하도록 만든 다음, 필요한 모든 곳에서 이 조합을 반복하는 대신 다른 설정들이 이 &apos;사용자 정의 입력&apos;에 의존하도록 만드는 것입니다.
+&apos;by random&apos;으로 변경되게 하면 느린(부드러운) 무작위 입력을 생성할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7232,14 +7290,15 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>사용자 정의 입력이 실제로 원하는 값(위의 값)을 얼마나 느리게 따라가는지입니다. 이는 brushdab 수준에서 발생합니다(brushdab이 시간에 의존하지 않으면 경과 시간을 무시합니다).
+0.0 둔화 없음(변경이 즉시 적용됨)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>dab의 종횡비입니다, 1.0 이상이어야 하며 1.0은 완 기억형 dab를 의미합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7249,14 +7308,17 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>타원형 dab가 기울어지는 각도
+ 0.0 수평 dab
+ 45.0 45도, 시계 방향 회전
+ 180.0 다시 수평</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>값이 낮으면 방향 입력이 더 빠르게 적응하고, 값이 높으면 더 부드러워집니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7266,28 +7328,31 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>레이어의 알파 채널을 변경하지 않습니다(이미 칠해진 곳에만 칠합니다)
+ 0.0 일반 페인팅
+ 0.5 페인트의 절반은 정상적으로 적용됩니다
+ 1.0 알파 채널 완전히 잠금</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>대상 레이어를 색상화하여, 값과 알파를 유지하면서 활성 브러시 색상에서 색조와 채도를 설정합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>브러시 dab의 중심과 반경을 픽셀에 스냅합니다. 얇은 픽셀 브러시에는 1.0으로 설정하십시오.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>얼마나 세게 눌러야 하는지 변경합니다. 태블릿 압력에 일정한 계수를 곱합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7296,7 +7361,9 @@ Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>GridMap 브러시 입력이 동작하는 전체 스케일을 변경합니다.
+로그(브러시 반경과 동일한 스케일).
+스케일이 0이면 격자는 256x256 픽셀이 됩니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7305,7 +7372,9 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>GridMap 브러시 입력이 동작하는 스케일을 변경합니다, X축에만 영향을 줍니다.
+범위는 0-5x입니다.
+이를 통해 GridMap 패턴을 늘리거나 압축할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7314,7 +7383,9 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>GridMap 브러시 입력이 동작하는 스케일을 변경합니다, Y축에만 영향을 줍니다.
+범위는 0-5x입니다.
+이를 통해 GridMap 패턴을 늘리거나 압축할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7323,7 +7394,9 @@ Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Smudge length&quot; 값에 대한 로그 승수입니다.
+dab가 많은 고해상도/대형 브러시를 보정하는 데 유용합니다.
+smudge length가 길수록 색상이 더 많이 퍼지고, 캔버스를 덜 자주 샘플링하므로 성능이 크게 향상됩니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7332,7 +7405,9 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>캔버스에서 가져온 색상을 각각 담을 수 있는 256개의 버킷이 있습니다.
+어떤 버킷을 사용할지 제어하여 브러시의 가변성과 현실감을 향상시킬 수 있습니다.
+특히 &quot;Custom input&quot; 설정과 함께 사용하면 버킷을 오프셋 같은 다른 설정과 연관시킬 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7343,7 +7418,11 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>알파 잠금과 유사하게, 얼마나 많은 투명도를 가져와 문지를지 제어합니다.
+1.0은 어떤 투명도도 이동시키지 않습니다.
+0.5는 50% 이상의 투명도만 이동시킵니다.
+0.0은 효과가 없습니다.
+음수 값은 반대로 동작합니다</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7364,28 +7443,28 @@ Negative values do the reverse</source>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>스트로크 방향을 따라 dab를 한쪽으로 오프셋합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>기울기 방향을 따라 dab를 한쪽으로 오프셋합니다. Tilt가 필요합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>보기 방향을 따라 dab를 한쪽으로 오프셋합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>스트로크 방향을 따라 dab를 오프셋하지만, 스트로크의 양쪽으로 오프셋합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
