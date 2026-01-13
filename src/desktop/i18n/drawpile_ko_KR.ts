@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>오버플로 방지</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -119,22 +119,22 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>오버플로 방지:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">영역 크기: </translation>
+        <translation>영역 크기: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">확장: </translation>
+        <translation>확장: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 소스 설정</translation>
     </message>
     <message>
         <location line="-326"/>
@@ -155,7 +155,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+336"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 유지</translation>
     </message>
     <message>
         <location line="+213"/>
@@ -202,7 +202,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -378,12 +378,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">이름:</translation>
+        <translation>이름:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">타입:</translation>
+        <translation>타입:</translation>
     </message>
 </context>
 <context>
@@ -503,7 +503,7 @@
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -518,7 +518,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished">레이어드 이미지</translation>
+        <translation>레이어드 이미지</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -528,28 +528,28 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 설정 가져오기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되는 모든 파일 (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+402"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 설정 (%1)</translation>
     </message>
     <message>
         <location line="-401"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 차단 목록 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 역할 (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -614,17 +614,17 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 설정 내보내기</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>PSD 형식은 주석, 애니메이션 타임라인 및 일부 혼합 모드를 지원하지 않습니다. 이러한 요소를 제대로 유지하려면 다른 형식으로 저장해야 합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 형식은 병합된 이미지를 저장합니다. 레이어, 주석 및 애니메이션 타임라인을 유지하려면 다른 형식으로 저장해야 합니다.</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -642,7 +642,7 @@
         <location line="+5"/>
         <location line="+491"/>
         <source>Untitled</source>
-        <translation type="unfinished">무제</translation>
+        <translation>무제</translation>
     </message>
     <message>
         <location line="-392"/>
@@ -769,7 +769,7 @@
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="-357"/>
@@ -799,7 +799,7 @@
     <message>
         <location line="+17"/>
         <source>Zoom</source>
-        <translation type="unfinished">돋보기</translation>
+        <translation>확대/축소</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -832,17 +832,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>더보기…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">변형</translation>
+        <translation>변형</translation>
     </message>
 </context>
 <context>
@@ -868,7 +868,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">세션</translation>
+        <translation>세션</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -888,22 +888,22 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>코드</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>생성</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>회수</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>복</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -918,7 +918,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 운영자가 초대 코드를 관리하도록 허용</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1035,17 +1035,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자용 스케치 모드</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>스케치 불투명도:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished"></translation>
+        <translation>스케치 색조:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1065,37 +1065,37 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>색조 없음</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>파란색 색조</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 상속</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>아래 레이어에 클리핑</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 혼합</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>콘텐츠 차단 (본인에게 검열)</translation>
     </message>
 </context>
 <context>
@@ -1123,7 +1123,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile의 독은 자유롭게 배치할 수 있습니다. 표시 &gt; 도커 &gt; Arrange Docks를 사용하면 더 쉽게 드래그할 수 있습니다. 배치가 화면 해상도에 맞는지 확인하세요. 그렇지 않으면 일부 컨트롤이 화면 밖으로 밀려날 수 있습니다.</translation>
     </message>
 </context>
 <context>
@@ -1131,22 +1131,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1423"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>링크 열기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation>이 링크는 Drawpile에서 운영하지 않는 “%1” 웹사이트로 이동합니다. 계속하시겠습니까?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>예, 웹사이트로 이동</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>아니요, 취소</translation>
     </message>
 </context>
 <context>
@@ -1262,7 +1262,9 @@ Subrange: [%3, %4]</source>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션은 다른 서버에서 호스팅되고 있어 리디렉션됩니다.
+
+앞으로 이러한 추가 단계를 피하려면, Browse 페이지나 세션의 직접 링크를 사용하세요.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -1312,7 +1314,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>문서를 검토하지 않으면 모든 변경 사항이 사라집니다.</translation>
     </message>
     <message>
         <location line="+2"/>
