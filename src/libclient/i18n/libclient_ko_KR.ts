@@ -1188,7 +1188,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 없음</translation>
     </message>
     <message>
         <location line="+7"/>
