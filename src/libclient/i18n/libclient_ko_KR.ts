@@ -297,13 +297,13 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 오류.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 크기가 허용 범위를 벗어났습니다, 너비와 높이는 %2의 경우 1에서 %1 사이여야 합니다.</translation>
     </message>
 </context>
 <context>
@@ -312,198 +312,198 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>충돌</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (충돌)</translation>
     </message>
     <message>
         <location line="+76"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>단축키</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>동작</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>보조 키</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>마우스 휠</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>해제</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>왼쪽 클릭</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>오른쪽 클릭</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>가운데 클릭</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 버튼 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>버튼 %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 이동</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 회전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 확대/축소</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 선택</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 선택</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 크기 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 불투명도 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 경도 변경</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 제한</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 중앙 정렬</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 제한 및 중앙 정렬</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 제한 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 단계별 회전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 자유 회전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 색조 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 채도 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 명도 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 동작 %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>반전됨, 축 교환</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>반전됨</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>축 교환</translation>
     </message>
 </context>
 <context>
@@ -511,47 +511,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’에 유효한 호스트 인증서가 포함되어 있지 않습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’에 여러 개의 호스트 인증서가 포함되어 있으며, 이는 현재 지원되지 않습니다.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’에 유효하지 않은 인증서가 포함되어 있습니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’에 여러 호스트 이름이 포함된 인증서가 있으며, 이는 현재 지원되지 않습니다.</translation>
     </message>
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’에서 인증서를 읽을 수 없습니다.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’을(를) 쓰기 위해 열 수 없습니다: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’을(를) 쓸 수 없습니다: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’을(를) ‘%2’(으)로 이동할 수 없습니다: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’을(를) 삭제할 수 없습니다: %2.</translation>
     </message>
 </context>
 <context>
@@ -560,33 +560,33 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>충돌</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (충돌)</translation>
     </message>
     <message>
         <location line="+126"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>동작</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>단축키</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>대체</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값</translation>
     </message>
 </context>
 <context>
@@ -594,44 +594,44 @@
     <message>
         <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 형식.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>헤더 오류.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 여는 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>레코더를 시작하는 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 오류.</translation>
     </message>
     <message>
         <location line="+544"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>레이어 선택 영역: 현재 레이어가 비어 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>레이어 경계 선택: 현재 레이어가 비어 있습니다.</translation>
     </message>
     <message>
         <location line="+182"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지를 저장하는 중 오류가 발생했습니다</translation>
     </message>
 </context>
 <context>
@@ -639,33 +639,33 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows용 ffmpeg는 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;에서 다운로드할 수 있습니다. Drawpile에서 ffmpeg 경로로 ffmpeg.exe를 선택하세요.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Homebrew를 통해 ffmpeg를 설치할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>패키지 관리자를 통해 ffmpeg를 설치할 수 있을 것입니다.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>‘%1’을(를) 사용하여 ffmpeg를 시작하는 데 실패했습니다. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg가 충돌했습니다!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg 프로세스 오류</translation>
     </message>
 </context>
 <context>
@@ -673,18 +673,19 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+332"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>채우는 중…</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택된 레이어가 없습니다.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 %1은(는) 채울 수 없습니다.
+대신 일반 레이어를 선택하세요.</translation>
     </message>
 </context>
 <context>
@@ -692,17 +693,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>가시성: 숨김</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>가시성: 표시됨</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>가시성: 상위 기준</translation>
     </message>
 </context>
 <context>
@@ -710,7 +711,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+292"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 중…</translation>
     </message>
 </context>
 <context>
@@ -718,82 +719,82 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/images.cpp" line="+72"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>바이너리 녹화 파일 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>텍스트 녹화 파일 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>녹화 파일 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>성능 프로파일 (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>디버그 덤프 (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>태블릿 이벤트 로그 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 비디오 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM 비디오 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>텍스트 파일 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 팩 (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 차단 목록 (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>역할 (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되는 모든 파일 (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 파일 (*)</translation>
     </message>
 </context>
 <context>
@@ -801,7 +802,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+121"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 %1</translation>
     </message>
 </context>
 <context>
@@ -809,22 +810,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -832,138 +833,138 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+76"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1일%2시간%3분</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1시간%2분</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1분</translation>
     </message>
     <message>
         <location line="+442"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(제목 없음)</translation>
     </message>
     <message numerus="yes">
         <location line="-333"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n명 사용자</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-3"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n명 사용자</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 그림을 그리고 있는 사용자 수를 알 수 없습니다</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n명의 그림 그리는 사용자</numerusform>
         </translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>호환됨</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>호환성 모드가 필요함 (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>더 최신 클라이언트가 필요함 (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않음 (%1)</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 버전</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>경미한 호환성 문제</translation>
     </message>
     <message>
         <location line="+121"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>호환성</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>제목</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>서버</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>유저 목록</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>활성</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>주인</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>나이</translation>
     </message>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>호환되지 않음</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>웹에서의 참여가 허용되지 않음</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>닫힘</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>비밀번호로 보호됨</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -971,37 +972,37 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+44"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>일반</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recolor</source>
-        <translation type="unfinished"></translation>
+        <translation>재색칠</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤쪽</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>밀도 증</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>마커</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>안료</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1021,17 +1022,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>선형 닷지/추가</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>컬러 번</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>컬러 닷지</translation>
     </message>
     <message>
         <location line="+6"/>
