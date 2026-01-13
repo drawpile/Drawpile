@@ -1037,12 +1037,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>비비드 라이트</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>핀 라이트</translation>
     </message>
     <message>
         <location line="+18"/>
