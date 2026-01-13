@@ -1523,7 +1523,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-1422"/>
         <source>Open</source>
-        <translation type="unfinished">열기</translation>
+        <translation>열기</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1925,7 +1925,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">디버그 덤프 열기</translation>
+        <translation>디버그 덤프 열기</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2684,7 +2684,7 @@ You can re-enable them via the View menu or preferences.</source>
     <message>
         <location line="+34"/>
         <source>Apply</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4022,7 +4022,7 @@ You can re-enable it via the View menu.</source>
         <location filename="../utils/widgetutils.cpp" line="+139"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4045,7 +4045,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+6"/>
         <source>Blue</source>
-        <translation type="unfinished">청</translation>
+        <translation>파랑</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4060,7 +4060,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+6"/>
         <source>Green</source>
-        <translation type="unfinished">녹</translation>
+        <translation>초록</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4120,7 +4120,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+6"/>
         <source>Red</source>
-        <translation type="unfinished">적</translation>
+        <translation>빨강</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4374,7 +4374,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished">변형</translation>
+        <translation>변형</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5200,7 +5200,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished">포맷:</translation>
+        <translation>형식:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5210,7 +5210,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+9"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5225,7 +5225,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">입력</translation>
+        <translation>입력</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5235,12 +5235,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+13"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">프레임레이트:</translation>
+        <translation>프레임 레이트:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5255,7 +5255,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">초기화</translation>
+        <translation>초기화</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5275,7 +5275,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">내보내기</translation>
+        <translation>내보내기</translation>
     </message>
     <message>
         <location line="+130"/>
@@ -5308,17 +5308,17 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished">캔버스 배경:</translation>
+        <translation>캔버스 배경:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation type="unfinished">추가</translation>
+        <translation>추가</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5374,7 +5374,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+10"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5414,7 +5414,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">프레임레이트:</translation>
+        <translation>프레임 레이트:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -5529,7 +5529,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -5643,42 +5643,42 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
-        <translation type="unfinished">변경…</translation>
+        <translation>변경…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished">핫키:</translation>
+        <translation>단축키:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished">파일 선택…</translation>
+        <translation>파일 선택…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished">64x64 픽셀로 크기가 조정됩니다.</translation>
+        <translation>64x64 픽셀로 크기가 조정됩니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">썸네일:</translation>
+        <translation>썸네일:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished">라벨 추가:</translation>
+        <translation>레이블 추가:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">이름:</translation>
+        <translation>이름:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">설명:</translation>
+        <translation>설명:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5693,7 +5693,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished">핫키가 할당되지 않음</translation>
+        <translation>지정된 단축키 없음</translation>
     </message>
 </context>
 <context>
@@ -5706,7 +5706,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+123"/>
         <source>Brush</source>
-        <translation type="unfinished">브러시</translation>
+        <translation>브러시</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5890,12 +5890,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+18"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">영역 크기: </translation>
+        <translation>허용치: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Expand: </source>
-        <translation type="unfinished">확장: </translation>
+        <translation>확장: </translation>
     </message>
     <message>
         <location line="+51"/>
@@ -5976,37 +5976,37 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
         <location line="+12"/>
         <location line="+326"/>
         <source>Jitter</source>
-        <translation type="unfinished">지터링</translation>
+        <translation>지터</translation>
     </message>
     <message>
         <location line="-302"/>
         <source>No dynamics</source>
-        <translation type="unfinished">다이내믹 끄기</translation>
+        <translation>다이내믹 없음</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">압력 다이내믹</translation>
+        <translation>압력 다이내믹</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">속도 다이내믹</translation>
+        <translation>속도 다이내믹</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">거리 다이내믹</translation>
+        <translation>거리 다이내믹</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">최대 속도: </translation>
+        <translation>최대 속도: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">최대 거리: </translation>
+        <translation>최대 거리: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6016,7 +6016,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">최대 속력값이 이 브러시의 모든 세팅에 적용됨.</translation>
+        <translation>이 브러시의 모든 설정에 대해 최대 속도가 설정되었습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6026,7 +6026,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">최대 거리값이 이 브러시의 모든 세팅에 적용됨.</translation>
+        <translation>이 브러시의 모든 설정에 대해 최대 거리가 설정되었습니다.</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -7471,35 +7471,35 @@ Negative values do the reverse</source>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>기울기 방향을 따라 뎁스(Dab)를 오프셋하지만 스트로크의 양쪽으로 적용합니다. 틸트 기능이 필요합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>보기 방향을 따라 뎁스를 오프셋하지만 스트로크의 양쪽으로 적용합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>기본값인 90도에서 각도 오프셋 값을 변경합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>X, Y 및 각도 오프셋 설정을 위한 로그 배율입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>포스터화 강도입니다. 알파(투명도)는 유지하면서 &quot;포스터화 레벨&quot; 설정에 따라 색상 수를 줄입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7508,7 +7508,9 @@ Negative values do the reverse</source>
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>포스터화 레벨의 수입니다 (100으로 나눔).
+0.05 = 5 레벨, 0.2 = 20 레벨 등
+0.5보다 큰 값은 차이가 느껴지지 않을 수 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7517,12 +7519,14 @@ Values above 0.5 may not be noticeable.</source>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>감산 스펙트럼 색상 혼합 모드입니다.
+0.0: 스펙트럼 혼합 없음
+1.0: 스펙트럼 혼합만 사용</translation>
     </message>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-5"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>문지르기 동기화</translation>
     </message>
 </context>
 <context>
@@ -7592,27 +7596,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 불투명도 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 경도 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 색조 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 채도 변경</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 명도 변경</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7632,7 +7636,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>마우스나 펜 입력 없이 캔버스에서 사용하는 일반적인 키 조합입니다. 예: 클릭할 필요 없이 스페이스바를 눌러 화면 이동.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7667,7 +7671,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 동작에는 키 조합만 할당할 수 없습니다. 대신 유형을 마우스 버튼으로 변경하십시오.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7680,7 +7684,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1의 SSL 인증서</translation>
     </message>
 </context>
 <context>
@@ -7688,32 +7692,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+482"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 코드 만들기</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>사용 횟수:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>없음(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>신뢰함(&amp;T)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;관리자</translation>
+        <translation>관리자(&amp;O)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>역할:</translation>
     </message>
 </context>
 <context>
@@ -7721,69 +7725,69 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation>사용</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">이름 변경</translation>
+        <translation>이름 바꾸기</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">저장</translation>
+        <translation>저장</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Save Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>곡선 저장</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+16"/>
         <source>Name</source>
-        <translation type="unfinished">이름</translation>
+        <translation>이름</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>곡선 이름 변경</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Delete Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>곡선 삭제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 &apos;%1&apos; 곡선을 삭제하시겠습니까?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished"></translation>
+        <translation>부드럽게 끝내기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>부드럽게 시작하기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished">매끄러운</translation>
+        <translation>매끄럽게</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7793,7 +7797,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 (저장되지 않음)</translation>
     </message>
 </context>
 <context>
@@ -7801,22 +7805,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>자르기 초기화</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>보기에 맞춰 확대</translation>
     </message>
     <message>
         <location line="+101"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -7825,62 +7829,62 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/invitedialog.cpp" line="-383"/>
         <location line="+279"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 코드란 무엇인가요?</translation>
     </message>
     <message>
         <location line="-123"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 링크가 클립보드에 복사되었습니다.</translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>초대 코드 링크가 클립보드에 복사되었습니다.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+35"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버는 초대 코드를 지원하지 않습니다.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 관리자만 이 세션의 초대 코드를 관리할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>운영자 및 서버 관리자만 이 세션의 초대 코드를 관리할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 코드 취소</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>정말로 선택한 %n개의 초대 코드를 취소하시겠습니까?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 코드를 사용하면 사용 제한 링크를 통해 세션에 참여할 수 있습니다. 나중에 코드를 취소하여 다시 접근 권한을 뺏을 수 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>초대 코드로 참여하는 사용자는 일반적인 세션 제한을 우회합니다. 세션 비밀번호가 필요하지 않고, 웹 브라우저를 통해 참여할 수 있으며, 등록된 계정이 없어도 되며, 새로운 참여 차단 설정의 영향을 받지 않습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>차단이나 서버 전체 제한 사항은 우회하지 않습니다.</translation>
     </message>
 </context>
 <context>
@@ -7888,27 +7892,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+128"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임 속성</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Title:</source>
-        <translation type="unfinished">제목:</translation>
+        <translation>제목:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished">검색…</translation>
+        <translation>검색…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>이전</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>다음</translation>
     </message>
 </context>
 <context>
@@ -7916,32 +7920,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+122"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">새 레이어 그룹</translation>
+        <translation>새 레이어 그룹</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">새 레이어</translation>
+        <translation>새 레이어</translation>
     </message>
     <message>
         <location filename="../utils/blendmodes.cpp" line="+113"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation>통과</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-1101"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 혼합</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 상속</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>아래 레이어에 클리핑</translation>
     </message>
 </context>
 <context>
@@ -7949,92 +7953,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+168"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 (저장되지 않음)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (신규)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (삭제됨)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2에서 이름 변경됨)</translation>
     </message>
     <message>
         <location line="+136"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>삭제 취소</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Layout Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>레이아웃 이름:</translation>
     </message>
     <message>
         <location line="-242"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Default Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>기본 애니메이션</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>파이어알파카 스타일</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>가로</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation>하이에나</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>크리타 스타일</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>메디방 스타일</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation>밍크</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>Paint.NET 스타일</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>SAI-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>사이툴 스타일</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>스파이더</translation>
     </message>
 </context>
 <context>
@@ -8042,65 +8046,65 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+184"/>
         <source>Report...</source>
-        <translation type="unfinished">신고...</translation>
+        <translation>신고...</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>동의</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished">서버 계정에 로그인</translation>
+        <translation>서버 계정으로 로그인</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>계정 비밀번호를 입력하세요. 계정이 없다면 등록해야 합니다. 이 서버는 등록 방법에 대한 정보를 제공하지 않습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>계정 비밀번호를 입력하세요. 계정이 없다면 %1에서 등록해야 합니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 이미 등록된 계정입니다. 본인의 계정이 아니라면 취소하고 다른 이름으로 다시 시도해 주세요.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished">닫기</translation>
+        <translation>닫기</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>거절</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <location line="+12"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>규칙</translation>
     </message>
     <message>
         <location line="-16"/>
         <location line="+22"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>뒤로</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>(%1에서 리디렉션됨)</translation>
     </message>
     <message>
         <location line="+146"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>다음 사유로 인해 이 세션에 참여할 수 없습니다:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8110,118 +8114,118 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션에 참여할 수 없음</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>계정 제거</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 이 계정을 제거하시겠습니까? 최근 계정 목록에서만 제거되며, 실제 계정이 삭제되지는 않습니다.</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+159"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>사용할 이름을 입력하세요.</translation>
     </message>
     <message>
         <location line="-98"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 서버 규칙</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 계정으로 로그인</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>사용할 이름을 입력하세요. 이 서버에 대한 자세한 정보는 %1에서 확인하세요.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 이 서버의 계정이 아닙니다. drawpile.net 계정과는 별개입니다!</translation>
     </message>
     <message>
         <location line="+638"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버 계정의 사용자 이름과 비밀번호를 입력하세요. drawpile.net 계정과는 별개입니다!</translation>
     </message>
     <message>
         <location line="-722"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>계정 없이 계속할 수 있습니다. 등록을 원하시면 %1에서 하실 수 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>계정이 필요합니다. %1에서 등록할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>계정 없이 계속할 수 있습니다. 서버에서 계정 등록 방법에 대한 정보는 제공하지 않습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>계정이 필요하지만, 서버에서 계정 등록 방법에 대한 정보를 제공하지 않습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버에 대한 정보는 %1에서 확인하세요. 계정 등록은 %2에서 하실 수 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버에 대한 정보는 %1에서 확인하세요.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 이미 존재하는 계정입니다. 다른 이름을 선택하세요.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 인증이 작동하지 않습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 %1의 계정이 아닙니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 서버 전용 계정입니다. 이 서버에서 %1을 통해 로그인할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 사용자 이름은 다른 로그인 방식으로 가입된 계정입니다. 이 서버에서 %1을 통해 로그인할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+626"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 계정의 사용자 이름과 비밀번호를 입력하세요.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 인증 정보로 로그인</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 인증 정보로 로그인 (보안되지 않은 연결!)</translation>
     </message>
 </context>
 <context>
@@ -8229,7 +8233,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>연결되지 않음</translation>
     </message>
 </context>
 <context>
@@ -8237,22 +8241,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished">플레이백</translation>
+        <translation>재생</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>Building index...</source>
-        <translation type="unfinished"></translation>
+        <translation>인덱스 생성 중...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>인덱스 생성에 실패했습니다.</translation>
     </message>
     <message>
         <location line="+165"/>
         <source>Video error</source>
-        <translation type="unfinished"></translation>
+        <translation>비디오 오류</translation>
     </message>
 </context>
 <context>
@@ -8260,42 +8264,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resetdialog.cpp" line="+129"/>
         <source>Reset Session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 초기화</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>새로 만들기</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>열기...</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>This session was hosted with a newer version of Drawpile. You are not able to reset it.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션은 최신 버전의 Drawpile에서 호스팅되었습니다. 초기화할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished">세션을 초기화하려면 관리자여야 합니다.</translation>
+        <translation>세션을 초기화하려면 관리자 권한이 필요합니다.</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 열기 오류: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 열기 오류: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished">초기화</translation>
+        <translation>초기화</translation>
     </message>
 </context>
 <context>
@@ -8323,52 +8327,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>크기 조절</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished">중앙</translation>
+        <translation>가운데</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Error</source>
-        <translation type="unfinished">오류</translation>
+        <translation>오류</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2에서 호스팅되는 세션의 너비와 높이는 1에서 %1 픽셀 사이여야 합니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2에서 호스팅되는 세션의 너비는 1에서 %1 픽셀 사이여야 합니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2에서 호스팅되는 세션의 높이는 1에서 %1 픽셀 사이여야 합니다.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>너비와 높이는 1에서 %1 픽셀 사이여야 합니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>너비는 1에서 %1 픽셀 사이여야 합니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>높이는 1에서 %1 픽셀 사이여야 합니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>전체 크기는 1에서 %1 픽셀 사이여야 합니다 (현재 %2 픽셀)</translation>
     </message>
 </context>
 <context>
@@ -8376,13 +8380,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">흐리기: </translation>
+        <translation>페더: </translation>
     </message>
     <message>
         <location line="+49"/>
@@ -8424,7 +8428,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-598"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 차단 목록 내보내기</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8434,12 +8438,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 차단 오류</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 목록에는 등록된 사용자만 표시됩니다.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8449,104 +8453,104 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+130"/>
         <source>Operators</source>
-        <translation type="unfinished">관리자</translation>
+        <translation>관리자</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished">신뢰됨</translation>
+        <translation>신뢰됨</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>등록된 사용자</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 사용자</translation>
     </message>
     <message>
         <location line="+135"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>예</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>아니오</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>변경</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>할당</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>안 함</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>중재자에 의해 비활성화됨</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n시간</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n분</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n초</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+128"/>
         <location line="+16"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>새 비밀번호를 설정하거나 비워 두어 비밀번호를 제거하십시오.</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 비밀번호를 설정합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 비밀번호</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8562,7 +8566,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+31"/>
         <location line="+122"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos;을(를) 여는 중 오류 발생: %2</translation>
     </message>
     <message>
         <location line="-91"/>
@@ -8592,12 +8596,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>암호화됨</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>일반 텍스트</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -8609,12 +8613,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일에 올바른 역할 내보내기 정보가 포함되어 있지 않습니다.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>역할 저장 중 오류 발생: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
@@ -8626,7 +8630,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-61"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>역할 내보내기</translation>
     </message>
 </context>
 <context>
@@ -8634,17 +8638,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 되돌리기 단계 제한 변경</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>되돌리기 제한: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션의 새로운 되돌리기 한도를 선택하십시오 (현재 한도: %1). 되돌리기는 모든 참여자가 공유합니다. 한도를 변경하면 되돌리기 기록이 초기화되며, 변경 시점 이전으로 되돌릴 수 없게 됩니다.</translation>
     </message>
 </context>
 <context>
@@ -8652,52 +8656,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+35"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>환경 설정</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>General</source>
-        <translation type="unfinished">일반</translation>
+        <translation>일반</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자 인터페이스</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>태블릿</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>터치</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>도구</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>파일</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>알림</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>서버</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8707,7 +8711,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>자녀 보호 설정</translation>
     </message>
 </context>
 <context>
@@ -8715,58 +8719,58 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 배색</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show harmony swatches under color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>색상환 아래에 배색 견본 표시</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 배색 견본이 비활성화되었습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>활성화하려면 여기를 클릭하십시오.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Rows: </source>
-        <translation type="unfinished"></translation>
+        <translation>행: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Row height: </source>
-        <translation type="unfinished"></translation>
+        <translation>행 높이: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Colors per row: </source>
-        <translation type="unfinished"></translation>
+        <translation>행당 색상 수: </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>테두리: </translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 설정…</translation>
     </message>
     <message>
         <location line="+218"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>색상 범위: </translation>
     </message>
 </context>
 <context>
@@ -8774,204 +8778,204 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+75"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>시작</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>환영합니다</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation>뉴스 및 업데이트</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 참여</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation>드로잉 세션에 직접 연결</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 찾아보기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>공개된 드로잉 세션 목록 찾아보기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">세션을 호스팅하기</translation>
+        <translation>세션 호스트</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished">다른 사람과 캔버스 공유</translation>
+        <translation>다른 사람과 캔버스 공유</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>New Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>새 캔버스</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a new, empty canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>새 빈 캔버스 만들기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 열기</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 파일 열기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>최근 파일</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation type="unfinished"></translation>
+        <translation>최근에 사용한 파일 다시 열기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Layouts</source>
-        <translation type="unfinished">레이아웃</translation>
+        <translation>레이아웃</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Choose application layout</source>
-        <translation type="unfinished"></translation>
+        <translation>애플리케이션 레이아웃 선택</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>환경 설정</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>애플리케이션 설정 변경</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Record</source>
-        <translation type="unfinished"></translation>
+        <translation>녹화</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">서버 추가</translation>
+        <translation>서버 추가</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>저장/불러오기</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reload defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값 다시 로드…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 불러오기…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 저장…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>파일에서 가져오기…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>파일로 내보내기…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트 확인</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Show network preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 설정 표시</translation>
     </message>
     <message>
         <location line="+349"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>확인 중…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>마지막 확인: 오늘.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>마지막 확인: %n일 전.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>마지막 확인: 없음.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished">접속</translation>
+        <translation>참여</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Join via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>WebSocket으로 참여</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>TCP로 참여</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>호스트</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Host via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>WebSocket으로 호스팅</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>TCP로 호스팅</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>만들기</translation>
     </message>
 </context>
 <context>
@@ -8979,12 +8983,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+29"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템 정보</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>복사</translation>
     </message>
 </context>
 <context>
@@ -8992,22 +8996,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 모음 설정</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>드래그하여 순서를 변경하고 체크를 해제하여 도구를 숨깁니다.</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished">초기화</translation>
+        <translation>초기화</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 도구 모음 설정을 기본 상태로 되돌리시겠습니까?</translation>
     </message>
 </context>
 <context>
@@ -9015,22 +9019,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>터치 활성화</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>제스처 활성화</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>로그 저장 중 오류</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>터치 테스트 로그를 저장할 수 없음: %1</translation>
     </message>
 </context>
 <context>
@@ -9038,7 +9042,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-265"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>여기를 터치하세요.</translation>
     </message>
 </context>
 <context>
@@ -9046,7 +9050,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">새로고침</translation>
+        <translation>새로고침</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -9063,7 +9067,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>그리기</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9073,17 +9077,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>아무것도 안 함</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>활성화됨</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>비활성화됨</translation>
     </message>
 </context>
 <context>
@@ -9096,12 +9100,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished">MP4 동영상</translation>
+        <translation>MP4 비디오</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM 비디오</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9111,7 +9115,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>원본</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9122,22 +9126,22 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>실행 파일</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg 경로 선택</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>확인 중…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>찾을 수 없습니다. %1</translation>
     </message>
 </context>
 <context>
@@ -9145,90 +9149,90 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+43"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>활성화 시 %1분마다 저장</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>자동 저장:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 파일의 자동 저장 활성화는 파일 ▸ 자동 저장에서 할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템 파일 선택 대화 상자 사용</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>인터페이스:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>기본값 (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster (.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 캔버스 (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation type="unfinished"></translation>
+        <translation>선호하는 저장 형식:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>PNG (.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG (.png)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG (.jpg)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>QOI (.qoi)</source>
-        <translation type="unfinished"></translation>
+        <translation>QOI (.qoi)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBP (.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP (.webp)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Photoshop Document (.psd)</source>
-        <translation type="unfinished"></translation>
+        <translation>Photoshop 문서 (.psd)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferred export format:</source>
-        <translation type="unfinished"></translation>
+        <translation>선호하는 내보내기 형식:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>디버깅 로그를 파일에 기록</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation>로그 기록:</translation>
     </message>
 </context>
 <context>
@@ -9238,56 +9242,56 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+157"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템 기본</translation>
     </message>
     <message>
         <location line="-161"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>언어:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>언어 변경은 Drawpile을 재시작한 후에 적용됩니다.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Qt 그래픽 뷰</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>하드웨어</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>소프트웨어</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>기본값</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>렌더러:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9299,147 +9303,147 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 렌더러: %1. 변경 사항은 Drawpile 재시작 후 적용됩니다.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Improve zoom quality (hardware renderer only)</source>
-        <translation type="unfinished"></translation>
+        <translation>확대/축소 품질 개선 (하드웨어 렌더러 전용)</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>%1개의 캔버스 스냅샷 유지</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 스냅샷:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1초마다 스냅샷 찍기</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Blue Apatite</source>
-        <translation type="unfinished"></translation>
+        <translation>Blue Apatite</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Indigo</source>
-        <translation type="unfinished"></translation>
+        <translation>남색 (Indigo)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocean Deep</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Pool Table</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation type="unfinished"></translation>
+        <translation>Rose Quartz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation type="unfinished"></translation>
+        <translation>Rust</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>수박 (Watermelon)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 offline undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>기본적으로 %1단계의 오프라인 실행 취소</translation>
     </message>
     <message>
         <location line="-102"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>보기 확대/축소 또는 회전 시 보간 수행</translation>
     </message>
     <message>
         <location line="-54"/>
         <source>Show contribution, donation and feedback links</source>
-        <translation type="unfinished"></translation>
+        <translation>기여, 후원 및 피드백 링크 표시</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Contributing:</source>
-        <translation type="unfinished"></translation>
+        <translation>기여하기:</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>특정 확대/축소 및 회전 수준에서 지터 현상 방지</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 옵션을 활성화하면 일부 시스템에서 성능에 영향을 줄 수 있습니다.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 ▸ 초기화… 메뉴에서 스냅샷을 복구할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>스타일:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>밝게</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>어둡게</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Bright</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Bright</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Dark</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Darker</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Darker</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Fusion</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotdog Stand</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 구성표:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Session history:</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 기록:</translation>
     </message>
 </context>
 <context>
@@ -9447,123 +9451,123 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+92"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>내장 서버:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>가능한 경우 %1 포트에서 호스팅</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>자동으로 업데이트 확인</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>안전하지 않은 로컬 저장소 허용</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation type="unfinished"></translation>
+        <translation>비밀번호 보안:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 옵션을 활성화하면 Drawpile이 비밀번호를 암호화되지 않은 형식으로 저장할 수 있습니다. 이 옵션을 비활성화하면 안전하지 않게 저장된 모든 비밀번호가 삭제됩니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connection quality:</source>
-        <translation type="unfinished"></translation>
+        <translation>연결 품질:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>좋음</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>나쁨</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 시간 제한:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1초</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 프록시:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>비활성화됨</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>수신 지연:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>값이 높을수록 다른 사용자의 스트로크가 더 부드럽게 표시됩니다.</translation>
     </message>
     <message>
         <location line="-98"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>채팅 아바타:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>아바타 추가…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">추가</translation>
+        <translation>추가</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 아바타 삭제…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>아바타 삭제</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>정말로 %n개의 아바타를 삭제하시겠습니까?</numerusform>
         </translation>
     </message>
 </context>
@@ -9572,72 +9576,72 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+93"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>이벤트</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>이 알림을 발생시킨 원인</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>소리 재생</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 이벤트가 발생할 때 효과음을 재생합니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>팝업</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 이벤트가 발생할 때 모서리에 말풍선을 띄웁니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>작업 표시줄 깜빡임</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 이벤트가 발생할 때 작업 표시줄에서 Drawpile 창을 깜빡입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>독(dock) 바운스</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 이벤트가 발생할 때 독에 있는 Drawpile 아이콘을 튕기게 합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>주의 요청</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 창에 주의가 필요함을 표시합니다. 표시 방식은 시스템에 따라 다릅니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>미리보기</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>어떤 일이 일어나는지 확인할 수 있도록 이 이벤트를 발생시킵니다.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9652,7 +9656,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자 나감</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9662,17 +9666,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>이벤트 미리보기</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>소리 음량:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9687,47 +9691,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>추가 트리거를 여기에 입력하세요 (한 줄에 하나씩).</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자 이름은 항상 멘션으로 간주됩니다. 다른 닉네임과 같이 트리거로 사용하고 싶은 단어나 구절을 추가할 수 있습니다. 한 줄에 한 단어나 구절씩 입력하며, 대소문자는 구분하지 않습니다.</translation>
     </message>
     <message>
         <location line="-84"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자 입장</translation>
     </message>
     <message>
         <location line="-89"/>
         <source>Display notification while connected to a session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션에 연결된 동안 알림 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network:</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>알림</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to grant Drawpile permission to show you a connection notification?</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile에 연결 알림 표시 권한을 부여하시겠습니까?</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">캔버스 잠김</translation>
+        <translation>캔버스 잠김</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">캔버스 잠금 해제됨</translation>
+        <translation>캔버스 잠금 해제됨</translation>
     </message>
 </context>
 <context>
@@ -9735,113 +9739,113 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+56"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>제목에 다음 키워드가 포함된 세션을 NSFM(성인용)으로 간주합니다.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>키워드:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>필터 모드:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>제한 없음</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>목록에서 NSFM 세션 제거</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM 세션 참여 방지</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM 세션 참여 방지 및 연결 끊기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM 세션은 서버 목록에서 숨겨지지만, 직접 링크를 통해 참여할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM 세션은 서버 목록에서 숨겨지며 참여할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM 세션은 서버 목록에서 숨겨지며 참여할 수 없습니다. 연결된 세션의 제목이나 NSFM 플래그가 부적절하게 변경되면 자동으로 연결이 끊깁니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 검열 해제 허용 안 함</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM 세션 참여 시 경고</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금 시 설정 숨기기</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>자녀 보호 설정이 현재 잠겨 있습니다.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금 해제</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 설정은 미성년자 부적합(NSFM)으로 표시된 세션 및 검열된 레이어의 처리 방식을 구성합니다.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation type="unfinished"></translation>
+        <translation>자녀 보호 설정이 현재 운영 체제에 의해 관리되고 있습니다.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>자녀 보호 설정 잠금 해제</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>자녀 보호 설정 잠금</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>비밀번호 입력:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">암호가 틀립니다.</translation>
+        <translation>비밀번호가 일치하지 않습니다.</translation>
     </message>
 </context>
 <context>
@@ -9849,7 +9853,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+107"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>알려진 호스트:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9859,107 +9863,107 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 호스트 제거…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>알려진 호스트 제거</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>정말로 알려진 호스트 %n개를 제거하시겠습니까?</numerusform>
         </translation>
     </message>
     <message>
         <location line="-82"/>
         <source>List servers:</source>
-        <translation type="unfinished"></translation>
+        <translation>목록 서버:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>목록 서버 추가…</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+57"/>
         <source>Add</source>
-        <translation type="unfinished">추가</translation>
+        <translation>추가</translation>
     </message>
     <message>
         <location line="-53"/>
         <source>Remove selected list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 목록 서버 제거…</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+58"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
     <message>
         <location line="-56"/>
         <source>Remove list servers</source>
-        <translation type="unfinished"></translation>
+        <translation>목록 서버 제거</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>정말로 목록 서버 %n개를 제거하시겠습니까?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>위로 이동</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>아래로 이동</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>고정(Pin)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 인증서 고정</translation>
     </message>
     <message>
         <location line="-65"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>고정 해제(Unpin)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 인증서 고정 해제</translation>
     </message>
     <message>
         <location line="-35"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>계속</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>인증서 가져오기</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>알려진 호스트의 변경 사항을 저장할 수 없습니다: %1</translation>
     </message>
 </context>
 <context>
@@ -10007,7 +10011,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">추가</translation>
+        <translation>추가</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10017,12 +10021,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>편집</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 캔버스 단축키 편집…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10032,7 +10036,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10083,120 +10087,120 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+34"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished">타블렛 테스터</translation>
+        <translation>태블릿 테스터</translation>
     </message>
     <message>
         <location line="+26"/>
         <location line="+20"/>
         <source>Output</source>
-        <translation type="unfinished">출력</translation>
+        <translation>출력</translation>
     </message>
     <message>
         <location line="-20"/>
         <source>Stylus</source>
-        <translation type="unfinished"></translation>
+        <translation>스타일러스</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>전체 압력 곡선:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Use separate curve for eraser tip</source>
-        <translation type="unfinished"></translation>
+        <translation>지우개 팁에 별도의 곡선 사용</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>지우개 압력 곡선:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished">지우개</translation>
+        <translation>지우개</translation>
     </message>
     <message>
         <location line="+21"/>
         <location filename="../mainwindow.cpp" line="-689"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink (비네이티브)</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab (상대 좌표)</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 드라이버:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>압력 감지 활성화</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>펜 압력:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>전역 평활화: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">부드러움:</translation>
+        <translation>부드럽게:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>마우스에 전역 평활화 적용</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>거친 곡선 보정</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>일반 펜 팁으로 취급</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10206,13 +10210,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 브러시로 지우기</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>지우개 팁 동작:</translation>
     </message>
 </context>
 <context>
@@ -10230,12 +10234,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt 키를 두 번 눌러 캔버스에 포커스</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>기본 단축키를 길게 눌러 %1 동안 도구를 일시적으로 전환</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -10245,7 +10249,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>활성화하면 브러시 슬롯의 변경 사항이 브러시 자체에 자동으로 저장됩니다. 비활성화하면 명시적으로 저장할 때만 브러시가 변경됩니다.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10260,80 +10264,80 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-145"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show a %1 outline around the brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 주위에 %1 윤곽선 표시</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+88"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 윤곽선 활성화</translation>
     </message>
     <message>
         <location line="-71"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 윤곽선:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 커서와 동일</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished"></translation>
+        <translation>점</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished"></translation>
+        <translation>십자선</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished"></translation>
+        <translation>화살표</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>오른손잡이용 삼각형</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>왼손잡이용 삼각형</translation>
     </message>
     <message>
         <location line="+14"/>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+122"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>샘플링 링 표시</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 선택기:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Cancel action to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>동작 취소하여 선택 해제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Press %1 to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 해제하려면 %1 키를 누르세요</translation>
     </message>
     <message numerus="yes">
         <location line="+25"/>
@@ -10350,37 +10354,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (색상–채도–명도)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (색상–채도–밝기)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL (색상–크로마–휘도)</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Eraser</source>
-        <translation type="unfinished">지우개</translation>
+        <translation>지우개</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 커서:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>지우개 커서:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 잠금 커서:</translation>
     </message>
 </context>
 <context>
@@ -10388,32 +10392,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+27"/>
         <source>Touch Tester</source>
-        <translation type="unfinished">터치 테스터</translation>
+        <translation>터치 테스터</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Enable pressure for touch drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>터치 드로잉 시 압력 활성화</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
-        <translation type="unfinished"></translation>
+        <translation>특정 액정 타블렛에 필요하며, 손가락 드로잉에는 작동하지 않을 수 있습니다!</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>터치 모드:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>터치스크린</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>제스처</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -10422,77 +10426,77 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>동작 없음</translation>
     </message>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">실행 취소</translation>
+        <translation>실행 취소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">다시 실행</translation>
+        <translation>다시 실행</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>도커 숨기기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 선택기 토글</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>지우개 토글</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>지우개 모드 전환</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>채색 모드 토글</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>한 손가락 탭:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>두 손가락 탭:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>세 손가락 탭:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>네 손가락 탭:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 선택</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>한 손가락 길게 누르기:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>그리기</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10502,32 +10506,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>추측</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>한 손가락 터치:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">돋보기</translation>
+        <translation>확대/축소</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>두 손가락 핀치:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 회전</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>자유롭게 캔버스 회전</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10537,17 +10541,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>두 손가락 트위스트:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">부드러움:</translation>
+        <translation>부드럽게:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -10555,158 +10559,158 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+235"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템 글꼴 크기 무시</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>글꼴 크기: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="-199"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>인터페이스 모드:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>동적</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>데스크톱</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+192"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>비활성화됨</translation>
     </message>
     <message>
         <location line="-191"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>왼쪽 클릭 드래그 시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>가운데 클릭 드래그 시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>오른쪽 클릭 드래그 시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>터치 드래그 시</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>키네틱 스크롤:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>임계값: </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>스크롤 바 숨기기</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 배경 색상</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템 배율 무시</translation>
     </message>
     <message>
         <location line="-150"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>작은 화면</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>첫 번째 체크무늬 색상</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>두 번째 체크무늬 색상</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 뒤 배경 색상:</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>확대/축소, 회전, 대칭 및 반전 알림</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 위 알림:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>View mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>보기 모드 알림</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스에 스크롤 바 표시</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>기타:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 생성 시 확인</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 삭제 전 확인</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>혼합 모드에 따라 자동으로 알파 상속 및 유지</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Long-press to open context menus</source>
-        <translation type="unfinished"></translation>
+        <translation>길게 눌러 컨텍스트 메뉴 열기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Quit when last window is closed</source>
-        <translation type="unfinished"></translation>
+        <translation>마지막 창을 닫을 때 종료</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>macOS:</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10716,47 +10720,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>배율: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>글꼴 크기:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>수직 동기화:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>활성화됨</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>설정은 Drawpile을 다시 시작한 후에 적용됩니다. 현재 배율은 %1%이며, 글꼴 크기는 %2입니다.</translation>
     </message>
 </context>
 <context>
@@ -10764,102 +10768,102 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+62"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>아직 서버를 추가하지 않았습니다. &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;에서 서버를 찾을 수 있습니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>공개 Drawpile 서버를 추가하려면 &lt;a href=&quot;#&quot;&gt;여기를 클릭&lt;/a&gt;하세요.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished">필터</translation>
+        <translation>필터</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>닫힘</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>새 사용자의 참여를 허용하지 않는 세션 표시</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">암호</translation>
+        <translation>비밀번호</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>참여 시 비밀번호가 필요한 세션 표시</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished">미성년자에게 부적합한 세션 보이기 (NSFM)</translation>
+        <translation>미성년자에게 부적합한 세션(NSFM) 표시</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>비활성</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>활동 중인 사용자가 없는 세션 표시</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>중복</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation>여러 서버에 등록된 세션 표시</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>로딩 중...</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>Join</source>
-        <translation type="unfinished">접속</translation>
+        <translation>참여</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 URL 복사</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished"></translation>
+        <translation>제목 복사</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 복사</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished"></translation>
+        <translation>소유자 복사</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished"></translation>
+        <translation>아직 아무것도 없어요!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10873,27 +10877,27 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/create.cpp" line="+29"/>
         <location line="+6"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>너비:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>높이:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 배경 색상</translation>
     </message>
     <message>
         <location line="-39"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>배경:</translation>
     </message>
 </context>
 <context>
@@ -10901,59 +10905,59 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
         <source>Session</source>
-        <translation type="unfinished">세션</translation>
+        <translation>세션</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>목록 표시</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Permissions</source>
-        <translation type="unfinished">권한</translation>
+        <translation>권한</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">역할</translation>
+        <translation>역할</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished">추방</translation>
+        <translation>차단</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation>호스트 오류</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Invalid input(s), please correct the following:</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>입력값이 올바르지 않습니다. 다음 사항을 수정해 주세요:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 읽지 못했습니다: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일이나 내용을 받지 못했습니다.</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>가져오기 실패</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 설정을 가져올 수 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -10961,12 +10965,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;세션 URL&lt;/strong&gt;, &lt;strong&gt;호스트 이름&lt;/strong&gt; 또는 &lt;strong&gt;IP 주소&lt;/strong&gt;를 입력하세요:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>최근 기록:</translation>
     </message>
 </context>
 <context>
@@ -10974,62 +10978,62 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>도움말</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>브라우저에서 Drawpile 도움말 페이지 열기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>태블릿 설정</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>브라우저에서 Drawpile 태블릿 설정 및 문제 해결 페이지 열기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>커뮤니티</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s communities page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>브라우저에서 Drawpile 커뮤니티 페이지 열기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile Discord 서버 참여</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat의 #drawpile 채팅방 참여</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GitHub</source>
-        <translation type="unfinished"></translation>
+        <translation>GitHub</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s GitHub page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>브라우저에서 Drawpile GitHub 페이지 열기</translation>
     </message>
 </context>
 <context>
@@ -11037,37 +11041,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>닫기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>이 알림 숨기기</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile의 새 버전을 사용할 수 있습니다!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 버전 %1로 업데이트</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 다운로드 페이지가 브라우저에서 열렸을 것입니다. 만약 열리지 않는다면 &lt;strong&gt;drawpile.net&lt;/strong&gt;에 직접 방문해 주세요.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 다운로드 페이지를 열 수 없습니다. &lt;strong&gt;drawpile.net&lt;/strong&gt;에 직접 방문해 주세요.</translation>
     </message>
 </context>
 <context>
@@ -11075,37 +11079,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+51"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>독립 실행 모드</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>웹 브라우저 버전의 Drawpile을 독립 실행 모드로 실행 중입니다. 작업 내용이 &lt;strong&gt;자동으로 저장되지 않으니&lt;/strong&gt; 자주 저장해 주세요!</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Welcome to Drawpile!</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile에 오신 것을 환영합니다!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;#preferences&quot;&gt;환경 설정&lt;/a&gt;을 통해 원하는 대로 구성해 보세요. 또한 애플리케이션의 &lt;a href=&quot;#layouts&quot;&gt;레이아웃&lt;/a&gt;을 변경할 수도 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 초대 링크가 있다면 바로 &lt;a href=&quot;#join&quot;&gt;참여&lt;/a&gt;할 수 있습니다. 또는 공개 세션을 &lt;a href=&quot;#browse&quot;&gt;찾아보거나&lt;/a&gt;, &lt;a href=&quot;#create&quot;&gt;새 캔버스&lt;/a&gt;를 만들어 혼자 그릴 수도 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>문제가 발생하면 오른쪽에 링크된 도움말 페이지를 확인해 보십시오. 궁금한 점이 해결되지 않는다면 Discord 서버에 가입하여 질문해 주세요. 도움을 줄 수 있는 사람들이 항상 대기하고 있습니다!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>다음번에는 이 페이지에서 새로운 소식과 업데이트 정보를 보실 수 있습니다.</translation>
     </message>
 </context>
 <context>
@@ -11113,12 +11117,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+25"/>
         <source>No bans imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>가져온 차단 목록이 없습니다.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
 </context>
 <context>
@@ -11126,42 +11130,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
         <source>Session</source>
-        <translation type="unfinished">세션</translation>
+        <translation>세션</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>목록</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>공지사항 대체</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Permissions</source>
-        <translation type="unfinished">권한</translation>
+        <translation>권한</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">역할</translation>
+        <translation>역할</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation type="unfinished"></translation>
+        <translation>역할 목록 대체</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bans</source>
-        <translation type="unfinished">추방</translation>
+        <translation>차단</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>차단 목록 대체</translation>
     </message>
 </context>
 <context>
@@ -11169,22 +11173,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+501"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 내보내기</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation type="unfinished"></translation>
+        <translation>내보낼 섹션을 선택하십시오:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>내보내기 오류</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 설정을 내보낼 수 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -11192,12 +11196,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 가져오기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation type="unfinished"></translation>
+        <translation>가져올 섹션을 선택하십시오:</translation>
     </message>
 </context>
 <context>
@@ -11205,57 +11209,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+38"/>
         <source>Set title automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>자동으로 제목 설정</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enter a publicly visible title</source>
-        <translation type="unfinished"></translation>
+        <translation>공개적으로 표시될 제목 입력</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Title:</source>
-        <translation type="unfinished">제목:</translation>
+        <translation>제목:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Publicly visible ID for pretty invite links</source>
-        <translation type="unfinished"></translation>
+        <translation>간편한 초대 링크용 공개 ID</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID 별칭:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation type="unfinished"></translation>
+        <translation>공지사항:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add</source>
-        <translation type="unfinished">추가</translation>
+        <translation>추가</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished">선택목록 삭제</translation>
+        <translation>선택한 항목 제거</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>목록: 공개 세션에는 제목이 필요합니다</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>목록: 제목이 부적절합니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>목록: ID 별칭이 부적절합니다.</translation>
     </message>
 </context>
 <context>
@@ -11263,60 +11267,60 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-353"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 불러오기</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+109"/>
         <source>Rename</source>
-        <translation type="unfinished">이름 변경</translation>
+        <translation>이름 바꾸기</translation>
     </message>
     <message>
         <location line="-102"/>
         <location line="+140"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="-131"/>
         <source>Pick the sections you want to load:</source>
-        <translation type="unfinished"></translation>
+        <translation>불러올 섹션을 선택하십시오:</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 %1의 새 이름을 선택하십시오.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>충돌</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 %1이(가) 이미 존재합니다. 덮어쓰시겠습니까?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>예, 교체합니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+22"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>아니요, 유지</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 %1을(를) 정말로 삭제하시겠습니까?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation type="unfinished"></translation>
+        <translation>예, 삭제</translation>
     </message>
 </context>
 <context>
@@ -11324,113 +11328,113 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+107"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>되돌리기 한도: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Cut, paste and fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>잘라내기, 붙여넣기 및 채우기:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 변형:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Create annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>주석 생성:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage own layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>본인 레이어 관리:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage all layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 레이어 관리:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 크기 변경:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>배경 변경:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>MyPaint brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint 브러시:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pigment and OKLAB brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigment 및 OKLAB 브러시:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>레이저 포인터:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 타임라인:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>실행 취소 및 다시 실행:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>강퇴 및 차단:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>최대 브러시 크기:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>최대 레이어 개수:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>모두</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>등록됨</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Trusted</source>
-        <translation type="unfinished">신뢰됨</translation>
+        <translation>신뢰됨</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Operators</source>
-        <translation type="unfinished">관리자</translation>
+        <translation>관리자</translation>
     </message>
 </context>
 <context>
@@ -11438,12 +11442,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-232"/>
         <source>Reset</source>
-        <translation type="unfinished">초기화</translation>
+        <translation>초기화</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>기본값으로 재설정할 섹션을 선택하세요:</translation>
     </message>
 </context>
 <context>
@@ -11451,27 +11455,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+37"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>누구나 운영자가 될 수 있도록 비밀번호를 정의합니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">관리자 암호:</translation>
+        <translation>관리자 비밀번호:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>가져온 역할이 없습니다.</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">관리자</translation>
+        <translation>관리자</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished">신뢰됨</translation>
+        <translation>신뢰됨</translation>
     </message>
 </context>
 <context>
@@ -11479,37 +11483,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 불러오기</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">이름:</translation>
+        <translation>이름:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>저장할 섹션을 선택하세요:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">저장</translation>
+        <translation>저장</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋 %1이(가) 이미 존재합니다. 덮어쓰시겠습니까?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>예, 덮어쓰기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>아니요, 유지</translation>
     </message>
 </context>
 <context>
@@ -11517,92 +11521,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+43"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>개인 세션, 초대한 사람만 참여 가능</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>공개 세션, 누구나 자유롭게 참여 가능</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>등록 탭에서 세션 제목을 설정하세요.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 비밀번호:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 비밀번호를 입력하거나 생성하세요</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>생성</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">미성년자에겐 부적합함 (NSFM)</translation>
+        <translation>미성년자 부적합(NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">채팅 내용 저장</translation>
+        <translation>채팅 기록 유지</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>호스트 또는 IP 주소</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>이 컴퓨터의 내장 서버</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>서버:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>호스트 또는 IP 주소를 입력하세요</translation>
     </message>
     <message>
         <location line="+145"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>세션: 비밀번호가 필요합니다</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>세션: 서버가 필요합니다</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션은 공개 Drawpile 서버에서 호스팅됩니다. 누구나 자유롭게 이용할 수 있습니다. 서버 공간 확보를 위해 일정 시간 활동이 없거나 모든 인원이 퇴장하면 세션이 종료됩니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션은 규칙을 준수해야 합니다. &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;여기를 클릭하여 확인&lt;/a&gt;하세요.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Hosting on your own computer requires additional setup!</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자의 컴퓨터에서 직접 호스팅하려면 추가 설정이 필요합니다!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;여기를 클릭하여 안내를 확인하세요.&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -11610,27 +11614,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
         <source>This file doesn&apos;t contain any valid session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 파일에는 유효한 세션 설정이 포함되어 있지 않습니다.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Invalid session settings format.</source>
-        <translation type="unfinished"></translation>
+        <translation>올바르지 않은 세션 설정 형식입니다.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>File contains session settings to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일에 가져올 세션 설정이 포함되어 있습니다.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>올바르지 않은 역할(Role) 형식입니다.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일에 가져올 역할(Role) 정보가 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -11668,12 +11672,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished">모든 &amp;브러시 초기화</translation>
+        <translation>모든 브러시 초기화(&amp;B)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>새 브러시(&amp;N)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11683,52 +11687,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 삭제(&amp;D)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 태그(&amp;T)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>아이콘 크기(&amp;I)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>새 태그(&amp;W)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 이름 바꾸기(&amp;M)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 삭제(&amp;L)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 가져오기(&amp;P)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 내보내기(&amp;X)…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 내보내기…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%1</translation>
     </message>
     <message>
         <location line="+225"/>
@@ -11750,7 +11754,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+314"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>유지</translation>
     </message>
     <message>
         <location line="-296"/>
@@ -11779,53 +11783,53 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
-            <numerusform>%n개의 오류.</numerusform>
+        <translation>
+            <numerusform>%n개의 오류가 발생했습니다.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+116"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>태그 없음</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>선택한 브러시 없음</translation>
     </message>
     <message>
         <location line="+41"/>
         <location line="+16"/>
         <source>Tag name:</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 이름:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>태그 편집</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 태그 &apos;%1&apos;을(를) 삭제하시겠습니까? 태그 안의 브러시는 삭제되지 않습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 삭제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 브러시 &apos;%1&apos;을(를) 삭제하시겠습니까?</translation>
     </message>
 </context>
 <context>
@@ -11833,17 +11837,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+26"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>색상환</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>원형</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>구성…</translation>
     </message>
 </context>
 <context>
@@ -11851,37 +11855,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+373"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="-249"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>새 팔레트</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 팔레트</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished">팔레트</translation>
+        <translation>팔레트</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 복제</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 삭제</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 이름 변경</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11891,63 +11895,63 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 내보내기…</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Add column</source>
-        <translation type="unfinished"></translation>
+        <translation>열 추가</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove column</source>
-        <translation type="unfinished"></translation>
+        <translation>열 삭제</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Color history</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 기록</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>이 독에 표시</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Show on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 색상 독에 표시</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 색상 독에서 숨기기</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>이 독에만 표시</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>이 독에서만 숨기기</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>New Palette</source>
-        <translation type="unfinished">새 팔레트</translation>
+        <translation>새 팔레트</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+47"/>
         <source>Name</source>
-        <translation type="unfinished">이름</translation>
+        <translation>이름 순</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 이름 변경</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -11957,37 +11961,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Palettes (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 (%1)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished">모든 파일 (*)</translation>
+        <translation>모든 파일 (*)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 내보내기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIMP 팔레트 (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished">오류</translation>
+        <translation>오류</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t save file</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 저장할 수 없습니다</translation>
     </message>
     <message>
         <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; 팔레트를 삭제하시겠습니까?</translation>
     </message>
 </context>
 <context>
@@ -11995,12 +11999,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+74"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 슬라이더</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished">색상 슬라이더</translation>
+        <translation>슬라이더</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12012,117 +12016,117 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-383"/>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-348"/>
         <location line="+360"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-347"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 슬라이더를 한 번에 표시</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex 입력 표시</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>B</source>
         <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -12162,85 +12166,85 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>색상환</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Wheel</source>
-        <translation type="unfinished">색상 휠</translation>
+        <translation>색상 휠</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Direction</source>
-        <translation type="unfinished">방향</translation>
+        <translation>방향</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>오름차순</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>내림차순</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>정렬</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>위쪽</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished">중앙</translation>
+        <translation>가운데</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Show color harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 배색 표시</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle the harmony swatches below the color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>색상환 아래의 배색 견본을 켜거나 끕니다</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Configure color harmonies…</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 배색 구성…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the color harmonies and how they are displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 배색과 표시 방식을 변경합니다</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="-19"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 색상 미리보기</translation>
     </message>
 </context>
 <context>
@@ -12248,12 +12252,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/dockbase.cpp" line="+89"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>정렬하려면 여기로 드래그하십시오</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>정렬 완료</translation>
     </message>
 </context>
 <context>
@@ -12261,12 +12265,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+29"/>
         <source>Locks:</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Access tier:</source>
-        <translation type="unfinished"></translation>
+        <translation>접근 계층:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12276,22 +12280,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished">신뢰됨</translation>
+        <translation>신뢰됨</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>등록된 사용자</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 사용자</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Exclusive access:</source>
-        <translation type="unfinished"></translation>
+        <translation>독점적 접근:</translation>
     </message>
 </context>
 <context>
@@ -12299,144 +12303,144 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-463"/>
         <source>Layers</source>
-        <translation type="unfinished">레이어</translation>
+        <translation>레이어</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금 및 권한</translation>
     </message>
     <message>
         <location line="-62"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>아래 레이어에 클리핑</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>알파 상속</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>스케치 모드 전환 (본인에게만 보임)</translation>
     </message>
     <message>
         <location line="+19"/>
         <location line="+1950"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>불투명도: </translation>
     </message>
     <message>
         <location line="-1949"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>스케치 틴트 변경</translation>
     </message>
     <message>
         <location line="+351"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 복제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 병합</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 속성…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 삭제</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 표시 여부 토글(&amp;V)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 스케치 모드 토글(&amp;S)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 선택</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 그룹 선택 해제</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 선택</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 선택 해제</translation>
     </message>
     <message>
         <location line="+1072"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 제한에 도달함</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>레이어를 더 이상 생성할 수 없습니다 (%n개 제한).</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2로 호스팅된 세션의 레이어 제한은 사용자당 256개입니다.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>현재 레이어 제한은 %n개입니다. 세션 관리자가 세션 설정에서 이를 변경할 수 있습니다.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+496"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>스케치: </translation>
     </message>
     <message>
         <location line="+267"/>
         <location filename="../mainwindow.cpp" line="-4877"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>그룹</translation>
     </message>
     <message>
         <location line="-933"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어를 삭제하시겠습니까?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 &apos;%1&apos; 레이어를 삭제하시겠습니까?</translation>
     </message>
 </context>
 <context>
@@ -12444,17 +12448,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/navigator.cpp" line="+508"/>
         <source>Navigator</source>
-        <translation type="unfinished"></translation>
+        <translation>내비게이터</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Show Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>커서 표시</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished"></translation>
+        <translation>실시간 업데이트</translation>
     </message>
 </context>
 <context>
@@ -12462,42 +12466,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/onionskins.cpp" line="+118"/>
         <source>Onion Skins</source>
-        <translation type="unfinished">어니언 스킨</translation>
+        <translation>어니언 스킨</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Tint Below</source>
-        <translation type="unfinished"></translation>
+        <translation>아래 틴트</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation>프레임: </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>순환</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tint Above</source>
-        <translation type="unfinished"></translation>
+        <translation>위 틴트</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>불투명도: %1%</translation>
     </message>
 </context>
 <context>
@@ -12505,78 +12509,78 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/reference.cpp" line="+27"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>참조</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>열기…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 참조 이미지로 열기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>붙여넣기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>클립보드에서 참조 이미지 붙여넣기</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">닫기</translation>
+        <translation>닫기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 참조 이미지 닫기</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 추출</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 이동</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>배율 초기화</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>화면에 맞춤</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>줌: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Error</source>
-        <translation type="unfinished">오류</translation>
+        <translation>오류</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>참조 이미지를 열 수 없습니다: %1.</translation>
     </message>
 </context>
 <context>
@@ -12584,17 +12588,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>타임라인</translation>
     </message>
     <message>
         <location line="+101"/>
         <source>Play</source>
-        <translation type="unfinished">재생</translation>
+        <translation>재생</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 FPS</translation>
     </message>
 </context>
 <context>
@@ -12602,17 +12606,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>고정됨</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>드래그로 고정 가능</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">닫기</translation>
+        <translation>닫기</translation>
     </message>
 </context>
 <context>
@@ -12620,12 +12624,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+12"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>도구</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 설정</translation>
     </message>
 </context>
 <context>
@@ -12634,26 +12638,26 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-34"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Drawpile에 후원하기]를 클릭하여 공개 서버 운영을 도와주세요.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+6426"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>후원</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Open Drawpile&apos;s donate page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>브라우저에서 Drawpile 후원 페이지 열기</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+988"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Drawpile에 후원하기]를 클릭하여 개발과 서버 운영을 지원해 주세요.</translation>
     </message>
 </context>
 <context>
@@ -12661,37 +12665,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../tabletinput.cpp" line="+149"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt 태블릿 입력</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink 입력</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink 비네이티브 입력</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab 입력</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>상대 펜 모드를 사용하는 KisTablet Wintab 입력</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink 입력</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab 입력</translation>
     </message>
 </context>
 <context>
@@ -12699,22 +12703,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>보호</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>병합</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>왼쪽</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12725,54 +12729,54 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-17"/>
         <source>Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>양쪽 맞춤</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>오른쪽</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>위쪽</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>하단</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>벡터</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">매끄러운</translation>
+        <translation>매끄럽게</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>픽셀</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>주석이 숨겨져 있습니다. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>보기</translation>
     </message>
     <message>
         <location line="+385"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>병합된 주석을 붙여넣을 권한이 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -12780,12 +12784,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-139"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 편집(&amp;E)…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished">브러시 &amp;초기화</translation>
+        <translation>브러시 초기화(&amp;R)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12795,12 +12799,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished">모든 &amp;브러시 초기화</translation>
+        <translation>모든 브러시 초기화(&amp;B)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>새 브러시(&amp;N)…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12810,102 +12814,102 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 삭제(&amp;D)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 분리(&amp;T)</translation>
     </message>
     <message>
         <location line="+123"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-114"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished">시간 기준 스태빌라이저</translation>
+        <translation>시간 기반 보정</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished">평균적 완곡화</translation>
+        <translation>평균 부드럽게</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>스트로크를 늦추고 시간이 지남에 따라 안정화합니다. 매우 매끄러운 결과를 얻을 수 있지만, 반응이 느리게 느껴질 수 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+5"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+7"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>입력값을 평균화하여 매끄러운 결과를 얻습니다. 시간 기반 안정화 장치보다 빠르지만, 그만큼 매끄럽지는 않습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Finish Strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>스트로크 마무리</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation type="unfinished"></translation>
+        <translation>안정화된 스트로크를 중간에 끊지 않고 끝까지 그립니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronize With Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시와 동기화</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation type="unfinished"></translation>
+        <translation>안정화 설정을 (Krita처럼) 독립적인 설정이 아닌 (MyPaint처럼) 브러시 설정으로 만듭니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Click to disable pixel art input</source>
-        <translation type="unfinished"></translation>
+        <translation>픽셀 아트 입력을 비활성화하려면 클릭</translation>
     </message>
     <message>
         <location line="+151"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB 또는 Pigment 모드의 브러시를 사용할 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+654"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>문지르기: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>혼합: </translation>
     </message>
     <message>
         <location line="+802"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1</translation>
     </message>
     <message>
         <location line="-1494"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint 브러시를 사용할 권한이 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -12913,34 +12917,34 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="-23"/>
         <source>Pick from screen</source>
-        <translation type="unfinished"></translation>
+        <translation>화면에서 선택</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished">크기: </translation>
+        <translation>크기: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pick from current layer only</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 레이어에서만 선택</translation>
     </message>
     <message>
         <location filename="../dialogs/colordialog.cpp" line="+20"/>
         <source>Screen Color Picking Unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>화면 색상 추출 지원되지 않음</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picking colors from the screen is not supported under Wayland.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wayland 환경에서는 화면 색상 추출이 지원되지 않습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Linux 사용자 계정으로 로그인할 때 대신 Xorg로 전환할 수 있습니다.</translation>
     </message>
 </context>
 <context>
@@ -12948,42 +12952,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="-61"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 도구 설정</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>대기 중인 채우기 편집(&amp;E)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>아직 적용되지 않은 채우기에 설정, 색상 및 레이어 변경 사항 적용</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>두 번째 클릭으로 채우기 확정(&amp;C)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>다른 채우기를 시작하는 대신 클릭으로 채우기를 적용할 수 있게 합니다</translation>
     </message>
     <message>
         <location line="+114"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 도구를 사용할 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>크기 제한: 선택 영역</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished">크기 제한: 제한 없음</translation>
+        <translation>크기 제한: 무제한</translation>
     </message>
 </context>
 <context>
@@ -12991,129 +12995,129 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-263"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>전경색: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>불투명도: </translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Foreground color to transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>전경색에서 투명으로</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Transparency to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>투명에서 전경색으로</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Foreground color to background color</source>
-        <translation type="unfinished"></translation>
+        <translation>전경색에서 배경색으로</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Background color to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>배경색에서 전경색으로</translation>
     </message>
     <message>
         <location line="+34"/>
         <location line="+11"/>
         <location line="+44"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>배경색: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation type="unfinished">선형</translation>
+        <translation>선형</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Straight gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>직선 그라데이션 모양</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>원형</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Circular gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>원형 그라데이션 모양</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>모양:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Focus: </source>
-        <translation type="unfinished"></translation>
+        <translation>초점: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pad</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continue gradient by padding it with the nearest color</source>
-        <translation type="unfinished"></translation>
+        <translation>가장 가까운 색상으로 채워서 그라데이션을 계속합니다</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reflect</source>
-        <translation type="unfinished"></translation>
+        <translation>반사</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continue gradient by reflecting it</source>
-        <translation type="unfinished"></translation>
+        <translation>그라데이션을 반사하여 연결</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Spread:</source>
-        <translation type="unfinished"></translation>
+        <translation>분산:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Mode:</source>
-        <translation type="unfinished">혼합모드:</translation>
+        <translation>모드:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>그라데이션 적용</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>그라데이션 삭제</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>The gradient tool requires a selection to operate in.</source>
-        <translation type="unfinished"></translation>
+        <translation>그라데이션 도구를 사용하려면 선택 영역이 필요합니다.</translation>
     </message>
 </context>
 <context>
@@ -13121,19 +13125,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>레이저 포인터 사용 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>레이저 자국이 숨겨져 있습니다. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>표시</translation>
     </message>
 </context>
 <context>
@@ -13142,42 +13146,42 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-23"/>
         <source>Stabilization mode</source>
-        <translation type="unfinished"></translation>
+        <translation>보정 모드</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Mode:</source>
-        <translation type="unfinished">혼합모드:</translation>
+        <translation>모드:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>앤티 앨리어싱</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out fill edges</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 가장자리를 부드럽게</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 채우기 적용</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 채우기 삭제</translation>
     </message>
 </context>
 <context>
@@ -13185,52 +13189,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-90"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 교체</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역에 추가</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역과 교차</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역에서 제거</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>앤티 앨리어싱</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 가장자리를 부드럽게</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation type="unfinished"></translation>
+        <translation>드래그하여 이동</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Allow dragging the selection for a quick move operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역을 드래그하여 빠르게 이동할 수 있게 허용합니다.</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>연속된 영역 선택</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>유사한 색상 선택</translation>
     </message>
 </context>
 <context>
@@ -13238,52 +13242,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="-164"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>빠름</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어링, 불투명도 등을 고려하지 않는 빠른 미리보기</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>정확함</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>변형이 적용되었을 때와 똑같은 모습으로 미리보기</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>정확한 미리보기를 하기에는 너무 많은 레이어가 선택되어 빠른 미리보기만 가능합니다.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>미리보기:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>최근접 이웃</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>최근접 이웃 보간, 부드럽게 하지 않음</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary</source>
-        <translation type="unfinished"></translation>
+        <translation>바이너리</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothed interpolation while retaining hard edges</source>
-        <translation type="unfinished"></translation>
+        <translation>단단한 경계선을 유지하면서 부드럽게 보간</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13293,28 +13297,28 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>부드러운 보간</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>샘플링:</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>표시</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation type="unfinished"></translation>
+        <translation>단순 이동 대신 변형 핸들 표시</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Scale</source>
-        <translation type="unfinished">크기 변형</translation>
+        <translation>크기 조정</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13324,7 +13328,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished">왜곡</translation>
+        <translation>왜곡</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13340,47 +13344,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Mode:</source>
-        <translation type="unfinished">혼합모드:</translation>
+        <translation>모드:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Constrain</source>
-        <translation type="unfinished"></translation>
+        <translation>제한</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Center</source>
-        <translation type="unfinished">중앙</translation>
+        <translation>가운데</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>불투명도: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">적용하기</translation>
+        <translation>적용</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>변형 적용</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>변형 취소</translation>
     </message>
 </context>
 <context>
@@ -13388,12 +13392,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>보통 크기(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit To Window</source>
-        <translation type="unfinished"></translation>
+        <translation>창에 맞춤</translation>
     </message>
 </context>
 <context>
@@ -13401,7 +13405,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/recents.cpp" line="+424"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>더 보기…</translation>
     </message>
 </context>
 <context>
@@ -13409,17 +13413,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/hudhandler.cpp" line="+235"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 복원 중…</translation>
     </message>
     <message>
         <location line="+293"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 압축 중…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 업로드 중 %1%</translation>
     </message>
 </context>
 <context>
@@ -13427,7 +13431,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasview.cpp" line="+129"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>다른 이름으로 저장…</translation>
     </message>
 </context>
 <context>
@@ -13435,142 +13439,142 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/lock.cpp" line="+101"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>초기화 진행 중</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스가 잠겨 있습니다</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자가 잠겨 있습니다</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You need to set a layer as the fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어를 채우기 소스로 설정해야 합니다</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어가 그룹입니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어가 잠겨 있습니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Layer is censored and blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어가 검열 및 차단되었습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어가 검열되었습니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Layer is blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어가 차단되었습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어가 숨겨져 있습니다</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 프레임에서 레이어가 보이지 않습니다</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 레이어가 없습니다</translation>
     </message>
     <message>
         <location line="-119"/>
         <source>Exit layer view</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 보기 나가기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit group view</source>
-        <translation type="unfinished"></translation>
+        <translation>그룹 보기 나가기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit frame view</source>
-        <translation type="unfinished"></translation>
+        <translation>프레임 보기 나가기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unlock canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 잠금 해제</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 초기화…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>모두 선택</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 경계 선택</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Disable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>넘침 방지 비활성화</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set current layer as fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 레이어를 채우기 소스로 설정</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 소스 해제</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>검열된 레이어 표시</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Out of space, you must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>공간이 부족합니다. 캔버스를 초기화해야 합니다</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Out of space, operator must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>공간이 부족합니다. 관리자가 캔버스를 초기화해야 합니다</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Choose a different layer to fill on</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기를 수행할 다른 레이어를 선택하세요</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>도구가 잠겨 있습니다</translation>
     </message>
     <message>
         <location line="-32"/>
         <source>Tool requires a selection</source>
-        <translation type="unfinished"></translation>
+        <translation>도구를 사용하려면 선택 영역이 필요합니다</translation>
     </message>
 </context>
 <context>
@@ -13578,7 +13582,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시를 편집하려면 클릭</translation>
     </message>
 </context>
 <context>
@@ -13586,7 +13590,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13630,66 +13634,66 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../scene/canvasview.cpp" line="+342"/>
         <location filename="../view/canvasview.cpp" line="-23"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>재연결</translation>
     </message>
     <message>
         <location line="+20"/>
         <location filename="../view/canvasview.cpp" line="+19"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>초기화 전의 상태로 캔버스를 저장하시겠습니까?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>다른 이름으로 저장…</translation>
     </message>
     <message>
         <location line="+380"/>
         <location filename="../view/canvascontroller.cpp" line="+475"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>수직 반전: 켜짐</translation>
     </message>
     <message>
         <location line="+0"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>수직 반전: 꺼짐</translation>
     </message>
     <message>
         <location line="+18"/>
         <location filename="../view/canvascontroller.cpp" line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>수평 미러: 켜짐</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>수평 미러: 꺼짐</translation>
     </message>
     <message>
         <location line="+2021"/>
         <location filename="../view/canvascontroller.cpp" line="+2162"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>줌: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../view/canvascontroller.cpp" line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>회전: %1°</translation>
     </message>
     <message>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 중…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>저장 중…</translation>
     </message>
 </context>
 <context>
@@ -13697,22 +13701,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+46"/>
         <source>Invite</source>
-        <translation type="unfinished">초대</translation>
+        <translation>초대</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished">세션</translation>
+        <translation>세션</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished">채팅창</translation>
+        <translation>채팅</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation type="unfinished"></translation>
+        <translation>채팅 옵션 표시</translation>
     </message>
 </context>
 <context>
@@ -13720,72 +13724,72 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+182"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>공개</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>전송</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>As regular window</source>
         <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>일반 창으로</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of Drawpile</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 창 위에</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of everything</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>항상 위</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>알림 음소거</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>이 창에 대한 알림 토글</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished"></translation>
+        <translation>채팅 (기록됨)...</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Chat...</source>
-        <translation type="unfinished"></translation>
+        <translation>채팅...</translation>
     </message>
     <message>
         <location line="+359"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 님이 세션에 참여했습니다</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> (on an older version of Drawpile)</source>
         <extracomment>This is appended to the message &quot;%1 joined the session&quot; if the person joining is using a slightly incompatible version of Drawpile.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> (이전 버전의 Drawpile 사용 중)</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>%1 left the session</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 님이 세션을 나갔습니다</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>%1 rolls %2</source>
         <extracomment>This refers to a dice roll.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 님이 주사위를 굴려 %2이(가) 나왔습니다</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -13800,7 +13804,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>/!: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: 텍스트가 입력되지 않았습니다.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -13810,42 +13814,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>/alert: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: 텍스트가 입력되지 않았습니다.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/me: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/me: 텍스트가 입력되지 않았습니다.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: 운영자만 핀을 고정할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: 공개 채팅에서만 핀을 고정할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: 텍스트가 입력되지 않았습니다.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: 운영자만 핀 고정을 해제할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: 공개 채팅에서만 핀 고정을 해제할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>/roll: invalid dice roll description.</source>
-        <translation type="unfinished"></translation>
+        <translation>/roll: 주사위 규칙 설명이 올바르지 않습니다.</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -13859,7 +13863,15 @@ Values above 0.5 may not be noticeable.</source>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>사용 가능한 클라이언트 명령어:
+/help - 이 메시지 표시
+/clear - 채팅창 비우기
+/! &lt;내용&gt; - 공지하기 (관리자 전용)
+/alert &lt;내용&gt; - 높은 우선순위 경고 보내기 (관리자 전용)
+/pin &lt;내용&gt; - 메시지를 채팅창 상단에 고정 (관리자 전용)
+/unpin - 고정된 메시지 제거 (관리자 전용)
+/me &lt;내용&gt; - 행동 유형 메시지 보내기
+/roll &lt;주사위&gt; - 주사위 굴리기 (예: 6면체 주사위 1개는 1d6)</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -13869,22 +13881,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-797"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>지우기</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compact mode</source>
-        <translation type="unfinished"></translation>
+        <translation>컴팩트 모드</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>분리</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>붙이기</translation>
     </message>
 </context>
 <context>
@@ -13892,7 +13904,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+13"/>
         <source>Chat</source>
-        <translation type="unfinished">채팅창</translation>
+        <translation>채팅</translation>
     </message>
 </context>
 <context>
@@ -13900,7 +13912,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 선택</translation>
     </message>
 </context>
 <context>
@@ -13908,47 +13920,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+108"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>복사</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 곡선을 클립보드에 복사합니다. 다른 설정에 붙여넣거나 채팅창에 붙여넣어 다른 사용자와 공유할 수 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>붙여넣기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation type="unfinished"></translation>
+        <translation>클립보드에서 복사된 곡선을 붙여넣어 현재 설정을 덮어씁니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save and load curve presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>곡선 프리셋을 저장하고 불러옵니다.</translation>
     </message>
     <message>
         <location line="+102"/>
         <source>Curve copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>곡선이 클립보드에 복사되었습니다.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>클립보드에서 곡선을 붙여넣었습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation type="unfinished"></translation>
+        <translation>클립보드에 곡선 데이터가 포함되어 있지 않은 것 같습니다.</translation>
     </message>
 </context>
 <context>
@@ -13961,12 +13973,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>배경색 설정…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation type="unfinished"></translation>
+        <translation>색상을 검은색과 흰색으로 초기화</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -14017,17 +14029,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/mypaintinput.cpp" line="+137"/>
         <source>Output Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>출력 범위: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Input Minimum: </source>
-        <translation type="unfinished"></translation>
+        <translation>입력 최소값: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation>입력 최대값: </translation>
     </message>
 </context>
 <context>
@@ -14035,92 +14047,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+60"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>주소를 클립보드에 복사</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 URL을 클립보드에 복사</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">외부 아이피 주소 받기</translation>
+        <translation>외부 아이피 주소 가져오기</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hide address</source>
-        <translation type="unfinished"></translation>
+        <translation>주소 숨기기</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation type="unfinished">현황</translation>
+        <translation>통계</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>인증서 보기</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>자체 서명된 인증서</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>알려진 자체 서명된 인증서</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>고정된 자체 서명된 인증서</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>유효한 인증서</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>고정된 유효한 인증서</translation>
     </message>
     <message>
         <location line="+186"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>연결되지 않음</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>연결 중...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>연결됨</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Logging out...</source>
-        <translation type="unfinished"></translation>
+        <translation>로그아웃 중...</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>공지</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished"></translation>
+        <translation>인터넷 서비스 제공업체가 Carrier Grade NAT를 사용하고 있습니다. 이로 인해 다른 사용자가 귀하에게 직접 연결할 수 없습니다. 해결 방법은 Drawpile 도움말 페이지를 참조하세요.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>다시 표시하지 않음</translation>
     </message>
 </context>
 <context>
@@ -14128,12 +14140,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>무시 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>무시</translation>
     </message>
 </context>
 <context>
@@ -14141,22 +14153,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+42"/>
         <source>Add</source>
-        <translation type="unfinished">추가</translation>
+        <translation>추가</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation type="unfinished"></translation>
+        <translation>수정</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation type="unfinished"></translation>
+        <translation>팔레트 색상 설정</translation>
     </message>
     <message>
         <location line="+203"/>
@@ -14164,7 +14176,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>빨강: %1
+초록: %2
+파랑: %3
+Hex: %4</translation>
     </message>
 </context>
 <context>
@@ -14172,22 +14187,22 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>프리셋</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>불러오기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">저장</translation>
+        <translation>저장</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
 </context>
 <context>
@@ -14195,17 +14210,17 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation type="unfinished"></translation>
+        <translation>최근 파일이 없습니다.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation>최근 호스트가 없습니다.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>제거</translation>
     </message>
 </context>
 <context>
@@ -14213,85 +14228,87 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+745"/>
         <source>Blank key frame (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>빈 키프레임 (복제)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>빈 키프레임 %1 (복제)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blank key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>빈 키프레임</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>빈 키프레임 %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1의 키프레임 (복제)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>%2의 키프레임 %1 (복제)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1의 키프레임</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%2의 키프레임 %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>표시 여부 전환</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished"></translation>
+        <translation>어니언 스킨 전환</translation>
     </message>
     <message>
         <location line="+288"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>아직 트랙이 없습니다.
+위의 ＋ 버튼을 누르거나
+애니메이션 ▸ 새 트랙을 통해 추가하세요.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-7415"/>
         <location filename="../widgets/timelinewidget.cpp" line="+571"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>트랙</translation>
     </message>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+56"/>
         <source>Rename Track</source>
-        <translation type="unfinished">트랙 이름 변경</translation>
+        <translation>트랙 이름 바꾸기</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>트랙 이름</translation>
     </message>
     <message>
         <location line="+545"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>키프레임을 %1로 설정</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished">키프레임을 현재 레이어로 설정</translation>
+        <translation>키프레임을 현재 레이어로 설정</translation>
     </message>
 </context>
 <context>
@@ -14299,12 +14316,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+162"/>
         <source>Operator</source>
-        <translation type="unfinished">관리자</translation>
+        <translation>관리자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished">신뢰됨</translation>
+        <translation>신뢰됨</translation>
     </message>
     <message>
         <location line="-133"/>
@@ -14314,37 +14331,37 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>신뢰함(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>잠금(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;음소거</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;실행 취소</translation>
+        <translation>실행 취소(&amp;U)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;다시 실행</translation>
+        <translation>다시 실행(&amp;R)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>강제 퇴장(&amp;K)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>강제 퇴장 및 차단(&amp;N)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -14359,7 +14376,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Request Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 브러시 요청(&amp;B)</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -14374,18 +14391,18 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>Outdated</source>
-        <translation type="unfinished"></translation>
+        <translation>구버전</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> | </source>
         <extracomment>Separator for user state, shows up like &quot;Operator | Registered&quot;. Only change this if the vertical line is troublesome in your language, otherwise just leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> | </translation>
     </message>
     <message>
         <location line="-19"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>등록됨</translation>
     </message>
 </context>
 <context>
@@ -14398,7 +14415,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished">돋보기</translation>
+        <translation>확대/축소</translation>
     </message>
 </context>
 </TS>
