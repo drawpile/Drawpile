@@ -1132,12 +1132,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+66"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>더 밝게</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>부드러운 빛</translation>
     </message>
     <message>
         <location line="-36"/>
