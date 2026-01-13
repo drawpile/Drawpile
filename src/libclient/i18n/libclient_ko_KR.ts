@@ -1007,22 +1007,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation>곱하기</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>스크린</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>오버레이</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation>선형 닷지/추가</translation>
+        <translation>선형닷지</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1042,7 +1042,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation>핀 라이트</translation>
+        <translation>핀라이트</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1057,12 +1057,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>차이</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation>나누기</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -2252,52 +2252,52 @@ Select a regular layer instead.</source>
         <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트 확인 중…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 자동 업데이트 확인 기능이 꺼져 있습니다, &lt;a href=&quot;#autoupdate&quot;&gt;활성화하려면 여기를 클릭하세요. &lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>자동 확인을 원하지 않으면, &lt;a href=&quot;#checkupdates&quot;&gt;여기를 클릭해 수동으로 확인하세요. &lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>네트워크 에러: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>불러온 데이터를 이해하지 못했습니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>불러온 업데이트를 인식할 수 없었습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트를 저장하지 못했습니다.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>불러온 소식을 인식하지 못했습니다.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>소식을 저장하지 못했습니다.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 소식은 없습니다.</translation>
     </message>
 </context>
 <context>
