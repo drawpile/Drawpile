@@ -88,9 +88,10 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ_WRITE (-904)
 
 #define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_UNKNOWN   (-1000)
-#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN  (-1001)
-#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_READY (-1002)
-#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE     (-1003)
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_MISUSE    (-1001)
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN  (-1002)
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_READY (-1003)
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE     (-1004)
 
 #define DP_PROJECT_CANVAS_SAVE_ERROR_UNKNOWN       (-1100)
 #define DP_PROJECT_CANVAS_SAVE_ERROR_OPEN_SNAPSHOT (-1101)
@@ -111,6 +112,22 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_NOT_OPEN (-1402)
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_PREPARE  (-1403)
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_QUERY    (-1404)
+
+#define DP_PROJECT_SAVE_ERROR_UNKNOWN         (-1500)
+#define DP_PROJECT_SAVE_ERROR_MISUSE          (-1501)
+#define DP_PROJECT_SAVE_ERROR_NO_SESSION      (-1502)
+#define DP_PROJECT_SAVE_ERROR_OPEN            (-1503)
+#define DP_PROJECT_SAVE_ERROR_READ_ONLY       (-1504)
+#define DP_PROJECT_SAVE_ERROR_SETUP           (-1505)
+#define DP_PROJECT_SAVE_ERROR_READ_EMPTY      (-1506)
+#define DP_PROJECT_SAVE_ERROR_HEADER_WRITE    (-1507)
+#define DP_PROJECT_SAVE_ERROR_HEADER_READ     (-1508)
+#define DP_PROJECT_SAVE_ERROR_HEADER_MISMATCH (-1509)
+#define DP_PROJECT_SAVE_ERROR_MIGRATION       (-1510)
+#define DP_PROJECT_SAVE_ERROR_PREPARE         (-1511)
+#define DP_PROJECT_SAVE_ERROR_LOCKED          (-1512)
+#define DP_PROJECT_SAVE_ERROR_QUERY           (-1513)
+#define DP_PROJECT_SAVE_ERROR_WRITE           (-1514)
 
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
@@ -137,6 +154,12 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS  (1u << 5u)
 #define DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS (1u << 6u)
 #define DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS    (1u << 7u)
+
+#define DP_PROJECT_SAVE_FLAG_NO_MESSAGES (1u << 0u)
+
+#define DP_PROJECT_INFO_FLAG_HEADER    (1u << 0u)
+#define DP_PROJECT_INFO_FLAG_SESSIONS  (1u << 1u)
+#define DP_PROJECT_INFO_FLAG_SNAPSHOTS (1u << 2u)
 
 
 typedef struct DP_Project DP_Project;
@@ -270,6 +293,21 @@ int DP_project_snapshot_canvas(DP_Project *prj, long long snapshot_id,
                                bool (*thumb_write_fn)(void *, DP_Image *,
                                                       DP_Output *),
                                void *thumb_write_user);
+
+
+// Attaches the given database and writes the messages of the current session
+// (unless the DP_PROJECT_SAVE_FLAG_NO_MESSAGES is passed) and a snapshot of the
+// given canvas state into it. The target file should first be copied if it
+// already exists, this function doesn't take care of rollbacks. If a save has
+// been made to the file before and it is the latest session (according to a
+// matching source_param on the session), it updates that session by deleting
+// any non-persistent snapshots and continuing the messages from the last
+// sequence id, otherwise it creates a new one. Returns 0 on success and a
+// negative DP_PROJECT_SESSION_SAVE_ERROR_* value on failure.
+int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
+                    unsigned int flags,
+                    bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
+                    void *thumb_write_user);
 
 
 DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,

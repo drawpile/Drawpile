@@ -331,7 +331,9 @@ private slots:
 	void markDirty();
 	void unmarkDirty();
 
-	void onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec);
+	void onSaveSucceeded(qint64 elapsedMsec);
+	void onSaveCancelled();
+	void onSaveFailed(const QString &errorMessage);
 
 private:
 	void clearConfig();

@@ -39,12 +39,9 @@ public:
 	badDimensionsErrorString(int maxDimension, const QString &format);
 
 signals:
-	/**
-	 * @brief Emitted once the file has been saved
-	 * @param error the error message (blank string if no error occurred)
-	 * @param elapsedMsec milliseconds that the save took
-	 */
-	void saveComplete(const QString &error, qint64 elapsedMsec);
+	void saveSucceeded(qint64 elapsedMsec);
+	void saveCancelled();
+	void saveFailed(const QString &errorMessage);
 
 private:
 	static bool

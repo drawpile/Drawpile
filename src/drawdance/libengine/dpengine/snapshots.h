@@ -42,6 +42,13 @@ typedef struct DP_ResetImageOptions {
         bool (*fn)(void *, DP_Image *, DP_Output *);
         void *user;
     } thumb_write;
+    // For speed: a function to be called before the workers are joined. This is
+    // a time where the main thread is idle, so we can do other stuff there. For
+    // example, dppr saving uses this to copy messages during that time.
+    struct {
+        void (*fn)(void *);
+        void *user;
+    } pre_join;
 } DP_ResetImageOptions;
 
 typedef enum DP_ResetEntryType {

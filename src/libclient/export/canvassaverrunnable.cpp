@@ -75,7 +75,17 @@ void CanvasSaverRunnable::run()
 	}
 #endif
 
-	emit saveComplete(saveResultToErrorString(result, m_type), timer.elapsed());
+	switch(result) {
+	case DP_SAVE_RESULT_SUCCESS:
+		Q_EMIT saveSucceeded(timer.elapsed());
+		break;
+	case DP_SAVE_RESULT_CANCEL:
+		Q_EMIT saveCancelled();
+		break;
+	default:
+		Q_EMIT saveFailed(saveResultToErrorString(result, m_type));
+		break;
+	}
 }
 
 QString CanvasSaverRunnable::saveResultToErrorString(

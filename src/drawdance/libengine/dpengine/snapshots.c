@@ -884,6 +884,13 @@ void DP_reset_image_build_with(
 
     canvas_state_to_reset_image(&c, cs);
 
+    // This thread is gonna go idle waiting for the worker to finish, let the
+    // caller do other work if they have any.
+    void (*pre_join_fn)(void *) = options->pre_join.fn;
+    if (pre_join_fn) {
+        pre_join_fn(options->pre_join.user);
+    }
+
     DP_PERF_BEGIN(join, "image:join");
     DP_worker_free_join(worker);
     DP_PERF_END(join);
@@ -1193,7 +1200,9 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
         compatibility_mode ? DP_RESET_IMAGE_COMPRESSION_GZIP8BE
                            : DP_RESET_IMAGE_COMPRESSION_ZSTD8LE;
     DP_ResetImageOptions options = {
-        true, false, !compatibility_mode, compression, 0, 0, {NULL, NULL}};
+        true, false, !compatibility_mode, compression,
+        0,    0,     {NULL, NULL},        {NULL, NULL},
+    };
     struct DP_ResetImageMessageContext c = {
         context_id, 0, compatibility_mode, DP_mutex_new(), push_message, user};
     if (!c.mutex) {

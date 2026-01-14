@@ -281,20 +281,48 @@ static void handle_internal_project_worker_snapshot_request(DP_PaintEngine *pe)
         DP_acl_state_local_user_id(pe->acls));
 }
 
-static void
-handle_internal_project_worker_request(DP_PaintEngine *pe,
-                                       void (*handler_fn)(DP_PaintEngine *pe))
+static void handle_internal_project_worker_save_request(
+    DP_PaintEngine *pe, DP_MsgInternal *mi, bool is_project_recording)
 {
-    if (pe->record.pw) {
-        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
-        DP_ProjectWorker *pw = pe->record.pw;
-        // Might have stopped recording in the interim, so check again.
-        if (pw) {
-            handler_fn(pe);
-        }
-        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+    DP_CanvasState *cs = DP_local_state_apply_dec(
+        pe->local_state, DP_canvas_history_get(pe->ch), pe->paint_dc);
+
+    DP_ProjectWorker *pw;
+    unsigned int file_id;
+    if (is_project_recording) {
+        pw = pe->record.pw;
+        file_id = pe->record.file_id;
     }
+    else {
+        pw = NULL;
+        file_id = 0u;
+    }
+
+    DP_ProjectSaveRequestCallback callback =
+        DP_msg_internal_project_save_request_callback(mi);
+    void *user = DP_msg_internal_project_save_request_user(mi);
+    callback(user, cs, pw, file_id);
 }
+
+#define HANDLE_INTERNAL_PROJECT_WORKER_REQUEST(PE, THEN, ELSE)                 \
+    do {                                                                       \
+        DP_PaintEngine *_pe = (PE);                                            \
+        if (_pe->record.pw) {                                                  \
+            DP_MUTEX_MUST_LOCK(pe->queue_mutex);                               \
+            DP_ProjectWorker *_pw = pe->record.pw;                             \
+            /* Might have stopped recording in the interim, so check again. */ \
+            if (_pw) {                                                         \
+                THEN;                                                          \
+            }                                                                  \
+            else {                                                             \
+                ELSE;                                                          \
+            }                                                                  \
+            DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);                             \
+        }                                                                      \
+        else {                                                                 \
+            ELSE;                                                              \
+        }                                                                      \
+    } while (0)
 
 static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
                             DP_MsgInternal *mi)
@@ -423,12 +451,19 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
                             DP_msg_internal_local_state_save_user(mi));
         break;
     case DP_MSG_INTERNAL_TYPE_PROJECT_METADATA_REQUEST:
-        handle_internal_project_worker_request(
-            pe, handle_internal_project_worker_metadata_request);
+        HANDLE_INTERNAL_PROJECT_WORKER_REQUEST(
+            pe, handle_internal_project_worker_metadata_request(pe),
+            /* nothing */);
         break;
     case DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST:
-        handle_internal_project_worker_request(
-            pe, handle_internal_project_worker_snapshot_request);
+        HANDLE_INTERNAL_PROJECT_WORKER_REQUEST(
+            pe, handle_internal_project_worker_snapshot_request(pe),
+            /* nothing */);
+        break;
+    case DP_MSG_INTERNAL_TYPE_PROJECT_SAVE_REQUEST:
+        HANDLE_INTERNAL_PROJECT_WORKER_REQUEST(
+            pe, handle_internal_project_worker_save_request(pe, mi, true),
+            handle_internal_project_worker_save_request(pe, mi, false));
         break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
@@ -907,6 +942,11 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
                 case DP_MSG_INTERNAL_TYPE_LOCAL_STATE_SAVE:
                     DP_msg_internal_local_state_save_callback(mi)(
                         DP_msg_internal_local_state_save_user(mi), NULL);
+                    break;
+                case DP_MSG_INTERNAL_TYPE_PROJECT_SAVE_REQUEST:
+                    DP_msg_internal_project_save_request_callback(mi)(
+                        DP_msg_internal_project_save_request_user(mi), NULL,
+                        NULL, 0u);
                     break;
                 default:
                     break;

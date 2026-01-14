@@ -340,6 +340,11 @@ void ProjectHandler::handleEvent(const DP_ProjectWorkerEvent *event)
 			lcDpProjectWorker, "Error %d updating session times: %s",
 			int(event->data.error.error), event->data.error.message);
 		return;
+	case DP_PROJECT_WORKER_EVENT_SAVE_ERROR:
+		qCWarning(
+			lcDpProjectWorker, "Error %d saving project: %s",
+			int(event->data.error.error), event->data.error.message);
+		return;
 	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE:
 		setMetadatum(
 			QStringLiteral("own_work_minutes"), event->data.own_work_minutes);
@@ -354,26 +359,34 @@ void ProjectHandler::handleEventCallback(
 	static_cast<ProjectHandler *>(user)->handleEvent(event);
 }
 
-bool ProjectHandler::writeThumbnail(DP_Image *thumb)
+bool ProjectHandler::writeThumbnail(DP_Image *thumb, DP_Output *outputOrNull)
 {
-	QByteArray thumbnailPathBytes = m_thumbnailPath.toUtf8();
-	DP_Output *output =
-		DP_file_output_save_new_from_path(thumbnailPathBytes.constData());
-	if(!output) {
-		return false;
-	}
+	if(outputOrNull) {
+		// Write thumbnail to given output, used when saving the project.
+		return DP_image_write_project_thumbnail(nullptr, thumb, outputOrNull);
+	} else {
+		// Write thumbnail to metadata file, used for metadata snapshots.
+		QByteArray thumbnailPathBytes = m_thumbnailPath.toUtf8();
+		DP_Output *output =
+			DP_file_output_save_new_from_path(thumbnailPathBytes.constData());
+		if(!output) {
+			return false;
+		}
 
-	if(!DP_image_write_project_thumbnail(nullptr, thumb, output)) {
-		DP_output_free_discard(output);
-		return false;
-	}
+		if(!DP_image_write_project_thumbnail(nullptr, thumb, output)) {
+			DP_output_free_discard(output);
+			return false;
+		}
 
-	return DP_output_free(output);
+		return DP_output_free(output);
+	}
 }
 
-bool ProjectHandler::writeThumbnailCallback(void *user, DP_Image *thumb)
+bool ProjectHandler::writeThumbnailCallback(
+	void *user, DP_Image *thumb, DP_Output *outputOrNull)
 {
-	return static_cast<ProjectHandler *>(user)->writeThumbnail(thumb);
+	return static_cast<ProjectHandler *>(user)->writeThumbnail(
+		thumb, outputOrNull);
 }
 
 void ProjectHandler::emitError(

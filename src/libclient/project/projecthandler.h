@@ -7,6 +7,7 @@
 
 class QTimer;
 struct DP_Image;
+struct DP_Output;
 struct DP_ProjectWorker;
 struct DP_ProjectWorkerEvent;
 struct DP_ProjectWorkerEventError;
@@ -79,9 +80,10 @@ private:
 	static void
 	handleEventCallback(void *user, const DP_ProjectWorkerEvent *event);
 
-	bool writeThumbnail(DP_Image *thumb);
+	bool writeThumbnail(DP_Image *thumb, DP_Output *outputOrNull);
 
-	static bool writeThumbnailCallback(void *user, DP_Image *thumb);
+	static bool writeThumbnailCallback(
+		void *user, DP_Image *thumb, DP_Output *outputOrNull);
 
 	void
 	emitError(const char *messageTemplate, const DP_ProjectWorkerEventError &e);

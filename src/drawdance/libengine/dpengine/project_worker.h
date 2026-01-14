@@ -21,6 +21,7 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_SNAPSHOT_ERROR,
     DP_PROJECT_WORKER_EVENT_THUMBNAIL_MAKE_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
+    DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
 } DP_ProjectWorkerEventType;
 
@@ -43,9 +44,15 @@ typedef struct DP_ProjectWorkerEvent {
 typedef void (*DP_ProjectWorkerHandleEventFn)(
     void *user, const DP_ProjectWorkerEvent *event);
 
-typedef bool (*DP_ProjectWorkerThumbWriteFn)(void *user, DP_Image *img);
+// Third parameter will be null if it comes from a thumbnail make command. In
+// that case, the handler writes a thumbnail file along with the metadata.
+typedef bool (*DP_ProjectWorkerThumbWriteFn)(void *user, DP_Image *img,
+                                             DP_Output *output_or_null);
 
 typedef void (*DP_ProjectWorkerSyncFn)(void *user);
+
+typedef void (*DP_ProjectWorkerSaveStartFn)(void *user);
+typedef void (*DP_ProjectWorkerSaveFinishFn)(void *user, int save_result);
 
 
 DP_ProjectWorker *
@@ -114,5 +121,11 @@ void DP_project_worker_thumbnail_make_noinc(DP_ProjectWorker *pw,
 
 void DP_project_worker_session_times_update(DP_ProjectWorker *pw,
                                             unsigned int file_id);
+
+void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
+                                  const char *path, DP_CanvasState *cs,
+                                  DP_ProjectWorkerSaveStartFn start_fn,
+                                  DP_ProjectWorkerSaveFinishFn finish_fn,
+                                  void *user);
 
 #endif

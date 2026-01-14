@@ -52,6 +52,8 @@
 #define DP_PROJECT_SNAPSHOT_TRACK_FLAG_HIDDEN          (1u << 0u)
 #define DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN      (1u << 1u)
 
+#define DP_PROJECT_SQL_MAIN_SAV(A, B, COND) ((COND) ? A "sav." B : A "" B)
+
 
 typedef enum DP_ProjectPersistentStatement {
     DP_PROJECT_STATEMENT_MESSAGE_RECORD,
@@ -100,6 +102,7 @@ typedef struct DP_ProjectSnapshot {
     long long id;
     long long sequence_id;
     DP_ProjectSnapshotState state;
+    bool attached;
     bool merge_sublayers;
     bool include_selections;
     bool has_sublayers;
@@ -413,15 +416,17 @@ static void set_db_configs(sqlite3 *db)
             _application_id_sql =                                           \
                 "pragma " PREFIX "application_id = " DP_PROJECT_XSTR(       \
                     DP_PROJECT_CANVAS_APPLICATION_ID);                      \
-            _user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(   \
-                DP_PROJECT_CANVAS_USER_VERSION);                            \
+            _user_version_sql =                                             \
+                "pragma " PREFIX "user_version = " DP_PROJECT_XSTR(         \
+                    DP_PROJECT_CANVAS_USER_VERSION);                        \
         }                                                                   \
         else {                                                              \
             _application_id_sql =                                           \
                 "pragma " PREFIX "application_id = " DP_PROJECT_XSTR(       \
                     DP_PROJECT_APPLICATION_ID);                             \
-            _user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(   \
-                DP_PROJECT_USER_VERSION);                                   \
+            _user_version_sql =                                             \
+                "pragma " PREFIX                                            \
+                "user_version = " DP_PROJECT_XSTR(DP_PROJECT_USER_VERSION); \
         }                                                                   \
         OUT_OK = exec_write_stmt(DB, _application_id_sql,                   \
                                  "setting application_id", &OUT_SQL_RESULT) \
@@ -509,7 +514,7 @@ static void try_rollback(sqlite3 *db)
             "    source_type integer not null,\n"                              \
             "    source_param text not null,\n"                                \
             "    protocol text not null,\n"                                    \
-            "    flags integer not null\n,"                                    \
+            "    flags integer not null,\n"                                    \
             "    opened_at real not null,\n"                                   \
             "    closed_at real,\n"                                            \
             "    thumbnail blob)\n"                                            \
@@ -624,8 +629,8 @@ static void try_rollback(sqlite3 *db)
             "    frame_index integer not null,\n"                              \
             "    layer_id integer not null,\n"                                 \
             "    flags integer not null,\n"                                    \
-            "    primary key (snapshot_id, track_index, frame_index, "         \
-            "layer_id))\n"                                                     \
+            "    primary key (snapshot_id, track_index, frame_index,\n"        \
+            "                 layer_id))\n"                                    \
             "strict, without rowid;\n"                                         \
             "create table " PREFIX "snapshot_messages (\n"                     \
             "    snapshot_id integer not null,\n"                              \
@@ -875,6 +880,7 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
     prj->snapshot.id = 0LL;
     prj->snapshot.sequence_id = 0LL;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_CLOSED;
+    prj->snapshot.attached = false;
     prj->snapshot.merge_sublayers = false;
     prj->snapshot.include_selections = false;
     prj->snapshot.has_sublayers = false;
@@ -1413,52 +1419,80 @@ int DP_project_session_times_update(DP_Project *prj,
 }
 
 
-static const char *snapshot_sql(DP_ProjectSnapshotPersistentStatement psps)
+static const char *snapshot_sql(DP_ProjectSnapshotPersistentStatement psps,
+                                bool attached)
 {
     switch (psps) {
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_METADATA:
-        return "insert into snapshot_metadata (snapshot_id, metadata_id, "
-               "value) values (?, ?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV("insert into ",
+                                       "snapshot_metadata (snapshot_id, "
+                                       "metadata_id, value) values (?, ?, ?)",
+                                       attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_LAYER:
-        return "insert into snapshot_layers (snapshot_id, layer_index, "
-               "parent_index, layer_id, title, blend_mode, opacity, "
-               "sketch_opacity, sketch_tint, flags, fill) values (?, ?, ?, "
-               "?, ?, ?, ?, ?, ?, ?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_layers (snapshot_id, layer_index, parent_index, "
+            "layer_id, title, blend_mode, opacity, sketch_opacity, "
+            "sketch_tint, flags, fill) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+            "?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER:
-        return "insert into snapshot_sublayers (snapshot_id, sublayer_index, "
-               "layer_index, sublayer_id, blend_mode, opacity, flags, fill) "
-               "values (?, ?, ?, ?, ?, ?, 0, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_sublayers (snapshot_id, sublayer_index, layer_index, "
+            "sublayer_id, blend_mode, opacity, flags, fill) values (?, ?, ?, "
+            "?, ?, ?, 0, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TILE:
-        return "insert into snapshot_tiles (snapshot_id, layer_index, "
-               "tile_index, context_id, repeat, pixels) values (?, ?, ?, ?, ?, "
-               "?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_tiles (snapshot_id, layer_index, tile_index, context_id, "
+            "repeat, pixels) values (?, ?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER_TILE:
-        return "insert into snapshot_sublayer_tiles (snapshot_id, "
-               "sublayer_index, tile_index, repeat, pixels) values (?, ?, ?, "
-               "?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_sublayer_tiles (snapshot_id, sublayer_index, tile_index, "
+            "repeat, pixels) values (?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE:
-        return "insert into snapshot_selection_tiles (snapshot_id, "
-               "selection_id, context_id, tile_index, mask) values (?, ?, ?, "
-               "?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_selection_tiles (snapshot_id, selection_id, context_id, "
+            "tile_index, mask) values (?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_ANNOTATION:
-        return "insert into snapshot_annotations (snapshot_id, "
-               "annotation_index, annotation_id, content, x, y, width, height, "
-               "background_color, valign, flags) values (?, ?, ?, ?, ?, ?, ?, "
-               "?, ?, ?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_annotations (snapshot_id, annotation_index, "
+            "annotation_id, content, x, y, width, height, background_color, "
+            "valign, flags) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_TRACK:
-        return "insert into snapshot_tracks (snapshot_id, track_index, "
-               "track_id, title, flags) values (?, ?, ?, ?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_tracks (snapshot_id, track_index, track_id, title, "
+            "flags) values (?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME:
-        return "insert into snapshot_key_frames (snapshot_id, track_index, "
-               "frame_index, title, layer_id) values (?, ?, ?, ?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_key_frames (snapshot_id, track_index, frame_index, "
+            "title, layer_id) values (?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME_LAYER:
-        return "insert into snapshot_key_frame_layers (snapshot_id, "
-               "track_index, frame_index, layer_id, flags) values (?, ?, ?, ?, "
-               "?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_key_frame_layers (snapshot_id, track_index, frame_index, "
+            "layer_id, flags) values (?, ?, ?, ?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_MESSAGE:
-        return "insert into snapshot_messages (snapshot_id, sequence_id, "
-               "recorded_at, flags, type, context_id, body) values (?, ?, "
-               "unixepoch('subsec'), ?, ?, ?, ?)";
+        return DP_PROJECT_SQL_MAIN_SAV(
+            "insert into ",
+            "snapshot_messages (snapshot_id, sequence_id, recorded_at, flags, "
+            "type, context_id, body) values (?, ?, unixepoch('subsec'), ?, ?, "
+            "?, ?)",
+            attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_COUNT:
         break;
     }
@@ -1477,8 +1511,8 @@ snapshot_prepare(DP_Project *prj, DP_ProjectSnapshotPersistentStatement psps)
         return stmt;
     }
 
-    stmt =
-        prepare(prj->db, snapshot_sql(psps), SQLITE_PREPARE_PERSISTENT, NULL);
+    stmt = prepare(prj->db, snapshot_sql(psps, prj->snapshot.attached),
+                   SQLITE_PREPARE_PERSISTENT, NULL);
     if (!stmt) {
         return NULL;
     }
@@ -1492,7 +1526,8 @@ snapshot_prepare(DP_Project *prj, DP_ProjectSnapshotPersistentStatement psps)
     return stmt;
 }
 
-static long long project_snapshot_open(DP_Project *prj, unsigned int flags)
+static long long project_snapshot_open(DP_Project *prj, unsigned int flags,
+                                       long long session_id, bool attached)
 {
     if (prj->snapshot.id != 0LL) {
         DP_error_set("Snapshot %lld already open", prj->snapshot.id);
@@ -1505,15 +1540,17 @@ static long long project_snapshot_open(DP_Project *prj, unsigned int flags)
     }
 
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "insert into snapshots (session_id, flags, taken_at) values "
-             "(?, ?, unixepoch('subsec'))");
+        prj, DP_PROJECT_SQL_MAIN_SAV("insert into ",
+                                     "snapshots (session_id, flags, taken_at) "
+                                     "values (?, ?, unixepoch('subsec'))",
+                                     attached));
     if (!stmt) {
         DP_mutex_free(mutex);
         return DP_PROJECT_SNAPSHOT_OPEN_ERROR_PREPARE;
     }
 
     long long snapshot_id;
-    bool write_ok = ps_bind_int64(prj, stmt, 1, prj->session_id)
+    bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
                  && ps_bind_int64(prj, stmt, 2, flags)
                  && ps_exec_write(prj, stmt, &snapshot_id);
     sqlite3_finalize(stmt);
@@ -1527,6 +1564,7 @@ static long long project_snapshot_open(DP_Project *prj, unsigned int flags)
     prj->snapshot.sequence_id = 0LL;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_READY;
     bool is_autosave = flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE;
+    prj->snapshot.attached = attached;
     prj->snapshot.merge_sublayers = !is_autosave;
     prj->snapshot.include_selections = is_autosave;
     prj->snapshot.has_sublayers = false;
@@ -1545,7 +1583,7 @@ long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags)
         return DP_PROJECT_SNAPSHOT_OPEN_ERROR_NO_SESSION;
     }
 
-    return project_snapshot_open(prj, flags);
+    return project_snapshot_open(prj, flags, prj->session_id, false);
 }
 
 static int record_snapshot_message(DP_Project *prj, unsigned int flags,
@@ -1597,6 +1635,12 @@ int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
         return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
     }
 
+    if (prj->snapshot.attached) {
+        DP_error_set("Snapshot %lld is not open, (attached snapshot %lld is)",
+                     snapshot_id, prj->snapshot.id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
     if (prj->snapshot.id != snapshot_id) {
         DP_error_set("Snapshot %lld is not open, (%lld is)", snapshot_id,
                      prj->snapshot.id);
@@ -1625,27 +1669,17 @@ static void snapshot_close(DP_Project *prj)
     prj->snapshot.mutex = NULL;
 }
 
-int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id)
+static int snapshot_finish(DP_Project *prj)
 {
-    DP_ASSERT(prj);
-    DP_ASSERT(snapshot_id > 0LL);
-
-    if (prj->snapshot.id == 0LL) {
-        DP_error_set("Snapshot %lld is not open (none is)", snapshot_id);
-        return DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN;
-    }
-
-    if (prj->snapshot.id != snapshot_id) {
-        DP_error_set("Snapshot %lld is not open, (%lld is)", snapshot_id,
-                     prj->snapshot.id);
-        return DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN;
-    }
-
+    long long snapshot_id = prj->snapshot.id;
     DP_ProjectSnapshotState snapshot_state = prj->snapshot.state;
     snapshot_close(prj);
 
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "update snapshots set flags = flags | ? where snapshot_id = ?");
+        prj,
+        DP_PROJECT_SQL_MAIN_SAV(
+            "update ", "snapshots set flags = flags | ? where snapshot_id = ?",
+            prj->snapshot.attached));
     if (!stmt) {
         return DP_PROJECT_SNAPSHOT_FINISH_ERROR_PREPARE;
     }
@@ -1678,21 +1712,66 @@ int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id)
     return 0;
 }
 
+int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id)
+{
+    DP_ASSERT(prj);
+    DP_ASSERT(snapshot_id > 0LL);
+
+    if (prj->snapshot.id == 0LL) {
+        DP_error_set("Snapshot %lld is not open (none is)", snapshot_id);
+        return DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.attached) {
+        DP_error_set("Snapshot %lld is not open, (attached snapshot %lld is)",
+                     snapshot_id, prj->snapshot.id);
+        return DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.id != snapshot_id) {
+        DP_error_set("Snapshot %lld is not open, (%lld is)", snapshot_id,
+                     prj->snapshot.id);
+        return DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN;
+    }
+
+    return snapshot_finish(prj);
+}
+
 static int project_snapshot_discard_relations(DP_Project *prj,
-                                              long long snapshot_id)
+                                              long long snapshot_id,
+                                              bool attached)
 {
     const char *sqls[] = {
-        "delete from snapshot_messages where snapshot_id = ?",
-        "delete from snapshot_key_frame_layers where snapshot_id = ?",
-        "delete from snapshot_key_frames where snapshot_id = ?",
-        "delete from snapshot_tracks where snapshot_id = ?",
-        "delete from snapshot_annotations where snapshot_id = ?",
-        "delete from snapshot_selection_tiles where snapshot_id = ?",
-        "delete from snapshot_sublayer_tiles where snapshot_id = ?",
-        "delete from snapshot_tiles where snapshot_id = ?",
-        "delete from snapshot_sublayers where snapshot_id = ?",
-        "delete from snapshot_layers where snapshot_id = ?",
-        "delete from snapshot_metadata where snapshot_id = ?",
+        DP_PROJECT_SQL_MAIN_SAV("delete from ",
+                                "snapshot_messages where snapshot_id = ?",
+                                attached),
+        DP_PROJECT_SQL_MAIN_SAV(
+            "delete from ", "snapshot_key_frame_layers where snapshot_id = ?",
+            attached),
+        DP_PROJECT_SQL_MAIN_SAV("delete from ",
+                                "snapshot_key_frames where snapshot_id = ?",
+                                attached),
+        DP_PROJECT_SQL_MAIN_SAV(
+            "delete from ", "snapshot_tracks where snapshot_id = ?", attached),
+        DP_PROJECT_SQL_MAIN_SAV("delete from ",
+                                "snapshot_annotations where snapshot_id = ?",
+                                attached),
+        DP_PROJECT_SQL_MAIN_SAV(
+            "delete from ", "snapshot_selection_tiles where snapshot_id = ?",
+            attached),
+        DP_PROJECT_SQL_MAIN_SAV("delete from ",
+                                "snapshot_sublayer_tiles where snapshot_id = ?",
+                                attached),
+        DP_PROJECT_SQL_MAIN_SAV(
+            "delete from ", "snapshot_tiles where snapshot_id = ?", attached),
+        DP_PROJECT_SQL_MAIN_SAV("delete from ",
+                                "snapshot_sublayers where snapshot_id = ?",
+                                attached),
+        DP_PROJECT_SQL_MAIN_SAV(
+            "delete from ", "snapshot_layers where snapshot_id = ?", attached),
+        DP_PROJECT_SQL_MAIN_SAV("delete from ",
+                                "snapshot_metadata where snapshot_id = ?",
+                                attached),
     };
 
     int prepare_errors = 0;
@@ -1738,17 +1817,16 @@ static int project_snapshot_discard_relations(DP_Project *prj,
     }
 }
 
-int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id)
+static int snapshot_discard(DP_Project *prj, long long snapshot_id,
+                            bool attached)
 {
-    DP_ASSERT(prj);
-    DP_ASSERT(snapshot_id > 0LL);
-
-    if (prj->snapshot.id == snapshot_id) {
+    if (prj->snapshot.id == snapshot_id && prj->snapshot.attached == attached) {
         snapshot_close(prj);
     }
 
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "delete from snapshots where snapshot_id = ?");
+        prj, DP_PROJECT_SQL_MAIN_SAV(
+                 "delete from ", "snapshots where snapshot_id = ?", attached));
     if (!stmt) {
         return DP_PROJECT_SNAPSHOT_DISCARD_ERROR_PREPARE;
     }
@@ -1761,7 +1839,7 @@ int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id)
     }
 
     long long changes = sqlite3_changes64(prj->db);
-    int error = project_snapshot_discard_relations(prj, snapshot_id);
+    int error = project_snapshot_discard_relations(prj, snapshot_id, attached);
     if (error != 0) {
         return error;
     }
@@ -1773,25 +1851,45 @@ int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id)
     return 0;
 }
 
-int DP_project_snapshot_discard_all_except(DP_Project *prj,
-                                           long long snapshot_id)
+int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id)
 {
     DP_ASSERT(prj);
     DP_ASSERT(snapshot_id > 0LL);
+    return snapshot_discard(prj, snapshot_id, false);
+}
 
-    sqlite3_stmt *stmt =
-        ps_prepare_ephemeral(prj, "select snapshot_id from snapshots "
-                                  "where snapshot_id <> ? and (flags & ?) = 0");
-    if (!stmt) {
-        return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_PREPARE;
+static int snapshot_discard_all_except(DP_Project *prj, long long snapshot_id,
+                                       bool attached)
+{
+    DP_ASSERT(prj);
+
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT == 2,
+                  "persistent snapshot flag matches query");
+    sqlite3_stmt *stmt;
+    if (snapshot_id > 0LL) { // Only check for valid snapshot ids.
+        stmt = ps_prepare_ephemeral(
+            prj, DP_PROJECT_SQL_MAIN_SAV(
+                     "select snapshot_id from ",
+                     "snapshots where snapshot_id <> ? and (flags & 2) = 0",
+                     attached));
+        if (!stmt) {
+            return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_PREPARE;
+        }
+
+        bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
+        if (!bind_ok) {
+            sqlite3_finalize(stmt);
+            return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_PREPARE;
+        }
     }
-
-    bool bind_ok =
-        ps_bind_int64(prj, stmt, 1, snapshot_id)
-        && ps_bind_int64(prj, stmt, 2, DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT);
-    if (!bind_ok) {
-        sqlite3_finalize(stmt);
-        return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ;
+    else {
+        stmt = ps_prepare_ephemeral(
+            prj, DP_PROJECT_SQL_MAIN_SAV("select snapshot_id from ",
+                                         "snapshots where (flags & 2) = 0",
+                                         attached));
+        if (!stmt) {
+            return DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_PREPARE;
+        }
     }
 
     bool read_error = false;
@@ -1800,7 +1898,7 @@ int DP_project_snapshot_discard_all_except(DP_Project *prj,
     while (ps_exec_step(prj, stmt, &read_error)) {
         long long snapshot_id_to_discard = sqlite3_column_int64(stmt, 0);
         int discard_result =
-            DP_project_snapshot_discard(prj, snapshot_id_to_discard);
+            snapshot_discard(prj, snapshot_id_to_discard, attached);
         if (discard_result < 0) {
             DP_warn("Error discarding snapshot %lld: %s",
                     snapshot_id_to_discard, DP_error());
@@ -1831,6 +1929,13 @@ int DP_project_snapshot_discard_all_except(DP_Project *prj,
     else {
         return discard_count;
     }
+}
+
+int DP_project_snapshot_discard_all_except(DP_Project *prj,
+                                           long long snapshot_id)
+{
+    DP_ASSERT(prj);
+    return snapshot_discard_all_except(prj, snapshot_id, false);
 }
 
 
@@ -2151,7 +2256,9 @@ static bool snapshot_handle_thumb(DP_Project *prj,
                                   const DP_ResetEntryThumb *ret)
 {
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "update snapshots set thumbnail = ? where snapshot_id = ?");
+        prj, DP_PROJECT_SQL_MAIN_SAV(
+                 "update ", "snapshots set thumbnail = ? where snapshot_id = ?",
+                 prj->snapshot.attached));
     if (!stmt) {
         return false;
     }
@@ -2204,15 +2311,12 @@ static void snapshot_handle_entry_callback(void *user,
     }
 }
 
-static int
-snapshot_canvas(DP_Project *prj, long long snapshot_id, DP_CanvasState *cs,
-                bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
-                void *thumb_write_user)
+static int snapshot_canvas(DP_Project *prj, DP_CanvasState *cs,
+                           bool (*thumb_write_fn)(void *, DP_Image *,
+                                                  DP_Output *),
+                           void *thumb_write_user, void (*pre_join_fn)(void *),
+                           void *pre_join_user)
 {
-    if (prj->snapshot.id != snapshot_id) {
-        return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN;
-    }
-
     if (prj->snapshot.state != DP_PROJECT_SNAPSHOT_STATE_READY) {
         return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_READY;
     }
@@ -2229,13 +2333,16 @@ snapshot_canvas(DP_Project *prj, long long snapshot_id, DP_CanvasState *cs,
     }
     else {
         prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_OK;
-        DP_ResetImageOptions options = {true,
-                                        prj->snapshot.merge_sublayers,
-                                        prj->snapshot.include_selections,
-                                        DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
-                                        DP_PROJECT_THUMBNAIL_SIZE,
-                                        DP_PROJECT_THUMBNAIL_SIZE,
-                                        {thumb_write_fn, thumb_write_user}};
+        DP_ResetImageOptions options = {
+            true,
+            prj->snapshot.merge_sublayers,
+            prj->snapshot.include_selections,
+            DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
+            DP_PROJECT_THUMBNAIL_SIZE,
+            DP_PROJECT_THUMBNAIL_SIZE,
+            {thumb_write_fn, thumb_write_user},
+            {pre_join_fn, pre_join_user},
+        };
         DP_reset_image_build_with(cs, &options, snapshot_handle_entry_callback,
                                   prj);
         if (prj->snapshot.state != DP_PROJECT_SNAPSHOT_STATE_OK) {
@@ -2252,13 +2359,665 @@ int DP_project_snapshot_canvas(DP_Project *prj, long long snapshot_id,
                                                       DP_Output *),
                                void *thumb_write_user)
 {
-    DP_ASSERT(prj);
-    DP_ASSERT(snapshot_id > 0LL);
-    DP_PERF_BEGIN(fn, "save");
+    DP_PERF_BEGIN(fn, "snapshot_canvas");
+
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_MISUSE;
+    }
+
+    if (!cs) {
+        DP_error_set("No canvas given");
+        return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_MISUSE;
+    }
+
+    if (prj->snapshot.id == 0LL) {
+        DP_error_set("Snapshot %lld is not open (none is)", snapshot_id);
+        return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.attached) {
+        DP_error_set("Snapshot %lld is not open, (attached snapshot %lld is)",
+                     snapshot_id, prj->snapshot.id);
+        return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.id != snapshot_id) {
+        DP_error_set("Snapshot %lld is not open, (%lld is)", snapshot_id,
+                     prj->snapshot.id);
+        return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN;
+    }
+
     int result =
-        snapshot_canvas(prj, snapshot_id, cs, thumb_write_fn, thumb_write_user);
+        snapshot_canvas(prj, cs, thumb_write_fn, thumb_write_user, NULL, NULL);
     DP_PERF_END(fn);
     return result;
+}
+
+
+static void project_save_try_detach(DP_Project *prj)
+{
+    sqlite3 *db = prj->db;
+    char *errmsg;
+    int exec_result = sqlite3_exec(db, "detach sav", NULL, NULL, &errmsg);
+    if (!is_ok(exec_result)) {
+        DP_warn("Error %d detaching save database: %s", exec_result,
+                fallback_db_error(db, errmsg));
+    }
+}
+
+static int project_save_attach(DP_Project *prj, const char *path)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(prj, "attach ? as sav");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_text(prj, stmt, 1, path)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool attach_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!attach_ok) {
+        return DP_PROJECT_SAVE_ERROR_OPEN;
+    }
+
+    return 0;
+}
+
+static int project_save_append_session_id(DP_Project *prj,
+                                          long long *out_save_session_id)
+{
+    // A save can be appended if there is already a session with the same source
+    // param, which is a UUID in practice. That session must also be the last
+    // one in that file, otherwise opening it would not load what was saved. It
+    // usually shouldn't happen that you end up in a situation where it is not
+    // the last, since the user would have to append from different canvases.
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select ss.session_id sid, ms.session_id mid\n"
+             "from sav.sessions ss\n"
+             "left join main.sessions ms\n"
+             "    on ms.session_id = ?\n"
+             "    and ss.source_param = ms.source_param\n"
+             "order by ss.session_id desc\n"
+             "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, prj->session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        long long save_session_id = sqlite3_column_int64(stmt, 0);
+        long long main_session_id = sqlite3_column_int64(stmt, 1);
+        if (save_session_id > 0LL && main_session_id > 0LL) {
+            *out_save_session_id = save_session_id;
+        }
+        else {
+            *out_save_session_id = 0LL;
+        }
+    }
+    else {
+        *out_save_session_id = 0LL;
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int project_save_new_session(DP_Project *prj,
+                                    long long *out_save_session_id)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "insert into sav.sessions (source_type, "
+             "source_param, protocol, flags, opened_at)\n"
+             "select source_type, source_param, protocol, flags, opened_at\n"
+             "from main.sessions where session_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, prj->session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, out_save_session_id);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
+static int project_save_initial_snapshot_id(DP_Project *prj,
+                                            long long *out_initial_snapshot_id)
+{
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
+                  "snapshot complete flag matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID == 11,
+                  "sequence id snapshot metadata matches query");
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "select s.snapshot_id\n"
+                                  "from main.snapshots s\n"
+                                  "left join main.snapshot_metadata m\n"
+                                  "    on s.snapshot_id = m.snapshot_id\n"
+                                  "    and m.metadata_id = 11\n" // SEQUENCE_ID
+                                  "where s.session_id = ?\n"
+                                  "and (m.value is null or m.value = 1)\n"
+                                  "order by s.snapshot_id\n"
+                                  "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, prj->session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        *out_initial_snapshot_id = sqlite3_column_int64(stmt, 0);
+    }
+    else {
+        *out_initial_snapshot_id = 0LL;
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int project_save_copy_snapshot_header(DP_Project *prj,
+                                             long long save_session_id,
+                                             long long source_snapshot_id,
+                                             long long *out_save_snapshot_id)
+{
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE == 8,
+                  "project snapshot autosave flag matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "insert into sav.snapshots (session_id, flags, taken_at)\n"
+             "select ?, flags & ~(8), taken_at\n"
+             "from main.snapshots\n"
+             "where snapshot_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_session_id)
+                && ps_bind_int64(prj, stmt, 2, source_snapshot_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, out_save_snapshot_id);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
+static int project_save_copy_initial_snapshot(DP_Project *prj,
+                                              long long save_session_id)
+{
+    long long source_snapshot_id;
+    int initial_snapshot_id_result =
+        project_save_initial_snapshot_id(prj, &source_snapshot_id);
+    if (initial_snapshot_id_result != 0) {
+        return initial_snapshot_id_result;
+    }
+
+    if (source_snapshot_id > 0LL) {
+        long long save_snapshot_id;
+        int copy_snapshot_header_result = project_save_copy_snapshot_header(
+            prj, save_session_id, source_snapshot_id, &save_snapshot_id);
+        if (copy_snapshot_header_result != 0) {
+            return copy_snapshot_header_result;
+        }
+
+        const char *sqls[] = {
+            "insert into sav.snapshot_metadata (\n"
+            "    snapshot_id, metadata_id, value)\n"
+            "select\n"
+            "    ?, metadata_id, value\n"
+            "from main.snapshot_metadata\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_layers (snapshot_id,\n"
+            "    layer_index, parent_index, layer_id, title, blend_mode,\n"
+            "    opacity, sketch_opacity, sketch_tint, flags, fill)\n"
+            "select ?,\n"
+            "    layer_index, parent_index, layer_id, title, blend_mode,\n"
+            "    opacity, sketch_opacity, sketch_tint, flags, fill\n"
+            "from main.snapshot_layers\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_sublayers (snapshot_id,\n"
+            "    sublayer_index, layer_index, sublayer_id, blend_mode,\n"
+            "    opacity, flags, fill)\n"
+            "select ?,\n"
+            "    sublayer_index, layer_index, sublayer_id, blend_mode,\n"
+            "    opacity, flags, fill\n"
+            "from main.snapshot_sublayers\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_tiles (snapshot_id,\n"
+            "    layer_index, tile_index, context_id, repeat, pixels)\n"
+            "select ?,\n"
+            "    layer_index, tile_index, context_id, repeat, pixels\n"
+            "from main.snapshot_tiles\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_sublayer_tiles (snapshot_id,\n"
+            "    sublayer_index, tile_index, repeat, pixels)\n"
+            "select ?,\n"
+            "    sublayer_index, tile_index, repeat, pixels\n"
+            "from main.snapshot_sublayer_tiles\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_selection_tiles (snapshot_id,\n"
+            "    selection_id, context_id, tile_index, mask)\n"
+            "select ?,\n"
+            "    selection_id, context_id, tile_index, mask\n"
+            "from main.snapshot_selection_tiles\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_annotations (snapshot_id,\n"
+            "    annotation_index, annotation_id, content, x, y, width,\n"
+            "    height, background_color, valign, flags)\n"
+            "select ?,\n"
+            "    annotation_index, annotation_id, content, x, y, width,\n"
+            "    height, background_color, valign, flags\n"
+            "from main.snapshot_annotations\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_tracks (snapshot_id,\n"
+            "    track_index, track_id, title, flags)\n"
+            "select ?,\n"
+            "    track_index, track_id, title, flags\n"
+            "from main.snapshot_tracks\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_key_frames (snapshot_id,\n"
+            "    track_index, frame_index, title, layer_id)\n"
+            "select ?,\n"
+            "    track_index, frame_index, title, layer_id\n"
+            "from main.snapshot_key_frames\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_key_frame_layers (snapshot_id,\n"
+            "    track_index, frame_index, layer_id, flags)\n"
+            "select ?,\n"
+            "    track_index, frame_index, title, layer_id\n"
+            "from main.snapshot_key_frames\n"
+            "where snapshot_id = ?",
+
+            "insert into sav.snapshot_messages (snapshot_id,\n"
+            "    sequence_id, recorded_at, flags, type, context_id, body)\n"
+            "select ?,\n"
+            "    sequence_id, recorded_at, flags, type, context_id, body\n"
+            "from main.snapshot_messages\n"
+            "where snapshot_id = ?",
+        };
+
+        for (int i = 0; i < (int)DP_ARRAY_LENGTH(sqls); ++i) {
+            sqlite3_stmt *stmt = ps_prepare_ephemeral(prj, sqls[i]);
+            if (!stmt) {
+                return DP_PROJECT_SAVE_ERROR_PREPARE;
+            }
+
+            bool bind_ok = ps_bind_int64(prj, stmt, 1, save_snapshot_id)
+                        && ps_bind_int64(prj, stmt, 2, source_snapshot_id);
+            if (!bind_ok) {
+                sqlite3_finalize(stmt);
+                return DP_PROJECT_SAVE_ERROR_PREPARE;
+            }
+
+            bool write_ok = ps_exec_write(prj, stmt, NULL);
+            sqlite3_finalize(stmt);
+            if (!write_ok) {
+                return DP_PROJECT_SAVE_ERROR_WRITE;
+            }
+
+            DP_debug("Copied %lld row(s)", sqlite3_changes64(prj->db));
+        }
+    }
+    else {
+        // There should always be an initial snapshot. We can keep going without
+        // one though and get a sensible enough save, so we'll deal with it.
+        DP_warn("No initial snapshot to copy found");
+    }
+
+    return 0;
+}
+
+static int project_save_append_session(DP_Project *prj,
+                                       long long save_session_id,
+                                       long long *out_last_sequence_id)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select sequence_id from sav.messages\n where session_id = ?\n"
+             "order by sequence_id desc limit 1");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, save_session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        *out_last_sequence_id = sqlite3_column_int64(stmt, 0);
+    }
+    else if (!error) {
+        *out_last_sequence_id = 0LL;
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int project_save_copy_messages(DP_Project *prj,
+                                      long long save_session_id,
+                                      long long last_sequence_id)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj,
+        "insert into sav.messages (session_id, sequence_id, recorded_at,\n"
+        "flags, type, context_id, body)\n"
+        "select ?, sequence_id, recorded_at, flags, type, context_id, body\n"
+        "from main.messages where session_id = ? and sequence_id > ?\n"
+        "order by sequence_id");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_session_id)
+                && ps_bind_int64(prj, stmt, 2, prj->session_id)
+                && ps_bind_int64(prj, stmt, 3, last_sequence_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    DP_debug("Copied %lld message(s)", sqlite3_changes64(prj->db));
+    return 0;
+}
+
+struct DP_ProjectSaveCopyMessageParams {
+    DP_Project *prj;
+    long long save_session_id;
+    long long last_sequence_id;
+};
+
+static void project_save_copy_messages_pre_join(void *user)
+{
+    const struct DP_ProjectSaveCopyMessageParams *params = user;
+    // Analogous to snapshot_handle_entry_callback
+    DP_Project *prj = params->prj;
+    if (prj->snapshot.state == DP_PROJECT_SNAPSHOT_STATE_OK) {
+        DP_Mutex *mutex = prj->snapshot.mutex;
+        DP_MUTEX_MUST_LOCK(mutex);
+        int result = project_save_copy_messages(
+            params->prj, params->save_session_id, params->last_sequence_id);
+        DP_MUTEX_MUST_UNLOCK(mutex);
+        if (result != 0) {
+            prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_ERROR;
+            DP_warn("Error %d copying messages: %s", result, DP_error());
+        }
+    }
+}
+
+static int
+project_save_snapshot(DP_Project *prj, DP_CanvasState *cs,
+                      long long save_session_id,
+                      bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
+                      void *thumb_write_user, void (*pre_join_fn)(void *),
+                      void *pre_join_user, long long *out_save_snapshot_id)
+{
+    long long save_snapshot_id = project_snapshot_open(
+        prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, save_session_id, true);
+    if (save_snapshot_id < 1LL) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    int snapshot_canvas_result = snapshot_canvas(
+        prj, cs, thumb_write_fn, thumb_write_user, pre_join_fn, pre_join_user);
+    if (snapshot_canvas_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    if (snapshot_finish(prj) != 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    *out_save_snapshot_id = save_snapshot_id;
+    return 0;
+}
+
+static int project_save_close_session(DP_Project *prj,
+                                      long long save_session_id,
+                                      long long save_snapshot_id)
+{
+    static_assert(DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED == 1,
+                  "session closed flag matches query");
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "update sav.sessions\n"
+                                  "set flags = flags | 1,\n"
+                                  "    closed_at = unixepoch('subsec'),\n"
+                                  "    thumbnail = (\n"
+                                  "        select thumbnail\n"
+                                  "        from sav.snapshots\n"
+                                  "        where snapshot_id = ?)\n"
+                                  "where session_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_snapshot_id)
+                && ps_bind_int64(prj, stmt, 2, save_session_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    DP_debug("Updated %lld session(s) on close", sqlite3_changes64(prj->db));
+    return 0;
+}
+
+static int project_save_to_attached(DP_Project *prj, DP_CanvasState *cs,
+                                    unsigned int flags,
+                                    bool (*thumb_write_fn)(void *, DP_Image *,
+                                                           DP_Output *),
+                                    void *thumb_write_user)
+{
+    sqlite3 *db = prj->db;
+    if (sqlite3_db_readonly(prj->db, "sav")) {
+        DP_error_set("Database is read-only");
+        return DP_PROJECT_SAVE_ERROR_READ_ONLY;
+    }
+
+    bool ok;
+    int sql_result;
+    PRAGMA_SETUP(db, "sav.", ok, sql_result);
+    if (!ok) {
+        if (sql_result == SQLITE_BUSY) {
+            return DP_PROJECT_SAVE_ERROR_LOCKED;
+        }
+        else {
+            return DP_PROJECT_SAVE_ERROR_SETUP;
+        }
+    }
+
+    bool empty;
+    IS_EMPTY_DB(db, "sav.", ok, empty, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_READ_EMPTY;
+    }
+
+    if (empty) {
+        INIT_HEADER(db, "sav.", false, ok, sql_result);
+        if (!ok) {
+            return DP_PROJECT_SAVE_ERROR_HEADER_WRITE;
+        }
+    }
+
+    int header_result;
+    CHECK_HEADER(db, "sav.", false, header_result, sql_result);
+    if (header_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_HEADER_MISMATCH;
+    }
+
+    APPLY_MIGRATIONS_IN_TX(db, "sav.", ok, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_MIGRATION;
+    }
+
+    PRAGMA_READY(db, "sav.", ok, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_SETUP;
+    }
+
+    // Figure out whether we can continue the current session.
+    // TODO: Somehow handle the split-brain situation if a user saves to a file,
+    // then saves to the same file from a different window, then saves from the
+    // first window again. This currently creates two separate sessions, which
+    // isn't great (but the situation is pretty pathological to begin with.)
+    long long append_session_id;
+    int append_session_id_result =
+        project_save_append_session_id(prj, &append_session_id);
+    if (append_session_id_result != 0) {
+        return append_session_id_result;
+    }
+
+    // Get rid of any non-persistent snapshots, we'll be writing a new one.
+    int discard_result = snapshot_discard_all_except(prj, 0LL, true);
+    if (discard_result < 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+    DP_debug("Discarded %d snapshot(s)", discard_result);
+
+    long long save_session_id;
+    long long last_sequence_id;
+    if (append_session_id > 0LL) {
+        DP_debug("Appending to existing session %lld", append_session_id);
+        save_session_id = append_session_id;
+        int append_session_result = project_save_append_session(
+            prj, save_session_id, &last_sequence_id);
+        if (append_session_result != 0) {
+            return append_session_result;
+        }
+    }
+    else {
+        DP_debug("Saving to a new session");
+        last_sequence_id = 0LL;
+        int new_session_result =
+            project_save_new_session(prj, &save_session_id);
+        if (new_session_result != 0) {
+            return new_session_result;
+        }
+
+        int copy_initial_snapshot_result =
+            project_save_copy_initial_snapshot(prj, save_session_id);
+        if (copy_initial_snapshot_result != 0) {
+            return copy_initial_snapshot_result;
+        }
+    }
+
+    DP_debug("Saving to session %lld starting from message %lld",
+             save_session_id, last_sequence_id);
+
+    // Savin a snapshot has some downtime on the main thread when waiting for
+    // the worker threads to finish compressing the tiles. During that, we can
+    // copy the messages over for an extra bit of saved time (not crazy amounts,
+    // we still have to take a lock to access the database. But it's something.)
+    bool no_messages = flags & DP_PROJECT_SAVE_FLAG_NO_MESSAGES;
+    long long save_snapshot_id;
+    int snapshot_result = project_save_snapshot(
+        prj, cs, save_session_id, thumb_write_fn, thumb_write_user,
+        no_messages ? NULL : project_save_copy_messages_pre_join,
+        no_messages
+            ? NULL
+            : (struct DP_ProjectSaveCopyMessageParams[1]){{prj, save_session_id,
+                                                           last_sequence_id}},
+        &save_snapshot_id);
+
+    if (snapshot_result != 0) {
+        return snapshot_result;
+    }
+
+    return project_save_close_session(prj, save_session_id, save_snapshot_id);
+}
+
+int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
+                    unsigned int flags,
+                    bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
+                    void *thumb_write_user)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (!cs) {
+        DP_error_set("No canvas state given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (!path) {
+        DP_error_set("No path given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (prj->session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_SAVE_ERROR_NO_SESSION;
+    }
+
+    int attach_result = project_save_attach(prj, path);
+    if (attach_result != 0) {
+        return attach_result;
+    }
+
+    int save_result = project_save_to_attached(prj, cs, flags, thumb_write_fn,
+                                               thumb_write_user);
+    project_save_try_detach(prj);
+    return save_result;
 }
 
 
@@ -2454,6 +3213,8 @@ static void cfs_tile_job(void *element, int thread_index)
 static bool cfs_read_header(DP_ProjectCanvasFromSnapshotContext *c)
 {
     DP_Project *prj = c->prj;
+    // Don't read anything that is behind the DP_PROJECT_SNAPSHOT_FLAG_HAS_*
+    // flags, earlier dpcs files don't have those tables.
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj,
         "select "
@@ -3950,6 +4711,8 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
         }
         DP_PERF_END(tiles);
 
+        // Don't touch the snapshot_sublayer* tables without this flag! Earlier
+        // dpcs files don't have them.
         if (c.snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS) {
             DP_PERF_BEGIN(sublayers, "load:sublayers");
             int sublayer_count;
@@ -3967,6 +4730,8 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
         }
     }
 
+    // Don't touch the snapshot_selection* tables without this flag! Earlier
+    // dpcs files don't have them.
     if (c.snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS) {
         DP_PERF_BEGIN(selections, "load:selections");
         if (!cfs_read_selections(&c, DP_compress_zstd_bounds(DP_TILE_LENGTH))) {
@@ -4129,12 +4894,6 @@ static DP_ProjectPlaybackHandleFn playback_get_handle_fn(int type)
     }
 }
 
-static DP_TransientTimeline *get_local_track_transient_timeline(void *user)
-{
-    DP_TransientCanvasState *tcs = user;
-    return DP_transient_canvas_state_transient_timeline(tcs, 0);
-}
-
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                            struct DP_ProjectPlaybackContext *c)
 {
@@ -4187,6 +4946,8 @@ static int playback_query_snapshot_messages(DP_Project *prj,
                                             unsigned int flags,
                                             struct DP_ProjectPlaybackContext *c)
 {
+    // Don't touch the snapshot_messages table without this flag! Earlier dpcs
+    // files don't have it.
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES) {
         sqlite3_stmt *stmt = ps_prepare_ephemeral(
             prj, "select type, context_id, body from snapshot_messages\n"
@@ -4288,7 +5049,8 @@ canvas_from_snapshot_playback(DP_Project *prj, DP_DrawContext *dc,
     bool cancel = snapshot_messages_error != 0
                && canvas_load_warn(warn_fn, user, snapshot_messages_error);
 
-    if (!cancel) {
+    // Only autosaves can have regular messages.
+    if (!cancel && (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE)) {
         // Play back regular messages after the snapshot was taken. Should also
         // only exist for autosave snapshots.
         int messages_error =
@@ -4303,27 +5065,7 @@ canvas_from_snapshot_playback(DP_Project *prj, DP_DrawContext *dc,
         cs = NULL;
     }
     else {
-        cs = DP_canvas_history_get(ch);
-
-        bool has_local_layers = DP_local_state_layer_state_count(ls) != 0;
-        bool has_local_tracks = DP_local_state_track_state_count(ls) != 0;
-        if (has_local_layers || has_local_tracks) {
-            DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-            DP_canvas_state_decref(cs);
-
-            if (has_local_layers) {
-                DP_local_state_layer_states_apply(ls, tcs, dc, false, NULL,
-                                                  NULL);
-            }
-
-            if (has_local_tracks) {
-                DP_local_state_track_states_apply(
-                    ls, DP_transient_canvas_state_timeline_noinc(tcs),
-                    get_local_track_transient_timeline, tcs);
-            }
-
-            cs = DP_transient_canvas_state_persist(tcs);
-        }
+        cs = DP_local_state_apply_dec(ls, DP_canvas_history_get(ch), dc);
     }
 
     DP_local_state_free(ls);
@@ -4414,8 +5156,8 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
 
     // We can only load snapshots with messages in them if the recording is
     // sufficiently compatible, otherwise we fall back to just loading the
-    // snapshot on its own. Also, only autosave snapshots can have messages.
-    if (load_messages && (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE)) {
+    // snapshot on its own.
+    if (load_messages) {
         DP_debug("Load from autosave snapshot sequence id %lld", sequence_id);
         return canvas_from_snapshot_playback(prj, dc, snapshot_id, session_id,
                                              sequence_id, flags, warn_fn, user);
@@ -4446,8 +5188,8 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
         return open_result.error;
     }
 
-    long long snapshot_id =
-        project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS);
+    long long snapshot_id = project_snapshot_open(
+        prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, prj->session_id, false);
     if (snapshot_id <= 0LL) {
         project_close(prj, true);
         return DP_PROJECT_CANVAS_SAVE_ERROR_OPEN_SNAPSHOT;
