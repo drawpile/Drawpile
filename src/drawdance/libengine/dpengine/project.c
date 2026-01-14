@@ -5242,6 +5242,178 @@ int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
 }
 
 
+static int project_info_header(DP_Project *prj,
+                               void (*callback)(void *, const DP_ProjectInfo *),
+                               void *user)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select\n"
+             "    (select application_id from pragma_application_id),\n"
+             "    (select user_version from pragma_user_version)");
+    if (!stmt) {
+        return DP_PROJECT_INFO_ERROR_PREPARE;
+    }
+
+    bool error;
+    unsigned int application_id;
+    unsigned int user_version;
+    if (ps_exec_step(prj, stmt, &error)) {
+        application_id = (unsigned int)sqlite3_column_int64(stmt, 0);
+        user_version = (unsigned int)sqlite3_column_int64(stmt, 1);
+    }
+    else if (!error) {
+        error = true;
+        DP_error_set("Header query returned no values");
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_INFO_ERROR_QUERY;
+    }
+
+    const char *path = sqlite3_db_filename(prj->db, "main");
+    DP_ProjectInfo info = {DP_PROJECT_INFO_TYPE_HEADER,
+                           {.header = {application_id, user_version, path}}};
+    callback(user, &info);
+
+    return 0;
+}
+
+static int project_info_sessions(DP_Project *prj,
+                                 void (*callback)(void *,
+                                                  const DP_ProjectInfo *),
+                                 void *user)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select"
+             "    s.session_id, s.source_type, s.source_param, s.protocol,\n"
+             "    s.flags, s.opened_at, s.closed_at, s.thumbnail,\n"
+             "    (select count(*) from messages m\n"
+             "     where s.session_id = m.session_id),\n"
+             "    (select count(*) from snapshots h\n"
+             "     where s.session_id = h.session_id)\n"
+             "from sessions s\n"
+             "order by s.session_id");
+    if (!stmt) {
+        return DP_PROJECT_INFO_ERROR_PREPARE;
+    }
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        long long session_id = sqlite3_column_int64(stmt, 0);
+        int source_type = sqlite3_column_int(stmt, 1);
+        const char *source_param = (const char *)sqlite3_column_text(stmt, 2);
+        const char *protocol = (const char *)sqlite3_column_text(stmt, 3);
+        unsigned int flags = (unsigned int)sqlite3_column_int64(stmt, 4);
+        double opened_at = sqlite3_column_double(stmt, 5);
+        double closed_at = sqlite3_column_double(stmt, 6);
+        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 7);
+        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 7);
+        long long message_count = sqlite3_column_int64(stmt, 8);
+        long long snapshot_count = sqlite3_column_int64(stmt, 9);
+        DP_ProjectInfo info = {
+            DP_PROJECT_INFO_TYPE_SESSION,
+            {.session = {session_id, source_type, source_param, protocol, flags,
+                         opened_at, closed_at, thumbnail_data, thumbnail_size,
+                         message_count, snapshot_count}}};
+        callback(user, &info);
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_INFO_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int project_info_snapshots(DP_Project *prj,
+                                  void (*callback)(void *,
+                                                   const DP_ProjectInfo *),
+                                  void *user)
+{
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID == 11,
+                  "sequence id snapshot metadata matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select"
+             "    h.snapshot_id, h.session_id, h.flags, h.taken_at,\n"
+             "    h.thumbnail,\n"
+             "    (select value from snapshot_metadata d\n"
+             "     where h.snapshot_id = d.snapshot_id\n"
+             "     and d.metadata_id = 11),\n"
+             "    (select count(*) from snapshot_messages m\n"
+             "     where h.snapshot_id = m.snapshot_id)\n"
+             "from snapshots h\n"
+             "order by h.snapshot_id");
+    if (!stmt) {
+        return DP_PROJECT_INFO_ERROR_PREPARE;
+    }
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        long long snapshot_id = sqlite3_column_int64(stmt, 0);
+        long long session_id = sqlite3_column_int64(stmt, 1);
+        unsigned int flags = (unsigned int)sqlite3_column_int64(stmt, 2);
+        double taken_at = sqlite3_column_double(stmt, 3);
+        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 4);
+        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 4);
+        long long metadata_sequence_id = sqlite3_column_int64(stmt, 5);
+        long long snapshot_message_count = sqlite3_column_int64(stmt, 6);
+        DP_ProjectInfo info = {
+            DP_PROJECT_INFO_TYPE_SNAPSHOT,
+            {.snapshot = {snapshot_id, session_id, flags, taken_at,
+                          thumbnail_data, thumbnail_size, metadata_sequence_id,
+                          snapshot_message_count}}};
+        callback(user, &info);
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_INFO_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+int DP_project_info(DP_Project *prj, unsigned int flags,
+                    void (*callback)(void *, const DP_ProjectInfo *),
+                    void *user)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_INFO_ERROR_MISUSE;
+    }
+
+    if (!callback) {
+        DP_error_set("No callback given");
+        return DP_PROJECT_INFO_ERROR_MISUSE;
+    }
+
+    if (flags & DP_PROJECT_INFO_FLAG_HEADER) {
+        int header_result = project_info_header(prj, callback, user);
+        if (header_result != 0) {
+            return header_result;
+        }
+    }
+
+    if (flags & DP_PROJECT_INFO_FLAG_SESSIONS) {
+        int sessions_result = project_info_sessions(prj, callback, user);
+        if (sessions_result != 0) {
+            return sessions_result;
+        }
+    }
+
+    if (flags & DP_PROJECT_INFO_FLAG_SNAPSHOTS) {
+        int snapshots_result = project_info_snapshots(prj, callback, user);
+        if (snapshots_result != 0) {
+            return snapshots_result;
+        }
+    }
+
+    return 0;
+}
+
+
 static int dump_rows(void *user, int ncols, char **values, char **names)
 {
     DP_Output *output = ((void **)user)[0];

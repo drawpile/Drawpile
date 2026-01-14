@@ -92,6 +92,10 @@ public:
 		const CanvasStateOpenSuccessFn &onSuccess,
 		const CanvasStateOpenErrorFn &onError) const;
 
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+	QString openProjectInfo() const;
+#endif
+
 #ifndef __EMSCRIPTEN_
 	// The browser handles our certificates in Emscripten.
 	QStringList getImportCertificatePaths(const QString &title) const;

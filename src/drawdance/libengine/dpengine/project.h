@@ -129,6 +129,11 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_SAVE_ERROR_QUERY           (-1513)
 #define DP_PROJECT_SAVE_ERROR_WRITE           (-1514)
 
+#define DP_PROJECT_INFO_ERROR_UNKNOWN (-1600)
+#define DP_PROJECT_INFO_ERROR_MISUSE  (-1601)
+#define DP_PROJECT_INFO_ERROR_PREPARE (-1602)
+#define DP_PROJECT_INFO_ERROR_QUERY   (-1603)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -202,6 +207,52 @@ typedef struct DP_ProjectSessionTimes {
     long long last_sequence_id;
     double last_recorded_at;
 } DP_ProjectSessionTimes;
+
+typedef enum DP_ProjectInfoType {
+    DP_PROJECT_INFO_TYPE_HEADER,
+    DP_PROJECT_INFO_TYPE_SESSION,
+    DP_PROJECT_INFO_TYPE_SNAPSHOT,
+} DP_ProjectInfoType;
+
+typedef struct DP_ProjectInfoHeader {
+    unsigned int application_id;
+    unsigned int user_version;
+    const char *path;
+} DP_ProjectInfoHeader;
+
+typedef struct DP_ProjectInfoSession {
+    long long session_id;
+    int source_type;
+    const char *source_param;
+    const char *protocol;
+    unsigned int flags;
+    double opened_at;
+    double closed_at;
+    const unsigned char *thumbnail_data;
+    size_t thumbnail_size;
+    long long message_count;
+    long long snapshot_count;
+} DP_ProjectInfoSession;
+
+typedef struct DP_ProjectInfoSnapshot {
+    long long snapshot_id;
+    long long session_id;
+    unsigned int flags;
+    double taken_at;
+    const unsigned char *thumbnail_data;
+    size_t thumbnail_size;
+    long long metadata_sequence_id;
+    long long snapshot_message_count;
+} DP_ProjectInfoSnapshot;
+
+typedef struct DP_ProjectInfo {
+    DP_ProjectInfoType type;
+    union {
+        DP_ProjectInfoHeader header;
+        DP_ProjectInfoSession session;
+        DP_ProjectInfoSnapshot snapshot;
+    };
+} DP_ProjectInfo;
 
 // Warning handler when loading a canvas. The warn parameter is one of the
 // DP_PROJECT_CANVAS_LOAD_WARN_* constants. Return true if loading should be
@@ -334,6 +385,10 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
 // snapshot_only to true to load a dpcs file, false for a dppr file.
 int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
                            bool snapshot_only, DP_CanvasState **out_cs);
+
+int DP_project_info(DP_Project *prj, unsigned int flags,
+                    void (*callback)(void *, const DP_ProjectInfo *),
+                    void *user);
 
 bool DP_project_dump(DP_Project *prj, DP_Output *output);
 

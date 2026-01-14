@@ -754,6 +754,14 @@ if(NOT EMSCRIPTEN)
 	dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
 endif()
 
+if(NOT EMSCRIPTEN AND NOT ANDROID)
+	target_compile_definitions(drawpile PRIVATE DRAWPILE_PROJECT_INFO_DIALOG=1)
+	target_sources(drawpile PRIVATE
+		dialogs/projectinfodialog.cpp
+		dialogs/projectinfodialog.h
+	)
+endif()
+
 if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
 	configure_file(drawpile.exe.manifest.in drawpile.exe.manifest)

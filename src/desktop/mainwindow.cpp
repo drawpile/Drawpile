@@ -132,6 +132,9 @@ extern "C" {
 #include <QVBoxLayout>
 #include <QWindow>
 #include <functional>
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+#	include "desktop/dialogs/projectinfodialog.h"
+#endif
 #ifdef Q_OS_WIN
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -5375,6 +5378,18 @@ void MainWindow::openDebugDump()
 		});
 }
 
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+void MainWindow::openProjectInfo()
+{
+	QString path = FileWrangler(this).openProjectInfo();
+	if(!path.isEmpty()) {
+		dialogs::ProjectInfoDialog *dlg = new dialogs::ProjectInfoDialog(this);
+		utils::showWindow(dlg);
+		dlg->loadProjectInfo(path);
+	}
+}
+#endif
+
 void MainWindow::causeCrash()
 {
 	QMessageBox *box = utils::makeQuestion(
@@ -7381,6 +7396,9 @@ void MainWindow::setupActions()
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable().noDefaultShortcut();
 #endif
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump...")).noDefaultShortcut();
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+	QAction *projectInfo = makeAction("projectinfo", tr("Project Information…"));
+#endif
 	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
 	devtoolsmenu->addAction(systeminfo);
 	devtoolsmenu->addAction(tableteventlog);
@@ -7389,6 +7407,9 @@ void MainWindow::setupActions()
 	devtoolsmenu->addAction(debugDump);
 #endif
 	devtoolsmenu->addAction(openDebugDump);
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+	devtoolsmenu->addAction(projectInfo);
+#endif
 	devtoolsmenu->addAction(showNetStats);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(systeminfo, &QAction::triggered, this, &MainWindow::showSystemInfo);
@@ -7398,6 +7419,9 @@ void MainWindow::setupActions()
 	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
 #endif
 	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+	connect(projectInfo, &QAction::triggered, this, &MainWindow::openProjectInfo);
+#endif
 	connect(showNetStats, &QAction::triggered, m_netstatus, &widgets::NetStatus::showNetStats);
 
 	// clang-format on

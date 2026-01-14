@@ -150,6 +150,15 @@ void FileWrangler::openCanvasState(
 		fileOpenCompleted);
 }
 
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+QString FileWrangler::openProjectInfo() const
+{
+	return showOpenFileDialogFilters(
+		tr("Project Information"), LastPath::IMAGE,
+		{QStringLiteral("%1 (*.dppr)").arg(tr("Drawpile Project Files"))});
+}
+#endif
+
 void FileWrangler::openBrushThumbnail(const ImageOpenFn &imageOpenCompleted)
 {
 	openImageFileContent(tr("Set Brush Preset Thumbnail"), imageOpenCompleted);

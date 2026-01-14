@@ -284,6 +284,9 @@ private slots:
 	void toggleDebugDump();
 #endif
 	void openDebugDump();
+#ifdef DRAWPILE_PROJECT_INFO_DIALOG
+	void openProjectInfo();
+#endif
 	void causeCrash();
 
 	void updateTemporaryToolSwitch();
