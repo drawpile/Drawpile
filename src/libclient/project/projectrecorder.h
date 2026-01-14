@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef LIBCLIENT_PROJECT_PROJECTHANDLER_H
-#define LIBCLIENT_PROJECT_PROJECTHANDLER_H
+#ifndef LIBCLIENT_PROJECT_PROJECTRECORDER_H
+#define LIBCLIENT_PROJECT_PROJECTRECORDER_H
 #include <QAtomicInt>
 #include <QObject>
 #include <libshared/util/database.h>
@@ -22,12 +22,12 @@ class Config;
 
 namespace project {
 
-class ProjectHandler final : public QObject {
+class ProjectRecorder final : public QObject {
 	Q_OBJECT
-	Q_DISABLE_COPY_MOVE(ProjectHandler)
+	Q_DISABLE_COPY_MOVE(ProjectRecorder)
 public:
-	explicit ProjectHandler(config::Config *cfg, QObject *parent = nullptr);
-	~ProjectHandler() override;
+	explicit ProjectRecorder(config::Config *cfg, QObject *parent = nullptr);
+	~ProjectRecorder() override;
 
 	const QString &path() const { return m_path; }
 

@@ -23,7 +23,7 @@ class SelectionSet;
 }
 
 namespace project {
-class ProjectHandler;
+class ProjectRecorder;
 }
 
 // Qt5 is very picky about types passed to QMetaType::invokeMethod, namespaces
@@ -274,7 +274,7 @@ private:
 	TransformModel *m_transform;
 
 	PaintEngine *m_paintengine;
-	project::ProjectHandler *m_projectHandler = nullptr;
+	project::ProjectRecorder *m_projectRecorder = nullptr;
 	int m_transformInterpolation = 0;
 	QColor m_lastPickedColor;
 

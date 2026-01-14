@@ -7,7 +7,7 @@ extern "C" {
 }
 #include "libclient/canvas/paintengine.h"
 #include "libclient/config/config.h"
-#include "libclient/project/projecthandler.h"
+#include "libclient/project/projectrecorder.h"
 #include "libclient/project/recoverymodel.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/ulid.h"
@@ -18,27 +18,27 @@ extern "C" {
 #include <QUuid>
 
 Q_LOGGING_CATEGORY(
-	lcDpProjectWorker, "net.drawpile.project.projecthandler", QtDebugMsg)
+	lcDpProjectWorker, "net.drawpile.project.projectrecorder", QtDebugMsg)
 
 namespace project {
 
-ProjectHandler::ProjectHandler(config::Config *cfg, QObject *parent)
+ProjectRecorder::ProjectRecorder(config::Config *cfg, QObject *parent)
 	: QObject(parent)
 {
 	CFG_BIND_SET(
 		cfg, AutoRecordMetadataIntervalMinutes, this,
-		ProjectHandler::setMetadataTimerIntervalMinutes);
+		ProjectRecorder::setMetadataTimerIntervalMinutes);
 	CFG_BIND_SET(
 		cfg, AutoRecordSnapshotIntervalMinutes, this,
-		ProjectHandler::setSnapshotTimerIntervalMinutes);
+		ProjectRecorder::setSnapshotTimerIntervalMinutes);
 }
 
-ProjectHandler::~ProjectHandler()
+ProjectRecorder::~ProjectRecorder()
 {
 	DP_project_worker_free_join(m_pw);
 }
 
-bool ProjectHandler::startProjectRecording(
+bool ProjectRecorder::startProjectRecording(
 	canvas::PaintEngine *paintEngine, int sourceType, const QString &protocol,
 	QString *outError)
 {
@@ -58,8 +58,8 @@ bool ProjectHandler::startProjectRecording(
 	}
 
 	m_pw = DP_project_worker_new(
-		&ProjectHandler::handleEventCallback,
-		&ProjectHandler::writeThumbnailCallback, this);
+		&ProjectRecorder::handleEventCallback,
+		&ProjectRecorder::writeThumbnailCallback, this);
 	if(!m_pw) {
 		if(outError) {
 			*outError = tr("Could not start autosave recording: %1")
@@ -95,19 +95,19 @@ bool ProjectHandler::startProjectRecording(
 	m_metadataTimer->setSingleShot(true);
 	connect(
 		m_metadataTimer, &QTimer::timeout, this,
-		&ProjectHandler::metadataRequested);
+		&ProjectRecorder::metadataRequested);
 
 	m_snapshotTimer = new QTimer(this);
 	m_snapshotTimer->setTimerType(Qt::VeryCoarseTimer);
 	m_snapshotTimer->setSingleShot(true);
 	connect(
 		m_snapshotTimer, &QTimer::timeout, this,
-		&ProjectHandler::snapshotRequested);
+		&ProjectRecorder::snapshotRequested);
 
 	return true;
 }
 
-bool ProjectHandler::stopProjectRecording(
+bool ProjectRecorder::stopProjectRecording(
 	canvas::PaintEngine *paintEngine, bool remove)
 {
 	if(!m_pw) {
@@ -149,7 +149,7 @@ bool ProjectHandler::stopProjectRecording(
 	return true;
 }
 
-void ProjectHandler::startMetadataTimer()
+void ProjectRecorder::startMetadataTimer()
 {
 	if(isMetadataTimerReady()) {
 		qCDebug(
@@ -159,19 +159,19 @@ void ProjectHandler::startMetadataTimer()
 	}
 }
 
-void ProjectHandler::stopMetadataTimer()
+void ProjectRecorder::stopMetadataTimer()
 {
 	if(m_metadataTimer) {
 		m_metadataTimer->stop();
 	}
 }
 
-bool ProjectHandler::isMetadataTimerReady() const
+bool ProjectRecorder::isMetadataTimerReady() const
 {
 	return m_metadataTimer && !m_metadataTimer->isActive();
 }
 
-void ProjectHandler::startSnapshotTimer()
+void ProjectRecorder::startSnapshotTimer()
 {
 	if(isSnapshotTimerReady()) {
 		qCDebug(
@@ -181,24 +181,24 @@ void ProjectHandler::startSnapshotTimer()
 	}
 }
 
-void ProjectHandler::stopSnapshotTimer()
+void ProjectRecorder::stopSnapshotTimer()
 {
 	if(m_snapshotTimer) {
 		m_snapshotTimer->stop();
 	}
 }
 
-bool ProjectHandler::isSnapshotTimerReady() const
+bool ProjectRecorder::isSnapshotTimerReady() const
 {
 	return m_snapshotTimer && !m_snapshotTimer->isActive();
 }
 
-void ProjectHandler::unblockErrors()
+void ProjectRecorder::unblockErrors()
 {
 	m_errorsBlocked.storeRelaxed(0);
 }
 
-void ProjectHandler::setMetadatum(
+void ProjectRecorder::setMetadatum(
 	const QString &name, const drawdance::Query::Param &value)
 {
 	drawdance::DatabaseLocker locker(m_metaDb);
@@ -211,7 +211,7 @@ void ProjectHandler::setMetadatum(
 	}
 }
 
-void ProjectHandler::addMetadataSource(
+void ProjectRecorder::addMetadataSource(
 	int sourceType, const QString &sourceParam)
 {
 	drawdance::DatabaseLocker locker(m_metaDb);
@@ -225,7 +225,7 @@ void ProjectHandler::addMetadataSource(
 	}
 }
 
-void ProjectHandler::setMetadataTimerIntervalMinutes(
+void ProjectRecorder::setMetadataTimerIntervalMinutes(
 	int metadataTimerIntervalMinutes)
 {
 	setTimerIntervalMinutes(
@@ -233,7 +233,7 @@ void ProjectHandler::setMetadataTimerIntervalMinutes(
 		m_metadataTimer);
 }
 
-void ProjectHandler::setSnapshotTimerIntervalMinutes(
+void ProjectRecorder::setSnapshotTimerIntervalMinutes(
 	int snapshotTimerIntervalMinutes)
 {
 	setTimerIntervalMinutes(
@@ -241,7 +241,7 @@ void ProjectHandler::setSnapshotTimerIntervalMinutes(
 		m_snapshotTimer);
 }
 
-void ProjectHandler::setTimerIntervalMinutes(
+void ProjectRecorder::setTimerIntervalMinutes(
 	int newMinutes, int &inOutMinutes, QTimer *timer)
 {
 	if(newMinutes < TIMER_INTERVAL_MINUTES_MIN) {
@@ -269,7 +269,7 @@ void ProjectHandler::setTimerIntervalMinutes(
 	}
 }
 
-bool ProjectHandler::initMetaDb()
+bool ProjectRecorder::initMetaDb()
 {
 	if(m_metaDb.open(m_metadataPath, QStringLiteral("autosave metadata"))) {
 		drawdance::Query qry = m_metaDb.queryWithoutLock();
@@ -291,7 +291,7 @@ bool ProjectHandler::initMetaDb()
 	}
 }
 
-void ProjectHandler::handleEvent(const DP_ProjectWorkerEvent *event)
+void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 {
 	DP_ProjectWorkerEventType type = event->type;
 	switch(type) {
@@ -353,13 +353,13 @@ void ProjectHandler::handleEvent(const DP_ProjectWorkerEvent *event)
 	qCWarning(lcDpProjectWorker, "Unhandled event type %d", int(type));
 }
 
-void ProjectHandler::handleEventCallback(
+void ProjectRecorder::handleEventCallback(
 	void *user, const DP_ProjectWorkerEvent *event)
 {
-	static_cast<ProjectHandler *>(user)->handleEvent(event);
+	static_cast<ProjectRecorder *>(user)->handleEvent(event);
 }
 
-bool ProjectHandler::writeThumbnail(DP_Image *thumb, DP_Output *outputOrNull)
+bool ProjectRecorder::writeThumbnail(DP_Image *thumb, DP_Output *outputOrNull)
 {
 	if(outputOrNull) {
 		// Write thumbnail to given output, used when saving the project.
@@ -382,14 +382,14 @@ bool ProjectHandler::writeThumbnail(DP_Image *thumb, DP_Output *outputOrNull)
 	}
 }
 
-bool ProjectHandler::writeThumbnailCallback(
+bool ProjectRecorder::writeThumbnailCallback(
 	void *user, DP_Image *thumb, DP_Output *outputOrNull)
 {
-	return static_cast<ProjectHandler *>(user)->writeThumbnail(
+	return static_cast<ProjectRecorder *>(user)->writeThumbnail(
 		thumb, outputOrNull);
 }
 
-void ProjectHandler::emitError(
+void ProjectRecorder::emitError(
 	const char *messageTemplate, const DP_ProjectWorkerEventError &e)
 {
 	if(shouldEmitErrorBlock()) {
@@ -399,12 +399,12 @@ void ProjectHandler::emitError(
 	}
 }
 
-bool ProjectHandler::shouldEmitErrorBlock()
+bool ProjectRecorder::shouldEmitErrorBlock()
 {
 	return m_errorsBlocked.testAndSetRelaxed(0, 1);
 }
 
-QString ProjectHandler::searchAvailableProjectPath()
+QString ProjectRecorder::searchAvailableProjectPath()
 {
 	int attempts = 20;
 	for(int i = 0; i < attempts; ++i) {

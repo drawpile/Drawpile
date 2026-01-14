@@ -14,7 +14,7 @@ extern "C" {
 #include "libclient/canvas/userlist.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/viewmode.h"
-#include "libclient/project/projecthandler.h"
+#include "libclient/project/projectrecorder.h"
 #include "libclient/utils/identicon.h"
 #include "libshared/net/protover.h"
 #include "libshared/util/qtcompat.h"
@@ -253,11 +253,11 @@ void CanvasModel::handleCommands(int count, const net::Message *msgs)
 
 		bool projectMetadataTimerReady;
 		bool projectSnapshotTimerReady;
-		if(m_projectHandler) {
+		if(m_projectRecorder) {
 			projectMetadataTimerReady =
-				m_projectHandler->isMetadataTimerReady();
+				m_projectRecorder->isMetadataTimerReady();
 			projectSnapshotTimerReady =
-				m_projectHandler->isSnapshotTimerReady();
+				m_projectRecorder->isSnapshotTimerReady();
 		} else {
 			projectMetadataTimerReady = false;
 			projectSnapshotTimerReady = false;
@@ -268,11 +268,11 @@ void CanvasModel::handleCommands(int count, const net::Message *msgs)
 		if(needsDirtyCheck && net::anyMessageDirtiesCanvas(count, msgs)) {
 
 			if(projectMetadataTimerReady) {
-				m_projectHandler->startMetadataTimer();
+				m_projectRecorder->startMetadataTimer();
 			}
 
 			if(projectSnapshotTimerReady) {
-				m_projectHandler->startSnapshotTimer();
+				m_projectRecorder->startSnapshotTimer();
 			}
 
 			if(dirtyReady) {
@@ -658,7 +658,7 @@ bool CanvasModel::isRecording() const
 bool CanvasModel::startProjectRecording(
 	config::Config *cfg, int sourceType, bool requestMetadata)
 {
-	if(m_projectHandler) {
+	if(m_projectRecorder) {
 		Q_EMIT projectRecordingErrorOccurred(
 			tr("Project recording is already active"));
 		return false;
@@ -669,24 +669,24 @@ bool CanvasModel::startProjectRecording(
 		return false;
 	}
 
-	m_projectHandler = new project::ProjectHandler(cfg, this);
+	m_projectRecorder = new project::ProjectRecorder(cfg, this);
 	connect(
-		m_projectHandler, &project::ProjectHandler::metadataRequested,
+		m_projectRecorder, &project::ProjectRecorder::metadataRequested,
 		m_paintengine, &PaintEngine::enqueueProjectMetadataRequest);
 	connect(
-		m_projectHandler, &project::ProjectHandler::snapshotRequested,
+		m_projectRecorder, &project::ProjectRecorder::snapshotRequested,
 		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
 	connect(
-		m_projectHandler, &project::ProjectHandler::errorOccurred, this,
+		m_projectRecorder, &project::ProjectRecorder::errorOccurred, this,
 		&CanvasModel::handleProjectRecordingError, Qt::QueuedConnection);
 
 	QString error;
-	bool started = m_projectHandler->startProjectRecording(
+	bool started = m_projectRecorder->startProjectRecording(
 		m_paintengine, sourceType,
 		protocol::ProtocolVersion::current().asString(), &error);
 	if(!started) {
-		delete m_projectHandler;
-		m_projectHandler = nullptr;
+		delete m_projectRecorder;
+		m_projectRecorder = nullptr;
 		Q_EMIT projectRecordingErrorOccurred(error);
 		return false;
 	}
@@ -716,7 +716,7 @@ bool CanvasModel::discardProjectRecordingReinit()
 
 bool CanvasModel::isProjectRecording() const
 {
-	return m_projectHandler != nullptr;
+	return m_projectRecorder != nullptr;
 }
 
 void CanvasModel::setRetainProjectRecordings(bool retainProjectRecordings)
@@ -729,15 +729,15 @@ void CanvasModel::setRetainProjectRecordings(bool retainProjectRecordings)
 
 void CanvasModel::unblockProjectRecordingErrors()
 {
-	if(m_projectHandler) {
-		m_projectHandler->unblockErrors();
+	if(m_projectRecorder) {
+		m_projectRecorder->unblockErrors();
 	}
 }
 
 void CanvasModel::requestProjectRecordingMetadata()
 {
-	if(m_projectHandler) {
-		m_projectHandler->stopMetadataTimer();
+	if(m_projectRecorder) {
+		m_projectRecorder->stopMetadataTimer();
 		m_paintengine->enqueueProjectMetadataRequest();
 	}
 }
@@ -745,8 +745,8 @@ void CanvasModel::requestProjectRecordingMetadata()
 void CanvasModel::addProjectRecordingMetadataSource(
 	int sourceType, const QString &sourceParam)
 {
-	if(m_projectHandler) {
-		m_projectHandler->addMetadataSource(sourceType, sourceParam);
+	if(m_projectRecorder) {
+		m_projectRecorder->addMetadataSource(sourceType, sourceParam);
 	}
 }
 
@@ -757,13 +757,13 @@ void CanvasModel::updatePaintEngineTransform()
 
 bool CanvasModel::stopProjectRecording(bool remove, bool notify)
 {
-	if(!m_projectHandler) {
+	if(!m_projectRecorder) {
 		return false;
 	}
 
-	bool ok = m_projectHandler->stopProjectRecording(m_paintengine, remove);
-	delete m_projectHandler;
-	m_projectHandler = nullptr;
+	bool ok = m_projectRecorder->stopProjectRecording(m_paintengine, remove);
+	delete m_projectRecorder;
+	m_projectRecorder = nullptr;
 
 	Q_EMIT projectRecordingStopped(notify);
 	return ok;
