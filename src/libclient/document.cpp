@@ -266,6 +266,15 @@ void Document::loadState(
 	DP_SaveImageType type, bool dirty, bool autoRecord)
 {
 	initCanvas();
+
+	if(type == DP_SAVE_IMAGE_PROJECT) {
+		m_projectDirty = dirty;
+		setProjectPath(path);
+	} else {
+		m_projectDirty = false;
+		setProjectPath(QString());
+	}
+
 	if(dirty) {
 		markDirty();
 	} else {
@@ -906,8 +915,17 @@ void Document::setExportPath(const QString &path, DP_SaveImageType type)
 	}
 }
 
+void Document::setProjectPath(const QString &path)
+{
+	if(m_projectPath != path) {
+		m_projectPath = path;
+		Q_EMIT projectPathChanged(path);
+	}
+}
+
 void Document::markDirty()
 {
+	m_projectDirty = true;
 	if(m_canvas) {
 		bool wasDirty = m_canvas->isDirty();
 		m_canvas->setDirty(true);
@@ -947,6 +965,8 @@ void Document::clearPaths()
 {
 	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 	setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+	setProjectPath(QString());
+	m_projectDirty = false;
 }
 
 QString Document::downloadName() const
@@ -1085,10 +1105,17 @@ void Document::saveCanvasState(
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	if(isCurrentState && (!exported || type == DP_SAVE_IMAGE_ORA ||
-						  type == DP_SAVE_IMAGE_PROJECT_CANVAS ||
-						  type == DP_SAVE_IMAGE_PROJECT)) {
-		unmarkDirty();
+	if(isCurrentState) {
+		if(!exported || type == DP_SAVE_IMAGE_ORA ||
+		   type == DP_SAVE_IMAGE_PROJECT_CANVAS ||
+		   type == DP_SAVE_IMAGE_PROJECT) {
+			unmarkDirty();
+		}
+
+		if(type == DP_SAVE_IMAGE_PROJECT) {
+			setProjectPath(path);
+			m_projectDirty = false;
+		}
 	}
 
 	Q_EMIT canvasSaveStarted();
@@ -1836,6 +1863,11 @@ bool Document::saveSelection(const QString &path)
 		fillBackground(img);
 		return img.save(path);
 	}
+}
+
+bool Document::isProjectRecording() const
+{
+	return m_canvas && m_canvas->isProjectRecording();
 }
 
 void Document::fillBackground(QImage &img)

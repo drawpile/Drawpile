@@ -129,10 +129,11 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_SAVE_ERROR_QUERY           (-1513)
 #define DP_PROJECT_SAVE_ERROR_WRITE           (-1514)
 
-#define DP_PROJECT_INFO_ERROR_UNKNOWN (-1600)
-#define DP_PROJECT_INFO_ERROR_MISUSE  (-1601)
-#define DP_PROJECT_INFO_ERROR_PREPARE (-1602)
-#define DP_PROJECT_INFO_ERROR_QUERY   (-1603)
+#define DP_PROJECT_INFO_ERROR_UNKNOWN   (-1600)
+#define DP_PROJECT_INFO_ERROR_MISUSE    (-1601)
+#define DP_PROJECT_INFO_ERROR_PREPARE   (-1602)
+#define DP_PROJECT_INFO_ERROR_QUERY     (-1603)
+#define DP_PROJECT_INFO_ERROR_CANCELLED (-1604)
 
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
@@ -162,9 +163,11 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 
 #define DP_PROJECT_SAVE_FLAG_NO_MESSAGES (1u << 0u)
 
-#define DP_PROJECT_INFO_FLAG_HEADER    (1u << 0u)
-#define DP_PROJECT_INFO_FLAG_SESSIONS  (1u << 1u)
-#define DP_PROJECT_INFO_FLAG_SNAPSHOTS (1u << 2u)
+#define DP_PROJECT_INFO_FLAG_HEADER     (1u << 0u)
+#define DP_PROJECT_INFO_FLAG_SESSIONS   (1u << 1u)
+#define DP_PROJECT_INFO_FLAG_SNAPSHOTS  (1u << 2u)
+#define DP_PROJECT_INFO_FLAG_OVERVIEW   (1u << 3u)
+#define DP_PROJECT_INFO_FLAG_WORK_TIMES (1u << 4u)
 
 
 typedef struct DP_Project DP_Project;
@@ -202,13 +205,6 @@ typedef enum DP_ProjectVerifyStatus {
     DP_PROJECT_VERIFY_CANCELLED,
 } DP_ProjectVerifyStatus;
 
-typedef struct DP_ProjectRecoveryInfo {
-    int error;
-    int source_type;
-    char *source_param;
-    long long own_work_minutes;
-} DP_ProjectRecoveryInfo;
-
 typedef struct DP_ProjectSessionTimes {
     long long own_work_minutes;
     long long last_sequence_id;
@@ -219,6 +215,8 @@ typedef enum DP_ProjectInfoType {
     DP_PROJECT_INFO_TYPE_HEADER,
     DP_PROJECT_INFO_TYPE_SESSION,
     DP_PROJECT_INFO_TYPE_SNAPSHOT,
+    DP_PROJECT_INFO_TYPE_OVERVIEW,
+    DP_PROJECT_INFO_TYPE_WORK_TIMES,
 } DP_ProjectInfoType;
 
 typedef struct DP_ProjectInfoHeader {
@@ -252,12 +250,28 @@ typedef struct DP_ProjectInfoSnapshot {
     long long snapshot_message_count;
 } DP_ProjectInfoSnapshot;
 
+typedef struct DP_ProjectInfoOverview {
+    long long session_id;
+    const char *protocol;
+    double opened_at;
+    double closed_at;
+    const unsigned char *thumbnail_data;
+    size_t thumbnail_size;
+} DP_ProjectInfoOverview;
+
+typedef struct DP_ProjectInfoWorkTimes {
+    long long session_id;
+    long long own_work_minutes;
+} DP_ProjectInfoWorkTimes;
+
 typedef struct DP_ProjectInfo {
     DP_ProjectInfoType type;
     union {
         DP_ProjectInfoHeader header;
         DP_ProjectInfoSession session;
         DP_ProjectInfoSnapshot snapshot;
+        DP_ProjectInfoOverview overview;
+        DP_ProjectInfoWorkTimes work_times;
     };
 } DP_ProjectInfo;
 
@@ -412,6 +426,9 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
 int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
                            bool snapshot_only, DP_CanvasState **out_cs);
 
+// [cancelable] Queries project information according to the given flags, calls
+// back the given function accordingly. Returns 0 on success and a negative
+// DP_PROJECT_INFO_ERROR_* value on failure.
 int DP_project_info(DP_Project *prj, unsigned int flags,
                     void (*callback)(void *, const DP_ProjectInfo *),
                     void *user);

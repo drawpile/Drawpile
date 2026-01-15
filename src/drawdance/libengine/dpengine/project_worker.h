@@ -7,6 +7,7 @@ typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
+typedef struct DP_ProjectInfo DP_ProjectInfo;
 
 
 typedef struct DP_ProjectWorker DP_ProjectWorker;
@@ -22,7 +23,11 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_THUMBNAIL_MAKE_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
     DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
+    DP_PROJECT_WORKER_EVENT_INFO_ERROR,
+    DP_PROJECT_WORKER_EVENT_OPEN,
+    DP_PROJECT_WORKER_EVENT_CLOSE,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
+    DP_PROJECT_WORKER_EVENT_INFO_DONE,
 } DP_ProjectWorkerEventType;
 
 typedef struct DP_ProjectWorkerEventError {
@@ -34,7 +39,7 @@ typedef struct DP_ProjectWorkerEventError {
 typedef struct DP_ProjectWorkerEvent {
     DP_ProjectWorkerEventType type;
     union {
-        unsigned int sync_id;
+        unsigned int file_id;
         long long session_id;
         long long own_work_minutes;
         DP_ProjectWorkerEventError error;
@@ -131,6 +136,11 @@ void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
                                   DP_ProjectWorkerSaveStartFn start_fn,
                                   DP_ProjectWorkerSaveFinishFn finish_fn,
                                   void *user);
+
+void DP_project_worker_info(DP_ProjectWorker *pw, unsigned int file_id,
+                            unsigned int flags,
+                            void (*callback)(void *, const DP_ProjectInfo *),
+                            void *user);
 
 // Attempts to cancel whatever the project is currently doing. Returns whether
 // the given file id matched the open project. This doesn't clear out the queue

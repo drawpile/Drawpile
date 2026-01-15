@@ -2,6 +2,7 @@
 #include "desktop/dialogs/startdialog/recover.h"
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/thumbnail.h"
 #include "libclient/project/recoverymodel.h"
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libshared/util/paths.h"
@@ -27,70 +28,6 @@
 namespace dialogs {
 namespace startdialog {
 
-
-class RecoveryThumbnail final : public QFrame {
-public:
-	RecoveryThumbnail(const QPixmap &pixmap, QWidget *parent = nullptr)
-		: QFrame(parent)
-		, m_pixmap(pixmap)
-	{
-	}
-
-protected:
-	void paintEvent(QPaintEvent *event) override
-	{
-		paintPixmap();
-		QFrame::paintEvent(event);
-	}
-
-private:
-	void paintPixmap()
-	{
-		if(m_pixmap.isNull()) {
-			return;
-		}
-
-		QSize pixmapSize = m_pixmap.size();
-		if(pixmapSize.isEmpty()) {
-			return;
-		}
-
-		QSize widgetSize = size();
-		if(widgetSize.isEmpty()) {
-			return;
-		}
-
-		qreal widthRatio =
-			qreal(widgetSize.width()) / qreal(pixmapSize.width());
-		qreal heightRatio =
-			qreal(widgetSize.height()) / qreal(pixmapSize.height());
-		QRect targetRect;
-		if(qFuzzyCompare(widthRatio, heightRatio)) {
-			targetRect = QRect(0, 0, widgetSize.width(), widgetSize.height());
-		} else if(widthRatio < heightRatio) {
-			int h = qMin(
-				pixmapSize.height(),
-				qRound(qreal(pixmapSize.height()) * widthRatio));
-			targetRect =
-				QRect(0, (widgetSize.height() - h) / 2, widgetSize.width(), h);
-		} else {
-			int w = qMin(
-				pixmapSize.width(),
-				qRound(qreal(pixmapSize.width()) * heightRatio));
-			targetRect =
-				QRect((widgetSize.width() - w) / 2, 0, w, widgetSize.height());
-		}
-
-		QPainter painter(this);
-		painter.setCompositionMode(QPainter::CompositionMode_Source);
-		painter.setRenderHint(QPainter::SmoothPixmapTransform);
-		painter.drawPixmap(targetRect, m_pixmap);
-	}
-
-	QPixmap m_pixmap;
-};
-
-
 RecoveryEntryWidget::RecoveryEntryWidget(
 	const project::RecoveryEntry &entry, QWidget *parent)
 	: QFrame(parent)
@@ -103,7 +40,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 	QHBoxLayout *rootLayout = new QHBoxLayout;
 	setLayout(rootLayout);
 
-	RecoveryThumbnail *thumbnail = new RecoveryThumbnail(entry.thumbnail());
+	widgets::Thumbnail *thumbnail = new widgets::Thumbnail(entry.thumbnail());
 	thumbnail->setFixedSize(200, 200);
 	thumbnail->setContentsMargins(0, 0, 0, 0);
 	thumbnail->setFrameShape(QFrame::StyledPanel);
@@ -159,29 +96,11 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 	bool canRemove = true;
 	switch(entry.status()) {
 	case project::RecoveryStatus::Available: {
-		QString workTime;
-		long long ownWorkMinutes = entry.ownWorkMinutes();
-		if(ownWorkMinutes >= 0LL) {
-			int minutes = int(ownWorkMinutes % 60LL);
-			QString minutesString = tr("%n minute(s)", nullptr, minutes);
-			if(ownWorkMinutes < 60LL) {
-				workTime = minutesString;
-			} else {
-				int hours = int(ownWorkMinutes / 60LL);
-				QString hoursString = tr("%n hour(s)", nullptr, hours);
-				// %1 is hours, %2 is minutes. So this turns into something like
-				// "approximately 1 hour and 15 minutes".
-				workTime = tr("approximately %1 and %2")
-							   .arg(hoursString, minutesString);
-			}
-		} else {
-			//: Part of "Work time: unknown", when Drawpile can't figure out how
-			//: long you've worked on an autosave file.
-			workTime = tr("unknown");
-		}
 		//: How long you've worked on an autosave file. %1 is either a time span
 		//: like "1 hour and 15 minutes" or "unknown".
-		statusLabel->setText(tr("Work time: %1").arg(workTime));
+		statusLabel->setText(
+			tr("Work time: %1")
+				.arg(utils::formatWorkMinutes(entry.ownWorkMinutes())));
 		break;
 	}
 	case project::RecoveryStatus::Locked:

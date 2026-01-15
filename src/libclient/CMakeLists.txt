@@ -283,7 +283,12 @@ if(EMSCRIPTEN)
 		utils/wasmpersistence.cpp
 	)
 else()
-	target_sources(dpclient PRIVATE utils/news.cpp utils/news.h)
+	target_sources(dpclient PRIVATE
+		project/projectwrangler.cpp
+		project/projectwrangler.h
+		utils/news.cpp
+		utils/news.h
+	)
 endif()
 
 if(HAVE_TCPSOCKETS)
