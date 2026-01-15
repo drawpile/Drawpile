@@ -193,6 +193,7 @@ typedef enum DP_ProjectVerifyStatus {
     DP_PROJECT_VERIFY_OK,
     DP_PROJECT_VERIFY_CORRUPTED,
     DP_PROJECT_VERIFY_ERROR,
+    DP_PROJECT_VERIFY_CANCELLED,
 } DP_ProjectVerifyStatus;
 
 typedef struct DP_ProjectRecoveryInfo {
@@ -275,6 +276,14 @@ DP_ProjectOpenResult DP_project_open(const char *path, unsigned int flags);
 bool DP_project_close(DP_Project *prj);
 
 
+// Set the cancel flag on the project, issue an interrupt to the SQLite
+// database. Only operations that mention that they are cancelable in their
+// comment handle this gracefully!
+void DP_project_cancel(DP_Project *prj);
+
+
+// [cancelable] Runs SQLite's quick or full integrity check on the project
+// database, bailing out at the first detected corruption.
 DP_ProjectVerifyStatus DP_project_verify(DP_Project *prj, unsigned int flags);
 
 

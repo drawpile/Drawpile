@@ -171,9 +171,14 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
         return;
     }
 
-    bool ok = DP_project_close(pw->prj);
+    DP_Mutex *mutex = pw->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    DP_Project *prj = pw->prj;
     pw->prj = NULL;
     pw->open_file_id = 0u;
+    DP_MUTEX_MUST_UNLOCK(mutex);
+
+    bool ok = DP_project_close(prj);
     if (!ok) {
         emit_event(
             pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_CLOSE_ERROR,
@@ -195,12 +200,15 @@ static void handle_open(DP_ProjectWorker *pw, unsigned int file_id, char *path,
     free(path);
 
     if (result.project) {
+        DP_Mutex *mutex = pw->mutex;
+        DP_MUTEX_MUST_LOCK(mutex);
         pw->prj = result.project;
         pw->open_file_id = file_id;
+        DP_MUTEX_MUST_UNLOCK(mutex);
     }
     else {
-        pw->prj = NULL;
-        pw->open_file_id = 0u;
+        DP_ASSERT(!pw->prj);
+        DP_ASSERT(pw->open_file_id == 0u);
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_OPEN_ERROR,
                            .error = {file_id, result.error, DP_error()}});
@@ -935,4 +943,17 @@ void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
         pw, (DP_ProjectWorkerCommand){DP_PROJECT_WORKER_COMMAND_SAVE,
                                       .save = {start_fn, finish_fn, user,
                                                DP_strdup(path), cs, file_id}});
+}
+
+bool DP_project_worker_cancel(DP_ProjectWorker *pw, unsigned int file_id)
+{
+    DP_ASSERT(pw);
+    DP_Mutex *mutex = pw->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    bool ok = pw->open_file_id == file_id;
+    if (ok) {
+        DP_project_cancel(pw->prj);
+    }
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    return ok;
 }

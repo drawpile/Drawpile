@@ -128,4 +128,12 @@ void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
                                   DP_ProjectWorkerSaveFinishFn finish_fn,
                                   void *user);
 
+// Attempts to cancel whatever the project is currently doing. Returns whether
+// the given file id matched the open project. This doesn't clear out the queue
+// nor does every project command handle the cancellation gracefully, it's meant
+// for cancelling long-running stuff like timelapses or verifications where the
+// UI blocks the user from queuing up more stuff. Call DP_project_worker_sync to
+// figure out when the worker is free again.
+bool DP_project_worker_cancel(DP_ProjectWorker *pw, unsigned int file_id);
+
 #endif

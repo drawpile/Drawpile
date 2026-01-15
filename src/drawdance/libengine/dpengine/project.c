@@ -20,6 +20,7 @@
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -116,6 +117,7 @@ struct DP_Project {
     long long session_id;
     long long sequence_id;
     DP_ProjectSnapshot snapshot;
+    DP_Atomic cancel;
     sqlite3_stmt *stmts[DP_PROJECT_STATEMENT_COUNT];
     unsigned char serialize_buffer[DP_MESSAGE_MAX_PAYLOAD_LENGTH];
 };
@@ -886,6 +888,7 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
     prj->snapshot.has_sublayers = false;
     prj->snapshot.has_selections = false;
     prj->snapshot.mutex = NULL;
+    DP_atomic_set(&prj->cancel, 0);
     for (int i = 0; i < DP_PROJECT_SNAPSHOT_STATEMENT_COUNT; ++i) {
         prj->snapshot.stmts[i] = NULL;
     }
@@ -962,6 +965,26 @@ bool DP_project_close(DP_Project *prj)
 }
 
 
+void DP_project_cancel(DP_Project *prj)
+{
+    if (prj) {
+        DP_atomic_set(&prj->cancel, 1);
+        sqlite3_interrupt(prj->db);
+    }
+}
+
+static void cancel_reset(DP_Project *prj)
+{
+    DP_atomic_set(&prj->cancel, 0);
+}
+
+static bool cancel_check_reset(DP_Project *prj)
+{
+    int cancel = DP_atomic_xch(&prj->cancel, 0);
+    return cancel != 0;
+}
+
+
 static bool handle_verify(void *user, const char *text)
 {
     DP_ProjectVerifyStatus *out_status = user;
@@ -986,12 +1009,20 @@ static bool handle_verify(void *user, const char *text)
 DP_ProjectVerifyStatus DP_project_verify(DP_Project *prj, unsigned int flags)
 {
     DP_ASSERT(prj);
+    cancel_reset(prj);
+
     const char *sql = (flags & DP_PROJECT_VERIFY_FULL)
                         ? "pragma integrity_check(1)"
                         : "pragma quick_check(1)";
     DP_ProjectVerifyStatus status = DP_PROJECT_VERIFY_ERROR;
     exec_text_stmt(prj->db, sql, NULL, handle_verify, &status, NULL);
-    return status;
+
+    if (cancel_check_reset(prj)) {
+        return DP_PROJECT_VERIFY_CANCELLED;
+    }
+    else {
+        return status;
+    }
 }
 
 
