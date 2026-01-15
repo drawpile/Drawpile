@@ -10,7 +10,23 @@ namespace widgets {
 Spinner::Spinner(QWidget *parent):
 	QWidget(parent), m_dots(8), m_currentDot(0)
 {
-	startTimer(150);
+}
+
+void Spinner::showEvent(QShowEvent *event)
+{
+	QWidget::showEvent(event);
+	if(m_timerId == 0) {
+		m_timerId = startTimer(150);
+	}
+}
+
+void Spinner::hideEvent(QHideEvent *event)
+{
+	QWidget::hideEvent(event);
+	if(m_timerId != 0) {
+		killTimer(m_timerId);
+		m_timerId = 0;
+	}
 }
 
 void Spinner::paintEvent(QPaintEvent *)

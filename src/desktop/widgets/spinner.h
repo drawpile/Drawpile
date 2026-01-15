@@ -23,12 +23,15 @@ public:
 	void setDots(int dots) { m_dots = qBound(2, dots, 32); }
 
 protected:
+	void showEvent(QShowEvent *event) override;
+	void hideEvent(QHideEvent *event) override;
 	void paintEvent(QPaintEvent *) override;
 	void timerEvent(QTimerEvent *) override;
 
 private:
 	int m_dots;
 	int m_currentDot;
+	int m_timerId = 0;
 };
 
 }
