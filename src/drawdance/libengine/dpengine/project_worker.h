@@ -22,6 +22,7 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_THUMBNAIL_MAKE_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
     DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
+    DP_PROJECT_WORKER_EVENT_CLOSE,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
 } DP_ProjectWorkerEventType;
 
@@ -34,7 +35,7 @@ typedef struct DP_ProjectWorkerEventError {
 typedef struct DP_ProjectWorkerEvent {
     DP_ProjectWorkerEventType type;
     union {
-        unsigned int sync_id;
+        unsigned int file_id;
         long long session_id;
         long long own_work_minutes;
         DP_ProjectWorkerEventError error;
@@ -49,7 +50,7 @@ typedef void (*DP_ProjectWorkerHandleEventFn)(
 typedef bool (*DP_ProjectWorkerThumbWriteFn)(void *user, DP_Image *img,
                                              DP_Output *output_or_null);
 
-typedef void (*DP_ProjectWorkerSyncFn)(void *user);
+typedef void (*DP_ProjectWorkerSyncFn)(void *user, unsigned int sync_id);
 
 typedef int (*DP_ProjectWorkerSaveStartFn)(void *user, const char **out_path);
 
@@ -67,7 +68,7 @@ void DP_project_worker_free_join(DP_ProjectWorker *pw);
 
 // Calls the given sync function when the worker gets to it.
 void DP_project_worker_sync(DP_ProjectWorker *pw, DP_ProjectWorkerSyncFn fn,
-                            void *user);
+                            void *user, unsigned int sync_id);
 
 // Returns an id for the opened file, which is used to identify subsequent
 // outgoing events and incoming commands. Anything that doesn't pertain to the

@@ -345,6 +345,9 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 			lcDpProjectWorker, "Error %d saving project: %s",
 			int(event->data.error.error), event->data.error.message);
 		return;
+	case DP_PROJECT_WORKER_EVENT_CLOSE:
+		qCDebug(lcDpProjectWorker, "Project %u closed", event->data.file_id);
+		return;
 	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE:
 		setMetadatum(
 			QStringLiteral("own_work_minutes"), event->data.own_work_minutes);

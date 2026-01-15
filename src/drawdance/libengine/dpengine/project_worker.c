@@ -70,6 +70,7 @@ typedef struct DP_ProjectWorkerCommand {
         struct {
             DP_ProjectWorkerSyncFn fn;
             void *user;
+            unsigned int sync_id;
         } sync;
         struct {
             char *path;
@@ -178,6 +179,8 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
     DP_MUTEX_MUST_UNLOCK(mutex);
 
     bool ok = DP_project_close(prj);
+    emit_event(pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_CLOSE,
+                                           {.file_id = file_id}});
     if (!ok) {
         emit_event(
             pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_CLOSE_ERROR,
@@ -561,8 +564,9 @@ static void handle_command(DP_ProjectWorker *pw,
 {
     switch (command->type) {
     case DP_PROJECT_WORKER_COMMAND_SYNC:
-        DP_PROJECT_WORKER_DEBUG("handle sync %p", command->sync.user);
-        command->sync.fn(command->sync.user);
+        DP_PROJECT_WORKER_DEBUG("handle sync %p sync_id %u", command->sync.user,
+                                command->sync.sync_id);
+        command->sync.fn(command->sync.user, command->sync.sync_id);
         return;
     case DP_PROJECT_WORKER_COMMAND_OPEN:
         DP_PROJECT_WORKER_DEBUG("handle open %u '%s' flags %x",
@@ -773,12 +777,12 @@ void DP_project_worker_free_join(DP_ProjectWorker *pw)
 }
 
 void DP_project_worker_sync(DP_ProjectWorker *pw, DP_ProjectWorkerSyncFn fn,
-                            void *user)
+                            void *user, unsigned int sync_id)
 {
     DP_ASSERT(pw);
-    DP_PROJECT_WORKER_DEBUG("push sync");
+    DP_PROJECT_WORKER_DEBUG("push sync %u", sync_id);
     push_command(pw, (DP_ProjectWorkerCommand){DP_PROJECT_WORKER_COMMAND_SYNC,
-                                               {.sync = {fn, user}}});
+                                               {.sync = {fn, user, sync_id}}});
 }
 
 unsigned int DP_project_worker_open(DP_ProjectWorker *pw, const char *path,
