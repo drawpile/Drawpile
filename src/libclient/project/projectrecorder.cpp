@@ -18,7 +18,7 @@ extern "C" {
 #include <QUuid>
 
 Q_LOGGING_CATEGORY(
-	lcDpProjectWorker, "net.drawpile.project.projectrecorder", QtDebugMsg)
+	lcDpProjectWorker, "net.drawpile.project.projectrecorder", QtWarningMsg)
 
 namespace project {
 
@@ -345,10 +345,20 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 			lcDpProjectWorker, "Error %d saving project: %s",
 			int(event->data.error.error), event->data.error.message);
 		return;
+	case DP_PROJECT_WORKER_EVENT_INFO_ERROR:
+		break; // Shouldn't occur.
+	case DP_PROJECT_WORKER_EVENT_OPEN:
+		qCDebug(lcDpProjectWorker, "Project %u opened", event->data.file_id);
+		return;
+	case DP_PROJECT_WORKER_EVENT_CLOSE:
+		qCDebug(lcDpProjectWorker, "Project %u closed", event->data.file_id);
+		return;
 	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE:
 		setMetadatum(
 			QStringLiteral("own_work_minutes"), event->data.own_work_minutes);
 		return;
+	case DP_PROJECT_WORKER_EVENT_INFO_DONE:
+		break; // Shouldn't occur.
 	}
 	qCWarning(lcDpProjectWorker, "Unhandled event type %d", int(type));
 }

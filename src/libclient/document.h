@@ -93,6 +93,7 @@ public:
 	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
+	bool isProjectRecording() const;
 
 #ifdef __EMSCRIPTEN__
 	void downloadCanvas(
@@ -112,6 +113,7 @@ public:
 	bool haveExportPath() const { return !m_exportPath.isEmpty(); }
 	QString currentPath() const { return m_currentPath; }
 	QString exportPath() const { return m_exportPath; }
+	QString projectPath() const { return m_projectPath; }
 	DP_SaveImageType currentType() const { return m_currentType; }
 	DP_SaveImageType exportType() const { return m_exportType; }
 	void clearPaths();
@@ -124,6 +126,7 @@ public:
 	bool stopRecording();
 
 	bool isDirty() const;
+	bool isProjectDirty() const { return m_projectDirty; }
 
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
@@ -210,6 +213,7 @@ signals:
 	void dirtyCanvas(bool isDirty);
 	void currentPathChanged(const QString &path);
 	void exportPathChanged(const QString &path);
+	void projectPathChanged(const QString &path);
 	void recorderStateChanged(bool recording);
 
 	void sessionTitleChanged(const QString &title);
@@ -344,6 +348,7 @@ private:
 	QImage selectionToImage();
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setExportPath(const QString &path, DP_SaveImageType type);
+	void setProjectPath(const QString &path);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionAuthOnly(bool authOnly);
@@ -400,6 +405,7 @@ private:
 
 	QString m_currentPath;
 	QString m_exportPath;
+	QString m_projectPath;
 	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
 	DP_SaveImageType m_exportType = DP_SAVE_IMAGE_UNKNOWN;
 	QString m_downloadName;
@@ -458,6 +464,7 @@ private:
 
 	bool m_sessionOutOfSpace = false;
 	bool m_preparingReset = false;
+	bool m_projectDirty = false;
 
 #ifdef HAVE_CLIPBOARD_EMULATION
 	static QMimeData clipboardData;

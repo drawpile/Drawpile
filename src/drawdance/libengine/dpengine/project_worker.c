@@ -62,6 +62,7 @@ typedef enum DP_ProjectWorkerCommandType {
     DP_PROJECT_WORKER_COMMAND_THUMBNAIL_MAKE,
     DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
     DP_PROJECT_WORKER_COMMAND_SAVE,
+    DP_PROJECT_WORKER_COMMAND_INFO,
 } DP_ProjectWorkerCommandType;
 
 typedef struct DP_ProjectWorkerCommand {
@@ -131,6 +132,12 @@ typedef struct DP_ProjectWorkerCommand {
             DP_CanvasState *cs;
             unsigned int file_id;
         } save;
+        struct {
+            void (*callback)(void *, const DP_ProjectInfo *);
+            void *user;
+            unsigned int flags;
+            unsigned int file_id;
+        } info;
     };
 } DP_ProjectWorkerCommand;
 
@@ -178,6 +185,8 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
     DP_MUTEX_MUST_UNLOCK(mutex);
 
     bool ok = DP_project_close(prj);
+    emit_event(pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_CLOSE,
+                                           {.file_id = file_id}});
     if (!ok) {
         emit_event(
             pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_CLOSE_ERROR,
@@ -204,6 +213,8 @@ static void handle_open(DP_ProjectWorker *pw, unsigned int file_id, char *path,
         pw->prj = result.project;
         pw->open_file_id = file_id;
         DP_MUTEX_MUST_UNLOCK(mutex);
+        emit_event(pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_OPEN,
+                                               .file_id = file_id});
     }
     else {
         DP_ASSERT(!pw->prj);
@@ -556,6 +567,31 @@ static void handle_save(DP_ProjectWorker *pw, unsigned int file_id,
     }
 }
 
+static void handle_info(DP_ProjectWorker *pw, unsigned int file_id,
+                        unsigned int flags,
+                        void (*callback)(void *, const DP_ProjectInfo *),
+                        void *user)
+{
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_warn("Not getting info on file id %u, currently open is %u", file_id,
+                open_file_id);
+        return;
+    }
+
+    int result = DP_project_info(pw->prj, flags, callback, user);
+    if (result == 0) {
+        emit_event(pw,
+                   (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_INFO_DONE,
+                                           .file_id = file_id});
+    }
+    else {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_INFO_ERROR,
+                           .error = {file_id, result, DP_error()}});
+    }
+}
+
 static void handle_command(DP_ProjectWorker *pw,
                            const DP_ProjectWorkerCommand *command)
 {
@@ -669,6 +705,12 @@ static void handle_command(DP_ProjectWorker *pw,
                     command->save.start_fn, command->save.finish_fn,
                     command->save.user);
         return;
+    case DP_PROJECT_WORKER_COMMAND_INFO:
+        DP_PROJECT_WORKER_DEBUG("handle info %u flags 0x%x",
+                                command->info.file_id, command->info.flags);
+        handle_info(pw, command->info.file_id, command->info.flags,
+                    command->info.callback, command->info.user);
+        return;
     }
     DP_warn("Unhandled project worker command %d", (int)command->type);
 }
@@ -764,8 +806,13 @@ void DP_project_worker_free_join(DP_ProjectWorker *pw)
         DP_mutex_free(pw->mutex);
 
         DP_Project *prj = pw->prj;
-        if (prj && !DP_project_close(prj)) {
-            DP_warn("Failed to close project on free: %s", DP_error());
+        if (prj) {
+            if (!DP_project_close(prj)) {
+                DP_warn("Failed to close project on free: %s", DP_error());
+            }
+            emit_event(pw,
+                       (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_CLOSE,
+                                               {.file_id = pw->last_file_id}});
         }
 
         DP_free(pw);
@@ -776,7 +823,7 @@ void DP_project_worker_sync(DP_ProjectWorker *pw, DP_ProjectWorkerSyncFn fn,
                             void *user)
 {
     DP_ASSERT(pw);
-    DP_PROJECT_WORKER_DEBUG("push sync");
+    DP_PROJECT_WORKER_DEBUG("push sync %u", sync_id);
     push_command(pw, (DP_ProjectWorkerCommand){DP_PROJECT_WORKER_COMMAND_SYNC,
                                                {.sync = {fn, user}}});
 }
@@ -943,6 +990,18 @@ void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
     push_command(pw, (DP_ProjectWorkerCommand){
                          DP_PROJECT_WORKER_COMMAND_SAVE,
                          .save = {start_fn, finish_fn, user, cs, file_id}});
+}
+
+void DP_project_worker_info(DP_ProjectWorker *pw, unsigned int file_id,
+                            unsigned int flags,
+                            void (*callback)(void *, const DP_ProjectInfo *),
+                            void *user)
+{
+    DP_ASSERT(pw);
+    DP_ASSERT(callback);
+    push_command(pw, (DP_ProjectWorkerCommand){
+                         DP_PROJECT_WORKER_COMMAND_INFO,
+                         .info = {callback, user, flags, file_id}});
 }
 
 bool DP_project_worker_cancel(DP_ProjectWorker *pw, unsigned int file_id)

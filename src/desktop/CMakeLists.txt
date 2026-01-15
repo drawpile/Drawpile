@@ -469,6 +469,8 @@ target_sources(drawpile PRIVATE
 	widgets/tablettest.h
 	widgets/timelinewidget.cpp
 	widgets/timelinewidget.h
+	widgets/thumbnail.cpp
+	widgets/thumbnail.h
 	widgets/toolmessage.cpp
 	widgets/toolmessage.h
 	widgets/viewstatus.cpp
@@ -745,7 +747,10 @@ endif()
 add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidgets" "")
 
 if(NOT EMSCRIPTEN)
+	target_compile_definitions(drawpile PRIVATE DRAWPILE_PROJECT_DIALOG=1)
 	target_sources(drawpile PRIVATE
+		dialogs/projectdialog.cpp
+		dialogs/projectdialog.h
 		dialogs/startdialog/recent.cpp
 		dialogs/startdialog/recent.h
 		dialogs/startdialog/updatenotice.cpp

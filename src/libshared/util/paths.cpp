@@ -185,6 +185,50 @@ bool slurp(const QString &path, QByteArray &outBytes, QString &outError)
 	}
 }
 
+bool copyFileContents(
+	QFileDevice &sourceFile, QFileDevice &targetFile, QString &outError)
+{
+	QByteArray buffer;
+	buffer.resize(BUFSIZ);
+	while(true) {
+		qint64 read = sourceFile.read(buffer.data(), BUFSIZ);
+		if(read < 0) {
+			outError =
+				QStringLiteral("Error reading from source file '%1': %2")
+					.arg(sourceFile.fileName(), sourceFile.errorString());
+			return false;
+		} else if(read > 0) {
+			qint64 written = targetFile.write(buffer, read);
+			if(written < 0) {
+				outError =
+					QStringLiteral(
+						"Error writing %1 byte(s) to target file '%2': %3")
+						.arg(
+							QString::number(read), targetFile.fileName(),
+							targetFile.errorString());
+				return false;
+			} else if(written != read) {
+				outError = QStringLiteral(
+							   "Tried to write %1 byte(s) to target file '%2', "
+							   "but only wrote %3")
+							   .arg(
+								   QString::number(read), targetFile.fileName(),
+								   QString::number(written));
+				return false;
+			}
+		} else {
+			if(targetFile.flush()) {
+				return true;
+			} else {
+				outError =
+					QStringLiteral("Error flushing target file '%1': %2")
+						.arg(targetFile.fileName(), targetFile.errorString());
+				return false;
+			}
+		}
+	}
+}
+
 QString formatFileSize(qint64 sizeInBytes)
 {
 	qint64 mib = 1024LL * 1024LL;

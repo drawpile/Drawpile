@@ -22,6 +22,7 @@ class QHeaderView;
 class QInputDialog;
 class QKeySequence;
 class QLabel;
+class QSpacerItem;
 class QSpinBox;
 class QWidget;
 
@@ -199,7 +200,7 @@ KineticScroller *bindKineticScrollingWith(
 
 QFormLayout *addFormSection(QBoxLayout *layout);
 
-void addFormSpacer(
+QSpacerItem *addFormSpacer(
 	QLayout *layout, QSizePolicy::Policy vPolicy = QSizePolicy::Fixed);
 
 QFrame *makeSeparator();
@@ -341,6 +342,8 @@ struct MarkerColor {
 };
 
 const QVector<MarkerColor> &markerColors();
+
+QString formatWorkMinutes(long long workMinutes);
 
 }
 

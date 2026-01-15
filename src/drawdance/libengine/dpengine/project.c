@@ -5541,6 +5541,101 @@ static int project_info_snapshots(DP_Project *prj,
     return 0;
 }
 
+static int project_info_overview(DP_Project *prj,
+                                 void (*callback)(void *,
+                                                  const DP_ProjectInfo *),
+                                 void *user)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select session_id, protocol, opened_at, closed_at, thumbnail\n"
+             "from sessions order by session_id");
+    if (!stmt) {
+        return DP_PROJECT_INFO_ERROR_PREPARE;
+    }
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        long long session_id = sqlite3_column_int64(stmt, 0);
+        const char *protocol = (const char *)sqlite3_column_text(stmt, 1);
+        double opened_at = sqlite3_column_double(stmt, 2);
+        double closed_at = sqlite3_column_double(stmt, 3);
+        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 4);
+        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 4);
+        DP_ProjectInfo info = {
+            DP_PROJECT_INFO_TYPE_OVERVIEW,
+            {.overview = {session_id, protocol, opened_at, closed_at,
+                          thumbnail_data, thumbnail_size}}};
+        callback(user, &info);
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_INFO_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+struct DP_ProjectInfoWorkTimesContext {
+    long long session_id;
+    long long own_work_minutes;
+    double own_last_recorded_at;
+};
+
+static void project_info_work_times_flush(
+    struct DP_ProjectInfoWorkTimesContext *c, long long session_id,
+    void (*callback)(void *, const DP_ProjectInfo *), void *user)
+{
+    long long current_session_id = c->session_id;
+    if (session_id != current_session_id) {
+        if (current_session_id > 0LL) {
+            DP_ProjectInfo info = {
+                DP_PROJECT_INFO_TYPE_WORK_TIMES,
+                {.work_times = {current_session_id, c->own_work_minutes}}};
+            callback(user, &info);
+        }
+        *c = (struct DP_ProjectInfoWorkTimesContext){session_id, 0LL, 0.0};
+    }
+}
+
+static int project_info_work_times(DP_Project *prj,
+                                   void (*callback)(void *,
+                                                    const DP_ProjectInfo *),
+                                   void *user)
+{
+    static_assert(DP_PROJECT_MESSAGE_FLAG_OWN == 1,
+                  "message own flag matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select session_id, recorded_at from messages\n"
+             "where (flags & 1) <> 0 order by session_id, sequence_id");
+    if (!stmt) {
+        return DP_PROJECT_INFO_ERROR_PREPARE;
+    }
+
+    struct DP_ProjectInfoWorkTimesContext c = {0LL, 0LL, 0.0};
+
+    bool error;
+    while (ps_exec_step(prj, stmt, &error)) {
+        long long session_id = sqlite3_column_int64(stmt, 0);
+        double recorded_at = sqlite3_column_double(stmt, 1);
+
+        project_info_work_times_flush(&c, session_id, callback, user);
+
+        if (has_minute_passed(c.own_last_recorded_at, recorded_at)) {
+            c.own_last_recorded_at = recorded_at;
+            ++c.own_work_minutes;
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_INFO_ERROR_QUERY;
+    }
+
+    project_info_work_times_flush(&c, 0LL, callback, user);
+    return 0;
+}
+
 int DP_project_info(DP_Project *prj, unsigned int flags,
                     void (*callback)(void *, const DP_ProjectInfo *),
                     void *user)
@@ -5555,26 +5650,28 @@ int DP_project_info(DP_Project *prj, unsigned int flags,
         return DP_PROJECT_INFO_ERROR_MISUSE;
     }
 
-    if (flags & DP_PROJECT_INFO_FLAG_HEADER) {
-        int header_result = project_info_header(prj, callback, user);
-        if (header_result != 0) {
-            return header_result;
-        }
-    }
+    cancel_reset(prj);
 
-    if (flags & DP_PROJECT_INFO_FLAG_SESSIONS) {
-        int sessions_result = project_info_sessions(prj, callback, user);
-        if (sessions_result != 0) {
-            return sessions_result;
-        }
-    }
+#define PROJECT_INFO_CHECK(FLAG, FN)                              \
+    do {                                                          \
+        if (flags & DP_PROJECT_INFO_FLAG_##FLAG) {                \
+            int _result = project_info_##FN(prj, callback, user); \
+            if (cancel_check_reset(prj)) {                        \
+                return DP_PROJECT_INFO_ERROR_CANCELLED;           \
+            }                                                     \
+            else if (_result != 0) {                              \
+                return _result;                                   \
+            }                                                     \
+        }                                                         \
+    } while (0)
 
-    if (flags & DP_PROJECT_INFO_FLAG_SNAPSHOTS) {
-        int snapshots_result = project_info_snapshots(prj, callback, user);
-        if (snapshots_result != 0) {
-            return snapshots_result;
-        }
-    }
+    PROJECT_INFO_CHECK(HEADER, header);
+    PROJECT_INFO_CHECK(SESSIONS, sessions);
+    PROJECT_INFO_CHECK(SNAPSHOTS, snapshots);
+    PROJECT_INFO_CHECK(OVERVIEW, overview);
+    PROJECT_INFO_CHECK(WORK_TIMES, work_times);
+
+#undef PROJECT_INFO_CHECK
 
     return 0;
 }

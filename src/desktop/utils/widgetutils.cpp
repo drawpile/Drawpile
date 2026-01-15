@@ -935,11 +935,12 @@ static int getSpacing(
 	return spacing;
 }
 
-void addFormSpacer(QLayout *layout, QSizePolicy::Policy vPolicy)
+QSpacerItem *addFormSpacer(QLayout *layout, QSizePolicy::Policy vPolicy)
 {
 	QSpacerItem *spacer = new QSpacerItem(
 		0, getSpacerSpacing(layout), QSizePolicy::Minimum, vPolicy);
 	layout->addItem(spacer);
+	return spacer;
 }
 
 QFrame *makeSeparator()
@@ -1570,6 +1571,30 @@ const QVector<MarkerColor> &markerColors()
 		},
 	};
 	return instance;
+}
+
+QString formatWorkMinutes(long long ownWorkMinutes)
+{
+	if(ownWorkMinutes >= 0LL) {
+		int minutes = int(ownWorkMinutes % 60LL);
+		QString minutesString = QCoreApplication::translate(
+			"WorkTime", "%n minute(s)", nullptr, minutes);
+		if(ownWorkMinutes < 60LL) {
+			return minutesString;
+		} else {
+			int hours = int(ownWorkMinutes / 60LL);
+			QString hoursString = QCoreApplication::translate(
+				"WorkTime", "%n hour(s)", nullptr, hours);
+			// %1 is hours, %2 is minutes. So this turns into something like
+			// "1 hour and 15 minutes".
+			return QCoreApplication::translate("WorkTime", "%1 and %2")
+				.arg(hoursString, minutesString);
+		}
+	} else {
+		//: An unknown work time. Will be shown to the user like "Your work
+		//: time: unknown".
+		return QCoreApplication::translate("WorkTime", "unknown");
+	}
 }
 
 }

@@ -132,6 +132,9 @@ extern "C" {
 #include <QVBoxLayout>
 #include <QWindow>
 #include <functional>
+#ifdef DRAWPILE_PROJECT_DIALOG
+#	include "desktop/dialogs/projectdialog.h"
+#endif
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 #	include "desktop/dialogs/projectinfodialog.h"
 #endif
@@ -340,6 +343,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_doc, &Document::exportPathChanged, this,
 		&MainWindow::updateExportPath);
 #endif
+	connect(
+		m_doc, &Document::projectPathChanged, this,
+		&MainWindow::updateProjectOverviewAction);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
 	// clang-format on
@@ -656,6 +662,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		brushMode == int(tools::BrushSettings::UnknownMode)
 			? int(tools::BrushSettings::NormalMode)
 			: brushMode);
+
+	updateProjectOverviewAction();
 
 	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
@@ -1711,6 +1719,33 @@ void MainWindow::showProjectRecordingError(const QString &message)
 	}
 }
 
+void MainWindow::updateProjectOverviewAction()
+{
+#ifdef DRAWPILE_PROJECT_DIALOG
+	getAction(QStringLiteral("projectoverview"))
+		->setEnabled(
+			!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty());
+#endif
+}
+
+#ifdef DRAWPILE_PROJECT_DIALOG
+void MainWindow::showProjectOverview()
+{
+	QString objectName = QStringLiteral("projectdialog");
+	dialogs::ProjectDialog *dlg = findChild<dialogs::ProjectDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else if(!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty()) {
+		dlg = new dialogs::ProjectDialog(m_doc->isProjectDirty(), this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->openProject(m_doc->projectPath());
+		utils::showWindow(dlg);
+	}
+}
+#endif
+
 void MainWindow::showSelectionMaskColorPicker()
 {
 	QString objectName = QStringLiteral("selectionmaskcolordialog");
@@ -2660,6 +2695,7 @@ void MainWindow::onCanvasSaveStarted()
 #endif
 	m_viewStatusBar->showMessage(tr("Saving..."));
 	m_canvasView->setSaveInProgress(true);
+	updateProjectOverviewAction();
 }
 
 void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
@@ -2679,6 +2715,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 #	endif
 #endif
 	m_canvasView->setSaveInProgress(false);
+	updateProjectOverviewAction();
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
@@ -5742,6 +5779,11 @@ void MainWindow::setupActions()
 						  .icon("media-record")
 						  .noDefaultShortcut();
 #endif
+#ifdef DRAWPILE_PROJECT_DIALOG
+	QAction *projectOverview =
+		makeAction("projectoverview", tr("Project statistics…"))
+			.noDefaultShortcut();
+#endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
 	QAction *quit = makeAction("exitprogram", tr("&Quit"))
@@ -5821,6 +5863,11 @@ void MainWindow::setupActions()
 	connect(
 		exportBrushes, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::exportBrushes);
+#ifdef DRAWPILE_PROJECT_DIALOG
+	connect(
+		projectOverview, &QAction::triggered, this,
+		&MainWindow::showProjectOverview);
+#endif
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 
 #ifndef __EMSCRIPTEN__
@@ -5883,6 +5930,10 @@ void MainWindow::setupActions()
 	filemenu->addAction(record);
 #endif
 	filemenu->addAction(autoRecord);
+#ifdef DRAWPILE_PROJECT_DIALOG
+	filemenu->addSeparator();
+	filemenu->addAction(projectOverview);
+#endif
 	filemenu->addSeparator();
 	filemenu->addAction(start);
 #ifndef __EMSCRIPTEN__

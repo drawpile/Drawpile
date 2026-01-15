@@ -5,6 +5,8 @@
 
 #include <QStandardPaths>
 
+class QFileDevice;
+
 namespace utils {
 namespace paths {
 
@@ -56,6 +58,9 @@ QString extractBasename(QString filename);
 bool looksLikeCanvasReplacingSuffix(const QString &suffix);
 
 bool slurp(const QString &path, QByteArray &outBytes, QString &outError);
+
+bool copyFileContents(
+	QFileDevice &sourceFile, QFileDevice &targetFile, QString &outError);
 
 // Gives a reasonable format for a project file, either in MiB or GiB (presented
 // without the overly correct i), avoiding smaller units because at best it's

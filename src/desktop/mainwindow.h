@@ -403,6 +403,10 @@ private:
 	void onProjectRecordingStarted();
 	void onProjectRecordingStopped(bool notify);
 	void showProjectRecordingError(const QString &message);
+	void updateProjectOverviewAction();
+#ifdef DRAWPILE_PROJECT_DIALOG
+	void showProjectOverview();
+#endif
 
 	void showSelectionMaskColorPicker();
 

@@ -7,6 +7,7 @@ extern "C" {
 #include "libclient/drawdance/global.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/utils/annotations.h"
+#include "libshared/util/paths.h"
 #include <QElapsedTimer>
 #include <QPainter>
 #include <QRandomGenerator>
@@ -108,8 +109,9 @@ QString CanvasSaverRunnable::saveResultToErrorString(
 	case DP_SAVE_RESULT_OPEN_ERROR:
 		return tr("Couldn't open file for writing.");
 	case DP_SAVE_RESULT_WRITE_ERROR:
-		return tr("Save operation failed, but the file might have been "
-				  "partially written.");
+		return tr(
+			"Save operation failed, but the file might have been "
+			"partially written.");
 	case DP_SAVE_RESULT_INTERNAL_ERROR:
 		return tr("Internal error during saving.");
 	}
@@ -130,45 +132,14 @@ QString CanvasSaverRunnable::badDimensionsErrorString(
 bool CanvasSaverRunnable::copyFileContents(
 	QFileDevice &sourceFile, QFileDevice &targetFile)
 {
-	QByteArray buffer;
-	buffer.resize(BUFSIZ);
-	while(true) {
-		qint64 read = sourceFile.read(buffer.data(), BUFSIZ);
-		if(read < 0) {
-			DP_error_set(
-				"Error reading from source file '%s': %s",
-				qUtf8Printable(sourceFile.fileName()),
-				qUtf8Printable(sourceFile.errorString()));
-			return false;
-		} else if(read > 0) {
-			qint64 written = targetFile.write(buffer, read);
-			if(written < 0) {
-				DP_error_set(
-					"Error writing %lld byte(s) to target file '%s': %s",
-					static_cast<long long>(read),
-					qUtf8Printable(targetFile.fileName()),
-					qUtf8Printable(targetFile.errorString()));
-				return false;
-			} else if(written != read) {
-				DP_error_set(
-					"Tried to write %lld byte(s) to target file '%s', but only "
-					"wrote %lld",
-					static_cast<long long>(read),
-					qUtf8Printable(targetFile.fileName()),
-					static_cast<long long>(written));
-				return false;
-			}
-		} else {
-			if(targetFile.flush()) {
-				return true;
-			} else {
-				DP_error_set(
-					"Error flushing target file '%s': %s",
-					qUtf8Printable(targetFile.fileName()),
-					qUtf8Printable(targetFile.errorString()));
-				return false;
-			}
-		}
+	QString error;
+	if(utils::paths::copyFileContents(sourceFile, targetFile, error)) {
+		return true;
+	} else {
+		QByteArray errorBytes = error.toUtf8();
+		DP_error_set_string(
+			errorBytes.constData(), size_t(errorBytes.length()));
+		return false;
 	}
 }
 
