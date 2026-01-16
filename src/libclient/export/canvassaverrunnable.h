@@ -11,6 +11,7 @@ extern "C" {
 #include <QRunnable>
 
 class QFile;
+class QFileDevice;
 class QTemporaryDir;
 
 namespace canvas {
@@ -37,6 +38,9 @@ public:
 
 	static QString
 	badDimensionsErrorString(int maxDimension, const QString &format);
+
+	static bool
+	copyFileContents(QFileDevice &sourceFile, QFileDevice &targetFile);
 
 signals:
 	void saveSucceeded(qint64 elapsedMsec);

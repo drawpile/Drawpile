@@ -128,7 +128,6 @@ typedef struct DP_ProjectWorkerCommand {
             DP_ProjectWorkerSaveStartFn start_fn;
             DP_ProjectWorkerSaveFinishFn finish_fn;
             void *user;
-            char *path;
             DP_CanvasState *cs;
             unsigned int file_id;
         } save;
@@ -518,30 +517,34 @@ static DP_SaveResult save_result_from_project_save_result(int result)
     }
 }
 
-static void handle_save(DP_ProjectWorker *pw, unsigned int file_id, char *path,
+static void handle_save(DP_ProjectWorker *pw, unsigned int file_id,
                         DP_CanvasState *cs,
                         DP_ProjectWorkerSaveStartFn start_fn,
                         DP_ProjectWorkerSaveFinishFn finish_fn, void *user)
 {
-    if (start_fn) {
-        start_fn(user);
+    const char *path = NULL;
+    int start_result = start_fn(user, &path);
+    if (start_result != (int)DP_SAVE_RESULT_SUCCESS) {
+        finish_fn(user, start_result);
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
+                           .error = {file_id, start_result, DP_error()}});
+        return;
     }
+
+    DP_PROJECT_WORKER_DEBUG("saving to %s", path ? path : "NULL");
 
     unsigned int open_file_id = pw->open_file_id;
     if (file_id != open_file_id) {
-        DP_free(path);
         DP_canvas_state_decref(cs);
         DP_warn("Not saving file id %u, currently open is %u", file_id,
                 open_file_id);
-        if (finish_fn) {
-            finish_fn(user, (int)DP_SAVE_RESULT_CANCEL);
-        }
+        finish_fn(user, (int)DP_SAVE_RESULT_CANCEL);
         return;
     }
 
     int result =
         DP_project_save(pw->prj, cs, path, 0u, pw->thumb_write_fn, pw->user);
-    DP_free(path);
     DP_canvas_state_decref(cs);
 
     if (finish_fn) {
@@ -663,11 +666,10 @@ static void handle_command(DP_ProjectWorker *pw,
         handle_session_times_update(pw, command->session_times_update.file_id);
         return;
     case DP_PROJECT_WORKER_COMMAND_SAVE:
-        DP_PROJECT_WORKER_DEBUG("handle save %u path '%s'",
-                                command->save.file_id, command->save.path);
-        handle_save(pw, command->save.file_id, command->save.path,
-                    command->save.cs, command->save.start_fn,
-                    command->save.finish_fn, command->save.user);
+        DP_PROJECT_WORKER_DEBUG("handle save %u", command->save.file_id);
+        handle_save(pw, command->save.file_id, command->save.cs,
+                    command->save.start_fn, command->save.finish_fn,
+                    command->save.user);
         return;
     }
     DP_warn("Unhandled project worker command %d", (int)command->type);
@@ -932,17 +934,17 @@ void DP_project_worker_session_times_update(DP_ProjectWorker *pw,
 }
 
 void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
-                                  const char *path, DP_CanvasState *cs,
+                                  DP_CanvasState *cs,
                                   DP_ProjectWorkerSaveStartFn start_fn,
                                   DP_ProjectWorkerSaveFinishFn finish_fn,
                                   void *user)
 {
     DP_ASSERT(pw);
-    DP_ASSERT(path);
-    push_command(
-        pw, (DP_ProjectWorkerCommand){DP_PROJECT_WORKER_COMMAND_SAVE,
-                                      .save = {start_fn, finish_fn, user,
-                                               DP_strdup(path), cs, file_id}});
+    DP_ASSERT(start_fn);
+    DP_ASSERT(finish_fn);
+    push_command(pw, (DP_ProjectWorkerCommand){
+                         DP_PROJECT_WORKER_COMMAND_SAVE,
+                         .save = {start_fn, finish_fn, user, cs, file_id}});
 }
 
 bool DP_project_worker_cancel(DP_ProjectWorker *pw, unsigned int file_id)

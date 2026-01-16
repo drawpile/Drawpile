@@ -35,6 +35,12 @@ bool DP_file_remove(const char *path);
 
 bool DP_file_copy(const char *source_path, const char *target_path);
 
+#ifdef _WIN32
+bool DP_file_move_win32(const wchar_t *source_path, const wchar_t *target_path);
+#else
+bool DP_file_move_unix(const char *source_path, const char *target_path);
+#endif
+
 char *DP_file_path_unique(const char *path, int max,
                           DP_FilePathUniqueAcceptFn accept, void *user);
 

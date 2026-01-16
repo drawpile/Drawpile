@@ -21,16 +21,18 @@
  */
 #include "file.h"
 #include "common.h"
-#include "conversions.h"
 #include "input.h"
 #include "output.h"
 #include <ctype.h>
 #include <string.h>
-#if defined(DP_QT_IO)
+#ifdef DP_QT_IO
 #    include "file_qt.h"
-#elif defined(_WIN32)
+#endif
+#ifdef _WIN32
 #    include <io.h>
+#    include <windows.h>
 #else
+#    include <errno.h>
 #    include <unistd.h>
 #endif
 
@@ -132,6 +134,32 @@ bool DP_file_copy(const char *source_path, const char *target_path)
     DP_input_free(input);
     return !error;
 }
+
+
+#ifdef _WIN32
+bool DP_file_move_win32(const wchar_t *source_path, const wchar_t *target_path)
+{
+    BOOL ok = MoveFileExW(source_path, target_path, MOVEFILE_REPLACE_EXISTING);
+    if (ok) {
+        return true;
+    }
+    else {
+        DP_error_set("Error %u moving file", (unsigned int)GetLastError());
+        return false;
+    }
+}
+#else
+bool DP_file_move_unix(const char *source_path, const char *target_path)
+{
+    if (rename(source_path, target_path) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("Error %d renaming file: %s", errno, strerror(errno));
+        return false;
+    }
+}
+#endif
 
 
 static int find_prefix_len(const char *start, const char *end,

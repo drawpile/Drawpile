@@ -28,16 +28,20 @@ private:
 		void *user, DP_CanvasState *cs, DP_ProjectWorker *pw,
 		unsigned int fileId);
 
-	void handleSaveStart();
+	int handleSaveStart();
 
-	static void handleSaveStartCallback(void *user);
+	static int handleSaveStartCallback(void *user, const char **outPath);
 
-	void handleSaveFinish(int saveResult);
+	int handleSaveFinish(int saveResult);
 
-	static void handleSaveFinishCallback(void *user, int saveResult);
+	static int handleSaveFinishCallback(void *user, int saveResult);
+
+	bool writeBackFromTemporaryFile();
 
 	const QString m_path;
 	QElapsedTimer m_saveTimer;
+	QString m_tempPath;
+	QByteArray m_tempPathBytes;
 };
 
 #endif

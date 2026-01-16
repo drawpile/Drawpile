@@ -51,8 +51,9 @@ typedef bool (*DP_ProjectWorkerThumbWriteFn)(void *user, DP_Image *img,
 
 typedef void (*DP_ProjectWorkerSyncFn)(void *user);
 
-typedef void (*DP_ProjectWorkerSaveStartFn)(void *user);
-typedef void (*DP_ProjectWorkerSaveFinishFn)(void *user, int save_result);
+typedef int (*DP_ProjectWorkerSaveStartFn)(void *user, const char **out_path);
+
+typedef int (*DP_ProjectWorkerSaveFinishFn)(void *user, int save_result);
 
 
 DP_ProjectWorker *
@@ -123,7 +124,7 @@ void DP_project_worker_session_times_update(DP_ProjectWorker *pw,
                                             unsigned int file_id);
 
 void DP_project_worker_save_noinc(DP_ProjectWorker *pw, unsigned int file_id,
-                                  const char *path, DP_CanvasState *cs,
+                                  DP_CanvasState *cs,
                                   DP_ProjectWorkerSaveStartFn start_fn,
                                   DP_ProjectWorkerSaveFinishFn finish_fn,
                                   void *user);

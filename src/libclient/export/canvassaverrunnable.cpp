@@ -128,6 +128,52 @@ QString CanvasSaverRunnable::badDimensionsErrorString(
 		.arg(QString::number(maxDimension), format);
 }
 
+
+bool CanvasSaverRunnable::copyFileContents(
+	QFileDevice &sourceFile, QFileDevice &targetFile)
+{
+	QByteArray buffer;
+	buffer.resize(BUFSIZ);
+	while(true) {
+		qint64 read = sourceFile.read(buffer.data(), BUFSIZ);
+		if(read < 0) {
+			DP_error_set(
+				"Error reading from source file '%s': %s",
+				qUtf8Printable(sourceFile.fileName()),
+				qUtf8Printable(sourceFile.errorString()));
+			return false;
+		} else if(read > 0) {
+			qint64 written = targetFile.write(buffer, read);
+			if(written < 0) {
+				DP_error_set(
+					"Error writing %lld byte(s) to target file '%s': %s",
+					static_cast<long long>(read),
+					qUtf8Printable(targetFile.fileName()),
+					qUtf8Printable(targetFile.errorString()));
+				return false;
+			} else if(written != read) {
+				DP_error_set(
+					"Tried to write %lld byte(s) to target file '%s', but only "
+					"wrote %lld",
+					static_cast<long long>(read),
+					qUtf8Printable(targetFile.fileName()),
+					static_cast<long long>(written));
+				return false;
+			}
+		} else {
+			if(targetFile.flush()) {
+				return true;
+			} else {
+				DP_error_set(
+					"Error flushing target file '%s': %s",
+					qUtf8Printable(targetFile.fileName()),
+					qUtf8Printable(targetFile.errorString()));
+				return false;
+			}
+		}
+	}
+}
+
 bool CanvasSaverRunnable::bakeAnnotation(
 	void *user, DP_Annotation *a, unsigned char *out)
 {
@@ -165,48 +211,13 @@ DP_SaveResult CanvasSaverRunnable::copyToTargetFile(QFile &tempFile) const
 		return DP_SAVE_RESULT_OPEN_ERROR;
 	}
 
-	QByteArray buffer;
-	buffer.resize(BUFSIZ);
-	while(true) {
-		qint64 read = tempFile.read(buffer.data(), BUFSIZ);
-		if(read < 0) {
-			DP_error_set(
-				"Error reading from temporary file '%s': %s",
-				qUtf8Printable(tempFile.fileName()),
-				qUtf8Printable(tempFile.errorString()));
-			tempFile.close();
-			return DP_SAVE_RESULT_WRITE_ERROR;
-		} else if(read > 0) {
-			qint64 written = targetFile.write(buffer, read);
-			if(written < 0) {
-				DP_error_set(
-					"Error writing %lld byte(s) to target file '%s': %s",
-					static_cast<long long>(read),
-					qUtf8Printable(targetFile.fileName()),
-					qUtf8Printable(targetFile.errorString()));
-				tempFile.close();
-				return DP_SAVE_RESULT_WRITE_ERROR;
-			} else if(written != read) {
-				DP_error_set(
-					"Tried to write %lld byte(s) to target file '%s', but only "
-					"wrote %lld",
-					static_cast<long long>(read), qUtf8Printable(m_path),
-					static_cast<long long>(written));
-				tempFile.close();
-				return DP_SAVE_RESULT_WRITE_ERROR;
-			}
-		} else {
-			tempFile.close();
-			if(targetFile.flush()) {
-				return DP_SAVE_RESULT_SUCCESS;
-			} else {
-				DP_error_set(
-					"Error flushing target file '%s': %s",
-					qUtf8Printable(targetFile.fileName()),
-					qUtf8Printable(targetFile.errorString()));
-				return DP_SAVE_RESULT_WRITE_ERROR;
-			}
-		}
+	bool copyOk = copyFileContents(tempFile, targetFile);
+	tempFile.close();
+	targetFile.close();
+	if(copyOk) {
+		return DP_SAVE_RESULT_SUCCESS;
+	} else {
+		return DP_SAVE_RESULT_WRITE_ERROR;
 	}
 }
 #endif
