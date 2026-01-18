@@ -27,6 +27,10 @@
 #include <dpcommon/platform_qt.h>
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #	include "desktop/dialogs/filetypedialog.h"
+#else
+extern "C" {
+#	include <dpengine/project.h>
+}
 #endif
 
 Q_LOGGING_CATEGORY(lcDpFileWrangler, "net.drawpile.filewrangler", QtWarningMsg)
@@ -200,7 +204,6 @@ QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 		return {};
 	}
 }
-#endif
 
 QString FileWrangler::saveImage(Document *doc, bool exported) const
 {
@@ -212,7 +215,7 @@ QString FileWrangler::saveImage(Document *doc, bool exported) const
 	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
 		return saveImageAs(doc, exported, DP_SAVE_IMAGE_UNKNOWN);
 	} else if(exported || confirmFlatten(doc, path, type)) {
-		doc->saveCanvasAs(path, type, exported);
+		doc->saveCanvasAs(path, type, exported, true);
 		return path;
 	} else {
 		return QString();
@@ -259,11 +262,20 @@ QString FileWrangler::saveImageAs(
 			haveFilename ? guessType(intendedName) : DP_SAVE_IMAGE_UNKNOWN;
 
 		if(haveFilename && (exported || confirmFlatten(doc, filename, type))) {
-			if(confirmOverwrite(filename)) {
+			switch(confirmOverwrite(filename, type)) {
+			case OverwriteAction::Cancel:
+				continue;
+			case OverwriteAction::Replace:
 				qCDebug(
 					lcDpFileWrangler, "Saving canvas as '%s'",
 					qUtf8Printable(filename));
-				doc->saveCanvasAs(filename, type, exported);
+				doc->saveCanvasAs(filename, type, exported, false);
+				return filename;
+			case OverwriteAction::Append:
+				qCDebug(
+					lcDpFileWrangler, "Appending canvas to '%s'",
+					qUtf8Printable(filename));
+				doc->saveCanvasAs(filename, type, exported, true);
 				return filename;
 			}
 		} else {
@@ -285,7 +297,7 @@ QString FileWrangler::savePreResetImageAs(
 	DP_SaveImageType type = guessType(intendedName);
 
 	if(!path.isEmpty() && confirmFlatten(doc, path, type)) {
-		doc->saveCanvasStateAs(path, type, canvasState, false, false);
+		doc->saveCanvasStateAs(path, type, canvasState, false, false, false);
 		return path;
 	} else {
 		return QString{};
@@ -309,6 +321,7 @@ QString FileWrangler::saveSelectionAs(Document *doc) const
 		return QString{};
 	}
 }
+#endif
 
 QString FileWrangler::getSaveRecordingPath() const
 {
@@ -563,18 +576,18 @@ bool FileWrangler::saveLogFile(
 		outError);
 }
 
-
+#ifndef __EMSCRIPTEN__
 bool FileWrangler::confirmFlatten(
 	Document *doc, QString &path, DP_SaveImageType &type) const
 {
-#ifdef Q_OS_ANDROID
+#	ifdef Q_OS_ANDROID
 	// We're not allowed to change the file extension on Android, all we could
 	// do at this point is continue or cancel. So we'll just keep going.
 	Q_UNUSED(doc);
 	Q_UNUSED(path);
 	Q_UNUSED(type);
 	return true;
-#else
+#	else
 	// If the image can be flattened without losing any information, we don't
 	// need to confirm anything.
 	bool needsBetterFormat = type != DP_SAVE_IMAGE_ORA &&
@@ -643,33 +656,104 @@ bool FileWrangler::confirmFlatten(
 		// Save the file as-is.
 		return true;
 	}
-#endif
+#	endif
 }
 
-bool FileWrangler::confirmOverwrite(const QString &path) const
+FileWrangler::OverwriteAction
+FileWrangler::confirmOverwrite(const QString &path, DP_SaveImageType type) const
 {
 	// On Android, the operating system creates the file for us, so it
 	// will always exist at this point. In practice, it will always be a
 	// new file, because the OS refuses to overwrite files.
-#ifdef Q_OS_ANDROID
+#	ifdef Q_OS_ANDROID
 	Q_UNUSED(path);
-	return true;
-#else
+	Q_UNUSED(type);
+	return OverwriteAction::Replace;
+#	else
 	QFileInfo fileInfo(path);
 	if(fileInfo.exists()) {
-		QMessageBox box(
-			QMessageBox::Question, tr("Replace Image"),
-			tr("The file %1 already exists, do you want to replace it?")
-				.arg(fileInfo.fileName()),
-			QMessageBox::Yes | QMessageBox::No, parentWidget());
-		box.button(QMessageBox::Yes)->setText(tr("Yes, replace"));
-		box.button(QMessageBox::No)->setText(tr("No, keep"));
-		return box.exec() == QMessageBox::Yes;
+		if(canAppend(path, type)) {
+			QMessageBox box(
+				QMessageBox::Question, tr("Replace Project"),
+				tr("The project file %1 already exists. Do you want to append "
+				   "to it or replace it?")
+					.arg(fileInfo.fileName()),
+				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+				parentWidget());
+			box.setInformativeText(
+				tr("If you replace the file, any data it contains from past "
+				   "sessions will be lost."));
+			box.button(QMessageBox::Save)->setText(tr("Append"));
+			box.button(QMessageBox::Discard)->setText(tr("Replace"));
+
+			switch(box.exec()) {
+			case int(QMessageBox::Save):
+				return OverwriteAction::Append;
+			case int(QMessageBox::Discard):
+				return OverwriteAction::Replace;
+			default:
+				return OverwriteAction::Cancel;
+			}
+
+		} else {
+			QMessageBox box(
+				QMessageBox::Question, tr("Replace Image"),
+				tr("The file %1 already exists, do you want to replace it?")
+					.arg(fileInfo.fileName()),
+				QMessageBox::Yes | QMessageBox::No, parentWidget());
+			box.button(QMessageBox::Yes)->setText(tr("Yes, replace"));
+			box.button(QMessageBox::No)->setText(tr("No, keep"));
+
+			if(box.exec() == int(QMessageBox::Yes)) {
+				return OverwriteAction::Replace;
+			} else {
+				return OverwriteAction::Cancel;
+			}
+		}
 	} else {
-		return true;
+		return OverwriteAction::Replace;
 	}
-#endif
+#	endif
 }
+
+#	ifndef Q_OS_ANDROID
+bool FileWrangler::canAppend(const QString &path, DP_SaveImageType type) const
+{
+	if(type == DP_SAVE_IMAGE_PROJECT) {
+		// Project files can be overwritten or appended to, but we should only
+		// ask the user whether they want to append to the project if there is
+		// any existing data that could be appended to. If there's only
+		// non-persistent snapshots in there, they'll be deleted when
+		// "appending", so it's effectively the same as just ovewriting it. If
+		// an error occurs, we ask the user whether they want to append, since
+		// we can't be sure what the project contains currently.
+		DP_ProjectAppendStatus append_status =
+			DP_project_append_status(path.toUtf8().constData());
+
+		switch(append_status) {
+		case DP_PROJECT_APPEND_STATUS_APPEND:
+			return true;
+		case DP_PROJECT_APPEND_STATUS_OVERWRITE:
+			return false;
+		case DP_PROJECT_APPEND_STATUS_ERROR:
+			qCWarning(
+				lcDpFileWrangler, "Error checking append status of '%s': %s",
+				qUtf8Printable(path), DP_error());
+			return true;
+		}
+
+		qCWarning(
+			lcDpFileWrangler, "Error checking append status of '%s': %s",
+			qUtf8Printable(path), DP_error());
+		return true;
+
+	} else {
+		// Other file types are always overwritten.
+		return false;
+	}
+}
+#	endif
+#endif
 
 QString FileWrangler::guessExtension(
 	const QString &selectedFilter, const QString &fallbackExt)

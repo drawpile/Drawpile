@@ -1058,29 +1058,29 @@ void Document::clearConfig()
 }
 
 void Document::saveCanvasAs(
-	const QString &filename, DP_SaveImageType type, bool exported)
+	const QString &filename, DP_SaveImageType type, bool exported, bool append)
 {
 	saveCanvasStateAs(
 		filename, type, m_canvas->paintEngine()->viewCanvasState(), true,
-		exported);
+		exported, append);
 }
 
 void Document::saveCanvasStateAs(
 	const QString &path, DP_SaveImageType type,
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
-	bool exported)
+	bool exported, bool append)
 {
 	if(exported) {
 		setExportPath(path, type);
 	} else {
 		setCurrentPath(path, type);
 	}
-	saveCanvasState(canvasState, isCurrentState, exported, path, type);
+	saveCanvasState(canvasState, isCurrentState, exported, append, path, type);
 }
 
 void Document::saveCanvasState(
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
-	bool exported, const QString &path, DP_SaveImageType type)
+	bool exported, bool append, const QString &path, DP_SaveImageType type)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
@@ -1094,7 +1094,7 @@ void Document::saveCanvasState(
 	Q_EMIT canvasSaveStarted();
 
 	if(type == DP_SAVE_IMAGE_PROJECT) {
-		ProjectSaver *projectSaver = new ProjectSaver(path);
+		ProjectSaver *projectSaver = new ProjectSaver(append, path);
 		connect(
 			projectSaver, &ProjectSaver::saveSucceeded, this,
 			&Document::onSaveSucceeded);

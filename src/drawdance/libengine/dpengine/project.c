@@ -714,6 +714,71 @@ static void try_rollback(sqlite3 *db)
         }                                                              \
     } while (0)
 
+
+static DP_ProjectAppendStatus project_append_status(sqlite3 *db)
+{
+    // If the project contains sessions, there's something to append to.
+    {
+        int value;
+        bool exec_ok = exec_int_stmt(db, "select 1 from sessions limit 1", 0,
+                                     &value, NULL);
+        if (!exec_ok) {
+            return DP_PROJECT_APPEND_STATUS_ERROR;
+        }
+        else if (value != 0) {
+            return DP_PROJECT_APPEND_STATUS_APPEND;
+        }
+    }
+
+    // If the project contains persistent snapshots, they are also retained when
+    // appending.
+    {
+        static_assert(DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT == 2,
+                      "persistent snapshot flag matches query");
+        int value;
+        bool exec_ok = exec_int_stmt(
+            db, "select 1 from snapshots where (flags & 2) <> 0 limit 1", 0,
+            &value, NULL);
+        if (!exec_ok) {
+            return DP_PROJECT_APPEND_STATUS_ERROR;
+        }
+        else if (value != 0) {
+            return DP_PROJECT_APPEND_STATUS_APPEND;
+        }
+    }
+
+    // Otherwise, appending would be the same as overwriting, since everything
+    // in the project would get discarded.
+    return DP_PROJECT_APPEND_STATUS_OVERWRITE;
+}
+
+DP_ProjectAppendStatus DP_project_append_status(const char *path)
+{
+    if (!path) {
+        DP_error_set("No path given");
+        return DP_PROJECT_APPEND_STATUS_ERROR;
+    }
+
+    int sql_result = DP_sql_init();
+    if (sql_result != SQLITE_OK) {
+        return DP_PROJECT_APPEND_STATUS_ERROR;
+    }
+
+    sqlite3 *db;
+    sql_result = sqlite3_open_v2(path, &db, SQLITE_OPEN_READONLY, NULL);
+    if (sql_result != SQLITE_OK) {
+        DP_error_set("Error %d opening '%s': %s", sql_result, path,
+                     db_error(db));
+        try_close_db(db);
+        return DP_PROJECT_APPEND_STATUS_ERROR;
+    }
+
+    DP_ProjectAppendStatus status = project_append_status(db);
+    try_close_db(db);
+    return status;
+}
+
+
 static const char *pps_sql(DP_ProjectPersistentStatement pps)
 {
     static_assert(DP_PROJECT_MESSAGE_FLAG_OWN == 1,

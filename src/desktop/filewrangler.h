@@ -99,7 +99,6 @@ public:
 #ifndef __EMSCRIPTEN_
 	// The browser handles our certificates in Emscripten.
 	QStringList getImportCertificatePaths(const QString &title) const;
-#endif
 
 	QString saveImage(Document *doc, bool exported) const;
 	QString saveImageAs(
@@ -107,6 +106,7 @@ public:
 	QString savePreResetImageAs(
 		Document *doc, const drawdance::CanvasState &canvasState) const;
 	QString saveSelectionAs(Document *doc) const;
+#endif
 	QString getSaveRecordingPath() const;
 	QString getSaveTemplatePath() const;
 	QString getSaveAnimationGifPath() const;
@@ -145,10 +145,19 @@ public:
 		QString *outError) const;
 
 private:
+#ifndef __EMSCRIPTEN_
+	enum class OverwriteAction { Cancel, Replace, Append };
+
 	bool
 	confirmFlatten(Document *doc, QString &path, DP_SaveImageType &type) const;
 
-	bool confirmOverwrite(const QString &path) const;
+	OverwriteAction
+	confirmOverwrite(const QString &path, DP_SaveImageType type) const;
+
+#	ifndef Q_OS_ANDROID
+	bool canAppend(const QString &path, DP_SaveImageType type) const;
+#	endif
+#endif
 
 	static QString
 	guessExtension(const QString &selectedFilter, const QString &fallbackExt);

@@ -175,6 +175,12 @@ typedef enum DP_ProjectCheckType {
     DP_PROJECT_CHECK_CANVAS,  // Single snapshot file.
 } DP_ProjectCheckType;
 
+typedef enum DP_ProjectAppendStatus {
+    DP_PROJECT_APPEND_STATUS_ERROR,
+    DP_PROJECT_APPEND_STATUS_OVERWRITE,
+    DP_PROJECT_APPEND_STATUS_APPEND,
+} DP_ProjectAppendStatus;
+
 typedef struct DP_ProjectCheckResult {
     DP_ProjectCheckType result;
     union {
@@ -270,6 +276,11 @@ DP_ProjectCheckResult DP_project_check(const unsigned char *buf, size_t size);
 // Opens the file, reads the first 72 bytes, then calls DP_project_check. The
 // OPEN and READ errors can only happen when using this function.
 DP_ProjectCheckResult DP_project_check_path(const char *path);
+
+// Tries to check whether the project contains only snapshots or whether there's
+// any sessions inside it. This is used to determine whether the file overwrite
+// prompt should ask about appending to the project or not.
+DP_ProjectAppendStatus DP_project_append_status(const char *path);
 
 DP_ProjectOpenResult DP_project_open(const char *path, unsigned int flags);
 

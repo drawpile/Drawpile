@@ -17,9 +17,10 @@ extern "C" {
 Q_LOGGING_CATEGORY(
 	lcDpProjectSaver, "net.drawpile.export.projectsaver", QtWarningMsg)
 
-ProjectSaver::ProjectSaver(const QString &path, QObject *parent)
+ProjectSaver::ProjectSaver(bool append, const QString &path, QObject *parent)
 	: QObject(parent)
 	, m_path(path)
+	, m_append(append)
 {
 }
 
@@ -87,15 +88,8 @@ int ProjectSaver::handleSaveStart()
 	}
 
 	QFile saveFile(m_path);
-#ifdef Q_OS_ANDROID
-	// On Android, we have some kind of weird content:// URL here, so checking
-	// for existence doesn't make sense.
-	bool saveFileExists = true;
-#else
-	bool saveFileExists = saveFile.exists();
-#endif
 	int result;
-	if(saveFileExists) {
+	if(shouldAppend(saveFile)) {
 		qCDebug(
 			lcDpProjectSaver, "Target file '%s' exists, copying contents",
 			qUtf8Printable(tempFile.fileName()));
@@ -207,4 +201,20 @@ bool ProjectSaver::writeBackFromTemporaryFile()
 	return DP_file_move_unix(
 		m_tempPathBytes.constData(), m_path.toUtf8().constData());
 #endif
+}
+
+bool ProjectSaver::shouldAppend(QFile &saveFile) const
+{
+	if(m_append) {
+#ifdef Q_OS_ANDROID
+		// On Android, we have some kind of weird content:// URL here, so
+		// checking for existence doesn't make sense.
+		Q_UNUSED(saveFile);
+		return true;
+#else
+		return saveFile.exists();
+#endif
+	} else {
+		return false;
+	}
 }

@@ -84,12 +84,12 @@ public:
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 
-	void
-	saveCanvasAs(const QString &path, DP_SaveImageType type, bool exported);
+	void saveCanvasAs(
+		const QString &path, DP_SaveImageType type, bool exported, bool append);
 	void saveCanvasStateAs(
 		const QString &path, DP_SaveImageType type,
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
-		bool exported);
+		bool exported, bool append);
 	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
@@ -340,7 +340,7 @@ private:
 
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
-		bool exported, const QString &path, DP_SaveImageType type);
+		bool exported, bool append, const QString &path, DP_SaveImageType type);
 	QImage selectionToImage();
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setExportPath(const QString &path, DP_SaveImageType type);

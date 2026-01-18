@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QRunnable>
 
+class QFile;
 struct DP_CanvasState;
 struct DP_ProjectWorker;
 
@@ -17,7 +18,8 @@ struct DP_ProjectWorker;
 class ProjectSaver final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
-	explicit ProjectSaver(const QString &path, QObject *parent = nullptr);
+	explicit ProjectSaver(
+		bool append, const QString &path, QObject *parent = nullptr);
 
 	net::Message getProjectSaveRequestMessage();
 
@@ -51,11 +53,14 @@ private:
 
 	bool writeBackFromTemporaryFile();
 
+	bool shouldAppend(QFile &saveFile) const ;
+
 	const QString m_path;
 	drawdance::CanvasState m_canvasState;
 	QElapsedTimer m_saveTimer;
 	QString m_tempPath;
 	QByteArray m_tempPathBytes;
+	const bool m_append;
 };
 
 #endif
