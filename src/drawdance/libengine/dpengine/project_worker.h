@@ -56,6 +56,9 @@ typedef int (*DP_ProjectWorkerSaveStartFn)(void *user, const char **out_path);
 typedef int (*DP_ProjectWorkerSaveFinishFn)(void *user, int save_result);
 
 
+int DP_project_save_error_to_save_result(int result);
+
+
 DP_ProjectWorker *
 DP_project_worker_new(DP_ProjectWorkerHandleEventFn handle_event_fn,
                       DP_ProjectWorkerThumbWriteFn thumb_write_fn, void *user);

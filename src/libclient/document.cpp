@@ -1093,13 +1093,7 @@ void Document::saveCanvasState(
 
 	Q_EMIT canvasSaveStarted();
 
-	// Saving to project files integrates with project recording, since it also
-	// stores the recorded messages. So if auto-recording is running, we take a
-	// different path here if possible.
-	bool shouldSaveThroughPaintEngine =
-		isCurrentState && type == DP_SAVE_IMAGE_PROJECT && m_canvas &&
-		m_canvas->isProjectRecording();
-	if(shouldSaveThroughPaintEngine) {
+	if(type == DP_SAVE_IMAGE_PROJECT) {
 		ProjectSaver *projectSaver = new ProjectSaver(path);
 		connect(
 			projectSaver, &ProjectSaver::saveSucceeded, this,
@@ -1110,8 +1104,20 @@ void Document::saveCanvasState(
 		connect(
 			projectSaver, &ProjectSaver::saveFailed, this,
 			&Document::onSaveFailed);
-		net::Message msg = projectSaver->getProjectSaveRequestMessage();
-		m_canvas->paintEngine()->receiveMessages(false, 1, &msg);
+
+		// Saving to project files integrates with project recording, since it
+		// also stores the recorded messages. So if auto-recording is running,
+		// we take a different path here if possible.
+		bool shouldSaveThroughPaintEngine =
+			isCurrentState && m_canvas && m_canvas->isProjectRecording();
+		if(shouldSaveThroughPaintEngine) {
+			net::Message msg = projectSaver->getProjectSaveRequestMessage();
+			m_canvas->paintEngine()->receiveMessages(false, 1, &msg);
+		} else {
+			projectSaver->setCanvasState(canvasState);
+			QThreadPool::globalInstance()->start(projectSaver);
+		}
+
 	} else {
 		CanvasSaverRunnable *canvasSaver = new CanvasSaverRunnable(
 			canvasState, type, path,

@@ -2,8 +2,10 @@
 extern "C" {
 #include <dpcommon/file.h>
 #include <dpengine/canvas_state.h>
+#include <dpengine/project.h>
 #include <dpengine/project_worker.h>
 #include <dpengine/save_enums.h>
+#include <dpimpex/image_impex.h>
 #include <dpmsg/msg_internal.h>
 }
 #include "libclient/export/canvassaverrunnable.h"
@@ -31,7 +33,6 @@ void ProjectSaver::handleSaveRequest(
 	DP_CanvasState *cs, DP_ProjectWorker *pw, unsigned int fileId)
 {
 	if(pw && cs) {
-		QByteArray pathBytes = m_path.toUtf8();
 		DP_project_worker_save_noinc(
 			pw, fileId, cs, &ProjectSaver::handleSaveStartCallback,
 			&ProjectSaver::handleSaveFinishCallback, this);
@@ -40,6 +41,21 @@ void ProjectSaver::handleSaveRequest(
 		Q_EMIT saveFailed(tr("Autosave cancelled during save"));
 		deleteLater();
 	}
+}
+
+void ProjectSaver::run()
+{
+	Q_ASSERT(!m_canvasState.isNull());
+
+	int saveResult = handleSaveStart();
+	if(saveResult == DP_SAVE_RESULT_SUCCESS) {
+		int result = DP_project_save_state(
+			m_canvasState.get(), m_tempPathBytes.constData(),
+			DP_image_write_project_thumbnail, nullptr);
+		saveResult = DP_project_save_error_to_save_result(result);
+	}
+
+	handleSaveFinish(saveResult);
 }
 
 void ProjectSaver::handleSaveRequestCallback(
@@ -143,13 +159,15 @@ int ProjectSaver::handleSaveFinish(int saveResult)
 	}
 
 	m_saveTimer.invalidate();
-	deleteLater();
 	return saveResult;
 }
 
 int ProjectSaver::handleSaveFinishCallback(void *user, int saveResult)
 {
-	return static_cast<ProjectSaver *>(user)->handleSaveFinish(saveResult);
+	ProjectSaver *saver = static_cast<ProjectSaver *>(user);
+	int result = saver->handleSaveFinish(saveResult);
+	saver->deleteLater();
+	return result;
 }
 
 bool ProjectSaver::writeBackFromTemporaryFile()

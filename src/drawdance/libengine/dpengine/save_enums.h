@@ -24,7 +24,6 @@ typedef enum DP_SaveResult {
     DP_SAVE_RESULT_WRITE_ERROR,
     DP_SAVE_RESULT_INTERNAL_ERROR,
     DP_SAVE_RESULT_CANCEL,
-    DP_SAVE_RESULT_TODO_DPPR,
 } DP_SaveResult;
 
 #endif

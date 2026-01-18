@@ -369,6 +369,12 @@ int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
                     bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
                     void *thumb_write_user);
 
+// Like DP_project_save, but only saves the given canvas state.
+int DP_project_save_state(DP_CanvasState *cs, const char *path,
+                          bool (*thumb_write_fn)(void *, DP_Image *,
+                                                 DP_Output *),
+                          void *thumb_write_user);
+
 
 DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
                                                 DP_DrawContext *dc,

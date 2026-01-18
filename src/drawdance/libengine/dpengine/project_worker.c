@@ -490,13 +490,13 @@ static void handle_session_times_update(DP_ProjectWorker *pw,
     }
 }
 
-static DP_SaveResult save_result_from_project_save_result(int result)
+int DP_project_save_error_to_save_result(int result)
 {
     switch (result) {
     case 0:
-        return DP_SAVE_RESULT_SUCCESS;
+        return (int)DP_SAVE_RESULT_SUCCESS;
     case DP_PROJECT_SAVE_ERROR_MISUSE:
-        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+        return (int)DP_SAVE_RESULT_BAD_ARGUMENTS;
     case DP_PROJECT_SAVE_ERROR_NO_SESSION:
     case DP_PROJECT_SAVE_ERROR_OPEN:
     case DP_PROJECT_SAVE_ERROR_READ_ONLY:
@@ -506,14 +506,12 @@ static DP_SaveResult save_result_from_project_save_result(int result)
     case DP_PROJECT_SAVE_ERROR_HEADER_READ:
     case DP_PROJECT_SAVE_ERROR_HEADER_MISMATCH:
     case DP_PROJECT_SAVE_ERROR_MIGRATION:
-        return DP_SAVE_RESULT_OPEN_ERROR;
-    case DP_PROJECT_SAVE_ERROR_PREPARE:
+        return (int)DP_SAVE_RESULT_OPEN_ERROR;
     case DP_PROJECT_SAVE_ERROR_LOCKED:
-    case DP_PROJECT_SAVE_ERROR_QUERY:
     case DP_PROJECT_SAVE_ERROR_WRITE:
-        return DP_SAVE_RESULT_WRITE_ERROR;
+        return (int)DP_SAVE_RESULT_WRITE_ERROR;
     default:
-        return DP_SAVE_RESULT_INTERNAL_ERROR;
+        return (int)DP_SAVE_RESULT_INTERNAL_ERROR;
     }
 }
 
@@ -548,7 +546,7 @@ static void handle_save(DP_ProjectWorker *pw, unsigned int file_id,
     DP_canvas_state_decref(cs);
 
     if (finish_fn) {
-        finish_fn(user, (int)save_result_from_project_save_result(result));
+        finish_fn(user, DP_project_save_error_to_save_result(result));
     }
 
     if (result != 0) {

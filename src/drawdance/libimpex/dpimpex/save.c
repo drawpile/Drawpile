@@ -1100,9 +1100,8 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_SAVE_IMAGE_PROJECT_CANVAS:
         return save_project_canvas(cs, path);
     case DP_SAVE_IMAGE_PROJECT:
-        // TODO implement this
-        DP_error_set("Saving to dppr is not implemented yet");
-        return DP_SAVE_RESULT_TODO_DPPR;
+        DP_error_set("Programming error: can't DP_save dppr file");
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
     default:
         DP_error_set("Unknown save format");
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;

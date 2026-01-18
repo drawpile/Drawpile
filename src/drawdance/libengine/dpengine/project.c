@@ -3052,6 +3052,74 @@ int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
 }
 
 
+static int project_save_state_to(DP_Project *prj, DP_CanvasState *cs,
+                                 bool (*thumb_write_fn)(void *, DP_Image *,
+                                                        DP_Output *),
+                                 void *thumb_write_user)
+{
+    // Get rid of any non-persistent snapshots, we'll be writing a new one.
+    int snapshot_discard_result = snapshot_discard_all_except(prj, 0LL, false);
+    if (snapshot_discard_result < 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    long long snapshot_id =
+        project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, 0LL, false);
+    if (snapshot_id <= 0LL) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    int snapshot_result = DP_project_snapshot_canvas(
+        prj, snapshot_id, cs, thumb_write_fn, thumb_write_user);
+    if (snapshot_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    int finish_result = DP_project_snapshot_finish(prj, snapshot_id);
+    if (finish_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
+int DP_project_save_state(DP_CanvasState *cs, const char *path,
+                          bool (*thumb_write_fn)(void *, DP_Image *,
+                                                 DP_Output *),
+                          void *thumb_write_user)
+{
+    if (!cs) {
+        DP_error_set("No canvas state given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (!path) {
+        DP_error_set("No path given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    DP_ProjectOpenResult open_result = DP_project_open(path, 0);
+    DP_Project *prj = open_result.project;
+    if (!prj) {
+        return DP_PROJECT_SAVE_ERROR_OPEN;
+    }
+
+    int save_result =
+        project_save_state_to(prj, cs, thumb_write_fn, thumb_write_user);
+
+    // Don't clobber a save error with a close error, only warn and return the
+    // original error in that case.
+    bool save_ok = save_result == 0;
+    bool close_ok = project_close(prj, !save_ok);
+    if (save_ok && !close_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+    else {
+        return save_result;
+    }
+}
+
+
 typedef struct DP_ProjectCanvasFromSnapshotLayer {
     DP_TransientLayerProps *tlp;
     union {
@@ -5144,7 +5212,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
             sequence_id = 1LL;
         }
 
-        if (snapshot_only) {
+        if (snapshot_only || snapshot_id <= 0LL) {
             load_messages = false;
         }
         else {
