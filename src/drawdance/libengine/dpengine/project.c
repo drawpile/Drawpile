@@ -2235,9 +2235,8 @@ snapshot_handle_selection_tile(DP_Project *prj,
         data = rest->data;
     }
 
-    sqlite3_stmt *stmt =
-        prj->snapshot
-            .stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE];
+    sqlite3_stmt *stmt = snapshot_prepare(
+        prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SELECTION_TILE);
     return stmt && ps_bind_int(prj, stmt, 2, rest->selection_id)
         && ps_bind_int64(prj, stmt, 3, rest->context_id)
         && ps_bind_int(prj, stmt, 4, rest->tile_index)
@@ -2305,9 +2304,8 @@ static bool snapshot_insert_key_frame_layers(DP_Project *prj,
     int count;
     const DP_KeyFrameLayer *kfls = DP_key_frame_layers(ref->kf, &count);
     if (count != 0) {
-        sqlite3_stmt *stmt =
-            prj->snapshot
-                .stmts[DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME_LAYER];
+        sqlite3_stmt *stmt = snapshot_prepare(
+            prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME_LAYER);
 
         bool bind_ok = stmt && ps_bind_int(prj, stmt, 2, ref->track_index)
                     && ps_bind_int(prj, stmt, 3, ref->frame_index);
