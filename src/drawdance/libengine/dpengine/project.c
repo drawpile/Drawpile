@@ -2400,6 +2400,8 @@ static void snapshot_handle_entry_callback(void *user,
         bool handle_ok = snapshot_handle_entry(prj, entry);
         DP_MUTEX_MUST_UNLOCK(mutex);
         if (!handle_ok) {
+            DP_warn("Error handling snapshot entry type %d: %s",
+                    (int)entry->type, DP_error());
             prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_ERROR;
         }
     }
@@ -2440,6 +2442,7 @@ static int snapshot_canvas(DP_Project *prj, DP_CanvasState *cs,
         DP_reset_image_build_with(cs, &options, snapshot_handle_entry_callback,
                                   prj);
         if (prj->snapshot.state != DP_PROJECT_SNAPSHOT_STATE_OK) {
+            DP_error_set("Building reset image failed");
             return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE;
         }
     }
