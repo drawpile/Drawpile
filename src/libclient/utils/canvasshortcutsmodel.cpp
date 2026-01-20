@@ -390,8 +390,10 @@ QString CanvasShortcutsModel::actionToString(const CanvasShortcuts::Shortcut &s)
 			return tr("Unknown Constraint 0x%1").arg(s.flags, 0, 16);
 		}
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		//: This refers to rotating the canvas in 15° steps.
 		return tr("Ratchet Rotate Canvas");
 	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
+		//: This refers to rotating the canvas without snapping around 0°.
 		return tr("Free Rotate Canvas");
 	case CanvasShortcuts::COLOR_H_ADJUST:
 		return tr("Change Color Hue");

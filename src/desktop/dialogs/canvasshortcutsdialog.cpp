@@ -2,6 +2,7 @@
 #include "desktop/dialogs/canvasshortcutsdialog.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "ui_canvasshortcutsdialog.h"
+#include <QCoreApplication>
 #include <QPushButton>
 
 namespace dialogs {
@@ -28,44 +29,75 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 		tr("Constraint Key"), CanvasShortcuts::CONSTRAINT_KEY_COMBINATION);
 	d->ui.typeCombo->setCurrentIndex(0);
 
-	d->ui.actionCombo->addItem(tr("Pan Canvas"), CanvasShortcuts::CANVAS_PAN);
 	d->ui.actionCombo->addItem(
-		tr("Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE);
+		QCoreApplication::translate("CanvasShortcutsModel", "Pan Canvas"),
+		CanvasShortcuts::CANVAS_PAN);
 	d->ui.actionCombo->addItem(
-		//: This refers to rotating the canvas without snapping around 0°.
-		tr("Free Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE_NO_SNAP);
+		QCoreApplication::translate("CanvasShortcutsModel", "Rotate Canvas"),
+		CanvasShortcuts::CANVAS_ROTATE);
 	d->ui.actionCombo->addItem(
-		//: This refers to rotating the canvas in 15° steps.
-		tr("Ratchet Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE_DISCRETE);
-	d->ui.actionCombo->addItem(tr("Zoom Canvas"), CanvasShortcuts::CANVAS_ZOOM);
-	d->ui.actionCombo->addItem(tr("Pick Color"), CanvasShortcuts::COLOR_PICK);
-	d->ui.actionCombo->addItem(tr("Pick Layer"), CanvasShortcuts::LAYER_PICK);
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Free Rotate Canvas"),
+		CanvasShortcuts::CANVAS_ROTATE_NO_SNAP);
 	d->ui.actionCombo->addItem(
-		tr("Change Brush Size"), CanvasShortcuts::TOOL_ADJUST1);
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Ratchet Rotate Canvas"),
+		CanvasShortcuts::CANVAS_ROTATE_DISCRETE);
 	d->ui.actionCombo->addItem(
-		tr("Change Brush Opacity"), CanvasShortcuts::TOOL_ADJUST2);
+		QCoreApplication::translate("CanvasShortcutsModel", "Zoom Canvas"),
+		CanvasShortcuts::CANVAS_ZOOM);
 	d->ui.actionCombo->addItem(
-		tr("Change Brush Hardness"), CanvasShortcuts::TOOL_ADJUST3);
+		QCoreApplication::translate("CanvasShortcutsModel", "Pick Color"),
+		CanvasShortcuts::COLOR_PICK);
 	d->ui.actionCombo->addItem(
-		tr("Change Color Hue"), CanvasShortcuts::COLOR_H_ADJUST);
+		QCoreApplication::translate("CanvasShortcutsModel", "Pick Layer"),
+		CanvasShortcuts::LAYER_PICK);
 	d->ui.actionCombo->addItem(
-		tr("Change Color Saturation"), CanvasShortcuts::COLOR_S_ADJUST);
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Change Brush Size"),
+		CanvasShortcuts::TOOL_ADJUST1);
 	d->ui.actionCombo->addItem(
-		tr("Change Color Value"), CanvasShortcuts::COLOR_V_ADJUST);
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Change Brush Opacity"),
+		CanvasShortcuts::TOOL_ADJUST2);
 	d->ui.actionCombo->addItem(
-		tr("Toggle Eraser Tool"), CanvasShortcuts::TOGGLE_ERASER);
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Change Brush Hardness"),
+		CanvasShortcuts::TOOL_ADJUST3);
 	d->ui.actionCombo->addItem(
-		tr("Toggle Eraser Mode"), CanvasShortcuts::TOGGLE_ERASE_MODE);
+		QCoreApplication::translate("CanvasShortcutsModel", "Change Color Hue"),
+		CanvasShortcuts::COLOR_H_ADJUST);
 	d->ui.actionCombo->addItem(
-		tr("Toggle Alpha Preserve"), CanvasShortcuts::TOGGLE_RECOLOR_MODE);
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Change Color Saturation"),
+		CanvasShortcuts::COLOR_S_ADJUST);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Change Color Value"),
+		CanvasShortcuts::COLOR_V_ADJUST);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Toggle Eraser Tool"),
+		CanvasShortcuts::TOGGLE_ERASER);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Toggle Eraser Mode"),
+		CanvasShortcuts::TOGGLE_ERASE_MODE);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Toggle Alpha Preserve"),
+		CanvasShortcuts::TOGGLE_RECOLOR_MODE);
 	d->ui.actionCombo->setCurrentIndex(0);
 
 	d->ui.constraintsCombo->addItem(
-		tr("Constrain Tool"), CanvasShortcuts::TOOL_CONSTRAINT1);
+		QCoreApplication::translate("CanvasShortcutsModel", "Constrain Tool"),
+		CanvasShortcuts::TOOL_CONSTRAINT1);
 	d->ui.constraintsCombo->addItem(
-		tr("Center Tool"), CanvasShortcuts::TOOL_CONSTRAINT2);
+		QCoreApplication::translate("CanvasShortcutsModel", "Center Tool"),
+		CanvasShortcuts::TOOL_CONSTRAINT2);
 	d->ui.constraintsCombo->addItem(
-		tr("Constrain and Center Tool"),
+		QCoreApplication::translate(
+			"CanvasShortcutsModel", "Constrain and Center Tool"),
 		CanvasShortcuts::TOOL_CONSTRAINT1 | CanvasShortcuts::TOOL_CONSTRAINT2);
 	d->ui.constraintsCombo->setCurrentIndex(0);
 
