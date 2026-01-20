@@ -399,7 +399,7 @@ void FloodFill::previewPending()
 	if(canvas) {
 		if(havePending()) {
 			int layerId =
-				m_pendingEditable ? lastActiveLayerId() : m_originalLayerId;
+				m_pendingEditable ? m_owner.activeLayer() : m_originalLayerId;
 			if(layerId <= 0) {
 				canvas->paintEngine()->clearFillPreview();
 				if(m_pendingEditable) {
