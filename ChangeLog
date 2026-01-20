@@ -21,6 +21,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Add "Anti-Strain", "Apple Pencil" and "Xiaomi Stylus" as a preset options for the global pressure curve.
  * Fix: When saving a file, ask whether to overwrite it after confirming the format to avoid overwriting files unquestioned.
  * Fix: Properly preview editable fills when switching layers.
+ * Feature: Allow toggling eraser, erase mode and alpha preserve via canvas shortcut. Thanks SOLARIS for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

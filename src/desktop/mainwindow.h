@@ -202,6 +202,7 @@ public slots:
 
 	void dropImage(const QImage &image);
 	void dropUrl(const QUrl &url);
+	void handleCanvasShortcutAction(const QString &name);
 	void handleHudAction(const HudAction &action, const QPoint &globalPos);
 	void handleToggleAction(const HudAction &action);
 	void handleTouchTapAction(int action);

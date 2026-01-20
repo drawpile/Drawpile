@@ -52,6 +52,12 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 		tr("Change Color Saturation"), CanvasShortcuts::COLOR_S_ADJUST);
 	d->ui.actionCombo->addItem(
 		tr("Change Color Value"), CanvasShortcuts::COLOR_V_ADJUST);
+	d->ui.actionCombo->addItem(
+		tr("Toggle Eraser Tool"), CanvasShortcuts::TOGGLE_ERASER);
+	d->ui.actionCombo->addItem(
+		tr("Toggle Eraser Mode"), CanvasShortcuts::TOGGLE_ERASE_MODE);
+	d->ui.actionCombo->addItem(
+		tr("Toggle Alpha Preserve"), CanvasShortcuts::TOGGLE_RECOLOR_MODE);
 	d->ui.actionCombo->setCurrentIndex(0);
 
 	d->ui.constraintsCombo->addItem(

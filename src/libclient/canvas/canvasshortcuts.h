@@ -36,6 +36,9 @@ public:
 		COLOR_V_ADJUST,
 		TOOL_ADJUST2,
 		TOOL_ADJUST3,
+		TOGGLE_ERASER,
+		TOGGLE_ERASE_MODE,
+		TOGGLE_RECOLOR_MODE,
 		ACTION_COUNT,
 	};
 
@@ -77,6 +80,8 @@ public:
 		{
 			return shortcut ? shortcut->action : NO_ACTION;
 		}
+
+		QString actionName() const { return getActionName(action()); }
 
 		unsigned int flags() const
 		{
@@ -145,6 +150,8 @@ private:
 	static QVariantMap saveShortcut(const Shortcut &s);
 
 	static Shortcut loadShortcut(const QVariantMap &cfg);
+
+	static QString getActionName(Action action);
 
 	QVector<Shortcut> m_shortcuts;
 };

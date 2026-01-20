@@ -4602,6 +4602,16 @@ void MainWindow::handleToggleAction(const HudAction &action)
 	});
 }
 
+void MainWindow::handleCanvasShortcutAction(const QString &name)
+{
+	QAction *action = searchAction(name);
+	if(action) {
+		action->trigger();
+	} else {
+		qWarning("Canvas shortcut action '%s' not found", qUtf8Printable(name));
+	}
+}
+
 void MainWindow::handleTouchTapAction(int action)
 {
 	switch(action) {

@@ -410,6 +410,9 @@ void ViewWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_view, &CanvasView::imageDropped, mainWindow, &MainWindow::dropImage);
 	connect(m_view, &CanvasView::urlDropped, mainWindow, &MainWindow::dropUrl);
 	connect(
+		m_controller, &CanvasController::canvasShortcutActionActivated,
+		mainWindow, &MainWindow::handleCanvasShortcutAction);
+	connect(
 		m_controller, &CanvasController::touchTapActionActivated, mainWindow,
 		&MainWindow::handleTouchTapAction);
 	connect(

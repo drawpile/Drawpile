@@ -172,6 +172,7 @@ signals:
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 
+	void canvasShortcutActionActivated(const QString &name);
 	void touchTapActionActivated(int action);
 
 public slots:

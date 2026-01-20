@@ -399,6 +399,12 @@ QString CanvasShortcutsModel::actionToString(const CanvasShortcuts::Shortcut &s)
 		return tr("Change Color Saturation");
 	case CanvasShortcuts::COLOR_V_ADJUST:
 		return tr("Change Color Value");
+	case CanvasShortcuts::TOGGLE_ERASER:
+		return tr("Toggle Eraser Tool");
+	case CanvasShortcuts::TOGGLE_ERASE_MODE:
+		return tr("Toggle Eraser Mode");
+	case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+		return tr("Toggle Alpha Preserve");
 	default:
 		return tr("Unknown Action %1").arg(s.action);
 	}

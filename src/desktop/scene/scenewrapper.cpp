@@ -423,6 +423,9 @@ void SceneWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_view, &CanvasView::imageDropped, mainWindow, &MainWindow::dropImage);
 	connect(m_view, &CanvasView::urlDropped, mainWindow, &MainWindow::dropUrl);
 	connect(
+		m_view, &CanvasView::canvasShortcutActionActivated, mainWindow,
+		&MainWindow::handleCanvasShortcutAction);
+	connect(
 		m_view, &CanvasView::touchTapActionActivated, mainWindow,
 		&MainWindow::handleTouchTapAction);
 	connect(

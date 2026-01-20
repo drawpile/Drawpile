@@ -1370,6 +1370,11 @@ void CanvasView::penPressEvent(
 	case CanvasShortcuts::LAYER_PICK:
 		penmode = PenMode::Layerpick;
 		break;
+	case CanvasShortcuts::TOGGLE_ERASER:
+	case CanvasShortcuts::TOGGLE_ERASE_MODE:
+	case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+		Q_EMIT canvasShortcutActionActivated(match.actionName());
+		break;
 	default:
 		qWarning("Unhandled mouse button canvas shortcut %u", match.action());
 		break;
@@ -1816,6 +1821,11 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 			event, int(tools::QuickAdjustType::ColorV), toolAllowsColorPick(),
 			deltaY);
 		break;
+	case CanvasShortcuts::TOGGLE_ERASER:
+	case CanvasShortcuts::TOGGLE_ERASE_MODE:
+	case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+		Q_EMIT canvasShortcutActionActivated(match.actionName());
+		break;
 	default:
 		qWarning("Unhandled mouse wheel canvas shortcut %u", match.action());
 		break;
@@ -1890,6 +1900,11 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 					.setResetDragPoints()
 					.setResetDragRotation()
 					.setResetCursor());
+			break;
+		case CanvasShortcuts::TOGGLE_ERASER:
+		case CanvasShortcuts::TOGGLE_ERASE_MODE:
+		case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+			Q_EMIT canvasShortcutActionActivated(keyMatch.actionName());
 			break;
 		default:
 			CanvasShortcuts::Match mouseMatch =

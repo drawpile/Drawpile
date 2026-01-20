@@ -199,6 +199,7 @@ signals:
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void cursorChanged(const QCursor &cursor);
+	void canvasShortcutActionActivated(const QString &name);
 	void touchTapActionActivated(int action);
 	void saveInProgressChanged(bool saveInProgress);
 

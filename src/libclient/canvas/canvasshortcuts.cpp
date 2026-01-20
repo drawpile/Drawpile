@@ -506,3 +506,18 @@ CanvasShortcuts::Shortcut CanvasShortcuts::loadShortcut(const QVariantMap &cfg)
 	}
 	return s;
 }
+
+QString CanvasShortcuts::getActionName(Action action)
+{
+	switch(action) {
+	case Action::TOGGLE_ERASER:
+		return QStringLiteral("tooleraser");
+	case Action::TOGGLE_ERASE_MODE:
+		return QStringLiteral("currenterasemode");
+	case Action::TOGGLE_RECOLOR_MODE:
+		return QStringLiteral("currentrecolormode");
+	default:
+		qWarning("No name for action %d", int(action));
+		return QString();
+	}
+}
