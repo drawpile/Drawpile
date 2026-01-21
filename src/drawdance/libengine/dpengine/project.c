@@ -790,7 +790,8 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
                "unixepoch('subsec'), ?, ?, ?, ?)";
     case DP_PROJECT_STATEMENT_SESSION_TIMES_SELECT:
         return "select sequence_id, recorded_at from messages "
-               "where session_id = ? and sequence_id > ? and (flags & 1) <> 0";
+               "where session_id = ? and sequence_id > ? and (flags & 1) <> 0 "
+               "order by sequence_id";
     case DP_PROJECT_STATEMENT_COUNT:
         break;
     }
