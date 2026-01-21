@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished">مكافحة التجاوز</translation>
+        <translation>‌مكافحة التجاوز</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -769,7 +769,7 @@
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <translation>‌‍‎إلغاء</translation>
     </message>
     <message>
         <location line="-357"/>
@@ -781,7 +781,7 @@
         <location line="+300"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation>إغلاق الفجوات: </translation>
+        <translation>إغلاق الفجوات </translation>
     </message>
 </context>
 <context>
@@ -842,7 +842,7 @@
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">تحويل</translation>
+        <translation>تحويل</translation>
     </message>
 </context>
 <context>
@@ -850,12 +850,12 @@
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation>آخر تعديل بواسطة:</translation>
+        <translation>مين عمل التغيير الاخير:</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished">تحديد البلاطات الكاملة</translation>
+        <translation>ضع علامة على البلاط بأكمله</translation>
     </message>
 </context>
 <context>
