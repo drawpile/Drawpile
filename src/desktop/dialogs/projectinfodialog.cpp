@@ -284,7 +284,11 @@ void ProjectInfoDialog::addRow(
 	table->insertRow(row);
 	int count = items.size();
 	for(int i = 0; i < count; ++i) {
-		table->setItem(row, i, items[i]);
+		QTableWidgetItem *item = items[i];
+		Qt::ItemFlags flags = item->flags();
+		flags.setFlag(Qt::ItemIsEditable, false);
+		item->setFlags(flags);
+		table->setItem(row, i, item);
 	}
 }
 
