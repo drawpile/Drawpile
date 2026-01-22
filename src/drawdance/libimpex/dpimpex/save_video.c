@@ -359,18 +359,10 @@ static int64_t seek_avio(void *opaque, int64_t offset, int whence)
     }
 }
 
-static bool report_progress(DP_SaveAnimationProgressFn progress_fn, void *user,
+static bool report_progress(DP_SaveProgressFn progress_fn, void *user,
                             double progress)
 {
     return !progress_fn || progress_fn(user, progress);
-}
-
-static bool report_frame_progress(DP_SaveAnimationProgressFn progress_fn,
-                                  void *user, int frames_done, int frames_to_do)
-{
-    double part = DP_int_to_double(frames_done);
-    double total = DP_int_to_double(frames_to_do);
-    return report_progress(progress_fn, user, part / total * 0.97);
 }
 
 static DP_SaveResult handle_frame(AVCodecContext *codec_context,
@@ -443,7 +435,7 @@ static DP_SaveResult filter_frame(AVCodecContext *codec_context,
     }
 }
 
-DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
+DP_SaveResult DP_save_video(DP_SaveVideoParams params)
 {
     DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
     AVCodecContext *codec_context = NULL;
@@ -462,18 +454,12 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
     AVFrame *filtered_frame = NULL;
     AVPacket *packet = NULL;
     struct SwsContext *sws_context = NULL;
-    DP_ViewModeBuffer vmb;
-    DP_view_mode_buffer_init(&vmb);
-    DP_Image *img = NULL;
 
-    DP_Rect crop;
     const char *format_name;
     enum AVCodecID codec_id;
     bool params_ok =
-        params.cs
-        && is_destination_ok(params.destination, params.path_or_output)
+        is_destination_ok(params.destination, params.path_or_output)
         && params.width > 0 && params.height > 0
-        && DP_rect_valid(crop = get_crop(params.cs, params.area))
         && (format_name = get_format_name(params.format))
         && (codec_id = get_format_codec_id(params.format)) != AV_CODEC_ID_NONE;
     if (!params_ok) {
@@ -482,12 +468,8 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    int input_width = DP_rect_width(crop);
-    int input_height = DP_rect_height(crop);
-    int output_width =
-        get_format_dimension(params.format, params.width, input_width);
-    int output_height =
-        get_format_dimension(params.format, params.height, input_height);
+    int output_width = params.width;
+    int output_height = params.height;
     if (!check_format_dimensions(output_width, output_height, params.format)) {
         result = DP_SAVE_RESULT_BAD_DIMENSIONS;
         goto cleanup;
@@ -501,26 +483,10 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    int start = params.start < 0 ? 0 : params.start;
-    int frame_count = DP_canvas_state_frame_count(params.cs);
-    int end_inclusive =
-        params.end_inclusive < 0 || params.end_inclusive > frame_count - 1
-            ? frame_count - 1
-            : params.end_inclusive;
-    if (start > end_inclusive) {
-        DP_error_set("Frame range is empty");
-        result = DP_SAVE_RESULT_BAD_ARGUMENTS;
-        goto cleanup;
-    }
-
-    double framerate = params.framerate <= 0.0 || !isfinite(params.framerate)
-                         ? DP_canvas_state_effective_framerate(params.cs)
-                         : params.framerate;
+    double framerate = params.framerate;
     if (framerate <= 0.0 || !isfinite(framerate)) {
         framerate = 24.0;
     }
-
-    int loops = get_format_loops(params.format, params.loops);
 
     const AVOutputFormat *output_format =
         av_guess_format(format_name, NULL, NULL);
@@ -844,18 +810,6 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    sws_context = sws_getContext(input_width, input_height, AV_PIX_FMT_BGRA,
-                                 output_width, output_height, frame->format,
-                                 get_scaling_flags(params.flags, input_width,
-                                                   input_height, output_width,
-                                                   output_height),
-                                 NULL, NULL, NULL);
-    if (!sws_context) {
-        DP_error_set("Failed to allocate scaling context");
-        result = DP_SAVE_RESULT_INTERNAL_ERROR;
-        goto cleanup;
-    }
-
     if (!report_progress(params.progress_fn, params.user, 0.0)) {
         result = DP_SAVE_RESULT_CANCEL;
         goto cleanup;
@@ -907,66 +861,78 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
         }
     }
 
-    int frames_to_do = (end_inclusive - start + 1) * loops;
-    int frames_done = 0;
     int64_t duration =
         get_format_frame_duration(params.format, codec_context, stream);
-    int instances = 0;
     frame->pts = 0;
-    unsigned int flat_image_flags = get_format_flat_image_flags(params.format);
-    for (int loop_index = 0; loop_index < loops; ++loop_index) {
-        int frame_index = start;
-        while (frame_index <= end_inclusive) {
-            err = av_frame_make_writable(frame);
-            if (err != 0) {
-                DP_error_set("Error making frame writeable: %s",
-                             av_err2str(err));
-                result = DP_SAVE_RESULT_INTERNAL_ERROR;
-                goto cleanup;
-            }
 
-            instances = 1;
-            while (frame_index < end_inclusive
-                   && DP_canvas_state_same_frame(params.cs, frame_index,
-                                                 frame_index + 1)) {
-                ++frame_index;
-                ++instances;
-            }
+    double last_progress = 0.0;
+    DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
+    while (params.next_frame_fn(params.user, &f)) {
+        int input_width = f.width;
+        int input_height = f.height;
+        if (input_width <= 0 || input_height <= 0 || !f.pixels) {
+            DP_error_set("Frame has no image");
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
 
-            DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame_render(
-                &vmb, params.cs, frame_index - instances + 1);
-            if (!DP_canvas_state_into_flat_image(params.cs, flat_image_flags,
-                                                 &crop, &vmf, &img)) {
-                result = DP_SAVE_RESULT_INTERNAL_ERROR;
-                goto cleanup;
-            }
-            const uint8_t *data = (const uint8_t *)DP_image_pixels(img);
-            const int stride = input_width * 4;
-            sws_scale(sws_context, &data, &stride, 0, input_height, frame->data,
-                      frame->linesize);
+        if (f.instances < 1) {
+            DP_error_set("Frame has %d instances (should be >= 1)",
+                         f.instances);
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
 
-            result = filter_frame(codec_context, format_context, frame, packet,
-                                  buffersrc_context, buffersink_context,
-                                  filtered_frame);
-            if (result != DP_SAVE_RESULT_SUCCESS) {
-                goto cleanup;
-            }
+        err = av_frame_make_writable(frame);
+        if (err != 0) {
+            DP_error_set("Error making frame writeable: %s", av_err2str(err));
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
 
-            frame->pts += duration * instances;
-            frames_done += instances;
-            ++frame_index;
-            if (!report_frame_progress(params.progress_fn, params.user,
-                                       frames_done, frames_to_do)) {
-                result = DP_SAVE_RESULT_CANCEL;
-                goto cleanup;
-            }
+        sws_context = sws_getCachedContext(
+            sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
+            output_width, output_height, frame->format,
+            get_scaling_flags(params.flags, input_width, input_height,
+                              output_width, output_height),
+            NULL, NULL, NULL);
+        if (!sws_context) {
+            DP_error_set("Failed to allocate scaling context");
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        const uint8_t *data = f.pixels;
+        const int stride = input_width * 4;
+        sws_scale(sws_context, &data, &stride, 0, input_height, frame->data,
+                  frame->linesize);
+
+        result =
+            filter_frame(codec_context, format_context, frame, packet,
+                         buffersrc_context, buffersink_context, filtered_frame);
+        if (result != DP_SAVE_RESULT_SUCCESS) {
+            goto cleanup;
+        }
+
+        frame->pts += duration * f.instances;
+
+        if (isfinite(f.progress) && f.progress >= last_progress) {
+            last_progress = DP_min_double(f.progress, 1.0);
+        }
+
+        if (!report_progress(params.progress_fn, params.user,
+                             last_progress * 0.97)) {
+            result = DP_SAVE_RESULT_CANCEL;
+            goto cleanup;
         }
     }
 
-    DP_image_free(img);
-    img = NULL;
+    if (f.result != DP_SAVE_RESULT_SUCCESS) {
+        result = f.result;
+        goto cleanup;
+    }
 
-    if (instances > 1) {
+    if (f.instances > 1) {
         frame->pts -= duration;
         result =
             filter_frame(codec_context, format_context, frame, packet,
@@ -1028,8 +994,6 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
     }
 
 cleanup:
-    DP_image_free(img);
-    DP_view_mode_buffer_dispose(&vmb);
     sws_freeContext(sws_context);
     if (format_context && format_context->pb) {
         av_freep(&format_context->pb->buffer);
@@ -1052,28 +1016,146 @@ cleanup:
     return result;
 }
 
+struct DP_SaveAnimationVideoContext {
+    DP_CanvasState *cs;
+    DP_Image *img;
+    DP_SaveProgressFn progress_fn;
+    void *progress_user;
+    DP_ViewModeBuffer vmb;
+    DP_Rect crop;
+    int start;
+    int end_inclusive;
+    int loops;
+    int frames_to_do;
+    int frames_done;
+    unsigned int flat_image_flags;
+    int loop_index;
+    int frame_index;
+};
+
+static bool save_animation_video_next_frame(void *user,
+                                            DP_SaveVideoNextFrame *f)
+{
+    struct DP_SaveAnimationVideoContext *c = user;
+
+    if (c->frame_index > c->end_inclusive) {
+        ++c->loop_index;
+        c->frame_index = c->start;
+    }
+
+    if (c->loop_index >= c->loops) {
+        f->result = DP_SAVE_RESULT_SUCCESS;
+        return false;
+    }
+
+    f->instances = 1;
+    while (c->frame_index < c->end_inclusive
+           && DP_canvas_state_same_frame(c->cs, c->frame_index,
+                                         c->frame_index + 1)) {
+        ++c->frame_index;
+        ++f->instances;
+    }
+
+    DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame_render(
+        &c->vmb, c->cs, c->frame_index - f->instances + 1);
+    if (!DP_canvas_state_into_flat_image(c->cs, c->flat_image_flags, &c->crop,
+                                         &vmf, &c->img)) {
+        f->result = DP_SAVE_RESULT_INTERNAL_ERROR;
+        return false;
+    }
+
+    ++c->frame_index;
+    c->frames_done += f->instances;
+    f->progress =
+        DP_int_to_double(c->frames_done) / DP_int_to_double(c->frames_to_do);
+
+    f->result = DP_SAVE_RESULT_SUCCESS;
+    f->pixels = DP_image_pixels(c->img);
+    f->width = DP_image_width(c->img);
+    f->height = DP_image_height(c->img);
+    return true;
+}
+
+static bool save_animation_progress(void *user, double progress)
+{
+    struct DP_SaveAnimationVideoContext *c = user;
+    return c->progress_fn(c->progress_user, progress);
+}
+
+DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params)
+{
+    DP_Rect crop;
+    bool params_ok =
+        params.cs && DP_rect_valid(crop = get_crop(params.cs, params.area));
+    if (!params_ok) {
+        DP_error_set("Invalid arguments");
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+
+    int start = params.start < 0 ? 0 : params.start;
+    int frame_count = DP_canvas_state_frame_count(params.cs);
+    int end_inclusive =
+        params.end_inclusive < 0 || params.end_inclusive > frame_count - 1
+            ? frame_count - 1
+            : params.end_inclusive;
+    if (start > end_inclusive) {
+        DP_error_set("Frame range is empty");
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+
+    struct DP_SaveAnimationVideoContext c;
+    c.cs = params.cs;
+    c.img = NULL;
+    c.progress_fn = params.progress_fn;
+    c.progress_user = params.user;
+    DP_view_mode_buffer_init(&c.vmb);
+    c.crop = crop;
+    c.start = start;
+    c.end_inclusive = end_inclusive;
+    c.loops = get_format_loops(params.format, params.loops);
+    c.frames_to_do = (end_inclusive - start + 1) * c.loops;
+    c.frames_done = 0;
+    c.flat_image_flags = get_format_flat_image_flags(params.format);
+    c.loop_index = -1;
+    c.frame_index = end_inclusive + 1;
+
+    double framerate = params.framerate <= 0.0 || !isfinite(params.framerate)
+                         ? DP_canvas_state_effective_framerate(params.cs)
+                         : params.framerate;
+
+    DP_SaveResult result = DP_save_video((DP_SaveVideoParams){
+        params.destination, params.path_or_output, params.palette_data,
+        params.palette_size, params.flags, params.format, params.width,
+        params.height, framerate, save_animation_video_next_frame,
+        params.progress_fn ? save_animation_progress : NULL, &c});
+
+    DP_image_free(c.img);
+    DP_view_mode_buffer_dispose(&c.vmb);
+    return result;
+}
+
 
 struct DP_GifProgressParams {
     bool palette;
-    DP_SaveAnimationProgressFn progress_fn;
+    DP_SaveProgressFn progress_fn;
     void *user;
 };
 
 static bool on_gif_progress_palette(void *user, double progress)
 {
-    DP_SaveGifParams *params = user;
-    DP_SaveAnimationProgressFn progress_fn = params->progress_fn;
+    DP_SaveAnimationGifParams *params = user;
+    DP_SaveProgressFn progress_fn = params->progress_fn;
     return progress_fn ? progress_fn(params->user, progress * 0.49) : true;
 }
 
 static bool on_gif_progress_gif(void *user, double progress)
 {
-    DP_SaveGifParams *params = user;
-    DP_SaveAnimationProgressFn progress_fn = params->progress_fn;
+    DP_SaveAnimationGifParams *params = user;
+    DP_SaveProgressFn progress_fn = params->progress_fn;
     return progress_fn ? progress_fn(params->user, progress * 0.5 + 0.5) : true;
 }
 
-DP_SaveResult DP_save_animation_video_gif(DP_SaveGifParams params)
+DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params)
 {
     DP_Rect crop = get_crop(params.cs, params.area);
     if (!DP_rect_valid(crop)) {
@@ -1101,15 +1183,16 @@ DP_SaveResult DP_save_animation_video_gif(DP_SaveGifParams params)
         return DP_SAVE_RESULT_INTERNAL_ERROR;
     }
 
-    DP_SaveResult result = DP_save_animation_video((DP_SaveVideoParams){
-        params.cs, params.area, DP_SAVE_VIDEO_DESTINATION_OUTPUT,
-        palette_output, NULL, 0, params.flags, DP_SAVE_VIDEO_FORMAT_PALETTE,
-        params.width, params.height, params.start, params.end_inclusive,
-        params.framerate, 1, on_gif_progress_palette, &params});
+    DP_SaveResult result =
+        DP_save_animation_video((DP_SaveAnimationVideoParams){
+            params.cs, params.area, DP_SAVE_VIDEO_DESTINATION_OUTPUT,
+            palette_output, NULL, 0, params.flags, DP_SAVE_VIDEO_FORMAT_PALETTE,
+            params.width, params.height, params.start, params.end_inclusive,
+            params.framerate, 1, on_gif_progress_palette, &params});
 
     if (result == DP_SAVE_RESULT_SUCCESS) {
         // Render out the actual GIF based on the generated palette.
-        result = DP_save_animation_video((DP_SaveVideoParams){
+        result = DP_save_animation_video((DP_SaveAnimationVideoParams){
             params.cs, params.area, params.destination, params.path_or_output,
             *buffer_ptr, *size_ptr, params.flags, DP_SAVE_VIDEO_FORMAT_GIF,
             params.width, params.height, params.start, params.end_inclusive,

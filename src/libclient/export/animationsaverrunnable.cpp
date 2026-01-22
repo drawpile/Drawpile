@@ -91,7 +91,7 @@ void AnimationSaverRunnable::run()
 	}
 #ifdef DP_LIBAV
 	case int(AnimationFormat::Gif): {
-		DP_SaveGifParams params = {
+		DP_SaveAnimationGifParams params = {
 			m_canvasState.get(),
 			pr,
 			DP_SAVE_VIDEO_DESTINATION_PATH,
@@ -106,13 +106,13 @@ void AnimationSaverRunnable::run()
 			&onProgress,
 			this,
 		};
-		result = DP_save_animation_video_gif(params);
+		result = DP_save_animation_gif(params);
 		break;
 	}
 	case int(AnimationFormat::Webp):
 	case int(AnimationFormat::Mp4Vp9):
 	case int(AnimationFormat::WebmVp8): {
-		DP_SaveVideoParams params = {
+		DP_SaveAnimationVideoParams params = {
 			m_canvasState.get(),
 			pr,
 			DP_SAVE_VIDEO_DESTINATION_PATH,

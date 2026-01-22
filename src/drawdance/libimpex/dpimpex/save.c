@@ -1161,7 +1161,7 @@ struct DP_SaveFrameContext {
     int frame_count;
     const char *path;
     const char *separator;
-    DP_SaveAnimationProgressFn progress_fn;
+    DP_SaveProgressFn progress_fn;
     void *user;
     DP_ZipWriter *zw;
     DP_Mutex *mutex;
@@ -1338,7 +1338,7 @@ static int count_frames(int start, int end_inclusive)
 
 static void report_progress(struct DP_SaveFrameContext *c)
 {
-    DP_SaveAnimationProgressFn progress_fn = c->progress_fn;
+    DP_SaveProgressFn progress_fn = c->progress_fn;
     if (progress_fn && DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
         DP_Mutex *mutex = c->mutex;
         DP_MUTEX_MUST_LOCK(mutex);
@@ -1406,9 +1406,9 @@ static void save_frame_job(void *element, int thread_index)
 
 static DP_SaveResult
 save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
-                      DP_SaveAnimationProgressFn progress_fn, void *user,
-                      DP_Rect *crop, int width, int height, int interpolation,
-                      int start, int end_inclusive, bool zip)
+                      DP_SaveProgressFn progress_fn, void *user, DP_Rect *crop,
+                      int width, int height, int interpolation, int start,
+                      int end_inclusive, bool zip)
 {
     if (end_inclusive < start) {
         return DP_SAVE_RESULT_SUCCESS;
@@ -1525,7 +1525,7 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc,
                                        const char *path, DP_Rect *crop,
                                        int width, int height, int interpolation,
                                        int start, int end_inclusive,
-                                       DP_SaveAnimationProgressFn progress_fn,
+                                       DP_SaveProgressFn progress_fn,
                                        void *user)
 {
     if (cs && path && width > 0 && height > 0) {
@@ -1554,8 +1554,7 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
                                     const char *path, DP_Rect *crop, int width,
                                     int height, int interpolation, int start,
                                     int end_inclusive,
-                                    DP_SaveAnimationProgressFn progress_fn,
-                                    void *user)
+                                    DP_SaveProgressFn progress_fn, void *user)
 {
     if (cs && path && width > 0 && height > 0) {
         int frame_count = DP_canvas_state_frame_count(cs);

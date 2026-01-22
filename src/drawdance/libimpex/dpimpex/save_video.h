@@ -7,6 +7,7 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Output DP_Output;
+typedef struct DP_Image DP_Image;
 typedef struct DP_Rect DP_Rect;
 
 #define DP_SAVE_VIDEO_FLAGS_NONE         0x0u
@@ -29,7 +30,33 @@ typedef enum DP_SaveVideoDestination {
     DP_SAVE_VIDEO_DESTINATION_OUTPUT,
 } DP_SaveVideoDestination;
 
+typedef struct DP_SaveVideoNextFrame {
+    DP_SaveResult result;
+    int width;
+    int height;
+    const void *pixels;
+    double progress;
+    int instances;
+} DP_SaveVideoNextFrame;
+
+typedef bool (*DP_SaveVideoNextFrameFn)(void *user, DP_SaveVideoNextFrame *f);
+
 typedef struct DP_SaveVideoParams {
+    DP_SaveVideoDestination destination;
+    void *path_or_output;
+    const unsigned char *palette_data;
+    size_t palette_size;
+    unsigned int flags;
+    int format;
+    int width;
+    int height;
+    double framerate;
+    DP_SaveVideoNextFrameFn next_frame_fn;
+    DP_SaveProgressFn progress_fn;
+    void *user;
+} DP_SaveVideoParams;
+
+typedef struct DP_SaveAnimationVideoParams {
     DP_CanvasState *cs;
     const DP_Rect *area;
     DP_SaveVideoDestination destination;
@@ -44,11 +71,11 @@ typedef struct DP_SaveVideoParams {
     int end_inclusive;
     double framerate;
     int loops;
-    DP_SaveAnimationProgressFn progress_fn;
+    DP_SaveProgressFn progress_fn;
     void *user;
-} DP_SaveVideoParams;
+} DP_SaveAnimationVideoParams;
 
-typedef struct DP_SaveGifParams {
+typedef struct DP_SaveAnimationGifParams {
     DP_CanvasState *cs;
     const DP_Rect *area;
     DP_SaveVideoDestination destination;
@@ -59,14 +86,16 @@ typedef struct DP_SaveGifParams {
     int start;
     int end_inclusive;
     double framerate;
-    DP_SaveAnimationProgressFn progress_fn;
+    DP_SaveProgressFn progress_fn;
     void *user;
-} DP_SaveGifParams;
+} DP_SaveAnimationGifParams;
 
 bool DP_save_video_format_supported(int format);
 
-DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params);
+DP_SaveResult DP_save_video(DP_SaveVideoParams params);
 
-DP_SaveResult DP_save_animation_video_gif(DP_SaveGifParams params);
+DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params);
+
+DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params);
 
 #endif
