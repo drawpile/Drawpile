@@ -6,7 +6,7 @@
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/config/config.h"
-#include "libclient/export/animationformat.h"
+#include "libclient/export/videoformat.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -41,17 +41,17 @@ AnimationExportDialog::AnimationExportDialog(
 	tabs->addTab(outputWidget, tr("Output"));
 
 	m_formatCombo = new QComboBox;
-	QPair<QString, AnimationFormat> formats[] = {
-		{tr("Frames as PNGs"), AnimationFormat::Frames},
-		{tr("Frames as PNGs in ZIP"), AnimationFormat::Zip},
-		{tr("Animated GIF"), AnimationFormat::Gif},
-		{tr("Animated WEBP"), AnimationFormat::Webp},
-		{tr("MP4 Video"), AnimationFormat::Mp4Vp9},
-		{tr("WEBM Video"), AnimationFormat::WebmVp8},
+	QPair<QString, VideoFormat> formats[] = {
+		{tr("Frames as PNGs"), VideoFormat::Frames},
+		{tr("Frames as PNGs in ZIP"), VideoFormat::Zip},
+		{tr("Animated GIF"), VideoFormat::Gif},
+		{tr("Animated WEBP"), VideoFormat::Webp},
+		{tr("MP4 Video"), VideoFormat::Mp4Vp9},
+		{tr("WEBM Video"), VideoFormat::WebmVp8},
 	};
 	int lastFormat = dpAppConfig()->getAnimationExportFormat();
-	for(const QPair<QString, AnimationFormat> &p : formats) {
-		if(isAnimationFormatSupported(p.second)) {
+	for(const QPair<QString, VideoFormat> &p : formats) {
+		if(isVideoFormatSupported(p.second)) {
 			int format = int(p.second);
 			m_formatCombo->addItem(p.first, format);
 			if(format == lastFormat) {
@@ -264,8 +264,8 @@ void AnimationExportDialog::accept()
 void AnimationExportDialog::updateOutputUi()
 {
 	int format = m_formatCombo->currentData().toInt();
-	bool showLoops = format == int(AnimationFormat::Mp4Vp9) ||
-					 format == int(AnimationFormat::WebmVp8);
+	bool showLoops = format == int(VideoFormat::Mp4Vp9) ||
+					 format == int(VideoFormat::WebmVp8);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
 }
@@ -282,20 +282,19 @@ void AnimationExportDialog::updateScalingUi()
 #ifndef __EMSCRIPTEN__
 QString AnimationExportDialog::choosePath()
 {
-	AnimationFormat format =
-		AnimationFormat(m_formatCombo->currentData().toInt());
+	VideoFormat format = VideoFormat(m_formatCombo->currentData().toInt());
 	switch(format) {
-	case AnimationFormat::Frames:
+	case VideoFormat::Frames:
 		return FileWrangler(this).getSaveAnimationFramesPath();
-	case AnimationFormat::Gif:
+	case VideoFormat::Gif:
 		return FileWrangler(this).getSaveAnimationGifPath();
-	case AnimationFormat::Zip:
+	case VideoFormat::Zip:
 		return FileWrangler(this).getSaveAnimationZipPath();
-	case AnimationFormat::Webp:
+	case VideoFormat::Webp:
 		return FileWrangler(this).getSaveAnimationWebpPath();
-	case AnimationFormat::Mp4Vp9:
+	case VideoFormat::Mp4Vp9:
 		return FileWrangler(this).getSaveAnimationMp4Path();
-	case AnimationFormat::WebmVp8:
+	case VideoFormat::WebmVp8:
 		return FileWrangler(this).getSaveAnimationWebmPath();
 	}
 	qWarning("choosePath: unhandled format %d", int(format));

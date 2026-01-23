@@ -7,9 +7,9 @@ extern "C" {
 #endif
 }
 #include "libclient/drawdance/global.h"
-#include "libclient/export/animationformat.h"
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/export/videoformat.h"
 #include <QElapsedTimer>
 #ifdef __EMSCRIPTEN__
 #	include <QDateTime>
@@ -68,7 +68,7 @@ void AnimationSaverRunnable::run()
 	DP_SaveResult result;
 	switch(m_format) {
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
-	case int(AnimationFormat::Frames): {
+	case int(VideoFormat::Frames): {
 		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 		result = DP_save_animation_frames(
 			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
@@ -79,7 +79,7 @@ void AnimationSaverRunnable::run()
 		break;
 	}
 #endif
-	case int(AnimationFormat::Zip): {
+	case int(VideoFormat::Zip): {
 		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 		result = DP_save_animation_zip(
 			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
@@ -90,7 +90,7 @@ void AnimationSaverRunnable::run()
 		break;
 	}
 #ifdef DP_LIBAV
-	case int(AnimationFormat::Gif): {
+	case int(VideoFormat::Gif): {
 		DP_SaveAnimationGifParams params = {
 			m_canvasState.get(),
 			pr,
@@ -109,9 +109,9 @@ void AnimationSaverRunnable::run()
 		result = DP_save_animation_gif(params);
 		break;
 	}
-	case int(AnimationFormat::Webp):
-	case int(AnimationFormat::Mp4Vp9):
-	case int(AnimationFormat::WebmVp8): {
+	case int(VideoFormat::Webp):
+	case int(VideoFormat::Mp4Vp9):
+	case int(VideoFormat::WebmVp8): {
 		DP_SaveAnimationVideoParams params = {
 			m_canvasState.get(),
 			pr,
@@ -170,15 +170,15 @@ void AnimationSaverRunnable::cancelExport()
 QString AnimationSaverRunnable::getFormatExtension() const
 {
 	switch(m_format) {
-	case int(AnimationFormat::Gif):
+	case int(VideoFormat::Gif):
 		return QStringLiteral(".gif");
-	case int(AnimationFormat::Zip):
+	case int(VideoFormat::Zip):
 		return QStringLiteral(".zip");
-	case int(AnimationFormat::Webp):
+	case int(VideoFormat::Webp):
 		return QStringLiteral(".webp");
-	case int(AnimationFormat::Mp4Vp9):
+	case int(VideoFormat::Mp4Vp9):
 		return QStringLiteral(".mp4");
-	case int(AnimationFormat::WebmVp8):
+	case int(VideoFormat::WebmVp8):
 		return QStringLiteral(".webm");
 	default:
 		qWarning("Don't know extension for animation format %d", m_format);
@@ -191,11 +191,11 @@ QString AnimationSaverRunnable::getFormatExtension() const
 int AnimationSaverRunnable::formatToSaveVideoFormat() const
 {
 	switch(m_format) {
-	case int(AnimationFormat::Webp):
+	case int(VideoFormat::Webp):
 		return DP_SAVE_VIDEO_FORMAT_WEBP;
-	case int(AnimationFormat::Mp4Vp9):
+	case int(VideoFormat::Mp4Vp9):
 		return DP_SAVE_VIDEO_FORMAT_MP4_VP9;
-	case int(AnimationFormat::WebmVp8):
+	case int(VideoFormat::WebmVp8):
 		return DP_SAVE_VIDEO_FORMAT_WEBM_VP8;
 	default:
 		qWarning("formatToSaveVideoFormat: unhandled format %d", m_format);
@@ -209,20 +209,20 @@ AnimationSaverRunnable::saveResultToErrorString(DP_SaveResult result) const
 {
 	if(result == DP_SAVE_RESULT_BAD_DIMENSIONS) {
 		switch(m_format) {
-		case int(AnimationFormat::Frames):
-		case int(AnimationFormat::Zip):
+		case int(VideoFormat::Frames):
+		case int(VideoFormat::Zip):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				2147483647, QStringLiteral("PNG"));
-		case int(AnimationFormat::Gif):
+		case int(VideoFormat::Gif):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				65536, QStringLiteral("GIF"));
-		case int(AnimationFormat::Webp):
+		case int(VideoFormat::Webp):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				16384, QStringLiteral("WEBP"));
-		case int(AnimationFormat::Mp4Vp9):
+		case int(VideoFormat::Mp4Vp9):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				65536, QStringLiteral("MP4"));
-		case int(AnimationFormat::WebmVp8):
+		case int(VideoFormat::WebmVp8):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				65536, QStringLiteral("WEBM"));
 		}
