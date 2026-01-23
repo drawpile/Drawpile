@@ -30,7 +30,7 @@ QImage wrapImage(DP_Image *img)
 {
 	if(img) {
 		return QImage{
-			reinterpret_cast<const uchar *>(DP_image_pixels(img)),
+			reinterpret_cast<uchar *>(DP_image_pixels(img)),
 			DP_image_width(img),
 			DP_image_height(img),
 			QImage::Format_ARGB32_Premultiplied,
@@ -45,8 +45,8 @@ QImage wrapPixels8(int width, int height, DP_Pixel8 *pixels)
 {
 	if(width > 0 && height > 0 && pixels) {
 		return QImage{
-			reinterpret_cast<const uchar *>(pixels), width,			 height,
-			QImage::Format_ARGB32_Premultiplied,	 cleanupPixels8, pixels};
+			reinterpret_cast<uchar *>(pixels),	 width,			 height,
+			QImage::Format_ARGB32_Premultiplied, cleanupPixels8, pixels};
 	} else {
 		return QImage{};
 	}
@@ -89,6 +89,19 @@ QImage transformImage(
 		}
 	}
 	return QImage();
+}
+
+QSize thumbnailDimensions(const QSize &size, const QSize &maxSize)
+{
+	if(size.isEmpty() || maxSize.isEmpty()) {
+		return QSize();
+	} else {
+		int width, height;
+		DP_image_thumbnail_dimensions(
+			size.width(), size.height(), maxSize.width(), maxSize.height(),
+			&width, &height);
+		return QSize(width, height);
+	}
 }
 
 }

@@ -106,6 +106,7 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR         (-1303)
 #define DP_PROJECT_CANVAS_LOAD_WARN_HISTORY_ERROR         (-1304)
 #define DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR           (-1305)
+#define DP_PROJECT_CANVAS_LOAD_WARN_PLAYBACK_ERROR        (-1306)
 
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_UNKNOWN  (-1400)
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_MISUSE   (-1401)
@@ -134,6 +135,12 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_INFO_ERROR_PREPARE   (-1602)
 #define DP_PROJECT_INFO_ERROR_QUERY     (-1603)
 #define DP_PROJECT_INFO_ERROR_CANCELLED (-1604)
+
+#define DP_PROJECT_PLAYBACK_ERROR_UNKNOWN (-1600)
+#define DP_PROJECT_PLAYBACK_ERROR_MISUSE  (-1601)
+#define DP_PROJECT_PLAYBACK_ERROR_PREPARE (-1602)
+#define DP_PROJECT_PLAYBACK_ERROR_QUERY   (-1603)
+#define DP_PROJECT_PLAYBACK_ERROR_EMPTY   (-1604)
 
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
@@ -171,6 +178,7 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 
 
 typedef struct DP_Project DP_Project;
+typedef struct DP_ProjectPlayback DP_ProjectPlayback;
 
 typedef enum DP_ProjectCheckType {
     DP_PROJECT_CHECK_NONE,    // Not a project file.
@@ -434,6 +442,20 @@ int DP_project_info(DP_Project *prj, unsigned int flags,
                     void *user);
 
 bool DP_project_dump(DP_Project *prj, DP_Output *output);
+
+
+DP_ProjectPlayback *DP_project_playback_new(DP_Project *prj);
+
+void DP_project_playback_free(DP_ProjectPlayback *pb);
+
+int DP_project_playback_measure(DP_ProjectPlayback *pb,
+                                double max_delta_seconds);
+
+// The callback takes ownership of the canvas states it's given.
+int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
+                             double framerate, double target_seconds,
+                             bool (*callback)(void *, int, DP_CanvasState *),
+                             void *user);
 
 
 #endif

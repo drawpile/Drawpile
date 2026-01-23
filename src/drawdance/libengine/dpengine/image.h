@@ -55,6 +55,10 @@ typedef enum DP_ImageScaleInterpolation {
     DP_IMAGE_SCALE_INTERPOLATION_SINC = -9,
     DP_IMAGE_SCALE_INTERPOLATION_LANCZOS = -10,
     DP_IMAGE_SCALE_INTERPOLATION_SPLINE = -11,
+    // Not an algorithm, will guess a good scaling algorithm based on the
+    // difference in images size. Basically, this uses bilinear up to a certain
+    // size, then goes to lanczos to get good results at reasonable speed.
+    DP_IMAGE_SCALE_INTERPOLATION_GUESS = -12,
 } DP_ImageScaleInterpolation;
 
 typedef struct DP_Image DP_Image;
@@ -143,6 +147,8 @@ DP_Image *DP_image_scale_pixels(int src_width, int src_height,
 DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
                          int height, int interpolation);
 
+bool DP_image_scale_interpolation_supported(int interpolation);
+
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel);
 
 DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
@@ -151,6 +157,11 @@ DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
                                              int x, int y, int diameter,
                                              bool opaque,
                                              int *in_out_last_diameter);
+
+
+typedef struct DP_SharedImage DP_SharedImage;
+
+DP_SharedImage *DP_shared_image_new(DP_Image *img);
 
 
 #endif

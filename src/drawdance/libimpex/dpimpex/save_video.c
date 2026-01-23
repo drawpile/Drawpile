@@ -454,7 +454,6 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
     AVFrame *filtered_frame = NULL;
     AVPacket *packet = NULL;
     struct SwsContext *sws_context = NULL;
-    DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, NULL, 0.0, 0};
 
     const char *format_name;
     enum AVCodecID codec_id;
@@ -867,8 +866,11 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
     frame->pts = 0;
 
     double last_progress = 0.0;
+    DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
     while (params.next_frame_fn(params.user, &f)) {
-        if (!f.img) {
+        int input_width = f.width;
+        int input_height = f.height;
+        if (input_width <= 0 || input_height <= 0 || !f.pixels) {
             DP_error_set("Frame has no image");
             result = DP_SAVE_RESULT_INTERNAL_ERROR;
             goto cleanup;
@@ -888,8 +890,6 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
             goto cleanup;
         }
 
-        int input_width = DP_image_width(f.img);
-        int input_height = DP_image_height(f.img);
         sws_context = sws_getCachedContext(
             sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
             output_width, output_height, frame->format,
@@ -902,7 +902,7 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
             goto cleanup;
         }
 
-        const uint8_t *data = (const uint8_t *)DP_image_pixels(f.img);
+        const uint8_t *data = f.pixels;
         const int stride = input_width * 4;
         sws_scale(sws_context, &data, &stride, 0, input_height, frame->data,
                   frame->linesize);
@@ -931,9 +931,6 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
         result = f.result;
         goto cleanup;
     }
-
-    DP_image_free(f.img);
-    f.img = NULL;
 
     if (f.instances > 1) {
         frame->pts -= duration;
@@ -997,7 +994,6 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
     }
 
 cleanup:
-    DP_image_free(f.img);
     sws_freeContext(sws_context);
     if (format_context && format_context->pb) {
         av_freep(&format_context->pb->buffer);
@@ -1022,6 +1018,7 @@ cleanup:
 
 struct DP_SaveAnimationVideoContext {
     DP_CanvasState *cs;
+    DP_Image *img;
     DP_SaveProgressFn progress_fn;
     void *progress_user;
     DP_ViewModeBuffer vmb;
@@ -1062,7 +1059,7 @@ static bool save_animation_video_next_frame(void *user,
     DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame_render(
         &c->vmb, c->cs, c->frame_index - f->instances + 1);
     if (!DP_canvas_state_into_flat_image(c->cs, c->flat_image_flags, &c->crop,
-                                         &vmf, &f->img)) {
+                                         &vmf, &c->img)) {
         f->result = DP_SAVE_RESULT_INTERNAL_ERROR;
         return false;
     }
@@ -1073,6 +1070,9 @@ static bool save_animation_video_next_frame(void *user,
         DP_int_to_double(c->frames_done) / DP_int_to_double(c->frames_to_do);
 
     f->result = DP_SAVE_RESULT_SUCCESS;
+    f->pixels = DP_image_pixels(c->img);
+    f->width = DP_image_width(c->img);
+    f->height = DP_image_height(c->img);
     return true;
 }
 
@@ -1105,6 +1105,7 @@ DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params)
 
     struct DP_SaveAnimationVideoContext c;
     c.cs = params.cs;
+    c.img = NULL;
     c.progress_fn = params.progress_fn;
     c.progress_user = params.user;
     DP_view_mode_buffer_init(&c.vmb);
@@ -1128,6 +1129,7 @@ DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params)
         params.height, framerate, save_animation_video_next_frame,
         params.progress_fn ? save_animation_progress : NULL, &c});
 
+    DP_image_free(c.img);
     DP_view_mode_buffer_dispose(&c.vmb);
     return result;
 }

@@ -199,6 +199,8 @@ target_sources(dpclient PRIVATE
 	utils/brushshortcutmodel.h
 	utils/canvasshortcutsmodel.cpp
 	utils/canvasshortcutsmodel.h
+	utils/canvastoimagerunnable.cpp
+	utils/canvastoimagerunnable.h
 	utils/certificatestoremodel.cpp
 	utils/certificatestoremodel.h
 	utils/colorscheme.cpp
@@ -284,6 +286,8 @@ if(EMSCRIPTEN)
 	)
 else()
 	target_sources(dpclient PRIVATE
+		export/timelapsesaverrunnable.cpp
+		export/timelapsesaverrunnable.h
 		project/projectwrangler.cpp
 		project/projectwrangler.h
 		utils/news.cpp

@@ -403,9 +403,12 @@ private:
 	void onProjectRecordingStarted();
 	void onProjectRecordingStopped(bool notify);
 	void showProjectRecordingError(const QString &message);
-	void updateProjectOverviewAction();
+	void updateProjectActions();
 #ifdef DRAWPILE_PROJECT_DIALOG
 	void showProjectOverview();
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	void showTimelapseDialog();
 #endif
 
 	void showSelectionMaskColorPicker();

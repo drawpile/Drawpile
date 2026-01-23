@@ -138,6 +138,9 @@ extern "C" {
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 #	include "desktop/dialogs/projectinfodialog.h"
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+#	include "desktop/dialogs/timelapsedialog.h"
+#endif
 #ifdef Q_OS_WIN
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -345,7 +348,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #endif
 	connect(
 		m_doc, &Document::projectPathChanged, this,
-		&MainWindow::updateProjectOverviewAction);
+		&MainWindow::updateProjectActions);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
 	// clang-format on
@@ -663,7 +666,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 			? int(tools::BrushSettings::NormalMode)
 			: brushMode);
 
-	updateProjectOverviewAction();
+	updateProjectActions();
 
 	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
@@ -1719,12 +1722,17 @@ void MainWindow::showProjectRecordingError(const QString &message)
 	}
 }
 
-void MainWindow::updateProjectOverviewAction()
+void MainWindow::updateProjectActions()
 {
+#if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
+	bool enabled =
+		!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty();
+#endif
 #ifdef DRAWPILE_PROJECT_DIALOG
-	getAction(QStringLiteral("projectoverview"))
-		->setEnabled(
-			!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty());
+	getAction(QStringLiteral("projectoverview"))->setEnabled(enabled);
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	getAction(QStringLiteral("maketimelapse"))->setEnabled(enabled);
 #endif
 }
 
@@ -1742,6 +1750,29 @@ void MainWindow::showProjectOverview()
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->openProject(m_doc->projectPath());
 		utils::showWindow(dlg);
+	}
+}
+#endif
+
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+void MainWindow::showTimelapseDialog()
+{
+	QString objectName = QStringLiteral("timelapsedialog");
+	dialogs::TimelapseDialog *dlg = findChild<dialogs::TimelapseDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else if(!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty()) {
+		canvas::CanvasModel *canvas = m_doc->canvas();
+		if(canvas) {
+			drawdance::CanvasState canvasState =
+				m_doc->canvas()->paintEngine()->viewCanvasState();
+			dlg = new dialogs ::TimelapseDialog(canvasState, this);
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			dlg->setInputPath(m_doc->projectPath());
+			utils::showWindow(dlg);
+		}
 	}
 }
 #endif
@@ -2695,7 +2726,7 @@ void MainWindow::onCanvasSaveStarted()
 #endif
 	m_viewStatusBar->showMessage(tr("Saving..."));
 	m_canvasView->setSaveInProgress(true);
-	updateProjectOverviewAction();
+	updateProjectActions();
 }
 
 void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
@@ -2715,7 +2746,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 #	endif
 #endif
 	m_canvasView->setSaveInProgress(false);
-	updateProjectOverviewAction();
+	updateProjectActions();
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
@@ -5784,6 +5815,10 @@ void MainWindow::setupActions()
 		makeAction("projectoverview", tr("Project statistics…"))
 			.noDefaultShortcut();
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	QAction *makeTimelapse =
+		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
+#endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
 	QAction *quit = makeAction("exitprogram", tr("&Quit"))
@@ -5868,6 +5903,11 @@ void MainWindow::setupActions()
 		projectOverview, &QAction::triggered, this,
 		&MainWindow::showProjectOverview);
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	connect(
+		makeTimelapse, &QAction::triggered, this,
+		&MainWindow::showTimelapseDialog);
+#endif
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 
 #ifndef __EMSCRIPTEN__
@@ -5930,9 +5970,14 @@ void MainWindow::setupActions()
 	filemenu->addAction(record);
 #endif
 	filemenu->addAction(autoRecord);
-#ifdef DRAWPILE_PROJECT_DIALOG
+#if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
 	filemenu->addSeparator();
+#endif
+#ifdef DRAWPILE_PROJECT_DIALOG
 	filemenu->addAction(projectOverview);
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	filemenu->addAction(makeTimelapse);
 #endif
 	filemenu->addSeparator();
 	filemenu->addAction(start);

@@ -32,7 +32,9 @@ typedef enum DP_SaveVideoDestination {
 
 typedef struct DP_SaveVideoNextFrame {
     DP_SaveResult result;
-    DP_Image *img;
+    int width;
+    int height;
+    const void *pixels;
     double progress;
     int instances;
 } DP_SaveVideoNextFrame;
