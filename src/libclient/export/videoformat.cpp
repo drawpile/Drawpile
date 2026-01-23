@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/export/animationformat.h"
+#include "libclient/export/videoformat.h"
 #include <QtGlobal>
 #ifdef DP_LIBAV
 extern "C" {
@@ -8,23 +8,23 @@ extern "C" {
 #endif
 
 
-bool isAnimationFormatSupported(AnimationFormat format)
+bool isVideoFormatSupported(VideoFormat format)
 {
 	switch(format) {
 #if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
-	case AnimationFormat::Frames:
+	case VideoFormat::Frames:
 #endif
-	case AnimationFormat::Zip:
+	case VideoFormat::Zip:
 		return true;
 #ifdef DP_LIBAV
-	case AnimationFormat::Gif:
+	case VideoFormat::Gif:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
 			   DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_GIF);
-	case AnimationFormat::Mp4Vp9:
+	case VideoFormat::Mp4Vp9:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4_VP9);
-	case AnimationFormat::WebmVp8:
+	case VideoFormat::WebmVp8:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBM_VP8);
-	case AnimationFormat::Webp:
+	case VideoFormat::Webp:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBP);
 #endif
 	default:

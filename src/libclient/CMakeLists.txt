@@ -110,8 +110,6 @@ target_sources(dpclient PRIVATE
 	drawdance/viewmode.h
 	drawdance/ziparchive.cpp
 	drawdance/ziparchive.h
-	export/animationformat.cpp
-	export/animationformat.h
 	export/animationsaverrunnable.cpp
 	export/animationsaverrunnable.h
 	export/canvassaverrunnable.cpp
@@ -120,6 +118,8 @@ target_sources(dpclient PRIVATE
 	export/projectsaver.h
 	export/thumbnailerrunnable.cpp
 	export/thumbnailerrunnable.h
+	export/videoformat.cpp
+	export/videoformat.h
 	import/animationimporter.cpp
 	import/animationimporter.h
 	import/canvasloaderrunnable.cpp
