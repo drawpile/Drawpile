@@ -183,7 +183,7 @@ static void set_option(void *obj, const char *name, const char *value)
 {
     int result = av_opt_set(obj, name, value, AV_OPT_SEARCH_CHILDREN);
     if (result == 0) {
-        DP_info("Set option %s to %s", name, value);
+        DP_debug("Set option %s to %s", name, value);
     }
     else {
         DP_warn("Error setting option %s to %s: %s", name, value,
