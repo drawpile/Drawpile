@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-transborda</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -114,17 +114,17 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Transborda:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">Tolerância: </translation>
+        <translation>Tolerância: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">Expandir: </translation>
+        <translation>Expandir: </translation>
     </message>
     <message>
         <location line="+26"/>
@@ -834,17 +834,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished">Mais…</translation>
+        <translation>Mais…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleção</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">Transformar</translation>
+        <translation>Transformar</translation>
     </message>
 </context>
 <context>
@@ -1097,7 +1097,7 @@ Subintervalo: [%3,%4]</translation>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear conteúdo (censurar para você)</translation>
     </message>
 </context>
 <context>
@@ -1264,7 +1264,9 @@ Subintervalo: [%3,%4]</translation>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta seção está hospedada em outro servidor, você será redirecionado.
+
+Para evitar este passo extra no futuro, use a página Procurar ou um link direto para uma sessão.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -1315,12 +1317,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation>Se você não revisar seus documentos, todas as mudanças vão se perder</translation>
+        <translation>Se você não revisar seus documentos, todas as mudanças serão perdidas.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Revisar alterações…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1682,12 +1684,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1798"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão Desatualizada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sessão foi hospedada em uma versão mais recente do Drawpile. Você não verá diferença quando alguém usar um novo recurso que sua versão não possui e você não poderá comprimir ou resetar a tela. Cheque &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; para atualizações.</translation>
     </message>
     <message>
         <location line="+509"/>
@@ -1702,7 +1704,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você tem alterações não salvas, gostaria de salvá-las antes de reconectar?</translation>
     </message>
     <message>
         <location line="+5"/>
