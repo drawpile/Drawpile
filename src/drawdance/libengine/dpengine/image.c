@@ -619,11 +619,30 @@ DP_Image *DP_image_scale_pixels(int src_width, int src_height,
                 const int src_stride = src_width * 4;
 
                 DP_Image *dst = DP_image_new(width, height);
-                uint8_t *dst_data = (uint8_t *)DP_image_pixels(dst);
+                DP_Pixel8 *dst_pixels = DP_image_pixels(dst);
+                uint8_t *dst_data = (uint8_t *)dst_pixels;
                 const int dst_stride = width * 4;
 
                 sws_scale(sws_context, &src_data, &src_stride, 0, src_height,
                           &dst_data, &dst_stride);
+
+                // libswscale doesn't correctly scale premultiplied data, so it
+                // may end up with slight off-by-one errors. Clamp the channels.
+                long long pixel_count =
+                    DP_int_to_llong(width) * DP_int_to_llong(height);
+                for (long long i = 0; i < pixel_count; ++i) {
+                    DP_Pixel8 pixel = dst_pixels[i];
+                    if (pixel.b > pixel.a) {
+                        pixel.b = pixel.a;
+                    }
+                    if (pixel.g > pixel.a) {
+                        pixel.g = pixel.a;
+                    }
+                    if (pixel.r > pixel.a) {
+                        pixel.r = pixel.a;
+                    }
+                    dst_pixels[i] = pixel;
+                }
 
                 return dst;
             }
