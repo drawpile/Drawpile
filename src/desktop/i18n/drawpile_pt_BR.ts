@@ -129,7 +129,7 @@
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir como Origem do Preenchimento</translation>
     </message>
     <message>
         <location line="-326"/>
