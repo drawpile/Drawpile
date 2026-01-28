@@ -1315,7 +1315,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se você não revisar seus documentos, todas as mudanças vão se perder</translation>
     </message>
     <message>
         <location line="+2"/>
