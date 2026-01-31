@@ -213,6 +213,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 {
 	// Avoid flickering of intermediate states.
 	setUpdatesEnabled(false);
+	// Animations are slow, ugly and cause crashes on Android and the browser.
+	setAnimated(false);
 
 	m_saveSplitterDebounce.setSingleShot(true);
 	m_saveWindowDebounce.setSingleShot(true);
