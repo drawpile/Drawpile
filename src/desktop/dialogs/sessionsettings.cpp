@@ -780,27 +780,7 @@ void SessionSettingsDialog::updateIdleSettings(
 		//: "Idle timeout: disabled by moderator"
 		amount = tr("disabled by moderator");
 	} else {
-		QStringList pieces;
-		int hours = timeLimit / 3600;
-		if(hours != 0) {
-			//: Idle timeout hours. May be joined with minutes and seconds.
-			pieces.append(tr("%n hour(s)", "", hours));
-		}
-
-		int minutes = timeLimit / 60 - hours * 60;
-		if(minutes != 0) {
-			//: Idle timeout minutes. May be joined with hours and seconds.
-			pieces.append(tr("%n minute(s)", "", minutes));
-		}
-
-		int seconds = timeLimit % 60;
-		if(seconds != 0) {
-			//: Idle timeout seconds. May be joined with hours and minutes.
-			pieces.append(tr("%n second(s)", "", seconds));
-		}
-
-		//: This string joins the hours, minutes and seconds for the idle time.
-		amount = pieces.join(tr(", "));
+		amount = utils::formatTime(timeLimit);
 	}
 	m_ui->idleTimeoutAmount->setText(amount);
 }
