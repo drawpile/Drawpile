@@ -20,6 +20,8 @@ QImage transformImage(
 	const QImage &source, const QPolygon &dstQuad, int interpolation,
 	bool checkBounds, QPoint *outOffset = nullptr);
 
+QSize thumbnailDimensions(const QSize &size, const QSize &maxSize);
+
 }
 
 #endif

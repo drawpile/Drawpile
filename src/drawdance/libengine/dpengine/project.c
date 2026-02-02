@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "project.h"
+#include "affected_area.h"
 #include "annotation.h"
 #include "annotation_list.h"
 #include "canvas_history.h"
@@ -24,16 +25,19 @@
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/geom.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/threading.h>
+#include <dpcommon/vector.h>
 #include <dpcommon/worker.h>
 #include <dpdb/sql.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/ids.h>
 #include <dpmsg/message.h>
 #include <dpmsg/protover.h>
+#include <math.h>
 
 #define DP_PERF_CONTEXT "project"
 
@@ -122,6 +126,24 @@ struct DP_Project {
     DP_Atomic cancel;
     sqlite3_stmt *stmts[DP_PROJECT_STATEMENT_COUNT];
     unsigned char serialize_buffer[DP_MESSAGE_MAX_PAYLOAD_LENGTH];
+};
+
+typedef struct DP_ProjectPlaybackResize {
+    long long session_id;
+    long long sequence_id;
+    int offset_x;
+    int offset_y;
+    int width;
+    int height;
+} DP_ProjectPlaybackResize;
+
+struct DP_ProjectPlayback {
+    DP_Project *prj;
+    double max_delta_seconds;
+    double total_playback_seconds;
+    DP_Rect crop;
+    DP_Vector resizes;
+    bool own_only;
 };
 
 static bool is_ok(int result)
@@ -3437,6 +3459,12 @@ static void cfs_insert_tile_job(void *user, void *element)
     memcpy(job->data, params->data, params->header.size);
 }
 
+static bool snapshot_metadata_dimensions_valid(int width, int height)
+{
+    return (width == 0 && height == 0)
+        || DP_canvas_state_dimensions_in_bounds(width, height);
+}
+
 static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
 {
     DP_Project *prj = c->prj;
@@ -3535,8 +3563,7 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
         return false;
     }
 
-    if ((width == 0 && height == 0)
-        || DP_canvas_state_dimensions_in_bounds(width, height)) {
+    if (snapshot_metadata_dimensions_valid(width, height)) {
         DP_transient_canvas_state_width_set(tcs, width);
         DP_transient_canvas_state_height_set(tcs, height);
         DP_transient_canvas_state_offsets_set(tcs, offset_x, offset_y);
@@ -4950,39 +4977,115 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
     return cs;
 }
 
-static bool canvas_load_warn(DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
-                             int warn)
-{
-    return warn_fn && warn_fn(user, warn);
-}
-
-static DP_CanvasState *canvas_load_warn_cs(DP_ProjectCanvasLoadWarnFn warn_fn,
-                                           void *user, int warn,
-                                           DP_CanvasState *cs)
-{
-    if (canvas_load_warn(warn_fn, user, warn)) {
-        DP_canvas_state_decref(cs);
-        return NULL;
-    }
-    else {
-        return cs;
-    }
-}
 
 #define MAX_MULTIDAB_COUNT 8192
+#define FILTER_PASS        0
+#define FILTER_IGNORE      1
+#define FILTER_ABORT       2
+
+typedef struct DP_ProjectPlaybackContext DP_ProjectPlaybackContext;
+
+typedef void (*DP_ProjectPlaybackHandleFn)(DP_ProjectPlaybackContext *c,
+                                           DP_Message *msg);
+
+typedef DP_CanvasState *(*DP_ProjectPlaybackLoadSnapshotFn)(
+    DP_Project *prj, DP_DrawContext *dc, long long session_id);
+
+typedef struct DP_ProjectPlaybackMessageContext {
+    long long session_id;
+    long long sequence_id;
+    double recorded_at;
+    union {
+        struct {
+            size_t length;
+            const unsigned char *body;
+        };
+        DP_Message *msg;
+    };
+    int type;
+    unsigned int flags;
+    unsigned int context_id;
+    bool deserialized;
+} DP_ProjectPlaybackMessageContext;
+
+static DP_Message *
+playback_message_context_deserialize(DP_ProjectPlaybackMessageContext *mc)
+{
+    if (mc->deserialized) {
+        return mc->msg;
+    }
+    else {
+        mc->deserialized = true;
+        DP_Message *msg = DP_message_deserialize_body(
+            mc->type, mc->context_id, mc->body, mc->length, true);
+        if (!msg) {
+            DP_warn("Failed to deserialize playback message of type %d: %s",
+                    mc->type, DP_error());
+        }
+        mc->msg = msg;
+        return msg;
+    }
+}
+
+static void
+playback_message_context_dispose(DP_ProjectPlaybackMessageContext *mc)
+{
+    if (mc->deserialized) {
+        DP_message_decref_nullable(mc->msg);
+    }
+}
+
+// May optionally be passed to the playback to have it called for each message
+// and snapshot message during playback, sequence_id will be -1 and recorded_at
+// will be 0.0 if this is a snapshot message. Must return FILTER_PASS for
+// playback to handle the message, FILTER_IGNORE for playback to skip to the
+// next message and FILTER_ABORT to cancel playback and return an error.
+typedef int (*DP_ProjectPlaybackFilterFn)(void *user,
+                                          DP_ProjectPlaybackMessageContext *mc);
 
 struct DP_ProjectPlaybackContext {
+    DP_Project *prj;
     DP_CanvasHistory *ch;
     DP_DrawContext *dc;
     DP_LocalState *ls;
     DP_Message **multidab_msgs;
     int multidab_count;
+    DP_ProjectPlaybackLoadSnapshotFn load_snapshot_fn;
+    DP_ProjectPlaybackFilterFn filter_fn;
+    void *filter_user;
 };
 
-typedef void (*DP_ProjectPlaybackHandleFn)(struct DP_ProjectPlaybackContext *,
-                                           DP_Message *);
+static void
+playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
+                      DP_DrawContext *dc,
+                      DP_ProjectPlaybackLoadSnapshotFn load_snapshot_fn,
+                      DP_ProjectPlaybackFilterFn filter_fn, void *filter_user)
+{
+    *c = (DP_ProjectPlaybackContext){
+        prj,
+        DP_canvas_history_new_no_mutex(),
+        dc,
+        DP_local_state_new(NULL, NULL, NULL),
+        DP_malloc(sizeof(*c->multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT),
+        0,
+        load_snapshot_fn,
+        filter_fn,
+        filter_user,
+    };
+}
 
-static void playback_handle_single_dec(struct DP_ProjectPlaybackContext *c,
+static void playback_context_dispose(DP_ProjectPlaybackContext *c)
+{
+    int count = c->multidab_count;
+    for (int i = 0; i < count; ++i) {
+        DP_message_decref(c->multidab_msgs[i]);
+    }
+    DP_free(c->multidab_msgs);
+    DP_local_state_free(c->ls);
+    DP_canvas_history_free(c->ch);
+}
+
+static void playback_handle_single_dec(DP_ProjectPlaybackContext *c,
                                        DP_Message *msg)
 {
     if (!DP_canvas_history_handle(c->ch, c->dc, msg)) {
@@ -4991,7 +5094,7 @@ static void playback_handle_single_dec(struct DP_ProjectPlaybackContext *c,
     DP_message_decref(msg);
 }
 
-static void playback_flush_multidab(struct DP_ProjectPlaybackContext *c)
+static void playback_flush_multidab(DP_ProjectPlaybackContext *c)
 {
     int count = c->multidab_count;
     switch (count) {
@@ -5009,7 +5112,7 @@ static void playback_flush_multidab(struct DP_ProjectPlaybackContext *c)
     }
 }
 
-static void playback_handle_command(struct DP_ProjectPlaybackContext *c,
+static void playback_handle_command(DP_ProjectPlaybackContext *c,
                                     DP_Message *msg)
 {
     DP_MessageType type = DP_message_type(msg);
@@ -5027,7 +5130,7 @@ static void playback_handle_command(struct DP_ProjectPlaybackContext *c,
     }
 }
 
-static void playback_handle_soft_reset(struct DP_ProjectPlaybackContext *c,
+static void playback_handle_soft_reset(DP_ProjectPlaybackContext *c,
                                        DP_Message *msg)
 {
     playback_flush_multidab(c);
@@ -5036,7 +5139,7 @@ static void playback_handle_soft_reset(struct DP_ProjectPlaybackContext *c,
     DP_message_decref(msg);
 }
 
-static void playback_handle_undo_depth(struct DP_ProjectPlaybackContext *c,
+static void playback_handle_undo_depth(DP_ProjectPlaybackContext *c,
                                        DP_Message *msg)
 {
     playback_flush_multidab(c);
@@ -5048,7 +5151,7 @@ static void playback_handle_undo_depth(struct DP_ProjectPlaybackContext *c,
     DP_message_decref(msg);
 }
 
-static void playback_handle_local_change(struct DP_ProjectPlaybackContext *c,
+static void playback_handle_local_change(DP_ProjectPlaybackContext *c,
                                          DP_Message *msg)
 {
     DP_local_state_handle(c->ls, c->dc, msg, false);
@@ -5076,37 +5179,69 @@ static DP_ProjectPlaybackHandleFn playback_get_handle_fn(int type)
 }
 
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
-                           struct DP_ProjectPlaybackContext *c)
+                           DP_ProjectPlaybackContext *c, long long session_id,
+                           bool snapshot_message)
 {
+    DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
+    void *filter_user = c->filter_user;
+
+    DP_ProjectPlaybackMessageContext mc = {
+        session_id, -1LL, 0.0, {{0, NULL}}, 0, 0u, 0u, false,
+    };
+
     bool error;
     while (ps_exec_step(prj, stmt, &error) && !error) {
-        int type = sqlite3_column_int(stmt, 0);
-        if (type < 0) { // Internal message.
-            switch (type) {
+        mc.type = sqlite3_column_int(stmt, 0);
+        mc.context_id = DP_int_to_uint(sqlite3_column_int(stmt, 1));
+        mc.length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
+        if (mc.length == 0) {
+            mc.body = NULL;
+        }
+        else {
+            mc.body = sqlite3_column_blob(stmt, 2);
+        }
+        mc.deserialized = false;
+
+        if (filter_fn) {
+            if (snapshot_message) {
+                mc.sequence_id = -1;
+                mc.recorded_at = 0.0;
+            }
+            else {
+                mc.sequence_id = sqlite3_column_int64(stmt, 3);
+                mc.flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
+                mc.recorded_at = sqlite3_column_double(stmt, 5);
+            }
+
+            switch (filter_fn(filter_user, &mc)) {
+            case FILTER_PASS:
+                break;
+            case FILTER_IGNORE:
+                playback_message_context_dispose(&mc);
+                continue;
+            case FILTER_ABORT:
+                playback_message_context_dispose(&mc);
+                return false;
+            default:
+                DP_UNREACHABLE();
+            }
+        }
+
+        if (mc.type < 0) { // Internal message.
+            switch (mc.type) {
             case DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET:
                 DP_canvas_history_reset(c->ch);
                 break;
             default:
-                DP_debug("Unhandled internal project message type %d", type);
+                DP_debug("Unhandled internal project message type %d", mc.type);
                 break;
             }
         }
         else {
-            DP_ProjectPlaybackHandleFn handle_fn = playback_get_handle_fn(type);
+            DP_ProjectPlaybackHandleFn handle_fn =
+                playback_get_handle_fn(mc.type);
             if (handle_fn) {
-                unsigned int context_id =
-                    DP_int_to_uint(sqlite3_column_int(stmt, 1));
-                size_t length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
-                const unsigned char *buf;
-                if (length == 0) {
-                    buf = NULL;
-                }
-                else {
-                    buf = sqlite3_column_blob(stmt, 2);
-                }
-
-                DP_Message *msg = DP_message_deserialize_body(
-                    type, context_id, buf, length, true);
+                DP_Message *msg = playback_message_context_deserialize(&mc);
                 if (msg) {
                     handle_fn(c, msg);
                 }
@@ -5115,6 +5250,9 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                             DP_error());
                 }
             }
+            else {
+                playback_message_context_dispose(&mc);
+            }
         }
     }
 
@@ -5122,74 +5260,96 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
     return !error;
 }
 
-static int playback_query_snapshot_messages(DP_Project *prj,
-                                            long long snapshot_id,
-                                            unsigned int flags,
-                                            struct DP_ProjectPlaybackContext *c)
+static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
+                                             long long session_id,
+                                             long long snapshot_id,
+                                             unsigned int flags)
 {
     // Don't touch the snapshot_messages table without this flag! Earlier dpcs
     // files don't have it.
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES) {
+        DP_Project *prj = c->prj;
         sqlite3_stmt *stmt = ps_prepare_ephemeral(
             prj, "select type, context_id, body from snapshot_messages\n"
                  "where snapshot_id = ?\n"
                  "order by sequence_id");
         if (!stmt) {
-            return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+            return false;
         }
 
         bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
         if (!bind_ok) {
             sqlite3_finalize(stmt);
-            return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+            return false;
         }
 
-        bool query_ok = playback_query(prj, stmt, c);
+        bool query_ok = playback_query(prj, stmt, c, session_id, true);
         sqlite3_finalize(stmt);
         if (!query_ok) {
-            return DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR;
+            return false;
         }
     }
-    return 0;
+    return true;
 }
 
-static int playback_query_messages(DP_Project *prj, long long session_id,
-                                   long long first_sequence_id,
-                                   struct DP_ProjectPlaybackContext *c)
+static bool playback_query_messages(DP_ProjectPlaybackContext *c,
+                                    long long session_id,
+                                    long long first_sequence_id)
 {
-    sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "select type, context_id, body from messages\n"
-             "where session_id = ? and sequence_id >= ?\n"
-             "order by sequence_id");
+    DP_Project *prj = c->prj;
+
+    // Only need these extra columns for the filter callback.
+    const char *sql;
+    if (c->filter_fn) {
+        sql = "select type, context_id, body, sequence_id, flags, recorded_at\n"
+              "from messages\n"
+              "where session_id = ? and sequence_id >= ?\n"
+              "order by sequence_id";
+    }
+    else {
+        sql = "select type, context_id, body\n"
+              "from messages\n"
+              "where session_id = ? and sequence_id >= ?\n"
+              "order by sequence_id";
+    }
+
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(prj, sql);
     if (!stmt) {
-        return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+        return false;
     }
 
     bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
                 && ps_bind_int64(prj, stmt, 2, first_sequence_id);
     if (!bind_ok) {
         sqlite3_finalize(stmt);
-        return DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR;
+        return false;
     }
 
-    bool query_ok = playback_query(prj, stmt, c);
+    bool query_ok = playback_query(prj, stmt, c, session_id, false);
     sqlite3_finalize(stmt);
-    if (query_ok) {
-        return 0;
-    }
-    else {
-        return DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR;
-    }
+    return query_ok;
+}
+
+static DP_CanvasState *playback_current_canvas(DP_ProjectPlaybackContext *c)
+{
+    return DP_local_state_apply_nodec(
+        c->ls, DP_canvas_history_get_noinc_nolock(c->ch), c->dc);
+}
+
+
+static bool canvas_load_warn(DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+                             int warn)
+{
+    return warn_fn && warn_fn(user, warn);
 }
 
 static DP_CanvasState *
-canvas_from_snapshot_playback(DP_Project *prj, DP_DrawContext *dc,
+canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
                               long long snapshot_id, long long session_id,
                               long long first_sequence_id, unsigned int flags,
                               DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
 {
-    DP_ASSERT(prj);
-    DP_ASSERT(dc);
+    DP_ASSERT(c);
     DP_ASSERT(snapshot_id > 0LL);
     DP_ASSERT(session_id > 0LL);
     DP_ASSERT(first_sequence_id > 0LL);
@@ -5198,60 +5358,41 @@ canvas_from_snapshot_playback(DP_Project *prj, DP_DrawContext *dc,
     // because it's pointless to do a bunch of work just to throw it all away
     // along the way.
 
-    DP_CanvasState *cs;
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
         DP_debug("Starting from null canvas");
-        cs = DP_canvas_state_new();
     }
     else {
-        cs = DP_project_canvas_from_snapshot(prj, dc, snapshot_id);
-        if (!cs) {
+        DP_CanvasState *cs = c->load_snapshot_fn(c->prj, c->dc, snapshot_id);
+        if (cs) {
+            DP_canvas_history_reset_to_state_noinc(c->ch, cs);
+        }
+        else {
             return NULL;
         }
     }
 
-    DP_CanvasHistory *ch =
-        DP_canvas_history_new_noinc(cs, NULL, NULL, false, NULL);
-    if (!ch) {
-        return canvas_load_warn_cs(
-            warn_fn, user, DP_PROJECT_CANVAS_LOAD_WARN_HISTORY_ERROR, cs);
-    }
-
-    DP_LocalState *ls = DP_local_state_new(cs, NULL, NULL);
-
-    struct DP_ProjectPlaybackContext c = {
-        ch, dc, ls,
-        DP_malloc(sizeof(*c.multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT), 0};
-
     // Play back snapshot messages, effectively the undo history from the point
     // of the snapshot onwards. These should only exist for autosave snapshots.
-    int snapshot_messages_error =
-        playback_query_snapshot_messages(prj, snapshot_id, flags, &c);
-    bool cancel = snapshot_messages_error != 0
-               && canvas_load_warn(warn_fn, user, snapshot_messages_error);
+    if (!playback_query_snapshot_messages(c, session_id, snapshot_id, flags)) {
+        if (canvas_load_warn(warn_fn, user,
+                             DP_PROJECT_CANVAS_LOAD_WARN_PLAYBACK_ERROR)) {
+            return NULL;
+        }
+    }
 
     // Only autosaves can have regular messages.
-    if (!cancel && (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE)) {
+    if (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE) {
         // Play back regular messages after the snapshot was taken. Should also
         // only exist for autosave snapshots.
-        int messages_error =
-            playback_query_messages(prj, session_id, first_sequence_id, &c);
-        cancel = messages_error != 0
-              && canvas_load_warn(warn_fn, user, messages_error);
+        if (!playback_query_messages(c, session_id, first_sequence_id)) {
+            if (canvas_load_warn(warn_fn, user,
+                                 DP_PROJECT_CANVAS_LOAD_WARN_PLAYBACK_ERROR)) {
+                return NULL;
+            }
+        }
     }
 
-    DP_free(c.multidab_msgs);
-
-    if (cancel) {
-        cs = NULL;
-    }
-    else {
-        cs = DP_local_state_apply_dec(ls, DP_canvas_history_get(ch), dc);
-    }
-
-    DP_local_state_free(ls);
-    DP_canvas_history_free(ch);
-    return cs;
+    return playback_current_canvas(c);
 }
 
 DP_CanvasState *DP_project_canvas_from_latest_snapshot(
@@ -5340,8 +5481,15 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     // snapshot on its own.
     if (load_messages) {
         DP_debug("Load from autosave snapshot sequence id %lld", sequence_id);
-        return canvas_from_snapshot_playback(prj, dc, snapshot_id, session_id,
-                                             sequence_id, flags, warn_fn, user);
+
+        DP_ProjectPlaybackContext c;
+        playback_context_init(&c, prj, dc, DP_project_canvas_from_snapshot,
+                              NULL, NULL);
+
+        DP_CanvasState *cs = canvas_from_snapshot_playback(
+            &c, snapshot_id, session_id, sequence_id, flags, warn_fn, user);
+        playback_context_dispose(&c);
+        return cs;
     }
 
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
@@ -5776,4 +5924,649 @@ bool DP_project_dump(DP_Project *prj, DP_Output *output)
                "case when closed_at is null then 'open' else 'closed' end "
                "as status from sessions order by session_id")
         && DP_OUTPUT_PRINT_LITERAL(output, "\nend project dump\n");
+}
+
+
+DP_ProjectPlayback *DP_project_playback_new(DP_Project *prj)
+{
+    DP_ASSERT(prj);
+    DP_ProjectPlayback *pb = DP_malloc(sizeof(*pb));
+    *pb = (DP_ProjectPlayback){
+        prj, 0.0, 0.0, DP_RECT_INVALID, DP_VECTOR_NULL, false,
+    };
+    return pb;
+}
+
+void DP_project_playback_free(DP_ProjectPlayback *pb)
+{
+    DP_vector_dispose(&pb->resizes);
+    DP_free(pb);
+}
+
+static void project_playback_resize_push(DP_ProjectPlayback *pb,
+                                         long long session_id,
+                                         long long sequence_id, int offset_x,
+                                         int offset_y, int width, int height)
+{
+    DP_ProjectPlaybackResize resize = {
+        session_id, sequence_id, offset_x, offset_y, width, height,
+    };
+    DP_VECTOR_PUSH_TYPE(&pb->resizes, DP_ProjectPlaybackResize, resize);
+}
+
+static DP_ProjectPlaybackResize
+project_playback_resize_last(DP_ProjectPlayback *pb)
+{
+    return DP_VECTOR_LAST_TYPE(&pb->resizes, DP_ProjectPlaybackResize);
+}
+
+typedef struct DP_ProjectPlaybackCrop {
+    const DP_ProjectPlaybackResize *resizes;
+    DP_Rect last_rect;
+    DP_Rect current_rect;
+    int count;
+    int index;
+} DP_ProjectPlaybackCrop;
+
+static void playback_crop_init(DP_ProjectPlaybackCrop *pbc,
+                               DP_ProjectPlayback *pb)
+{
+    *pbc =
+        (DP_ProjectPlaybackCrop){NULL, DP_RECT_INVALID, DP_RECT_INVALID, 0, 0};
+    int count = DP_size_to_int(pb->resizes.used);
+    if (count != 0) {
+        // The first element of the resize vector is always an empty resize, so
+        // we don't need to bother setting up the crop rectangle yet.
+        pbc->resizes = pb->resizes.elements;
+        pbc->last_rect = pb->crop;
+        pbc->count = count;
+    }
+}
+
+static void playback_crop_update(DP_ProjectPlaybackCrop *pbc,
+                                 DP_ProjectPlaybackMessageContext *mc)
+{
+    int next_index = pbc->index + 1;
+    int count = pbc->count;
+    if (next_index < count) {
+        long long session_id = mc->session_id;
+        long long sequence_id = mc->sequence_id;
+        DP_ProjectPlaybackResize current = pbc->resizes[next_index];
+        bool should_update = current.session_id == session_id
+                          && current.sequence_id == sequence_id;
+        if (should_update) {
+            DP_ProjectPlaybackResize last = pbc->resizes[count - 1];
+            int dx = last.offset_x - current.offset_x;
+            int dy = last.offset_y - current.offset_y;
+            pbc->current_rect = DP_rect_intersection(
+                DP_rect_make(0, 0, current.width, current.height),
+                DP_rect_translate(pbc->last_rect, dx, dy));
+            pbc->index = next_index;
+        }
+    }
+}
+
+static const DP_Rect *playback_crop_current(DP_ProjectPlaybackCrop *pbc)
+{
+    if (pbc->count == 0 || DP_rect_empty(pbc->current_rect)) {
+        return NULL;
+    }
+    else {
+        return &pbc->current_rect;
+    }
+}
+
+struct DP_ProjectPlaybackMeasureFilterResizeContext {
+    DP_ProjectPlaybackContext c;
+    DP_ProjectPlayback *pb;
+    DP_CanvasHistory *ch;
+    long long last_session_id;
+    int extra_offset_x;
+    int extra_offset_y;
+};
+
+struct DP_ProjectPlaybackMeasureFilterTimeContext {
+    DP_ProjectPlaybackContext c;
+    DP_ProjectPlayback *pb;
+    DP_CanvasHistory *ch;
+    double last_recorded_at;
+    DP_ProjectPlaybackCrop pbc;
+};
+
+struct DP_ProjectPlaybackPlayFilterContext {
+    DP_ProjectPlaybackContext c;
+    DP_ProjectPlayback *pb;
+    double seconds_to_frames;
+    double max_delta_seconds;
+    double total_playback_seconds;
+    double current_playback_seconds;
+    double last_recorded_at;
+    int current_frame;
+    DP_ProjectPlaybackCrop pbc;
+    DP_ProjectPlaybackCallbackFn callback;
+    void *user;
+};
+
+static bool
+project_playback_is_timing_relevant(DP_ProjectPlayback *pb,
+                                    DP_ProjectPlaybackCrop *pbc,
+                                    DP_ProjectPlaybackMessageContext *mc)
+{
+    // Negative sequence id means this is a snapshot message, which isn't
+    // timing-relevant. We also only care about pixel-affecting messages with
+    // regards to timing. Other messsages do have a visible effect as well, but
+    // they tend to be rather whole-image affecting, so they are likely to just
+    // cause a lot of flicker and it looks better to just disregard them.
+    if (mc->sequence_id > 0LL
+        && (!pb->own_only || (mc->flags & DP_PROJECT_MESSAGE_FLAG_OWN))
+        && DP_affected_area_pixel_domain_type(mc->type)) {
+        // Only regard stuff within the crop area, if we have one.
+        if (pbc->count == 0) {
+            return true;
+        }
+        else if (!DP_rect_empty(pbc->current_rect)) {
+            DP_Message *msg = playback_message_context_deserialize(mc);
+            if (msg) {
+                DP_AffectedArea aa = DP_affected_area_make(msg, NULL);
+                return DP_rect_intersects(aa.bounds, pbc->current_rect);
+            }
+        }
+    }
+    return false;
+}
+
+static bool project_playback_measure_should_pass(int type)
+{
+    switch (type) {
+    case DP_MSG_INTERNAL:
+    case DP_MSG_UNDO_DEPTH:
+    case DP_MSG_UNDO_POINT:
+    case DP_MSG_CANVAS_RESIZE:
+    case DP_MSG_UNDO:
+        return true;
+    default:
+        return type < 0;
+    }
+}
+
+static int project_playback_measure_filter_type(int type)
+{
+    if (project_playback_measure_should_pass(type)) {
+        return FILTER_PASS;
+    }
+    else {
+        return FILTER_IGNORE;
+    }
+}
+
+static int
+project_playback_measure_filter_resize(void *user,
+                                       DP_ProjectPlaybackMessageContext *mc)
+{
+    struct DP_ProjectPlaybackMeasureFilterResizeContext *mfrc = user;
+    DP_ProjectPlayback *pb = mfrc->pb;
+
+    // Negative sequence id means this is a snapshot message. We don't care
+    // about resizes in those, since those in-between states will never get
+    // emitted to the timelapse.
+    long long sequence_id = mc->sequence_id;
+    if (sequence_id > 0LL) {
+        DP_CanvasState *cs = DP_canvas_history_get_noinc_nolock(mfrc->ch);
+        int width = DP_canvas_state_width(cs);
+        int height = DP_canvas_state_height(cs);
+        int offset_x = DP_canvas_state_offset_x(cs);
+        int offset_y = DP_canvas_state_offset_y(cs);
+        DP_ProjectPlaybackResize last_resize = project_playback_resize_last(pb);
+
+        // Offset information may be incomplete, since earlier versions of
+        // Drawpile didn't track them reliably. If we get a new session with the
+        // same canvas size with only the offsets reset to zero, we assume that
+        // this is such a case and compensate for it by adding back the offsets.
+        int effective_offset_x = offset_x + mfrc->extra_offset_x;
+        int effective_offset_y = offset_y + mfrc->extra_offset_y;
+
+        long long session_id = mc->session_id;
+        bool session_changed = session_id != mfrc->last_session_id;
+        bool size_changed =
+            width != last_resize.width || height != last_resize.height;
+        bool offsets_changed = effective_offset_x != last_resize.offset_x
+                            || effective_offset_y != last_resize.offset_y;
+
+        if (session_changed && !size_changed && offsets_changed && offset_x == 0
+            && offset_y == 0) {
+            // Offsets got reset to zero, but the canvas size is still the same.
+            mfrc->extra_offset_x = effective_offset_x = last_resize.offset_x;
+            mfrc->extra_offset_y = effective_offset_y = last_resize.offset_y;
+            offsets_changed = false;
+        }
+
+        if (size_changed || offsets_changed) {
+            project_playback_resize_push(pb, session_id, sequence_id, offset_x,
+                                         offset_y, width, height);
+        }
+
+        if (session_changed) {
+            mfrc->last_session_id = session_id;
+        }
+    }
+
+    return project_playback_measure_filter_type(mc->type);
+}
+
+static int
+project_playback_measure_filter_time(void *user,
+                                     DP_ProjectPlaybackMessageContext *mc)
+{
+    struct DP_ProjectPlaybackMeasureFilterTimeContext *mftc = user;
+    DP_ProjectPlayback *pb = mftc->pb;
+
+    playback_crop_update(&mftc->pbc, mc);
+
+    if (project_playback_is_timing_relevant(pb, &mftc->pbc, mc)) {
+        double recorded_at = mc->recorded_at;
+        if (isfinite(recorded_at)) {
+            double last_recorded_at = mftc->last_recorded_at;
+            if (last_recorded_at <= recorded_at) {
+                pb->total_playback_seconds += DP_min_double(
+                    pb->max_delta_seconds, recorded_at - last_recorded_at);
+            }
+            else {
+                DP_debug("Message recorded time went backwards from %f to %f",
+                         mftc->last_recorded_at, recorded_at);
+            }
+            mftc->last_recorded_at = recorded_at;
+        }
+        else {
+            DP_debug("Got non-finite message record time");
+        }
+    }
+
+    return project_playback_measure_filter_type(mc->type);
+}
+
+static int project_playback_play_filter(void *user,
+                                        DP_ProjectPlaybackMessageContext *mc)
+{
+    struct DP_ProjectPlaybackPlayFilterContext *pfc = user;
+    int filter_result = FILTER_PASS;
+
+    DP_ProjectPlaybackCrop *pbc = &pfc->pbc;
+    playback_crop_update(pbc, mc);
+
+    if (project_playback_is_timing_relevant(pfc->pb, &pfc->pbc, mc)) {
+        double recorded_at = mc->recorded_at;
+        if (isfinite(recorded_at)) {
+            if (pfc->last_recorded_at <= recorded_at) {
+
+                double next_playback_seconds =
+                    pfc->current_playback_seconds
+                    + DP_min_double(pfc->max_delta_seconds,
+                                    recorded_at - pfc->last_recorded_at);
+                pfc->current_playback_seconds = next_playback_seconds;
+
+                int current_frame = pfc->current_frame;
+                int next_frame = DP_double_to_int(
+                    (next_playback_seconds / pfc->total_playback_seconds)
+                    * pfc->seconds_to_frames);
+
+                if (next_frame > current_frame) {
+                    DP_ProjectPlaybackContext *c = &pfc->c;
+                    playback_flush_multidab(c);
+                    if (!pfc->callback(pfc->user, next_frame - current_frame,
+                                       playback_current_canvas(c),
+                                       playback_crop_current(pbc))) {
+                        filter_result = FILTER_ABORT;
+                    }
+                    pfc->current_frame = next_frame;
+                }
+            }
+            else {
+                DP_debug("Message recorded time went backwards from %f to %f",
+                         pfc->last_recorded_at, recorded_at);
+            }
+            pfc->last_recorded_at = recorded_at;
+        }
+        else {
+            DP_debug("Got non-finite message record time");
+        }
+    }
+
+    return filter_result;
+}
+
+static bool
+project_playback_play_initial_snapshot_id(DP_Project *prj, long long session_id,
+                                          long long *out_snapshot_id,
+                                          unsigned int *out_flags)
+{
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
+                  "snapshot complete flag matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID == 11,
+                  "sequence id snapshot metadata matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select h.snapshot_id, h.flags from snapshots h\n"
+             "left join snapshot_metadata m\n"
+             "    on h.snapshot_id = m.snapshot_id\n"
+             "    and m.metadata_id = 11\n"
+             "where h.session_id = ?\n"
+             "and (h.flags & 1) <> 0\n"
+             "and (m.value is null or m.value = 0)");
+    if (!stmt) {
+        return false;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, session_id)) {
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        *out_snapshot_id = sqlite3_column_int64(stmt, 0);
+        *out_flags = DP_int_to_uint(sqlite3_column_int(stmt, 1));
+    }
+    else {
+        *out_snapshot_id = 0LL;
+        *out_flags = 0u;
+    }
+
+    sqlite3_finalize(stmt);
+    return !error;
+}
+
+static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
+                                          long long session_id)
+{
+    long long snapshot_id;
+    unsigned int snapshot_flags;
+    if (!project_playback_play_initial_snapshot_id(
+            c->prj, session_id, &snapshot_id, &snapshot_flags)) {
+        return false;
+    }
+
+    if (snapshot_id <= 0LL
+        || snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
+        DP_canvas_history_reset(c->ch);
+    }
+    else {
+        DP_CanvasState *cs =
+            DP_project_canvas_from_snapshot(c->prj, c->dc, snapshot_id);
+        if (cs) {
+            DP_canvas_history_reset_to_state_noinc(c->ch, cs);
+        }
+        else {
+            return false;
+        }
+    }
+
+    if (!playback_query_snapshot_messages(c, session_id, snapshot_id,
+                                          snapshot_flags)) {
+        return false;
+    }
+
+    if (!playback_query_messages(c, session_id, 1LL)) {
+        return false;
+    }
+
+    return true;
+}
+
+static bool project_playback_is_compatible(const char *protocol)
+{
+    DP_ProtocolVersion *protover = DP_protocol_version_parse(protocol);
+    bool ok =
+        protover
+        && (DP_protocol_version_is_compatible(protover)
+            || DP_protocol_version_is_future_minor_incompatibility(protover));
+    DP_protocol_version_free(protover);
+    return ok;
+}
+
+static int project_playback_play(DP_ProjectPlaybackContext *c)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *session_stmt = ps_prepare_ephemeral(
+        prj, "select session_id, protocol from sessions order by session_id");
+    if (!session_stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool error;
+    while (ps_exec_step(prj, session_stmt, &error)) {
+        long long session_id = sqlite3_column_int64(session_stmt, 0);
+        const char *protocol =
+            (const char *)sqlite3_column_text(session_stmt, 1);
+
+        if (project_playback_is_compatible(protocol)) {
+            if (!project_playback_play_session(c, session_id)) {
+                error = true;
+                break;
+            }
+        }
+    }
+    sqlite3_finalize(session_stmt);
+
+    if (error) {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static DP_CanvasState *project_playback_measure_canvas_state_from_snapshot(
+    DP_Project *prj, DP_UNUSED DP_DrawContext *dc, long long snapshot_id)
+{
+    DP_ASSERT(prj);
+    DP_ASSERT(snapshot_id > 0LL);
+
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_WIDTH == 1,
+                  "width snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_HEIGHT == 2,
+                  "height snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_OFFSET_X == 12,
+                  "offset x snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_OFFSET_Y == 13,
+                  "offset y snapshot metadata matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select metadata_id, value from snapshot_metadata\n"
+             "where snapshot_id = ? and metadata_id in (1, 2, 12, 13)");
+    if (!stmt) {
+        return NULL;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, snapshot_id)) {
+        sqlite3_finalize(stmt);
+        return NULL;
+    }
+
+    bool error;
+    int width = 0;
+    int height = 0;
+    int offset_x = 0;
+    int offset_y = 0;
+    while (ps_exec_step(prj, stmt, &error)) {
+        int metadata_id = sqlite3_column_int(stmt, 0);
+        switch (metadata_id) {
+        case DP_PROJECT_SNAPSHOT_METADATA_WIDTH:
+            width = sqlite3_column_int(stmt, 1);
+            break;
+        case DP_PROJECT_SNAPSHOT_METADATA_HEIGHT:
+            height = sqlite3_column_int(stmt, 1);
+            break;
+        case DP_PROJECT_SNAPSHOT_METADATA_OFFSET_X:
+            offset_x = sqlite3_column_int(stmt, 1);
+            break;
+        case DP_PROJECT_SNAPSHOT_METADATA_OFFSET_Y:
+            offset_y = sqlite3_column_int(stmt, 1);
+            break;
+        default:
+            DP_warn("Unknown snapshot measure metadatum %d", metadata_id);
+            break;
+        }
+    }
+    sqlite3_finalize(stmt);
+    if (error) {
+        return NULL;
+    }
+
+    if (!snapshot_metadata_dimensions_valid(width, height)) {
+        DP_error_set("Canvas dimensions %dx%d out of bounds", width, height);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
+    DP_transient_canvas_state_width_set(tcs, width);
+    DP_transient_canvas_state_height_set(tcs, height);
+    DP_transient_canvas_state_offsets_set(tcs, offset_x, offset_y);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+int DP_project_playback_measure(DP_ProjectPlayback *pb, DP_DrawContext *dc,
+                                double max_delta_seconds,
+                                const DP_Rect *crop_or_null, unsigned int flags)
+{
+    if (!pb) {
+        DP_error_set("No playback given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!dc) {
+        DP_error_set("No draw context given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!isfinite(max_delta_seconds) || max_delta_seconds <= 0.0) {
+        DP_error_set("Invalid max delta given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    pb->max_delta_seconds = max_delta_seconds;
+    pb->total_playback_seconds = 0.0;
+    pb->resizes.used = 0;
+    pb->own_only = flags & DP_PROJECT_PLAYBACK_FLAG_MEASURE_OWN_ONLY;
+
+    bool have_crop = crop_or_null && !DP_rect_empty(*crop_or_null);
+    if (have_crop) {
+        pb->crop = *crop_or_null;
+    }
+    else {
+        pb->crop = DP_RECT_INVALID;
+    }
+
+    int result = 0;
+
+    if (have_crop) {
+        if (pb->resizes.capacity == 0) {
+            DP_VECTOR_INIT_TYPE(&pb->resizes, DP_ProjectPlaybackResize, 8);
+        }
+        project_playback_resize_push(pb, 0LL, 0LL, 0, 0, 0, 0);
+
+        struct DP_ProjectPlaybackMeasureFilterResizeContext mfrc;
+        playback_context_init(
+            &mfrc.c, pb->prj, dc,
+            project_playback_measure_canvas_state_from_snapshot,
+            project_playback_measure_filter_resize, &mfrc);
+        mfrc.pb = pb;
+        mfrc.ch = mfrc.c.ch;
+        mfrc.last_session_id = 0LL;
+        mfrc.extra_offset_x = 0;
+        mfrc.extra_offset_y = 0;
+
+        result = project_playback_play(&mfrc.c);
+        playback_context_dispose(&mfrc.c);
+    }
+
+    if (result == 0) {
+        struct DP_ProjectPlaybackMeasureFilterTimeContext mftc;
+        playback_context_init(
+            &mftc.c, pb->prj, dc,
+            project_playback_measure_canvas_state_from_snapshot,
+            project_playback_measure_filter_time, &mftc);
+        mftc.pb = pb;
+        mftc.ch = mftc.c.ch;
+        mftc.last_recorded_at = 0.0;
+        playback_crop_init(&mftc.pbc, pb);
+
+        result = project_playback_play(&mftc.c);
+        playback_context_dispose(&mftc.c);
+    }
+
+    if (result == 0
+        && (!isfinite(pb->total_playback_seconds)
+            || pb->total_playback_seconds <= 0.0)) {
+        DP_error_set("Nothing to play back");
+        result = DP_PROJECT_PLAYBACK_ERROR_EMPTY;
+    }
+
+    if (result == 0) {
+        DP_debug("Measured playback time of %f seconds with %zu resizes",
+                 pb->total_playback_seconds, pb->resizes.used);
+    }
+    else {
+        pb->max_delta_seconds = 0.0;
+        pb->total_playback_seconds = 0.0;
+    }
+
+    return result;
+}
+
+int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
+                             double framerate, double target_seconds,
+                             DP_ProjectPlaybackCallbackFn callback, void *user)
+{
+    if (!pb) {
+        DP_error_set("No playback given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!dc) {
+        DP_error_set("No draw context given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!isfinite(framerate) || framerate <= 0.0) {
+        DP_error_set("Invalid framerate");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!isfinite(target_seconds) || target_seconds <= 0.0) {
+        DP_error_set("Invalid target time");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!callback) {
+        DP_error_set("No callback given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (pb->max_delta_seconds <= 0.0 || pb->total_playback_seconds <= 0.0) {
+        DP_error_set("No measurement taken");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    struct DP_ProjectPlaybackPlayFilterContext pfc;
+    playback_context_init(&pfc.c, pb->prj, dc, DP_project_canvas_from_snapshot,
+                          project_playback_play_filter, &pfc);
+    pfc.pb = pb;
+    pfc.seconds_to_frames = framerate * target_seconds;
+    pfc.max_delta_seconds = pb->max_delta_seconds;
+    pfc.total_playback_seconds = pb->total_playback_seconds;
+    pfc.current_frame = 0;
+    playback_crop_init(&pfc.pbc, pb);
+    pfc.callback = callback;
+    pfc.user = user;
+
+    int result = project_playback_play(&pfc.c);
+    playback_context_dispose(&pfc.c);
+    return result;
+}
+
+const DP_Rect *DP_project_playback_crop_or_null(DP_ProjectPlayback *pb)
+{
+    if (pb && pb->resizes.used != 0) {
+        return &pb->crop;
+    }
+    else {
+        return NULL;
+    }
 }

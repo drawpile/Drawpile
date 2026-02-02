@@ -111,6 +111,10 @@ typedef struct DP_AffectedIndirectAreas {
 DP_AffectedArea DP_affected_area_make(DP_Message *msg,
                                       DP_AffectedIndirectAreas *aia_or_null);
 
+// Whether the message type is in the pixel domain. If not, e.g. timelapses
+// don't need to bother deserializing the message.
+bool DP_affected_area_pixel_domain_type(int type);
+
 bool DP_affected_area_concurrent_with(const DP_AffectedArea *aa,
                                       const DP_AffectedArea *other);
 

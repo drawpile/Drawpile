@@ -138,6 +138,9 @@ extern "C" {
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 #	include "desktop/dialogs/projectinfodialog.h"
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+#	include "desktop/dialogs/timelapsedialog.h"
+#endif
 #ifdef Q_OS_WIN
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -347,7 +350,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #endif
 	connect(
 		m_doc, &Document::projectPathChanged, this,
-		&MainWindow::updateProjectOverviewAction);
+		&MainWindow::updateProjectActions);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
 	// clang-format on
@@ -665,7 +668,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 			? int(tools::BrushSettings::NormalMode)
 			: brushMode);
 
-	updateProjectOverviewAction();
+	updateProjectActions();
 
 	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
@@ -1692,11 +1695,13 @@ void MainWindow::toggleProjectRecording(bool enabled)
 void MainWindow::onProjectRecordingStarted()
 {
 	getAction("autorecord")->setChecked(true);
+	updateProjectActions();
 }
 
 void MainWindow::onProjectRecordingStopped(bool notify)
 {
 	getAction("autorecord")->setChecked(false);
+	updateProjectActions();
 	if(notify) {
 		m_canvasView->showPopupNotice(tr("Autosave deactivated"));
 	}
@@ -1721,12 +1726,18 @@ void MainWindow::showProjectRecordingError(const QString &message)
 	}
 }
 
-void MainWindow::updateProjectOverviewAction()
+void MainWindow::updateProjectActions()
 {
 #ifdef DRAWPILE_PROJECT_DIALOG
 	getAction(QStringLiteral("projectoverview"))
 		->setEnabled(
 			!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty());
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	getAction(QStringLiteral("maketimelapse"))
+		->setEnabled(
+			!m_doc->isSaveInProgress() &&
+			(!m_doc->projectPath().isEmpty() || m_doc->isProjectRecording()));
 #endif
 }
 
@@ -1745,6 +1756,105 @@ void MainWindow::showProjectOverview()
 		dlg->openProject(m_doc->projectPath());
 		utils::showWindow(dlg);
 	}
+}
+#endif
+
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+void MainWindow::requestTimelapseDialog()
+{
+	if(showTimelapseDialog(true, false)) {
+		// Timelapse dialog is already open, don't do anything.
+
+	} else if(m_doc->projectPath().isEmpty()) {
+		QMessageBox *box = utils::makeQuestion(
+			this, tr("Timelapse"),
+			tr("To make a timelapse, you have to save a project file (.dppr) "
+			   "first. Do you want to do so now?"));
+		connect(
+			box, &QMessageBox::accepted, this,
+			&MainWindow::saveAsProjectBeforeTimelapseDialog);
+		box->show();
+
+	} else if(m_doc->isProjectDirty()) {
+		QMessageBox *box = utils::makeQuestion(
+			this, tr("Timelapse"),
+			tr("There are changes not saved to a project file (.dppr) yet. Do "
+			   "you want to save them now so they show up in the timelapse?"));
+		connect(box, &QMessageBox::accepted, this, [this] {
+			if(m_doc->currentType() == DP_SAVE_IMAGE_PROJECT &&
+			   m_doc->currentPath() == m_doc->projectPath()) {
+				save();
+				showTimelapseDialog(true, true);
+			} else {
+				saveAsProjectBeforeTimelapseDialog();
+			}
+		});
+		connect(
+			box, &QMessageBox::rejected, this,
+			std::bind(&MainWindow::showTimelapseDialog, this, true, true));
+		box->show();
+
+	} else {
+		showTimelapseDialog(false, true);
+	}
+}
+
+void MainWindow::saveAsProjectBeforeTimelapseDialog()
+{
+	if(saveAsType(int(DP_SAVE_IMAGE_PROJECT), true)) {
+		if(m_doc->currentType() == DP_SAVE_IMAGE_PROJECT &&
+		   m_doc->currentPath() == m_doc->projectPath()) {
+			showTimelapseDialog(true, true);
+		} else {
+			utils::showWarning(
+				this, tr("Timelapse"),
+				tr("Unexpected save format. To make a timelapse, you have to "
+				   "save to a project file (.dppr)."));
+		}
+	}
+}
+
+bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
+{
+	QString objectName = QStringLiteral("timelapsedialog");
+	if(checkExisting) {
+		dialogs::TimelapseDialog *dlg = findChild<dialogs::TimelapseDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+		if(dlg) {
+			dlg->activateWindow();
+			dlg->raise();
+			return true;
+		}
+	}
+
+	if(openNew) {
+		canvas::CanvasModel *canvas = m_doc->canvas();
+		if(canvas) {
+			drawdance::CanvasState canvasState =
+				m_doc->canvas()->paintEngine()->viewCanvasState();
+
+			QRect crop;
+			if(const canvas::TransformModel *transform = canvas->transform();
+			   transform->isActive()) {
+				crop = transform->dstQuad().boundingRect().toAlignedRect();
+			} else if(canvas::SelectionModel *sel = canvas->selection();
+					  sel->isValid()) {
+				crop = sel->bounds();
+			}
+
+			dialogs::TimelapseDialog *dlg =
+				new dialogs ::TimelapseDialog(canvasState, crop, this);
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			dlg->setObjectName(objectName);
+			if(!m_doc->isSaveInProgress()) {
+				dlg->setInputPath(m_doc->projectPath());
+			}
+			utils::showWindow(dlg);
+			return true;
+		}
+	}
+
+	return false;
 }
 #endif
 
@@ -2575,17 +2685,17 @@ bool MainWindow::save()
 
 void MainWindow::saveAs()
 {
-	saveAsType(int(DP_SAVE_IMAGE_UNKNOWN));
+	saveAsType(int(DP_SAVE_IMAGE_UNKNOWN), false);
 }
 
 void MainWindow::saveAsDpcs()
 {
-	saveAsType(int(DP_SAVE_IMAGE_PROJECT_CANVAS));
+	saveAsType(int(DP_SAVE_IMAGE_PROJECT_CANVAS), true);
 }
 
 void MainWindow::saveAsOra()
 {
-	saveAsType(int(DP_SAVE_IMAGE_ORA));
+	saveAsType(int(DP_SAVE_IMAGE_ORA), true);
 }
 
 void MainWindow::saveSelection()
@@ -2598,8 +2708,8 @@ void MainWindow::saveSelection()
 
 void MainWindow::exportImage()
 {
-	QString result =
-		FileWrangler(this).saveImageAs(m_doc, true, DP_SAVE_IMAGE_UNKNOWN);
+	QString result = FileWrangler(this).saveImageAs(
+		m_doc, true, DP_SAVE_IMAGE_UNKNOWN, false);
 	if(!result.isEmpty()) {
 		addRecentFile(result);
 	}
@@ -2697,7 +2807,7 @@ void MainWindow::onCanvasSaveStarted()
 #endif
 	m_viewStatusBar->showMessage(tr("Saving..."));
 	m_canvasView->setSaveInProgress(true);
-	updateProjectOverviewAction();
+	updateProjectActions();
 }
 
 void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
@@ -2717,12 +2827,24 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 #	endif
 #endif
 	m_canvasView->setSaveInProgress(false);
-	updateProjectOverviewAction();
+	updateProjectActions();
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
 
-	if(!errorMessage.isEmpty()) {
+	bool haveError = !errorMessage.isEmpty();
+
+	dialogs::TimelapseDialog *dlg = findChild<dialogs::TimelapseDialog *>(
+		QStringLiteral("timelapsedialog"), Qt::FindDirectChildrenOnly);
+	if(dlg && !dlg->haveInputPath()) {
+		if(haveError) {
+			dlg->close();
+		} else {
+			dlg->setInputPath(m_doc->projectPath());
+		}
+	}
+
+	if(haveError) {
 		m_viewStatusBar->showMessage(tr("Image saving failed"), 1000);
 		showErrorMessageWithDetails(tr("Couldn't save image"), errorMessage);
 		m_reconnectAfterSave = false;
@@ -5786,6 +5908,10 @@ void MainWindow::setupActions()
 		makeAction("projectoverview", tr("Project statistics…"))
 			.noDefaultShortcut();
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	QAction *makeTimelapse =
+		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
+#endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
 	QAction *quit = makeAction("exitprogram", tr("&Quit"))
@@ -5870,6 +5996,11 @@ void MainWindow::setupActions()
 		projectOverview, &QAction::triggered, this,
 		&MainWindow::showProjectOverview);
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	connect(
+		makeTimelapse, &QAction::triggered, this,
+		&MainWindow::requestTimelapseDialog);
+#endif
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 
 #ifndef __EMSCRIPTEN__
@@ -5932,9 +6063,14 @@ void MainWindow::setupActions()
 	filemenu->addAction(record);
 #endif
 	filemenu->addAction(autoRecord);
-#ifdef DRAWPILE_PROJECT_DIALOG
+#if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
 	filemenu->addSeparator();
+#endif
+#ifdef DRAWPILE_PROJECT_DIALOG
 	filemenu->addAction(projectOverview);
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	filemenu->addAction(makeTimelapse);
 #endif
 	filemenu->addSeparator();
 	filemenu->addAction(start);
@@ -8644,12 +8780,15 @@ void MainWindow::updateDockTabs()
 }
 
 #ifndef __EMSCRIPTEN__
-void MainWindow::saveAsType(int saveImageType)
+bool MainWindow::saveAsType(int saveImageType, bool force)
 {
 	QString result = FileWrangler(this).saveImageAs(
-		m_doc, false, DP_SaveImageType(saveImageType));
-	if(!result.isEmpty()) {
+		m_doc, false, DP_SaveImageType(saveImageType), force);
+	if(result.isEmpty()) {
+		return false;
+	} else {
 		addRecentFile(result);
+		return true;
 	}
 }
 

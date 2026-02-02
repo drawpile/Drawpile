@@ -1057,6 +1057,74 @@ public:
 	virtual void setThreeFingerTap(int value) = 0;
 	static int defaultThreeFingerTap();
 
+	virtual QColor getTimelapseBackdropColor() const = 0;
+	virtual void setTimelapseBackdropColor(const QColor &value) = 0;
+	static QColor defaultTimelapseBackdropColor();
+
+	virtual int getTimelapseDurationSeconds() const = 0;
+	virtual void setTimelapseDurationSeconds(int value) = 0;
+	static int defaultTimelapseDurationSeconds();
+
+	virtual int getTimelapseExportFormat() const = 0;
+	virtual void setTimelapseExportFormat(int value) = 0;
+	static int defaultTimelapseExportFormat();
+
+	virtual QColor getTimelapseFlashColor() const = 0;
+	virtual void setTimelapseFlashColor(const QColor &value) = 0;
+	static QColor defaultTimelapseFlashColor();
+
+	virtual int getTimelapseFlashSeconds() const = 0;
+	virtual void setTimelapseFlashSeconds(int value) = 0;
+	static int defaultTimelapseFlashSeconds();
+
+	virtual double getTimelapseFramerate() const = 0;
+	virtual void setTimelapseFramerate(double value) = 0;
+	static double defaultTimelapseFramerate();
+
+	virtual int getTimelapseInterpolation() const = 0;
+	virtual void setTimelapseInterpolation(int value) = 0;
+	static int defaultTimelapseInterpolation();
+
+	virtual int getTimelapseLingerAfterSeconds() const = 0;
+	virtual void setTimelapseLingerAfterSeconds(int value) = 0;
+	static int defaultTimelapseLingerAfterSeconds();
+
+	virtual int getTimelapseLingerBeforeSeconds() const = 0;
+	virtual void setTimelapseLingerBeforeSeconds(int value) = 0;
+	static int defaultTimelapseLingerBeforeSeconds();
+
+	virtual int getTimelapseLogoLocation() const = 0;
+	virtual void setTimelapseLogoLocation(int value) = 0;
+	static int defaultTimelapseLogoLocation();
+
+	virtual double getTimelapseLogoOffset() const = 0;
+	virtual void setTimelapseLogoOffset(double value) = 0;
+	static double defaultTimelapseLogoOffset();
+
+	virtual int getTimelapseLogoOpacity() const = 0;
+	virtual void setTimelapseLogoOpacity(int value) = 0;
+	static int defaultTimelapseLogoOpacity();
+
+	virtual double getTimelapseLogoScale() const = 0;
+	virtual void setTimelapseLogoScale(double value) = 0;
+	static double defaultTimelapseLogoScale();
+
+	virtual double getTimelapseMaxDeltaSeconds() const = 0;
+	virtual void setTimelapseMaxDeltaSeconds(double value) = 0;
+	static double defaultTimelapseMaxDeltaSeconds();
+
+	virtual int getTimelapseMaxQueueEntries() const = 0;
+	virtual void setTimelapseMaxQueueEntries(int value) = 0;
+	static int defaultTimelapseMaxQueueEntries();
+
+	virtual bool getTimelapseShowAdvanced() const = 0;
+	virtual void setTimelapseShowAdvanced(bool value) = 0;
+	static bool defaultTimelapseShowAdvanced();
+
+	virtual bool getTimelapseTimeOwnOnly() const = 0;
+	virtual void setTimelapseTimeOwnOnly(bool value) = 0;
+	static bool defaultTimelapseTimeOwnOnly();
+
 	virtual QVariantHash getToolBarConfig() const = 0;
 	virtual void setToolBarConfig(const QVariantHash &value) = 0;
 	static QVariantHash defaultToolBarConfig();
@@ -1359,6 +1427,23 @@ Q_SIGNALS:
 	void changeThemePalette(const QString &value);
 	void changeThemeStyle(const QString &value);
 	void changeThreeFingerTap(int value);
+	void changeTimelapseBackdropColor(const QColor &value);
+	void changeTimelapseDurationSeconds(int value);
+	void changeTimelapseExportFormat(int value);
+	void changeTimelapseFlashColor(const QColor &value);
+	void changeTimelapseFlashSeconds(int value);
+	void changeTimelapseFramerate(double value);
+	void changeTimelapseInterpolation(int value);
+	void changeTimelapseLingerAfterSeconds(int value);
+	void changeTimelapseLingerBeforeSeconds(int value);
+	void changeTimelapseLogoLocation(int value);
+	void changeTimelapseLogoOffset(double value);
+	void changeTimelapseLogoOpacity(int value);
+	void changeTimelapseLogoScale(double value);
+	void changeTimelapseMaxDeltaSeconds(double value);
+	void changeTimelapseMaxQueueEntries(int value);
+	void changeTimelapseShowAdvanced(bool value);
+	void changeTimelapseTimeOwnOnly(bool value);
 	void changeToolBarConfig(const QVariantHash &value);
 	void changeToolToggle(bool value);
 	void changeToolset(const QMap<QString, QVariantHash> &value);

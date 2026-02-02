@@ -89,6 +89,10 @@ void DP_local_state_track_states_apply(
     DP_LocalState *ls, DP_Timeline *tl,
     DP_TransientTimeline *(*get_transient_timeline_fn)(void *), void *user);
 
+DP_CanvasState *DP_local_state_apply_nodec(DP_LocalState *ls,
+                                           DP_CanvasState *cs_or_null,
+                                           DP_DrawContext *dc);
+
 DP_CanvasState *DP_local_state_apply_dec(DP_LocalState *ls,
                                          DP_CanvasState *cs_or_null,
                                          DP_DrawContext *dc);

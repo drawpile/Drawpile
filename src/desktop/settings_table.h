@@ -594,6 +594,62 @@ SETTING(
 	threeFingerTap, ThreeFingerTap, "settings/input/threefingertap",
 	config::Config::defaultThreeFingerTap())
 SETTING(
+	timelapseBackdropColor, TimelapseBackdropColor, "timelapse/backdropcolor",
+	config::Config::defaultTimelapseBackdropColor())
+SETTING(
+	timelapseDurationSeconds, TimelapseDurationSeconds,
+	"timelapse/durationseconds",
+	config::Config::defaultTimelapseDurationSeconds())
+SETTING(
+	timelapseExportFormat, TimelapseExportFormat, "timelapse/exportformat",
+	config::Config::defaultTimelapseExportFormat())
+SETTING(
+	timelapseFlashColor, TimelapseFlashColor, "timelapse/flashcolor",
+	config::Config::defaultTimelapseFlashColor())
+SETTING(
+	timelapseFlashSeconds, TimelapseFlashSeconds, "timelapse/flashseconds",
+	config::Config::defaultTimelapseFlashSeconds())
+SETTING(
+	timelapseFramerate, TimelapseFramerate, "timelapse/framerate",
+	config::Config::defaultTimelapseFramerate())
+SETTING(
+	timelapseInterpolation, TimelapseInterpolation, "timelapse/interpolation",
+	config::Config::defaultTimelapseInterpolation())
+SETTING(
+	timelapseLingerAfterSeconds, TimelapseLingerAfterSeconds,
+	"timelapse/lingerafterseconds",
+	config::Config::defaultTimelapseLingerAfterSeconds())
+SETTING(
+	timelapseLingerBeforeSeconds, TimelapseLingerBeforeSeconds,
+	"timelapse/lingerbeforeseconds",
+	config::Config::defaultTimelapseLingerBeforeSeconds())
+SETTING(
+	timelapseLogoLocation, TimelapseLogoLocation, "timelapse/logolocation",
+	config::Config::defaultTimelapseLogoLocation())
+SETTING(
+	timelapseLogoOffset, TimelapseLogoOffset, "timelapse/logooffset",
+	config::Config::defaultTimelapseLogoOffset())
+SETTING(
+	timelapseLogoOpacity, TimelapseLogoOpacity, "timelapse/logoopacity",
+	config::Config::defaultTimelapseLogoOpacity())
+SETTING(
+	timelapseLogoScale, TimelapseLogoScale, "timelapse/logoscale",
+	config::Config::defaultTimelapseLogoScale())
+SETTING(
+	timelapseMaxDeltaSeconds, TimelapseMaxDeltaSeconds,
+	"timelapse/maxdeltaseconds",
+	config::Config::defaultTimelapseMaxDeltaSeconds())
+SETTING(
+	timelapseMaxQueueEntries, TimelapseMaxQueueEntries,
+	"timelapse/maxqueueentries",
+	config::Config::defaultTimelapseMaxQueueEntries())
+SETTING(
+	timelapseShowAdvanced, TimelapseShowAdvanced, "timelapse/showadvanced",
+	config::Config::defaultTimelapseShowAdvanced())
+SETTING(
+	timelapseTimeOwnOnly, TimelapseTimeOwnOnly, "timelapse/timeownonly",
+	config::Config::defaultTimelapseTimeOwnOnly())
+SETTING(
 	toolBarConfig, ToolBarConfig, "settings/toolbarconfig",
 	config::Config::defaultToolBarConfig())
 SETTING(

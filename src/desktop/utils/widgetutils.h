@@ -144,6 +144,8 @@ public:
 		const QString &text, bool indent = false, const QIcon &icon = QIcon(),
 		bool link = false);
 
+	void setContentsVisible(bool contentsVisible);
+
 	QSize sizeHint() const override;
 	QSize minimumSizeHint() const override;
 
@@ -164,6 +166,7 @@ private:
 	int m_iconSize = 0;
 	int m_width = 1;
 	int m_height = 1;
+	bool m_contentsVisible = true;
 };
 
 void showWindow(

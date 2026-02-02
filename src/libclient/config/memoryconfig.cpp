@@ -2701,6 +2701,228 @@ void MemoryConfig::setThreeFingerTap(int value)
 	}
 }
 
+QColor MemoryConfig::getTimelapseBackdropColor() const
+{
+	return m_timelapseBackdropColor;
+}
+
+void MemoryConfig::setTimelapseBackdropColor(const QColor &value)
+{
+	if(value != m_timelapseBackdropColor) {
+		m_timelapseBackdropColor = value;
+		Q_EMIT changeTimelapseBackdropColor(m_timelapseBackdropColor);
+	}
+}
+
+int MemoryConfig::getTimelapseDurationSeconds() const
+{
+	return m_timelapseDurationSeconds;
+}
+
+void MemoryConfig::setTimelapseDurationSeconds(int value)
+{
+	if(value != m_timelapseDurationSeconds) {
+		m_timelapseDurationSeconds = value;
+		Q_EMIT changeTimelapseDurationSeconds(m_timelapseDurationSeconds);
+	}
+}
+
+int MemoryConfig::getTimelapseExportFormat() const
+{
+	return m_timelapseExportFormat;
+}
+
+void MemoryConfig::setTimelapseExportFormat(int value)
+{
+	if(value != m_timelapseExportFormat) {
+		m_timelapseExportFormat = value;
+		Q_EMIT changeTimelapseExportFormat(m_timelapseExportFormat);
+	}
+}
+
+QColor MemoryConfig::getTimelapseFlashColor() const
+{
+	return m_timelapseFlashColor;
+}
+
+void MemoryConfig::setTimelapseFlashColor(const QColor &value)
+{
+	if(value != m_timelapseFlashColor) {
+		m_timelapseFlashColor = value;
+		Q_EMIT changeTimelapseFlashColor(m_timelapseFlashColor);
+	}
+}
+
+int MemoryConfig::getTimelapseFlashSeconds() const
+{
+	return m_timelapseFlashSeconds;
+}
+
+void MemoryConfig::setTimelapseFlashSeconds(int value)
+{
+	if(value != m_timelapseFlashSeconds) {
+		m_timelapseFlashSeconds = value;
+		Q_EMIT changeTimelapseFlashSeconds(m_timelapseFlashSeconds);
+	}
+}
+
+double MemoryConfig::getTimelapseFramerate() const
+{
+	return m_timelapseFramerate;
+}
+
+void MemoryConfig::setTimelapseFramerate(double value)
+{
+	if(value != m_timelapseFramerate) {
+		m_timelapseFramerate = value;
+		Q_EMIT changeTimelapseFramerate(m_timelapseFramerate);
+	}
+}
+
+int MemoryConfig::getTimelapseInterpolation() const
+{
+	return m_timelapseInterpolation;
+}
+
+void MemoryConfig::setTimelapseInterpolation(int value)
+{
+	if(value != m_timelapseInterpolation) {
+		m_timelapseInterpolation = value;
+		Q_EMIT changeTimelapseInterpolation(m_timelapseInterpolation);
+	}
+}
+
+int MemoryConfig::getTimelapseLingerAfterSeconds() const
+{
+	return m_timelapseLingerAfterSeconds;
+}
+
+void MemoryConfig::setTimelapseLingerAfterSeconds(int value)
+{
+	if(value != m_timelapseLingerAfterSeconds) {
+		m_timelapseLingerAfterSeconds = value;
+		Q_EMIT changeTimelapseLingerAfterSeconds(m_timelapseLingerAfterSeconds);
+	}
+}
+
+int MemoryConfig::getTimelapseLingerBeforeSeconds() const
+{
+	return m_timelapseLingerBeforeSeconds;
+}
+
+void MemoryConfig::setTimelapseLingerBeforeSeconds(int value)
+{
+	if(value != m_timelapseLingerBeforeSeconds) {
+		m_timelapseLingerBeforeSeconds = value;
+		Q_EMIT changeTimelapseLingerBeforeSeconds(
+			m_timelapseLingerBeforeSeconds);
+	}
+}
+
+int MemoryConfig::getTimelapseLogoLocation() const
+{
+	return m_timelapseLogoLocation;
+}
+
+void MemoryConfig::setTimelapseLogoLocation(int value)
+{
+	if(value != m_timelapseLogoLocation) {
+		m_timelapseLogoLocation = value;
+		Q_EMIT changeTimelapseLogoLocation(m_timelapseLogoLocation);
+	}
+}
+
+double MemoryConfig::getTimelapseLogoOffset() const
+{
+	return m_timelapseLogoOffset;
+}
+
+void MemoryConfig::setTimelapseLogoOffset(double value)
+{
+	if(value != m_timelapseLogoOffset) {
+		m_timelapseLogoOffset = value;
+		Q_EMIT changeTimelapseLogoOffset(m_timelapseLogoOffset);
+	}
+}
+
+int MemoryConfig::getTimelapseLogoOpacity() const
+{
+	return m_timelapseLogoOpacity;
+}
+
+void MemoryConfig::setTimelapseLogoOpacity(int value)
+{
+	if(value != m_timelapseLogoOpacity) {
+		m_timelapseLogoOpacity = value;
+		Q_EMIT changeTimelapseLogoOpacity(m_timelapseLogoOpacity);
+	}
+}
+
+double MemoryConfig::getTimelapseLogoScale() const
+{
+	return m_timelapseLogoScale;
+}
+
+void MemoryConfig::setTimelapseLogoScale(double value)
+{
+	if(value != m_timelapseLogoScale) {
+		m_timelapseLogoScale = value;
+		Q_EMIT changeTimelapseLogoScale(m_timelapseLogoScale);
+	}
+}
+
+double MemoryConfig::getTimelapseMaxDeltaSeconds() const
+{
+	return m_timelapseMaxDeltaSeconds;
+}
+
+void MemoryConfig::setTimelapseMaxDeltaSeconds(double value)
+{
+	if(value != m_timelapseMaxDeltaSeconds) {
+		m_timelapseMaxDeltaSeconds = value;
+		Q_EMIT changeTimelapseMaxDeltaSeconds(m_timelapseMaxDeltaSeconds);
+	}
+}
+
+int MemoryConfig::getTimelapseMaxQueueEntries() const
+{
+	return m_timelapseMaxQueueEntries;
+}
+
+void MemoryConfig::setTimelapseMaxQueueEntries(int value)
+{
+	if(value != m_timelapseMaxQueueEntries) {
+		m_timelapseMaxQueueEntries = value;
+		Q_EMIT changeTimelapseMaxQueueEntries(m_timelapseMaxQueueEntries);
+	}
+}
+
+bool MemoryConfig::getTimelapseShowAdvanced() const
+{
+	return m_timelapseShowAdvanced;
+}
+
+void MemoryConfig::setTimelapseShowAdvanced(bool value)
+{
+	if(value != m_timelapseShowAdvanced) {
+		m_timelapseShowAdvanced = value;
+		Q_EMIT changeTimelapseShowAdvanced(m_timelapseShowAdvanced);
+	}
+}
+
+bool MemoryConfig::getTimelapseTimeOwnOnly() const
+{
+	return m_timelapseTimeOwnOnly;
+}
+
+void MemoryConfig::setTimelapseTimeOwnOnly(bool value)
+{
+	if(value != m_timelapseTimeOwnOnly) {
+		m_timelapseTimeOwnOnly = value;
+		Q_EMIT changeTimelapseTimeOwnOnly(m_timelapseTimeOwnOnly);
+	}
+}
+
 QVariantHash MemoryConfig::getToolBarConfig() const
 {
 	return m_toolBarConfig;

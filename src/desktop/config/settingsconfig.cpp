@@ -715,6 +715,72 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::threeFingerTapChanged, this,
 		&SettingsConfig::changeThreeFingerTap, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::timelapseBackdropColorChanged,
+		this, &SettingsConfig::changeTimelapseBackdropColor,
+		Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseDurationSecondsChanged, this,
+		&SettingsConfig::changeTimelapseDurationSeconds, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseExportFormatChanged,
+		this, &SettingsConfig::changeTimelapseExportFormat,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseFlashColorChanged,
+		this, &SettingsConfig::changeTimelapseFlashColor, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseFlashSecondsChanged,
+		this, &SettingsConfig::changeTimelapseFlashSeconds,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseFramerateChanged,
+		this, &SettingsConfig::changeTimelapseFramerate, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseInterpolationChanged,
+		this, &SettingsConfig::changeTimelapseInterpolation,
+		Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseLingerAfterSecondsChanged, this,
+		&SettingsConfig::changeTimelapseLingerAfterSeconds,
+		Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseLingerBeforeSecondsChanged, this,
+		&SettingsConfig::changeTimelapseLingerBeforeSeconds,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseLogoLocationChanged,
+		this, &SettingsConfig::changeTimelapseLogoLocation,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseLogoOffsetChanged,
+		this, &SettingsConfig::changeTimelapseLogoOffset, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseLogoOpacityChanged,
+		this, &SettingsConfig::changeTimelapseLogoOpacity,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseLogoScaleChanged,
+		this, &SettingsConfig::changeTimelapseLogoScale, Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseMaxDeltaSecondsChanged, this,
+		&SettingsConfig::changeTimelapseMaxDeltaSeconds, Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseMaxQueueEntriesChanged, this,
+		&SettingsConfig::changeTimelapseMaxQueueEntries, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseShowAdvancedChanged,
+		this, &SettingsConfig::changeTimelapseShowAdvanced,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseTimeOwnOnlyChanged,
+		this, &SettingsConfig::changeTimelapseTimeOwnOnly,
+		Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::toolBarConfigChanged, this,
 		&SettingsConfig::changeToolBarConfig, Qt::DirectConnection);
 	connect(
@@ -2858,6 +2924,176 @@ int SettingsConfig::getThreeFingerTap() const
 void SettingsConfig::setThreeFingerTap(int value)
 {
 	m_settings->setThreeFingerTap(value);
+}
+
+QColor SettingsConfig::getTimelapseBackdropColor() const
+{
+	return m_settings->timelapseBackdropColor();
+}
+
+void SettingsConfig::setTimelapseBackdropColor(const QColor &value)
+{
+	m_settings->setTimelapseBackdropColor(value);
+}
+
+int SettingsConfig::getTimelapseDurationSeconds() const
+{
+	return m_settings->timelapseDurationSeconds();
+}
+
+void SettingsConfig::setTimelapseDurationSeconds(int value)
+{
+	m_settings->setTimelapseDurationSeconds(value);
+}
+
+int SettingsConfig::getTimelapseExportFormat() const
+{
+	return m_settings->timelapseExportFormat();
+}
+
+void SettingsConfig::setTimelapseExportFormat(int value)
+{
+	m_settings->setTimelapseExportFormat(value);
+}
+
+QColor SettingsConfig::getTimelapseFlashColor() const
+{
+	return m_settings->timelapseFlashColor();
+}
+
+void SettingsConfig::setTimelapseFlashColor(const QColor &value)
+{
+	m_settings->setTimelapseFlashColor(value);
+}
+
+int SettingsConfig::getTimelapseFlashSeconds() const
+{
+	return m_settings->timelapseFlashSeconds();
+}
+
+void SettingsConfig::setTimelapseFlashSeconds(int value)
+{
+	m_settings->setTimelapseFlashSeconds(value);
+}
+
+double SettingsConfig::getTimelapseFramerate() const
+{
+	return m_settings->timelapseFramerate();
+}
+
+void SettingsConfig::setTimelapseFramerate(double value)
+{
+	m_settings->setTimelapseFramerate(value);
+}
+
+int SettingsConfig::getTimelapseInterpolation() const
+{
+	return m_settings->timelapseInterpolation();
+}
+
+void SettingsConfig::setTimelapseInterpolation(int value)
+{
+	m_settings->setTimelapseInterpolation(value);
+}
+
+int SettingsConfig::getTimelapseLingerAfterSeconds() const
+{
+	return m_settings->timelapseLingerAfterSeconds();
+}
+
+void SettingsConfig::setTimelapseLingerAfterSeconds(int value)
+{
+	m_settings->setTimelapseLingerAfterSeconds(value);
+}
+
+int SettingsConfig::getTimelapseLingerBeforeSeconds() const
+{
+	return m_settings->timelapseLingerBeforeSeconds();
+}
+
+void SettingsConfig::setTimelapseLingerBeforeSeconds(int value)
+{
+	m_settings->setTimelapseLingerBeforeSeconds(value);
+}
+
+int SettingsConfig::getTimelapseLogoLocation() const
+{
+	return m_settings->timelapseLogoLocation();
+}
+
+void SettingsConfig::setTimelapseLogoLocation(int value)
+{
+	m_settings->setTimelapseLogoLocation(value);
+}
+
+double SettingsConfig::getTimelapseLogoOffset() const
+{
+	return m_settings->timelapseLogoOffset();
+}
+
+void SettingsConfig::setTimelapseLogoOffset(double value)
+{
+	m_settings->setTimelapseLogoOffset(value);
+}
+
+int SettingsConfig::getTimelapseLogoOpacity() const
+{
+	return m_settings->timelapseLogoOpacity();
+}
+
+void SettingsConfig::setTimelapseLogoOpacity(int value)
+{
+	m_settings->setTimelapseLogoOpacity(value);
+}
+
+double SettingsConfig::getTimelapseLogoScale() const
+{
+	return m_settings->timelapseLogoScale();
+}
+
+void SettingsConfig::setTimelapseLogoScale(double value)
+{
+	m_settings->setTimelapseLogoScale(value);
+}
+
+double SettingsConfig::getTimelapseMaxDeltaSeconds() const
+{
+	return m_settings->timelapseMaxDeltaSeconds();
+}
+
+void SettingsConfig::setTimelapseMaxDeltaSeconds(double value)
+{
+	m_settings->setTimelapseMaxDeltaSeconds(value);
+}
+
+int SettingsConfig::getTimelapseMaxQueueEntries() const
+{
+	return m_settings->timelapseMaxQueueEntries();
+}
+
+void SettingsConfig::setTimelapseMaxQueueEntries(int value)
+{
+	m_settings->setTimelapseMaxQueueEntries(value);
+}
+
+bool SettingsConfig::getTimelapseShowAdvanced() const
+{
+	return m_settings->timelapseShowAdvanced();
+}
+
+void SettingsConfig::setTimelapseShowAdvanced(bool value)
+{
+	m_settings->setTimelapseShowAdvanced(value);
+}
+
+bool SettingsConfig::getTimelapseTimeOwnOnly() const
+{
+	return m_settings->timelapseTimeOwnOnly();
+}
+
+void SettingsConfig::setTimelapseTimeOwnOnly(bool value)
+{
+	m_settings->setTimelapseTimeOwnOnly(value);
 }
 
 QVariantHash SettingsConfig::getToolBarConfig() const

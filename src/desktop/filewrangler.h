@@ -102,7 +102,8 @@ public:
 
 	QString saveImage(Document *doc, bool exported) const;
 	QString saveImageAs(
-		Document *doc, bool exported, DP_SaveImageType requestedType) const;
+		Document *doc, bool exported, DP_SaveImageType requestedType,
+		bool forceRequestedType) const;
 	QString savePreResetImageAs(
 		Document *doc, const drawdance::CanvasState &canvasState) const;
 	QString saveSelectionAs(Document *doc) const;

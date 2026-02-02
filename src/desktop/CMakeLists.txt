@@ -747,7 +747,10 @@ endif()
 add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidgets" "")
 
 if(NOT EMSCRIPTEN)
-	target_compile_definitions(drawpile PRIVATE DRAWPILE_PROJECT_DIALOG=1)
+	target_compile_definitions(drawpile PRIVATE
+		DRAWPILE_PROJECT_DIALOG=1
+		DRAWPILE_TIMELAPSE_DIALOG=1
+	)
 	target_sources(drawpile PRIVATE
 		dialogs/projectdialog.cpp
 		dialogs/projectdialog.h
@@ -755,6 +758,10 @@ if(NOT EMSCRIPTEN)
 		dialogs/startdialog/recent.h
 		dialogs/startdialog/updatenotice.cpp
 		dialogs/startdialog/updatenotice.h
+		dialogs/timelapsedialog.cpp
+		dialogs/timelapsedialog.h
+		widgets/timelapsepreview.cpp
+		widgets/timelapsepreview.h
 	)
 	dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
 endif()
@@ -1173,6 +1180,7 @@ add_resources(drawpile
 		rust.colors
 		watermelon.colors
 		initialbrushpresets.db
+		logo1.png
 	DIRS brushes gamutmasks palettes sounds theme
 	BUILD_TIME_DESTINATION "${build_time_assets_dir}"
 )

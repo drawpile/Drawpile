@@ -25,11 +25,8 @@
 #include "common.h"
 #include <math.h>
 
-#define DP_RECT_INVALID                    \
-    (DP_Rect)                              \
-    {                                      \
-        INT_MAX, INT_MAX, INT_MIN, INT_MIN \
-    }
+#define DP_RECT_INVALID_INIT {INT_MAX, INT_MAX, INT_MIN, INT_MIN}
+#define DP_RECT_INVALID      (DP_Rect) DP_RECT_INVALID_INIT
 
 
 typedef struct DP_Quad {
@@ -93,6 +90,12 @@ DP_INLINE DP_Quad DP_quad_translate(DP_Quad quad, int dx, int dy)
 }
 
 
+DP_INLINE DP_Rect DP_rect_make_invalid(void)
+{
+    DP_Rect rect = DP_RECT_INVALID_INIT;
+    return rect;
+}
+
 DP_INLINE DP_Rect DP_rect_make(int x, int y, int width, int height)
 {
     DP_ASSERT(width >= 0);
@@ -104,8 +107,7 @@ DP_INLINE DP_Rect DP_rect_make(int x, int y, int width, int height)
         return rect;
     }
     else {
-        DP_Rect invalid_rect = {0, 0, -1, -1};
-        return invalid_rect;
+        return DP_rect_make_invalid();
     }
 }
 

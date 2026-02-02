@@ -403,9 +403,14 @@ private:
 	void onProjectRecordingStarted();
 	void onProjectRecordingStopped(bool notify);
 	void showProjectRecordingError(const QString &message);
-	void updateProjectOverviewAction();
+	void updateProjectActions();
 #ifdef DRAWPILE_PROJECT_DIALOG
 	void showProjectOverview();
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	void requestTimelapseDialog();
+	void saveAsProjectBeforeTimelapseDialog();
+	bool showTimelapseDialog(bool checkExisting, bool openNew);
 #endif
 
 	void showSelectionMaskColorPicker();
@@ -466,7 +471,7 @@ private:
 	void updateDockTabs();
 
 #ifndef __EMSCRIPTEN__
-	void saveAsType(int saveImageType);
+	bool saveAsType(int saveImageType, bool force);
 	void setPreferredSaveFormat(const QString &format);
 #endif
 

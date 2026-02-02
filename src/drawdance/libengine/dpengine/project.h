@@ -6,9 +6,10 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct DP_LocalStateAction DP_LocalStateAction;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
-typedef struct DP_LocalStateAction DP_LocalStateAction;
+typedef struct DP_Rect DP_Rect;
 
 
 #define DP_PROJECT_APPLICATION_ID 520585024
@@ -106,6 +107,7 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_CANVAS_LOAD_WARN_PREPARE_ERROR         (-1303)
 #define DP_PROJECT_CANVAS_LOAD_WARN_HISTORY_ERROR         (-1304)
 #define DP_PROJECT_CANVAS_LOAD_WARN_QUERY_ERROR           (-1305)
+#define DP_PROJECT_CANVAS_LOAD_WARN_PLAYBACK_ERROR        (-1306)
 
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_UNKNOWN  (-1400)
 #define DP_PROJECT_SESSION_TIMES_UPDATE_ERROR_MISUSE   (-1401)
@@ -134,6 +136,12 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_INFO_ERROR_PREPARE   (-1602)
 #define DP_PROJECT_INFO_ERROR_QUERY     (-1603)
 #define DP_PROJECT_INFO_ERROR_CANCELLED (-1604)
+
+#define DP_PROJECT_PLAYBACK_ERROR_UNKNOWN (-1600)
+#define DP_PROJECT_PLAYBACK_ERROR_MISUSE  (-1601)
+#define DP_PROJECT_PLAYBACK_ERROR_PREPARE (-1602)
+#define DP_PROJECT_PLAYBACK_ERROR_QUERY   (-1603)
+#define DP_PROJECT_PLAYBACK_ERROR_EMPTY   (-1604)
 
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
@@ -169,8 +177,11 @@ typedef struct DP_LocalStateAction DP_LocalStateAction;
 #define DP_PROJECT_INFO_FLAG_OVERVIEW   (1u << 3u)
 #define DP_PROJECT_INFO_FLAG_WORK_TIMES (1u << 4u)
 
+#define DP_PROJECT_PLAYBACK_FLAG_MEASURE_OWN_ONLY (1u << 0u)
+
 
 typedef struct DP_Project DP_Project;
+typedef struct DP_ProjectPlayback DP_ProjectPlayback;
 
 typedef enum DP_ProjectCheckType {
     DP_PROJECT_CHECK_NONE,    // Not a project file.
@@ -280,6 +291,13 @@ typedef struct DP_ProjectInfo {
 // cancelled, false to keep going. If cancelling, you should call DP_error_set
 // as well to avoid getting hit with some stale error message down the line.
 typedef bool (*DP_ProjectCanvasLoadWarnFn)(void *user, int warn);
+
+// Timelapse callback. Takes ownership of the canvas state, so it must decrement
+// its reference count. Must return true to let playback continue and false to
+// cancel and bail out of the process.
+typedef bool (*DP_ProjectPlaybackCallbackFn)(void *user, int current_frame,
+                                             DP_CanvasState *cs,
+                                             const DP_Rect *crop_or_null);
 
 
 // Check whether the given buffer looks like the header of project file. The
@@ -434,6 +452,22 @@ int DP_project_info(DP_Project *prj, unsigned int flags,
                     void *user);
 
 bool DP_project_dump(DP_Project *prj, DP_Output *output);
+
+
+DP_ProjectPlayback *DP_project_playback_new(DP_Project *prj);
+
+void DP_project_playback_free(DP_ProjectPlayback *pb);
+
+int DP_project_playback_measure(DP_ProjectPlayback *pb, DP_DrawContext *dc,
+                                double max_delta_seconds,
+                                const DP_Rect *crop_or_null,
+                                unsigned int flags);
+
+int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
+                             double framerate, double target_seconds,
+                             DP_ProjectPlaybackCallbackFn callback, void *user);
+
+const DP_Rect *DP_project_playback_crop_or_null(DP_ProjectPlayback *pb);
 
 
 #endif

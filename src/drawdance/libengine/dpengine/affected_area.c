@@ -529,6 +529,29 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     }
 }
 
+bool DP_affected_area_pixel_domain_type(int type)
+{
+    switch (type) {
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_PUT_IMAGE_ZSTD:
+    case DP_MSG_PUT_TILE:
+    case DP_MSG_PUT_TILE_ZSTD:
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+    case DP_MSG_FILL_RECT:
+    case DP_MSG_MOVE_RECT:
+    case DP_MSG_MOVE_RECT_ZSTD:
+    case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool domains_conflict(DP_AffectedDomain a, DP_AffectedDomain b)
 {
     // Affecting everything means being concurrent with nothing. The timeline

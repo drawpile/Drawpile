@@ -24,6 +24,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow toggling eraser, erase mode and alpha preserve via canvas shortcut. Thanks SOLARIS for suggesting.
  * Fix: Disable the annoyingly slow and sometimes even crashy animations when rearranging docks and toggling toolbar extensions. They now just occur instantly instead.
  * Feature: Allow viewing project statistics, such as length of sessions and work time, via File → Project statistics. Requires enabling autosave and saving to a dppr file.
+ * Feature: Timelapses, via File → Make timelapse. Requires enabling autosave and saving to a dppr file.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

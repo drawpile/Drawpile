@@ -569,8 +569,29 @@ bool DP_image_thumbnail_from_canvas_write(
 }
 
 #ifdef DP_LIBSWSCALE
+static bool scale_guess_needs_lanczos(int a, int b)
+{
+    DP_ASSERT(a != 0);
+    DP_ASSERT(b != 0);
+    if (a == b) {
+        return false;
+    }
+    else {
+        double ratio;
+        if (a < b) {
+            ratio = DP_int_to_double(b) / DP_int_to_double(a);
+        }
+        else {
+            ratio = DP_int_to_double(a) / DP_int_to_double(b);
+        }
+        return ratio > 2.0;
+    }
+}
+
 static int
-get_sws_flags_from_interpolation(DP_ImageScaleInterpolation interpolation)
+get_sws_flags_from_interpolation(DP_ImageScaleInterpolation interpolation,
+                                 int src_width, int src_height, int width,
+                                 int height)
 {
     switch (interpolation) {
     case DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR:
@@ -595,6 +616,14 @@ get_sws_flags_from_interpolation(DP_ImageScaleInterpolation interpolation)
         return SWS_LANCZOS;
     case DP_IMAGE_SCALE_INTERPOLATION_SPLINE:
         return SWS_SPLINE;
+    case DP_IMAGE_SCALE_INTERPOLATION_GUESS:
+        if (scale_guess_needs_lanczos(src_width, width)
+            || scale_guess_needs_lanczos(src_height, height)) {
+            return SWS_LANCZOS;
+        }
+        else {
+            return SWS_FAST_BILINEAR;
+        }
     default:
         DP_warn("Unknown interpolation %d", (int)interpolation);
         return SWS_BILINEAR;
@@ -613,7 +642,8 @@ DP_Image *DP_image_scale_pixels(int src_width, int src_height,
 #ifdef DP_LIBSWSCALE
             struct SwsContext *sws_context = DP_draw_context_sws_context(
                 dc, src_width, src_height, width, height,
-                get_sws_flags_from_interpolation(interpolation));
+                get_sws_flags_from_interpolation(interpolation, src_width,
+                                                 src_height, width, height));
             if (sws_context) {
                 const uint8_t *src_data = (const uint8_t *)src_pixels;
                 const int src_stride = src_width * 4;
@@ -660,6 +690,7 @@ DP_Image *DP_image_scale_pixels(int src_width, int src_height,
             switch (interpolation) {
             case DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR:
             case DP_IMAGE_SCALE_INTERPOLATION_BILINEAR:
+            case DP_IMAGE_SCALE_INTERPOLATION_GUESS:
                 interpolation = DP_MSG_TRANSFORM_REGION_MODE_BILINEAR;
                 break;
             case DP_IMAGE_SCALE_INTERPOLATION_NEAREST:
@@ -701,6 +732,32 @@ DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
     return DP_image_scale_pixels(DP_image_width(img), DP_image_height(img),
                                  DP_image_pixels(img), dc, width, height,
                                  interpolation);
+}
+
+bool DP_image_scale_interpolation_supported(int interpolation)
+{
+    switch (interpolation) {
+    case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
+    case DP_MSG_TRANSFORM_REGION_MODE_BILINEAR:
+    case DP_MSG_TRANSFORM_REGION_MODE_BINARY:
+    case DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR:
+    case DP_IMAGE_SCALE_INTERPOLATION_BILINEAR:
+    case DP_IMAGE_SCALE_INTERPOLATION_NEAREST:
+    case DP_IMAGE_SCALE_INTERPOLATION_GUESS:
+#ifdef DP_LIBSWSCALE
+    case DP_IMAGE_SCALE_INTERPOLATION_BICUBIC:
+    case DP_IMAGE_SCALE_INTERPOLATION_EXPERIMENTAL:
+    case DP_IMAGE_SCALE_INTERPOLATION_AREA:
+    case DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN:
+    case DP_IMAGE_SCALE_INTERPOLATION_GAUSS:
+    case DP_IMAGE_SCALE_INTERPOLATION_SINC:
+    case DP_IMAGE_SCALE_INTERPOLATION_LANCZOS:
+    case DP_IMAGE_SCALE_INTERPOLATION_SPLINE:
+#endif
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel)

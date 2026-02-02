@@ -1316,6 +1316,108 @@ settings:
     qsettings: 'settings/input/threefingertap'
     legacy_package: 'desktop'
 
+  - id: timelapseBackdropColor
+    type: 'QColor'
+    default: 'QColor(Qt::transparent)'
+    qsettings: 'timelapse/backdropcolor'
+    legacy_package: 'desktop'
+
+  - id: timelapseExportFormat
+    type: 'int'
+    default: '-1'
+    qsettings: 'timelapse/exportformat'
+    legacy_package: 'desktop'
+
+  - id: timelapseDurationSeconds
+    type: 'int'
+    default: '120'
+    qsettings: 'timelapse/durationseconds'
+    legacy_package: 'desktop'
+
+  - id: timelapseLingerAfterSeconds
+    type: 'int'
+    default: '3'
+    qsettings: 'timelapse/lingerafterseconds'
+    legacy_package: 'desktop'
+
+  - id: timelapseLingerBeforeSeconds
+    type: 'int'
+    default: '1'
+    qsettings: 'timelapse/lingerbeforeseconds'
+    legacy_package: 'desktop'
+
+  - id: timelapseLogoLocation
+    type: 'int'
+    default: '-1'
+    qsettings: 'timelapse/logolocation'
+    legacy_package: 'desktop'
+
+  - id: timelapseLogoOffset
+    type: 'double'
+    default: '0.05'
+    qsettings: 'timelapse/logooffset'
+    legacy_package: 'desktop'
+
+  - id: timelapseLogoOpacity
+    type: 'int'
+    default: '40'
+    qsettings: 'timelapse/logoopacity'
+    legacy_package: 'desktop'
+
+  - id: timelapseLogoScale
+    type: 'double'
+    default: '0.204'
+    qsettings: 'timelapse/logoscale'
+    legacy_package: 'desktop'
+
+  - id: timelapseFlashColor
+    type: 'QColor'
+    default: 'QColor(Qt::white)'
+    qsettings: 'timelapse/flashcolor'
+    legacy_package: 'desktop'
+
+  - id: timelapseFlashSeconds
+    type: 'int'
+    default: '1'
+    qsettings: 'timelapse/flashseconds'
+    legacy_package: 'desktop'
+
+  - id: timelapseFramerate
+    type: 'double'
+    default: '24.0'
+    qsettings: 'timelapse/framerate'
+    legacy_package: 'desktop'
+
+  - id: timelapseInterpolation
+    type: 'int'
+    default: 'int(DP_IMAGE_SCALE_INTERPOLATION_GUESS)'
+    qsettings: 'timelapse/interpolation'
+    legacy_package: 'desktop'
+
+  - id: timelapseMaxDeltaSeconds
+    type: 'double'
+    default: '0.1'
+    qsettings: 'timelapse/maxdeltaseconds'
+    legacy_package: 'desktop'
+
+  - id: timelapseMaxQueueEntries
+    type: 'int'
+    default: '8'
+    qsettings: 'timelapse/maxqueueentries'
+    legacy_package: 'desktop'
+
+  - id: timelapseShowAdvanced
+    type: 'bool'
+    default: 'false'
+    qsettings: 'timelapse/showadvanced'
+    legacy_package: 'desktop'
+
+  - id: timelapseTimeOwnOnly
+    type: 'bool'
+    default: 'false'
+    qsettings: 'timelapse/timeownonly'
+    legacy_package: 'desktop'
+
   - id: toolBarConfig
     type: 'QVariantHash'
     default: 'QVariantHash()'

@@ -650,6 +650,57 @@ public:
 	int getThreeFingerTap() const override;
 	void setThreeFingerTap(int value) override;
 
+	QColor getTimelapseBackdropColor() const override;
+	void setTimelapseBackdropColor(const QColor &value) override;
+
+	int getTimelapseDurationSeconds() const override;
+	void setTimelapseDurationSeconds(int value) override;
+
+	int getTimelapseExportFormat() const override;
+	void setTimelapseExportFormat(int value) override;
+
+	QColor getTimelapseFlashColor() const override;
+	void setTimelapseFlashColor(const QColor &value) override;
+
+	int getTimelapseFlashSeconds() const override;
+	void setTimelapseFlashSeconds(int value) override;
+
+	double getTimelapseFramerate() const override;
+	void setTimelapseFramerate(double value) override;
+
+	int getTimelapseInterpolation() const override;
+	void setTimelapseInterpolation(int value) override;
+
+	int getTimelapseLingerAfterSeconds() const override;
+	void setTimelapseLingerAfterSeconds(int value) override;
+
+	int getTimelapseLingerBeforeSeconds() const override;
+	void setTimelapseLingerBeforeSeconds(int value) override;
+
+	int getTimelapseLogoLocation() const override;
+	void setTimelapseLogoLocation(int value) override;
+
+	double getTimelapseLogoOffset() const override;
+	void setTimelapseLogoOffset(double value) override;
+
+	int getTimelapseLogoOpacity() const override;
+	void setTimelapseLogoOpacity(int value) override;
+
+	double getTimelapseLogoScale() const override;
+	void setTimelapseLogoScale(double value) override;
+
+	double getTimelapseMaxDeltaSeconds() const override;
+	void setTimelapseMaxDeltaSeconds(double value) override;
+
+	int getTimelapseMaxQueueEntries() const override;
+	void setTimelapseMaxQueueEntries(int value) override;
+
+	bool getTimelapseShowAdvanced() const override;
+	void setTimelapseShowAdvanced(bool value) override;
+
+	bool getTimelapseTimeOwnOnly() const override;
+	void setTimelapseTimeOwnOnly(bool value) override;
+
 	QVariantHash getToolBarConfig() const override;
 	void setToolBarConfig(const QVariantHash &value) override;
 

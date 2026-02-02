@@ -213,7 +213,7 @@ QString FileWrangler::saveImage(Document *doc, bool exported) const
 		lcDpFileWrangler, "saveImage exported=%d, path='%s', type=%d",
 		int(exported), qUtf8Printable(path), int(type));
 	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
-		return saveImageAs(doc, exported, DP_SAVE_IMAGE_UNKNOWN);
+		return saveImageAs(doc, exported, DP_SAVE_IMAGE_UNKNOWN, false);
 	} else if(exported || confirmFlatten(doc, path, type)) {
 		doc->saveCanvasAs(path, type, exported, true);
 		return path;
@@ -223,7 +223,8 @@ QString FileWrangler::saveImage(Document *doc, bool exported) const
 }
 
 QString FileWrangler::saveImageAs(
-	Document *doc, bool exported, DP_SaveImageType requestedType) const
+	Document *doc, bool exported, DP_SaveImageType requestedType,
+	bool forceRequestedType) const
 {
 	qCDebug(
 		lcDpFileWrangler, "saveImageAs exported=%d requestedFormat=%d",
@@ -245,6 +246,10 @@ QString FileWrangler::saveImageAs(
 		extension = preferredSaveExtensionFor(requestedType);
 	}
 	updateSelectedFilter(selectedFilter, filters, extension);
+
+	if(forceRequestedType && !selectedFilter.isEmpty()) {
+		filters = QStringList({selectedFilter});
+	}
 
 	QString lastPath = getCurrentPathOrUntitled(doc, extension);
 	if(exported && !lastPath.isEmpty()) {

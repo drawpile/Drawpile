@@ -91,4 +91,17 @@ QImage transformImage(
 	return QImage();
 }
 
+QSize thumbnailDimensions(const QSize &size, const QSize &maxSize)
+{
+	if(size.isEmpty() || maxSize.isEmpty()) {
+		return QSize();
+	} else {
+		int width, height;
+		DP_image_thumbnail_dimensions(
+			size.width(), size.height(), maxSize.width(), maxSize.height(),
+			&width, &height);
+		return QSize(width, height);
+	}
+}
+
 }

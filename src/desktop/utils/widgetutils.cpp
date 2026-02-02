@@ -581,6 +581,14 @@ FormNote::FormNote(
 	}
 }
 
+void FormNote::setContentsVisible(bool contentsVisible)
+{
+	if(contentsVisible != m_contentsVisible) {
+		m_contentsVisible = contentsVisible;
+		update();
+	}
+}
+
 QSize FormNote::sizeHint() const
 {
 	return QSize(m_indent + m_iconSize + m_width, m_height);
@@ -594,23 +602,25 @@ QSize FormNote::minimumSizeHint() const
 void FormNote::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
-	QPainter painter(this);
+	if(m_contentsVisible) {
+		QPainter painter(this);
 
-	if(m_link) {
-		QFont font = painter.font();
-		font.setUnderline(true);
-		painter.setFont(font);
-	} else {
-		painter.setOpacity(0.7);
+		if(m_link) {
+			QFont font = painter.font();
+			font.setUnderline(true);
+			painter.setFont(font);
+		} else {
+			painter.setOpacity(0.7);
+		}
+
+		if(!m_icon.isNull()) {
+			m_icon.paint(&painter, QRect(0, 0, m_iconSize, m_iconSize));
+		}
+
+		painter.setPen(palette().color(QPalette::Text));
+		painter.drawText(
+			QRect(m_indent + m_iconSize, 0, m_width, m_height), m_text);
 	}
-
-	if(!m_icon.isNull()) {
-		m_icon.paint(&painter, QRect(0, 0, m_iconSize, m_iconSize));
-	}
-
-	painter.setPen(palette().color(QPalette::Text));
-	painter.drawText(
-		QRect(m_indent + m_iconSize, 0, m_width, m_height), m_text);
 }
 
 void FormNote::resizeEvent(QResizeEvent *event)
