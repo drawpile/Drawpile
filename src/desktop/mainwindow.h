@@ -405,7 +405,9 @@ private:
 	void showProjectRecordingError(const QString &message);
 	void updateProjectActions();
 #ifdef DRAWPILE_PROJECT_DIALOG
-	void showProjectOverview();
+	void requestProjectOverview();
+	void saveAsProjectBeforeProjectOverview();
+	bool showProjectOverview(bool checkExisting, bool openNew);
 #endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	void requestTimelapseDialog();

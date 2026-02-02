@@ -1728,34 +1728,100 @@ void MainWindow::showProjectRecordingError(const QString &message)
 
 void MainWindow::updateProjectActions()
 {
+#if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
+	bool enabled =
+		!m_doc->isSaveInProgress() &&
+		(!m_doc->projectPath().isEmpty() || m_doc->isProjectRecording());
+#endif
 #ifdef DRAWPILE_PROJECT_DIALOG
-	getAction(QStringLiteral("projectoverview"))
-		->setEnabled(
-			!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty());
+	getAction(QStringLiteral("projectoverview"))->setEnabled(enabled);
 #endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
-	getAction(QStringLiteral("maketimelapse"))
-		->setEnabled(
-			!m_doc->isSaveInProgress() &&
-			(!m_doc->projectPath().isEmpty() || m_doc->isProjectRecording()));
+	getAction(QStringLiteral("maketimelapse"))->setEnabled(enabled);
 #endif
 }
 
 #ifdef DRAWPILE_PROJECT_DIALOG
-void MainWindow::showProjectOverview()
+void MainWindow::requestProjectOverview()
+{
+	if(showProjectOverview(true, false)) {
+		// Project dialog is already open, don't do anything.
+
+	} else if(m_doc->projectPath().isEmpty()) {
+		QMessageBox *box = utils::makeQuestion(
+			this, tr("Project Overview"),
+			tr("To view statistics, you have to save a project file (.dppr) "
+			   "first. Do you want to do so now?"));
+		connect(
+			box, &QMessageBox::accepted, this,
+			&MainWindow::saveAsProjectBeforeProjectOverview);
+		box->show();
+
+	} else if(m_doc->isProjectDirty()) {
+		QMessageBox *box = utils::makeQuestion(
+			this, tr("Project Overview"),
+			tr("There are changes not saved to a project file (.dppr) yet. Do "
+			   "you want to save them now so they show up in the statistics?"));
+		connect(box, &QMessageBox::accepted, this, [this] {
+			if(m_doc->currentType() == DP_SAVE_IMAGE_PROJECT &&
+			   m_doc->currentPath() == m_doc->projectPath()) {
+				save();
+				showProjectOverview(true, true);
+			} else {
+				saveAsProjectBeforeProjectOverview();
+			}
+		});
+		connect(
+			box, &QMessageBox::rejected, this,
+			std::bind(&MainWindow::showProjectOverview, this, true, true));
+		box->show();
+
+	} else {
+		showProjectOverview(false, true);
+	}
+}
+
+void MainWindow::saveAsProjectBeforeProjectOverview()
+{
+	if(saveAsType(int(DP_SAVE_IMAGE_PROJECT), true)) {
+		if(m_doc->currentType() == DP_SAVE_IMAGE_PROJECT &&
+		   m_doc->currentPath() == m_doc->projectPath()) {
+			showProjectOverview(true, true);
+		} else {
+			utils::showWarning(
+				this, tr("Timelapse"),
+				tr("Unexpected save format. To view statistics, you have to "
+				   "save to a project file (.dppr)."));
+		}
+	}
+}
+
+bool MainWindow::showProjectOverview(bool checkExisting, bool openNew)
 {
 	QString objectName = QStringLiteral("projectdialog");
-	dialogs::ProjectDialog *dlg = findChild<dialogs::ProjectDialog *>(
-		objectName, Qt::FindDirectChildrenOnly);
-	if(dlg) {
-		dlg->activateWindow();
-		dlg->raise();
-	} else if(!m_doc->isSaveInProgress() && !m_doc->projectPath().isEmpty()) {
-		dlg = new dialogs::ProjectDialog(m_doc->isProjectDirty(), this);
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->openProject(m_doc->projectPath());
-		utils::showWindow(dlg);
+	if(checkExisting) {
+		dialogs::ProjectDialog *dlg = findChild<dialogs::ProjectDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+		if(dlg) {
+			dlg->activateWindow();
+			dlg->raise();
+			return true;
+		}
 	}
+
+	if(openNew) {
+		dialogs::ProjectDialog *dlg =
+			new dialogs::ProjectDialog(m_doc->isProjectDirty(), this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
+		if(!m_doc->isSaveInProgress()) {
+			dlg->openProject(m_doc->projectPath());
+		}
+		utils::showWindow(dlg);
+		return true;
+	}
+
+	return false;
 }
 #endif
 
@@ -2834,13 +2900,24 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 
 	bool haveError = !errorMessage.isEmpty();
 
-	dialogs::TimelapseDialog *dlg = findChild<dialogs::TimelapseDialog *>(
-		QStringLiteral("timelapsedialog"), Qt::FindDirectChildrenOnly);
-	if(dlg && !dlg->haveInputPath()) {
+	dialogs::ProjectDialog *projectDlg = findChild<dialogs::ProjectDialog *>(
+		QStringLiteral("projectdialog"), Qt::FindDirectChildrenOnly);
+	if(projectDlg && !projectDlg->wasProjectOpened()) {
 		if(haveError) {
-			dlg->close();
+			projectDlg->close();
 		} else {
-			dlg->setInputPath(m_doc->projectPath());
+			projectDlg->openProject(m_doc->projectPath());
+		}
+	}
+
+	dialogs::TimelapseDialog *timelapseDlg =
+		findChild<dialogs::TimelapseDialog *>(
+			QStringLiteral("timelapsedialog"), Qt::FindDirectChildrenOnly);
+	if(timelapseDlg && !timelapseDlg->haveInputPath()) {
+		if(haveError) {
+			timelapseDlg->close();
+		} else {
+			timelapseDlg->setInputPath(m_doc->projectPath());
 		}
 	}
 
@@ -5994,7 +6071,7 @@ void MainWindow::setupActions()
 #ifdef DRAWPILE_PROJECT_DIALOG
 	connect(
 		projectOverview, &QAction::triggered, this,
-		&MainWindow::showProjectOverview);
+		&MainWindow::requestProjectOverview);
 #endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	connect(

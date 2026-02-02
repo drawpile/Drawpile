@@ -20,6 +20,8 @@ public:
 
 	void openProject(const QString &path);
 
+	bool wasProjectOpened() const { return m_projectWrangler != nullptr; }
+
 private:
 	void requestCancel();
 
