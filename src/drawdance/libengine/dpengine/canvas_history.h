@@ -96,6 +96,8 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
     void *save_point_user, bool want_dump, const char *dump_dir);
 
+DP_CanvasHistory *DP_canvas_history_new_no_mutex(void);
+
 void DP_canvas_history_free(DP_CanvasHistory *ch);
 
 void DP_canvas_history_local_drawing_in_progress_set(
@@ -105,7 +107,13 @@ bool DP_canvas_history_want_dump(DP_CanvasHistory *ch);
 
 void DP_canvas_history_want_dump_set(DP_CanvasHistory *ch, bool want_dump);
 
+// Only usable if the canvas history was created WITH a mutex! Increments the
+// canvas state reference count, since that's the only safe way to do it with
+// multithreading involved.
 DP_CanvasState *DP_canvas_history_get(DP_CanvasHistory *ch);
+
+// Not safe for multithreaded use.
+DP_CanvasState *DP_canvas_history_get_noinc_nolock(DP_CanvasHistory *ch);
 
 DP_CanvasState *
 DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,

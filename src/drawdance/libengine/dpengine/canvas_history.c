@@ -483,24 +483,11 @@ static void validate_history(DP_UNUSED DP_CanvasHistory *ch,
 }
 
 
-DP_CanvasHistory *
-DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
-                      void *save_point_user, bool want_dump,
-                      const char *dump_dir)
+static DP_CanvasHistory *
+canvas_history_new(DP_CanvasState *cs_or_null, DP_Mutex *mutex,
+                   DP_CanvasHistorySavePointFn save_point_fn,
+                   void *save_point_user, bool want_dump, const char *dump_dir)
 {
-    return DP_canvas_history_new_noinc(NULL, save_point_fn, save_point_user,
-                                       want_dump, dump_dir);
-}
-
-DP_CanvasHistory *DP_canvas_history_new_noinc(
-    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
-    void *save_point_user, bool want_dump, const char *dump_dir)
-{
-    DP_Mutex *mutex = DP_mutex_new();
-    if (!mutex) {
-        return NULL;
-    }
-
     DP_CanvasHistory *ch = DP_malloc(sizeof(*ch));
     DP_CanvasState *cs = cs_or_null ? cs_or_null : DP_canvas_state_new();
     size_t entries_size = sizeof(*ch->entries) * INITIAL_CAPACITY;
@@ -538,6 +525,29 @@ DP_CanvasHistory *DP_canvas_history_new_noinc(
     return ch;
 }
 
+DP_CanvasHistory *
+DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
+                      void *save_point_user, bool want_dump,
+                      const char *dump_dir)
+{
+    return DP_canvas_history_new_noinc(NULL, save_point_fn, save_point_user,
+                                       want_dump, dump_dir);
+}
+
+DP_CanvasHistory *DP_canvas_history_new_noinc(
+    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
+    void *save_point_user, bool want_dump, const char *dump_dir)
+{
+    DP_Mutex *mutex = DP_mutex_new();
+    if (mutex) {
+        return canvas_history_new(cs_or_null, mutex, save_point_fn,
+                                  save_point_user, want_dump, dump_dir);
+    }
+    else {
+        return NULL;
+    }
+}
+
 DP_CanvasHistory *DP_canvas_history_new_inc(
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
     void *save_point_user, bool want_dump, const char *dump_dir)
@@ -548,6 +558,11 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
         DP_canvas_state_incref(cs_or_null);
     }
     return ch;
+}
+
+DP_CanvasHistory *DP_canvas_history_new_no_mutex(void)
+{
+    return canvas_history_new(NULL, NULL, NULL, NULL, false, NULL);
 }
 
 
@@ -622,11 +637,18 @@ void DP_canvas_history_want_dump_set(DP_CanvasHistory *ch, bool want_dump)
 DP_CanvasState *DP_canvas_history_get(DP_CanvasHistory *ch)
 {
     DP_ASSERT(ch);
+    DP_ASSERT(ch->mutex);
     DP_Mutex *mutex = ch->mutex;
     DP_MUTEX_MUST_LOCK(mutex);
     DP_CanvasState *cs = DP_canvas_state_incref(ch->current_state);
     DP_MUTEX_MUST_UNLOCK(mutex);
     return cs;
+}
+
+DP_CanvasState *DP_canvas_history_get_noinc_nolock(DP_CanvasHistory *ch)
+{
+    DP_ASSERT(ch);
+    return ch->current_state;
 }
 
 DP_CanvasState *
@@ -636,7 +658,7 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
     DP_ASSERT(ch);
     DP_PERF_BEGIN(fn, "compare_and_get");
     DP_Mutex *mutex = ch->mutex;
-    DP_MUTEX_MUST_LOCK(mutex);
+    DP_MUTEX_MUST_LOCK_NULLABLE(mutex);
     DP_CanvasState *next = ch->current_state;
     DP_CanvasState *cs;
     if (next == prev) {
@@ -648,7 +670,7 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
             DP_effective_user_cursors_retrieve(&ch->eucs, out_user_cursors);
         }
     }
-    DP_MUTEX_MUST_UNLOCK(mutex);
+    DP_MUTEX_MUST_UNLOCK_NULLABLE(mutex);
     DP_PERF_END(fn);
     return cs;
 }
@@ -657,9 +679,9 @@ static void set_current_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *next)
 {
     DP_CanvasState *current = ch->current_state;
     DP_Mutex *mutex = ch->mutex;
-    DP_MUTEX_MUST_LOCK(mutex);
+    DP_MUTEX_MUST_LOCK_NULLABLE(mutex);
     ch->current_state = next;
-    DP_MUTEX_MUST_UNLOCK(mutex);
+    DP_MUTEX_MUST_UNLOCK_NULLABLE(mutex);
     DP_canvas_state_decref(current);
 }
 
@@ -668,10 +690,10 @@ static void set_current_state_with_cursors_noinc(DP_CanvasHistory *ch,
 {
     DP_CanvasState *current = ch->current_state;
     DP_Mutex *mutex = ch->mutex;
-    DP_MUTEX_MUST_LOCK(mutex);
+    DP_MUTEX_MUST_LOCK_NULLABLE(mutex);
     ch->current_state = next;
     DP_effective_user_cursors_apply(&ch->eucs, &ch->ucs);
-    DP_MUTEX_MUST_UNLOCK(mutex);
+    DP_MUTEX_MUST_UNLOCK_NULLABLE(mutex);
     DP_canvas_state_decref(current);
 }
 

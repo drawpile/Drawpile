@@ -98,6 +98,22 @@ void DP_mutex_must_spin_lock_at(const char *file, int line, DP_Mutex *mutex);
         }                               \
     } while (0)
 
+#define DP_MUTEX_MUST_LOCK_NULLABLE(MUTEX_OR_NULL) \
+    do {                                           \
+        DP_Mutex *_mutex = (MUTEX_OR_NULL);        \
+        if (_mutex) {                              \
+            DP_MUTEX_MUST_LOCK(_mutex);            \
+        }                                          \
+    } while (0)
+
+#define DP_MUTEX_MUST_UNLOCK_NULLABLE(MUTEX_OR_NULL) \
+    do {                                             \
+        DP_Mutex *_mutex = (MUTEX_OR_NULL);          \
+        if (_mutex) {                                \
+            DP_MUTEX_MUST_UNLOCK(_mutex);            \
+        }                                            \
+    } while (0)
+
 
 DP_Semaphore *DP_semaphore_new(unsigned int initial_value);
 
