@@ -32,27 +32,21 @@
 
 #define ALL_IDS INT_MIN
 
-#define INVALID_BOUNDS                     \
-    (DP_Rect)                              \
-    {                                      \
-        INT_MAX, INT_MAX, INT_MIN, INT_MIN \
-    }
-
 static DP_AffectedArea make_user_attrs(void)
 {
-    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_USER_ATTRS, 0, INVALID_BOUNDS};
+    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_USER_ATTRS, 0, DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_layer_attrs(int layer_id)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_LAYER_ATTRS, layer_id,
-                             INVALID_BOUNDS};
+                             DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_annotations(int annotation_id)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_ANNOTATIONS, annotation_id,
-                             INVALID_BOUNDS};
+                             DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_pixels(int layer_id, DP_Rect bounds)
@@ -65,30 +59,30 @@ static DP_AffectedArea make_pixels(int layer_id, DP_Rect bounds)
 static DP_AffectedArea make_canvas_background(void)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_CANVAS_BACKGROUND, 0,
-                             INVALID_BOUNDS};
+                             DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_document_metadata(int field)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_DOCUMENT_METADATA, field,
-                             INVALID_BOUNDS};
+                             DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_timeline(int track_id)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_TIMELINE, track_id,
-                             INVALID_BOUNDS};
+                             DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_selections(uint8_t context_id, uint8_t selection_id)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_SELECTIONS,
-                             (context_id << 8) | selection_id, INVALID_BOUNDS};
+                             (context_id << 8) | selection_id, DP_RECT_INVALID};
 }
 
 static DP_AffectedArea make_everything(void)
 {
-    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_EVERYTHING, 0, INVALID_BOUNDS};
+    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_EVERYTHING, 0, DP_RECT_INVALID};
 }
 
 struct SubpixelDabs {
@@ -195,13 +189,13 @@ static DP_Rect region_bounds(int bx, int by, int bw, int bh, int x1, int y1,
 {
     DP_Rect src = DP_rect_make(bx, by, bw, bh);
     if (!DP_rect_valid(src)) {
-        return INVALID_BOUNDS;
+        return DP_RECT_INVALID;
     }
 
     DP_Quad dst_quad = DP_quad_make(x1, y1, x2, y2, x3, y3, x4, y4);
     DP_Rect dst = DP_quad_bounds(dst_quad);
     if (!DP_rect_valid(dst)) {
-        return INVALID_BOUNDS;
+        return DP_RECT_INVALID;
     }
 
     return DP_rect_union(src, dst);
@@ -215,14 +209,14 @@ static DP_Rect move_rect_bounds(DP_MsgMoveRect *mrr)
     int h = DP_msg_move_rect_h(mrr);
     DP_Rect src = DP_rect_make(sx, sy, w, h);
     if (!DP_rect_valid(src)) {
-        return INVALID_BOUNDS;
+        return DP_RECT_INVALID;
     }
 
     int tx = DP_msg_move_rect_tx(mrr);
     int ty = DP_msg_move_rect_ty(mrr);
     DP_Rect dst = DP_rect_make(tx, ty, w, h);
     if (!DP_rect_valid(dst)) {
-        return INVALID_BOUNDS;
+        return DP_RECT_INVALID;
     }
 
     return DP_rect_union(src, dst);
@@ -260,7 +254,7 @@ static DP_AffectedArea take_indirect_area(DP_AffectedIndirectAreas *aia,
     if (DP_rect_valid(bounds)) {
         int layer_id = ia->layer_id;
         ia->layer_id = -1;
-        ia->bounds = INVALID_BOUNDS;
+        ia->bounds = DP_RECT_INVALID;
         return layer_id > 0 ? make_pixels(layer_id, bounds) : make_everything();
     }
     else {
@@ -586,6 +580,6 @@ void DP_affected_indirect_areas_clear(DP_AffectedIndirectAreas *aia)
 {
     DP_ASSERT(aia);
     for (int i = 0; i < DP_AFFECTED_INDIRECT_AREAS_COUNT; ++i) {
-        aia->areas[i] = (DP_IndirectArea){-1, INVALID_BOUNDS};
+        aia->areas[i] = (DP_IndirectArea){-1, DP_RECT_INVALID};
     }
 }

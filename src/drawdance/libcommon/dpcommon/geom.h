@@ -25,6 +25,12 @@
 #include "common.h"
 #include <math.h>
 
+#define DP_RECT_INVALID                    \
+    (DP_Rect)                              \
+    {                                      \
+        INT_MAX, INT_MAX, INT_MIN, INT_MIN \
+    }
+
 
 typedef struct DP_Quad {
     int x1, y1;
