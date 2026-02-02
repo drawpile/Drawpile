@@ -1063,6 +1063,16 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST:
         set_field = DP_transient_document_metadata_frame_range_last_set;
         break;
+    case DP_MSG_SET_METADATA_INT_FIELD_OFFSET_X: {
+        DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+        tcs->offset_x = DP_msg_set_metadata_int_value(msmi);
+        return DP_transient_canvas_state_persist(tcs);
+    }
+    case DP_MSG_SET_METADATA_INT_FIELD_OFFSET_Y: {
+        DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+        tcs->offset_y = DP_msg_set_metadata_int_value(msmi);
+        return DP_transient_canvas_state_persist(tcs);
+    }
     default:
         DP_error_set("Set metadata int: unknown field %d", field);
         return NULL;
@@ -2409,6 +2419,16 @@ void DP_transient_canvas_state_active_selection_id_set(
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     tcs->active_selection_id = active_selection_id;
+}
+
+void DP_transient_canvas_state_offsets_set(DP_TransientCanvasState *tcs,
+                                           int offset_x, int offset_y)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    tcs->offset_x = offset_x;
+    tcs->offset_y = offset_y;
 }
 
 void DP_transient_canvas_state_offsets_add(DP_TransientCanvasState *tcs,

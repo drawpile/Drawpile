@@ -805,9 +805,11 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
     }
 
     reset_image_handle(
-        c, (DP_ResetEntry){
-               DP_RESET_ENTRY_CANVAS,
-               .canvas = {width, height, DP_canvas_state_metadata_noinc(cs)}});
+        c,
+        (DP_ResetEntry){DP_RESET_ENTRY_CANVAS,
+                        .canvas = {width, height, DP_canvas_state_offset_x(cs),
+                                   DP_canvas_state_offset_y(cs),
+                                   DP_canvas_state_metadata_noinc(cs)}});
 
     DP_Tile *t = DP_canvas_state_background_tile_noinc(cs);
     if (t) {
@@ -974,6 +976,14 @@ static void reset_entry_canvas_to_message(struct DP_ResetImageMessageContext *c,
             c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST,
             DP_document_metadata_frame_range_last(dm),
             DP_DOCUMENT_METADATA_FRAME_RANGE_LAST_DEFAULT);
+        push_document_metadata_int_field_if_not_default(
+            c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST,
+            DP_document_metadata_frame_range_last(dm),
+            DP_DOCUMENT_METADATA_FRAME_RANGE_LAST_DEFAULT);
+        push_document_metadata_int_field_if_not_default(
+            c, DP_MSG_SET_METADATA_INT_FIELD_OFFSET_X, rec->offset_x, 0);
+        push_document_metadata_int_field_if_not_default(
+            c, DP_MSG_SET_METADATA_INT_FIELD_OFFSET_Y, rec->offset_y, 0);
     }
 }
 

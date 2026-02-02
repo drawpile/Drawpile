@@ -245,6 +245,9 @@ void DP_transient_canvas_state_width_set(DP_TransientCanvasState *tcs,
 void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
                                           int height);
 
+void DP_transient_canvas_state_offsets_set(DP_TransientCanvasState *tcs,
+                                           int offset_x, int offset_y);
+
 void DP_transient_canvas_state_offsets_add(DP_TransientCanvasState *tcs,
                                            int offset_x, int offset_y);
 

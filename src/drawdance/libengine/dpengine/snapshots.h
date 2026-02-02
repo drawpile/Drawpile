@@ -66,6 +66,8 @@ typedef enum DP_ResetEntryType {
 typedef struct DP_ResetEntryCanvas {
     int width;
     int height;
+    int offset_x;
+    int offset_y;
     DP_DocumentMetadata *dm;
 } DP_ResetEntryCanvas;
 

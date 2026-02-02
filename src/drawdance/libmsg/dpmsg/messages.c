@@ -9304,6 +9304,10 @@ const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value)
         return "FrameRangeFirst";
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST:
         return "FrameRangeLast";
+    case DP_MSG_SET_METADATA_INT_FIELD_OFFSET_X:
+        return "OffsetX";
+    case DP_MSG_SET_METADATA_INT_FIELD_OFFSET_Y:
+        return "OffsetY";
     default:
         return NULL;
     }

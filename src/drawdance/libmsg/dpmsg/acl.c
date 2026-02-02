@@ -1195,6 +1195,9 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST:
         feature = DP_FEATURE_TIMELINE;
         break;
+    case DP_MSG_SET_METADATA_INT_FIELD_OFFSET_X:
+    case DP_MSG_SET_METADATA_INT_FIELD_OFFSET_Y:
+        return DP_acl_state_is_op(acls, user_id);
     default:
         feature = DP_FEATURE_RESIZE;
         break;

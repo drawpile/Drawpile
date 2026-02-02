@@ -97,6 +97,8 @@ typedef enum DP_ProjectSnapshotMetadata {
     DP_PROJECT_SNAPSHOT_METADATA_FRAME_RANGE_FIRST = 9,
     DP_PROJECT_SNAPSHOT_METADATA_FRAME_RANGE_LAST = 10,
     DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID = 11,
+    DP_PROJECT_SNAPSHOT_METADATA_OFFSET_X = 12,
+    DP_PROJECT_SNAPSHOT_METADATA_OFFSET_Y = 13,
 } DP_ProjectSnapshotMetadata;
 
 typedef struct DP_ProjectSnapshot {
@@ -2092,6 +2094,10 @@ static bool snapshot_handle_canvas(DP_Project *prj,
                                        rec->width)
         && snapshot_write_metadata_int(prj, DP_PROJECT_SNAPSHOT_METADATA_HEIGHT,
                                        rec->height)
+        && snapshot_write_metadata_int_unless_default(
+               prj, DP_PROJECT_SNAPSHOT_METADATA_OFFSET_X, rec->offset_x, 0)
+        && snapshot_write_metadata_int_unless_default(
+               prj, DP_PROJECT_SNAPSHOT_METADATA_OFFSET_Y, rec->offset_y, 0)
         && snapshot_write_document_metadata(prj, rec->dm);
 }
 
@@ -3454,6 +3460,8 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
     bool error;
     int width = 0;
     int height = 0;
+    int offset_x = 0;
+    int offset_y = 0;
     while (ps_exec_step(prj, stmt, &error)) {
         int metadata_id = sqlite3_column_int(stmt, 0);
         switch (metadata_id) {
@@ -3511,6 +3519,12 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
             break;
         case DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID:
             break;
+        case DP_PROJECT_SNAPSHOT_METADATA_OFFSET_X:
+            offset_x = sqlite3_column_int(stmt, 1);
+            break;
+        case DP_PROJECT_SNAPSHOT_METADATA_OFFSET_Y:
+            offset_y = sqlite3_column_int(stmt, 1);
+            break;
         default:
             DP_warn("Unknown snapshot metadatum %d", metadata_id);
             break;
@@ -3525,6 +3539,7 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
         || DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_transient_canvas_state_width_set(tcs, width);
         DP_transient_canvas_state_height_set(tcs, height);
+        DP_transient_canvas_state_offsets_set(tcs, offset_x, offset_y);
         return true;
     }
     else {
