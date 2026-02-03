@@ -6551,6 +6551,8 @@ int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
     pfc.seconds_to_frames = framerate * target_seconds;
     pfc.max_delta_seconds = pb->max_delta_seconds;
     pfc.total_playback_seconds = pb->total_playback_seconds;
+    pfc.current_playback_seconds = 0.0;
+    pfc.last_recorded_at = 0.0;
     pfc.current_frame = 0;
     playback_crop_init(&pfc.pbc, pb);
     pfc.callback = callback;
