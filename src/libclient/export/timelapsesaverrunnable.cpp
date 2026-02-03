@@ -708,19 +708,23 @@ TimelapseSaverRunnable::startPlaybackThread()
 	pr->setAutoDelete(false);
 
 	QThreadPool *threadPool = QThreadPool::globalInstance();
-	threadPool->reserveThread();
 	bool started = threadPool->tryStart(pr);
-	threadPool->releaseThread();
-
 	if(!started) {
 		qCWarning(
-			lcDpTimelapseSaverRunnable, "Failed to start playback thread: %s",
-			DP_error());
-		delete pr;
-		DP_semaphore_free(m_filledSem);
-		DP_semaphore_free(m_availableSem);
-		DP_mutex_free(m_mutex);
-		return nullptr;
+			lcDpTimelapseSaverRunnable,
+			"Failed to start playback runnable on thread pool, falling back to "
+			"a new thread");
+		m_thread = DP_thread_new(&TimelapseSaverRunnable::runPlayback, pr);
+		if(!m_thread) {
+			qCWarning(
+				lcDpTimelapseSaverRunnable,
+				"Failed to start playback thread: %s", DP_error());
+			delete pr;
+			DP_semaphore_free(m_filledSem);
+			DP_semaphore_free(m_availableSem);
+			DP_mutex_free(m_mutex);
+			return nullptr;
+		}
 	}
 
 	return pr;
@@ -745,6 +749,7 @@ void TimelapseSaverRunnable::finishPlaybackThread(PlaybackRunnable *pr)
 	}
 
 	qCDebug(lcDpTimelapseSaverRunnable, "Cleaning up playback thread");
+	DP_thread_free_join(m_thread);
 	DP_semaphore_free(m_filledSem);
 	DP_semaphore_free(m_availableSem);
 	DP_mutex_free(m_mutex);
@@ -832,4 +837,10 @@ bool TimelapseSaverRunnable::handleProgress(double value)
 bool TimelapseSaverRunnable::handleProgressCallback(void *user, double value)
 {
 	return static_cast<TimelapseSaverRunnable *>(user)->handleProgress(value);
+}
+
+void TimelapseSaverRunnable::runPlayback(void *user)
+{
+	PlaybackRunnable *pr = static_cast<PlaybackRunnable *>(user);
+	pr->run();
 }

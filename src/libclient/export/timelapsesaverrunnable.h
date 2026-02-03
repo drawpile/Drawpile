@@ -20,6 +20,7 @@ struct DP_ProjectPlayback;
 struct DP_Rect;
 struct DP_SaveVideoNextFrame;
 struct DP_Semaphore;
+struct DP_Thread;
 class QTemporaryFile;
 
 class TimelapseSaverRunnable final : public QObject, public QRunnable {
@@ -140,6 +141,8 @@ private:
 
 	static bool handleProgressCallback(void *user, double value);
 
+	static void runPlayback(void *user);
+
 	const drawdance::CanvasState m_canvasState;
 	const QString m_outputPath;
 	const QString m_inputPath;
@@ -171,6 +174,7 @@ private:
 	DP_Mutex *m_mutex = nullptr;
 	DP_Semaphore *m_availableSem = nullptr;
 	DP_Semaphore *m_filledSem = nullptr;
+	DP_Thread *m_thread = nullptr;
 	QQueue<PlaybackEntry> m_queue;
 	QImage m_lastImage;
 	bool m_playbackFinished = false;
