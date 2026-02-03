@@ -84,6 +84,8 @@ target_sources(drawpile PRIVATE
 	cursors/zoom.png
 	dialogs/abusereport.cpp
 	dialogs/abusereport.h
+	dialogs/actionpickerdialog.cpp
+	dialogs/actionpickerdialog.h
 	dialogs/addserverdialog.cpp
 	dialogs/addserverdialog.h
 	dialogs/animationexportdialog.cpp

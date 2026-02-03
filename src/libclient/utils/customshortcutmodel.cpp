@@ -11,6 +11,15 @@ CustomShortcutModel::CustomShortcutModel(QObject *parent)
 {
 }
 
+void CustomShortcutModel::setShowIcons(bool showIcons)
+{
+	if(showIcons != m_showIcons) {
+		beginResetModel();
+		m_showIcons = showIcons;
+		endResetModel();
+	}
+}
+
 int CustomShortcutModel::rowCount(const QModelIndex &parent) const
 {
 	return parent.isValid() ? 0 : m_shortcutIndexes.size();
@@ -78,7 +87,7 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		default:
 			return QVariant();
 		}
-	} else if(role == Qt::DecorationRole) {
+	} else if(role == Qt::DecorationRole && m_showIcons) {
 		switch(index.column()) {
 		case int(Action):
 			return m_loadedShortcuts[m_shortcutIndexes[row]].icon;
@@ -141,6 +150,9 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 				cs.defaultShortcut.toString(QKeySequence::NativeText),
 				cs.defaultAlternateShortcut.toString(QKeySequence::NativeText),
 				conflictMarker);
+	} else if(role == int(ActionNameRole)) {
+		const CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[row]];
+		return cs.name;
 	} else {
 		return QVariant();
 	}
@@ -210,6 +222,18 @@ CustomShortcutModel::getShortcutsMatching(const QKeySequence &keySequence)
 		}
 	}
 	return matches;
+}
+
+QModelIndex CustomShortcutModel::searchByActionName(const QString &name) const
+{
+	int count = rowCount();
+	for(int i = 0; i < count; ++i) {
+		const CustomShortcut &cs = shortcutAt(i);
+		if(cs.name == name) {
+			return createIndex(i, 0);
+		}
+	}
+	return QModelIndex();
 }
 
 void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
@@ -326,6 +350,17 @@ void CustomShortcutModel::changeDisabledActionNames(
 		} else {
 			m_disabledActionNames.remove(p.first);
 		}
+	}
+}
+
+QString CustomShortcutModel::getCustomizableActionTitle(const QString &name)
+{
+	QMap<QString, CustomShortcut>::const_iterator it =
+		m_customizableActions.constFind(name);
+	if(it == m_customizableActions.constEnd()) {
+		return name;
+	} else {
+		return it->title;
 	}
 }
 

@@ -39,6 +39,10 @@ public:
 		TOGGLE_ERASER,
 		TOGGLE_ERASE_MODE,
 		TOGGLE_RECOLOR_MODE,
+		UNDO,
+		REDO,
+		HIDE_DOCKS,
+		TRIGGER_ACTION,
 		ACTION_COUNT,
 	};
 
@@ -57,6 +61,7 @@ public:
 		QSet<Qt::Key> keys;
 		Qt::MouseButton button;
 		Action action;
+		QString trigger;
 		unsigned int flags;
 
 		bool conflictsWith(const Shortcut &other) const;
@@ -81,7 +86,11 @@ public:
 			return shortcut ? shortcut->action : NO_ACTION;
 		}
 
-		QString actionName() const { return getActionName(action()); }
+		QString actionName() const
+		{
+			return getActionName(
+				action(), shortcut ? shortcut->trigger : QString());
+		}
 
 		unsigned int flags() const
 		{
@@ -151,7 +160,8 @@ private:
 
 	static Shortcut loadShortcut(const QVariantMap &cfg);
 
-	static QString getActionName(Action action);
+	static QString
+	getActionName(Action action, const QString &triggerActionName);
 
 	QVector<Shortcut> m_shortcuts;
 };

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/canvasshortcutsdialog.h"
+#include "desktop/dialogs/actionpickerdialog.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
+#include "libclient/utils/clickeventfilter.h"
+#include "libclient/utils/customshortcutmodel.h"
 #include "ui_canvasshortcutsdialog.h"
 #include <QCoreApplication>
 #include <QPushButton>
@@ -11,13 +15,14 @@ struct CanvasShortcutsDialog::Private {
 	Ui::CanvasShortcutDialog ui;
 	const CanvasShortcuts::Shortcut *s;
 	const CanvasShortcutsModel &canvasShortcuts;
+	QString trigger;
 };
 
 CanvasShortcutsDialog::CanvasShortcutsDialog(
 	const CanvasShortcuts::Shortcut *s,
 	const CanvasShortcutsModel &canvasShortcuts, QWidget *parent)
 	: QDialog{parent}
-	, d{new Private{{}, s, canvasShortcuts}}
+	, d{new Private{{}, s, canvasShortcuts, QString()}}
 {
 	d->ui.setupUi(this);
 
@@ -87,6 +92,18 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 		QCoreApplication::translate(
 			"CanvasShortcutsModel", "Toggle Alpha Preserve"),
 		CanvasShortcuts::TOGGLE_RECOLOR_MODE);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate("CanvasShortcutsModel", "Undo"),
+		CanvasShortcuts::UNDO);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate("CanvasShortcutsModel", "Redo"),
+		CanvasShortcuts::REDO);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate("CanvasShortcutsModel", "Hide Docks"),
+		CanvasShortcuts::HIDE_DOCKS);
+	d->ui.actionCombo->addItem(
+		QCoreApplication::translate("CanvasShortcutsModel", "Trigger Action"),
+		CanvasShortcuts::TRIGGER_ACTION);
 	d->ui.actionCombo->setCurrentIndex(0);
 
 	d->ui.constraintsCombo->addItem(
@@ -132,6 +149,8 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 				break;
 			}
 		}
+
+		d->trigger = s->trigger;
 	}
 
 	connect(
@@ -150,8 +169,18 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 			updateResult();
 		});
 
+	ClickEventFilter *triggerEditClickEventFilter = new ClickEventFilter(this);
+	d->ui.triggerEdit->installEventFilter(triggerEditClickEventFilter);
+	connect(
+		triggerEditClickEventFilter, &ClickEventFilter::clicked, this,
+		&CanvasShortcutsDialog::changeTrigger);
+	connect(
+		d->ui.triggerButton, &QPushButton::clicked, this,
+		&CanvasShortcutsDialog::changeTrigger);
+
 	updateType();
 	updateAction();
+	updateTrigger();
 	updateResult();
 }
 
@@ -179,10 +208,41 @@ CanvasShortcuts::Shortcut CanvasShortcutsDialog::shortcut() const
 		}
 	}
 	return {
-		CanvasShortcuts::Type(type),	 d->ui.shortcutEdit->mods(),
-		d->ui.shortcutEdit->keys(),		 d->ui.shortcutEdit->button(),
-		CanvasShortcuts::Action(action), flags,
+		CanvasShortcuts::Type(type),
+		d->ui.shortcutEdit->mods(),
+		d->ui.shortcutEdit->keys(),
+		d->ui.shortcutEdit->button(),
+		CanvasShortcuts::Action(action),
+		d->trigger,
+		flags,
 	};
+}
+
+void CanvasShortcutsDialog::changeTrigger()
+{
+	QString objectName = QStringLiteral("actionpickerdialog");
+	ActionPickerDialog *dlg =
+		findChild<ActionPickerDialog *>(objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new ActionPickerDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
+		dlg->setSelectedAction(d->trigger);
+		connect(
+			dlg, &ActionPickerDialog::actionSelected, this,
+			&CanvasShortcutsDialog::setTrigger);
+		utils::showWindow(dlg);
+	}
+}
+
+void CanvasShortcutsDialog::setTrigger(const QString &trigger)
+{
+	d->trigger = trigger;
+	updateTrigger();
+	updateResult();
 }
 
 void CanvasShortcutsDialog::updateType()
@@ -195,9 +255,10 @@ void CanvasShortcutsDialog::updateType()
 	bool showConstraints;
 	switch(type) {
 	case CanvasShortcuts::Type::KEY_COMBINATION:
-		typeDescription = tr("A regular key combination on the canvas without "
-							 "further mouse or pen inputs. Example: holding "
-							 "Space to pan, without having to click as well.");
+		typeDescription =
+			tr("A regular key combination on the canvas without "
+			   "further mouse or pen inputs. Example: holding "
+			   "Space to pan, without having to click as well.");
 		showAction = true;
 		showConstraints = false;
 		break;
@@ -239,8 +300,8 @@ void CanvasShortcutsDialog::updateType()
 
 void CanvasShortcutsDialog::updateAction()
 {
+	utils::ScopedUpdateDisabler disabler(this);
 	unsigned int action = d->ui.actionCombo->currentData().toUInt();
-	bool showModifiers;
 	switch(action) {
 	case CanvasShortcuts::CANVAS_PAN:
 	case CanvasShortcuts::CANVAS_ROTATE:
@@ -253,13 +314,28 @@ void CanvasShortcutsDialog::updateAction()
 	case CanvasShortcuts::COLOR_H_ADJUST:
 	case CanvasShortcuts::COLOR_S_ADJUST:
 	case CanvasShortcuts::COLOR_V_ADJUST:
-		showModifiers = true;
+		d->ui.triggerWrapper->hide();
+		d->ui.modifiersWrapper->show();
+		break;
+	case CanvasShortcuts::TRIGGER_ACTION:
+		d->ui.modifiersWrapper->hide();
+		d->ui.triggerWrapper->show();
 		break;
 	default:
-		showModifiers = false;
+		d->ui.modifiersWrapper->hide();
+		d->ui.triggerWrapper->hide();
 		break;
 	}
-	d->ui.modifiersWrapper->setVisible(showModifiers);
+}
+
+void CanvasShortcutsDialog::updateTrigger()
+{
+	if(d->trigger.isEmpty()) {
+		d->ui.triggerEdit->clear();
+	} else {
+		d->ui.triggerEdit->setText(
+			CustomShortcutModel::getCustomizableActionTitle(d->trigger));
+	}
 }
 
 void CanvasShortcutsDialog::updateResult()
@@ -269,6 +345,8 @@ void CanvasShortcutsDialog::updateResult()
 		d->canvasShortcuts.searchConflict(s, d->s);
 	bool valid = s.isValid();
 	bool unmodifiedLeftClick = s.isUnmodifiedClick(Qt::LeftButton);
+	bool needsTrigger =
+		s.action == CanvasShortcuts::TRIGGER_ACTION && s.trigger.isEmpty();
 
 	QString conflictDescription;
 	if(conflict) {
@@ -289,6 +367,8 @@ void CanvasShortcutsDialog::updateResult()
 			   "the type to mouse button instead.");
 	} else if(!valid) {
 		conflictDescription = tr("Assign a shortcut to proceed.");
+	} else if(needsTrigger) {
+		conflictDescription = tr("Choose an action to proceed.");
 	} else {
 		conflictDescription = QString{};
 	}
@@ -296,7 +376,7 @@ void CanvasShortcutsDialog::updateResult()
 
 	QPushButton *okButton = d->ui.buttonBox->button(QDialogButtonBox::Ok);
 	if(okButton) {
-		okButton->setEnabled(valid && !unmodifiedLeftClick);
+		okButton->setEnabled(valid && !unmodifiedLeftClick && !needsTrigger);
 	}
 }
 

@@ -248,6 +248,7 @@ bool CanvasShortcutEdit::haveValidCapture()
 		m_capturedKeys,
 		m_capturedButton,
 		CanvasShortcuts::NO_ACTION,
+		QString(),
 		CanvasShortcuts::NORMAL,
 	};
 	return s.isValid(false);
@@ -276,18 +277,21 @@ void CanvasShortcutEdit::updateLineEditText()
 {
 	if(m_capturing) {
 		m_lineEdit->setEnabled(true);
-		m_lineEdit->setText(CanvasShortcutsModel::shortcutToString(
-			CanvasShortcuts::NO_TYPE, m_capturedMods, m_capturedKeys,
-			m_capturedButton));
+		m_lineEdit->setText(
+			CanvasShortcutsModel::shortcutToString(
+				CanvasShortcuts::NO_TYPE, m_capturedMods, m_capturedKeys,
+				m_capturedButton));
 	} else {
 		m_lineEdit->setEnabled(false);
-		m_lineEdit->setText(CanvasShortcutsModel::shortcutToString(
-			m_type, m_mods, m_keys, m_button));
+		m_lineEdit->setText(
+			CanvasShortcutsModel::shortcutToString(
+				m_type, m_mods, m_keys, m_button));
 	}
-	m_lineEdit->setCursor(QCursor{
-		m_capturing && m_type != CanvasShortcuts::KEY_COMBINATION
-			? Qt::CrossCursor
-			: Qt::ArrowCursor});
+	m_lineEdit->setCursor(
+		QCursor{
+			m_capturing && m_type != CanvasShortcuts::KEY_COMBINATION
+				? Qt::CrossCursor
+				: Qt::ArrowCursor});
 }
 
 void CanvasShortcutEdit::updateDescription()
@@ -309,8 +313,9 @@ void CanvasShortcutEdit::updateDescription()
 				   "optionally while holding down keys. Hit Escape to cancel.");
 			break;
 		case CanvasShortcuts::CONSTRAINT_KEY_COMBINATION:
-			description = tr("Hold down the desired key combination and click "
-							 "into the field above. Hit Escape to cancel.");
+			description =
+				tr("Hold down the desired key combination and click "
+				   "into the field above. Hit Escape to cancel.");
 			break;
 		default:
 			description = tr("Unknown shortcut type %1. Hit Escape to cancel.")

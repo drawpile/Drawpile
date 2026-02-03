@@ -36,9 +36,14 @@ public:
 		ColumnCount
 	};
 
-	enum Role { FilterRole = Qt::UserRole + 1 };
+	enum Role {
+		FilterRole = Qt::UserRole + 1,
+		ActionNameRole,
+	};
 
 	explicit CustomShortcutModel(QObject *parent = nullptr);
+
+	void setShowIcons(bool showIcons);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -57,6 +62,8 @@ public:
 
 	QVector<CustomShortcut>
 	getShortcutsMatching(const QKeySequence &keySequence);
+
+	QModelIndex searchByActionName(const QString &name) const;
 
 	void loadShortcuts(const QVariantMap &cfg);
 	[[nodiscard]] QVariantMap saveShortcuts();
@@ -81,6 +88,7 @@ public:
 	setCustomizableActionIcon(const QString &name, const QIcon &icon);
 	static void changeDisabledActionNames(
 		const QVector<QPair<QString, bool>> &nameDisabledPairs);
+	static QString getCustomizableActionTitle(const QString &name);
 
 private:
 	struct Conflict {
@@ -111,6 +119,7 @@ private:
 	QVector<CustomShortcut> m_loadedShortcuts;
 	QHash<int, Conflict> m_conflictRows;
 	QSet<QKeySequence> m_externalKeySequences;
+	bool m_showIcons = true;
 
 	static QMap<QString, CustomShortcut> m_customizableActions;
 	static QSet<QString> m_disabledActionNames;

@@ -901,6 +901,10 @@ void CanvasControllerBase::handleWheel(QWheelEvent *event)
 	case CanvasShortcuts::TOGGLE_ERASER:
 	case CanvasShortcuts::TOGGLE_ERASE_MODE:
 	case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+	case CanvasShortcuts::UNDO:
+	case CanvasShortcuts::REDO:
+	case CanvasShortcuts::HIDE_DOCKS:
+	case CanvasShortcuts::TRIGGER_ACTION:
 		Q_EMIT canvasShortcutActionActivated(match.actionName());
 		break;
 	default:
@@ -986,6 +990,10 @@ void CanvasControllerBase::handleKeyPress(QKeyEvent *event)
 		case CanvasShortcuts::TOGGLE_ERASER:
 		case CanvasShortcuts::TOGGLE_ERASE_MODE:
 		case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+		case CanvasShortcuts::UNDO:
+		case CanvasShortcuts::REDO:
+		case CanvasShortcuts::HIDE_DOCKS:
+		case CanvasShortcuts::TRIGGER_ACTION:
 			Q_EMIT canvasShortcutActionActivated(keyMatch.actionName());
 			break;
 		default:
@@ -1705,6 +1713,10 @@ void CanvasControllerBase::penPressEvent(
 		case CanvasShortcuts::TOGGLE_ERASER:
 		case CanvasShortcuts::TOGGLE_ERASE_MODE:
 		case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
+		case CanvasShortcuts::UNDO:
+		case CanvasShortcuts::REDO:
+		case CanvasShortcuts::HIDE_DOCKS:
+		case CanvasShortcuts::TRIGGER_ACTION:
 			Q_EMIT canvasShortcutActionActivated(match.actionName());
 			break;
 		default:

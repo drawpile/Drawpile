@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/utils/canvasshortcutsmodel.h"
+#include "libclient/utils/customshortcutmodel.h"
 #include <QColor>
 #include <QCoreApplication>
 #include <QIcon>
@@ -407,6 +408,21 @@ QString CanvasShortcutsModel::actionToString(const CanvasShortcuts::Shortcut &s)
 		return tr("Toggle Eraser Mode");
 	case CanvasShortcuts::TOGGLE_RECOLOR_MODE:
 		return tr("Toggle Alpha Preserve");
+	case CanvasShortcuts::UNDO:
+		return tr("Undo");
+	case CanvasShortcuts::REDO:
+		return tr("Redo");
+	case CanvasShortcuts::HIDE_DOCKS:
+		return tr("Hide Docks");
+	case CanvasShortcuts::TRIGGER_ACTION:
+		if(!s.trigger.isEmpty()) {
+			QString title =
+				CustomShortcutModel::getCustomizableActionTitle(s.trigger);
+			if(!title.isEmpty()) {
+				return title;
+			}
+		}
+		return tr("Trigger Action");
 	default:
 		return tr("Unknown Action %1").arg(s.action);
 	}

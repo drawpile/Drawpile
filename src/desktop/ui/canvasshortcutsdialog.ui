@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>439</height>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,6 +63,47 @@
      <layout class="QVBoxLayout">
       <item>
        <widget class="QComboBox" name="actionCombo"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="triggerWrapper" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLineEdit" name="triggerEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>Choose an action</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="triggerButton">
+           <property name="text">
+            <string>Change…</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <widget class="QWidget" name="modifiersWrapper" native="true">

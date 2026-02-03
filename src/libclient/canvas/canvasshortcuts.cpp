@@ -8,9 +8,10 @@ CanvasShortcuts::CanvasShortcuts() {}
 CanvasShortcuts CanvasShortcuts::load(const QVariantMap &cfg)
 {
 	const QVector<QVariantMap> shortcuts =
-		shortcutsToList(cfg.value("shortcuts"));
+		shortcutsToList(cfg.value(QStringLiteral("shortcuts")));
 	CanvasShortcuts cs;
-	if(shortcuts.isEmpty() && !cfg.value("defaultsloaded").toBool()) {
+	if(shortcuts.isEmpty() &&
+	   !cfg.value(QStringLiteral("defaultsloaded")).toBool()) {
 		cs.loadDefaults();
 	} else {
 		for(const auto &shortcut : shortcuts) {
@@ -31,6 +32,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::MiddleButton,
 		CANVAS_PAN,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -39,6 +41,7 @@ void CanvasShortcuts::loadDefaults()
 		{Qt::Key_Space},
 		Qt::LeftButton,
 		CANVAS_PAN,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -47,6 +50,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::MiddleButton,
 		CANVAS_ZOOM,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -55,6 +59,7 @@ void CanvasShortcuts::loadDefaults()
 		{Qt::Key_Space},
 		Qt::LeftButton,
 		CANVAS_ZOOM,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -63,6 +68,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::MiddleButton,
 		CANVAS_ROTATE,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -71,6 +77,7 @@ void CanvasShortcuts::loadDefaults()
 		{Qt::Key_Space},
 		Qt::LeftButton,
 		CANVAS_ROTATE,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -79,6 +86,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::MiddleButton,
 		CANVAS_ROTATE_DISCRETE,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -87,6 +95,7 @@ void CanvasShortcuts::loadDefaults()
 		{Qt::Key_Space},
 		Qt::LeftButton,
 		CANVAS_ROTATE_DISCRETE,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -95,6 +104,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::LeftButton,
 		COLOR_PICK,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -103,6 +113,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::LeftButton,
 		LAYER_PICK,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -111,6 +122,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::LeftButton,
 		TOOL_ADJUST1,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -119,6 +131,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::MiddleButton,
 		TOOL_ADJUST1,
+		QString(),
 		SWAP_AXES,
 	});
 	addShortcut({
@@ -127,6 +140,7 @@ void CanvasShortcuts::loadDefaults()
 		{Qt::Key_Space},
 		Qt::LeftButton,
 		TOOL_ADJUST1,
+		QString(),
 		SWAP_AXES,
 	});
 	// Unlike other platforms, macOS has two-dimensional scrolling by default,
@@ -141,6 +155,7 @@ void CanvasShortcuts::loadDefaults()
 #else
 		CANVAS_ZOOM,
 #endif
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -149,6 +164,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::NoButton,
 		CANVAS_ZOOM,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -157,6 +173,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::NoButton,
 		CANVAS_ROTATE,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -165,6 +182,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::NoButton,
 		TOOL_ADJUST1,
+		QString(),
 		NORMAL,
 	});
 	addShortcut({
@@ -173,6 +191,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::NoButton,
 		CONSTRAINT,
+		QString(),
 		TOOL_CONSTRAINT1,
 	});
 	addShortcut({
@@ -181,6 +200,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::NoButton,
 		CONSTRAINT,
+		QString(),
 		TOOL_CONSTRAINT2,
 	});
 	addShortcut({
@@ -189,6 +209,7 @@ void CanvasShortcuts::loadDefaults()
 		{},
 		Qt::NoButton,
 		CONSTRAINT,
+		QString(),
 		TOOL_CONSTRAINT1 | TOOL_CONSTRAINT2,
 	});
 }
@@ -454,7 +475,7 @@ QVector<QVariantMap> CanvasShortcuts::shortcutsToList(const QVariant &shortcuts)
 		}
 	} else if(shortcuts.userType() == QMetaType::QVariantMap) {
 		QVariantMap map = shortcuts.toMap();
-		for(int i = 1; i <= map["size"].toInt(); ++i) {
+		for(int i = 1; i <= map.value(QStringLiteral("size")).toInt(); ++i) {
 			QString key = QString::number(i);
 			result.append(map[key].toMap());
 		}
@@ -479,35 +500,40 @@ QVariantMap CanvasShortcuts::saveShortcut(const Shortcut &s)
 			Qt::Key kb = b.value<Qt::Key>();
 			return ka < kb;
 		});
-	cfg.insert("type", s.type);
-	cfg.insert("modifiers", Qt::KeyboardModifiers::Int(s.mods));
-	cfg.insert("keys", keyVariants);
-	cfg.insert("button", s.button);
-	cfg.insert("action", s.action);
-	cfg.insert("flags", s.flags);
+	cfg.insert(QStringLiteral("type"), s.type);
+	cfg.insert(QStringLiteral("modifiers"), Qt::KeyboardModifiers::Int(s.mods));
+	cfg.insert(QStringLiteral("keys"), keyVariants);
+	cfg.insert(QStringLiteral("button"), s.button);
+	cfg.insert(QStringLiteral("action"), s.action);
+	cfg.insert(QStringLiteral("trigger"), s.trigger);
+	cfg.insert(QStringLiteral("flags"), s.flags);
 	return cfg;
 }
 
 CanvasShortcuts::Shortcut CanvasShortcuts::loadShortcut(const QVariantMap &cfg)
 {
 	Shortcut s = {
-		Type(cfg.value("type", NO_TYPE).toUInt()),
-		Qt::KeyboardModifiers(
-			cfg.value("modifiers", Qt::KeyboardModifier::NoModifier)
-				.value<Qt::KeyboardModifiers::Int>()),
+		Type(cfg.value(QStringLiteral("type"), NO_TYPE).toUInt()),
+		Qt::KeyboardModifiers(cfg.value(
+									 QStringLiteral("modifiers"),
+									 Qt::KeyboardModifier::NoModifier)
+								  .value<Qt::KeyboardModifiers::Int>()),
 		{},
-		Qt::MouseButton(
-			cfg.value("button", Qt::NoButton).value<Qt::MouseButtons::Int>()),
-		Action(cfg.value("action", NO_ACTION).toUInt()),
-		cfg.value("flags", NORMAL).toUInt(),
+		Qt::MouseButton(cfg.value(QStringLiteral("button"), Qt::NoButton)
+							.value<Qt::MouseButtons::Int>()),
+		Action(cfg.value(QStringLiteral("action"), NO_ACTION).toUInt()),
+		cfg.value(QStringLiteral("trigger"), QString()).toString(),
+		cfg.value(QStringLiteral("flags"), NORMAL).toUInt(),
 	};
-	for(const QVariant &keyVariant : cfg.value("keys").toList()) {
+	for(const QVariant &keyVariant :
+		cfg.value(QStringLiteral("keys")).toList()) {
 		s.keys.insert(Qt::Key(keyVariant.toULongLong()));
 	}
 	return s;
 }
 
-QString CanvasShortcuts::getActionName(Action action)
+QString
+CanvasShortcuts::getActionName(Action action, const QString &triggerActionName)
 {
 	switch(action) {
 	case Action::TOGGLE_ERASER:
@@ -516,6 +542,14 @@ QString CanvasShortcuts::getActionName(Action action)
 		return QStringLiteral("currenterasemode");
 	case Action::TOGGLE_RECOLOR_MODE:
 		return QStringLiteral("currentrecolormode");
+	case Action::UNDO:
+		return QStringLiteral("undo");
+	case Action::REDO:
+		return QStringLiteral("redo");
+	case Action::HIDE_DOCKS:
+		return QStringLiteral("hidedocks");
+	case Action::TRIGGER_ACTION:
+		return triggerActionName;
 	default:
 		qWarning("No name for action %d", int(action));
 		return QString();

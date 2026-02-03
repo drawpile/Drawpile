@@ -21,8 +21,12 @@ public:
 	CanvasShortcuts::Shortcut shortcut() const;
 
 private:
+	void changeTrigger();
+	void setTrigger(const QString &trigger);
+
 	void updateType();
 	void updateAction();
+	void updateTrigger();
 	void updateResult();
 
 	struct Private;
