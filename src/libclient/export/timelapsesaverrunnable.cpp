@@ -486,6 +486,7 @@ void TimelapseSaverRunnable::PlaybackRunnable::enqueueFlashImage(
 
 void TimelapseSaverRunnable::PlaybackRunnable::enqueue(PlaybackEntry &&entry)
 {
+	DP_SEMAPHORE_MUST_WAIT(m_parent->m_availableSem);
 	DP_Mutex *mutex = m_parent->m_mutex;
 	DP_MUTEX_MUST_LOCK(mutex);
 	m_parent->m_queue.enqueue(std::move(entry));
