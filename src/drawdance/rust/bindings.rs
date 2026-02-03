@@ -282,7 +282,9 @@ pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT: u32 = 3;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION: u32 = 4;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST: u32 = 5;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST: u32 = 6;
-pub const DP_MSG_SET_METADATA_INT_NUM_FIELD: u32 = 7;
+pub const DP_MSG_SET_METADATA_INT_FIELD_OFFSET_X: u32 = 7;
+pub const DP_MSG_SET_METADATA_INT_FIELD_OFFSET_Y: u32 = 8;
+pub const DP_MSG_SET_METADATA_INT_NUM_FIELD: u32 = 9;
 pub const DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH: u32 = 14;
 pub const DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH_COMPAT: u32 = 11;
 pub const DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP: u32 = 1;
@@ -2132,6 +2134,13 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_canvas_state_offsets_set(
+        tcs: *mut DP_TransientCanvasState,
+        offset_x: ::std::os::raw::c_int,
+        offset_y: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_transient_canvas_state_offsets_add(
         tcs: *mut DP_TransientCanvasState,
         offset_x: ::std::os::raw::c_int,
@@ -2628,6 +2637,7 @@ pub const DP_IMAGE_SCALE_INTERPOLATION_GAUSS: DP_ImageScaleInterpolation = -8;
 pub const DP_IMAGE_SCALE_INTERPOLATION_SINC: DP_ImageScaleInterpolation = -9;
 pub const DP_IMAGE_SCALE_INTERPOLATION_LANCZOS: DP_ImageScaleInterpolation = -10;
 pub const DP_IMAGE_SCALE_INTERPOLATION_SPLINE: DP_ImageScaleInterpolation = -11;
+pub const DP_IMAGE_SCALE_INTERPOLATION_GUESS: DP_ImageScaleInterpolation = -12;
 pub type DP_ImageScaleInterpolation = ::std::os::raw::c_int;
 pub type DP_ImageGetPixelFn = ::std::option::Option<
     unsafe extern "C" fn(
@@ -2812,6 +2822,9 @@ extern "C" {
         height: ::std::os::raw::c_int,
         interpolation: ::std::os::raw::c_int,
     ) -> *mut DP_Image;
+}
+extern "C" {
+    pub fn DP_image_scale_interpolation_supported(interpolation: ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
     pub fn DP_image_same_pixel(img: *mut DP_Image, out_pixel: *mut DP_Pixel8) -> bool;
@@ -4766,6 +4779,9 @@ extern "C" {
     ) -> DP_AffectedArea;
 }
 extern "C" {
+    pub fn DP_affected_area_pixel_domain_type(type_: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
     pub fn DP_affected_area_concurrent_with(
         aa: *const DP_AffectedArea,
         other: *const DP_AffectedArea,
@@ -5297,6 +5313,9 @@ extern "C" {
     ) -> *mut DP_CanvasHistory;
 }
 extern "C" {
+    pub fn DP_canvas_history_new_no_mutex() -> *mut DP_CanvasHistory;
+}
+extern "C" {
     pub fn DP_canvas_history_free(ch: *mut DP_CanvasHistory);
 }
 extern "C" {
@@ -5313,6 +5332,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_canvas_history_get(ch: *mut DP_CanvasHistory) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_canvas_history_get_noinc_nolock(ch: *mut DP_CanvasHistory) -> *mut DP_CanvasState;
 }
 extern "C" {
     pub fn DP_canvas_history_compare_and_get(
@@ -6311,6 +6333,20 @@ extern "C" {
         >,
         user: *mut ::std::os::raw::c_void,
     );
+}
+extern "C" {
+    pub fn DP_local_state_apply_nodec(
+        ls: *mut DP_LocalState,
+        cs_or_null: *mut DP_CanvasState,
+        dc: *mut DP_DrawContext,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_local_state_apply_dec(
+        ls: *mut DP_LocalState,
+        cs_or_null: *mut DP_CanvasState,
+        dc: *mut DP_DrawContext,
+    ) -> *mut DP_CanvasState;
 }
 extern "C" {
     pub fn DP_local_state_msg_layer_visibility_new(
@@ -8293,7 +8329,6 @@ pub const DP_SAVE_RESULT_OPEN_ERROR: DP_SaveResult = 5;
 pub const DP_SAVE_RESULT_WRITE_ERROR: DP_SaveResult = 6;
 pub const DP_SAVE_RESULT_INTERNAL_ERROR: DP_SaveResult = 7;
 pub const DP_SAVE_RESULT_CANCEL: DP_SaveResult = 8;
-pub const DP_SAVE_RESULT_TODO_DPPR: DP_SaveResult = 9;
 pub type DP_SaveResult = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -8647,7 +8682,7 @@ extern "C" {
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
 }
-pub type DP_SaveAnimationProgressFn = ::std::option::Option<
+pub type DP_SaveProgressFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, progress: f64) -> bool,
 >;
 extern "C" {
@@ -8661,7 +8696,7 @@ extern "C" {
         interpolation: ::std::os::raw::c_int,
         start: ::std::os::raw::c_int,
         end_inclusive: ::std::os::raw::c_int,
-        progress_fn: DP_SaveAnimationProgressFn,
+        progress_fn: DP_SaveProgressFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
 }
@@ -8676,7 +8711,7 @@ extern "C" {
         interpolation: ::std::os::raw::c_int,
         start: ::std::os::raw::c_int,
         end_inclusive: ::std::os::raw::c_int,
-        progress_fn: DP_SaveAnimationProgressFn,
+        progress_fn: DP_SaveProgressFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
 }
@@ -13298,7 +13333,8 @@ extern "C" {
         msg: *mut DP_Message,
         get_buffer: DP_GetMessageBufferFn,
         user: *mut ::std::os::raw::c_void,
-    ) -> isize;
+        out_length: *mut usize,
+    ) -> bool;
 }
 extern "C" {
     pub fn DP_message_write_text(msg: *mut DP_Message, writer: *mut DP_TextWriter) -> bool;
