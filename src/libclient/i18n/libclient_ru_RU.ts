@@ -19,7 +19,7 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished">Не удалось распределить память. Это может произойти в некоторых браузерах при обновлении. Закройте эту страницу и браузер полностью, а затем повторите попытку.</translation>
+        <translation>Не удалось распределить память. Это может произойти в некоторых браузерах при обновлении. Закройте эту страницу и браузер полностью, а затем повторите попытку.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -89,42 +89,42 @@
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished">Обычно это происходит потому, что ваш браузер устарел или вы просматриваете страницу через какой-либо встроенный браузер, например браузер чат-приложения, и вам нужно открыть ее правильно. Для получения дополнительной информации ознакомьтесь с &lt;a href=&quot;#&quot;&gt;этой страницей помощи&lt;/a&gt;.</translation>
+        <translation>Обычно это происходит потому, что ваш браузер устарел или вы просматриваете страницу через какой-либо встроенный браузер, например браузер чат-приложения, и вам нужно открыть её правильно. Для получения дополнительной информации ознакомьтесь с &lt;a href=&quot;#&quot;&gt;этой страницей справки&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished">Неверная ссылка на сеанс.</translation>
+        <translation>Неверная ссылка на сеанс.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished">Однако вы попали сюда не по действительной ссылке на сессию Drawpile.</translation>
+        <translation>Однако вы попали сюда не по действительной ссылке на сессию Drawpile.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished">&lt;strong&gt;Браузер в приложении:&lt;/strong&gt; похоже, что вы открыли Drawpile в браузере в приложении.</translation>
+        <translation>&lt;strong&gt;Браузер в приложении:&lt;/strong&gt; похоже, что вы открыли Drawpile в браузере в приложении.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Браузер в приложении:&lt;/strong&gt; похоже, что вы открыли Drawpile в браузере в приложении %1.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished">Обычно это не работает должным образом, поэтому откройте эту страницу в настоящем веб-браузере.</translation>
+        <translation>Обычно это не работает должным образом, поэтому откройте эту страницу в настоящем веб-браузере.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished">Возможно, несовместимый браузер:</translation>
+        <translation>Возможно, несовместимый браузер:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished">&lt;strong&gt;Возможно, несовместимый браузер:&lt;/strong&gt; Firefox в Linux поддерживает чувствительные к нажатию ручки не на всех системах. Если у вас не получается нажимать, попробуйте использовать другой браузер или &lt;a href=&quot;#&quot;&gt;родное приложение Linux&lt;/a&gt;.</translation>
+        <translation>&lt;strong&gt;Возможно, несовместимый браузер:&lt;/strong&gt; Firefox в Linux поддерживает чувствительные к нажатию ручки не на всех системах. Если у вас не получается нажимать, попробуйте использовать другой браузер или &lt;a href=&quot;#&quot;&gt;родное приложение Linux&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -134,7 +134,7 @@
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Несовместимый браузер:&lt;/strong&gt; Chrome на %1 испытывает некоторые проблемы с запуском Drawpile. По сути, это просто системный браузер (Safari) в другой оболочке, что приводит к тому, что элементы управления могут оказаться за пределами экрана. Рекомендуется использовать системный браузер (Safari) напрямую.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -184,7 +184,7 @@
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished">&lt;strong&gt;Внимание:&lt;/strong&gt; эта установка&lt;strong&gt;устарела&lt;/strong&gt; до версии &lt;code&gt;%1&lt;/code&gt;, которая не является самой последней версией &lt;code&gt;%2&lt;/code&gt;.</translation>
+        <translation>&lt;strong&gt;Внимание:&lt;/strong&gt; эта установка&lt;strong&gt;устарела&lt;/strong&gt; до версии &lt;code&gt;%1&lt;/code&gt;, которая не является самой последней версией &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -209,12 +209,12 @@
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished">Запуск</translation>
+        <translation>Запуск</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished">Запустить в любом случае</translation>
+        <translation>Запустить в любом случае</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -224,7 +224,7 @@
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished">Стабильно (%1)</translation>
+        <translation>Стабильно (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -303,7 +303,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Размер холста выходит за пределы, ширина и высота должны быть от 1 до %1 для %2.</translation>
     </message>
 </context>
 <context>
@@ -345,13 +345,13 @@
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished">%1ч %2мин {1:?} {2?}</translation>
+        <translation>%1ч %2мин {1:?} {2?}</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -433,12 +433,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished">Изменить непрозрачность кисти</translation>
+        <translation>Изменить непрозрачность кисти</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить жёсткость кисти</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -463,7 +463,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошаговое вращение холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -493,17 +493,17 @@
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Инвертировано, переключить оси</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Инвертировано</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished">Переключить оси</translation>
+        <translation>Переключить оси</translation>
     </message>
 </context>
 <context>
@@ -620,13 +620,13 @@
         <location line="+544"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Слой по выделению: текущий слой пуст.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Выделить границы слоя: текущий слой пуст.</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -910,7 +910,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Незначительная несовместимость</translation>
     </message>
     <message>
         <location line="+121"/>
@@ -993,22 +993,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>Более высокая плотность</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Маркер</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>Пигмент</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1411,22 +1411,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">Модератор</translation>
+        <translation>Модератор</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">Оператор</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Доверенный</translation>
+        <translation>Доверенный</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1470,12 +1470,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
-        <translation>%1 забанен пользователем %2.</translation>
+        <translation>%1 запрещён доступ пользователем %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation>%1 выгнан(а) пользователем %2.</translation>
+        <translation>%1 исключён пользователем %2.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -1490,12 +1490,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен оператором через приглашение, созданное администратором сервера.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен оператором через приглашение, созданное %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1505,12 +1505,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-644"/>
         <source>You have been kicked.</source>
-        <translation>Вы были выгнаны.</translation>
+        <translation>Вы были исключены.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation>Вы были выгнаны пользователем %1.</translation>
+        <translation>Вы были исключены пользователем %1.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1546,7 +1546,7 @@ Select a regular layer instead.</source>
         <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation>Только модераторы могут экспортировать список забаненых пользователей.</translation>
+        <translation>Только модераторы могут экспортировать список пользователей, которым запрещён доступ.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1556,17 +1556,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation>Экспорт зашифрованного списка банов не настроен на данном сервере.</translation>
+        <translation>Экспорт зашифрованного списка запретов не настроен на данном сервере.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation>Экспорт зашифрованного списка банов не поддерживается данным сервером.</translation>
+        <translation>Экспорт зашифрованного списка запретов не поддерживается данным сервером.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation>Сервер не может прочесть импортируемые данные. Скорее всего, файл был экспортирован с другого сервера. Импортировать файл списка банов можно только на тот же сервер, откуда он был экспортирован.</translation>
+        <translation>Сервер не может прочесть импортируемые данные. Скорее всего, файл был экспортирован с другого сервера. Импортировать файл списка запретов можно только на тот же сервер, откуда он был экспортирован.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1576,126 +1576,126 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверно сформированные импортируемые данные.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт зашифрованных запретов не настроен на этом сервере.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт зашифрованных запретов не поддерживается этим сервером.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль сессии удалён администратором сервера. Этот сервер не разрешает использование веб-браузеров в публичных сессиях, они могут быть отключены.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль сессии удалён %1. Этот сервер не разрешает использование веб-браузеров, они будут отключены.</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен доверенным через приглашение, созданное администратором сервера.</translation>
     </message>
     <message>
         <location line="+134"/>
         <source> / </source>
         <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус оператора изъят у пользователя %1 пользователем %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недостаточно места для сессии. Чтобы продолжить рисование, оператор должен сбросить её, уменьшив размер. Это можно сделать через меню Сессия &gt; Сброс.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сброс сессии отменён. Оператор должен разблокировать холст и сбросить сессию вручную.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось сбросить сессию. Оператор должен разблокировать холст и сбросить сессию вручную.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Подготовка к сбросу сессии. Подождите, скоро сессия снова будет доступна…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Подготовка к сбросу сессии пользователем %1. Подождите, скоро сессия снова будет доступна…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 выполняет сжатие холста. Подождите, скоро сессия снова будет доступна…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 выполняет замену холста. Подождите, скоро сессия снова будет доступна…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 возвращает холст к предыдущему состоянию. Подождите, скоро сессия снова будет доступна…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия завершена модератором (%1).</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия завершена администратором: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия завершена модератором (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен доверенным сервером.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен доверенным пользователем %2.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен доверенным через приглашение, созданное пользователем %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен недоверенным сервером.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен недоверенным пользователем %2.</translation>
     </message>
 </context>
 <context>
@@ -1703,60 +1703,60 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет кодов приглашения, нажмите «Создать», чтобы добавить его.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Использован %1 пользователем %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Создан %1 пользователем %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Оператор и доверенный</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Оператор</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Доверенный</translation>
+        <translation>Доверенный</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Код</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Роль</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>Использование</translation>
     </message>
 </context>
 <context>
@@ -1787,47 +1787,47 @@ Select a regular layer instead.</source>
     <message>
         <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Был перенаправлен на сервер, который не принимает перенаправления: %1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот сервер не предоставляет способ входа для присоединения к сессии.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот сервер не предоставляет способ входа для проведения сессии.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер ожидает STARTTLS на неподдерживаемом сокете.</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось получить информацию о сервере</translation>
     </message>
     <message>
         <location line="+69"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось найти сессию</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовместимое перенаправление</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Циклическое перенаправление</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком много перенаправлений</translation>
     </message>
     <message>
         <location line="+108"/>
@@ -1848,7 +1848,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+127"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверный ответ на намерение идентификатора.</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1863,7 +1863,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер сообщил два разных URL-адреса внешнего сервера проверки подлинности</translation>
     </message>
     <message>
         <location line="+199"/>
@@ -1874,27 +1874,27 @@ Select a regular layer instead.</source>
         <location line="+210"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS не поддерживается через такой сокет</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно установить состояние игнорирования ошибки TLS</translation>
     </message>
     <message>
         <location line="+146"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>Обычно это означает, что ваша версия Drawpile слишком старая. Нужно ли обновить её?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Сессия не найдена. Возможно, она закончилась или пригласительная ссылка изменилась</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот сервер позволяет присоединиться к сессиям только по прямой ссылке.</translation>
     </message>
     <message>
         <location line="-468"/>
@@ -1909,17 +1909,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+461"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недопустимое имя пользователя.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Здесь не допускается проводить публичные сессии, разрешены только личные сессии. Вы можете сменить режим с публичного на личный во вкладке «Сессия».</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>Клиенту не удалось сериализовать команду</translation>
     </message>
     <message>
         <location line="-65"/>
@@ -1929,17 +1929,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="-1132"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим безопасности не включён на хосте с закреплённым сертификатом.</translation>
     </message>
     <message>
         <location line="+727"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестная версия %1</translation>
     </message>
     <message>
         <location line="+304"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Закреплённый сертификат был изменён.</translation>
     </message>
     <message>
         <location line="+103"/>
@@ -1975,7 +1975,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+318"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Сессия для другой версии Drawpile (%1) уже идёт.</translation>
     </message>
     <message>
         <location line="+396"/>
@@ -2018,72 +2018,72 @@ Select a regular layer instead.</source>
     <message>
         <location line="+57"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (несовместимая)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (режим совместимости)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (minor incompatibility)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (незначительная несовместимость)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (полностью совместима)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>Не в списке</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовместимая версия</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыто (не разрешено подключение с веб-браузера)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыто (не разрешено подключение через WebSocket)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыто (гостевой вход заблокирован)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыто (новый вход заблокирован)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Требуется пароль сессии</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Не подходит для несовершеннолетних (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished">Неизвестное число активно рисующих пользователей</translation>
+        <translation>Неизвестное число активно рисующих пользователей</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n активно рисующий пользователь</numerusform>
             <numerusform>%n активно рисующих пользователя</numerusform>
             <numerusform>%n активно рисующих пользователей</numerusform>
@@ -2107,49 +2107,49 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished">Активный</translation>
+        <translation>Активный</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия заполнена или закрыта.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Требуется учётная запись.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия не позволяет присоединяться через веб-браузер.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия не позволяет присоединяться через WebSockets.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия использует более новую версию Drawpile, необходимо обновление. Если обновление недоступно, возможно, сессия использует экспериментальную версию Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия использует старую, несовместимую версию Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сессия использует несовместимый протокол.</translation>
     </message>
 </context>
 <context>
@@ -2157,49 +2157,49 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Если вы не планируете использовать прокси, вы можете отключить сетевой прокси в параметрах Drawpile на вкладке «Сеть».</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка чтения сети</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка чтения сети: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка записи сети</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка записи сети: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Время сетевого соединения истекло</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Получены неверные данные</translation>
+        <translation>Получены неверные данные</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка сокета %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (ошибка %2)</translation>
     </message>
 </context>
 <context>
@@ -2207,7 +2207,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/freehand.cpp" line="+146"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для защиты от выхода за границы требуется слой-источник заливки.</translation>
     </message>
 </context>
 <context>
@@ -2215,7 +2215,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>Потащите, чтобы создать градиент.</translation>
     </message>
 </context>
 <context>
@@ -2223,27 +2223,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+423"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас нет разрешения на преобразование выделений.</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Холст отсутствует.</translation>
     </message>
     <message>
         <location line="-253"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас нет разрешения на это преобразование.</translation>
     </message>
     <message>
         <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас нет разрешения на маркировку выделения.</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выбрано ничего, что можно было бы преобразовать.</translation>
     </message>
 </context>
 <context>
@@ -2251,7 +2251,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>По умолчанию</translation>
     </message>
 </context>
 <context>
@@ -2260,52 +2260,52 @@ Select a regular layer instead.</source>
         <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">Проверка обновлений…</translation>
+        <translation>Проверка обновлений…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическая проверка обновлений отключена, &lt;a href=&quot;#autoupdate&quot;&gt;нажмите здесь, чтобы включить её&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Если автоматическая проверка не требуется, &lt;a href=&quot;#checkupdates&quot;&gt;нажмите здесь для проверки вручную&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка сети: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось разобраться в полученных данных.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось разобраться в полученных обновлениях.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось сохранить обновления.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось разобраться в полученных новостях.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось сохранить новости.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Новости недоступны.</translation>
     </message>
 </context>
 <context>
@@ -2313,22 +2313,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы не используете официальный клиент на web.drawpile.net. Большинство серверов не разрешают подключения с других мест.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Адрес сессии не выглядит как действительный URL-адрес WebSocket.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы пытаетесь подключиться к IP-адресу вместо правильного доменного имени. Обычно это не работает, если вы сначала не настроили свой браузер для разрешения таких подключений.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер может не поддерживать подключение через веб-браузер.</translation>
     </message>
 </context>
 </TS>
