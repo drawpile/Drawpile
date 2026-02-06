@@ -620,13 +620,13 @@
         <location line="+544"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Camada à seleção: a camada atual está vazia.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar limites da camada: a camada atual está vazia.</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -907,7 +907,7 @@ Selecione uma camada normal em vez disso.</translation>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Incompatibilidade leve</translation>
     </message>
     <message>
         <location line="+121"/>
@@ -1604,7 +1604,7 @@ Selecione uma camada normal em vez disso.</translation>
         <location line="+134"/>
         <source> / </source>
         <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location line="-200"/>
