@@ -2697,7 +2697,8 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 					bool autoRecord = dpAppConfig()->getAutoRecordHost();
 					m_doc->loadState(
 						canvasState, loader->path(), loader->type(), false,
-						autoRecord);
+						autoRecord, loader->sessionSourceParam(),
+						loader->sessionSequenceId());
 				}
 
 				loader->deleteLater();
@@ -2824,7 +2825,7 @@ void MainWindow::importAnimation(int source)
 					bool autoRecord = dpAppConfig()->getAutoRecordHost();
 					win->m_doc->loadState(
 						canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true,
-						autoRecord);
+						autoRecord, QString(), 0LL);
 				};
 				if(canReplace()) {
 					block(this);

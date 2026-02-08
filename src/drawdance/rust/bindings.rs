@@ -8367,48 +8367,178 @@ extern "C" {
 pub type DP_LoadFixedLayerFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, layer_id: ::std::os::raw::c_int),
 >;
+pub type DP_LoadCopyFn = ::std::option::Option<
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void) -> *const ::std::os::raw::c_char,
+>;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_LoadContextIn {
+    pub path: *const ::std::os::raw::c_char,
+    pub flat_image_layer_title: *const ::std::os::raw::c_char,
+    pub dc: *mut DP_DrawContext,
+    pub flags: ::std::os::raw::c_uint,
+    pub type_: DP_SaveImageType,
+    pub copy_fn: DP_LoadCopyFn,
+    pub fixed_layer_fn: DP_LoadFixedLayerFn,
+    pub user: *mut ::std::os::raw::c_void,
+}
+#[test]
+fn bindgen_test_layout_DP_LoadContextIn() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_LoadContextIn> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_LoadContextIn>(),
+        56usize,
+        "Size of DP_LoadContextIn"
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_LoadContextIn>(),
+        8usize,
+        "Alignment of DP_LoadContextIn"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).path) as usize - ptr as usize },
+        0usize,
+        "Offset of field: DP_LoadContextIn::path"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flat_image_layer_title) as usize - ptr as usize },
+        8usize,
+        "Offset of field: DP_LoadContextIn::flat_image_layer_title"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).dc) as usize - ptr as usize },
+        16usize,
+        "Offset of field: DP_LoadContextIn::dc"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        24usize,
+        "Offset of field: DP_LoadContextIn::flags"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        28usize,
+        "Offset of field: DP_LoadContextIn::type_"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).copy_fn) as usize - ptr as usize },
+        32usize,
+        "Offset of field: DP_LoadContextIn::copy_fn"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).fixed_layer_fn) as usize - ptr as usize },
+        40usize,
+        "Offset of field: DP_LoadContextIn::fixed_layer_fn"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).user) as usize - ptr as usize },
+        48usize,
+        "Offset of field: DP_LoadContextIn::user"
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_LoadContextOut {
+    pub cs: *mut DP_CanvasState,
+    pub session_source_param: *mut ::std::os::raw::c_char,
+    pub session_sequence_id: ::std::os::raw::c_longlong,
+    pub result: DP_LoadResult,
+    pub type_: DP_SaveImageType,
+}
+#[test]
+fn bindgen_test_layout_DP_LoadContextOut() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_LoadContextOut> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_LoadContextOut>(),
+        32usize,
+        "Size of DP_LoadContextOut"
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_LoadContextOut>(),
+        8usize,
+        "Alignment of DP_LoadContextOut"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).cs) as usize - ptr as usize },
+        0usize,
+        "Offset of field: DP_LoadContextOut::cs"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).session_source_param) as usize - ptr as usize },
+        8usize,
+        "Offset of field: DP_LoadContextOut::session_source_param"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).session_sequence_id) as usize - ptr as usize },
+        16usize,
+        "Offset of field: DP_LoadContextOut::session_sequence_id"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
+        24usize,
+        "Offset of field: DP_LoadContextOut::result"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        28usize,
+        "Offset of field: DP_LoadContextOut::type_"
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_LoadContext {
+    pub in_: DP_LoadContextIn,
+    pub out: DP_LoadContextOut,
+}
+#[test]
+fn bindgen_test_layout_DP_LoadContext() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_LoadContext> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_LoadContext>(),
+        88usize,
+        "Size of DP_LoadContext"
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_LoadContext>(),
+        8usize,
+        "Alignment of DP_LoadContext"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).in_) as usize - ptr as usize },
+        0usize,
+        "Offset of field: DP_LoadContext::in_"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).out) as usize - ptr as usize },
+        56usize,
+        "Offset of field: DP_LoadContext::out"
+    );
+}
+extern "C" {
+    pub fn DP_load_context_make(
+        path: *const ::std::os::raw::c_char,
+        dc: *mut DP_DrawContext,
+    ) -> DP_LoadContext;
+}
+extern "C" {
+    pub fn DP_load_context_dispose(lc: *mut DP_LoadContext);
+}
+extern "C" {
+    pub fn DP_load_context_dispose_take(lc: *mut DP_LoadContext) -> *mut DP_CanvasState;
+}
 extern "C" {
     pub fn DP_load_guess(buf: *const ::std::os::raw::c_uchar, size: usize) -> DP_SaveImageType;
 }
 extern "C" {
-    pub fn DP_load(
-        dc: *mut DP_DrawContext,
-        path: *const ::std::os::raw::c_char,
-        flat_image_layer_title: *const ::std::os::raw::c_char,
-        flags: ::std::os::raw::c_uint,
-        copy_fn: ::std::option::Option<
-            unsafe extern "C" fn(
-                arg1: *mut ::std::os::raw::c_void,
-            ) -> *const ::std::os::raw::c_char,
-        >,
-        copy_user: *mut ::std::os::raw::c_void,
-        out_result: *mut DP_LoadResult,
-        out_type: *mut DP_SaveImageType,
-    ) -> *mut DP_CanvasState;
-}
-extern "C" {
-    pub fn DP_load_ora(
-        dc: *mut DP_DrawContext,
-        path: *const ::std::os::raw::c_char,
-        flags: ::std::os::raw::c_uint,
-        on_fixed_layer: DP_LoadFixedLayerFn,
-        user: *mut ::std::os::raw::c_void,
-        out_result: *mut DP_LoadResult,
-    ) -> *mut DP_CanvasState;
+    pub fn DP_load_canvas(lc: *mut DP_LoadContext) -> bool;
 }
 extern "C" {
     pub fn DP_load_psd(
         dc: *mut DP_DrawContext,
         input: *mut DP_Input,
-        out_result: *mut DP_LoadResult,
-    ) -> *mut DP_CanvasState;
-}
-extern "C" {
-    pub fn DP_load_project_canvas(
-        dc: *mut DP_DrawContext,
-        path: *const ::std::os::raw::c_char,
-        flags: ::std::os::raw::c_uint,
-        snapshot_only: bool,
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_CanvasState;
 }

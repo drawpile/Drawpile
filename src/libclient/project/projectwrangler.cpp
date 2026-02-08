@@ -213,7 +213,7 @@ void ProjectWrangler::handleOpenSync(const QString &path)
 	DP_MUTEX_MUST_LOCK(m_mutex);
 	m_fileId = DP_project_worker_open(
 		m_pw, tempFile->fileName().toUtf8().constData(),
-		DP_PROJECT_OPEN_READ_ONLY);
+		DP_PROJECT_OPEN_READ_ONLY, nullptr, 0LL);
 	qCDebug(
 		lcDpProjectWrangler, "Adding temporary file '%s' for file id %u",
 		qUtf8Printable(tempFile->fileName()), m_fileId);

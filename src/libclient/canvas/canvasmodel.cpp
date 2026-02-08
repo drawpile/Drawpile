@@ -656,7 +656,8 @@ bool CanvasModel::isRecording() const
 }
 
 bool CanvasModel::startProjectRecording(
-	config::Config *cfg, int sourceType, bool requestMetadata)
+	config::Config *cfg, int sourceType, bool requestMetadata,
+	const QString &continueSourceParam, long long continueSequenceId)
 {
 	if(m_projectRecorder) {
 		Q_EMIT projectRecordingErrorOccurred(
@@ -683,7 +684,8 @@ bool CanvasModel::startProjectRecording(
 	QString error;
 	bool started = m_projectRecorder->startProjectRecording(
 		m_paintengine, sourceType,
-		protocol::ProtocolVersion::current().asString(), &error);
+		protocol::ProtocolVersion::current().asString(), continueSourceParam,
+		continueSequenceId, &error);
 	if(!started) {
 		delete m_projectRecorder;
 		m_projectRecorder = nullptr;

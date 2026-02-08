@@ -40,7 +40,7 @@ ProjectRecorder::~ProjectRecorder()
 
 bool ProjectRecorder::startProjectRecording(
 	canvas::PaintEngine *paintEngine, int sourceType, const QString &protocol,
-	QString *outError)
+	const QString &sourceParam, long long sequenceId, QString *outError)
 {
 	if(m_pw) {
 		if(outError) {
@@ -75,12 +75,21 @@ bool ProjectRecorder::startProjectRecording(
 	QFile::remove(m_metadataPath);
 	QFile::remove(m_thumbnailPath);
 
-	if(!initMetaDb()) {
+	if(initMetaDb()) {
+		if(!sourceParam.isEmpty()) {
+			setMetadatum(QStringLiteral("continue_source_param"), sourceParam);
+		}
+		if(sequenceId > 0LL) {
+			setMetadatum(QStringLiteral("continue_sequence_id"), sequenceId);
+		}
+	} else {
 		m_metaDb.close();
 	}
 
 	m_fileId = DP_project_worker_open(
-		m_pw, m_path.toUtf8().constData(), DP_PROJECT_OPEN_TRUNCATE);
+		m_pw, m_path.toUtf8().constData(), DP_PROJECT_OPEN_TRUNCATE,
+		sourceParam.isEmpty() ? nullptr : sourceParam.toUtf8().constData(),
+		sequenceId);
 	qCDebug(lcDpProjectWorker, "Opened file id %u", m_fileId);
 
 	DP_project_worker_session_open(

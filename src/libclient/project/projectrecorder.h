@@ -33,7 +33,8 @@ public:
 
 	bool startProjectRecording(
 		canvas::PaintEngine *paintEngine, int sourceType,
-		const QString &protocol, QString *outError = nullptr);
+		const QString &protocol, const QString &sourceParam,
+		long long sequenceId, QString *outError = nullptr);
 
 	bool stopProjectRecording(canvas::PaintEngine *paintEngine, bool remove);
 

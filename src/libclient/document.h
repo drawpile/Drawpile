@@ -80,7 +80,8 @@ public:
 		bool autoRecord);
 	void loadState(
 		const drawdance::CanvasState &canvasState, const QString &path,
-		DP_SaveImageType type, bool dirty, bool autoRecord);
+		DP_SaveImageType type, bool dirty, bool autoRecord,
+		const QString &continueSourceParam, long long continueSequenceId);
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 

@@ -44,6 +44,8 @@ struct DP_ProjectWorker {
     DP_ProjectSessionTimes pst;
     unsigned int last_file_id;
     unsigned int open_file_id;
+    char *continue_source_param;
+    long long continue_sequence_id;
     long long open_snapshot_id;
     DP_Queue queue;
 };
@@ -74,6 +76,8 @@ typedef struct DP_ProjectWorkerCommand {
         } sync;
         struct {
             char *path;
+            char *continue_source_param;
+            long long continue_sequence_id;
             unsigned int flags;
             unsigned int file_id;
         } open;
@@ -171,17 +175,25 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
         return;
     }
 
+    DP_Mutex *mutex = pw->mutex;
     if (!pw->prj) {
         DP_warn("No project open for file id %u", file_id);
+        DP_MUTEX_MUST_LOCK(mutex);
         pw->open_file_id = 0u;
+        DP_free(pw->continue_source_param);
+        pw->continue_source_param = NULL;
+        pw->continue_sequence_id = 0LL;
+        DP_MUTEX_MUST_UNLOCK(mutex);
         return;
     }
 
-    DP_Mutex *mutex = pw->mutex;
     DP_MUTEX_MUST_LOCK(mutex);
     DP_Project *prj = pw->prj;
     pw->prj = NULL;
     pw->open_file_id = 0u;
+    DP_free(pw->continue_source_param);
+    pw->continue_source_param = NULL;
+    pw->continue_sequence_id = 0LL;
     DP_MUTEX_MUST_UNLOCK(mutex);
 
     bool ok = DP_project_close(prj);
@@ -195,7 +207,8 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
 }
 
 static void handle_open(DP_ProjectWorker *pw, unsigned int file_id, char *path,
-                        unsigned int flags)
+                        unsigned int flags, char *continue_source_param,
+                        long long continue_sequence_id)
 {
     if (pw->prj) {
         unsigned int open_file_id = pw->open_file_id;
@@ -212,6 +225,8 @@ static void handle_open(DP_ProjectWorker *pw, unsigned int file_id, char *path,
         DP_MUTEX_MUST_LOCK(mutex);
         pw->prj = result.project;
         pw->open_file_id = file_id;
+        pw->continue_source_param = continue_source_param;
+        pw->continue_sequence_id = continue_sequence_id;
         DP_MUTEX_MUST_UNLOCK(mutex);
         emit_event(pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_OPEN,
                                                .file_id = file_id});
@@ -219,6 +234,7 @@ static void handle_open(DP_ProjectWorker *pw, unsigned int file_id, char *path,
     else {
         DP_ASSERT(!pw->prj);
         DP_ASSERT(pw->open_file_id == 0u);
+        DP_free(continue_source_param);
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_OPEN_ERROR,
                            .error = {file_id, result.error, DP_error()}});
@@ -553,7 +569,8 @@ static void handle_save(DP_ProjectWorker *pw, unsigned int file_id,
     }
 
     int result =
-        DP_project_save(pw->prj, cs, path, 0u, pw->thumb_write_fn, pw->user);
+        DP_project_save(pw->prj, cs, path, 0u, pw->continue_source_param,
+                        pw->continue_sequence_id, pw->thumb_write_fn, pw->user);
     DP_canvas_state_decref(cs);
 
     if (finish_fn) {
@@ -605,7 +622,8 @@ static void handle_command(DP_ProjectWorker *pw,
                                 command->open.file_id, command->open.path,
                                 command->open.flags);
         handle_open(pw, command->open.file_id, command->open.path,
-                    command->open.flags);
+                    command->open.flags, command->open.continue_source_param,
+                    command->open.continue_sequence_id);
         return;
     case DP_PROJECT_WORKER_COMMAND_CLOSE:
         DP_PROJECT_WORKER_DEBUG("handle close %u", command->close.file_id);
@@ -776,6 +794,8 @@ DP_project_worker_new(DP_ProjectWorkerHandleEventFn handle_event_fn,
         DP_project_session_times_null(),
         0u,
         0u,
+        NULL,
+        0LL,
         0LL,
         DP_QUEUE_NULL,
     };
@@ -815,6 +835,7 @@ void DP_project_worker_free_join(DP_ProjectWorker *pw)
                                                {.file_id = pw->last_file_id}});
         }
 
+        DP_free(pw->continue_source_param);
         DP_free(pw);
     }
 }
@@ -829,7 +850,9 @@ void DP_project_worker_sync(DP_ProjectWorker *pw, DP_ProjectWorkerSyncFn fn,
 }
 
 unsigned int DP_project_worker_open(DP_ProjectWorker *pw, const char *path,
-                                    unsigned int flags)
+                                    unsigned int flags,
+                                    const char *continue_source_param,
+                                    long long continue_sequence_id)
 {
     DP_ASSERT(pw);
     DP_ASSERT(path);
@@ -837,10 +860,14 @@ unsigned int DP_project_worker_open(DP_ProjectWorker *pw, const char *path,
     if (file_id == 0) { // In case someone manages to open UINT_MAX files.
         file_id = ++pw->last_file_id;
     }
-    DP_PROJECT_WORKER_DEBUG("push open %u %s", file_id, path);
-    push_command(pw, (DP_ProjectWorkerCommand){
-                         DP_PROJECT_WORKER_COMMAND_OPEN,
-                         {.open = {DP_strdup(path), flags, file_id}}});
+    DP_PROJECT_WORKER_DEBUG("push open %u %s %s %lld", file_id, path,
+                            continue_source_param ? continue_source_param : "",
+                            continue_sequence_id);
+    push_command(
+        pw, (DP_ProjectWorkerCommand){
+                DP_PROJECT_WORKER_COMMAND_OPEN,
+                {.open = {DP_strdup(path), DP_strdup(continue_source_param),
+                          continue_sequence_id, flags, file_id}}});
     return file_id;
 }
 

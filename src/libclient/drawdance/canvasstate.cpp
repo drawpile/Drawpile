@@ -114,27 +114,43 @@ private:
 #endif
 
 CanvasState CanvasState::load(
-	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType)
+	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType,
+	QString *outSessionSourceParam, long long *outSessionSequenceId)
 {
 	QByteArray pathBytes = path.toUtf8();
 	QByteArray flatImageLayerTitleBytes =
 		QObject::tr("Layer %1").arg(1).toUtf8();
 	DrawContext dc = DrawContextPool::acquire();
+
+	DP_LoadContext lc = DP_load_context_make(pathBytes.constData(), dc.get());
+	lc.in.flat_image_layer_title = flatImageLayerTitleBytes.constData();
+	lc.in.flags = loadFlags();
+
 	// Android needs to copy content:// URLs to a "real" file so that SQLite can
 	// actually open them.
 #ifdef Q_OS_ANDROID
 	CopyDpcsContext copyDpcsContext(path);
+	lc.in.copy_fn = &CopyDpcsContext::copyDpcs;
+	lc.in.user = &copyDpcsContext;
 #endif
-	DP_CanvasState *cs = DP_load(
-		dc.get(), pathBytes.constData(), flatImageLayerTitleBytes.constData(),
-		loadFlags(),
-#ifdef Q_OS_ANDROID
-		&CopyDpcsContext::copyDpcs, &copyDpcsContext,
-#else
-		nullptr, nullptr,
-#endif
-		outResult, outType);
-	return CanvasState::noinc(cs);
+
+	DP_load_canvas(&lc);
+	if(outResult) {
+		*outResult = lc.out.result;
+	}
+	if(outType) {
+		*outType = lc.out.type;
+	}
+	if(outSessionSourceParam) {
+		*outSessionSourceParam =
+			lc.out.session_source_param
+				? QString::fromUtf8(lc.out.session_source_param)
+				: QString();
+	}
+	if(outSessionSequenceId) {
+		*outSessionSequenceId = lc.out.session_sequence_id;
+	}
+	return CanvasState::noinc(DP_load_context_dispose_take(&lc));
 }
 
 

@@ -138,7 +138,9 @@ public:
 	bool isRecording() const;
 
 	bool startProjectRecording(
-		config::Config *cfg, int sourceType, bool requestMetadata = true);
+		config::Config *cfg, int sourceType, bool requestMetadata = true,
+		const QString &continueSourceParam = QString(),
+		long long continueSequenceId = 0LL);
 	bool cancelProjectRecording();
 	bool discardProjectRecording();
 	bool discardProjectRecordingReinit();

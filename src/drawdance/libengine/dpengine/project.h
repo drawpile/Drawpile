@@ -156,7 +156,8 @@ typedef struct DP_Rect DP_Rect;
 
 #define DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED (1u << 0u)
 
-#define DP_PROJECT_MESSAGE_FLAG_OWN (1u << 0u)
+#define DP_PROJECT_MESSAGE_FLAG_OWN      (1u << 0u)
+#define DP_PROJECT_MESSAGE_FLAG_CONTINUE (1u << 1u)
 
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET (-1)
 
@@ -168,6 +169,7 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS  (1u << 5u)
 #define DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS (1u << 6u)
 #define DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS    (1u << 7u)
+#define DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION   (1u << 8u)
 
 #define DP_PROJECT_SAVE_FLAG_NO_MESSAGES (1u << 0u)
 
@@ -209,6 +211,13 @@ typedef struct DP_ProjectOpenResult {
     int sql_result;
 } DP_ProjectOpenResult;
 
+typedef struct DP_ProjectCanvasLoad {
+    int result;
+    DP_CanvasState *cs;
+    char *session_source_param;
+    long long session_sequence_id;
+} DP_ProjectCanvasLoad;
+
 typedef enum DP_ProjectVerifyStatus {
     DP_PROJECT_VERIFY_OK,
     DP_PROJECT_VERIFY_CORRUPTED,
@@ -247,6 +256,7 @@ typedef struct DP_ProjectInfoSession {
     const unsigned char *thumbnail_data;
     size_t thumbnail_size;
     long long message_count;
+    long long continue_count;
     long long snapshot_count;
 } DP_ProjectInfoSession;
 
@@ -258,6 +268,8 @@ typedef struct DP_ProjectInfoSnapshot {
     const unsigned char *thumbnail_data;
     size_t thumbnail_size;
     long long metadata_sequence_id;
+    long long continue_session_id;
+    long long continue_sequence_id;
     long long snapshot_message_count;
 } DP_ProjectInfoSnapshot;
 
@@ -408,7 +420,8 @@ int DP_project_snapshot_canvas(DP_Project *prj, long long snapshot_id,
 // sequence id, otherwise it creates a new one. Returns 0 on success and a
 // negative DP_PROJECT_SESSION_SAVE_ERROR_* value on failure.
 int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
-                    unsigned int flags,
+                    unsigned int flags, const char *continue_source_param,
+                    long long continue_sequence_id,
                     bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
                     void *thumb_write_user);
 
@@ -425,7 +438,8 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
 
 DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
-    DP_ProjectCanvasLoadWarnFn warn_fn, void *user);
+    DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+    char **out_session_source_param, long long *out_session_sequence_id);
 
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_*,
@@ -438,11 +452,13 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
                            void *thumb_write_user);
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_* or
-// DP_PROJECT_CANVAS_LOAD_ERROR_* value on failure. The out_cs parameter is
-// required, it will be set on success and left untouched on failure. Set
-// snapshot_only to true to load a dpcs file, false for a dppr file.
-int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
-                           bool snapshot_only, DP_CanvasState **out_cs);
+// DP_PROJECT_CANVAS_LOAD_ERROR_* value on failure. On success, the canvas state
+// and possibly the session source param and sequence id values will be set.
+// It's the callers responsibility to manage the canvas state's reference count
+// and DP_free the source param.
+DP_ProjectCanvasLoad DP_project_canvas_load(DP_DrawContext *dc,
+                                            const char *path,
+                                            bool snapshot_only);
 
 // [cancelable] Queries project information according to the given flags, calls
 // back the given function accordingly. Returns 0 on success and a negative

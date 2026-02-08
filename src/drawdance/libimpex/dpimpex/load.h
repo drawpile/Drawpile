@@ -24,25 +24,45 @@ const DP_LoadFormat *DP_load_supported_formats(void);
 
 
 typedef void (*DP_LoadFixedLayerFn)(void *user, int layer_id);
+typedef const char *(*DP_LoadCopyFn)(void *user);
+
+typedef struct DP_LoadContextIn {
+    const char *path;
+    const char *flat_image_layer_title;
+    DP_DrawContext *dc;
+    unsigned int flags;
+    DP_SaveImageType type;
+    DP_LoadCopyFn copy_fn;
+    DP_LoadFixedLayerFn fixed_layer_fn;
+    void *user;
+} DP_LoadContextIn;
+
+typedef struct DP_LoadContextOut {
+    DP_CanvasState *cs;
+    char *session_source_param;
+    long long session_sequence_id;
+    DP_LoadResult result;
+    DP_SaveImageType type;
+} DP_LoadContextOut;
+
+typedef struct DP_LoadContext {
+    DP_LoadContextIn in;
+    DP_LoadContextOut out;
+} DP_LoadContext;
+
+DP_LoadContext DP_load_context_make(const char *path, DP_DrawContext *dc);
+
+void DP_load_context_dispose(DP_LoadContext *lc);
+
+DP_CanvasState *DP_load_context_dispose_take(DP_LoadContext *lc);
+
 
 DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size);
 
-DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
-                        const char *flat_image_layer_title, unsigned int flags,
-                        const char *(copy_fn)(void *), void *copy_user,
-                        DP_LoadResult *out_result, DP_SaveImageType *out_type);
-
-DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
-                            unsigned int flags,
-                            DP_LoadFixedLayerFn on_fixed_layer, void *user,
-                            DP_LoadResult *out_result);
+bool DP_load_canvas(DP_LoadContext *lc);
 
 DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
                             DP_LoadResult *out_result);
-
-DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
-                                       unsigned int flags, bool snapshot_only,
-                                       DP_LoadResult *out_result);
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);
 

@@ -41,7 +41,9 @@ public:
 
 	static CanvasState load(
 		const QString &path, DP_LoadResult *outResult = nullptr,
-		DP_SaveImageType *outType = nullptr);
+		DP_SaveImageType *outType = nullptr,
+		QString *outSessionSourceParam = nullptr,
+		long long *outSessionSequenceId = nullptr);
 
 	CanvasState();
 	CanvasState(const CanvasState &other);

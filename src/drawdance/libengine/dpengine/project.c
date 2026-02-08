@@ -63,6 +63,9 @@
 typedef enum DP_ProjectPersistentStatement {
     DP_PROJECT_STATEMENT_MESSAGE_RECORD,
     DP_PROJECT_STATEMENT_SESSION_TIMES_SELECT,
+    DP_PROJECT_STATEMENT_PLAYBACK_SNAPSHOT_MESSAGES,
+    DP_PROJECT_STATEMENT_PLAYBACK_MESSAGES,
+    DP_PROJECT_STATEMENT_PLAYBACK_CONTINUE_SELECT,
     DP_PROJECT_STATEMENT_COUNT,
 } DP_ProjectPersistentStatement;
 
@@ -103,6 +106,8 @@ typedef enum DP_ProjectSnapshotMetadata {
     DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID = 11,
     DP_PROJECT_SNAPSHOT_METADATA_OFFSET_X = 12,
     DP_PROJECT_SNAPSHOT_METADATA_OFFSET_Y = 13,
+    DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SESSION_ID = 14,
+    DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SEQUENCE_ID = 15,
 } DP_ProjectSnapshotMetadata;
 
 typedef struct DP_ProjectSnapshot {
@@ -807,6 +812,12 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
 {
     static_assert(DP_PROJECT_MESSAGE_FLAG_OWN == 1,
                   "message own flag matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SESSION_ID == 14,
+                  "continue session id snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SEQUENCE_ID == 15,
+                  "continue sequence id snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION == 256,
+                  "snapshot continuation flag matches query");
     switch (pps) {
     case DP_PROJECT_STATEMENT_MESSAGE_RECORD:
         return "insert into messages (session_id, sequence_id, recorded_at, "
@@ -816,6 +827,26 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
         return "select sequence_id, recorded_at from messages "
                "where session_id = ? and sequence_id > ? and (flags & 1) <> 0 "
                "order by sequence_id";
+    case DP_PROJECT_STATEMENT_PLAYBACK_SNAPSHOT_MESSAGES:
+        return "select type, context_id, body "
+               "from snapshot_messages  where snapshot_id = ? "
+               "order by sequence_id";
+    case DP_PROJECT_STATEMENT_PLAYBACK_MESSAGES:
+        return "select type, context_id, body, sequence_id, flags, recorded_at "
+               "from messages where session_id = ? and sequence_id >= ? "
+               "order by sequence_id";
+    case DP_PROJECT_STATEMENT_PLAYBACK_CONTINUE_SELECT:
+        return "select h.snapshot_id\n"
+               "from snapshots h\n"
+               "join snapshot_metadata mi\n"
+               "    on h.snapshot_id = mi.snapshot_id\n"
+               "    and mi.metadata_id = 14\n"
+               "join snapshot_metadata mq\n"
+               "    on h.snapshot_id = mq.snapshot_id\n"
+               "    and mq.metadata_id = 15\n"
+               "where (h.flags & 256) <> 0\n"
+               "and mi.value = ?\n"
+               "and mq.value = ?";
     case DP_PROJECT_STATEMENT_COUNT:
         break;
     }
@@ -2627,6 +2658,76 @@ static int project_save_new_session(DP_Project *prj,
     return 0;
 }
 
+static int project_save_continue_session_id(DP_Project *prj,
+                                            const char *continue_source_param,
+                                            long long continue_sequence_id,
+                                            long long *out_session_id,
+                                            unsigned int *out_message_flags)
+{
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "select i.session_id, m.flags\n"
+                                  "from sav.sessions i\n"
+                                  "join sav.messages m\n"
+                                  "    on i.session_id = m.session_id\n"
+                                  "where i.source_param = ?\n"
+                                  "and m.sequence_id = ?\n"
+                                  "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_text(prj, stmt, 1, continue_source_param)
+        || !ps_bind_int64(prj, stmt, 2, continue_sequence_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        *out_session_id = sqlite3_column_int64(stmt, 0);
+        *out_message_flags = DP_int_to_uint(sqlite3_column_int(stmt, 1));
+    }
+    else {
+        *out_session_id = 0LL;
+        *out_message_flags = 0u;
+    }
+    sqlite3_finalize(stmt);
+
+    if (error) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int project_save_flag_continued_message(DP_Project *prj,
+                                               long long session_id,
+                                               long long sequence_id)
+{
+    static_assert(DP_PROJECT_MESSAGE_FLAG_CONTINUE == 2,
+                  "message continue flag matches query");
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "update sav.messages set flags = flags | 2\n"
+                                  "where session_id = ? and sequence_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, session_id)
+        || !ps_bind_int64(prj, stmt, 2, sequence_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
 static int project_save_initial_snapshot_id(DP_Project *prj,
                                             long long *out_initial_snapshot_id)
 {
@@ -2669,6 +2770,75 @@ static int project_save_initial_snapshot_id(DP_Project *prj,
     return 0;
 }
 
+static int project_save_insert_continue_snapshot_header(
+    DP_Project *prj, long long save_session_id, long long source_snapshot_id,
+    long long *out_save_snapshot_id)
+{
+    static_assert((DP_PROJECT_SNAPSHOT_FLAG_COMPLETE
+                   | DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT
+                   | DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS
+                   | DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION)
+                      == 387,
+                  "continue snapshot header flags match query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "insert into sav.snapshots (session_id, flags, taken_at)\n"
+             "values (?, 387, coalesce(\n"
+             "    (select taken_at from main.snapshots\n"
+             "     where snapshot_id = ? limit 1),\n"
+             "    unixepoch('subsec')))");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_session_id)
+                && ps_bind_int64(prj, stmt, 2, source_snapshot_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, out_save_snapshot_id);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
+static int project_save_insert_continue_snapshot_metadata(
+    DP_Project *prj, long long save_snapshot_id, long long continue_session_id,
+    long long continue_sequence_id)
+{
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SESSION_ID == 14,
+                  "continue session id snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SEQUENCE_ID == 15,
+                  "continue sequence id snapshot metadata matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj,
+        "insert into sav.snapshot_metadata (snapshot_id, metadata_id, value)\n"
+        "values (?1, 14, ?2), (?1, 15, ?3)");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_snapshot_id)
+                && ps_bind_int64(prj, stmt, 2, continue_session_id)
+                && ps_bind_int64(prj, stmt, 3, continue_sequence_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
 static int project_save_copy_snapshot_header(DP_Project *prj,
                                              long long save_session_id,
                                              long long source_snapshot_id,
@@ -2702,13 +2872,65 @@ static int project_save_copy_snapshot_header(DP_Project *prj,
 }
 
 static int project_save_copy_initial_snapshot(DP_Project *prj,
-                                              long long save_session_id)
+                                              long long save_session_id,
+                                              const char *continue_source_param,
+                                              long long continue_sequence_id)
 {
     long long source_snapshot_id;
     int initial_snapshot_id_result =
         project_save_initial_snapshot_id(prj, &source_snapshot_id);
     if (initial_snapshot_id_result != 0) {
         return initial_snapshot_id_result;
+    }
+
+    if (continue_source_param && continue_sequence_id > 0LL) {
+        long long continue_session_id;
+        unsigned int continue_message_flags;
+        int continue_session_id_result = project_save_continue_session_id(
+            prj, continue_source_param, continue_sequence_id,
+            &continue_session_id, &continue_message_flags);
+        if (continue_session_id_result != 0) {
+            return continue_session_id_result;
+        }
+
+        if (continue_session_id > 0LL) {
+            DP_debug("Continuing session %lld (%s@%lld)", continue_session_id,
+                     continue_source_param, continue_sequence_id);
+
+            // Add a flag to the continued-from message if it doesn't have one
+            // yet so that the playback code can remember that state without
+            // doing any extra queries to check which messages are affected.
+            if (!(continue_message_flags & DP_PROJECT_MESSAGE_FLAG_CONTINUE)) {
+                int flag_continued_message_result =
+                    project_save_flag_continued_message(
+                        prj, continue_session_id, continue_sequence_id);
+                if (flag_continued_message_result != 0) {
+                    return flag_continued_message_result;
+                }
+            }
+
+            // Create a blank snapshot with the CONTINUATION flag.
+            long long save_snapshot_id;
+            int insert_continue_snapshot_header_result =
+                project_save_insert_continue_snapshot_header(
+                    prj, save_session_id, source_snapshot_id,
+                    &save_snapshot_id);
+            if (insert_continue_snapshot_header_result != 0) {
+                return insert_continue_snapshot_header_result;
+            }
+
+            // Add CONTINUE_SESSION_ID and CONTINUE_SEQUENCE_ID metadata to the
+            // snapshot pointing at the continued-from session and message.
+            int insert_continue_snapshot_metadata_result =
+                project_save_insert_continue_snapshot_metadata(
+                    prj, save_snapshot_id, continue_session_id,
+                    continue_sequence_id);
+            if (insert_continue_snapshot_metadata_result != 0) {
+                return insert_continue_snapshot_metadata_result;
+            }
+
+            return 0;
+        }
     }
 
     if (source_snapshot_id > 0LL) {
@@ -2986,11 +3208,11 @@ static int project_save_close_session(DP_Project *prj,
     return 0;
 }
 
-static int project_save_to_attached(DP_Project *prj, DP_CanvasState *cs,
-                                    unsigned int flags,
-                                    bool (*thumb_write_fn)(void *, DP_Image *,
-                                                           DP_Output *),
-                                    void *thumb_write_user)
+static int project_save_to_attached(
+    DP_Project *prj, DP_CanvasState *cs, unsigned int flags,
+    const char *continue_source_param, long long continue_sequence_id,
+    bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
+    void *thumb_write_user)
 {
     sqlite3 *db = prj->db;
     if (sqlite3_db_readonly(prj->db, "sav")) {
@@ -3078,8 +3300,8 @@ static int project_save_to_attached(DP_Project *prj, DP_CanvasState *cs,
             return new_session_result;
         }
 
-        int copy_initial_snapshot_result =
-            project_save_copy_initial_snapshot(prj, save_session_id);
+        int copy_initial_snapshot_result = project_save_copy_initial_snapshot(
+            prj, save_session_id, continue_source_param, continue_sequence_id);
         if (copy_initial_snapshot_result != 0) {
             return copy_initial_snapshot_result;
         }
@@ -3111,7 +3333,8 @@ static int project_save_to_attached(DP_Project *prj, DP_CanvasState *cs,
 }
 
 int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
-                    unsigned int flags,
+                    unsigned int flags, const char *continue_source_param,
+                    long long continue_sequence_id,
                     bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
                     void *thumb_write_user)
 {
@@ -3140,8 +3363,9 @@ int DP_project_save(DP_Project *prj, DP_CanvasState *cs, const char *path,
         return attach_result;
     }
 
-    int save_result = project_save_to_attached(prj, cs, flags, thumb_write_fn,
-                                               thumb_write_user);
+    int save_result = project_save_to_attached(
+        prj, cs, flags, continue_source_param, continue_sequence_id,
+        thumb_write_fn, thumb_write_user);
     project_save_try_detach(prj);
     return save_result;
 }
@@ -5035,6 +5259,17 @@ playback_message_context_dispose(DP_ProjectPlaybackMessageContext *mc)
     }
 }
 
+typedef struct DP_ProjectPlaybackContinue {
+    long long snapshot_id;
+    DP_CanvasState *cs;
+} DP_ProjectPlaybackContinue;
+
+static void playback_continue_dispose(void *element)
+{
+    DP_ProjectPlaybackContinue *ppc = element;
+    DP_canvas_state_decref(ppc->cs);
+}
+
 // May optionally be passed to the playback to have it called for each message
 // and snapshot message during playback, sequence_id will be -1 and recorded_at
 // will be 0.0 if this is a snapshot message. Must return FILTER_PASS for
@@ -5050,6 +5285,7 @@ struct DP_ProjectPlaybackContext {
     DP_LocalState *ls;
     DP_Message **multidab_msgs;
     int multidab_count;
+    DP_Vector continues;
     DP_ProjectPlaybackLoadSnapshotFn load_snapshot_fn;
     DP_ProjectPlaybackFilterFn filter_fn;
     void *filter_user;
@@ -5068,6 +5304,7 @@ playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
         DP_local_state_new(NULL, NULL, NULL),
         DP_malloc(sizeof(*c->multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT),
         0,
+        DP_VECTOR_NULL,
         load_snapshot_fn,
         filter_fn,
         filter_user,
@@ -5076,6 +5313,8 @@ playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
 
 static void playback_context_dispose(DP_ProjectPlaybackContext *c)
 {
+    DP_VECTOR_CLEAR_DISPOSE_TYPE(&c->continues, DP_ProjectPlaybackContinue,
+                                 playback_continue_dispose);
     int count = c->multidab_count;
     for (int i = 0; i < count; ++i) {
         DP_message_decref(c->multidab_msgs[i]);
@@ -5083,6 +5322,43 @@ static void playback_context_dispose(DP_ProjectPlaybackContext *c)
     DP_free(c->multidab_msgs);
     DP_local_state_free(c->ls);
     DP_canvas_history_free(c->ch);
+}
+
+static void playback_context_continue_push_inc(DP_ProjectPlaybackContext *c,
+                                               long long snapshot_id,
+                                               DP_CanvasState *cs)
+{
+    if (c->continues.capacity == 0) {
+        DP_VECTOR_INIT_TYPE(&c->continues, DP_ProjectPlaybackContinue, 8);
+    }
+    DP_ProjectPlaybackContinue ppc = {snapshot_id, DP_canvas_state_incref(cs)};
+    DP_VECTOR_PUSH_TYPE(&c->continues, DP_ProjectPlaybackContinue, ppc);
+}
+
+static bool playback_context_continue_snapshot_id_equal(void *element,
+                                                        void *user)
+{
+    DP_ProjectPlaybackContinue *ppc = element;
+    return ppc->snapshot_id == *(long long *)user;
+}
+
+static DP_CanvasState *
+playback_context_continue_take(DP_ProjectPlaybackContext *c,
+                               long long snapshot_id)
+{
+    int index = DP_VECTOR_SEARCH_INDEX_TYPE(
+        &c->continues, DP_ProjectPlaybackContinue,
+        playback_context_continue_snapshot_id_equal, &snapshot_id);
+    if (index == -1) {
+        return NULL;
+    }
+    else {
+        DP_ProjectPlaybackContinue ppc =
+            DP_VECTOR_AT_TYPE(&c->continues, DP_ProjectPlaybackContinue, index);
+        DP_VECTOR_REMOVE_TYPE(&c->continues, DP_ProjectPlaybackContinue, index);
+        DP_ASSERT(ppc.snapshot_id == snapshot_id);
+        return ppc.cs;
+    }
 }
 
 static void playback_handle_single_dec(DP_ProjectPlaybackContext *c,
@@ -5178,13 +5454,70 @@ static DP_ProjectPlaybackHandleFn playback_get_handle_fn(int type)
     }
 }
 
+static DP_CanvasState *playback_current_canvas(DP_ProjectPlaybackContext *c)
+{
+    return DP_local_state_apply_nodec(
+        c->ls, DP_canvas_history_get_noinc_nolock(c->ch), c->dc);
+}
+
+static bool playback_query_push_continues(DP_Project *prj,
+                                          DP_ProjectPlaybackContext *c,
+                                          long long session_id,
+                                          long long sequence_id)
+{
+    sqlite3_stmt *stmt =
+        pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_CONTINUE_SELECT);
+    if (!stmt) {
+        return false;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                && ps_bind_int64(prj, stmt, 2, sequence_id);
+    if (!bind_ok) {
+        return false;
+    }
+
+    bool error;
+    DP_CanvasState *cs = NULL;
+    while (ps_exec_step(prj, stmt, &error)) {
+        // Reify the canvas state on the first instance we need it.
+        if (!cs) {
+            playback_flush_multidab(c);
+            cs = playback_current_canvas(c);
+        }
+        long long snapshot_id = sqlite3_column_int64(stmt, 0);
+        playback_context_continue_push_inc(c, snapshot_id, cs);
+    }
+
+    DP_canvas_state_decref_nullable(cs);
+    return !error;
+}
+
+static void playback_query_handle_continue(DP_Project *prj,
+                                           DP_ProjectPlaybackContext *c,
+                                           long long session_id,
+                                           long long sequence_id,
+                                           unsigned int flags)
+{
+    if (flags & DP_PROJECT_MESSAGE_FLAG_CONTINUE) {
+        if (!playback_query_push_continues(prj, c, session_id, sequence_id)) {
+            DP_warn("Error handling continue %lld@%lld: %s", session_id,
+                    sequence_id, DP_error());
+        }
+    }
+}
+
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                            DP_ProjectPlaybackContext *c, long long session_id,
-                           bool snapshot_message)
+                           bool snapshot_message, long long first_sequence_id,
+                           long long *out_last_sequence_id)
 {
     DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
     void *filter_user = c->filter_user;
 
+    // The first sequence id is the first one we're supposed to play back,
+    // meaning the current state is actually one before that.
+    long long sequence_id = first_sequence_id - 1LL;
     DP_ProjectPlaybackMessageContext mc = {
         session_id, -1LL, 0.0, {{0, NULL}}, 0, 0u, 0u, false,
     };
@@ -5194,12 +5527,18 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
         mc.type = sqlite3_column_int(stmt, 0);
         mc.context_id = DP_int_to_uint(sqlite3_column_int(stmt, 1));
         mc.length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
+
         if (mc.length == 0) {
             mc.body = NULL;
         }
         else {
             mc.body = sqlite3_column_blob(stmt, 2);
         }
+
+        if (!snapshot_message) {
+            sequence_id = sqlite3_column_int64(stmt, 3);
+        }
+
         mc.deserialized = false;
 
         if (filter_fn) {
@@ -5208,7 +5547,7 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                 mc.recorded_at = 0.0;
             }
             else {
-                mc.sequence_id = sqlite3_column_int64(stmt, 3);
+                mc.sequence_id = sequence_id;
                 mc.flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
                 mc.recorded_at = sqlite3_column_double(stmt, 5);
             }
@@ -5218,6 +5557,8 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                 break;
             case FILTER_IGNORE:
                 playback_message_context_dispose(&mc);
+                playback_query_handle_continue(prj, c, session_id, sequence_id,
+                                               mc.flags);
                 continue;
             case FILTER_ABORT:
                 playback_message_context_dispose(&mc);
@@ -5254,6 +5595,13 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                 playback_message_context_dispose(&mc);
             }
         }
+
+        playback_query_handle_continue(prj, c, session_id, sequence_id,
+                                       mc.flags);
+    }
+
+    if (out_last_sequence_id) {
+        *out_last_sequence_id = sequence_id;
     }
 
     playback_flush_multidab(c);
@@ -5269,23 +5617,18 @@ static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
     // files don't have it.
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES) {
         DP_Project *prj = c->prj;
-        sqlite3_stmt *stmt = ps_prepare_ephemeral(
-            prj, "select type, context_id, body from snapshot_messages\n"
-                 "where snapshot_id = ?\n"
-                 "order by sequence_id");
+        sqlite3_stmt *stmt =
+            pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_SNAPSHOT_MESSAGES);
         if (!stmt) {
             return false;
         }
 
         bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
         if (!bind_ok) {
-            sqlite3_finalize(stmt);
             return false;
         }
 
-        bool query_ok = playback_query(prj, stmt, c, session_id, true);
-        sqlite3_finalize(stmt);
-        if (!query_ok) {
+        if (!playback_query(prj, stmt, c, session_id, true, -1L, NULL)) {
             return false;
         }
     }
@@ -5294,26 +5637,12 @@ static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
 
 static bool playback_query_messages(DP_ProjectPlaybackContext *c,
                                     long long session_id,
-                                    long long first_sequence_id)
+                                    long long first_sequence_id,
+                                    long long *out_last_sequence_id)
 {
     DP_Project *prj = c->prj;
-
-    // Only need these extra columns for the filter callback.
-    const char *sql;
-    if (c->filter_fn) {
-        sql = "select type, context_id, body, sequence_id, flags, recorded_at\n"
-              "from messages\n"
-              "where session_id = ? and sequence_id >= ?\n"
-              "order by sequence_id";
-    }
-    else {
-        sql = "select type, context_id, body\n"
-              "from messages\n"
-              "where session_id = ? and sequence_id >= ?\n"
-              "order by sequence_id";
-    }
-
-    sqlite3_stmt *stmt = ps_prepare_ephemeral(prj, sql);
+    sqlite3_stmt *stmt =
+        pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_MESSAGES);
     if (!stmt) {
         return false;
     }
@@ -5321,21 +5650,16 @@ static bool playback_query_messages(DP_ProjectPlaybackContext *c,
     bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
                 && ps_bind_int64(prj, stmt, 2, first_sequence_id);
     if (!bind_ok) {
-        sqlite3_finalize(stmt);
         return false;
     }
 
-    bool query_ok = playback_query(prj, stmt, c, session_id, false);
-    sqlite3_finalize(stmt);
-    return query_ok;
-}
+    if (!playback_query(prj, stmt, c, session_id, false, first_sequence_id,
+                        out_last_sequence_id)) {
+        return false;
+    }
 
-static DP_CanvasState *playback_current_canvas(DP_ProjectPlaybackContext *c)
-{
-    return DP_local_state_apply_nodec(
-        c->ls, DP_canvas_history_get_noinc_nolock(c->ch), c->dc);
+    return true;
 }
-
 
 static bool canvas_load_warn(DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
                              int warn)
@@ -5347,7 +5671,8 @@ static DP_CanvasState *
 canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
                               long long snapshot_id, long long session_id,
                               long long first_sequence_id, unsigned int flags,
-                              DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
+                              DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+                              long long *out_last_sequence_id)
 {
     DP_ASSERT(c);
     DP_ASSERT(snapshot_id > 0LL);
@@ -5384,7 +5709,8 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE) {
         // Play back regular messages after the snapshot was taken. Should also
         // only exist for autosave snapshots.
-        if (!playback_query_messages(c, session_id, first_sequence_id)) {
+        if (!playback_query_messages(c, session_id, first_sequence_id,
+                                     out_last_sequence_id)) {
             if (canvas_load_warn(warn_fn, user,
                                  DP_PROJECT_CANVAS_LOAD_WARN_PLAYBACK_ERROR)) {
                 return NULL;
@@ -5397,7 +5723,8 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
 
 DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
-    DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
+    DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+    char **out_session_source_param, long long *out_session_sequence_id)
 {
     DP_ASSERT(prj);
     static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
@@ -5406,7 +5733,8 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
                   "sequence id snapshot metadata matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj,
-        "select h.snapshot_id, h.session_id, h.flags, m.value, i.protocol\n"
+        "select h.snapshot_id, h.session_id, h.flags, m.value, i.protocol,\n"
+        "       i.source_param\n"
         "from snapshots h\n"
         "left join sessions i on h.session_id = i.session_id\n"
         "left join snapshot_metadata m\n"
@@ -5425,6 +5753,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     long long snapshot_id;
     long long session_id;
     long long sequence_id;
+    char *source_param = NULL;
     if (ps_exec_step(prj, stmt, &error)) {
         snapshot_id = sqlite3_column_int64(stmt, 0);
         session_id = sqlite3_column_int64(stmt, 1);
@@ -5463,6 +5792,11 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
             }
             DP_protocol_version_free(protover);
         }
+
+        if (load_messages && out_session_source_param) {
+            source_param =
+                DP_strdup((const char *)sqlite3_column_text(stmt, 5));
+        }
     }
     else {
         if (!error) {
@@ -5473,6 +5807,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     sqlite3_finalize(stmt);
 
     if (snapshot_id <= 0LL) {
+        DP_free(source_param);
         return NULL;
     }
 
@@ -5486,10 +5821,27 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
         playback_context_init(&c, prj, dc, DP_project_canvas_from_snapshot,
                               NULL, NULL);
 
+        // The sequence id in the snapshot is the first one to play back after
+        // loading it, meaning its state is actually one before that.
+        long long last_sequence_id = sequence_id - 1LL;
         DP_CanvasState *cs = canvas_from_snapshot_playback(
-            &c, snapshot_id, session_id, sequence_id, flags, warn_fn, user);
+            &c, snapshot_id, session_id, sequence_id, flags, warn_fn, user,
+            out_session_sequence_id ? &last_sequence_id : NULL);
         playback_context_dispose(&c);
-        return cs;
+
+        if (cs) {
+            if (out_session_source_param) {
+                *out_session_source_param = source_param;
+            }
+            if (out_session_sequence_id) {
+                *out_session_sequence_id = last_sequence_id;
+            }
+            return cs;
+        }
+        else {
+            DP_free(source_param);
+            return NULL;
+        }
     }
 
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
@@ -5544,30 +5896,31 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
     return 0;
 }
 
-int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
-                           bool snapshot_only, DP_CanvasState **out_cs)
+DP_ProjectCanvasLoad
+DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
 {
     DP_ASSERT(dc);
     DP_ASSERT(path);
-    DP_ASSERT(out_cs);
 
+    DP_ProjectCanvasLoad pcl = {0, NULL, NULL, 0LL};
     DP_ProjectOpenResult open_result =
         project_open(path, DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY,
                      snapshot_only);
     DP_Project *prj = open_result.project;
     if (!prj) {
-        return open_result.error;
+        pcl.result = open_result.error;
+        return pcl;
     }
 
-    DP_CanvasState *cs = DP_project_canvas_from_latest_snapshot(
-        prj, dc, snapshot_only, NULL, NULL);
+    pcl.cs = DP_project_canvas_from_latest_snapshot(
+        prj, dc, snapshot_only, NULL, NULL, &pcl.session_source_param,
+        &pcl.session_sequence_id);
     project_close(prj, true);
-    if (!cs) {
-        return DP_PROJECT_CANVAS_LOAD_ERROR_READ;
-    }
 
-    *out_cs = cs;
-    return 0;
+    if (!pcl.cs) {
+        pcl.result = DP_PROJECT_CANVAS_LOAD_ERROR_READ;
+    }
+    return pcl;
 }
 
 
@@ -5613,12 +5966,16 @@ static int project_info_sessions(DP_Project *prj,
                                                   const DP_ProjectInfo *),
                                  void *user)
 {
+    static_assert(DP_PROJECT_MESSAGE_FLAG_CONTINUE == 2,
+                  "message continue flag matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj, "select"
              "    s.session_id, s.source_type, s.source_param, s.protocol,\n"
              "    s.flags, s.opened_at, s.closed_at, s.thumbnail,\n"
              "    (select count(*) from messages m\n"
              "     where s.session_id = m.session_id),\n"
+             "    (select count(*) from messages m\n"
+             "     where s.session_id = m.session_id and (m.flags & 2) <> 0),\n"
              "    (select count(*) from snapshots h\n"
              "     where s.session_id = h.session_id)\n"
              "from sessions s\n"
@@ -5639,12 +5996,13 @@ static int project_info_sessions(DP_Project *prj,
         const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 7);
         size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 7);
         long long message_count = sqlite3_column_int64(stmt, 8);
-        long long snapshot_count = sqlite3_column_int64(stmt, 9);
+        long long continue_count = sqlite3_column_int64(stmt, 9);
+        long long snapshot_count = sqlite3_column_int64(stmt, 10);
         DP_ProjectInfo info = {
             DP_PROJECT_INFO_TYPE_SESSION,
             {.session = {session_id, source_type, source_param, protocol, flags,
                          opened_at, closed_at, thumbnail_data, thumbnail_size,
-                         message_count, snapshot_count}}};
+                         message_count, continue_count, snapshot_count}}};
         callback(user, &info);
     }
     sqlite3_finalize(stmt);
@@ -5663,6 +6021,10 @@ static int project_info_snapshots(DP_Project *prj,
 {
     static_assert(DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID == 11,
                   "sequence id snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SESSION_ID == 14,
+                  "continue session id snapshot metadata matches query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_CONTINUE_SEQUENCE_ID == 15,
+                  "continue sequence id snapshot metadata matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj, "select"
              "    h.snapshot_id, h.session_id, h.flags, h.taken_at,\n"
@@ -5670,6 +6032,12 @@ static int project_info_snapshots(DP_Project *prj,
              "    (select value from snapshot_metadata d\n"
              "     where h.snapshot_id = d.snapshot_id\n"
              "     and d.metadata_id = 11),\n"
+             "    (select value from snapshot_metadata d\n"
+             "     where h.snapshot_id = d.snapshot_id\n"
+             "     and d.metadata_id = 14),\n"
+             "    (select value from snapshot_metadata d\n"
+             "     where h.snapshot_id = d.snapshot_id\n"
+             "     and d.metadata_id = 15),\n"
              "    (select count(*) from snapshot_messages m\n"
              "     where h.snapshot_id = m.snapshot_id)\n"
              "from snapshots h\n"
@@ -5687,11 +6055,14 @@ static int project_info_snapshots(DP_Project *prj,
         const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 4);
         size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 4);
         long long metadata_sequence_id = sqlite3_column_int64(stmt, 5);
-        long long snapshot_message_count = sqlite3_column_int64(stmt, 6);
+        long long continue_session_id = sqlite3_column_int64(stmt, 6);
+        long long continue_sequence_id = sqlite3_column_int64(stmt, 7);
+        long long snapshot_message_count = sqlite3_column_int64(stmt, 8);
         DP_ProjectInfo info = {
             DP_PROJECT_INFO_TYPE_SNAPSHOT,
             {.snapshot = {snapshot_id, session_id, flags, taken_at,
                           thumbnail_data, thumbnail_size, metadata_sequence_id,
+                          continue_session_id, continue_sequence_id,
                           snapshot_message_count}}};
         callback(user, &info);
     }
@@ -6284,8 +6655,19 @@ static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
         return false;
     }
 
-    if (snapshot_id <= 0LL
-        || snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
+    if (snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION) {
+        DP_CanvasState *cs = playback_context_continue_take(c, snapshot_id);
+        if (cs) {
+            DP_canvas_history_reset_to_state_noinc(c->ch, cs);
+        }
+        else {
+            DP_error_set("Initial snapshot %lld continuation not found",
+                         snapshot_id);
+            return false;
+        }
+    }
+    else if (snapshot_id <= 0LL
+             || snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
         DP_canvas_history_reset(c->ch);
     }
     else {
@@ -6304,7 +6686,7 @@ static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
         return false;
     }
 
-    if (!playback_query_messages(c, session_id, 1LL)) {
+    if (!playback_query_messages(c, session_id, 1LL, NULL)) {
         return false;
     }
 

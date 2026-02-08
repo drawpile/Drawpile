@@ -263,7 +263,8 @@ bool Document::loadBlank(
 
 void Document::loadState(
 	const drawdance::CanvasState &canvasState, const QString &path,
-	DP_SaveImageType type, bool dirty, bool autoRecord)
+	DP_SaveImageType type, bool dirty, bool autoRecord,
+	const QString &continueSourceParam, long long continueSequenceId)
 {
 	initCanvas();
 
@@ -295,7 +296,9 @@ void Document::loadState(
 	}
 
 	if(autoRecord) {
-		m_canvas->startProjectRecording(m_cfg, DP_PROJECT_SOURCE_FILE);
+		m_canvas->startProjectRecording(
+			m_cfg, DP_PROJECT_SOURCE_FILE, true, continueSourceParam,
+			continueSequenceId);
 		if(!path.isEmpty()) {
 			m_canvas->addProjectRecordingMetadataSource(
 				DP_PROJECT_SOURCE_FILE, path);

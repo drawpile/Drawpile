@@ -165,8 +165,19 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
                                 unsigned int flags, DP_Vector *fixed_layer_ids,
                                 DP_LoadResult *out_result)
 {
-    return DP_load_ora(dc, path, flags, on_fixed_layer, fixed_layer_ids,
-                       out_result);
+    DP_LoadContext lc = DP_load_context_make(path, dc);
+    lc.in.flags = flags;
+    lc.in.type = DP_SAVE_IMAGE_ORA;
+    lc.in.fixed_layer_fn = on_fixed_layer;
+    lc.in.user = fixed_layer_ids;
+    if (DP_load_canvas(&lc)) {
+        return DP_load_context_dispose_take(&lc);
+    }
+    else {
+        assign_load_result(out_result, lc.out.result);
+        DP_load_context_dispose(&lc);
+        return NULL;
+    }
 }
 
 static int compare_layer_ids(const void *a, const void *b)

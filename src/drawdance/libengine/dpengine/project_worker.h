@@ -78,7 +78,9 @@ void DP_project_worker_sync(DP_ProjectWorker *pw, DP_ProjectWorkerSyncFn fn,
 // outgoing events and incoming commands. Anything that doesn't pertain to the
 // current file is ignored.
 unsigned int DP_project_worker_open(DP_ProjectWorker *pw, const char *path,
-                                    unsigned int flags);
+                                    unsigned int flags,
+                                    const char *continue_source_param,
+                                    long long continue_sequence_id);
 
 void DP_project_worker_close(DP_ProjectWorker *pw, unsigned int file_id);
 

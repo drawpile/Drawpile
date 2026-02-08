@@ -73,13 +73,6 @@ static void assign_load_result(DP_LoadResult *out_result, DP_LoadResult result)
     }
 }
 
-static void assign_type(DP_SaveImageType *out_type, DP_SaveImageType type)
-{
-    if (out_type) {
-        *out_type = type;
-    }
-}
-
 
 typedef enum DP_ReadOraExpect {
     DP_READ_ORA_EXPECT_IMAGE,
@@ -1315,26 +1308,23 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c,
     }
 }
 
-static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
-                                unsigned int flags,
-                                DP_LoadFixedLayerFn on_fixed_layer, void *user,
-                                DP_LoadResult *out_result)
+static bool load_ora(DP_LoadContext *lc)
 {
-    DP_ZipReader *zr = DP_zip_reader_new(path);
+    DP_ZipReader *zr = DP_zip_reader_new(lc->in.path);
     if (!zr) {
-        assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+        return false;
     }
 
     if (!ora_check_mimetype(zr)) {
-        assign_load_result(out_result, DP_LOAD_RESULT_BAD_MIMETYPE);
+        lc->out.result = DP_LOAD_RESULT_BAD_MIMETYPE;
         DP_zip_reader_free(zr);
-        return NULL;
+        return false;
     }
 
     DP_ReadOraContext c = {
-        dc,
-        {on_fixed_layer, user},
+        lc->in.dc,
+        {lc->in.fixed_layer_fn, lc->in.user},
         zr,
         NULL,
         DP_READ_ORA_EXPECT_IMAGE,
@@ -1360,7 +1350,7 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
     DP_VECTOR_INIT_TYPE(&c.groups, DP_ReadOraGroup, 8);
     DP_VECTOR_INIT_TYPE(&c.children, DP_ReadOraChildren, 8);
     DP_VECTOR_INIT_TYPE(&c.annotations, DP_Annotation *, 8);
-    DP_CanvasState *cs = ora_read_stack_xml(&c, flags);
+    DP_CanvasState *cs = ora_read_stack_xml(&c, lc->in.flags);
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.children, DP_ReadOraChildren,
                                  dispose_child);
     DP_vector_dispose(&c.groups);
@@ -1369,13 +1359,38 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.tracks, DP_ReadOraTrack, dispose_track);
     DP_free(c.text);
     DP_zip_reader_free(zr);
-    if (cs) {
-        return cs;
+
+    lc->out.cs = cs;
+    lc->out.result = c.error;
+    return cs != NULL;
+}
+
+
+DP_LoadContext DP_load_context_make(const char *path, DP_DrawContext *dc)
+{
+    DP_ASSERT(path);
+    DP_ASSERT(dc);
+    return (DP_LoadContext){
+        {path, "Layer 1", dc, 0u, DP_SAVE_IMAGE_UNKNOWN, NULL, NULL, NULL},
+        {NULL, NULL, 0LL, DP_LOAD_RESULT_BAD_ARGUMENTS, DP_SAVE_IMAGE_UNKNOWN},
+    };
+}
+
+void DP_load_context_dispose(DP_LoadContext *lc)
+{
+    if (lc) {
+        DP_free(lc->out.session_source_param);
+        DP_canvas_state_decref_nullable(lc->out.cs);
+    }
+}
+
+DP_CanvasState *DP_load_context_dispose_take(DP_LoadContext *lc)
+{
+    if (lc) {
+        DP_free(lc->out.session_source_param);
+        return lc->out.cs;
     }
     else {
-        assign_load_result(out_result, c.error == DP_LOAD_RESULT_SUCCESS
-                                           ? DP_LOAD_RESULT_READ_ERROR
-                                           : c.error);
         return NULL;
     }
 }
@@ -1431,16 +1446,90 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
 }
 
 
-static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
-                                       DP_ImageFileType type,
-                                       const char *flat_image_layer_title,
-                                       DP_LoadResult *out_result)
+static bool load_psd_from_input(DP_LoadContext *lc, DP_Input *input)
+{
+    DP_CanvasState *cs = DP_load_psd(lc->in.dc, input, &lc->out.result);
+    lc->out.cs = cs;
+    return cs != NULL;
+}
+
+static bool load_psd(DP_LoadContext *lc)
+{
+    DP_Input *input = DP_file_input_new_from_path(lc->in.path);
+    if (input) {
+        return load_psd_from_input(lc, input);
+    }
+    else {
+        lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+        return false;
+    }
+}
+
+
+static DP_CanvasState *clean_up_canvas(DP_CanvasState *cs, DP_DrawContext *dc)
+{
+    DP_CanvasState *next_cs = DP_canvas_state_merge_all_sublayers_dec(cs, dc);
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(next_cs);
+    DP_canvas_state_decref(next_cs);
+    DP_transient_canvas_state_post_load_fixup(tcs);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+static bool load_project(DP_LoadContext *lc, bool snapshot_only)
+{
+    // On Android, we probably have some kind of content:// URL here that
+    // SQLite can't deal with and we have to copy it to a temporary file.
+    const char *project_path;
+    DP_LoadCopyFn copy = lc->in.copy_fn;
+    if (copy) {
+        project_path = copy(lc->in.user);
+        if (!project_path) {
+            lc->out.result = DP_LOAD_RESULT_READ_ERROR;
+            return false;
+        }
+    }
+    else {
+        project_path = lc->in.path;
+    }
+
+
+    DP_DrawContext *dc = lc->in.dc;
+    DP_ProjectCanvasLoad pcl =
+        DP_project_canvas_load(dc, project_path, snapshot_only);
+    switch (pcl.result) {
+    case 0:
+        lc->out.result = DP_LOAD_RESULT_SUCCESS;
+        lc->out.cs = clean_up_canvas(pcl.cs, dc);
+        lc->out.session_source_param = pcl.session_source_param;
+        lc->out.session_sequence_id = pcl.session_sequence_id;
+        return true;
+    case DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH:
+        lc->out.result = DP_LOAD_RESULT_BAD_MIMETYPE;
+        return false;
+    default:
+        if (DP_PROJECT_ERROR_IN(pcl.result, DP_PROJECT_OPEN_ERROR)) {
+            lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+        }
+        else if (DP_PROJECT_ERROR_IN(pcl.result,
+                                     DP_PROJECT_CANVAS_LOAD_ERROR)) {
+            lc->out.result = DP_LOAD_RESULT_READ_ERROR;
+        }
+        else {
+            lc->out.result = DP_LOAD_RESULT_INTERNAL_ERROR;
+        }
+        return false;
+    }
+}
+
+
+static bool load_flat_image_from_input(DP_LoadContext *lc,
+                                       DP_ImageFileType type, DP_Input *input)
 {
     DP_Image *img = DP_image_new_from_file(input, type, NULL);
     DP_input_free(input);
     if (!img) {
-        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_READ_ERROR;
+        return false;
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
@@ -1449,8 +1538,8 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
     int height = DP_image_height(img);
     if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_error_set("Canvas dimensions out of bounds");
-        assign_load_result(out_result, DP_LOAD_RESULT_BAD_DIMENSIONS);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_BAD_DIMENSIONS;
+        return false;
     }
 
     DP_transient_canvas_state_width_set(tcs, width);
@@ -1467,34 +1556,40 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
     DP_transient_layer_list_insert_transient_content_noinc(tll, tlc, 0);
 
     DP_TransientLayerProps *tlp = DP_transient_layer_props_new_init(1, false);
-    const char *title =
-        flat_image_layer_title ? flat_image_layer_title : "Layer 1";
+    const char *title = lc->in.flat_image_layer_title;
     DP_transient_layer_props_title_set(tlp, title, strlen(title));
 
     DP_TransientLayerPropsList *tlpl =
         DP_transient_canvas_state_transient_layer_props(tcs, 1);
     DP_transient_layer_props_list_insert_transient_noinc(tlpl, tlp, 0);
 
-    DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+    DP_transient_canvas_state_layer_routes_reindex(tcs, lc->in.dc);
     DP_transient_canvas_state_post_load_fixup(tcs);
     DP_transient_canvas_state_timeline_cleanup(tcs);
 
-    assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
-    return DP_transient_canvas_state_persist(tcs);
+    lc->out.result = DP_LOAD_RESULT_SUCCESS;
+    lc->out.cs = DP_transient_canvas_state_persist(tcs);
+    return true;
 }
 
-
-static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
-                            const char *flat_image_layer_title,
-                            unsigned int flags, const char *(copy_fn)(void *),
-                            void *copy_user, DP_LoadResult *out_result,
-                            DP_SaveImageType *out_type)
+static bool load_flat_image(DP_LoadContext *lc, DP_ImageFileType type)
 {
-    DP_Input *input = DP_file_input_new_from_path(path);
+    DP_Input *input = DP_file_input_new_from_path(lc->in.path);
+    if (input) {
+        return load_flat_image_from_input(lc, type, input);
+    }
+    else {
+        lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+        return false;
+    }
+}
+
+static bool load_canvas_guess(DP_LoadContext *lc)
+{
+    DP_Input *input = DP_file_input_new_from_path(lc->in.path);
     if (!input) {
-        assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
-        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+        return false;
     }
 
     unsigned char buf[72];
@@ -1502,145 +1597,117 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
         DP_input_free(input);
-        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_READ_ERROR;
+        return false;
     }
 
     DP_SaveImageType type = DP_load_guess(buf, read);
-    assign_type(out_type, type);
+    lc->out.type = type;
     if (type == DP_SAVE_IMAGE_UNKNOWN) {
         DP_input_free(input);
-        assign_load_result(out_result, DP_LOAD_RESULT_UNKNOWN_FORMAT);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_UNKNOWN_FORMAT;
+        return false;
     }
 
     if (type == DP_SAVE_IMAGE_ORA) {
         DP_input_free(input);
-        return load_ora(dc, path, flags, NULL, NULL, out_result);
+        return load_ora(lc);
     }
     else if (type == DP_SAVE_IMAGE_PROJECT_CANVAS
              || type == DP_SAVE_IMAGE_PROJECT) {
         DP_input_free(input);
-        // On Android, we probably have some kind of content:// URL here that
-        // SQLite can't deal with and we have to copy it to a temporary file.
-        const char *project_path;
-        if (copy_fn) {
-            project_path = copy_fn(copy_user);
-            if (!project_path) {
-                assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-                return NULL;
-            }
-        }
-        else {
-            project_path = path;
-        }
-        return DP_load_project_canvas(dc, project_path, flags,
-                                      type == DP_SAVE_IMAGE_PROJECT_CANVAS,
-                                      out_result);
+        return load_project(lc, type == DP_SAVE_IMAGE_PROJECT_CANVAS);
     }
 
     if (!DP_input_rewind(input)) {
         DP_input_free(input);
-        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_READ_ERROR;
+        return false;
     }
 
     switch (type) {
     case DP_SAVE_IMAGE_PSD:
-        return DP_load_psd(dc, input, out_result);
+        return load_psd_from_input(lc, input);
     case DP_SAVE_IMAGE_PNG:
-        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_PNG,
-                               flat_image_layer_title, out_result);
+        return load_flat_image_from_input(lc, DP_IMAGE_FILE_TYPE_PNG, input);
     case DP_SAVE_IMAGE_JPEG:
-        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_JPEG,
-                               flat_image_layer_title, out_result);
+        return load_flat_image_from_input(lc, DP_IMAGE_FILE_TYPE_JPEG, input);
     case DP_SAVE_IMAGE_WEBP:
-        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_WEBP,
-                               flat_image_layer_title, out_result);
+        return load_flat_image_from_input(lc, DP_IMAGE_FILE_TYPE_WEBP, input);
     case DP_SAVE_IMAGE_QOI:
-        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_QOI,
-                               flat_image_layer_title, out_result);
+        return load_flat_image_from_input(lc, DP_IMAGE_FILE_TYPE_QOI, input);
     default:
-        assign_load_result(out_result, DP_LOAD_RESULT_INTERNAL_ERROR);
         DP_error_set("Unknown image type %d", (int)type);
-        return NULL;
+        lc->out.result = DP_LOAD_RESULT_INTERNAL_ERROR;
+        return false;
     }
 }
 
-DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
-                        const char *flat_image_layer_title, unsigned int flags,
-                        const char *(copy_dpcs_fn)(void *),
-                        void *copy_dpcs_user, DP_LoadResult *out_result,
-                        DP_SaveImageType *out_type)
+static bool load_canvas(DP_LoadContext *lc)
 {
-    if (path) {
-        DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s,flags=%x", path, flags);
-        DP_CanvasState *cs =
-            load(dc, path, flat_image_layer_title, flags, copy_dpcs_fn,
-                 copy_dpcs_user, out_result, out_type);
-        DP_PERF_END(fn);
-        return cs;
+    DP_SaveImageType type = lc->in.type;
+    lc->out.type = type;
+
+    switch (type) {
+    case DP_SAVE_IMAGE_UNKNOWN:
+        return load_canvas_guess(lc);
+    case DP_SAVE_IMAGE_ORA:
+        return load_ora(lc);
+    case DP_SAVE_IMAGE_PROJECT_CANVAS:
+        return load_project(lc, true);
+    case DP_SAVE_IMAGE_PROJECT:
+        return load_project(lc, false);
+    case DP_SAVE_IMAGE_PSD:
+        return load_psd(lc);
+    case DP_SAVE_IMAGE_PNG:
+        return load_flat_image(lc, DP_IMAGE_FILE_TYPE_PNG);
+    case DP_SAVE_IMAGE_JPEG:
+        return load_flat_image(lc, DP_IMAGE_FILE_TYPE_JPEG);
+    case DP_SAVE_IMAGE_WEBP:
+        return load_flat_image(lc, DP_IMAGE_FILE_TYPE_WEBP);
+    case DP_SAVE_IMAGE_QOI:
+        return load_flat_image(lc, DP_IMAGE_FILE_TYPE_QOI);
+    }
+
+    DP_error_set("Unknown type %d to load", (int)type);
+    lc->out.result = DP_LOAD_RESULT_BAD_ARGUMENTS;
+    return false;
+}
+
+bool DP_load_canvas(DP_LoadContext *lc)
+{
+    if (!lc || !lc->in.dc) {
+        DP_error_set("Invalid arguments");
+        lc->out.result = DP_LOAD_RESULT_BAD_ARGUMENTS;
+        return false;
+    }
+
+    bool ok = load_canvas(lc);
+
+    // Make sure the results line up. If we have a canvas, we must return true
+    // and have a successful load result. Without a canvas, we must return false
+    // and have a failed load result. The load functions should really set this
+    // themselves, but a bug with setting the result shouldn't cause an error.
+    if (lc->out.cs) {
+        if (!ok || lc->out.result != DP_LOAD_RESULT_SUCCESS) {
+            DP_warn("Fixing up successful load results from %s %d to true %d",
+                    ok ? "true" : "false", (int)lc->out.result,
+                    (int)DP_LOAD_RESULT_SUCCESS);
+            lc->out.result = DP_LOAD_RESULT_SUCCESS;
+        }
+        return true;
     }
     else {
-        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
-        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
-        return NULL;
+        if (ok || lc->out.result == DP_LOAD_RESULT_SUCCESS) {
+            DP_warn("Fixing up failed load results from %s %d to false %d",
+                    ok ? "true" : "false", (int)lc->out.result,
+                    (int)DP_LOAD_RESULT_READ_ERROR);
+            lc->out.result = DP_LOAD_RESULT_READ_ERROR;
+        }
+        return true;
     }
 }
 
-
-DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
-                            unsigned int flags,
-                            DP_LoadFixedLayerFn on_fixed_layer, void *user,
-                            DP_LoadResult *out_result)
-{
-    return load_ora(dc, path, flags, on_fixed_layer, user, out_result);
-}
-
-
-static DP_CanvasState *clean_up_canvas(DP_CanvasState *cs, DP_DrawContext *dc)
-{
-    DP_CanvasState *next_cs = DP_canvas_state_merge_all_sublayers_dec(cs, dc);
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(next_cs);
-    DP_canvas_state_decref(next_cs);
-    DP_transient_canvas_state_post_load_fixup(tcs);
-    return DP_transient_canvas_state_persist(tcs);
-}
-
-DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
-                                       DP_UNUSED unsigned int flags,
-                                       bool snapshot_only,
-                                       DP_LoadResult *out_result)
-{
-    if (!path) {
-        DP_error_set("Path is null");
-        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
-        return NULL;
-    }
-
-    DP_CanvasState *cs;
-    int result = DP_project_canvas_load(dc, path, snapshot_only, &cs);
-    switch (result) {
-    case 0:
-        assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
-        return clean_up_canvas(cs, dc);
-    case DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH:
-        assign_load_result(out_result, DP_LOAD_RESULT_BAD_MIMETYPE);
-        return NULL;
-    default:
-        if (DP_PROJECT_ERROR_IN(result, DP_PROJECT_OPEN_ERROR)) {
-            assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
-        }
-        else if (DP_PROJECT_ERROR_IN(result, DP_PROJECT_CANVAS_LOAD_ERROR)) {
-            assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-        }
-        else {
-            assign_load_result(out_result, DP_LOAD_RESULT_INTERNAL_ERROR);
-        }
-        return NULL;
-    }
-}
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
 {

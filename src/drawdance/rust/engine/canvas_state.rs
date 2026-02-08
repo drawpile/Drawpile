@@ -12,7 +12,8 @@ use crate::{
     DP_canvas_state_decref, DP_canvas_state_height, DP_canvas_state_incref,
     DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc,
     DP_canvas_state_metadata_noinc, DP_canvas_state_to_flat_separated_urgba8,
-    DP_canvas_state_transient, DP_canvas_state_width, DP_load, DP_save, DP_tile_incref,
+    DP_canvas_state_transient, DP_canvas_state_width, DP_load_canvas, DP_load_context_dispose_take,
+    DP_load_context_make, DP_save, DP_tile_incref,
     DP_transient_canvas_state_background_tile_set_noinc, DP_transient_canvas_state_decref,
     DP_transient_canvas_state_height_set, DP_transient_canvas_state_incref,
     DP_transient_canvas_state_layer_routes_reindex, DP_transient_canvas_state_new,
@@ -154,16 +155,10 @@ impl CanvasState {
         let cpath = CString::new(path)?;
         let flat_image_layer_title = CString::new("Layer")?;
         let opt = Self::new_detached_noinc_nullable(unsafe {
-            DP_load(
-                dc.as_ptr(),
-                cpath.as_ptr(),
-                flat_image_layer_title.as_ptr(),
-                0,
-                None,
-                null_mut(),
-                null_mut(),
-                null_mut(),
-            )
+            let mut lc = DP_load_context_make(cpath.as_ptr(), dc.as_ptr());
+            lc.in_.flat_image_layer_title = flat_image_layer_title.as_ptr();
+            DP_load_canvas(&mut lc);
+            DP_load_context_dispose_take(&mut lc)
         });
         if let Some(cs) = opt {
             Ok(cs)

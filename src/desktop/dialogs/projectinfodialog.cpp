@@ -56,14 +56,14 @@ ProjectInfoDialog::ProjectInfoDialog(QWidget *parent)
 	tabs->addTab(m_sessionsTable, QStringLiteral("Sessions"));
 	utils::bindKineticScrolling(m_sessionsTable);
 
-	m_snapshotsTable = new QTableWidget(0, 7);
+	m_snapshotsTable = new QTableWidget(0, 8);
 	m_snapshotsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_snapshotsTable->verticalHeader()->hide();
 	m_snapshotsTable->setHorizontalHeaderLabels(
 		{QStringLiteral("Thumbnail"), QStringLiteral("Snapshot ID"),
 		 QStringLiteral("Session ID"), QStringLiteral("Flags"),
 		 QStringLiteral("Taken At"), QStringLiteral("Sequence ID"),
-		 QStringLiteral("Messages")});
+		 QStringLiteral("Continues"), QStringLiteral("Messages")});
 	tabs->addTab(m_snapshotsTable, QStringLiteral("Snapshots"));
 	utils::bindKineticScrolling(m_snapshotsTable);
 
@@ -221,7 +221,10 @@ void ProjectInfoDialog::onProjectInfoSession(const DP_ProjectInfoSession &info)
 					.arg(flagNames.join(QStringLiteral(", ")))),
 			loadTimestamp(info.opened_at),
 			loadTimestamp(info.closed_at),
-			new QTableWidgetItem(QString::number(info.message_count)),
+			new QTableWidgetItem(QStringLiteral("%1 / %2 continue(s)")
+									 .arg(
+										 QString::number(info.message_count),
+										 QString::number(info.continue_count))),
 			new QTableWidgetItem(QString::number(info.snapshot_count)),
 		});
 }
@@ -254,6 +257,16 @@ void ProjectInfoDialog::onProjectInfoSnapshot(
 	if(info.flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
 		flagNames.append(QStringLiteral("null_canvas"));
 	}
+	if(info.flags & DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION) {
+		flagNames.append(QStringLiteral("continuation"));
+	}
+
+	QString continuation;
+	if(info.continue_session_id != 0LL || info.continue_sequence_id != 0LL) {
+		continuation = QStringLiteral("%1@%2").arg(
+			QString::number(info.continue_session_id),
+			QString::number(info.continue_sequence_id));
+	}
 
 	addRow(
 		m_snapshotsTable,
@@ -267,6 +280,7 @@ void ProjectInfoDialog::onProjectInfoSnapshot(
 					.arg(flagNames.join(QStringLiteral(", ")))),
 			loadTimestamp(info.taken_at),
 			new QTableWidgetItem(QString::number(info.metadata_sequence_id)),
+			new QTableWidgetItem(continuation),
 			new QTableWidgetItem(QString::number(info.snapshot_message_count)),
 		});
 }
