@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_IMPORT_CANVASLOADERRUNNABLE
 #define LIBCLIENT_IMPORT_CANVASLOADERRUNNABLE
+extern "C" {
+#include <dpengine/load_enums.h>
+}
 #include "libclient/drawdance/canvasstate.h"
-#include "libclient/import/loadresult.h"
 #include <QObject>
 #include <QRunnable>
 #include <QString>
@@ -29,6 +31,8 @@ private:
 	DP_LoadResult m_result = DP_LOAD_RESULT_BAD_ARGUMENTS;
 	DP_SaveImageType m_type = DP_SAVE_IMAGE_UNKNOWN;
 	drawdance::CanvasState m_canvasState;
+	QString m_sessionSourceParam;
+	long long m_sessionSequenceId = -1LL;
 };
 
 #endif

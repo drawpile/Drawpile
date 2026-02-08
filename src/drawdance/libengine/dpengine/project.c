@@ -5180,11 +5180,13 @@ static DP_ProjectPlaybackHandleFn playback_get_handle_fn(int type)
 
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                            DP_ProjectPlaybackContext *c, long long session_id,
-                           bool snapshot_message)
+                           bool snapshot_message, long long first_sequence_id,
+                           long long *out_last_sequence_id)
 {
     DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
     void *filter_user = c->filter_user;
 
+    long long sequence_id = first_sequence_id;
     DP_ProjectPlaybackMessageContext mc = {
         session_id, -1LL, 0.0, {{0, NULL}}, 0, 0u, 0u, false,
     };
@@ -5194,12 +5196,18 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
         mc.type = sqlite3_column_int(stmt, 0);
         mc.context_id = DP_int_to_uint(sqlite3_column_int(stmt, 1));
         mc.length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
+
         if (mc.length == 0) {
             mc.body = NULL;
         }
         else {
             mc.body = sqlite3_column_blob(stmt, 2);
         }
+
+        if (!snapshot_message) {
+            sequence_id = mc.sequence_id;
+        }
+
         mc.deserialized = false;
 
         if (filter_fn) {
@@ -5208,7 +5216,7 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                 mc.recorded_at = 0.0;
             }
             else {
-                mc.sequence_id = sqlite3_column_int64(stmt, 3);
+                mc.sequence_id = sequence_id;
                 mc.flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
                 mc.recorded_at = sqlite3_column_double(stmt, 5);
             }
@@ -5256,6 +5264,10 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
         }
     }
 
+    if (out_last_sequence_id) {
+        *out_last_sequence_id = sequence_id;
+    }
+
     playback_flush_multidab(c);
     return !error;
 }
@@ -5283,7 +5295,8 @@ static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
             return false;
         }
 
-        bool query_ok = playback_query(prj, stmt, c, session_id, true);
+        bool query_ok =
+            playback_query(prj, stmt, c, session_id, true, -1L, NULL);
         sqlite3_finalize(stmt);
         if (!query_ok) {
             return false;
@@ -5294,7 +5307,8 @@ static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
 
 static bool playback_query_messages(DP_ProjectPlaybackContext *c,
                                     long long session_id,
-                                    long long first_sequence_id)
+                                    long long first_sequence_id,
+                                    long long *out_last_sequence_id)
 {
     DP_Project *prj = c->prj;
 
@@ -5307,7 +5321,7 @@ static bool playback_query_messages(DP_ProjectPlaybackContext *c,
               "order by sequence_id";
     }
     else {
-        sql = "select type, context_id, body\n"
+        sql = "select type, context_id, body, sequence_id\n"
               "from messages\n"
               "where session_id = ? and sequence_id >= ?\n"
               "order by sequence_id";
@@ -5325,7 +5339,8 @@ static bool playback_query_messages(DP_ProjectPlaybackContext *c,
         return false;
     }
 
-    bool query_ok = playback_query(prj, stmt, c, session_id, false);
+    bool query_ok = playback_query(prj, stmt, c, session_id, false,
+                                   first_sequence_id, out_last_sequence_id);
     sqlite3_finalize(stmt);
     return query_ok;
 }
@@ -5347,7 +5362,8 @@ static DP_CanvasState *
 canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
                               long long snapshot_id, long long session_id,
                               long long first_sequence_id, unsigned int flags,
-                              DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
+                              DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+                              long long *out_last_sequence_id)
 {
     DP_ASSERT(c);
     DP_ASSERT(snapshot_id > 0LL);
@@ -5384,7 +5400,8 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE) {
         // Play back regular messages after the snapshot was taken. Should also
         // only exist for autosave snapshots.
-        if (!playback_query_messages(c, session_id, first_sequence_id)) {
+        if (!playback_query_messages(c, session_id, first_sequence_id,
+                                     out_last_sequence_id)) {
             if (canvas_load_warn(warn_fn, user,
                                  DP_PROJECT_CANVAS_LOAD_WARN_PLAYBACK_ERROR)) {
                 return NULL;
@@ -5397,7 +5414,8 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
 
 DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
-    DP_ProjectCanvasLoadWarnFn warn_fn, void *user)
+    DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+    char **out_session_source_param, long long *out_session_sequence_id)
 {
     DP_ASSERT(prj);
     static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
@@ -5406,7 +5424,8 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
                   "sequence id snapshot metadata matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj,
-        "select h.snapshot_id, h.session_id, h.flags, m.value, i.protocol\n"
+        "select h.snapshot_id, h.session_id, h.flags, m.value, i.protocol,\n"
+        "       h.source_param\n"
         "from snapshots h\n"
         "left join sessions i on h.session_id = i.session_id\n"
         "left join snapshot_metadata m\n"
@@ -5425,6 +5444,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     long long snapshot_id;
     long long session_id;
     long long sequence_id;
+    char *source_param = NULL;
     if (ps_exec_step(prj, stmt, &error)) {
         snapshot_id = sqlite3_column_int64(stmt, 0);
         session_id = sqlite3_column_int64(stmt, 1);
@@ -5463,6 +5483,11 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
             }
             DP_protocol_version_free(protover);
         }
+
+        if (load_messages && out_session_source_param) {
+            source_param =
+                DP_strdup((const char *)sqlite3_column_text(stmt, 5));
+        }
     }
     else {
         if (!error) {
@@ -5473,6 +5498,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     sqlite3_finalize(stmt);
 
     if (snapshot_id <= 0LL) {
+        DP_free(source_param);
         return NULL;
     }
 
@@ -5486,10 +5512,25 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
         playback_context_init(&c, prj, dc, DP_project_canvas_from_snapshot,
                               NULL, NULL);
 
+        long long last_sequence_id = sequence_id;
         DP_CanvasState *cs = canvas_from_snapshot_playback(
-            &c, snapshot_id, session_id, sequence_id, flags, warn_fn, user);
+            &c, snapshot_id, session_id, sequence_id, flags, warn_fn, user,
+            out_session_sequence_id ? &last_sequence_id : NULL);
         playback_context_dispose(&c);
-        return cs;
+
+        if (cs) {
+            if (out_session_source_param) {
+                *out_session_source_param = source_param;
+            }
+            if (out_session_sequence_id) {
+                *out_session_sequence_id = last_sequence_id;
+            }
+            return cs;
+        }
+        else {
+            DP_free(source_param);
+            return NULL;
+        }
     }
 
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS) {
@@ -5544,30 +5585,31 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
     return 0;
 }
 
-int DP_project_canvas_load(DP_DrawContext *dc, const char *path,
-                           bool snapshot_only, DP_CanvasState **out_cs)
+DP_ProjectCanvasLoad
+DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
 {
     DP_ASSERT(dc);
     DP_ASSERT(path);
-    DP_ASSERT(out_cs);
 
+    DP_ProjectCanvasLoad pcl = {0, NULL, NULL, 0LL};
     DP_ProjectOpenResult open_result =
         project_open(path, DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY,
                      snapshot_only);
     DP_Project *prj = open_result.project;
     if (!prj) {
-        return open_result.error;
+        pcl.result = open_result.error;
+        return pcl;
     }
 
-    DP_CanvasState *cs = DP_project_canvas_from_latest_snapshot(
-        prj, dc, snapshot_only, NULL, NULL);
+    pcl.cs = DP_project_canvas_from_latest_snapshot(
+        prj, dc, snapshot_only, NULL, NULL, &pcl.session_source_param,
+        &pcl.session_sequence_id);
     project_close(prj, true);
-    if (!cs) {
-        return DP_PROJECT_CANVAS_LOAD_ERROR_READ;
-    }
 
-    *out_cs = cs;
-    return 0;
+    if (!pcl.cs) {
+        pcl.result = DP_PROJECT_CANVAS_LOAD_ERROR_READ;
+    }
+    return pcl;
 }
 
 
@@ -6304,7 +6346,7 @@ static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
         return false;
     }
 
-    if (!playback_query_messages(c, session_id, 1LL)) {
+    if (!playback_query_messages(c, session_id, 1LL, NULL)) {
         return false;
     }
 
