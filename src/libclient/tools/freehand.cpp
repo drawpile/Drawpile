@@ -126,8 +126,7 @@ void Freehand::begin(const BeginParams &params)
 
 void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 {
-	Q_ASSERT(!m_drawing);
-	if(params.right) {
+	if(m_drawing || params.right) {
 		return;
 	}
 
