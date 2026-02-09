@@ -1071,7 +1071,8 @@ static DP_CanvasState *local_state_apply(DP_LocalState *ls,
     if (cs_or_null) {
         bool has_local_layers = ls->layer_states.used != 0;
         bool has_local_tracks = ls->track_states.used != 0;
-        if (has_local_layers || has_local_tracks) {
+        DP_Tile *background_tile = ls->background_tile;
+        if (has_local_layers || has_local_tracks || background_tile) {
             DP_TransientCanvasState *tcs =
                 DP_transient_canvas_state_new(cs_or_null);
             if (dec) {
@@ -1087,6 +1088,22 @@ static DP_CanvasState *local_state_apply(DP_LocalState *ls,
                 DP_local_state_track_states_apply(
                     ls, DP_transient_canvas_state_timeline_noinc(tcs),
                     get_local_track_transient_timeline, tcs);
+            }
+
+            if (background_tile) {
+                bool background_opaque = ls->background_opaque;
+                DP_Pixel15 pixel;
+                if (background_opaque
+                    || !DP_tile_same_pixel(background_tile, &pixel)
+                    || pixel.a != 0) {
+                    DP_transient_canvas_state_background_tile_set_noinc(
+                        tcs, DP_tile_incref(background_tile),
+                        background_opaque);
+                }
+                else {
+                    DP_transient_canvas_state_background_tile_set_noinc(
+                        tcs, NULL, false);
+                }
             }
 
             return DP_transient_canvas_state_persist(tcs);
