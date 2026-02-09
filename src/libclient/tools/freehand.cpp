@@ -126,7 +126,7 @@ void Freehand::begin(const BeginParams &params)
 
 void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 {
-	if(m_drawing || params.right) {
+	if(m_drawing) {
 		return;
 	}
 
@@ -159,7 +159,8 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 	m_firstPoint = true;
 
 	m_owner.setStrokeWorkerBrush(
-		m_strokeWorker, type(), floodLc, floodTolerance, floodExpand);
+		m_strokeWorker, type(), floodLc, floodTolerance, floodExpand,
+		params.right ? m_owner.backgroundColor() : QColor());
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event

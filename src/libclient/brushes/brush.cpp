@@ -3,25 +3,13 @@
 #include "cmake-config/config.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/brushengine.h"
+#include "libclient/drawdance/pixels.h"
 #include "libclient/drawdance/strokeworker.h"
-#include "libshared/util/qtcompat.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <mypaint-brush.h>
 
 namespace {
-
-void setDrawdanceColorToQColor(DP_UPixelFloat &r, const QColor &q)
-{
-	r = {
-		compat::cast<float>(q.blueF()), compat::cast<float>(q.greenF()),
-		compat::cast<float>(q.redF()), compat::cast<float>(q.alphaF())};
-}
-
-QColor drawdanceColorToQColor(const DP_UPixelFloat &color)
-{
-	return QColor::fromRgbF(color.r, color.g, color.b, color.a);
-}
 
 static bool antiOverflowIsNull(const DP_AntiOverflow &antiOverflow)
 {
@@ -179,12 +167,12 @@ void ClassicBrush::setJitterCurve(const KisCubicCurve &jitterCurve)
 
 void ClassicBrush::setQColor(const QColor &c)
 {
-	setDrawdanceColorToQColor(color, c);
+	drawdance::toUPixelFloat(color, c);
 }
 
 QColor ClassicBrush::qColor() const
 {
-	return drawdanceColorToQColor(color);
+	return drawdance::fromUPixelFloat(color);
 }
 
 bool ClassicBrush::shouldSyncSamples() const
@@ -800,12 +788,12 @@ void MyPaintBrush::removeCurve(int setting, int input)
 
 void MyPaintBrush::setQColor(const QColor &c)
 {
-	setDrawdanceColorToQColor(m_brush.color, c);
+	drawdance::toUPixelFloat(m_brush.color, c);
 }
 
 QColor MyPaintBrush::qColor() const
 {
-	return drawdanceColorToQColor(m_brush.color);
+	return drawdance::fromUPixelFloat(m_brush.color);
 }
 
 QPointF MyPaintBrush::getOffset() const
@@ -1673,14 +1661,15 @@ void ActiveBrush::setInBrushEngine(
 }
 
 void ActiveBrush::setInStrokeWorker(
-	drawdance::StrokeWorker &sw, const DP_BrushEngineStrokeParams &besp) const
+	drawdance::StrokeWorker &sw, const DP_BrushEngineStrokeParams &besp,
+	const QColor &colorOverride) const
 {
 	if(m_activeType == CLASSIC) {
-		sw.setClassicBrush(m_classic, besp, isEraserOverride());
+		sw.setClassicBrush(m_classic, besp, isEraserOverride(), colorOverride);
 	} else {
 		sw.setMyPaintBrush(
 			m_myPaint.constBrush(), m_myPaint.constSettings(), besp,
-			isEraserOverride());
+			isEraserOverride(), colorOverride);
 	}
 }
 

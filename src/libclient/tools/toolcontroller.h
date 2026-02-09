@@ -202,7 +202,8 @@ public:
 	void setBrushEngineBrush(drawdance::BrushEngine &be, Tool::Type source);
 	void setStrokeWorkerBrush(
 		drawdance::StrokeWorker &sw, Tool::Type source,
-		DP_LayerContent *floodLcOrNull, double floodTolerance, int floodExpand);
+		DP_LayerContent *floodLcOrNull, double floodTolerance, int floodExpand,
+		const QColor &colorOverride);
 	void setStrokeEngineParams(
 		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0,
 		int smoothing = 0);

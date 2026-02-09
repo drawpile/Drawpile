@@ -427,8 +427,8 @@ public:
 		const DP_BrushEngineStrokeParams &besp) const;
 
 	void setInStrokeWorker(
-		drawdance::StrokeWorker &sw,
-		const DP_BrushEngineStrokeParams &besp) const;
+		drawdance::StrokeWorker &sw, const DP_BrushEngineStrokeParams &besp,
+		const QColor &colorOverride) const;
 
 	void renderPreview(
 		drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;

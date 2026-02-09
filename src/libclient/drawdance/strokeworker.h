@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_DRAWDANCE_STROKEWORKER_H
 #define LIBCLIENT_DRAWDANCE_STROKEWORKER_H
+#include <QColor>
 #include <functional>
 
 struct DP_BrushEngineStrokeParams;
@@ -44,11 +45,12 @@ public:
 
 	void setClassicBrush(
 		const DP_ClassicBrush &brush, const DP_BrushEngineStrokeParams &besp,
-		bool eraserOverride);
+		bool eraserOverride, const QColor &colorOverride = QColor());
 
 	void setMyPaintBrush(
 		const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-		const DP_BrushEngineStrokeParams &besp, bool eraserOverride);
+		const DP_BrushEngineStrokeParams &besp, bool eraserOverride,
+		const QColor &colorOverride = QColor());
 
 	void flushDabs();
 

@@ -5,6 +5,7 @@ extern "C" {
 }
 #include "libclient/canvas/point.h"
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/pixels.h"
 #include "libclient/drawdance/strokeworker.h"
 
 namespace drawdance {
@@ -48,18 +49,36 @@ void StrokeWorker::setSizeLimit(int sizeLimit)
 
 void StrokeWorker::setClassicBrush(
 	const DP_ClassicBrush &brush, const DP_BrushEngineStrokeParams &besp,
-	bool eraserOverride)
+	bool eraserOverride, const QColor &colorOverride)
 {
+	DP_UPixelFloat colorOverridePixel;
+	DP_UPixelFloat *colorOverridePixelPtr;
+	if(drawdance::toUPixelFloat(colorOverridePixel, colorOverride)) {
+		colorOverridePixelPtr = &colorOverridePixel;
+	} else {
+		colorOverridePixelPtr = nullptr;
+	}
+
 	DP_stroke_worker_classic_brush_set(
-		m_data, &brush, &besp, nullptr, eraserOverride);
+		m_data, &brush, &besp, colorOverridePixelPtr, eraserOverride);
 }
 
 void StrokeWorker::setMyPaintBrush(
 	const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-	const DP_BrushEngineStrokeParams &besp, bool eraserOverride)
+	const DP_BrushEngineStrokeParams &besp, bool eraserOverride,
+	const QColor &colorOverride)
 {
+	DP_UPixelFloat colorOverridePixel;
+	DP_UPixelFloat *colorOverridePixelPtr;
+	if(drawdance::toUPixelFloat(colorOverridePixel, colorOverride)) {
+		colorOverridePixelPtr = &colorOverridePixel;
+	} else {
+		colorOverridePixelPtr = nullptr;
+	}
+
 	DP_stroke_worker_mypaint_brush_set(
-		m_data, &brush, &settings, &besp, nullptr, eraserOverride);
+		m_data, &brush, &settings, &besp, colorOverridePixelPtr,
+		eraserOverride);
 }
 
 void StrokeWorker::flushDabs()

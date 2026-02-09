@@ -673,12 +673,13 @@ void ToolController::setBrushEngineBrush(
 
 void ToolController::setStrokeWorkerBrush(
 	drawdance::StrokeWorker &sw, Tool::Type source,
-	DP_LayerContent *floodLcOrNull, double floodTolerance, int floodExpand)
+	DP_LayerContent *floodLcOrNull, double floodTolerance, int floodExpand,
+	const QColor &colorOverride)
 {
 	DP_BrushEngineStrokeParams stroke;
 	const brushes::ActiveBrush &brush = fillBrushEngineStrokeParams(
 		source, floodLcOrNull, floodTolerance, floodExpand, stroke);
-	brush.setInStrokeWorker(sw, stroke);
+	brush.setInStrokeWorker(sw, stroke, colorOverride);
 }
 
 void ToolController::setStrokeEngineParams(
