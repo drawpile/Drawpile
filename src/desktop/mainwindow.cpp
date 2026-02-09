@@ -1896,8 +1896,7 @@ bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
 	if(openNew) {
 		canvas::CanvasModel *canvas = m_doc->canvas();
 		if(canvas) {
-			drawdance::CanvasState canvasState =
-				m_doc->canvas()->paintEngine()->viewCanvasState();
+			canvas::PaintEngine *paintEngine = canvas->paintEngine();
 
 			QRect crop;
 			if(const canvas::TransformModel *transform = canvas->transform();
@@ -1909,7 +1908,7 @@ bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
 			}
 
 			dialogs::TimelapseDialog *dlg =
-				new dialogs ::TimelapseDialog(canvasState, crop, this);
+				new dialogs::TimelapseDialog(paintEngine, crop, this);
 			dlg->setAttribute(Qt::WA_DeleteOnClose);
 			dlg->setObjectName(objectName);
 			if(!m_doc->isSaveInProgress()) {

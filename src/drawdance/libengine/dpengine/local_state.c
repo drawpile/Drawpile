@@ -848,82 +848,122 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
     }
 }
 
+#define RESET_IMAGE_INCLUDE_LAYER_STATES (1u << 0u)
+#define RESET_IMAGE_INCLUDE_BACKGROUND   (1u << 1u)
+#define RESET_IMAGE_INCLUDE_ACTIVE_VIEW  (1u << 2u)
+#define RESET_IMAGE_INCLUDE_ONION_SKINS  (1u << 3u)
+#define RESET_IMAGE_INCLUDE_TRACK_STATES (1u << 4u)
+
+static bool reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
+                              unsigned int flags,
+                              DP_LocalStateAcceptResetMessageFn fn, void *user)
+{
+    if (flags & RESET_IMAGE_INCLUDE_LAYER_STATES) {
+        int lls_count;
+        const DP_LocalLayerState *llss =
+            DP_local_state_layer_states(ls, &lls_count);
+        for (int i = 0; i < lls_count; ++i) {
+            const DP_LocalLayerState *lls = &llss[i];
+            if (lls->hidden) {
+                DP_Message *msg = DP_local_state_msg_layer_visibility_new(
+                    lls->layer_id, true);
+                if (!fn(user, msg)) {
+                    return false;
+                }
+            }
+            if (lls->sketch_opacity != 0) {
+                DP_Message *msg = DP_local_state_msg_layer_sketch_new(
+                    lls->layer_id, lls->sketch_opacity, lls->sketch_tint);
+                if (!fn(user, msg)) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    if ((flags & RESET_IMAGE_INCLUDE_BACKGROUND) && dc) {
+        DP_Tile *t = ls->background_tile;
+        if (t) {
+            DP_Message *msg = DP_local_state_msg_background_tile_new(dc, t);
+            if (msg) {
+                if (!fn(user, msg)) {
+                    return false;
+                }
+            }
+            else {
+                DP_warn("Error serializing local background tile: %s",
+                        DP_error());
+            }
+        }
+    }
+
+    if (flags & RESET_IMAGE_INCLUDE_ACTIVE_VIEW) {
+        bool ok =
+            fn(user, DP_local_state_msg_view_mode_new(ls->view_mode))
+            && fn(user,
+                  DP_local_state_msg_active_layer_new(ls->active_layer_id))
+            && fn(user,
+                  DP_local_state_msg_active_frame_new(ls->active_frame_index));
+        if (!ok) {
+            return false;
+        }
+    }
+
+    if (flags & RESET_IMAGE_INCLUDE_ONION_SKINS) {
+        DP_OnionSkins *oss = ls->onion_skins;
+        if (oss && !fn(user, DP_local_state_msg_onion_skins_new(oss))) {
+            return false;
+        }
+    }
+
+    if (flags & RESET_IMAGE_INCLUDE_TRACK_STATES) {
+        int track_state_count;
+        const DP_LocalTrackState *track_states =
+            DP_local_state_track_states(ls, &track_state_count);
+        for (int i = 0; i < track_state_count; ++i) {
+            DP_LocalTrackState lts = track_states[i];
+            if (lts.hidden) {
+                DP_Message *msg =
+                    DP_local_state_msg_track_visibility_new(lts.track_id, true);
+                if (!fn(user, msg)) {
+                    return false;
+                }
+            }
+            if (lts.onion_skin) {
+                DP_Message *msg =
+                    DP_local_state_msg_track_onion_skin_new(lts.track_id, true);
+                if (!fn(user, msg)) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
 bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                                       DP_LocalStateAcceptResetMessageFn fn,
                                       void *user)
 {
     DP_ASSERT(ls);
     DP_ASSERT(fn);
+    unsigned int flags =
+        RESET_IMAGE_INCLUDE_LAYER_STATES | RESET_IMAGE_INCLUDE_BACKGROUND
+        | RESET_IMAGE_INCLUDE_ACTIVE_VIEW | RESET_IMAGE_INCLUDE_ONION_SKINS
+        | RESET_IMAGE_INCLUDE_TRACK_STATES;
+    return reset_image_build(ls, dc, flags, fn, user);
+}
 
-    int lls_count;
-    const DP_LocalLayerState *llss =
-        DP_local_state_layer_states(ls, &lls_count);
-    for (int i = 0; i < lls_count; ++i) {
-        const DP_LocalLayerState *lls = &llss[i];
-        if (lls->hidden) {
-            DP_Message *msg =
-                DP_local_state_msg_layer_visibility_new(lls->layer_id, true);
-            if (!fn(user, msg)) {
-                return false;
-            }
-        }
-        if (lls->sketch_opacity != 0) {
-            DP_Message *msg = DP_local_state_msg_layer_sketch_new(
-                lls->layer_id, lls->sketch_opacity, lls->sketch_tint);
-            if (!fn(user, msg)) {
-                return false;
-            }
-        }
-    }
-
-    DP_Tile *t = ls->background_tile;
-    if (t) {
-        DP_Message *msg = DP_local_state_msg_background_tile_new(dc, t);
-        if (msg) {
-            if (!fn(user, msg)) {
-                return false;
-            }
-        }
-        else {
-            DP_warn("Error serializing local background tile: %s", DP_error());
-        }
-    }
-
-    bool ok = fn(user, DP_local_state_msg_view_mode_new(ls->view_mode))
-           && fn(user, DP_local_state_msg_active_layer_new(ls->active_layer_id))
-           && fn(user,
-                 DP_local_state_msg_active_frame_new(ls->active_frame_index));
-    if (!ok) {
-        return false;
-    }
-
-    DP_OnionSkins *oss = ls->onion_skins;
-    if (oss && !fn(user, DP_local_state_msg_onion_skins_new(oss))) {
-        return false;
-    }
-
-    int track_state_count;
-    const DP_LocalTrackState *track_states =
-        DP_local_state_track_states(ls, &track_state_count);
-    for (int i = 0; i < track_state_count; ++i) {
-        DP_LocalTrackState lts = track_states[i];
-        if (lts.hidden) {
-            DP_Message *msg =
-                DP_local_state_msg_track_visibility_new(lts.track_id, true);
-            if (!fn(user, msg)) {
-                return false;
-            }
-        }
-        if (lts.onion_skin) {
-            DP_Message *msg =
-                DP_local_state_msg_track_onion_skin_new(lts.track_id, true);
-            if (!fn(user, msg)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
+bool DP_local_state_project_snapshot_build(DP_LocalState *ls,
+                                           DP_LocalStateAcceptResetMessageFn fn,
+                                           void *user)
+{
+    DP_ASSERT(ls);
+    DP_ASSERT(fn);
+    unsigned int flags =
+        RESET_IMAGE_INCLUDE_ACTIVE_VIEW | RESET_IMAGE_INCLUDE_ONION_SKINS;
+    return reset_image_build(ls, NULL, flags, fn, user);
 }
 
 

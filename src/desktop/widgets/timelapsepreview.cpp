@@ -21,7 +21,8 @@ TimelapsePreview::TimelapsePreview(QWidget *parent)
 {
 }
 
-void TimelapsePreview::setCanvas(const drawdance::CanvasState &canvasState)
+void TimelapsePreview::setCanvas(
+	const drawdance::CanvasState &canvasState, DP_ViewModeFilter *vmfOrNull)
 {
 	m_canvasImage = QPixmap();
 	m_canvasSize = canvasState.isNull() ? QSize() : canvasState.size();
@@ -48,7 +49,8 @@ void TimelapsePreview::setCanvas(const drawdance::CanvasState &canvasState)
 		}
 
 		CanvasToImageRunnable *canvasToImageRunnable =
-			new CanvasToImageRunnable(canvasState, m_canvasStateCorrelationId);
+			new CanvasToImageRunnable(
+				canvasState, vmfOrNull, m_canvasStateCorrelationId);
 		connect(
 			canvasToImageRunnable, &CanvasToImageRunnable::finished, this,
 			&TimelapsePreview::onCanvasToImageFinished, Qt::QueuedConnection);

@@ -98,6 +98,26 @@ static void view_mode_buffer_pop(DP_ViewModeBuffer *vmb)
     --vmb->count;
 }
 
+void DP_view_mode_buffer_clone(DP_ViewModeBuffer *vmb,
+                               const DP_ViewModeBuffer *src)
+{
+    DP_ASSERT(vmb);
+    DP_ASSERT(src);
+    if (vmb != src) {
+        int count = src->count;
+        vmb->count = count;
+        if (count > 0) {
+            size_t size = sizeof(*vmb->tracks) * DP_int_to_size(count);
+            if (vmb->capacity < count) {
+                DP_free(vmb->tracks);
+                vmb->tracks = DP_malloc(size);
+                vmb->capacity = count;
+            }
+            memcpy(vmb->tracks, src->tracks, size);
+        }
+    }
+}
+
 
 static DP_ViewModeFilter make_normal_filter(void)
 {
@@ -352,6 +372,29 @@ DP_view_mode_filter_make_callback(DP_ViewModeCallback *callback)
     else {
         return make_normal_filter();
     }
+}
+
+DP_ViewModeFilter
+DP_view_mode_filter_clone(DP_ViewModeBuffer *vmb,
+                          const DP_ViewModeFilter *vmf_or_null)
+{
+    if (vmf_or_null) {
+        int internal_type = vmf_or_null->internal_type;
+        switch (internal_type) {
+        case TYPE_NORMAL:
+        case TYPE_NOTHING:
+        case TYPE_LAYER:
+        case TYPE_CALLBACK:
+            return *vmf_or_null;
+        case TYPE_FRAME_MANUAL:
+        case TYPE_FRAME_RENDER:
+            DP_view_mode_buffer_clone(vmb, vmf_or_null->vmb);
+            return (DP_ViewModeFilter){internal_type, .vmb = vmb};
+        }
+        DP_warn("DP_view_mode_filter_clone: unknown internal type %d",
+                internal_type);
+    }
+    return DP_view_mode_filter_make_default();
 }
 
 bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf)

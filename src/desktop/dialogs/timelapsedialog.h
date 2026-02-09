@@ -2,6 +2,7 @@
 #ifndef DESKTOP_DIALOGS_TIMELAPSEDIALOG_H
 #define DESKTOP_DIALOGS_TIMELAPSEDIALOG_H
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/viewmode.h"
 #include <QDialog>
 #include <QImage>
 #include <QRect>
@@ -21,6 +22,10 @@ class QSpinBox;
 class QTimeEdit;
 class TimelapseSaverRunnable;
 
+namespace canvas {
+class PaintEngine;
+}
+
 namespace color_widgets {
 class ColorPreview;
 }
@@ -39,7 +44,7 @@ class TimelapseDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit TimelapseDialog(
-		const drawdance::CanvasState &canvasState, const QRect &crop,
+		canvas::PaintEngine *paintEngine, const QRect &crop,
 		QWidget *parent = nullptr);
 
 	void setInputPath(const QString &inputPath);
@@ -112,7 +117,9 @@ private:
 	void handleSaveCancelled();
 	void handleSaveFailed(const QString &errorMessage);
 
+	drawdance::ViewModeBuffer m_vmb;
 	drawdance::CanvasState m_canvasState;
+	DP_ViewModeFilter m_vmf;
 	QRect m_crop;
 	QString m_inputPath;
 	QScrollArea *m_scroll;

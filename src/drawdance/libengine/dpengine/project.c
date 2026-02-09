@@ -6584,7 +6584,7 @@ static int project_playback_play_filter(void *user,
                     DP_ProjectPlaybackContext *c = &pfc->c;
                     playback_flush_multidab(c);
                     if (!pfc->callback(pfc->user, next_frame - current_frame,
-                                       playback_current_canvas(c),
+                                       playback_current_canvas(c), c->ls,
                                        playback_crop_current(pbc))) {
                         filter_result = FILTER_ABORT;
                     }

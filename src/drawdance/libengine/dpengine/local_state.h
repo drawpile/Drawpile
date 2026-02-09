@@ -79,6 +79,10 @@ bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                                       DP_LocalStateAcceptResetMessageFn fn,
                                       void *user);
 
+bool DP_local_state_project_snapshot_build(DP_LocalState *ls,
+                                           DP_LocalStateAcceptResetMessageFn fn,
+                                           void *user);
+
 
 void DP_local_state_layer_states_apply(
     DP_LocalState *ls, DP_TransientCanvasState *tcs, DP_DrawContext *dc,

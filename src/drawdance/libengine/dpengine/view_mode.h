@@ -106,6 +106,9 @@ void DP_view_mode_buffer_init(DP_ViewModeBuffer *vmb);
 
 void DP_view_mode_buffer_dispose(DP_ViewModeBuffer *vmb);
 
+void DP_view_mode_buffer_clone(DP_ViewModeBuffer *vmb,
+                               const DP_ViewModeBuffer *src);
+
 
 DP_ViewModeFilter DP_view_mode_filter_make_default(void);
 
@@ -125,6 +128,10 @@ DP_view_mode_filter_make_from_active(DP_ViewModeBuffer *vmb, DP_ViewMode vm,
 
 DP_ViewModeFilter
 DP_view_mode_filter_make_callback(DP_ViewModeCallback *callback);
+
+DP_ViewModeFilter
+DP_view_mode_filter_clone(DP_ViewModeBuffer *vmb,
+                          const DP_ViewModeFilter *vmf_or_null);
 
 bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf);
 

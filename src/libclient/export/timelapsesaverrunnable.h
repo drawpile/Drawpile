@@ -3,6 +3,7 @@
 #define LIBCLIENT_EXPORT_TIMELAPSESAVERRUNNABLE_H
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/drawdance/tile.h"
+#include "libclient/drawdance/viewmode.h"
 #include <QAtomicInt>
 #include <QBrush>
 #include <QColor>
@@ -14,6 +15,7 @@
 
 struct DP_DrawContext;
 struct DP_Image;
+struct DP_LocalState;
 struct DP_Mutex;
 struct DP_Project;
 struct DP_ProjectPlayback;
@@ -21,13 +23,15 @@ struct DP_Rect;
 struct DP_SaveVideoNextFrame;
 struct DP_Semaphore;
 struct DP_Thread;
+struct DP_ViewModeFilter;
 class QTemporaryFile;
 
 class TimelapseSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
 	TimelapseSaverRunnable(
-		const drawdance::CanvasState &canvasState, const QString &outputPath,
+		const drawdance::CanvasState &canvasState,
+		const DP_ViewModeFilter *vmfOrNull, const QString &outputPath,
 		const QString &inputPath, int format, int width, int height,
 		int interpolation, const QRect &crop, const QColor &backdropColor,
 		const QColor &checkerColor1, const QColor &checkerColor2,
@@ -78,7 +82,7 @@ private:
 
 		QImage toOutputImage(
 			const drawdance::CanvasState &canvasState,
-			const DP_Rect *cropOrNull);
+			const DP_Rect *cropOrNull, DP_ViewModeFilter *vmfOrNull);
 
 		static bool imageHasTransparency(DP_Image *img);
 
@@ -90,10 +94,10 @@ private:
 
 		bool handle(
 			int instances, const drawdance::CanvasState &canvasState,
-			const DP_Rect *cropOrNull);
+			DP_LocalState *ls, const DP_Rect *cropOrNull);
 
 		static bool handleCallback(
-			void *user, int instances, DP_CanvasState *cs,
+			void *user, int instances, DP_CanvasState *cs, DP_LocalState *ls,
 			const DP_Rect *cropOrNull);
 
 		void enqueueLastImage(int instances);
@@ -167,6 +171,8 @@ private:
 	const double m_maxDeltaSeconds;
 	const int m_maxQueueEntries;
 	const unsigned int m_playbackFlags;
+	drawdance::ViewModeBuffer m_vmb;
+	DP_ViewModeFilter m_vmf;
 	QImage m_scaledLogoImage;
 	int m_elapsedFrames = 0;
 	DP_DrawContext *m_dc = nullptr;

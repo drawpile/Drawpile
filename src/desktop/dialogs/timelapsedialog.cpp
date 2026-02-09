@@ -11,6 +11,7 @@ extern "C" {
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/timelapsepreview.h"
+#include "libclient/canvas/paintengine.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/image.h"
 #include "libclient/export/timelapsesaverrunnable.h"
@@ -40,10 +41,10 @@ extern "C" {
 namespace dialogs {
 
 TimelapseDialog::TimelapseDialog(
-	const drawdance::CanvasState &canvasState, const QRect &crop,
-	QWidget *parent)
+	canvas::PaintEngine *paintEngine, const QRect &crop, QWidget *parent)
 	: QDialog(parent)
-	, m_canvasState(canvasState)
+	, m_canvasState(paintEngine->viewCanvasState())
+	, m_vmf(paintEngine->viewModeFilter(m_vmb, m_canvasState))
 	, m_crop(crop)
 {
 	setWindowTitle(tr("Timelapse"));
@@ -66,7 +67,7 @@ TimelapseDialog::TimelapseDialog(
 	QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
 
 	m_timelapsePreview = new widgets::TimelapsePreview;
-	m_timelapsePreview->setCanvas(canvasState);
+	m_timelapsePreview->setCanvas(m_canvasState, &m_vmf);
 	m_timelapsePreview->setFixedHeight(320);
 	scrollLayout->addWidget(m_timelapsePreview);
 
@@ -468,7 +469,7 @@ void TimelapseDialog::accept()
 
 			const config::Config *cfg = dpAppConfig();
 			m_saver = new TimelapseSaverRunnable(
-				m_canvasState, outputPath, m_inputPath, format,
+				m_canvasState, &m_vmf, outputPath, m_inputPath, format,
 				m_widthSpinner->value(), m_heightSpinner->value(),
 				m_interpolationCombo->currentData().toInt(),
 				m_cropCheckBox->isChecked() ? m_crop : QRect(),

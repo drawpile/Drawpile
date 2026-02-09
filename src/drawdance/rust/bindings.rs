@@ -5164,6 +5164,11 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_LocalState {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_ProjectWorker {
     _unused: [u8; 0],
 }
@@ -5453,6 +5458,7 @@ extern "C" {
     pub fn DP_canvas_history_project_recording_start(
         ch: *mut DP_CanvasHistory,
         pw: *mut DP_ProjectWorker,
+        ls: *mut DP_LocalState,
         file_id: ::std::os::raw::c_uint,
         local_user_id: ::std::os::raw::c_uint,
     );
@@ -5461,6 +5467,7 @@ extern "C" {
     pub fn DP_canvas_history_project_recording_snapshot(
         ch: *mut DP_CanvasHistory,
         pw: *mut DP_ProjectWorker,
+        ls: *mut DP_LocalState,
         file_id: ::std::os::raw::c_uint,
         local_user_id: ::std::os::raw::c_uint,
     );
@@ -5547,11 +5554,6 @@ extern "C" {
         chs: *mut DP_CanvasHistorySnapshot,
         index: ::std::os::raw::c_int,
     ) -> *const DP_ForkEntry;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_LocalState {
-    _unused: [u8; 0],
 }
 pub const DP_VIEW_MODE_NORMAL: DP_ViewMode = 0;
 pub const DP_VIEW_MODE_LAYER: DP_ViewMode = 1;
@@ -5961,6 +5963,9 @@ extern "C" {
     pub fn DP_view_mode_buffer_dispose(vmb: *mut DP_ViewModeBuffer);
 }
 extern "C" {
+    pub fn DP_view_mode_buffer_clone(vmb: *mut DP_ViewModeBuffer, src: *const DP_ViewModeBuffer);
+}
+extern "C" {
     pub fn DP_view_mode_filter_make_default() -> DP_ViewModeFilter;
 }
 extern "C" {
@@ -5992,6 +5997,12 @@ extern "C" {
 extern "C" {
     pub fn DP_view_mode_filter_make_callback(
         callback: *mut DP_ViewModeCallback,
+    ) -> DP_ViewModeFilter;
+}
+extern "C" {
+    pub fn DP_view_mode_filter_clone(
+        vmb: *mut DP_ViewModeBuffer,
+        vmf_or_null: *const DP_ViewModeFilter,
     ) -> DP_ViewModeFilter;
 }
 extern "C" {
@@ -6310,6 +6321,13 @@ extern "C" {
     pub fn DP_local_state_reset_image_build(
         ls: *mut DP_LocalState,
         dc: *mut DP_DrawContext,
+        fn_: DP_LocalStateAcceptResetMessageFn,
+        user: *mut ::std::os::raw::c_void,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_local_state_project_snapshot_build(
+        ls: *mut DP_LocalState,
         fn_: DP_LocalStateAcceptResetMessageFn,
         user: *mut ::std::os::raw::c_void,
     ) -> bool;

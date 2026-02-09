@@ -8,6 +8,8 @@
 #include <QSize>
 #include <QWidget>
 
+struct DP_ViewModeFilter;
+
 namespace drawdance {
 class CanvasState;
 }
@@ -21,7 +23,9 @@ class TimelapsePreview final : public QWidget {
 public:
 	TimelapsePreview(QWidget *parent = nullptr);
 
-	void setCanvas(const drawdance::CanvasState &canvasState);
+	void setCanvas(
+		const drawdance::CanvasState &canvasState,
+		DP_ViewModeFilter *vmfOrNull);
 	void setCropRect(const QRect &cropRect);
 	void setOutputSize(const QSize &outputSize);
 	void setLogoImage(const QImage &logoImage);

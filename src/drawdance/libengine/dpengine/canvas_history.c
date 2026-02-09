@@ -21,6 +21,7 @@
  */
 #include "canvas_history.h"
 #include "canvas_state.h"
+#include "local_state.h"
 #include "project.h"
 #include "project_worker.h"
 #include "recorder.h"
@@ -1870,7 +1871,7 @@ static bool accept_project_recording_message(void *user, DP_Message *msg)
 }
 
 static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
-                                  unsigned int file_id,
+                                  DP_LocalState *ls, unsigned int file_id,
                                   unsigned int local_user_id,
                                   unsigned int snapshot_flags,
                                   bool discard_other_snapshots)
@@ -1882,15 +1883,18 @@ static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
     DP_canvas_history_reset_image_new(ch, accept_project_recording_state,
                                       accept_project_recording_message,
                                       &params);
+    DP_local_state_project_snapshot_build(ls, accept_project_recording_message,
+                                          &params);
     DP_project_worker_snapshot_finish(pw, file_id, discard_other_snapshots);
 }
 
 void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
                                                DP_ProjectWorker *pw,
+                                               DP_LocalState *ls,
                                                unsigned int file_id,
                                                unsigned int local_user_id)
 {
-    make_project_snapshot(ch, pw, file_id, local_user_id,
+    make_project_snapshot(ch, pw, ls, file_id, local_user_id,
                           DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT
                               | DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE,
                           false);
@@ -1898,10 +1902,11 @@ void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
 
 void DP_canvas_history_project_recording_snapshot(DP_CanvasHistory *ch,
                                                   DP_ProjectWorker *pw,
+                                                  DP_LocalState *ls,
                                                   unsigned int file_id,
                                                   unsigned int local_user_id)
 {
-    make_project_snapshot(ch, pw, file_id, local_user_id,
+    make_project_snapshot(ch, pw, ls, file_id, local_user_id,
                           DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE, true);
 }
 

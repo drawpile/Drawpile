@@ -4,6 +4,7 @@ extern "C" {
 #include <dpcommon/threading.h>
 #include <dpengine/canvas_state.h>
 #include <dpengine/image.h>
+#include <dpengine/local_state.h>
 #include <dpengine/pixels.h>
 #include <dpengine/project.h>
 #include <dpimpex/save_video.h>
@@ -29,7 +30,8 @@ Q_LOGGING_CATEGORY(
 	QtWarningMsg)
 
 TimelapseSaverRunnable::TimelapseSaverRunnable(
-	const drawdance::CanvasState &canvasState, const QString &outputPath,
+	const drawdance::CanvasState &canvasState,
+	const DP_ViewModeFilter *vmfOrNull, const QString &outputPath,
 	const QString &inputPath, int format, int width, int height,
 	int interpolation, const QRect &crop, const QColor &backdropColor,
 	const QColor &checkerColor1, const QColor &checkerColor2,
@@ -70,6 +72,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	, m_maxQueueEntries(maxQueueEntries)
 	, m_playbackFlags(
 		  DP_flag_uint(timeOwnOnly, DP_PROJECT_PLAYBACK_FLAG_MEASURE_OWN_ONLY))
+	, m_vmf(DP_view_mode_filter_clone(m_vmb.get(), vmfOrNull))
 {
 }
 
@@ -189,7 +192,8 @@ void TimelapseSaverRunnable::PlaybackRunnable::run()
 
 		QImage finalImage = toOutputImage(
 			m_parent->m_canvasState,
-			DP_project_playback_crop_or_null(m_parent->m_projectPlayback));
+			DP_project_playback_crop_or_null(m_parent->m_projectPlayback),
+			&m_parent->m_vmf);
 		if(finalImage.isNull()) {
 			finalImage = drawdance::wrapImage(
 				DP_image_new(m_parent->m_width, m_parent->m_height));
@@ -270,14 +274,15 @@ void TimelapseSaverRunnable::PlaybackRunnable::scaleLogoImage(const QImage &img)
 }
 
 QImage TimelapseSaverRunnable::PlaybackRunnable::toOutputImage(
-	const drawdance::CanvasState &canvasState, const DP_Rect *cropOrNull)
+	const drawdance::CanvasState &canvasState, const DP_Rect *cropOrNull,
+	DP_ViewModeFilter *vmfOrNull)
 {
 	if(canvasState.isNull()) {
 		return QImage();
 	}
 
 	DP_Image *img = DP_canvas_state_to_flat_image(
-		canvasState.get(), DP_FLAT_IMAGE_RENDER_FLAGS, cropOrNull, NULL);
+		canvasState.get(), DP_FLAT_IMAGE_RENDER_FLAGS, cropOrNull, vmfOrNull);
 	if(!img) {
 		return QImage();
 	}
@@ -431,7 +436,7 @@ QColor TimelapseSaverRunnable::PlaybackRunnable::mixBackgroundColors(
 }
 
 bool TimelapseSaverRunnable::PlaybackRunnable::handle(
-	int instances, const drawdance::CanvasState &canvasState,
+	int instances, const drawdance::CanvasState &canvasState, DP_LocalState *ls,
 	const DP_Rect *cropOrNull)
 {
 	if(shouldStop()) {
@@ -440,7 +445,12 @@ bool TimelapseSaverRunnable::PlaybackRunnable::handle(
 	}
 
 	if(instances > 0) {
-		QImage img = toOutputImage(canvasState, cropOrNull);
+		DP_ViewModeFilter vmf = DP_view_mode_filter_make(
+			m_parent->m_vmb.get(), DP_local_state_view_mode(ls),
+			canvasState.get(), DP_local_state_active_layer_id(ls),
+			DP_local_state_active_frame_index(ls),
+			DP_local_state_onion_skins(ls));
+		QImage img = toOutputImage(canvasState, cropOrNull, &vmf);
 		if(img.isNull()) {
 			qCWarning(
 				lcDpTimelapseSaverRunnable, "Failed to create output image: %s",
@@ -458,10 +468,11 @@ bool TimelapseSaverRunnable::PlaybackRunnable::handle(
 }
 
 bool TimelapseSaverRunnable::PlaybackRunnable::handleCallback(
-	void *user, int instances, DP_CanvasState *cs, const DP_Rect *cropOrNull)
+	void *user, int instances, DP_CanvasState *cs, DP_LocalState *ls,
+	const DP_Rect *cropOrNull)
 {
 	return static_cast<TimelapseSaverRunnable::PlaybackRunnable *>(user)
-		->handle(instances, drawdance::CanvasState::noinc(cs), cropOrNull);
+		->handle(instances, drawdance::CanvasState::noinc(cs), ls, cropOrNull);
 }
 
 void TimelapseSaverRunnable::PlaybackRunnable::enqueueLastImage(int instances)

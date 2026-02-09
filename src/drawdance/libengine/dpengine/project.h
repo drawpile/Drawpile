@@ -6,7 +6,7 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
-typedef struct DP_LocalStateAction DP_LocalStateAction;
+typedef struct DP_LocalState DP_LocalState;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
 typedef struct DP_Rect DP_Rect;
@@ -309,6 +309,7 @@ typedef bool (*DP_ProjectCanvasLoadWarnFn)(void *user, int warn);
 // cancel and bail out of the process.
 typedef bool (*DP_ProjectPlaybackCallbackFn)(void *user, int current_frame,
                                              DP_CanvasState *cs,
+                                             DP_LocalState *ls,
                                              const DP_Rect *crop_or_null);
 
 
