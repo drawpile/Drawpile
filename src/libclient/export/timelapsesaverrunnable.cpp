@@ -525,6 +525,7 @@ bool TimelapseSaverRunnable::checkParameters(QString &outErrorMessage) const
 	case int(VideoFormat::Mp4Vp9):
 	case int(VideoFormat::WebmVp8):
 	case int(VideoFormat::Mp4H264):
+	case int(VideoFormat::Mp4Av1):
 		break;
 	default:
 		appendError(tr("Invalid output format %1 given.").arg(m_format));
@@ -794,6 +795,8 @@ int TimelapseSaverRunnable::formatToSaveVideoFormat() const
 		return int(DP_SAVE_VIDEO_FORMAT_WEBM_VP8);
 	case int(VideoFormat::Mp4H264):
 		return int(DP_SAVE_VIDEO_FORMAT_MP4_H264);
+	case int(VideoFormat::Mp4Av1):
+		return int(DP_SAVE_VIDEO_FORMAT_MP4_AV1);
 	default:
 		qCWarning(
 			lcDpTimelapseSaverRunnable, "No save video format for format %d",

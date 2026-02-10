@@ -68,6 +68,8 @@ static enum AVCodecID get_format_codec_id(int format)
         return AV_CODEC_ID_GIF;
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         return AV_CODEC_ID_H264;
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
+        return AV_CODEC_ID_AV1;
     default:
         return AV_CODEC_ID_NONE;
     }
@@ -93,6 +95,7 @@ static const char *get_format_name(int format)
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
         return "mp4";
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         return "webm";
@@ -107,6 +110,18 @@ static const char *get_format_name(int format)
     }
 }
 
+static const AVCodec *get_codec_encoder(enum AVCodecID codec_id)
+{
+    // We get libaom by default, but libsvtav1 is way faster.
+    if (codec_id == AV_CODEC_ID_AV1) {
+        const AVCodec *codec = avcodec_find_encoder_by_name("libsvtav1");
+        if (codec) {
+            return codec;
+        }
+    }
+    return avcodec_find_encoder(codec_id);
+}
+
 static bool check_format_dimensions(int output_width, int output_height,
                                     int format)
 {
@@ -115,6 +130,7 @@ static bool check_format_dimensions(int output_width, int output_height,
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
     case DP_SAVE_VIDEO_FORMAT_GIF:
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
         return DP_save_check_width_height(output_width, output_height, 65536);
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         return DP_save_check_width_height(output_width, output_height, 16384);
@@ -223,6 +239,10 @@ static void set_format_codec_params(int format, AVCodecContext *codec_context)
         set_option(codec_context->priv_data, "crf", "19");
         set_option(codec_context->priv_data, "tune", "animation");
         break;
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
+        codec_context->bit_rate = 0;
+        set_option(codec_context->priv_data, "crf", "23");
+        break;
     default:
         DP_warn("Don't know format params for format %d", format);
         break;
@@ -238,6 +258,7 @@ static void set_format_output_params(int format,
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
         break;
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         set_option(format_context->priv_data, "loop", "0");
@@ -510,7 +531,7 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    const AVCodec *codec = avcodec_find_encoder(codec_id);
+    const AVCodec *codec = get_codec_encoder(codec_id);
     if (!codec) {
         DP_error_set("Failed to find codec for '%s'", format_name);
         result = DP_SAVE_RESULT_UNKNOWN_FORMAT;

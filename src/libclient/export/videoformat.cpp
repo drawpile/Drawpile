@@ -28,6 +28,8 @@ bool isVideoFormatSupported(VideoFormat format)
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBM_VP8);
 	case VideoFormat::Mp4H264:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4_H264);
+	case VideoFormat::Mp4Av1:
+		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4_AV1);
 #endif
 	default:
 		return false;

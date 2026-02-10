@@ -47,6 +47,7 @@ AnimationExportDialog::AnimationExportDialog(
 		{tr("Animated GIF"), VideoFormat::Gif},
 		{tr("Animated WEBP"), VideoFormat::Webp},
 		{tr("MP4 Video (H.264)"), VideoFormat::Mp4H264},
+		{tr("MP4 Video (AV1)"), VideoFormat::Mp4Av1},
 		{tr("MP4 Video (VP9)"), VideoFormat::Mp4Vp9},
 		{tr("WEBM Video (VP8)"), VideoFormat::WebmVp8},
 	};
@@ -267,7 +268,8 @@ void AnimationExportDialog::updateOutputUi()
 	int format = m_formatCombo->currentData().toInt();
 	bool showLoops = format == int(VideoFormat::Mp4Vp9) ||
 					 format == int(VideoFormat::WebmVp8) ||
-					 format == int(VideoFormat::Mp4H264);
+					 format == int(VideoFormat::Mp4H264) ||
+					 format == int(VideoFormat::Mp4Av1);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
 }
@@ -296,6 +298,7 @@ QString AnimationExportDialog::choosePath()
 		return FileWrangler(this).getSaveAnimationWebpPath();
 	case VideoFormat::Mp4Vp9:
 	case VideoFormat::Mp4H264:
+	case VideoFormat::Mp4Av1:
 		return FileWrangler(this).getSaveAnimationMp4Path();
 	case VideoFormat::WebmVp8:
 		return FileWrangler(this).getSaveAnimationWebmPath();

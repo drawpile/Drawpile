@@ -161,6 +161,9 @@ TimelapseDialog::TimelapseDialog(
 			 "dialogs::AnimationExportDialog", "MP4 Video (H.264)"),
 		 VideoFormat::Mp4H264},
 		{QCoreApplication::translate(
+			 "dialogs::AnimationExportDialog", "MP4 Video (AV1)"),
+		 VideoFormat::Mp4Av1},
+		{QCoreApplication::translate(
 			 "dialogs::AnimationExportDialog", "MP4 Video (VP9)"),
 		 VideoFormat::Mp4Vp9},
 		{QCoreApplication::translate(
@@ -640,6 +643,7 @@ void TimelapseDialog::resetDefaultExportFormat()
 {
 	int formats[] = {
 		int(VideoFormat::Mp4H264),
+		int(VideoFormat::Mp4Av1),
 		int(VideoFormat::Mp4Vp9),
 		int(VideoFormat::WebmVp8),
 	};
@@ -964,6 +968,7 @@ QString TimelapseDialog::choosePath(int format)
 	switch(VideoFormat(format)) {
 	case VideoFormat::Mp4Vp9:
 	case VideoFormat::Mp4H264:
+	case VideoFormat::Mp4Av1:
 		return FileWrangler(this).getSaveAnimationMp4Path();
 	case VideoFormat::WebmVp8:
 		return FileWrangler(this).getSaveAnimationWebmPath();

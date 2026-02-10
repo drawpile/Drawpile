@@ -112,7 +112,8 @@ void AnimationSaverRunnable::run()
 	case int(VideoFormat::Webp):
 	case int(VideoFormat::Mp4Vp9):
 	case int(VideoFormat::WebmVp8):
-	case int(VideoFormat::Mp4H264): {
+	case int(VideoFormat::Mp4H264):
+	case int(VideoFormat::Mp4Av1): {
 		DP_SaveAnimationVideoParams params = {
 			m_canvasState.get(),
 			pr,
@@ -179,6 +180,7 @@ QString AnimationSaverRunnable::getFormatExtension() const
 		return QStringLiteral(".webp");
 	case int(VideoFormat::Mp4Vp9):
 	case int(VideoFormat::Mp4H264):
+	case int(VideoFormat::Mp4Av1):
 		return QStringLiteral(".mp4");
 	case int(VideoFormat::WebmVp8):
 		return QStringLiteral(".webm");
@@ -201,6 +203,8 @@ int AnimationSaverRunnable::formatToSaveVideoFormat() const
 		return DP_SAVE_VIDEO_FORMAT_WEBM_VP8;
 	case int(VideoFormat::Mp4H264):
 		return DP_SAVE_VIDEO_FORMAT_MP4_H264;
+	case int(VideoFormat::Mp4Av1):
+		return DP_SAVE_VIDEO_FORMAT_MP4_AV1;
 	default:
 		qWarning("formatToSaveVideoFormat: unhandled format %d", m_format);
 		return -1;
@@ -225,6 +229,7 @@ AnimationSaverRunnable::saveResultToErrorString(DP_SaveResult result) const
 				16384, QStringLiteral("WEBP"));
 		case int(VideoFormat::Mp4Vp9):
 		case int(VideoFormat::Mp4H264):
+		case int(VideoFormat::Mp4Av1):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				65536, QStringLiteral("MP4"));
 		case int(VideoFormat::WebmVp8):
