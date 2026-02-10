@@ -20,12 +20,14 @@ bool isVideoFormatSupported(VideoFormat format)
 	case VideoFormat::Gif:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
 			   DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_GIF);
+	case VideoFormat::Webp:
+		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBP);
 	case VideoFormat::Mp4Vp9:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4_VP9);
 	case VideoFormat::WebmVp8:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBM_VP8);
-	case VideoFormat::Webp:
-		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBP);
+	case VideoFormat::Mp4H264:
+		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4_H264);
 #endif
 	default:
 		return false;

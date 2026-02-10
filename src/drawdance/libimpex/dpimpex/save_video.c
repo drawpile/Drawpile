@@ -66,6 +66,8 @@ static enum AVCodecID get_format_codec_id(int format)
         return AV_CODEC_ID_RAWVIDEO;
     case DP_SAVE_VIDEO_FORMAT_GIF:
         return AV_CODEC_ID_GIF;
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+        return AV_CODEC_ID_H264;
     default:
         return AV_CODEC_ID_NONE;
     }
@@ -90,6 +92,7 @@ static const char *get_format_name(int format)
 {
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         return "mp4";
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         return "webm";
@@ -111,6 +114,7 @@ static bool check_format_dimensions(int output_width, int output_height,
     case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
     case DP_SAVE_VIDEO_FORMAT_GIF:
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         return DP_save_check_width_height(output_width, output_height, 65536);
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         return DP_save_check_width_height(output_width, output_height, 16384);
@@ -131,12 +135,17 @@ static int get_format_loops(int format, int loops)
     }
 }
 
-static int get_format_dimension(DP_UNUSED int format, int target_dimension,
+static int get_format_dimension(int format, int target_dimension,
                                 int input_dimension)
 {
     int dimension = target_dimension > 0 ? target_dimension : input_dimension;
-    // Some formats require dimensions to be divisible by 2, none currently.
-    return dimension;
+    switch (format) {
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+        // H264 dimensions must be divisible by 2.
+        return dimension + dimension % 2;
+    default:
+        return dimension;
+    }
 }
 
 static int get_format_codec_dimension(int format, int dimension)
@@ -210,6 +219,10 @@ static void set_format_codec_params(int format, AVCodecContext *codec_context)
         set_option(codec_context->priv_data, "preset", "drawing");
         set_option(codec_context->priv_data, "quality", "100");
         break;
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+        set_option(codec_context->priv_data, "crf", "19");
+        set_option(codec_context->priv_data, "tune", "animation");
+        break;
     default:
         DP_warn("Don't know format params for format %d", format);
         break;
@@ -224,6 +237,7 @@ static void set_format_output_params(int format,
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         break;
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         set_option(format_context->priv_data, "loop", "0");

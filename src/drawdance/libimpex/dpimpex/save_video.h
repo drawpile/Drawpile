@@ -23,6 +23,7 @@ typedef enum DP_SaveVideoFormat {
     DP_SAVE_VIDEO_FORMAT_WEBP,
     DP_SAVE_VIDEO_FORMAT_PALETTE,
     DP_SAVE_VIDEO_FORMAT_GIF,
+    DP_SAVE_VIDEO_FORMAT_MP4_H264,
 } DP_SaveVideoFormat;
 
 typedef enum DP_SaveVideoDestination {
