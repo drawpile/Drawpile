@@ -2792,6 +2792,19 @@ void MemoryConfig::setTimelapseInterpolation(int value)
 	}
 }
 
+int MemoryConfig::getTimelapseLingerAfterLoops() const
+{
+	return m_timelapseLingerAfterLoops;
+}
+
+void MemoryConfig::setTimelapseLingerAfterLoops(int value)
+{
+	if(value != m_timelapseLingerAfterLoops) {
+		m_timelapseLingerAfterLoops = value;
+		Q_EMIT changeTimelapseLingerAfterLoops(m_timelapseLingerAfterLoops);
+	}
+}
+
 int MemoryConfig::getTimelapseLingerAfterSeconds() const
 {
 	return m_timelapseLingerAfterSeconds;
@@ -2802,6 +2815,19 @@ void MemoryConfig::setTimelapseLingerAfterSeconds(int value)
 	if(value != m_timelapseLingerAfterSeconds) {
 		m_timelapseLingerAfterSeconds = value;
 		Q_EMIT changeTimelapseLingerAfterSeconds(m_timelapseLingerAfterSeconds);
+	}
+}
+
+int MemoryConfig::getTimelapseLingerBeforeLoops() const
+{
+	return m_timelapseLingerBeforeLoops;
+}
+
+void MemoryConfig::setTimelapseLingerBeforeLoops(int value)
+{
+	if(value != m_timelapseLingerBeforeLoops) {
+		m_timelapseLingerBeforeLoops = value;
+		Q_EMIT changeTimelapseLingerBeforeLoops(m_timelapseLingerBeforeLoops);
 	}
 }
 

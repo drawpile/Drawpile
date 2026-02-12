@@ -1127,9 +1127,19 @@ int Config::defaultTimelapseInterpolation()
 	return int(DP_IMAGE_SCALE_INTERPOLATION_GUESS);
 }
 
+int Config::defaultTimelapseLingerAfterLoops()
+{
+	return 0;
+}
+
 int Config::defaultTimelapseLingerAfterSeconds()
 {
 	return 3;
+}
+
+int Config::defaultTimelapseLingerBeforeLoops()
+{
+	return 1;
 }
 
 int Config::defaultTimelapseLingerBeforeSeconds()

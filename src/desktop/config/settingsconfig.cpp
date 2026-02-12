@@ -742,8 +742,17 @@ SettingsConfig::SettingsConfig(
 		Qt::DirectConnection);
 	connect(
 		m_settings,
+		&desktop::settings::Settings::timelapseLingerAfterLoopsChanged, this,
+		&SettingsConfig::changeTimelapseLingerAfterLoops, Qt::DirectConnection);
+	connect(
+		m_settings,
 		&desktop::settings::Settings::timelapseLingerAfterSecondsChanged, this,
 		&SettingsConfig::changeTimelapseLingerAfterSeconds,
+		Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseLingerBeforeLoopsChanged, this,
+		&SettingsConfig::changeTimelapseLingerBeforeLoops,
 		Qt::DirectConnection);
 	connect(
 		m_settings,
@@ -2996,6 +3005,16 @@ void SettingsConfig::setTimelapseInterpolation(int value)
 	m_settings->setTimelapseInterpolation(value);
 }
 
+int SettingsConfig::getTimelapseLingerAfterLoops() const
+{
+	return m_settings->timelapseLingerAfterLoops();
+}
+
+void SettingsConfig::setTimelapseLingerAfterLoops(int value)
+{
+	m_settings->setTimelapseLingerAfterLoops(value);
+}
+
 int SettingsConfig::getTimelapseLingerAfterSeconds() const
 {
 	return m_settings->timelapseLingerAfterSeconds();
@@ -3004,6 +3023,16 @@ int SettingsConfig::getTimelapseLingerAfterSeconds() const
 void SettingsConfig::setTimelapseLingerAfterSeconds(int value)
 {
 	m_settings->setTimelapseLingerAfterSeconds(value);
+}
+
+int SettingsConfig::getTimelapseLingerBeforeLoops() const
+{
+	return m_settings->timelapseLingerBeforeLoops();
+}
+
+void SettingsConfig::setTimelapseLingerBeforeLoops(int value)
+{
+	m_settings->setTimelapseLingerBeforeLoops(value);
 }
 
 int SettingsConfig::getTimelapseLingerBeforeSeconds() const

@@ -1907,8 +1907,10 @@ bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
 				crop = sel->bounds();
 			}
 
-			dialogs::TimelapseDialog *dlg =
-				new dialogs::TimelapseDialog(paintEngine, crop, this);
+			dialogs::TimelapseDialog *dlg = new dialogs::TimelapseDialog(
+				paintEngine, crop, m_layerViewCurrentFrame->isChecked(),
+				m_flipbookState.speedPercent, m_flipbookState.loopStart - 1,
+				m_flipbookState.loopEnd - 1, this);
 			dlg->setAttribute(Qt::WA_DeleteOnClose);
 			dlg->setObjectName(objectName);
 			if(!m_doc->isSaveInProgress()) {

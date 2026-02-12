@@ -1085,9 +1085,17 @@ public:
 	virtual void setTimelapseInterpolation(int value) = 0;
 	static int defaultTimelapseInterpolation();
 
+	virtual int getTimelapseLingerAfterLoops() const = 0;
+	virtual void setTimelapseLingerAfterLoops(int value) = 0;
+	static int defaultTimelapseLingerAfterLoops();
+
 	virtual int getTimelapseLingerAfterSeconds() const = 0;
 	virtual void setTimelapseLingerAfterSeconds(int value) = 0;
 	static int defaultTimelapseLingerAfterSeconds();
+
+	virtual int getTimelapseLingerBeforeLoops() const = 0;
+	virtual void setTimelapseLingerBeforeLoops(int value) = 0;
+	static int defaultTimelapseLingerBeforeLoops();
 
 	virtual int getTimelapseLingerBeforeSeconds() const = 0;
 	virtual void setTimelapseLingerBeforeSeconds(int value) = 0;
@@ -1434,7 +1442,9 @@ Q_SIGNALS:
 	void changeTimelapseFlashSeconds(int value);
 	void changeTimelapseFramerate(double value);
 	void changeTimelapseInterpolation(int value);
+	void changeTimelapseLingerAfterLoops(int value);
 	void changeTimelapseLingerAfterSeconds(int value);
+	void changeTimelapseLingerBeforeLoops(int value);
 	void changeTimelapseLingerBeforeSeconds(int value);
 	void changeTimelapseLogoLocation(int value);
 	void changeTimelapseLogoOffset(double value);

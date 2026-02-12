@@ -664,8 +664,14 @@ public:
 	int getTimelapseInterpolation() const override;
 	void setTimelapseInterpolation(int value) override;
 
+	int getTimelapseLingerAfterLoops() const override;
+	void setTimelapseLingerAfterLoops(int value) override;
+
 	int getTimelapseLingerAfterSeconds() const override;
 	void setTimelapseLingerAfterSeconds(int value) override;
+
+	int getTimelapseLingerBeforeLoops() const override;
+	void setTimelapseLingerBeforeLoops(int value) override;
 
 	int getTimelapseLingerBeforeSeconds() const override;
 	void setTimelapseLingerBeforeSeconds(int value) override;
@@ -986,7 +992,9 @@ private:
 	int m_timelapseFlashSeconds = defaultTimelapseFlashSeconds();
 	double m_timelapseFramerate = defaultTimelapseFramerate();
 	int m_timelapseInterpolation = defaultTimelapseInterpolation();
+	int m_timelapseLingerAfterLoops = defaultTimelapseLingerAfterLoops();
 	int m_timelapseLingerAfterSeconds = defaultTimelapseLingerAfterSeconds();
+	int m_timelapseLingerBeforeLoops = defaultTimelapseLingerBeforeLoops();
 	int m_timelapseLingerBeforeSeconds = defaultTimelapseLingerBeforeSeconds();
 	int m_timelapseLogoLocation = defaultTimelapseLogoLocation();
 	double m_timelapseLogoOffset = defaultTimelapseLogoOffset();

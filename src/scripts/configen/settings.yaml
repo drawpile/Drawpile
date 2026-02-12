@@ -1334,6 +1334,18 @@ settings:
     qsettings: 'timelapse/durationseconds'
     legacy_package: 'desktop'
 
+  - id: timelapseLingerAfterLoops
+    type: 'int'
+    default: '0'
+    qsettings: 'timelapse/lingeafterloops'
+    legacy_package: 'desktop'
+
+  - id: timelapseLingerBeforeLoops
+    type: 'int'
+    default: '1'
+    qsettings: 'timelapse/lingerbeforeloops'
+    legacy_package: 'desktop'
+
   - id: timelapseLingerAfterSeconds
     type: 'int'
     default: '3'

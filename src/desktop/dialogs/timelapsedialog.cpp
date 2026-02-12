@@ -13,6 +13,7 @@ extern "C" {
 #include "desktop/widgets/timelapsepreview.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/config/config.h"
+#include "libclient/drawdance/documentmetadata.h"
 #include "libclient/drawdance/image.h"
 #include "libclient/export/timelapsesaverrunnable.h"
 #include "libclient/export/videoformat.h"
@@ -36,16 +37,20 @@ extern "C" {
 #include <QTimeEdit>
 #include <QVBoxLayout>
 #include <QtColorWidgets/ColorPreview>
+#include <cmath>
 #include <functional>
 
 namespace dialogs {
 
 TimelapseDialog::TimelapseDialog(
-	canvas::PaintEngine *paintEngine, const QRect &crop, QWidget *parent)
+	canvas::PaintEngine *paintEngine, const QRect &crop, bool inFrameView,
+	double flipbookSpeedPercent, int flipbookFrameRangeFirst,
+	int flipbookFrameRangeLast, QWidget *parent)
 	: QDialog(parent)
 	, m_canvasState(paintEngine->viewCanvasState())
 	, m_vmf(paintEngine->viewModeFilter(m_vmb, m_canvasState))
 	, m_crop(crop)
+	, m_inFrameView(inFrameView)
 {
 	setWindowTitle(tr("Timelapse"));
 	utils::makeModal(this);
@@ -254,6 +259,50 @@ TimelapseDialog::TimelapseDialog(
 		m_keepAspectCheckBox, &QCheckBox::clicked, this,
 		&TimelapseDialog::updateAspectRatio);
 
+	if(m_canvasState.hasAnimation()) {
+		drawdance::DocumentMetadata documentMetadata =
+			m_canvasState.documentMetadata();
+		documentMetadata.effectiveFrameRange(
+			m_frameRangeFirst, m_frameRangeLast);
+		m_animationFramerate = documentMetadata.effectiveFramerate();
+
+		m_animationResultCheckBox =
+			new QCheckBox(tr("Play animation as result"));
+		m_animationResultCheckBox->setChecked(inFrameView);
+		settingsForm->addRow(nullptr, m_animationResultCheckBox);
+		connect(
+			m_animationResultCheckBox, &QCheckBox::clicked, this,
+			&TimelapseDialog::updateAnimation);
+
+		// Only offer the flipbook parameters if they are valid and different
+		// from the canvas parameters.
+		int frameCount = m_canvasState.frameCount();
+		bool flipbookParametersValid =
+			flipbookSpeedPercent > 0.0 && flipbookFrameRangeFirst >= 0 &&
+			flipbookFrameRangeLast >= 0 &&
+			flipbookFrameRangeFirst <= flipbookFrameRangeLast &&
+			flipbookFrameRangeLast < frameCount;
+
+		if(flipbookParametersValid) {
+			m_flipbookFrameRangeFirst = flipbookFrameRangeFirst;
+			m_flipbookFrameRangeLast = flipbookFrameRangeLast;
+			m_flipbookFramerate =
+				m_animationFramerate * (flipbookSpeedPercent / 100.0);
+
+			bool flipbookParametersDifferent =
+				m_flipbookFrameRangeFirst != m_frameRangeFirst ||
+				m_flipbookFrameRangeLast != m_frameRangeLast ||
+				std::abs(m_flipbookFramerate - m_animationFramerate) >= 0.01;
+
+			if(flipbookParametersDifferent) {
+				m_animationFlipbookCheckBox =
+					new QCheckBox(tr("Use flipbook range and speed"));
+				m_animationFlipbookCheckBox->hide();
+				settingsForm->addRow(nullptr, m_animationFlipbookCheckBox);
+			}
+		}
+	}
+
 	utils::addFormSpacer(settingsLayout);
 
 	QHBoxLayout *advancedButtonLayout = new QHBoxLayout;
@@ -348,12 +397,30 @@ TimelapseDialog::TimelapseDialog(
 		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&TimelapseDialog::updateLogoOpacity);
 
+	QString lingerBeforeTitle = tr("Preview result:");
 	m_lingerBeforeSlider = new KisDoubleSliderSpinBox;
 	m_lingerBeforeSlider->setRange(0.0, 60.0, 2);
 	m_lingerBeforeSlider->setSingleStep(0.1);
 	m_lingerBeforeSlider->setSuffix(tr(" seconds"));
-	advancedForm->addRow(tr("Preview result:"), m_lingerBeforeSlider);
 	kineticScroller->disableKineticScrollingOnWidget(m_lingerBeforeSlider);
+
+	if(m_animationResultCheckBox) {
+		m_lingerAnimationBeforeSlider = new KisSliderSpinBox;
+		m_lingerAnimationBeforeSlider->setRange(0, 99);
+		m_lingerAnimationBeforeSlider->hide();
+		bindAnimationLoopSlider(m_lingerAnimationBeforeSlider);
+		kineticScroller->disableKineticScrollingOnWidget(
+			m_lingerAnimationBeforeSlider);
+
+		QHBoxLayout *lingerBeforeLayout = new QHBoxLayout;
+		lingerBeforeLayout->setContentsMargins(0, 0, 0, 0);
+		lingerBeforeLayout->setSpacing(0);
+		lingerBeforeLayout->addWidget(m_lingerBeforeSlider);
+		lingerBeforeLayout->addWidget(m_lingerAnimationBeforeSlider);
+		advancedForm->addRow(lingerBeforeTitle, lingerBeforeLayout);
+	} else {
+		advancedForm->addRow(lingerBeforeTitle, m_lingerBeforeSlider);
+	}
 
 	QHBoxLayout *flashLayout = new QHBoxLayout;
 	flashLayout->setContentsMargins(0, 0, 0, 0);
@@ -376,12 +443,30 @@ TimelapseDialog::TimelapseDialog(
 	flashLayout->addWidget(m_flashSlider);
 	kineticScroller->disableKineticScrollingOnWidget(m_flashSlider);
 
+	QString lingerAfterTitle = tr("Linger result:");
 	m_lingerAfterSlider = new KisDoubleSliderSpinBox;
 	m_lingerAfterSlider->setRange(0.0, 60.0, 2);
 	m_lingerAfterSlider->setSingleStep(0.1);
 	m_lingerAfterSlider->setSuffix(tr(" seconds"));
-	advancedForm->addRow(tr("Linger result:"), m_lingerAfterSlider);
 	kineticScroller->disableKineticScrollingOnWidget(m_lingerAfterSlider);
+
+	if(m_animationResultCheckBox) {
+		m_lingerAnimationAfterSlider = new KisSliderSpinBox;
+		m_lingerAnimationAfterSlider->setRange(0, 99);
+		m_lingerAnimationAfterSlider->hide();
+		bindAnimationLoopSlider(m_lingerAnimationAfterSlider);
+		kineticScroller->disableKineticScrollingOnWidget(
+			m_lingerAnimationAfterSlider);
+
+		QHBoxLayout *lingerAfterLayout = new QHBoxLayout;
+		lingerAfterLayout->setContentsMargins(0, 0, 0, 0);
+		lingerAfterLayout->setSpacing(0);
+		lingerAfterLayout->addWidget(m_lingerAfterSlider);
+		lingerAfterLayout->addWidget(m_lingerAnimationAfterSlider);
+		advancedForm->addRow(lingerAfterTitle, lingerAfterLayout);
+	} else {
+		advancedForm->addRow(lingerAfterTitle, m_lingerAfterSlider);
+	}
 
 	m_maxDeltaSlider = new KisDoubleSliderSpinBox;
 	m_maxDeltaSlider->setRange(0.01, 10.0, 2);
@@ -450,6 +535,7 @@ TimelapseDialog::TimelapseDialog(
 	showSettingsPage();
 	setDefaultResolutions();
 	updateCurrentResolution();
+	updateAnimation();
 	loadSettings();
 }
 
@@ -466,12 +552,52 @@ void TimelapseDialog::accept()
 		int format = m_formatCombo->currentData().toInt();
 		QString outputPath = choosePath(format);
 		if(!outputPath.isEmpty()) {
-			double lingerBeforeSeconds = m_lingerBeforeSlider->value();
+			bool lingerAnimation = m_animationResultCheckBox &&
+								   m_animationResultCheckBox->isChecked();
 			double flashSeconds = m_flashSlider->value();
-			double lingerAfterSeconds = m_lingerAfterSlider->value();
-			double playbackSeconds = qMax(
-				1.0, getDurationSeconds() - lingerBeforeSeconds - flashSeconds -
-						 lingerAfterSeconds);
+			double playbackSeconds = getDurationSeconds() - flashSeconds;
+
+			double lingerBeforeSeconds, lingerAfterSeconds;
+			int lingerBeforeLoops, lingerAfterLoops;
+			int frameRangeFirst, frameRangeLast;
+			double animationFramerate;
+			if(lingerAnimation) {
+				lingerBeforeSeconds = 0.0;
+				lingerAfterSeconds = 0.0;
+				lingerBeforeLoops = m_lingerAnimationBeforeSlider->value();
+				lingerAfterLoops = m_lingerAnimationAfterSlider->value();
+
+				if(m_animationFlipbookCheckBox &&
+				   m_animationFlipbookCheckBox->isChecked()) {
+					frameRangeFirst = m_flipbookFrameRangeFirst;
+					frameRangeLast = m_flipbookFrameRangeLast;
+					animationFramerate = m_flipbookFramerate;
+				} else {
+					frameRangeFirst = m_frameRangeFirst;
+					frameRangeLast = m_frameRangeLast;
+					animationFramerate = m_animationFramerate;
+				}
+
+				int frames = frameRangeLast - frameRangeFirst + 1;
+				playbackSeconds -=
+					qreal(lingerBeforeLoops * frames) / animationFramerate;
+				playbackSeconds -=
+					qreal(lingerAfterLoops * frames) / animationFramerate;
+			} else {
+				lingerBeforeSeconds = m_lingerBeforeSlider->value();
+				lingerAfterSeconds = m_lingerAfterSlider->value();
+				lingerBeforeLoops = 0;
+				lingerAfterLoops = 0;
+				frameRangeFirst = -1;
+				frameRangeLast = -2;
+				animationFramerate = 0.0;
+				playbackSeconds -= lingerBeforeSeconds;
+				playbackSeconds -= lingerAfterSeconds;
+			}
+
+			if(playbackSeconds < 1.0) {
+				playbackSeconds = 1.0;
+			}
 
 			const config::Config *cfg = dpAppConfig();
 			m_saver = new TimelapseSaverRunnable(
@@ -485,7 +611,8 @@ void TimelapseDialog::accept()
 				m_framerateSlider->value(), lingerBeforeSeconds,
 				playbackSeconds, flashSeconds, lingerAfterSeconds,
 				m_maxDeltaSlider->value(), m_maxQueueEntriesSlider->value(),
-				m_ownCheckBox->isChecked());
+				m_ownCheckBox->isChecked(), lingerBeforeLoops, lingerAfterLoops,
+				frameRangeFirst, frameRangeLast, animationFramerate);
 			m_saver->setAutoDelete(false);
 
 			connect(
@@ -575,6 +702,30 @@ void TimelapseDialog::updateCurrentResolution()
 	updateDimensionsNote();
 }
 
+void TimelapseDialog::updateAnimation()
+{
+	if(m_animationResultCheckBox) {
+		utils::ScopedUpdateDisabler disabler(this);
+		if(m_animationResultCheckBox->isChecked()) {
+			m_lingerBeforeSlider->hide();
+			m_lingerAfterSlider->hide();
+			if(m_animationFlipbookCheckBox) {
+				m_animationFlipbookCheckBox->show();
+			}
+			m_lingerAnimationBeforeSlider->show();
+			m_lingerAnimationAfterSlider->show();
+		} else {
+			if(m_animationFlipbookCheckBox) {
+				m_animationFlipbookCheckBox->hide();
+			}
+			m_lingerAnimationBeforeSlider->hide();
+			m_lingerAnimationAfterSlider->hide();
+			m_lingerAfterSlider->show();
+			m_lingerBeforeSlider->show();
+		}
+	}
+}
+
 void TimelapseDialog::setUseCrop(bool checked)
 {
 	QSize sizeToSave(m_widthSpinner->value(), m_heightSpinner->value());
@@ -634,6 +785,19 @@ void TimelapseDialog::resetToDefaultSettings()
 		config::Config::defaultTimelapseMaxQueueEntries());
 	QSignalBlocker framerateBlocker(m_framerateSlider);
 	m_framerateSlider->setValue(config::Config::defaultTimelapseFramerate());
+
+	if(m_animationResultCheckBox) {
+		m_animationResultCheckBox->setChecked(m_inFrameView);
+		if(m_animationFlipbookCheckBox) {
+			m_animationFlipbookCheckBox->setChecked(false);
+		}
+		m_lingerAnimationBeforeSlider->setValue(
+			config::Config::defaultTimelapseLingerBeforeLoops());
+		m_lingerAnimationAfterSlider->setValue(
+			config::Config::defaultTimelapseLingerAfterLoops());
+		updateAnimation();
+	}
+
 	updateLogoRect();
 	updateLogoOpacity(m_logoOpacitySlider->value());
 	updateFramerateNote();
@@ -684,6 +848,16 @@ void TimelapseDialog::loadSettings()
 	m_maxQueueEntriesSlider->setValue(cfg->getTimelapseMaxQueueEntries());
 	QSignalBlocker framerateBlocker(m_framerateSlider);
 	m_framerateSlider->setValue(cfg->getTimelapseFramerate());
+
+	if(m_animationResultCheckBox) {
+		m_animationResultCheckBox->setChecked(m_inFrameView);
+		m_lingerAnimationBeforeSlider->setValue(
+			cfg->getTimelapseLingerBeforeLoops());
+		m_lingerAnimationAfterSlider->setValue(
+			cfg->getTimelapseLingerAfterLoops());
+		updateAnimation();
+	}
+
 	updateLogoRect();
 	updateLogoOpacity(m_logoOpacitySlider->value());
 	updateFramerateNote();
@@ -709,6 +883,12 @@ void TimelapseDialog::saveSettings()
 	cfg->setTimelapseMaxDeltaSeconds(m_maxDeltaSlider->value());
 	cfg->setTimelapseMaxQueueEntries(m_maxQueueEntriesSlider->value());
 	cfg->setTimelapseFramerate(m_framerateSlider->value());
+	if(m_animationResultCheckBox) {
+		cfg->setTimelapseLingerBeforeLoops(
+			m_lingerAnimationBeforeSlider->value());
+		cfg->setTimelapseLingerAfterLoops(
+			m_lingerAnimationAfterSlider->value());
+	}
 }
 
 bool TimelapseDialog::selectExportFormat(int format)
@@ -846,6 +1026,23 @@ void TimelapseDialog::updateAdvanced(bool enabled)
 void TimelapseDialog::updateFramerateNote()
 {
 	m_framerateNote->setContentsVisible(m_framerateSlider->value() > 30);
+}
+
+void TimelapseDialog::bindAnimationLoopSlider(KisSliderSpinBox *slider)
+{
+	connect(
+		slider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		[this, slider](int value) {
+			updateAnimationLoopText(slider, value);
+		});
+	updateAnimationLoopText(slider, slider->value());
+}
+
+void TimelapseDialog::updateAnimationLoopText(
+	KisSliderSpinBox *slider, int value)
+{
+	utils::encapsulateSpinBoxPrefixSuffix(
+		slider, tr("%1 loop(s)", nullptr, value));
 }
 
 QSize TimelapseDialog::getOutputSize() const

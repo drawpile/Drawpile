@@ -616,9 +616,17 @@ SETTING(
 	timelapseInterpolation, TimelapseInterpolation, "timelapse/interpolation",
 	config::Config::defaultTimelapseInterpolation())
 SETTING(
+	timelapseLingerAfterLoops, TimelapseLingerAfterLoops,
+	"timelapse/lingeafterloops",
+	config::Config::defaultTimelapseLingerAfterLoops())
+SETTING(
 	timelapseLingerAfterSeconds, TimelapseLingerAfterSeconds,
 	"timelapse/lingerafterseconds",
 	config::Config::defaultTimelapseLingerAfterSeconds())
+SETTING(
+	timelapseLingerBeforeLoops, TimelapseLingerBeforeLoops,
+	"timelapse/lingerbeforeloops",
+	config::Config::defaultTimelapseLingerBeforeLoops())
 SETTING(
 	timelapseLingerBeforeSeconds, TimelapseLingerBeforeSeconds,
 	"timelapse/lingerbeforeseconds",

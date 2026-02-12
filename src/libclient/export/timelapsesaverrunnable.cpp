@@ -39,7 +39,8 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const QImage &logoImage, double framerate, double lingerBeforeSeconds,
 	double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
 	double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
-	QObject *parent)
+	int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
+	int frameRangeLast, double animationFramerate, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_outputPath(outputPath)
@@ -65,13 +66,16 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	, m_playbackSeconds(playbackSeconds)
 	, m_flashSeconds(flashSeconds)
 	, m_lingerAfterSeconds(lingerAfterSeconds)
-	, m_totalSeconds(
-		  lingerBeforeSeconds + playbackSeconds + flashSeconds +
-		  lingerAfterSeconds)
 	, m_maxDeltaSeconds(maxDeltaSeconds)
 	, m_maxQueueEntries(maxQueueEntries)
 	, m_playbackFlags(
 		  DP_flag_uint(timeOwnOnly, DP_PROJECT_PLAYBACK_FLAG_MEASURE_OWN_ONLY))
+	, m_lingerBeforeLoops(lingerBeforeLoops)
+	, m_lingerAfterLoops(lingerAfterLoops)
+	, m_frameRangeFirst(frameRangeFirst)
+	, m_frameRangeLast(frameRangeLast)
+	, m_animationFramerate(animationFramerate)
+	, m_totalSeconds(calculateTotalSeconds())
 	, m_vmf(DP_view_mode_filter_clone(m_vmb.get(), vmfOrNull))
 {
 }
@@ -172,77 +176,121 @@ TimelapseSaverRunnable::PlaybackRunnable::PlaybackRunnable(
 
 void TimelapseSaverRunnable::PlaybackRunnable::run()
 {
-	int result;
-	if(shouldStop()) {
-		result = 0;
+	int result = runPlayback();
+	enqueue({result, -1, QImage()});
+}
+
+int TimelapseSaverRunnable::PlaybackRunnable::runPlayback()
+{
+#define RETURN_IF_STOPPED()                                                    \
+	do {                                                                       \
+		if(shouldStop()) {                                                     \
+			return 0;                                                          \
+		}                                                                      \
+	} while(0)
+
+	RETURN_IF_STOPPED();
+	Q_EMIT m_parent->stepChanged(
+		QCoreApplication::translate(
+			"TimelapseSaverRunnable", "Rendering preview…"));
+
+	const QImage &logoImage = m_parent->m_logoImage;
+	if(!logoImage.isNull()) {
+		if(logoImage.format() == QImage::Format_ARGB32_Premultiplied) {
+			scaleLogoImage(logoImage);
+		} else {
+			scaleLogoImage(
+				logoImage.convertToFormat(QImage::Format_ARGB32_Premultiplied));
+		}
+	}
+
+	bool animationResult = m_parent->shouldUseAnimationResult();
+	if(animationResult) {
+		setViewModeFilterFrame(m_parent->m_frameRangeFirst);
+	}
+
+	QImage finalImage = toOutputImage(
+		m_parent->m_canvasState,
+		DP_project_playback_crop_or_null(m_parent->m_projectPlayback),
+		&m_parent->m_vmf);
+	if(finalImage.isNull()) {
+		finalImage = drawdance::wrapImage(
+			DP_image_new(m_parent->m_width, m_parent->m_height));
+	}
+	m_lastImage = finalImage;
+
+	double framerate = m_parent->m_framerate;
+	if(animationResult) {
+		int loops = m_parent->m_lingerBeforeLoops;
+		if(loops > 0) {
+			renderAnimation(loops);
+		}
 	} else {
-		Q_EMIT m_parent->stepChanged(
-			QCoreApplication::translate(
-				"TimelapseSaverRunnable", "Rendering preview…"));
-
-		const QImage &logoImage = m_parent->m_logoImage;
-		if(!logoImage.isNull()) {
-			if(logoImage.format() == QImage::Format_ARGB32_Premultiplied) {
-				scaleLogoImage(logoImage);
-			} else {
-				scaleLogoImage(logoImage.convertToFormat(
-					QImage::Format_ARGB32_Premultiplied));
-			}
-		}
-
-		QImage finalImage = toOutputImage(
-			m_parent->m_canvasState,
-			DP_project_playback_crop_or_null(m_parent->m_projectPlayback),
-			&m_parent->m_vmf);
-		if(finalImage.isNull()) {
-			finalImage = drawdance::wrapImage(
-				DP_image_new(m_parent->m_width, m_parent->m_height));
-		}
-		m_lastImage = finalImage;
-
-		double framerate = m_parent->m_framerate;
 		int lingerBeforeFrames =
 			int(m_parent->m_lingerBeforeSeconds * framerate);
 		if(lingerBeforeFrames > 0) {
 			enqueueLastImage(lingerBeforeFrames);
 		}
+	}
 
-		Q_EMIT m_parent->stepChanged(
-			QCoreApplication::translate(
-				"TimelapseSaverRunnable", "Rendering timelapse…"));
+	RETURN_IF_STOPPED();
 
-		result = DP_project_playback_play(
-			m_parent->m_projectPlayback, m_parent->m_dc, framerate,
-			m_parent->m_playbackSeconds, &PlaybackRunnable::handleCallback,
-			this);
+	Q_EMIT m_parent->stepChanged(
+		QCoreApplication::translate(
+			"TimelapseSaverRunnable", "Rendering timelapse…"));
 
-		Q_EMIT m_parent->stepChanged(
-			QCoreApplication::translate(
-				"TimelapseSaverRunnable", "Rendering result…"));
+	int result = DP_project_playback_play(
+		m_parent->m_projectPlayback, m_parent->m_dc, framerate,
+		m_parent->m_playbackSeconds, &PlaybackRunnable::handleCallback, this);
 
-		int flashFrames = int(m_parent->m_flashSeconds * framerate);
-		if(flashFrames > 0) {
-			int brightest = flashFrames / 8;
-			for(int i = 0; i < brightest; ++i) {
-				enqueueFlashImage(double(i) / double(brightest));
-			}
+	// Check whether we were cancelled first, since in that case the playback
+	// result will be garbage. Otherwise, bail out if there was an error.
+	RETURN_IF_STOPPED();
+	if(result != 0) {
+		return result;
+	}
 
-			m_lastImage = finalImage;
-			enqueueFlashImage(1.0);
+	Q_EMIT m_parent->stepChanged(
+		QCoreApplication::translate(
+			"TimelapseSaverRunnable", "Rendering result…"));
 
-			for(int i = brightest + 1; i < flashFrames; ++i) {
-				enqueueFlashImage(
-					double(flashFrames - i) / double(flashFrames - brightest));
-			}
-		} else {
-			m_lastImage = finalImage;
+	int flashFrames = int(m_parent->m_flashSeconds * framerate);
+	if(flashFrames > 0) {
+		int brightest = flashFrames / 8;
+		for(int i = 0; i < brightest; ++i) {
+			RETURN_IF_STOPPED();
+			enqueueFlashImage(double(i) / double(brightest));
 		}
 
+		RETURN_IF_STOPPED();
+		m_lastImage = finalImage;
+		enqueueFlashImage(1.0);
+
+		for(int i = brightest + 1; i < flashFrames; ++i) {
+			RETURN_IF_STOPPED();
+			enqueueFlashImage(
+				double(flashFrames - i) / double(flashFrames - brightest));
+		}
+	} else {
+		m_lastImage = finalImage;
+	}
+
+	RETURN_IF_STOPPED();
+
+	if(animationResult) {
+		int loops = m_parent->m_lingerAfterLoops;
+		if(loops > 0) {
+			renderAnimation(loops);
+		} else {
+			enqueueLastImage(1);
+		}
+	} else {
 		int lingerAfterFrames = int(m_parent->m_lingerAfterSeconds * framerate);
 		enqueueLastImage(qMax(1, lingerAfterFrames));
 	}
 
-	enqueue({result, -1, QImage()});
+#undef RETURN_IF_STOPPED
+	return 0;
 }
 
 void TimelapseSaverRunnable::PlaybackRunnable::scaleLogoImage(const QImage &img)
@@ -270,6 +318,65 @@ void TimelapseSaverRunnable::PlaybackRunnable::scaleLogoImage(const QImage &img)
 					DP_error());
 			}
 		}
+	}
+}
+
+void TimelapseSaverRunnable::PlaybackRunnable::setViewModeFilterFrame(
+	int frameIndex)
+{
+	m_parent->m_vmf = DP_view_mode_filter_make_frame_render(
+		m_parent->m_vmb.get(), m_parent->m_canvasState.get(), frameIndex);
+}
+
+void TimelapseSaverRunnable::PlaybackRunnable::renderAnimation(int loops)
+{
+	int frameRangeFirst = m_parent->m_frameRangeFirst;
+	int frameRangeLast = m_parent->m_frameRangeLast;
+	qreal playbackFrameRate = m_parent->m_framerate;
+	qreal animationFrameRate = m_parent->m_animationFramerate;
+
+	int frameCount = frameRangeLast - frameRangeFirst + 1;
+	qreal loopDurationSeconds = frameCount / animationFrameRate;
+	qreal totalDurationSeconds = loopDurationSeconds * qreal(loops);
+	int playbackFrameCount = int(totalDurationSeconds * playbackFrameRate);
+
+	int lastRenderedFrameIndex = -1;
+	int instances = 0;
+
+	for(int i = 0; i < playbackFrameCount; ++i) {
+		// Figure out where we are in the animation.
+		qreal currentTimeSeconds = qreal(i) / playbackFrameRate;
+		int frameOffset =
+			int(std::fmod(currentTimeSeconds, loopDurationSeconds) *
+				animationFrameRate);
+		int frameIndex = qBound(
+			frameRangeFirst, frameRangeFirst + frameOffset, frameRangeLast);
+
+		bool repeatLastFrame =
+			instances > 0 && m_parent->m_canvasState.sameFrame(
+								 lastRenderedFrameIndex, frameIndex);
+		if(repeatLastFrame) {
+			// This frame is the same as the last one, just stretch it.
+			++instances;
+		} else {
+			// Flush last frame if we got one.
+			if(instances > 0) {
+				enqueueLastImage(instances);
+			}
+			// Render the frame, but don't flush yet since it may be repeated.
+			instances = 1;
+			lastRenderedFrameIndex = frameIndex;
+			setViewModeFilterFrame(frameIndex);
+			m_lastImage = toOutputImage(
+				m_parent->m_canvasState,
+				DP_project_playback_crop_or_null(m_parent->m_projectPlayback),
+				&m_parent->m_vmf);
+		}
+	}
+
+	// Flush the last frame.
+	if(instances > 0) {
+		enqueueLastImage(instances);
 	}
 }
 
@@ -506,6 +613,28 @@ void TimelapseSaverRunnable::PlaybackRunnable::enqueue(PlaybackEntry &&entry)
 }
 
 
+bool TimelapseSaverRunnable::shouldUseAnimationResult() const
+{
+	return m_lingerBeforeLoops > 0 || m_lingerAfterLoops > 0;
+}
+
+qreal TimelapseSaverRunnable::calculateTotalSeconds() const
+{
+	qreal lingerBeforeSeconds, lingerAfterSeconds;
+	if(shouldUseAnimationResult()) {
+		int frameCount = m_frameRangeLast - m_frameRangeFirst + 1;
+		lingerBeforeSeconds =
+			qreal(frameCount * m_lingerBeforeLoops) / m_animationFramerate;
+		lingerAfterSeconds =
+			qreal(frameCount * m_lingerAfterLoops) / m_animationFramerate;
+	} else {
+		lingerBeforeSeconds = m_lingerBeforeSeconds;
+		lingerAfterSeconds = m_lingerAfterSeconds;
+	}
+	return lingerBeforeSeconds + m_playbackSeconds + m_flashSeconds +
+		   lingerAfterSeconds;
+}
+
 bool TimelapseSaverRunnable::checkParameters(QString &outErrorMessage) const
 {
 	QStringList errors;
@@ -536,12 +665,34 @@ bool TimelapseSaverRunnable::checkParameters(QString &outErrorMessage) const
 		appendError(tr("Invalid framerate %1 given.").arg(m_framerate));
 	}
 
-	if(!std::isfinite(m_lingerBeforeSeconds) ||
-	   !std::isfinite(m_playbackSeconds) || !std::isfinite(m_flashSeconds) ||
-	   !std::isfinite(m_lingerAfterSeconds) || !std::isfinite(m_totalSeconds) ||
-	   !std::isfinite(m_maxDeltaSeconds) || m_lingerBeforeSeconds < 0.0 ||
-	   m_playbackSeconds <= 0.0 || m_flashSeconds < 0.0 ||
-	   m_lingerAfterSeconds < 0.0 || m_maxDeltaSeconds <= 0.0) {
+	bool animationError;
+	bool lingerTimeError;
+	if(shouldUseAnimationResult()) {
+		lingerTimeError = false;
+		int frameCount = m_canvasState.frameCount();
+		animationError =
+			m_frameRangeFirst < 0 || m_frameRangeLast < 0 ||
+			m_frameRangeFirst > m_frameRangeLast ||
+			m_frameRangeFirst >= frameCount || m_frameRangeLast > frameCount ||
+			!std::isfinite(m_animationFramerate) || m_animationFramerate <= 0.0;
+		if(animationError) {
+			appendError(tr("Invalid animation parameters given."));
+		}
+	} else {
+		animationError = false;
+		lingerTimeError = !std::isfinite(m_lingerBeforeSeconds) ||
+						  !std::isfinite(m_lingerAfterSeconds) ||
+						  m_lingerBeforeSeconds < 0.0 ||
+						  m_lingerAfterSeconds < 0.0;
+	}
+
+	// If the animation information is garbage already, an invalid time is
+	// probably just a knock-on effect of that, so don't report that as well.
+	if(!animationError &&
+	   (lingerTimeError || !std::isfinite(m_playbackSeconds) ||
+		!std::isfinite(m_flashSeconds) || !std::isfinite(m_totalSeconds) ||
+		!std::isfinite(m_maxDeltaSeconds) || m_playbackSeconds <= 0.0 ||
+		m_flashSeconds < 0.0 || m_maxDeltaSeconds <= 0.0)) {
 		appendError(tr("Invalid time given."));
 	}
 

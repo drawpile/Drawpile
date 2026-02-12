@@ -39,6 +39,8 @@ public:
 		const QImage &logoImage, double framerate, double lingerBeforeSeconds,
 		double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
 		double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
+		int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
+		int frameRangeLast, double animationFramerate,
 		QObject *parent = nullptr);
 
 	void run() override;
@@ -72,6 +74,8 @@ private:
 		void requestStop() { m_stopRequested.storeRelaxed(1); }
 
 	private:
+		int runPlayback();
+
 		bool shouldStop() const
 		{
 			return m_parent->m_cancelled.loadRelaxed() != 0 ||
@@ -79,6 +83,10 @@ private:
 		}
 
 		void scaleLogoImage(const QImage &img);
+
+		void setViewModeFilterFrame(int frameIndex);
+
+		void renderAnimation(int loops);
 
 		QImage toOutputImage(
 			const drawdance::CanvasState &canvasState,
@@ -111,6 +119,10 @@ private:
 		drawdance::Tile m_lastBackgroundTile = drawdance::Tile::null();
 		QAtomicInt m_stopRequested;
 	};
+
+	bool shouldUseAnimationResult() const;
+
+	qreal calculateTotalSeconds() const;
 
 	bool checkParameters(QString &outErrorMessage) const;
 
@@ -167,10 +179,15 @@ private:
 	const double m_playbackSeconds;
 	const double m_flashSeconds;
 	const double m_lingerAfterSeconds;
-	const double m_totalSeconds;
 	const double m_maxDeltaSeconds;
 	const int m_maxQueueEntries;
 	const unsigned int m_playbackFlags;
+	const int m_lingerBeforeLoops;
+	const int m_lingerAfterLoops;
+	const int m_frameRangeFirst;
+	const int m_frameRangeLast;
+	const double m_animationFramerate;
+	const double m_totalSeconds;
 	drawdance::ViewModeBuffer m_vmb;
 	DP_ViewModeFilter m_vmf;
 	QImage m_scaledLogoImage;

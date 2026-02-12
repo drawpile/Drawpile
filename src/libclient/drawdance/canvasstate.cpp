@@ -4,6 +4,7 @@ extern "C" {
 #include <dpengine/canvas_state.h>
 #include <dpengine/flood_fill.h>
 #include <dpengine/image.h>
+#include <dpengine/key_frame.h>
 #include <dpengine/layer_content.h>
 #include <dpengine/layer_group.h>
 #include <dpengine/layer_list.h>
@@ -11,6 +12,8 @@ extern "C" {
 #include <dpengine/layer_props_list.h>
 #include <dpengine/layer_routes.h>
 #include <dpengine/snapshots.h>
+#include <dpengine/timeline.h>
+#include <dpengine/track.h>
 #include <dpengine/view_mode.h>
 #include <dpimpex/load.h>
 }
@@ -285,6 +288,23 @@ double CanvasState::effectiveFramerate() const
 bool CanvasState::sameFrame(int frameIndexA, int frameIndexB) const
 {
 	return DP_canvas_state_same_frame(m_data, frameIndexA, frameIndexB);
+}
+
+bool CanvasState::hasAnimation() const
+{
+	DP_Timeline *tl = DP_canvas_state_timeline_noinc(m_data);
+	int trackCount = DP_timeline_track_count(tl);
+	for(int i = 0; i < trackCount; ++i) {
+		DP_Track *t = DP_timeline_track_at_noinc(tl, i);
+		int keyFrameCount = DP_track_key_frame_count(t);
+		for(int j = 0; j < keyFrameCount; ++j) {
+			DP_KeyFrame *kf = DP_track_key_frame_at_noinc(t, j);
+			if(DP_key_frame_layer_id(kf) > 0) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 QSet<int>

@@ -80,6 +80,8 @@ public:
 
 	bool sameFrame(int frameIndexA, int frameIndexB) const;
 
+	bool hasAnimation() const;
+
 	QSet<int> getLayersVisibleInTrackFrame(int trackId, int frameIndex) const;
 
 	QImage toFlatImage(

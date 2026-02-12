@@ -44,8 +44,9 @@ class TimelapseDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit TimelapseDialog(
-		canvas::PaintEngine *paintEngine, const QRect &crop,
-		QWidget *parent = nullptr);
+		canvas::PaintEngine *paintEngine, const QRect &crop, bool inFrameView,
+		double flipbookSpeedPercent, int flipbookFrameRangeFirst,
+		int flipbookFrameRangeLast, QWidget *parent = nullptr);
 
 	void setInputPath(const QString &inputPath);
 	bool haveInputPath() const { return !m_inputPath.isEmpty(); }
@@ -72,6 +73,7 @@ private:
 	void setDefaultResolutions();
 	QSize calculateResolution(const QSize &inputSize);
 	void updateCurrentResolution();
+	void updateAnimation();
 	void setUseCrop(bool checked);
 	void resetToDefaultSettings();
 	void resetDefaultExportFormat();
@@ -93,6 +95,8 @@ private:
 	void toggleAdvanced();
 	void updateAdvanced(bool enabled);
 	void updateFramerateNote();
+	void bindAnimationLoopSlider(KisSliderSpinBox *slider);
+	void updateAnimationLoopText(KisSliderSpinBox *slider, int value);
 
 	QSize getOutputSize() const;
 	QRect getLogoRect();
@@ -133,6 +137,8 @@ private:
 	QSpinBox *m_heightSpinner;
 	QCheckBox *m_keepAspectCheckBox;
 	QCheckBox *m_cropCheckBox;
+	QCheckBox *m_animationResultCheckBox = nullptr;
+	QCheckBox *m_animationFlipbookCheckBox = nullptr;
 	QButtonGroup *m_logoLocationGroup;
 	utils::FormNote *m_dimensionsNote;
 	QPushButton *m_advancedButton;
@@ -144,9 +150,11 @@ private:
 	KisDoubleSliderSpinBox *m_logoOffsetSlider;
 	KisSliderSpinBox *m_logoOpacitySlider;
 	KisDoubleSliderSpinBox *m_lingerBeforeSlider;
+	KisSliderSpinBox *m_lingerAnimationBeforeSlider = nullptr;
 	color_widgets::ColorPreview *m_flashPreview;
 	KisDoubleSliderSpinBox *m_flashSlider;
 	KisDoubleSliderSpinBox *m_lingerAfterSlider;
+	KisSliderSpinBox *m_lingerAnimationAfterSlider = nullptr;
 	KisDoubleSliderSpinBox *m_maxDeltaSlider;
 	KisSliderSpinBox *m_maxQueueEntriesSlider;
 	KisDoubleSliderSpinBox *m_framerateSlider;
@@ -160,6 +168,13 @@ private:
 	QSize m_fullResolution;
 	QSize m_cropResolution;
 	qreal m_aspectRatio = 0.0;
+	int m_frameRangeFirst = 0;
+	int m_frameRangeLast = 0;
+	int m_flipbookFrameRangeFirst = 0;
+	int m_flipbookFrameRangeLast = 0;
+	double m_animationFramerate = 24.0;
+	double m_flipbookFramerate = 24.0;
+	bool m_inFrameView;
 	bool m_cancelling = false;
 };
 

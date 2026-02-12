@@ -671,8 +671,14 @@ public:
 	int getTimelapseInterpolation() const override;
 	void setTimelapseInterpolation(int value) override;
 
+	int getTimelapseLingerAfterLoops() const override;
+	void setTimelapseLingerAfterLoops(int value) override;
+
 	int getTimelapseLingerAfterSeconds() const override;
 	void setTimelapseLingerAfterSeconds(int value) override;
+
+	int getTimelapseLingerBeforeLoops() const override;
+	void setTimelapseLingerBeforeLoops(int value) override;
 
 	int getTimelapseLingerBeforeSeconds() const override;
 	void setTimelapseLingerBeforeSeconds(int value) override;
