@@ -209,10 +209,16 @@ void LayerProperties::updateLayerItem(
 void LayerProperties::setControlsEnabled(bool enabled)
 {
 	m_controlsEnabled = enabled;
-	QWidget *w[] = {
-		m_ui->title, m_ui->opacitySlider, m_ui->blendMode, m_ui->censored};
-	for(unsigned int i = 0; i < sizeof(w) / sizeof(w[0]); ++i)
-		w[i]->setEnabled(enabled);
+	QWidget *widgets[] = {
+		m_ui->title,	  m_ui->opacitySlider, m_ui->blendMode, m_ui->censored,
+		m_ui->alphaBlend, m_ui->alphaPreserve, m_ui->clip,
+	};
+	for(QWidget *widget : widgets) {
+		widget->setEnabled(enabled);
+	}
+	for(QAbstractButton *button : m_colorButtons->buttons()) {
+		button->setEnabled(enabled);
+	}
 }
 
 void LayerProperties::setOpControlsEnabled(bool enabled)
