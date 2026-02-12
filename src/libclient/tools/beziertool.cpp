@@ -44,7 +44,11 @@ void BezierTool::begin(const BeginParams &params)
 
 	} else {
 		if(m_points.isEmpty()) {
-			m_points << ControlPoint{point, QPointF()};
+			m_points.append(ControlPoint{point, QPointF()});
+			m_points.append(ControlPoint{point, QPointF()});
+			m_firstPoint = true;
+		} else {
+			movePoint(point);
 		}
 
 		m_beginPoint = point;
@@ -59,35 +63,35 @@ void BezierTool::begin(const BeginParams &params)
 
 void BezierTool::motion(const MotionParams &params)
 {
-	if(m_rightButton)
-		return;
-
-	if(m_points.isEmpty()) {
-		qWarning("BezierTool::motion: point vector is empty!");
+	if(m_rightButton) {
 		return;
 	}
 
-	m_points.last().cp = m_beginPoint - params.point;
-	updatePreview();
+	if(m_points.isEmpty()) {
+		qWarning("BezierTool::motion: point vector is empty!");
+	} else if(m_firstPoint) {
+		movePoint(params.point);
+	} else {
+		m_points.last().cp = m_beginPoint - params.point;
+		updatePreview();
+	}
 }
 
 void BezierTool::hover(const HoverParams &params)
 {
-	if(m_points.isEmpty())
+	if(m_points.isEmpty()) {
 		return;
-
-	QPointF point = params.point;
-	if(!Point::intSame(point, m_points.last().point)) {
-		m_points.last().point = point;
-		updatePreview();
 	}
+
+	movePoint(params.point);
 }
 
 void BezierTool::end(const EndParams &)
 {
 	int s = m_points.size();
 
-	if(m_rightButton || s == 0) {
+	if(m_rightButton || s == 0 || m_firstPoint) {
+		m_firstPoint = false;
 		return;
 	}
 
@@ -215,11 +219,26 @@ QPointF BezierTool::cubicBezierPoint(const QPointF points[4], float t)
 	return QPointF(t1 * Dx + t * Ex, t1 * Dy + t * Ey);
 }
 
+void BezierTool::movePoint(const QPointF &point)
+{
+	if(!Point::intSame(point, m_points.last().point)) {
+		m_points.last().point = point;
+		updatePreview();
+	}
+}
+
 void BezierTool::updatePreview()
 {
-	const PointVector pv = calculateBezierCurve();
-	if(pv.size() <= 1)
+	PointVector pv = calculateBezierCurve();
+	switch(pv.size()) {
+	case 0:
 		return;
+	case 1:
+		pv.append(pv.constFirst().posAdjustedBy(QPointF(1.0, 1.0)));
+		break;
+	default:
+		break;
+	}
 
 	m_owner.setBrushEngineBrush(m_brushEngine, type());
 

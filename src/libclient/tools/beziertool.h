@@ -28,6 +28,7 @@ public:
 	void setSelectionMaskingEnabled(bool selectionMaskingEnabled) override;
 
 private:
+	void movePoint(const QPointF &point);
 	void updatePreview();
 	canvas::PointVector calculateBezierCurve() const;
 	static qreal cubicBezierDistance(const QPointF points[4]);
@@ -44,6 +45,7 @@ private:
 	bool m_rightButton = false;
 	bool m_mirror = false;
 	bool m_flip = false;
+	bool m_firstPoint = false;
 	qreal m_zoom = 1.0;
 	qreal m_angle = 0.0;
 };

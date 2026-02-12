@@ -28,6 +28,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow triggering undo, redo, hide docks and any other actions via canvas shortcut. Thanks RubySnoot for suggesting.
  * Feature: Make right-clicking with the freehand tool draw with the background color. Thanks doughie for suggesting.
  * Fix: Properly disable color marker and blending option buttons in the layer properties dialog when you don't have permission to modify those. Thanks xxxx for reporting.
+ * Fix: Make bezier curve tool work with touch drawing. Thanks Notester32 for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

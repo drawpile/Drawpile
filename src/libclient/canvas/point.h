@@ -124,6 +124,13 @@ public:
 	}
 	float distance(const QPointF &point) const { return distance(*this, point); }
 
+	Point posAdjustedBy(const QPointF &by) const
+	{
+		Point other = *this;
+		other += by;
+		return other;
+	}
+
 private:
 	long long m_timeMsec;
 	qreal m_p;
