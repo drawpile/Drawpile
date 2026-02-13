@@ -37,13 +37,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="zoomButton">
+      <widget class="QToolButton" name="moreButton">
        <property name="toolTip">
-        <string>Zoom</string>
+        <string>More…</string>
        </property>
        <property name="icon">
-        <iconset theme="zoom-out">
-         <normaloff>theme:zoom-out.svg</normaloff>theme:zoom-out.svg</iconset>
+        <iconset theme="drawpile_ellipsis_vertical">
+         <normaloff>theme:drawpile_ellipsis_vertical.svg</normaloff>theme:drawpile_ellipsis_vertical.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

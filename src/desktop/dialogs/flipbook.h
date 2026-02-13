@@ -56,7 +56,10 @@ private slots:
 	void updateSpeed();
 	void updateRange();
 	void setCrop(const QRectF &rect);
+	void setSpeedByFps();
 	void resetCrop();
+	void resetRange();
+	void resetSpeed();
 	void refreshCanvas();
 
 private:

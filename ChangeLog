@@ -32,6 +32,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make refreshing flipbook not reset the playback to the beginning. Thanks BulletPepper for reporting.
  * Fix: Keep flipbook range to match the canvas range when it did so before even when closing the flipbook. Thanks BulletPepper for reporting.
  * Feature: Add next/previous frame within range actions, to move through the timeline but wrap at the edges of the frame range. Holding shift while pressing arrow keys actuates this action as well. Thanks BulletPepper for suggesting.
+ * Feature: Add "set speed by FPS", "reset range" and "reset speed" actions to the flipbook. They are now behind the button that previously had only two zoom-related actions.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

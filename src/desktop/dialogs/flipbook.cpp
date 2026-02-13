@@ -26,8 +26,11 @@ namespace dialogs {
 struct Flipbook::Private {
 	State &state;
 	Ui_Flipbook ui;
+	QAction *setSpeedByFpsAction;
 	QAction *refreshAction;
 	QAction *resetCropAction;
+	QAction *resetRangeAction;
+	QAction *resetSpeedAction;
 	QAction *upscaleAction;
 	canvas::PaintEngine *paintengine = nullptr;
 	drawdance::CanvasState canvasState;
@@ -62,14 +65,31 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 		d->ui.refreshButton->animateClick();
 	});
 
-	QMenu *zoomMenu = new QMenu(this);
-	d->ui.zoomButton->setMenu(zoomMenu);
+	QMenu *moreMenu = new QMenu(this);
+	d->ui.moreButton->setMenu(moreMenu);
 
-	d->resetCropAction = zoomMenu->addAction(tr("Reset crop"));
+	d->setSpeedByFpsAction = moreMenu->addAction(tr("Set speed from FPS…"));
+	connect(
+		d->setSpeedByFpsAction, &QAction::triggered, this,
+		&Flipbook::setSpeedByFps);
+
+	moreMenu->addSeparator();
+
+	d->resetCropAction = moreMenu->addAction(tr("Reset crop"));
 	connect(
 		d->resetCropAction, &QAction::triggered, this, &Flipbook::resetCrop);
 
-	d->upscaleAction = zoomMenu->addAction(tr("Upscale to fit view"));
+	d->resetRangeAction = moreMenu->addAction(tr("Reset range"));
+	connect(
+		d->resetRangeAction, &QAction::triggered, this, &Flipbook::resetRange);
+
+	d->resetSpeedAction = moreMenu->addAction(tr("Reset speed"));
+	connect(
+		d->resetSpeedAction, &QAction::triggered, this, &Flipbook::resetSpeed);
+
+	moreMenu->addSeparator();
+
+	d->upscaleAction = moreMenu->addAction(tr("Upscale to fit view"));
 	d->upscaleAction->setCheckable(true);
 	config::Config *cfg = dpAppConfig();
 	CFG_BIND_ACTION(cfg, FlipbookUpscaling, d->upscaleAction);
@@ -228,9 +248,45 @@ void Flipbook::setCrop(const QRectF &rect)
 	renderFrames();
 }
 
+void Flipbook::setSpeedByFps()
+{
+	if(!d->canvasState.isNull()) {
+		double currentFps = d->canvasState.effectiveFramerate() *
+							d->ui.speedSpinner->value() / 100.0;
+		utils::getOrRaiseInputDouble(
+			this, QStringLiteral("setspeedbyfpsinputdialog"),
+			d->setSpeedByFpsAction->text(), tr("FPS"), 2, currentFps, 0.01,
+			999.99, [this](double value) {
+				if(!d->canvasState.isNull()) {
+					d->ui.speedSpinner->setValue(
+						value / d->canvasState.effectiveFramerate() * 100.0);
+				}
+			});
+	}
+}
+
 void Flipbook::resetCrop()
 {
 	setCrop(QRectF());
+}
+
+void Flipbook::resetRange()
+{
+	if(!d->canvasState.isNull()) {
+		int frameRangeFirst, frameRangeLast;
+		d->canvasState.documentMetadata().effectiveFrameRange(
+			frameRangeFirst, frameRangeLast);
+		QSignalBlocker loopStartBlocker(d->ui.loopStart);
+		QSignalBlocker loopEndBlocker(d->ui.loopEnd);
+		d->ui.loopStart->setValue(frameRangeFirst + 1);
+		d->ui.loopEnd->setValue(frameRangeLast + 1);
+	}
+	updateRange();
+}
+
+void Flipbook::resetSpeed()
+{
+	d->ui.speedSpinner->setValue(100.0);
 }
 
 void Flipbook::refreshCanvas()
