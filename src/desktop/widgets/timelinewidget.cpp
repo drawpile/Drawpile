@@ -179,6 +179,12 @@ struct TimelineWidget::Private {
 		}
 	}
 
+	bool isInRange(int frameIndex)
+	{
+		return frameIndex >= frameRangeFirst() &&
+			   frameIndex <= frameRangeLast();
+	}
+
 	double effectiveFramerate() const
 	{
 		return canvas ? canvas->metadata()->framerate() : 0.0;
@@ -545,6 +551,8 @@ void TimelineWidget::setActions(const Actions &actions)
 		menu->addSeparator();
 		menu->addAction(actions.frameNext);
 		menu->addAction(actions.framePrev);
+		menu->addAction(actions.frameNextClamp);
+		menu->addAction(actions.framePrevClamp);
 		menu->addAction(actions.keyFrameNext);
 		menu->addAction(actions.keyFramePrev);
 		menu->addAction(actions.trackAbove);
@@ -618,6 +626,12 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.framePrev, &QAction::triggered, this,
 		&TimelineWidget::prevFrame);
+	connect(
+		actions.frameNextClamp, &QAction::triggered, this,
+		&TimelineWidget::nextFrameClamp);
+	connect(
+		actions.framePrevClamp, &QAction::triggered, this,
+		&TimelineWidget::prevFrameClamp);
 	connect(
 		actions.keyFrameNext, &QAction::triggered, this,
 		&TimelineWidget::nextKeyFrame);
@@ -1093,7 +1107,11 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 	switch(event->key()) {
 	case Qt::Key_Left:
 		event->accept();
-		prevFrame();
+		if(event->modifiers().testFlag(Qt::ShiftModifier)) {
+			prevFrameClamp();
+		} else {
+			prevFrame();
+		}
 		break;
 	case Qt::Key_Up:
 		event->accept();
@@ -1101,7 +1119,11 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	case Qt::Key_Right:
 		event->accept();
-		nextFrame();
+		if(event->modifiers().testFlag(Qt::ShiftModifier)) {
+			nextFrameClamp();
+		} else {
+			nextFrame();
+		}
 		break;
 	case Qt::Key_Down:
 		event->accept();
@@ -1858,6 +1880,20 @@ void TimelineWidget::prevFrame()
 		targetFrame >= 0 ? targetFrame : d->visibleFrameCount() - 1);
 }
 
+void TimelineWidget::nextFrameClamp()
+{
+	int targetFrame = d->currentFrame + 1;
+	setCurrentFrame(
+		d->isInRange(targetFrame) ? targetFrame : d->frameRangeFirst());
+}
+
+void TimelineWidget::prevFrameClamp()
+{
+	int targetFrame = d->currentFrame - 1;
+	setCurrentFrame(
+		d->isInRange(targetFrame) ? targetFrame : d->frameRangeLast());
+}
+
 void TimelineWidget::nextKeyFrame()
 {
 	const canvas::TimelineTrack *track = d->trackById(d->currentTrackId);
@@ -2200,6 +2236,8 @@ void TimelineWidget::updateActions()
 	bool haveMultipleFrames = visibleFrameCount > 1;
 	d->actions.frameNext->setEnabled(haveMultipleFrames);
 	d->actions.framePrev->setEnabled(haveMultipleFrames);
+	d->actions.frameNextClamp->setEnabled(haveMultipleFrames);
+	d->actions.framePrevClamp->setEnabled(haveMultipleFrames);
 	int keyFrameCount = track ? track->keyFrames.size() : 0;
 	bool trackHasAnyKeyFrames = keyFrameCount != 0;
 	bool isOnOnlyKeyFrame =

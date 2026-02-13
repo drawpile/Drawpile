@@ -50,6 +50,8 @@ public:
 		QAction *animationProperties = nullptr;
 		QAction *frameNext = nullptr;
 		QAction *framePrev = nullptr;
+		QAction *frameNextClamp = nullptr;
+		QAction *framePrevClamp = nullptr;
 		QAction *keyFrameNext = nullptr;
 		QAction *keyFramePrev = nullptr;
 		QAction *trackAbove = nullptr;
@@ -140,6 +142,8 @@ private:
 		double framerate, int frameRangeFirst, int frameRangeLast);
 	void nextFrame();
 	void prevFrame();
+	void nextFrameClamp();
+	void prevFrameClamp();
 	void nextKeyFrame();
 	void prevKeyFrame();
 	void trackAbove();

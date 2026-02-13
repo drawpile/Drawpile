@@ -7354,6 +7354,8 @@ void MainWindow::setupActions()
 	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty").noDefaultShortcut();
 	QAction *frameNext = makeAction("frame-next", tr("Next Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+L").autoRepeat();
 	QAction *framePrev = makeAction("frame-prev", tr("Previous Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+H").autoRepeat();
+	QAction *frameNextClamp = makeAction("frame-next-clamp", tr("Next Frame Within Range")).icon("keyframe-next").noDefaultShortcut().autoRepeat();
+	QAction *framePrevClamp = makeAction("frame-prev-clamp", tr("Previous Frame Within Range")).icon("keyframe-previous").noDefaultShortcut().autoRepeat();
 	QAction *keyFrameNext = makeAction("key-frame-next", tr("Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Alt+Shift+L").autoRepeat();
 	QAction *keyFramePrev = makeAction("key-frame-prev", tr("Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Alt+Shift+H").autoRepeat();
 	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K").autoRepeat();
@@ -7426,6 +7428,8 @@ void MainWindow::setupActions()
 	animationMenu->addSeparator();
 	animationMenu->addAction(frameNext);
 	animationMenu->addAction(framePrev);
+	animationMenu->addAction(frameNextClamp);
+	animationMenu->addAction(framePrevClamp);
 	animationMenu->addAction(keyFrameNext);
 	animationMenu->addAction(keyFramePrev);
 	animationMenu->addAction(trackAbove);
@@ -7502,6 +7506,8 @@ void MainWindow::setupActions()
 			animationProperties,
 			frameNext,
 			framePrev,
+			frameNextClamp,
+			framePrevClamp,
 			keyFrameNext,
 			keyFramePrev,
 			trackAbove,
