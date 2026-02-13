@@ -134,7 +134,6 @@ void Flipbook::updateRange()
 	int loopStart = d->ui.loopStart->value();
 	int loopEnd = d->ui.loopEnd->value();
 	d->ui.layerIndex->setRange(loopStart, loopEnd);
-	d->ui.layerIndex->setValue(loopStart);
 	d->state.loopStart = loopStart;
 	d->state.loopEnd = loopEnd;
 	emit stateChanged();
