@@ -1,6 +1,27 @@
 settings:
   # libclient
 
+  - id: androidScalingAskOnStartup
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/androidscaling/askonstartup'
+    legacy_package: 'libclient'
+    condition: 'defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)'
+
+  - id: androidScalingLastInitialScale
+    type: 'double'
+    default: '0.0'
+    qsettings: 'settings/androidscaling/lastinitialscale'
+    legacy_package: 'libclient'
+    condition: 'defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)'
+
+  - id: androidScalingTargetScale
+    type: 'double'
+    default: '0.0'
+    qsettings: 'settings/androidscaling/targetscale'
+    legacy_package: 'libclient'
+    condition: 'defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)'
+
   - id: androidWorkaroundEmulateMouseButtonsForPageUpDown
     type: 'bool'
     default:
@@ -1122,7 +1143,7 @@ settings:
     type: 'bool'
     default:
       - value: 'true'
-        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+        condition: 'defined(__EMSCRIPTEN__)'
       - value: 'false'
     qsettings: 'settings/overridefontsize'
     legacy_package: 'desktop'

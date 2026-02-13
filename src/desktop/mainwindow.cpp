@@ -111,6 +111,7 @@ extern "C" {
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QPointer>
 #include <QProgressDialog>
 #include <QPushButton>
 #include <QScopedValueRollback>
@@ -236,8 +237,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #endif
 
 	// The document (initially empty)
-	config::Config *cfg = dpAppConfig();
-	m_doc = new Document(dpApp().canvasImplementation(), dpApp().config(), this);
+	DrawpileApp *app = &dpApp();
+	config::Config *cfg = app->config();
+	m_doc = new Document(app->canvasImplementation(), app->config(), this);
 
 	// Set up the main window widgets
 	// The central widget consists of a custom status bar and a splitter
@@ -289,7 +291,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	// Create canvas view (first splitter item)
 	m_canvasView =
-		view::CanvasWrapper::instantiate(dpApp().canvasImplementation(), this);
+		view::CanvasWrapper::instantiate(app->canvasImplementation(), this);
 	m_canvasView->setShowToggleItems(m_smallScreenMode, m_leftyMode);
 
 	m_canvasFrame = new widgets::CanvasFrame(m_canvasView->viewWidget());
@@ -567,7 +569,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 
 	// clang-format on
-	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this, cfg] {
+	connect(app, &DrawpileApp::focusCanvas, this, [this, cfg] {
 		if(cfg->getDoubleTapAltToFocusCanvas()) {
 			m_canvasView->viewWidget()->setFocus();
 		}
@@ -604,7 +606,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
 
 #ifdef SINGLE_MAIN_WINDOW
-	dpApp().deleteAllMainWindowsExcept(this);
+	app->deleteAllMainWindowsExcept(this);
 #endif
 
 	CFG_BIND_NOTIFY(cfg, InterfaceMode, this, MainWindow::updateInterfaceMode);
@@ -657,6 +659,17 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		this, &MainWindow::resizeReactionRequested, this,
 		&MainWindow::reactToResize, Qt::QueuedConnection);
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		app, &DrawpileApp::androidScalingDialogShown, this,
+		&MainWindow::handleAndroidScalingDialogShown, Qt::QueuedConnection);
+	connect(
+		app, &DrawpileApp::androidScalingDialogDismissed, this,
+		&MainWindow::handleAndroidScalingDialogDismissed, Qt::QueuedConnection);
+#endif
+	connect(
+		this, &MainWindow::smallScreenPreviewRequested, this,
+		&MainWindow::showSmallScreenModePreview, Qt::QueuedConnection);
 	m_resizeReactionPending = false;
 	m_updateIntendedDockStateDebounce.stop();
 	m_restoreIntendedDockStateDebounce.stop();
@@ -670,7 +683,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	updateProjectActions();
 
-	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
+	if(m_smallScreenMode) {
+		if(app->isAndroidScalingDialogShown()) {
+			Q_EMIT smallScreenPreviewRequested();
+		}
+	} else if(!m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
 	}
 }
@@ -715,7 +732,8 @@ void MainWindow::autoJoin(
 		m_doc->client()->setSessionUrl(url);
 		connectToSession(url, autoRecordPath, connectStrategy, false);
 	} else {
-		dialogs::StartDialog *dlg = showStartDialog();
+		dialogs::StartDialog *dlg =
+			showStartDialogOnPage(int(dialogs::StartDialog::Join));
 		dlg->autoJoin(url, autoRecordPath, connectStrategy);
 	}
 }
@@ -1479,13 +1497,15 @@ void MainWindow::readSettings(bool windowpos)
 
 void MainWindow::restoreSettings(config::Config *cfg)
 {
-	// Restore dock, toolbar and view states
-	const QByteArray lastWindowState = cfg->getLastWindowState();
-	if(!lastWindowState.isEmpty()) {
-		deactivateAllDocks();
-		restoreState(lastWindowState);
-	} else {
-		initDefaultDocks();
+	{
+		const QByteArray lastWindowState = cfg->getLastWindowState();
+		QScopedValueRollback<bool> rollback(m_restoringDockState, true);
+		if(!lastWindowState.isEmpty()) {
+			deactivateAllDocks();
+			restoreState(lastWindowState);
+		} else {
+			initDefaultDocks();
+		}
 	}
 
 	const QByteArray lastWindowViewState = cfg->getLastWindowViewState();
@@ -2120,19 +2140,88 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
 	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
 	QMainWindow::resizeEvent(event);
-	if(!m_resizeReactionPending) {
-		m_resizeReactionPending = true;
-		emit resizeReactionRequested();
+	if(!m_resizeReactionPending && !m_restoringDockState) {
+		if(dpApp().isAndroidScalingDialogShown()) {
+			reactToResize();
+		} else {
+			m_resizeReactionPending = true;
+			emit resizeReactionRequested();
+		}
 	}
 }
 
 void MainWindow::reactToResize()
 {
-	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
 	m_resizeReactionPending = false;
-	updateInterfaceMode();
-	restoreIntendedDockState();
-	m_restoreIntendedDockStateDebounce.start();
+	if(m_restoringDockState) {
+		dpApp().takeAndroidScalingJustChanged();
+	} else {
+		QScopedValueRollback<bool> rollback(m_updatingDockState, true);
+		updateInterfaceMode();
+		restoreIntendedDockState();
+		m_restoreIntendedDockStateDebounce.start();
+	}
+}
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+void MainWindow::handleAndroidScalingDialogShown()
+{
+	dialogs::SettingsDialog *settingsDlg =
+		getStartDialogOrThis()->findChild<dialogs::SettingsDialog *>(
+			QString(), Qt::FindDirectChildrenOnly);
+	if(settingsDlg) {
+		m_androidScalingSettingsDialog = true;
+		settingsDlg->close();
+	} else {
+		m_androidScalingSettingsDialog = false;
+	}
+
+	dialogs::StartDialog *startDlg = findChild<dialogs::StartDialog *>(
+		QStringLiteral("startdialog"), Qt::FindDirectChildrenOnly);
+	if(startDlg) {
+		m_androidScalingStartDialog = true;
+		startDlg->close();
+	} else {
+		m_androidScalingStartDialog = false;
+	}
+
+	if(!m_hiddenDockState.isEmpty()) {
+		setDocksHidden(false);
+	}
+	updateIntendedDockStateWith(true);
+}
+
+void MainWindow::handleAndroidScalingDialogDismissed()
+{
+	if(m_smallScreenMode) {
+		HudAction action;
+		action.type = HudAction::Type::None;
+		handleToggleAction(action);
+	} else {
+		m_restoreIntendedDockStateDebounce.start();
+	}
+
+	if(m_androidScalingStartDialog) {
+		m_androidScalingStartDialog = false;
+		showStartDialogOnPage(int(dialogs::StartDialog::Guess));
+	}
+
+	if(m_androidScalingSettingsDialog) {
+		m_androidScalingSettingsDialog = false;
+		dialogs::SettingsDialog *settingsDlg = showSettings();
+		settingsDlg->activateUserInterfacePanel();
+	}
+}
+#endif
+
+void MainWindow::showSmallScreenModePreview()
+{
+	if(m_smallScreenMode && DrawpileApp::isAndroidScalingDialogShown() &&
+	   !m_dockLayers->isVisible()) {
+		HudAction action;
+		action.type = HudAction::Type::ToggleLayer;
+		handleToggleAction(action);
+	}
 }
 
 void MainWindow::setToolBarConfig(const QVariantHash &cfg)
@@ -2367,13 +2456,14 @@ bool MainWindow::event(QEvent *event)
 	return QMainWindow::event(event);
 }
 
-dialogs::StartDialog *MainWindow::showStartDialog()
+dialogs::StartDialog *MainWindow::showStartDialogOnPage(int page)
 {
 	dialogs::StartDialog *dlg =
 		new dialogs::StartDialog(m_smallScreenMode, this);
 	dlg->setObjectName(QStringLiteral("startdialog"));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connectStartDialog(dlg);
+	dlg->showPage(dialogs::StartDialog::Entry(page));
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 	return dlg;
 }
@@ -2505,8 +2595,7 @@ QWidget *MainWindow::getStartDialogOrThis()
 
 void MainWindow::start()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Entry::Guess);
+	showStartDialogOnPage(int(dialogs::StartDialog::Entry::Guess));
 }
 
 /**
@@ -2514,8 +2603,7 @@ void MainWindow::start()
  */
 void MainWindow::showNew()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Entry::Create);
+	showStartDialogOnPage(int(dialogs::StartDialog::Entry::Create));
 }
 
 // clang-format on
@@ -3548,6 +3636,11 @@ dialogs::SettingsDialog *MainWindow::showSettings()
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
 		m_singleSession, m_smallScreenMode, getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		dlg, &dialogs::SettingsDialog::scalingChangeRequested, &dpApp(),
+		&DrawpileApp::showAndroidScalingDialog);
+#endif
 	connect(
 		dlg, &dialogs::SettingsDialog::tabletTesterRequested, this,
 		std::bind(&MainWindow::showTabletTestDialog, this, dlg));
@@ -3604,8 +3697,7 @@ dialogs::TouchTestDialog *MainWindow::showTouchTestDialog(QWidget *parent)
 
 void MainWindow::host()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Entry::Host);
+	showStartDialogOnPage(int(dialogs::StartDialog::Entry::Host));
 }
 
 void MainWindow::hostSession(const HostParams &params, int connectStrategy)
@@ -3811,8 +3903,7 @@ void MainWindow::join()
 	if(m_singleSession) {
 		reconnect();
 	} else {
-		dialogs::StartDialog *dlg = showStartDialog();
-		dlg->showPage(dialogs::StartDialog::Entry::Join);
+		showStartDialogOnPage(int(dialogs::StartDialog::Entry::Join));
 	}
 }
 
@@ -3911,8 +4002,7 @@ void MainWindow::reconnectWith(bool downloaded)
 
 void MainWindow::browse()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Entry::Browse);
+	showStartDialogOnPage(int(dialogs::StartDialog::Entry::Browse));
 }
 // clang-format off
 
@@ -3948,8 +4038,8 @@ void MainWindow::leave()
 #ifndef __EMSCRIPTEN__
 void MainWindow::checkForUpdates()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Entry::Welcome);
+	dialogs::StartDialog *dlg =
+		showStartDialogOnPage(int(dialogs::StartDialog::Entry::Welcome));
 	dlg->checkForUpdates();
 }
 #endif
@@ -4683,6 +4773,7 @@ void MainWindow::setDocksHidden(bool hidden)
 	finishArrangingDocks()->setEnabled(!hidden);
 	keepCanvasPosition([this, hidden] {
 		m_viewStatusBar->setHidden(hidden);
+		QScopedValueRollback<bool> rollback(m_restoringDockState, true);
 		if(hidden) {
 			m_hiddenDockState = saveState();
 			for(QWidget *w : findChildren<QWidget *>(
@@ -5417,8 +5508,10 @@ void MainWindow::showLayoutsDialog()
 				dlg, &dialogs::LayoutsDialog::applyState,
 				[this](const QByteArray &state) {
 					if(!m_smallScreenMode) {
-						QScopedValueRollback<bool> rollback(
+						QScopedValueRollback<bool> updateRollback(
 							m_updatingDockState, true);
+						QScopedValueRollback<bool> restoreRollback(
+							m_restoringDockState, true);
 						m_intendedDockState = state;
 						deactivateAllDocks();
 						restoreState(state);
@@ -6184,8 +6277,7 @@ void MainWindow::setupActions()
 			if(filepath.isValid()) {
 				this->openRecent(filepath.toString());
 			} else {
-				dialogs::StartDialog *dlg = showStartDialog();
-				dlg->showPage(dialogs::StartDialog::Entry::Recent);
+				showStartDialogOnPage(int(dialogs::StartDialog::Entry::Recent));
 			}
 		});
 	}
@@ -6518,9 +6610,16 @@ void MainWindow::setupActions()
 	//
 	// View menu
 	//
-	QAction *layoutsAction = makeAction("layouts", tr("&Layouts...")).icon("window_").shortcut("F9");
-
 	// clang-format on
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	QAction *interfaceScaleAction =
+		makeAction("interfacescale", tr("Interface scale…"))
+			.icon("monitor")
+			.noDefaultShortcut();
+#endif
+	QAction *layoutsAction =
+		makeAction("layouts", tr("&Layouts...")).icon("window_").shortcut("F9");
+
 	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
 	toolbartoggles->setMenu(toggletoolbarmenu);
 
@@ -6675,6 +6774,11 @@ void MainWindow::setupActions()
 							  .checkable();
 #endif
 
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		interfaceScaleAction, &QAction::triggered, &dpApp(),
+		&DrawpileApp::showAndroidScalingDialog);
+#endif
 	connect(
 		layoutsAction, &QAction::triggered, this,
 		&MainWindow::showLayoutsDialog);
@@ -6786,6 +6890,9 @@ void MainWindow::setupActions()
 
 	// clang-format on
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	viewmenu->addAction(interfaceScaleAction);
+#endif
 	viewmenu->addAction(layoutsAction);
 	m_desktopModeActions->addAction(layoutsAction);
 	viewmenu->addAction(toolbartoggles);
@@ -8551,6 +8658,25 @@ void MainWindow::resetDefaultToolbars()
 	m_toolBarDraw->show();
 }
 
+void MainWindow::restoreDefaultStateWith(
+	const QList<QDockWidget *> &dockWidgets)
+{
+	Q_ASSERT(m_restoringDockState);
+	setFreezeDocks(false);
+	for(QDockWidget *dw : dockWidgets) {
+		dw->setFloating(false);
+		dw->show();
+		removeDockWidget(dw);
+	}
+	removeToolBar(m_toolBarFile);
+	removeToolBar(m_toolBarEdit);
+	removeToolBar(m_toolBarDraw);
+	resetDefaultDocks();
+	resetDefaultToolbars();
+	initDefaultDocks();
+	setFreezeDocks(getAction("freezedocks")->isChecked());
+}
+
 bool MainWindow::isInitialSmallScreenMode()
 {
 	config::Config *cfg = dpAppConfig();
@@ -8683,24 +8809,14 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 		if(stateToRestore.isEmpty()) {
 			stateToRestore = dpAppConfig()->getLastWindowState();
 		}
+
+		QScopedValueRollback<bool> rollback(m_restoringDockState, true);
 		if(stateToRestore.isEmpty()) {
-			setFreezeDocks(false);
-			for(QDockWidget *dw : dockWidgets) {
-				dw->setFloating(false);
-				dw->show();
-				removeDockWidget(dw);
-			}
-			removeToolBar(m_toolBarFile);
-			removeToolBar(m_toolBarEdit);
-			removeToolBar(m_toolBarDraw);
-			resetDefaultDocks();
-			resetDefaultToolbars();
-			initDefaultDocks();
+			restoreDefaultStateWith(dockWidgets);
 		} else {
 			restoreState(stateToRestore);
+			setFreezeDocks(getAction("freezedocks")->isChecked());
 		}
-
-		setFreezeDocks(getAction("freezedocks")->isChecked());
 	}
 
 	m_canvasView->setShowToggleItems(smallScreenMode, m_leftyMode);
@@ -8708,11 +8824,16 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 	updateInterfaceModeActions();
 	reenableUpdates();
 
-	// Hide chat if not connected, since otherwise toggling to small-screen mode
-	// and back makes it pop up.
-	if(!smallScreenMode && !m_chatbox->isCollapsed() &&
-	   !m_doc->client()->isConnected()) {
-		getAction("togglechat")->trigger();
+	if(smallScreenMode) {
+		// Show the layers panel so the user can tell how large the UI is.
+		Q_EMIT smallScreenPreviewRequested();
+	} else {
+		// Hide chat if not connected, since otherwise toggling to small-screen
+		// mode and back makes it pop up.
+		if(!m_chatbox->isCollapsed() && !m_doc->client()->isConnected()) {
+			getAction("togglechat")->trigger();
+		}
+		updateIntendedDockState();
 	}
 
 	emit smallScreenModeChanged(smallScreenMode);
@@ -8769,9 +8890,15 @@ void MainWindow::startIntendedDockStateDebounce()
 
 void MainWindow::updateIntendedDockState()
 {
+	updateIntendedDockStateWith(false);
+}
+
+void MainWindow::updateIntendedDockStateWith(bool force)
+{
 	m_updateIntendedDockStateDebounce.stop();
 	if(!m_updatingDockState && !m_smallScreenMode &&
-	   m_hiddenDockState.isEmpty() && canRememberDockStateFromWindow()) {
+	   m_hiddenDockState.isEmpty() &&
+	   (force || canRememberDockStateFromWindow())) {
 		m_intendedDockState = saveState();
 	}
 }
@@ -8781,21 +8908,33 @@ bool MainWindow::canRememberDockStateFromWindow() const
 	// We only really want to save intended dock states from maximized windows.
 	// On Linux, depending on your window manager, you may not have the concept
 	// of a maximized window, so we just always remember the dock state. On
-	// Android and in the browser, the window is always full screen anyway.
+	// Android and in the browser, the window is always full screen anyway,
+	// although the former might currently be in the process of scaling the UI,
+	// during which we don't want to go around saving intermediate states.
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
 	return isMaximized() || isFullScreen();
 #else
-	return true;
+	return !DrawpileApp::isAndroidScalingDialogShown();
 #endif
 }
 
 void MainWindow::restoreIntendedDockState()
 {
-	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
+	bool androidScalingJustChanged = dpApp().takeAndroidScalingJustChanged();
+	QScopedValueRollback<bool> updateRollback(m_updatingDockState, true);
 	m_restoreIntendedDockStateDebounce.stop();
-	if(!m_smallScreenMode && m_hiddenDockState.isEmpty() &&
-	   !m_intendedDockState.isEmpty()) {
-		restoreState(m_intendedDockState);
+	if(!m_restoringDockState && !m_smallScreenMode &&
+	   m_hiddenDockState.isEmpty()) {
+		if(!m_intendedDockState.isEmpty()) {
+			QScopedValueRollback<bool> restoreRollback(
+				m_restoringDockState, true);
+			restoreState(m_intendedDockState);
+		} else if(androidScalingJustChanged) {
+			QScopedValueRollback<bool> restoreRollback(
+				m_restoringDockState, true);
+			restoreState(dialogs::LayoutsDialog::defaultState());
+			refitWindow();
+		}
 	}
 }
 

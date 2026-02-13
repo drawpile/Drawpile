@@ -47,7 +47,7 @@ private:
 	QAction *makeAction(
 		QMenu *menu, const char *name, const QString &text,
 		QAction::MenuRole menuRole);
-	dialogs::StartDialog *showStartDialog();
+	dialogs::StartDialog *showStartDialogOnPage(int page);
 
 	QMenu *m_recent;
 	QMenu *m_windows;

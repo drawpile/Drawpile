@@ -269,6 +269,16 @@ target_sources(dpclient PRIVATE
 	view/zoom.h
 )
 
+if(ANDROID)
+	target_sources(dpclient PRIVATE
+		utils/androidutils.cpp
+		utils/androidutils.h
+	)
+	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
+		target_link_libraries(dpclient PUBLIC ${QT_PACKAGE_NAME}::AndroidExtras)
+	endif()
+endif()
+
 if(ANDROID OR EMSCRIPTEN)
 	# Android doesn't allow images to be placed on the system clipboard.
 	# Emscripten can't freely access it. Emulate it via an internal buffer.

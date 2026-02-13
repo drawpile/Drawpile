@@ -21,6 +21,10 @@ extern "C" {
 #include <QUrl>
 #include <QVariantMap>
 #include <functional>
+#ifdef Q_OS_ANDROID
+// To get the KRITA_QT_SCREEN_DENSITY_ADJUSTMENT #define.
+#	include <QScreen>
+#endif
 
 class ActionBuilder;
 class Document;
@@ -124,7 +128,7 @@ public:
 	void exit();
 #endif
 
-	dialogs::StartDialog *showStartDialog();
+	dialogs::StartDialog *showStartDialogOnPage(int page);
 
 	void showPopupMessage(const QString &message);
 	void showPermissionDeniedMessage(int feature);
@@ -139,6 +143,7 @@ signals:
 	void viewShifted(qreal deltaX, qreal deltaY);
 	void dockTabUpdateRequested();
 	void intendedDockStateRestoreRequested();
+	void smallScreenPreviewRequested();
 	void resizeReactionRequested();
 	void lockWidgetUpdateRequested();
 	void selectionMaskVisibilityChanged(bool visible);
@@ -437,6 +442,7 @@ private:
 	void createDocks();
 	void resetDefaultDocks();
 	void resetDefaultToolbars();
+	void restoreDefaultStateWith(const QList<QDockWidget *> &dockWidgets);
 	void setupActions();
 	void setupBrushShortcuts();
 	void setupHud();
@@ -449,6 +455,12 @@ private:
 	void reenableUpdates();
 	void keepCanvasPosition(const std::function<void()> &block);
 	void reactToResize();
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	void handleAndroidScalingDialogShown();
+	void handleAndroidScalingDialogDismissed();
+#endif
+	void showSmallScreenModePreview();
 
 	void setToolBarConfig(const QVariantHash &cfg);
 	void showToolBarConfigDialog();
@@ -463,6 +475,7 @@ private:
 
 	void startIntendedDockStateDebounce();
 	void updateIntendedDockState();
+	void updateIntendedDockStateWith(bool force);
 	bool canRememberDockStateFromWindow() const;
 	void restoreIntendedDockState();
 	void startRefitWindowDebounce();
@@ -494,6 +507,10 @@ private:
 #ifdef SINGLE_MAIN_WINDOW
 	QTimer m_refitWindowDebounce;
 	bool m_refitting = false;
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	bool m_androidScalingSettingsDialog = false;
+	bool m_androidScalingStartDialog = false;
 #endif
 	QMap<QString, bool> m_actionsConfig;
 
@@ -587,6 +604,7 @@ private:
 	bool m_dockTabUpdatePending = false;
 	bool m_updatingDockState = false;
 	bool m_resizeReactionPending = false;
+	bool m_restoringDockState = false;
 	bool m_lockWidgetUpdatePending = false;
 	bool m_reconnectAfterSave = false;
 	bool m_actionBarEnabled = true;

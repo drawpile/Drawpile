@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libshared/util/androidutils.h"
+#include "libclient/utils/androidutils.h"
+#include <QCoreApplication>
 #include <QString>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #	include <QtAndroid>
@@ -159,7 +160,8 @@ bool androidLooksLikeXiaomiDevice()
 	if(looksLikeXiaomiDeviceResult == 0) {
 		QJniEnvironment env;
 		jboolean value = QJniObject::callStaticMethod<jboolean>(
-			"net/drawpile/android/MainActivity", "looksLikeXiaomiDevice", "()Z");
+			"net/drawpile/android/MainActivity", "looksLikeXiaomiDevice",
+			"()Z");
 		if(clearException(env) || !value) {
 			looksLikeXiaomiDeviceResult = -1;
 		} else {
@@ -167,6 +169,57 @@ bool androidLooksLikeXiaomiDevice()
 		}
 	}
 	return looksLikeXiaomiDeviceResult > 0;
+}
+
+bool androidShowScalingDialog(
+	double currentScale, double defaultScale, int interfaceMode,
+	bool showOnStartup, bool canShowOnStartup)
+{
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+	if(clearException(env) || !checkValid("activity", activity)) {
+		return false;
+	}
+
+	QJniObject percentTextFormat = QJniObject::fromString(
+		QCoreApplication::translate(
+			"AndroidScalingDialog", "Interface scale: %1"));
+	QJniObject percentDefaultTextFormat = QJniObject::fromString(
+		QCoreApplication::translate(
+			"AndroidScalingDialog", "Interface scale: %1 (default)"));
+	QJniObject dynamicText = QJniObject::fromString(
+		QCoreApplication::translate(
+			"dialogs::settingsdialog::UserInterface", "Dynamic"));
+	QJniObject desktopText = QJniObject::fromString(
+		QCoreApplication::translate(
+			"dialogs::settingsdialog::UserInterface", "Desktop"));
+	QJniObject mobileText = QJniObject::fromString(
+		QCoreApplication::translate(
+			"dialogs::settingsdialog::UserInterface", "Mobile"));
+	QJniObject rememberCheckBoxText = QJniObject::fromString(
+		QCoreApplication::translate(
+			"AndroidScalingDialog", "Show this dialog when Drawpile starts"));
+	QJniObject okButtonText = QJniObject::fromString(
+		QCoreApplication::translate("AndroidScalingDialog", "OK"));
+
+	activity.callMethod<void>(
+		"showScalingDialog",
+		"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/"
+		"String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DDIZZ)V",
+		percentTextFormat.object<jstring>(),
+		percentDefaultTextFormat.object<jstring>(),
+		dynamicText.object<jstring>(), desktopText.object<jstring>(),
+		mobileText.object<jstring>(), rememberCheckBoxText.object<jstring>(),
+		okButtonText.object<jstring>(), jdouble(currentScale),
+		jdouble(defaultScale), jint(interfaceMode), jboolean(showOnStartup),
+		jboolean(canShowOnStartup));
+	if(clearException(env)) {
+		return false;
+	}
+
+	return true;
 }
 
 #ifdef DRAWPILE_USE_CONNECT_SERVICE

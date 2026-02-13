@@ -67,17 +67,6 @@ target_link_libraries(dpshared
 		${QT_PACKAGE_NAME}::Network
 )
 
-if(ANDROID)
-	target_sources(dpshared PRIVATE
-		util/androidutils.cpp
-		util/androidutils.h
-	)
-
-	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
-		target_link_libraries(dpshared PUBLIC ${QT_PACKAGE_NAME}::AndroidExtras)
-	endif()
-endif()
-
 if(TARGET libsodium::libsodium)
 	target_sources(dpshared PRIVATE
 		util/authtoken.cpp

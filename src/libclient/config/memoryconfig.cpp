@@ -58,6 +58,52 @@ void MemoryConfig::setAlphaLockCursor(int value)
 	}
 }
 
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+bool MemoryConfig::getAndroidScalingAskOnStartup() const
+{
+	return m_androidScalingAskOnStartup;
+}
+
+void MemoryConfig::setAndroidScalingAskOnStartup(bool value)
+{
+	if(value != m_androidScalingAskOnStartup) {
+		m_androidScalingAskOnStartup = value;
+		Q_EMIT changeAndroidScalingAskOnStartup(m_androidScalingAskOnStartup);
+	}
+}
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+double MemoryConfig::getAndroidScalingLastInitialScale() const
+{
+	return m_androidScalingLastInitialScale;
+}
+
+void MemoryConfig::setAndroidScalingLastInitialScale(double value)
+{
+	if(value != m_androidScalingLastInitialScale) {
+		m_androidScalingLastInitialScale = value;
+		Q_EMIT changeAndroidScalingLastInitialScale(
+			m_androidScalingLastInitialScale);
+	}
+}
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+double MemoryConfig::getAndroidScalingTargetScale() const
+{
+	return m_androidScalingTargetScale;
+}
+
+void MemoryConfig::setAndroidScalingTargetScale(double value)
+{
+	if(value != m_androidScalingTargetScale) {
+		m_androidScalingTargetScale = value;
+		Q_EMIT changeAndroidScalingTargetScale(m_androidScalingTargetScale);
+	}
+}
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 bool MemoryConfig::getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const
 {

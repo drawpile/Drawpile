@@ -14,6 +14,7 @@
 #include <QFormLayout>
 #include <QPair>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QSettings>
 #include <QSurfaceFormat>
 #include <QtColorWidgets/ColorPreview>
@@ -33,19 +34,40 @@ void UserInterface::setUp(config::Config *cfg, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 	QFormLayout *form = utils::addFormSection(layout);
 	initInterfaceMode(cfg, form);
-	initKineticScrolling(cfg, utils::addFormSection(layout));
+	initKineticScrolling(cfg, form);
 	utils::addFormSeparator(layout);
 	initMiscellaneous(cfg, utils::addFormSection(layout));
 }
 
 void UserInterface::initInterfaceMode(config::Config *cfg, QFormLayout *form)
 {
+	QString interfaceModeLabel = tr("Interface mode:");
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	Q_UNUSED(cfg);
+
+	QHBoxLayout *scalingLayout = new QHBoxLayout;
+	scalingLayout->setContentsMargins(0, 0, 0, 0);
+	scalingLayout->setSpacing(0);
+
+	QPushButton *scalingButton = new QPushButton(
+		QIcon::fromTheme(QStringLiteral("monitor")),
+		tr("Change mode and scale…"));
+	scalingLayout->addWidget(scalingButton);
+	connect(
+		scalingButton, &QPushButton::clicked, this,
+		&UserInterface::scalingChangeRequested);
+
+	scalingLayout->addStretch(1);
+
+	form->addRow(interfaceModeLabel, scalingLayout);
+#else
 	QButtonGroup *interfaceMode = utils::addRadioGroup(
-		form, tr("Interface mode:"), true,
+		form, interfaceModeLabel, true,
 		{{tr("Dynamic"), int(view::InterfaceMode::Dynamic)},
 		 {tr("Desktop"), int(view::InterfaceMode::Desktop)},
-		 {tr("Small screen"), int(view::InterfaceMode::SmallScreen)}});
+		 {tr("Mobile"), int(view::InterfaceMode::SmallScreen)}});
 	CFG_BIND_BUTTONGROUP(cfg, InterfaceMode, interfaceMode);
+#endif
 }
 
 void UserInterface::initKineticScrolling(config::Config *cfg, QFormLayout *form)
@@ -192,14 +214,12 @@ void UserInterface::initMiscellaneous(config::Config *cfg, QFormLayout *form)
 void UserInterface::initRequiringRestart(config::Config *cfg, QFormLayout *form)
 {
 	QSettings *scalingSettings = dpApp().scalingSettings();
-	QString scalingLabel = tr("Scaling:");
 
+#if !defined(Q_OS_ANDROID) || !defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
 	QCheckBox *overrideScaleFactor =
 		new QCheckBox(tr("Override system scale factor"));
 	overrideScaleFactor->setChecked(
-		scalingSettings
-			->value(
-				QStringLiteral("scaling_override"), SCALING_OVERRIDE_DEFAULT)
+		scalingSettings->value(QStringLiteral("scaling_override"), false)
 			.toBool());
 	connect(
 		overrideScaleFactor, &QCheckBox::clicked, scalingSettings,
@@ -207,7 +227,7 @@ void UserInterface::initRequiringRestart(config::Config *cfg, QFormLayout *form)
 			scalingSettings->setValue(
 				QStringLiteral("scaling_override"), checked);
 		});
-	form->addRow(scalingLabel, overrideScaleFactor);
+	form->addRow(tr("Scaling:"), overrideScaleFactor);
 
 	KisSliderSpinBox *scaleFactor = new KisSliderSpinBox;
 	scaleFactor->setRange(100, 400);
@@ -232,16 +252,18 @@ void UserInterface::initRequiringRestart(config::Config *cfg, QFormLayout *form)
 		&QWidget::setVisible);
 	scaleFactor->setEnabled(overrideScaleFactor->isChecked());
 	scaleFactor->setVisible(overrideScaleFactor->isChecked());
+#endif
 
 	QCheckBox *overrideFontSize =
 		new QCheckBox(tr("Override system font size"));
 	CFG_BIND_CHECKBOX(cfg, OverrideFontSize, overrideFontSize);
 	form->addRow(tr("Font size:"), overrideFontSize);
 
+	int pointSize = font().pointSize();
 	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
 	fontSize->setRange(6, 16);
 	fontSize->setPrefix(tr("Font size: "));
-	fontSize->setSuffix(tr("pt"));
+	fontSize->setSuffix(pointSize == -1 ? tr("px") : tr("pt"));
 	form->addRow(nullptr, fontSize);
 	CFG_BIND_SLIDERSPINBOX(cfg, FontSize, fontSize);
 	CFG_BIND_SET(cfg, OverrideFontSize, fontSize, KisSliderSpinBox::setEnabled);
@@ -264,7 +286,6 @@ void UserInterface::initRequiringRestart(config::Config *cfg, QFormLayout *form)
 			scalingSettings->setValue(QStringLiteral("vsync"), id);
 		});
 
-	int pointSize = font().pointSize();
 	QString currentFontSize = pointSize == -1
 								  ? tr("%1px").arg(font().pixelSize())
 								  : tr("%1pt").arg(pointSize);

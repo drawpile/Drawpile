@@ -609,6 +609,7 @@ if(ANDROID)
 		icons/android/drawable-anydpi/ic_launcher.xml
 		icons/android/drawable-anydpi/ic_launcher_foreground.xml
 		icons/android/drawable-anydpi/ic_launcher_monochrome.xml
+		icons/android/layout/scaling_dialog_layout.xml
 		icons/android/values/strings.xml
 		icons/android/values/styles.xml
 		icons/android/xml/remote_action.xml

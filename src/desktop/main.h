@@ -5,11 +5,8 @@
 #include <QPair>
 #include <QPalette>
 #include <QVector>
-
 #ifdef Q_OS_ANDROID
-#	define SCALING_OVERRIDE_DEFAULT true
-#else
-#	define SCALING_OVERRIDE_DEFAULT false
+#	include <QScreen>
 #endif
 
 class GlobalKeyEventFilter;
@@ -66,6 +63,7 @@ public:
 		int width, int height, QColor backgroundColor,
 		bool restoreWindowPosition);
 	MainWindow *openDefault(bool restoreWindowPosition);
+	void newDefaultDocument(MainWindow *win);
 	void openStart(const QString &page, bool restoreWindowPosition);
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
@@ -117,6 +115,14 @@ public:
 	// an integer value that evalues to zero.
 	static bool isEnvTrue(const char *key);
 
+	static bool isAndroidScalingDialogShown();
+	static bool takeAndroidScalingJustChanged();
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	void showAndroidScalingDialog();
+	void handleAndroidScalingDialogDismissed();
+#endif
+
 signals:
 	void tabletEventReceived();
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
@@ -128,6 +134,12 @@ signals:
 	void tabletDriverChanged();
 	void refreshApplicationStyleRequested();
 	void refreshApplicationFontRequested();
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	// These may be emitted from the Android UI thread. Connect to them with
+	// Qt::QueuedConnection to avoid getting hit by them asynchronously.
+	void androidScalingDialogShown();
+	void androidScalingDialogDismissed();
+#endif
 
 protected:
 	bool event(QEvent *e) override;

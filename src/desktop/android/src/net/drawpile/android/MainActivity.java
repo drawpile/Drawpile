@@ -113,7 +113,7 @@ public class MainActivity extends QtActivity {
     public static int getLongPressTimeout() {
         try {
             return ViewConfiguration.getLongPressTimeout();
-        } catch (Exception|UnsatisfiedLinkError e) {
+        } catch (Exception | UnsatisfiedLinkError e) {
             Log.e(TAG, "Exception getting long press timeout", e);
             return 500;
         }
@@ -125,5 +125,19 @@ public class MainActivity extends QtActivity {
 
     private static boolean containsXiaomi(String s) {
         return s != null && s.toLowerCase().contains("xiaomi");
+    }
+
+    public void showScalingDialog(
+            String percentTextFormat, String percentDefaultTextFormat, String dynamicText,
+            String desktopText, String mobileText, String rememberCheckBoxText, String okButtonText,
+            double currentScale, double defaultScale, int interfaceMode, boolean showOnStartup,
+            boolean canShowOnStartup) {
+        QtNative.activity().runOnUiThread(() -> {
+            ScalingDialog scalingDialog = new ScalingDialog(
+                    this, percentTextFormat, percentDefaultTextFormat, dynamicText,
+                    desktopText, mobileText, rememberCheckBoxText, okButtonText, currentScale,
+                    defaultScale, interfaceMode, showOnStartup, canShowOnStartup);
+            scalingDialog.show();
+        });
     }
 }

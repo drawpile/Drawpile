@@ -14,6 +14,9 @@ class UserInterface final : public Page {
 public:
 	UserInterface(config::Config *cfg, QWidget *parent = nullptr);
 
+Q_SIGNALS:
+	void scalingChangeRequested();
+
 protected:
 	void setUp(config::Config *cfg, QVBoxLayout *layout) override;
 

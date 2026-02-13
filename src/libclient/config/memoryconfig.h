@@ -24,6 +24,21 @@ public:
 	int getAlphaLockCursor() const override;
 	void setAlphaLockCursor(int value) override;
 
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	bool getAndroidScalingAskOnStartup() const override;
+	void setAndroidScalingAskOnStartup(bool value) override;
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	double getAndroidScalingLastInitialScale() const override;
+	void setAndroidScalingLastInitialScale(double value) override;
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	double getAndroidScalingTargetScale() const override;
+	void setAndroidScalingTargetScale(double value) override;
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	bool getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const override;
 	void
@@ -767,6 +782,16 @@ private:
 	int m_actionBar = defaultActionBar();
 	int m_actionBarLocation = defaultActionBarLocation();
 	int m_alphaLockCursor = defaultAlphaLockCursor();
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	bool m_androidScalingAskOnStartup = defaultAndroidScalingAskOnStartup();
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	double m_androidScalingLastInitialScale =
+		defaultAndroidScalingLastInitialScale();
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	double m_androidScalingTargetScale = defaultAndroidScalingTargetScale();
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	bool m_androidWorkaroundEmulateMouseButtonsForPageUpDown =
 		defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown();

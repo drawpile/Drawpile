@@ -18,6 +18,8 @@ public:
 
 	~LayoutsDialog() override;
 
+	static QByteArray defaultState();
+
 signals:
 	void applyState(const QByteArray &state);
 

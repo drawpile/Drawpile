@@ -10,7 +10,7 @@ extern "C" {
 #include "libclient/tools/toolcontroller.h"
 #include "libshared/net/messagequeue.h"
 #ifdef Q_OS_ANDROID
-#	include "libshared/util/androidutils.h"
+#	include "libclient/utils/androidutils.h"
 #endif
 
 namespace config {
@@ -41,6 +41,27 @@ int Config::defaultAlphaLockCursor()
 {
 	return int(view::Cursor::SameAsBrush);
 }
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+bool Config::defaultAndroidScalingAskOnStartup()
+{
+	return true;
+}
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+double Config::defaultAndroidScalingLastInitialScale()
+{
+	return 0.0;
+}
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+double Config::defaultAndroidScalingTargetScale()
+{
+	return 0.0;
+}
+#endif
 
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 bool Config::defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown()
@@ -883,7 +904,7 @@ bool Config::defaultOnionSkinsWrap()
 
 bool Config::defaultOverrideFontSize()
 {
-#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__)
 	return true;
 #else
 	return false;

@@ -50,7 +50,8 @@
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
 #	include "desktop/utils/wineventfilter.h"
 #elif defined(Q_OS_ANDROID)
-#	include "libshared/util/androidutils.h"
+#	include "libclient/utils/androidutils.h"
+#	include <QPointer>
 #elif defined(__EMSCRIPTEN__)
 #	include "libclient/wasmsupport.h"
 #endif
@@ -67,6 +68,11 @@
 #	error "DRAWPILE_QSCROLLER_VERSION != 2, do you need to recompile Qt?"
 #endif
 
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+static QPointer<QScreen> initialPrimaryScreen;
+static double initialPrimaryScreenDevicePixelRatio;
+#endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -92,6 +98,36 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	// QSettings will use the wrong settings when it is opened before all
 	// the app and organisation names are set.
 	m_settings->reset();
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		this, &DrawpileApp::androidScalingDialogDismissed, this,
+		&DrawpileApp::handleAndroidScalingDialogDismissed);
+
+	QScreen *screen = primaryScreen();
+	if(screen) {
+		initialPrimaryScreen = screen;
+		initialPrimaryScreenDevicePixelRatio = screen->devicePixelRatio();
+
+		bool mustShowScalingDialog = true;
+		double lastInitialScale = m_config->getAndroidScalingLastInitialScale();
+		if(lastInitialScale == initialPrimaryScreenDevicePixelRatio) {
+			double targetScale = m_config->getAndroidScalingTargetScale();
+			if(targetScale >= 1.0) {
+				initialPrimaryScreen->setDensityAdjustment(
+					targetScale / initialPrimaryScreenDevicePixelRatio);
+				mustShowScalingDialog = false;
+			}
+		}
+
+		if(mustShowScalingDialog || m_config->getAndroidScalingAskOnStartup()) {
+			showAndroidScalingDialog();
+		}
+
+	} else {
+		qWarning("No primary screen");
+	}
+#endif
 
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
@@ -379,24 +415,39 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 void DrawpileApp::initInterface()
 {
 	QFont font = QApplication::font();
+	bool inPixels = font.pixelSize() != -1;
 	int fontSize = m_config->getFontSize();
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	// Scaling and font handling changed, making the persisted font size value
+	// invalid. We detect if that's the case by the fact that we don't have a
+	// previous initial scale, which should only happen on first run with this
+	// new flavor of scaling. If that's the case, we reset the font.
+	if(m_config->getAndroidScalingLastInitialScale() <= 0.0 && fontSize > 0) {
+		fontSize = -1;
+	}
+#endif
+
 	if(fontSize <= 0) {
-		// We require a point size. Android uses a pixel size, which causes the
-		// point size to be reported as -1 and breaks several UI elements. But
-		// the font size is too ginormous there to be usable anyway, so it makes
-		// sense to force it to a different value anyway. The font in the
-		// browser tends to be too large as well, force it too.
 #ifdef __EMSCRIPTEN__
+		// Font in the browser is just too small, force it.
 		fontSize = 10;
 #else
-		int pointSize = font.pointSize();
-		fontSize = pointSize <= 0 ? 9 : pointSize;
+		// Android has pixel fonts, everywhere else uses point fonts.
+		fontSize = inPixels ? font.pixelSize() : font.pointSize();
+		if(fontSize <= 0) {
+			fontSize = 9;
+		}
 #endif
 		m_config->setFontSize(fontSize);
 	}
 
 	if(m_config->getOverrideFontSize()) {
-		font.setPointSize(fontSize);
+		if(inPixels) {
+			font.setPixelSize(fontSize);
+		} else {
+			font.setPointSize(fontSize);
+		}
 		QApplication::setFont(font);
 	}
 
@@ -573,6 +624,61 @@ bool DrawpileApp::isEnvTrue(const char *key)
 	return false;
 }
 
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+static bool scalingDialogActive;
+static bool scalingJustChanged;
+static QPointer<MainWindow> scalingMainWindow;
+#endif
+
+bool DrawpileApp::isAndroidScalingDialogShown()
+{
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	return scalingDialogActive;
+#else
+	return false;
+#endif
+}
+
+bool DrawpileApp::takeAndroidScalingJustChanged()
+{
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	bool justChanged = scalingDialogActive && scalingJustChanged;
+	scalingJustChanged = false;
+	return justChanged;
+#else
+	return false;
+#endif
+}
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+void DrawpileApp::showAndroidScalingDialog()
+{
+	scalingJustChanged = false;
+	if(initialPrimaryScreen && !scalingDialogActive) {
+		bool canShowOnStartup = m_config->getAndroidScalingLastInitialScale() ==
+								initialPrimaryScreenDevicePixelRatio;
+		scalingDialogActive = utils::androidShowScalingDialog(
+			initialPrimaryScreen->devicePixelRatio(),
+			initialPrimaryScreenDevicePixelRatio, m_config->getInterfaceMode(),
+			!canShowOnStartup || m_config->getAndroidScalingAskOnStartup(),
+			canShowOnStartup);
+		if(scalingDialogActive) {
+			Q_EMIT androidScalingDialogShown();
+		}
+	}
+}
+
+void DrawpileApp::handleAndroidScalingDialogDismissed()
+{
+	scalingJustChanged = false;
+	if(scalingMainWindow) {
+		newDefaultDocument(scalingMainWindow);
+		scalingMainWindow->start();
+		scalingMainWindow.clear();
+	}
+}
+#endif
+
 MainWindow *
 DrawpileApp::acquireWindow(bool restoreWindowPosition, bool singleSession)
 {
@@ -643,8 +749,13 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 MainWindow *DrawpileApp::openDefault(bool restoreWindowPosition)
 {
 	MainWindow *win = new MainWindow(restoreWindowPosition);
-	win->newDocument(safeNewCanvasSize(), m_config->getNewCanvasBackColor());
+	newDefaultDocument(win);
 	return win;
+}
+
+void DrawpileApp::newDefaultDocument(MainWindow *win)
+{
+	win->newDocument(safeNewCanvasSize(), m_config->getNewCanvasBackColor());
 }
 
 void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
@@ -663,8 +774,7 @@ void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 		0) {
 		win->importAnimationLayers();
 	} else if(page.compare(QStringLiteral("none"), Qt::CaseInsensitive) != 0) {
-		dialogs::StartDialog *dlg = win->showStartDialog();
-		dlg->showPage(getStartDialogEntry(page));
+		win->showStartDialogOnPage(int(getStartDialogEntry(page)));
 	}
 }
 
@@ -1033,10 +1143,9 @@ static int applyRenderSettingsFrom(const QString &path)
 	QSettings cfg(path, QSettings::IniFormat);
 
 	bool overrideScaling = false;
+#if !defined(Q_OS_ANDROID) || !defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
 	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
-		if(cfg.value(
-				  QStringLiteral("scaling_override"), SCALING_OVERRIDE_DEFAULT)
-			   .toBool()) {
+		if(cfg.value(QStringLiteral("scaling_override"), false).toBool()) {
 			qreal factor = qBound(
 				1.0,
 				cfg.value(QStringLiteral("scaling_factor"), 100).toInt() /
@@ -1046,6 +1155,7 @@ static int applyRenderSettingsFrom(const QString &path)
 			overrideScaling = true;
 		}
 	}
+#endif
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	if(qgetenv("QT_AUTO_SCREEN_SCALE_FACTOR").isEmpty()) {
@@ -1157,6 +1267,13 @@ static void startApplication(
 		QSurfaceFormat::setDefaultFormat(format);
 	}
 
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	if(scalingDialogActive) {
+		scalingMainWindow = new MainWindow(false);
+		return;
+	}
+#endif
+
 	if(!startupOptions.joinUrl.isEmpty()) {
 		app->joinUrl(
 			buildJoinUrl(startupOptions.joinUrl), startupOptions.autoRecordPath,
@@ -1192,13 +1309,11 @@ static void startApplication(
 
 
 #ifdef Q_OS_ANDROID
-extern "C" JNIEXPORT void
-	JNICALL Java_net_drawpile_android_DrawpileNative_processEvents(
-		JNIEnv *env, jobject obj, jint n)
+extern "C" JNIEXPORT void JNICALL
+Java_net_drawpile_android_DrawpileNative_processEvents(JNIEnv *env, jobject obj)
 {
 	Q_UNUSED(env);
 	Q_UNUSED(obj);
-	Q_UNUSED(n);
 	if(dpApp().applicationState() == Qt::ApplicationSuspended) {
 		qWarning("DrawpileNative::processEvents start");
 		// TODO ?
@@ -1207,6 +1322,70 @@ extern "C" JNIEXPORT void
 		qWarning("DrawpileNative::not suspended");
 	}
 }
+
+#	ifdef KRITA_QT_SCREEN_DENSITY_ADJUSTMENT
+extern "C" JNIEXPORT void
+	JNICALL Java_net_drawpile_android_DrawpileNative_setPrimaryScreenScale(
+		JNIEnv *env, jobject obj, jdouble scale)
+{
+	Q_UNUSED(env);
+	Q_UNUSED(obj);
+	if(scalingDialogActive && initialPrimaryScreen &&
+	   initialPrimaryScreenDevicePixelRatio > 0.0) {
+		qreal actualScale = qMax(1.0, scale);
+		qreal densityAdjustment =
+			actualScale / initialPrimaryScreenDevicePixelRatio;
+		if(!qFuzzyCompare(
+			   densityAdjustment, initialPrimaryScreen->densityAdjustment())) {
+			scalingJustChanged = true;
+			initialPrimaryScreen->setDensityAdjustment(densityAdjustment);
+		}
+	}
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_net_drawpile_android_DrawpileNative_savePrimaryScreenScale(
+	JNIEnv *env, jobject obj, jboolean askOnStartup)
+{
+	Q_UNUSED(env);
+	Q_UNUSED(obj);
+	if(scalingDialogActive && initialPrimaryScreen &&
+	   initialPrimaryScreenDevicePixelRatio > 0.0) {
+		double dpr = initialPrimaryScreen->devicePixelRatio();
+		if(dpr >= 1.0) {
+			config::Config *cfg = dpAppConfig();
+			cfg->setAndroidScalingLastInitialScale(
+				initialPrimaryScreenDevicePixelRatio);
+			cfg->setAndroidScalingTargetScale(dpr);
+			cfg->setAndroidScalingAskOnStartup(askOnStartup);
+			cfg->trySubmit();
+		}
+	}
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_net_drawpile_android_DrawpileNative_setInterfaceMode(
+	JNIEnv *env, jobject obj, jint interfaceMode)
+{
+	Q_UNUSED(env);
+	Q_UNUSED(obj);
+	if(scalingDialogActive) {
+		dpAppConfig()->setInterfaceMode(interfaceMode);
+	}
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_net_drawpile_android_DrawpileNative_onScalingDialogDismissed(
+	JNIEnv *env, jobject obj)
+{
+	Q_UNUSED(env);
+	Q_UNUSED(obj);
+	if(scalingDialogActive) {
+		scalingDialogActive = false;
+		Q_EMIT dpApp().androidScalingDialogDismissed();
+	}
+}
+#	endif
 #endif
 
 

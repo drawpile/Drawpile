@@ -24,7 +24,7 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 #ifdef Q_OS_ANDROID
-#	include "libshared/util/androidutils.h"
+#	include "libclient/utils/androidutils.h"
 #endif
 
 namespace dialogs {

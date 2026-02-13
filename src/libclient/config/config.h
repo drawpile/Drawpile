@@ -14,6 +14,9 @@
 #include <QVariantList>
 #include <QVariantMap>
 #include <QVector>
+#ifdef Q_OS_ANDROID
+#	include <QScreen>
+#endif
 
 #if !defined(NATIVE_DIALOGS_SETTING_AVAILABLE) && defined(Q_OS_WIN)
 #	define NATIVE_DIALOGS_SETTING_AVAILABLE 1
@@ -234,6 +237,24 @@ public:
 	virtual int getAlphaLockCursor() const = 0;
 	virtual void setAlphaLockCursor(int value) = 0;
 	static int defaultAlphaLockCursor();
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	virtual bool getAndroidScalingAskOnStartup() const = 0;
+	virtual void setAndroidScalingAskOnStartup(bool value) = 0;
+	static bool defaultAndroidScalingAskOnStartup();
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	virtual double getAndroidScalingLastInitialScale() const = 0;
+	virtual void setAndroidScalingLastInitialScale(double value) = 0;
+	static double defaultAndroidScalingLastInitialScale();
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	virtual double getAndroidScalingTargetScale() const = 0;
+	virtual void setAndroidScalingTargetScale(double value) = 0;
+	static double defaultAndroidScalingTargetScale();
+#endif
 
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	virtual bool
@@ -1221,6 +1242,15 @@ Q_SIGNALS:
 	void changeActionBar(int value);
 	void changeActionBarLocation(int value);
 	void changeAlphaLockCursor(int value);
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	void changeAndroidScalingAskOnStartup(bool value);
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	void changeAndroidScalingLastInitialScale(double value);
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	void changeAndroidScalingTargetScale(double value);
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	void changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value);
 #endif

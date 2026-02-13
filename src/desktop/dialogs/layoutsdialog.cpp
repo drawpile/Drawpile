@@ -81,6 +81,8 @@ struct LayoutsDialog::Private {
 	// Defined at the bottom of the file because it's annoyingly large.
 	Predefs getPredefs();
 
+	static QByteArray getDefaultState();
+
 	Private(const QByteArray &currentState)
 		: ui{}
 		, layouts{}
@@ -309,6 +311,11 @@ LayoutsDialog::~LayoutsDialog()
 	delete d;
 }
 
+QByteArray LayoutsDialog::defaultState()
+{
+	return Private::getDefaultState();
+}
+
 void LayoutsDialog::save()
 {
 	Layout *layout = d->transientLayout();
@@ -409,10 +416,9 @@ void LayoutsDialog::promptTitle(
 }
 
 
-LayoutsDialog::Private::Predefs LayoutsDialog::Private::getPredefs()
+QByteArray LayoutsDialog::Private::getDefaultState()
 {
-	Predefs predefs;
-	predefs.defaultLayout = QByteArray::fromBase64(
+	return QByteArray::fromBase64(
 		"AAAA/wAAAAD9AAAAAwAAAAAAAAFcAAAD+vwCAAAAAvsAAAAYAFQAbwBvAGwAUwBlAH"
 		"QAdABpAG4AZwBzAQAAAD4AAAFCAAABPwD////7AAAAGABCAHIAdQBzAGgAUABhAGwA"
 		"ZQB0AHQAZQEAAAGGAAACsgAAAGMA////AAAAAQAAAQAAAAP6/AIAAAAD/AAAAD4AAA"
@@ -430,6 +436,12 @@ LayoutsDialog::Private::Predefs LayoutsDialog::Private::getPredefs()
 		"bwBvAGwAcwBiAGEAcgEAAAAA/////wAAAAAAAAAAAAAAGABlAGQAaQB0AHQAbwBvAG"
 		"wAcwBiAGEAcgEAAACV/////wAAAAAAAAAAAAAAGABkAHIAYQB3AHQAbwBvAGwAcwBi"
 		"AGEAcgEAAAFr/////wAAAAAAAAAA");
+}
+
+LayoutsDialog::Private::Predefs LayoutsDialog::Private::getPredefs()
+{
+	Predefs predefs;
+	predefs.defaultLayout = getDefaultState();
 	predefs.defaultAnimationLayout = QByteArray::fromBase64(
 		"AAAA/wAAAAD9AAAAAwAAAAAAAAFcAAAD+vwCAAAAAvsAAAAYAFQAbwBvAGwAUwBlAH"
 		"QAdABpAG4AZwBzAQAAAD4AAAFCAAABPwD////7AAAAGABCAHIAdQBzAGgAUABhAGwA"

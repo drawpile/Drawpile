@@ -153,8 +153,7 @@ QAction *MacMenu::makeAction(
 
 void MacMenu::newDocument()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Create);
+	showStartDialogOnPage(int(dialogs::StartDialog::Create));
 }
 
 void MacMenu::openDocument()
@@ -170,15 +169,13 @@ void MacMenu::openRecent(QAction *action)
 		MainWindow *mw = dpApp().openDefault(false);
 		mw->openPath(filepath.toString());
 	} else {
-		dialogs::StartDialog *dlg = showStartDialog();
-		dlg->showPage(dialogs::StartDialog::Recent);
+		showStartDialogOnPage(int(dialogs::StartDialog::Recent));
 	}
 }
 
 void MacMenu::startDocument()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Welcome);
+	showStartDialogOnPage(int(dialogs::StartDialog::Welcome));
 }
 
 void MacMenu::showSettings()
@@ -195,40 +192,36 @@ void MacMenu::showSettings()
 	if(mw) {
 		mw->showSettings();
 	} else {
-		dialogs::StartDialog *dlg = showStartDialog();
-		dlg->showPage(dialogs::StartDialog::Preferences);
+		showStartDialogOnPage(int(dialogs::StartDialog::Preferences));
 	}
 }
 
 void MacMenu::hostSession()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Host);
+	showStartDialogOnPage(int(dialogs::StartDialog::Host));
 }
 
 void MacMenu::joinSession()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Join);
+	showStartDialogOnPage(int(dialogs::StartDialog::Join));
 }
 
 void MacMenu::browseSessions()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Browse);
+	showStartDialogOnPage(int(dialogs::StartDialog::Browse));
 }
 
 void MacMenu::checkForUpdates()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Welcome);
+	dialogs::StartDialog *dlg =
+		showStartDialogOnPage(int(dialogs::StartDialog::Welcome));
 	dlg->checkForUpdates();
 }
 
-dialogs::StartDialog *MacMenu::showStartDialog()
+dialogs::StartDialog *MacMenu::showStartDialogOnPage(int page)
 {
 	MainWindow *mw = dpApp().openDefault(false);
-	return mw->showStartDialog();
+	return mw->showStartDialogOnPage(page);
 }
 
 /**

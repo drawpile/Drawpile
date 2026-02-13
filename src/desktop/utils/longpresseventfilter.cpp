@@ -21,7 +21,7 @@
 #include <QStyleHints>
 #include <QTimer>
 #ifdef Q_OS_ANDROID
-#	include <libshared/util/androidutils.h>
+#	include "libclient/utils/androidutils.h"
 #endif
 
 

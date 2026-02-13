@@ -10,7 +10,7 @@
 #include <QLoggingCategory>
 #include <QTimer>
 #ifdef Q_OS_ANDROID
-#	include "libshared/util/androidutils.h"
+#	include "libclient/utils/androidutils.h"
 #endif
 
 Q_LOGGING_CATEGORY(lcDpClient, "net.drawpile.client", QtWarningMsg)

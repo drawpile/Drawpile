@@ -14,6 +14,9 @@
 #include <QVariantList>
 #include <QVariantMap>
 #include <QVector>
+#ifdef Q_OS_ANDROID
+#   include <QScreen>
+#endif
 
 #if !defined(NATIVE_DIALOGS_SETTING_AVAILABLE) && defined(Q_OS_WIN)
 #	define NATIVE_DIALOGS_SETTING_AVAILABLE 1

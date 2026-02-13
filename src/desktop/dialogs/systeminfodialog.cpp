@@ -109,9 +109,7 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Override scaling setting: %1\n")
 				.arg(
 					scalingSettings
-							->value(
-								QStringLiteral("scaling_override"),
-								SCALING_OVERRIDE_DEFAULT)
+							->value(QStringLiteral("scaling_override"), false)
 							.toBool()
 						? QStringLiteral("%1%").arg(
 							  scalingSettings

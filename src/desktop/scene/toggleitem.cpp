@@ -92,7 +92,13 @@ int ToggleItem::innerSize()
 
 int ToggleItem::fontSize()
 {
-	int size = QApplication::font().pointSize() - 1;
+	QFont font = QApplication::font();
+	int size;
+	if(font.pixelSize() == -1) {
+		size = font.pointSize() - 1;
+	} else {
+		size = font.pixelSize() - 1;
+	}
 	return size < 1 ? 8 : size;
 }
 

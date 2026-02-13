@@ -78,6 +78,7 @@ SettingsDialog::SettingsDialog(
 #else
 	bool showServers = true;
 #endif
+	settingsdialog::UserInterface *userInterfacePage;
 	settingsdialog::Tablet *tabletPage;
 	settingsdialog::Touch *touchPage;
 	const std::initializer_list<
@@ -86,7 +87,9 @@ SettingsDialog::SettingsDialog(
 			{"configure", tr("General"),
 			 new settingsdialog::General(m_cfg, this), true},
 			{"window_", tr("User Interface"),
-			 new settingsdialog::UserInterface(m_cfg, this), true},
+			 (userInterfacePage =
+				  new settingsdialog::UserInterface(m_cfg, this)),
+			 true},
 			{"input-tablet", tr("Tablet"),
 			 (tabletPage = new settingsdialog::Tablet(m_cfg, this)), true},
 			{"input-touchscreen", tr("Touch"),
@@ -175,6 +178,10 @@ SettingsDialog::SettingsDialog(
 	touchPage->createButtons(buttons);
 	hidePanelButtons(buttons);
 	connect(
+		userInterfacePage,
+		&settingsdialog::UserInterface::scalingChangeRequested, this,
+		&SettingsDialog::scalingChangeRequested);
+	connect(
 		tabletPage, &settingsdialog::Tablet::tabletTesterRequested, this,
 		&SettingsDialog::tabletTesterRequested);
 	connect(
@@ -226,6 +233,11 @@ template <typename T> static T *activatePanelByType(QButtonGroup *group)
 	}
 	return nullptr;
 }
+}
+
+void SettingsDialog::activateUserInterfacePanel()
+{
+	activatePanelByType<settingsdialog::UserInterface>(m_group);
 }
 
 void SettingsDialog::activateNetworkPanel()

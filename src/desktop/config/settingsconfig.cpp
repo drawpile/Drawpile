@@ -19,6 +19,26 @@ SettingsConfig::SettingsConfig(
 	connect(
 		m_settings, &desktop::settings::Settings::alphaLockCursorChanged, this,
 		&SettingsConfig::changeAlphaLockCursor, Qt::DirectConnection);
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::androidScalingAskOnStartupChanged, this,
+		&SettingsConfig::changeAndroidScalingAskOnStartup,
+		Qt::DirectConnection);
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::androidScalingLastInitialScaleChanged,
+		this, &SettingsConfig::changeAndroidScalingLastInitialScale,
+		Qt::DirectConnection);
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::androidScalingTargetScaleChanged, this,
+		&SettingsConfig::changeAndroidScalingTargetScale, Qt::DirectConnection);
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	connect(
 		m_settings,
@@ -900,6 +920,42 @@ void SettingsConfig::setAlphaLockCursor(int value)
 {
 	m_settings->setAlphaLockCursor(value);
 }
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+bool SettingsConfig::getAndroidScalingAskOnStartup() const
+{
+	return m_settings->androidScalingAskOnStartup();
+}
+
+void SettingsConfig::setAndroidScalingAskOnStartup(bool value)
+{
+	m_settings->setAndroidScalingAskOnStartup(value);
+}
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+double SettingsConfig::getAndroidScalingLastInitialScale() const
+{
+	return m_settings->androidScalingLastInitialScale();
+}
+
+void SettingsConfig::setAndroidScalingLastInitialScale(double value)
+{
+	m_settings->setAndroidScalingLastInitialScale(value);
+}
+#endif
+
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+double SettingsConfig::getAndroidScalingTargetScale() const
+{
+	return m_settings->androidScalingTargetScale();
+}
+
+void SettingsConfig::setAndroidScalingTargetScale(double value)
+{
+	m_settings->setAndroidScalingTargetScale(value);
+}
+#endif
 
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 bool SettingsConfig::getAndroidWorkaroundEmulateMouseButtonsForPageUpDown()

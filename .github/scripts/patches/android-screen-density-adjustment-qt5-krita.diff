@@ -1,0 +1,128 @@
+Description: Adds a "density adjustment" parameter on QScreen on Android, to be
+able to dynamically adjust the UI scale at runtime there. It's pretty much
+impossible to get it right without asking the user, since someone using a
+finger may prefer a vastly different size to someone using a stylus or mouse.
+
+--- a/src/gui/kernel/qplatformscreen.cpp
++++ b/src/gui/kernel/qplatformscreen.cpp
+@@ -203,6 +203,20 @@ QPair<qreal, qreal> QPlatformScreen::overrideDpi(const QPair<qreal, qreal> &in)
+     return overrideDpi > 0 ?  QDpi(overrideDpi, overrideDpi) : in;
+ }
+ 
++#ifdef Q_OS_ANDROID
++// These get overridden in QAndroidPlatformScreen.
++
++qreal QPlatformScreen::densityAdjustment() const
++{
++    return 1.0;
++}
++
++void QPlatformScreen::setDensityAdjustment(qreal densityAdjustment)
++{
++    Q_UNUSED(densityAdjustment);
++}
++#endif
++
+ /*!
+     Reimplement to return the base logical DPI for the platform. This
+     DPI value should correspond to a standard-DPI (1x) display. The
+--- a/src/gui/kernel/qplatformscreen.h
++++ b/src/gui/kernel/qplatformscreen.h
+@@ -165,6 +165,11 @@ public:
+ 
+     static QDpi overrideDpi(const QDpi &in);
+ 
++#ifdef Q_OS_ANDROID
++    virtual qreal densityAdjustment() const;
++    virtual void setDensityAdjustment(qreal densityAdjustment);
++#endif
++
+ protected:
+     void resizeMaximizedWindows();
+ 
+--- a/src/gui/kernel/qscreen.cpp
++++ b/src/gui/kernel/qscreen.cpp
+@@ -586,6 +586,20 @@ qreal QScreen::refreshRate() const
+     return d->refreshRate;
+ }
+ 
++#ifdef KRITA_QT_SCREEN_DENSITY_ADJUSTMENT
++qreal QScreen::densityAdjustment() const
++{
++    Q_D(const QScreen);
++    return d->platformScreen->densityAdjustment();
++}
++
++void QScreen::setDensityAdjustment(qreal value)
++{
++    Q_D(QScreen);
++    d->platformScreen->setDensityAdjustment(value);
++}
++#endif
++
+ /*!
+     \property QScreen::primaryOrientation
+     \brief the primary screen orientation
+--- a/src/gui/kernel/qscreen.h
++++ b/src/gui/kernel/qscreen.h
+@@ -151,6 +151,12 @@ public:
+ 
+     qreal refreshRate() const;
+ 
++#ifdef Q_OS_ANDROID
++#   define KRITA_QT_SCREEN_DENSITY_ADJUSTMENT 1
++    qreal densityAdjustment() const;
++    void setDensityAdjustment(qreal value);
++#endif
++
+ Q_SIGNALS:
+     void geometryChanged(const QRect &geometry);
+     void availableGeometryChanged(const QRect &geometry);
+--- a/src/plugins/platforms/android/qandroidplatformscreen.cpp
++++ b/src/plugins/platforms/android/qandroidplatformscreen.cpp
+@@ -513,9 +513,23 @@ QPixmap QAndroidPlatformScreen::doScreenShot(QRect grabRect)
+ 
+ static const int androidLogicalDpi = 72;
+ 
++qreal QAndroidPlatformScreen::densityAdjustment() const
++{
++    return m_densityAdjustment;
++}
++
++void QAndroidPlatformScreen::setDensityAdjustment(qreal densityAdjustment)
++{
++    if (densityAdjustment > 0.0 && !qFuzzyCompare(m_densityAdjustment, densityAdjustment)) {
++        m_densityAdjustment = densityAdjustment;
++        QDpi dpi = logicalDpi();
++        QWindowSystemInterface::handleScreenLogicalDotsPerInchChange(QPlatformScreen::screen(), dpi.first, dpi.second);
++    }
++}
++
+ QDpi QAndroidPlatformScreen::logicalDpi() const
+ {
+-    qreal lDpi = QtAndroid::scaledDensity() * androidLogicalDpi;
++    qreal lDpi = QtAndroid::scaledDensity() * m_densityAdjustment * androidLogicalDpi;
+     return QDpi(lDpi, lDpi);
+ }
+ 
+--- a/src/plugins/platforms/android/qandroidplatformscreen.h
++++ b/src/plugins/platforms/android/qandroidplatformscreen.h
+@@ -87,6 +87,9 @@ public:
+ 
+     QPlatformCursor *cursor() const override { return m_cursor.data(); }
+ 
++    qreal densityAdjustment() const override;
++    void setDensityAdjustment(qreal value) override;
++
+ public slots:
+     void setDirty(const QRect &rect);
+     void setPhysicalSize(const QSize &size);
+@@ -132,6 +135,8 @@ private:
+     bool m_repaintOccurred = false;
+     QMap<int, QAndroidPlatformWindowManager *> m_windowManagers;
+     QScopedPointer<QPlatformCursor> m_cursor;
++
++    qreal m_densityAdjustment = 1.0;
+ };
+ 
+ QT_END_NAMESPACE

@@ -100,16 +100,23 @@ void RulerWidget::paintEvent(QPaintEvent *)
 
 			if(lineHeight * digits >= pixelsPerRulerDivision - 2) {
 				QFont smallerFont = painter.font();
-				qreal newPointSize = smallerFont.pointSizeF() - 1;
-				if(newPointSize <= 0)
-					// The font doesn't seem to be responding to point size or
-					// something else is wrong. Bail out here and continue with
-					// the current font.
-					break;
-				smallerFont.setPointSizeF(newPointSize);
+				if(smallerFont.pixelSize() == -1) {
+					qreal newPointSize = smallerFont.pointSizeF() - 1.0;
+					if(newPointSize <= 0.0) {
+						break;
+					}
+					smallerFont.setPointSizeF(newPointSize);
+				} else {
+					int newPixelSize = smallerFont.pixelSize() - 1;
+					if(newPixelSize <= 0) {
+						break;
+					}
+					smallerFont.setPixelSize(newPixelSize);
+				}
 				painter.setFont(smallerFont);
-			} else
+			} else {
 				break;
+			}
 		}
 	}
 

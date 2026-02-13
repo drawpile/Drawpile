@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"></LinearLayout>
+
+    <TextView
+        android:id="@+id/percentText"
+        style="@android:style/Widget.Material.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:text="Interface scale: 100%"
+        android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        style="@android:style/Widget.Material.SeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_weight="2"
+        android:max="60"
+        android:progress="0" />
+
+    <RadioGroup
+        android:id="@+id/interfaceModeGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/dynamicRadio"
+            style="@android:style/Widget.Material.CompoundButton.RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Dynamic" />
+
+        <RadioButton
+            android:id="@+id/desktopRadio"
+            style="@android:style/Widget.Material.CompoundButton.RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Desktop" />
+
+        <RadioButton
+            android:id="@+id/mobileRadio"
+            style="@android:style/Widget.Material.CompoundButton.RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mobile" />
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/rememberCheckBox"
+        style="@android:style/Widget.Material.CompoundButton.CheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show this dialog when Drawpile starts" />
+
+    <Button
+        android:id="@+id/okButton"
+        style="@android:style/Widget.Material.Light.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="OK" />
+
+</LinearLayout>

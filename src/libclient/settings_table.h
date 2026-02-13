@@ -5,6 +5,24 @@
 SETTING(
 	_parentalControlsLevelDummy, _ParentalControlsLevelDummy,
 	"_parentalcontrolsleveldummy", parentalcontrols::Level::Unrestricted)
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+SETTING(
+	androidScalingAskOnStartup, AndroidScalingAskOnStartup,
+	"settings/androidscaling/askonstartup",
+	config::Config::defaultAndroidScalingAskOnStartup())
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+SETTING(
+	androidScalingLastInitialScale, AndroidScalingLastInitialScale,
+	"settings/androidscaling/lastinitialscale",
+	config::Config::defaultAndroidScalingLastInitialScale())
+#endif
+#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+SETTING(
+	androidScalingTargetScale, AndroidScalingTargetScale,
+	"settings/androidscaling/targetscale",
+	config::Config::defaultAndroidScalingTargetScale())
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 SETTING(
 	androidWorkaroundEmulateMouseButtonsForPageUpDown,

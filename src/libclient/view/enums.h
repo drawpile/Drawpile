@@ -47,6 +47,7 @@ enum class Cursor : int {
 };
 Q_ENUM_NS(Cursor)
 
+// Keep these in sync with the constants in ScalingDialog.java!
 enum class InterfaceMode : int {
 	Dynamic,
 	Desktop,

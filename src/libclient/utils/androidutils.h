@@ -48,6 +48,10 @@ int androidLongPressTimeout();
 
 bool androidLooksLikeXiaomiDevice();
 
+bool androidShowScalingDialog(
+	double currentScale, double defaultScale, int interfaceMode,
+	bool showOnStartup, bool canShowOnStartup);
+
 #ifdef DRAWPILE_USE_CONNECT_SERVICE
 bool createConnectionNotificationChannel();
 bool shoulShowPostNotificationsRationale();
