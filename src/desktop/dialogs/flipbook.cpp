@@ -258,28 +258,39 @@ void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 
 	QSignalBlocker loopStartBlocker{d->ui.loopStart};
 	QSignalBlocker loopEndBlocker{d->ui.loopEnd};
-	int frameCount = d->canvasState.frameCount();
-	d->ui.loopStart->setMaximum(frameCount);
-	d->ui.loopEnd->setMaximum(frameCount);
 
 	int frameRangeFirst, frameRangeLast;
 	d->canvasState.documentMetadata().effectiveFrameRange(
 		frameRangeFirst, frameRangeLast);
-	if(d->state.loopStart > 0 && d->state.loopEnd > 0) {
-		d->ui.loopStart->setValue(
-			d->ui.loopStart->value() == d->state.lastCanvasFrameRangeFirst + 1
-				? frameRangeFirst + 1
-				: d->state.loopStart);
-		d->ui.loopEnd->setValue(
-			d->ui.loopEnd->value() == d->state.lastCanvasFrameRangeLast + 1
-				? frameRangeLast + 1
-				: d->state.loopEnd);
-	} else {
+
+	// If the start or end matched that of the canvas before, keep them
+	// there. Otherwise keep them at the same values that they had. This
+	// generally does what you mean, keeping a sub-range in place and keeping
+	// the full range full.
+	bool stateRangeValid = d->state.loopStart > 0 && d->state.loopEnd > 0;
+
+	if(!stateRangeValid ||
+	   d->state.loopStart == d->state.lastCanvasFrameRangeFirst + 1) {
 		d->ui.loopStart->setValue(frameRangeFirst + 1);
-		d->ui.loopEnd->setValue(frameRangeLast + 1);
+	} else {
+		d->ui.loopStart->setValue(d->state.loopStart);
 	}
+
+	if(!stateRangeValid ||
+	   d->state.loopEnd == d->state.lastCanvasFrameRangeLast + 1) {
+		d->ui.loopEnd->setValue(frameRangeLast + 1);
+	} else {
+		d->ui.loopEnd->setValue(d->state.loopEnd);
+	}
+
+
 	d->state.lastCanvasFrameRangeFirst = frameRangeFirst;
 	d->state.lastCanvasFrameRangeLast = frameRangeLast;
+
+	int frameCount = d->canvasState.frameCount();
+	d->ui.loopStart->setMaximum(frameCount);
+	d->ui.loopEnd->setMaximum(frameCount);
+
 	updateRange();
 
 	if(refresh) {
