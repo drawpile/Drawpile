@@ -112,7 +112,7 @@ public class MainActivity extends QtActivity {
 
     public static int getLongPressTimeout() {
         try {
-            return ViewConfiguration.get(QtNative.activity()).getLongPressTimeout();
+            return ViewConfiguration.getLongPressTimeout();
         } catch (Exception|UnsatisfiedLinkError e) {
             Log.e(TAG, "Exception getting long press timeout", e);
             return 500;
