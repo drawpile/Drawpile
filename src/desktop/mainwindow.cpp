@@ -8708,6 +8708,13 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 	updateInterfaceModeActions();
 	reenableUpdates();
 
+	// Hide chat if not connected, since otherwise toggling to small-screen mode
+	// and back makes it pop up.
+	if(!smallScreenMode && !m_chatbox->isCollapsed() &&
+	   !m_doc->client()->isConnected()) {
+		getAction("togglechat")->trigger();
+	}
+
 	emit smallScreenModeChanged(smallScreenMode);
 }
 
