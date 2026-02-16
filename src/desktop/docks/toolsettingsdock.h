@@ -16,6 +16,7 @@ class InspectorSettings;
 class LaserPointerSettings;
 class LassoFillSettings;
 class PanSettings;
+class RotationSettings;
 class SelectionSettings;
 class ToolController;
 class ToolSettings;
@@ -59,6 +60,7 @@ public:
 	tools::LaserPointerSettings *laserPointerSettings();
 	tools::LassoFillSettings *lassoFillSettings();
 	tools::PanSettings *panSettings();
+	tools::RotationSettings *rotationSettings();
 	tools::SelectionSettings *selectionSettings();
 	tools::TransformSettings *transformSettings();
 	tools::ZoomSettings *zoomSettings();

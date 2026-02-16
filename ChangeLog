@@ -35,6 +35,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add "set speed by FPS", "reset range" and "reset speed" actions to the flipbook. They are now behind the button that previously had only two zoom-related actions.
  * Fix: Make fonts not be a wonky size on some Android devices.
  * Feature: Ask for a UI scale on startup on Android, letting you adjust it and view the result, rather than having to restart Drawpile and potentially be left in an unworkable state. You can also pick the interface mode while you're at it.
+ * Feature: Rotation tool. Similar to the Pan and Zoom tools, this lets you rotate the canvas just by clicking on the canvas. Thanks Cryankiebuillars for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

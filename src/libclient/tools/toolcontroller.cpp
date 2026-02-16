@@ -22,6 +22,7 @@ extern "C" {
 #include "libclient/tools/lassofill.h"
 #include "libclient/tools/magicwand.h"
 #include "libclient/tools/pan.h"
+#include "libclient/tools/rotation.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
 #include "libclient/tools/toolcontroller.h"
@@ -83,6 +84,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new MagicWandTool(*this));
 	registerTool(new PanTool(*this));
 	registerTool(new ZoomTool(*this));
+	registerTool(new RotationTool(*this));
 	registerTool(new Inspector(*this));
 	registerTool(new TransformTool(*this));
 	DP_mask_sync_decref(ms);

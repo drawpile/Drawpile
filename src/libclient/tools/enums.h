@@ -51,6 +51,13 @@ enum class EraserAction {
 #endif
 };
 
+enum class RotationMode {
+	Normal,
+	NoSnap,
+	Discrete,
+	Count,
+};
+
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(tools::Capabilities)

@@ -101,7 +101,9 @@ public:
 	void rotateStepClockwise();
 	void rotateStepClockwiseCursor();
 	void rotateStepCounterClockwise();
-	void rotateStepCounterClockwiseCursor();
+	void resetRotationTool(int rotationMode);
+	void
+	moveRotationTool(const QPoint &point, const QPoint &lastPoint, bool invert);
 	void setFlip(bool flip);
 	void setMirror(bool mirror);
 
@@ -306,6 +308,10 @@ private:
 
 	void setDrag(const SetDragParams &params);
 	void moveDrag(const QPoint &point);
+	void dragRotate(
+		CanvasShortcuts::Action action, const QPoint &point,
+		const QPoint &lastPoint, bool inverted, qreal &snapRotation,
+		qreal &discreteRotation);
 	void dragAdjust(int type, int delta, qreal acceleration);
 	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
@@ -499,6 +505,10 @@ private:
 	QPointF m_dragCanvasPoint;
 	qreal m_dragDiscreteRotation = 0.0;
 	qreal m_dragSnapRotation = 0.0;
+	CanvasShortcuts::Action m_rotationToolAction =
+		CanvasShortcuts::CANVAS_ROTATE;
+	qreal m_rotationToolDiscreteRotation = 0.0;
+	qreal m_rotationToolSnapRotation = 0.0;
 	int m_zoomWheelDelta = 0;
 
 	bool m_pickingColor = false;

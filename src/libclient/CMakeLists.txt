@@ -178,6 +178,8 @@ target_sources(dpclient PRIVATE
 	tools/magicwand.h
 	tools/pan.cpp
 	tools/pan.h
+	tools/rotation.cpp
+	tools/rotation.h
 	tools/selection.cpp
 	tools/selection.h
 	tools/shapetools.cpp

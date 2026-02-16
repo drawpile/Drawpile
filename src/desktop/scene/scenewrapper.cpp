@@ -325,6 +325,12 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::zoomRequested, m_view,
 		&CanvasView::zoomTo);
 	connect(
+		toolCtrl, &tools::ToolController::resetRotationToolRequested, m_view,
+		&CanvasView::resetRotationTool);
+	connect(
+		toolCtrl, &tools::ToolController::moveRotationToolRequested, m_view,
+		&CanvasView::moveRotationTool);
+	connect(
 		toolCtrl, &tools::ToolController::foregroundColorChanged, m_scene,
 		&CanvasScene::setForegroundColor);
 	connect(

@@ -54,6 +54,7 @@ extern "C" {
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/lassofillsettings.h"
+#include "desktop/toolwidgets/rotationsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/utils/actionbuilder.h"
@@ -7725,6 +7726,7 @@ void MainWindow::setupActions()
 	QAction *transformtool = makeAction("tooltransform", tr("&Transform Tool")).icon("drawpile_transform").statusTip(tr("Transform selection")).noDefaultShortcut().checkable();
 	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
+	QAction *rotationtool = makeAction("toolrotation", tr("Rotation")).icon("drawpile_rotate").statusTip(tr("Rotate the canvas view")).shortcut("Shift+R").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
 
 	// clang-format on
@@ -7746,6 +7748,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(transformtool);
 	m_drawingtools->addAction(pantool);
 	m_drawingtools->addAction(zoomtool);
+	m_drawingtools->addAction(rotationtool);
 	m_drawingtools->addAction(inspectortool);
 
 	m_deselecttools = new QActionGroup(this);
@@ -8000,6 +8003,8 @@ void MainWindow::setupActions()
 		layerAutomaticAlphaPreserve, maskselection);
 	m_dockToolSettings->gradientSettings()->setActions(
 		layerAutomaticAlphaPreserve);
+	m_dockToolSettings->rotationSettings()->setActions(
+		rotateccw, rotateorig, rotatecw);
 	m_dockBrushPalette->setActions(
 		nextPreset, previousPreset, nextTag, previousTag);
 	// clang-format off

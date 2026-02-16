@@ -12,6 +12,7 @@
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/lassofillsettings.h"
 #include "desktop/toolwidgets/pansettings.h"
+#include "desktop/toolwidgets/rotationsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
@@ -140,6 +141,11 @@ struct ToolSettings::Private {
 		pages[tools::Tool::PAN] = {
 			QSharedPointer<tools::ToolSettings>(new tools::PanSettings(ctrl)),
 			"pan", QIcon::fromTheme("hand"), QApplication::tr("Pan")};
+		pages[tools::Tool::ROTATION] = {
+			QSharedPointer<tools::ToolSettings>(
+				new tools::RotationSettings(ctrl)),
+			"pan", QIcon::fromTheme("drawpile_rotate_right"),
+			QApplication::tr("Rotation")};
 		pages[tools::Tool::ZOOM] = {
 			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
 			"zoom", QIcon::fromTheme("edit-find"), QApplication::tr("Zoom")};
@@ -408,6 +414,12 @@ tools::PanSettings *ToolSettings::panSettings()
 {
 	return static_cast<tools::PanSettings *>(
 		getToolSettingsPage(tools::Tool::PAN));
+}
+
+tools::RotationSettings *ToolSettings::rotationSettings()
+{
+	return static_cast<tools::RotationSettings *>(
+		getToolSettingsPage(tools::Tool::ROTATION));
 }
 
 tools::SelectionSettings *ToolSettings::selectionSettings()

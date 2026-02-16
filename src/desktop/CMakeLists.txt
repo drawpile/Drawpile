@@ -318,6 +318,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/lassofillsettings.h
 	toolwidgets/pansettings.cpp
 	toolwidgets/pansettings.h
+	toolwidgets/rotationsettings.cpp
+	toolwidgets/rotationsettings.h
 	toolwidgets/selectionsettings.cpp
 	toolwidgets/selectionsettings.h
 	toolwidgets/toolsettings.cpp

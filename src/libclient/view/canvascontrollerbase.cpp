@@ -388,6 +388,35 @@ void CanvasControllerBase::rotateStepCounterClockwise()
 	setRotation(rotation() - ROTATION_STEP);
 }
 
+void CanvasControllerBase::resetRotationTool(int rotationMode)
+{
+	switch(rotationMode) {
+	case int(tools::RotationMode::Normal):
+		m_rotationToolAction = CanvasShortcuts::CANVAS_ROTATE;
+		break;
+	case int(tools::RotationMode::NoSnap):
+		m_rotationToolAction = CanvasShortcuts::CANVAS_ROTATE_NO_SNAP;
+		break;
+	case int(tools::RotationMode::Discrete):
+		m_rotationToolAction = CanvasShortcuts::CANVAS_ROTATE_DISCRETE;
+		break;
+	default:
+		qWarning("Unknown rotation mode %d", rotationMode);
+		m_rotationToolAction = CanvasShortcuts::CANVAS_ROTATE;
+		break;
+	}
+	m_rotationToolDiscreteRotation = 0.0;
+	m_rotationToolSnapRotation = rotation();
+}
+
+void CanvasControllerBase::moveRotationTool(
+	const QPoint &point, const QPoint &lastPoint, bool invert)
+{
+	dragRotate(
+		m_rotationToolAction, point, lastPoint, invert,
+		m_rotationToolSnapRotation, m_rotationToolDiscreteRotation);
+}
+
 void CanvasControllerBase::setFlip(bool flip)
 {
 	if(flip != m_flip) {
@@ -2004,34 +2033,11 @@ void CanvasControllerBase::moveDrag(const QPoint &point)
 		break;
 	case CanvasShortcuts::CANVAS_ROTATE:
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP: {
-		QSizeF halfSize = viewSizeF() / 2.0;
-		qreal hw = halfSize.width();
-		qreal hh = halfSize.height();
-		qreal a1 = qAtan2(hw - m_dragLastPoint.x(), hh - m_dragLastPoint.y());
-		qreal a2 = qAtan2(hw - point.x(), hh - point.y());
-		qreal ad = qRadiansToDegrees(a1 - a2);
-		qreal r = m_dragInverted ? -ad : ad;
-		if(m_dragAction == CanvasShortcuts::CANVAS_ROTATE) {
-			m_dragSnapRotation += r;
-			setRotationSnap(m_dragSnapRotation);
-		} else if(m_dragAction == CanvasShortcuts::CANVAS_ROTATE_DISCRETE) {
-			m_dragDiscreteRotation += r;
-			qreal discrete = m_dragDiscreteRotation / DISCRETE_ROTATION_STEP;
-			if(discrete >= 1.0) {
-				int steps = qFloor(discrete);
-				m_dragDiscreteRotation -= steps * DISCRETE_ROTATION_STEP;
-				rotateByDiscreteSteps(steps);
-			} else if(discrete <= -1.0) {
-				int steps = qCeil(discrete);
-				m_dragDiscreteRotation += steps * -DISCRETE_ROTATION_STEP;
-				rotateByDiscreteSteps(steps);
-			}
-		} else {
-			setRotation(rotation() + r);
-		}
+	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
+		dragRotate(
+			m_dragAction, point, m_dragLastPoint, m_dragInverted,
+			m_dragSnapRotation, m_dragDiscreteRotation);
 		break;
-	}
 	case CanvasShortcuts::CANVAS_ZOOM:
 		if(deltaY != 0) {
 			qreal delta = qBound(-1.0, deltaY / 100.0, 1.0);
@@ -2066,6 +2072,38 @@ void CanvasControllerBase::moveDrag(const QPoint &point)
 	}
 
 	m_dragLastPoint = point;
+}
+
+void CanvasControllerBase::dragRotate(
+	CanvasShortcuts::Action action, const QPoint &point,
+	const QPoint &lastPoint, bool inverted, qreal &snapRotation,
+	qreal &discreteRotation)
+{
+	QSizeF halfSize = viewSizeF() / 2.0;
+	qreal hw = halfSize.width();
+	qreal hh = halfSize.height();
+	qreal a1 = qAtan2(hw - lastPoint.x(), hh - lastPoint.y());
+	qreal a2 = qAtan2(hw - point.x(), hh - point.y());
+	qreal ad = qRadiansToDegrees(a1 - a2);
+	qreal r = inverted ? -ad : ad;
+	if(action == CanvasShortcuts::CANVAS_ROTATE) {
+		snapRotation += r;
+		setRotationSnap(snapRotation);
+	} else if(action == CanvasShortcuts::CANVAS_ROTATE_DISCRETE) {
+		discreteRotation += r;
+		qreal discrete = discreteRotation / DISCRETE_ROTATION_STEP;
+		if(discrete >= 1.0) {
+			int steps = qFloor(discrete);
+			discreteRotation -= steps * DISCRETE_ROTATION_STEP;
+			rotateByDiscreteSteps(steps);
+		} else if(discrete <= -1.0) {
+			int steps = qCeil(discrete);
+			discreteRotation += steps * -DISCRETE_ROTATION_STEP;
+			rotateByDiscreteSteps(steps);
+		}
+	} else {
+		setRotation(rotation() + r);
+	}
 }
 
 void CanvasControllerBase::dragAdjust(int type, int delta, qreal acceleration)

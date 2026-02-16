@@ -204,6 +204,9 @@ public slots:
 	void resetRotation();
 	void rotateStepClockwise();
 	void rotateStepCounterClockwise();
+	void resetRotationTool(int rotationMode);
+	void
+	moveRotationTool(const QPoint &point, const QPoint &lastPoint, bool invert);
 
 	void setViewFlip(bool flip);
 	void setViewMirror(bool mirror);
@@ -324,6 +327,10 @@ private:
 	void setDrag(const SetDragParams &params);
 	void dragAdjust(int type, int delta, qreal acceleration);
 	void moveDrag(const QPoint &point);
+	void dragRotate(
+		CanvasShortcuts::Action action, const QPoint &point,
+		const QPoint &lastPoint, bool inverted, qreal &snapRotation,
+		qreal &discreteRotation);
 	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
 
@@ -466,6 +473,10 @@ private:
 	QPointF m_dragCanvasPoint;
 	qreal m_dragDiscreteRotation;
 	qreal m_dragSnapRotation = 0.0;
+	CanvasShortcuts::Action m_rotationToolAction =
+		CanvasShortcuts::CANVAS_ROTATE;
+	qreal m_rotationToolDiscreteRotation = 0.0;
+	qreal m_rotationToolSnapRotation = 0.0;
 
 	//! Previous pointer location
 	canvas::Point m_prevpoint;

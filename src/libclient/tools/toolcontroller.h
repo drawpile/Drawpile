@@ -294,6 +294,9 @@ signals:
 	void hideColorPickRequested();
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
+	void resetRotationToolRequested(int rotationMode);
+	void moveRotationToolRequested(
+		const QPoint &point, const QPoint &lastPoint, bool invert);
 	void anchorLineRequested(const QVector<QPointF> &points, int activeIndex);
 	void anchorLineActiveIndexRequested(int activeIndex);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);

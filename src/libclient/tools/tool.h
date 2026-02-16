@@ -42,6 +42,7 @@ public:
 		TRANSFORM,
 		PAN,
 		ZOOM,
+		ROTATION,
 		INSPECTOR,
 		_LASTTOOL,
 	};
