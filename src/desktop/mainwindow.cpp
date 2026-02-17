@@ -3635,7 +3635,8 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
-		m_singleSession, m_smallScreenMode, getStartDialogOrThis());
+		m_singleSession, m_smallScreenMode,
+		searchAction(QStringLiteral("autorecord")), getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 #if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
 	connect(

@@ -29,7 +29,8 @@
 namespace dialogs {
 
 SettingsDialog::SettingsDialog(
-	bool singleSession, bool smallScreenMode, QWidget *parent)
+	bool singleSession, bool smallScreenMode, QAction *autorecordAction,
+	QWidget *parent)
 	: QDialog(parent)
 	, m_cfg(dpAppConfig())
 {
@@ -97,7 +98,7 @@ SettingsDialog::SettingsDialog(
 			{"tools", tr("Tools"), new settingsdialog::Tools(m_cfg, this),
 			 true},
 			{"document-open", tr("Files"),
-			 new settingsdialog::Files(m_cfg, this), true},
+			 new settingsdialog::Files(m_cfg, autorecordAction, this), true},
 			{"network-modem", tr("Network"),
 			 new settingsdialog::Network(m_cfg, this), true},
 			{"dialog-information", tr("Notifications"),

@@ -3,6 +3,7 @@
 #define DESKTOP_DIALOGS_SETTINGSDIALOG_H
 #include <QDialog>
 
+class QAction;
 class QButtonGroup;
 class QDialogButtonBox;
 class QStackedWidget;
@@ -21,7 +22,8 @@ class SettingsDialog final : public QDialog {
 	Q_OBJECT
 public:
 	SettingsDialog(
-		bool singleSession, bool smallScreenMode, QWidget *parent = nullptr);
+		bool singleSession, bool smallScreenMode, QAction *autorecordAction,
+		QWidget *parent = nullptr);
 	~SettingsDialog() override;
 
 	void initiateFixShortcutConflicts();

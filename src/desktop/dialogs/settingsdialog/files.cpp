@@ -3,6 +3,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
+#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
@@ -14,8 +15,9 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Files::Files(config::Config *cfg, QWidget *parent)
+Files::Files(config::Config *cfg, QAction *autorecordAction, QWidget *parent)
 	: Page(parent)
+	, m_autorecordAction(autorecordAction)
 {
 	init(cfg);
 }
@@ -35,10 +37,25 @@ void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 
 void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 {
+	m_autoRecordCurrent = new QCheckBox(tr("Enable for the current session"));
+	if(m_autorecordAction) {
+		m_autoRecordCurrent->setEnabled(m_autorecordAction);
+		m_autoRecordCurrent->setChecked(m_autorecordAction->isChecked());
+		connect(
+			m_autoRecordCurrent, &QCheckBox::clicked, m_autorecordAction,
+			&QAction::trigger);
+		connect(
+			m_autorecordAction, &QAction::changed, this,
+			&Files::updateAutoRecordCurrent);
+	} else {
+		m_autoRecordCurrent->setEnabled(false);
+	}
+	form->addRow(tr("Autosave:"), m_autoRecordCurrent);
+
 	QCheckBox *autoRecordHost =
 		new QCheckBox(tr("When offline or hosting sessions"));
 	CFG_BIND_CHECKBOX(cfg, AutoRecordHost, autoRecordHost);
-	form->addRow(tr("Autosave:"), autoRecordHost);
+	form->addRow(nullptr, autoRecordHost);
 
 	QCheckBox *autoRecordJoin = new QCheckBox(tr("When joining sessions"));
 	CFG_BIND_CHECKBOX(cfg, AutoRecordJoin, autoRecordJoin);
@@ -120,6 +137,12 @@ void Files::initLogging(config::Config *cfg, QFormLayout *form)
 	QCheckBox *enableLogging = new QCheckBox(tr("Write debugging log to file"));
 	CFG_BIND_CHECKBOX(cfg, WriteLogFile, enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);
+}
+
+void Files::updateAutoRecordCurrent()
+{
+	m_autoRecordCurrent->setEnabled(m_autorecordAction->isEnabled());
+	m_autoRecordCurrent->setChecked(m_autorecordAction->isChecked());
 }
 
 }
