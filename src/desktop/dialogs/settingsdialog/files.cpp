@@ -89,6 +89,8 @@ void Files::initFormats(config::Config *cfg, QFormLayout *form)
 		tr("OpenRaster (.ora)"), QStringLiteral("ora"));
 	preferredSaveFormat->addItem(
 		tr("Drawpile Canvas (.dpcs)"), QStringLiteral("dpcs"));
+	preferredSaveFormat->addItem(
+		tr("Drawpile Project (.dppr)"), QStringLiteral("dppr"));
 	CFG_BIND_COMBOBOX_USER_STRING(
 		cfg, PreferredSaveFormat, preferredSaveFormat);
 	form->addRow(tr("Preferred save format:"), preferredSaveFormat);
@@ -104,6 +106,8 @@ void Files::initFormats(config::Config *cfg, QFormLayout *form)
 		tr("OpenRaster (.ora)"), QStringLiteral("ora"));
 	preferredExportFormat->addItem(
 		tr("Drawpile Canvas (.dpcs)"), QStringLiteral("dpcs"));
+	preferredExportFormat->addItem(
+		tr("Drawpile Project (.dppr)"), QStringLiteral("dppr"));
 	preferredExportFormat->addItem(
 		tr("Photoshop Document (.psd)"), QStringLiteral("psd"));
 	CFG_BIND_COMBOBOX_USER_STRING(
