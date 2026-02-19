@@ -216,8 +216,19 @@ void LayerProperties::setControlsEnabled(bool enabled)
 	for(QWidget *widget : widgets) {
 		widget->setEnabled(enabled);
 	}
+
 	for(QAbstractButton *button : m_colorButtons->buttons()) {
 		button->setEnabled(enabled);
+	}
+
+	QWidget *compatibilityWidgets[] = {
+		m_ui->alphaBlend,
+		m_ui->alphaPreserve,
+		m_ui->clip,
+	};
+	bool compatibilityEnabled = enabled && !m_compatibilityMode;
+	for(QWidget *widget : compatibilityWidgets) {
+		widget->setEnabled(compatibilityEnabled);
 	}
 }
 
@@ -230,9 +241,10 @@ void LayerProperties::setCompatibilityMode(bool compatibilityMode)
 {
 	if(m_compatibilityMode != compatibilityMode) {
 		m_compatibilityMode = compatibilityMode;
-		m_ui->alphaBlend->setEnabled(!compatibilityMode);
-		m_ui->alphaPreserve->setEnabled(!compatibilityMode);
-		m_ui->clip->setEnabled(!compatibilityMode);
+		bool enabled = m_controlsEnabled && !compatibilityMode;
+		m_ui->alphaBlend->setEnabled(enabled);
+		m_ui->alphaPreserve->setEnabled(enabled);
+		m_ui->clip->setEnabled(enabled);
 		updateBlendMode(
 			m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
 			m_item.clip, m_automaticAlphaPreserve, compatibilityMode);
@@ -303,7 +315,7 @@ void LayerProperties::updateAlphaBasedOnBlendMode(int index)
 void LayerProperties::updateAlphaTogglesBasedOnBlendMode(int index)
 {
 	int blendMode = m_ui->blendMode->itemData(index).toInt();
-	bool enabled = blendMode != -1 && !m_compatibilityMode;
+	bool enabled = blendMode != -1 && m_controlsEnabled && !m_compatibilityMode;
 	m_ui->alphaBlend->setEnabled(enabled);
 	m_ui->alphaPreserve->setEnabled(enabled);
 	m_ui->clip->setEnabled(enabled);
