@@ -59,6 +59,7 @@ extern "C" {
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/utils/actionbuilder.h"
 #include "desktop/utils/connections.h"
+#include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/view/lock.h"

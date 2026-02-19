@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef MYPAINTINPUT_H
-#define MYPAINTINPUT_H
-#include "desktop/utils/qtguicompat.h"
+#ifndef DESKTOP_WIDGETS_MYPAINTINPUT_H
+#define DESKTOP_WIDGETS_MYPAINTINPUT_H
 #include "libclient/brushes/brush.h"
 #include <QWidget>
 #include <mypaint-brush-settings.h>
@@ -40,10 +38,8 @@ signals:
 	void controlPointsChanged();
 	void curveWidgetsConstructed();
 
-private slots:
-	void changeBoxState(compat::CheckBoxState state);
-
 private:
+	void handleBoxClicked(bool checked);
 	void constructCurveWidgets();
 
 	KisCubicCurve getCurve() const;

@@ -40,8 +40,8 @@ MyPaintInput::MyPaintInput(
 	widgetLayout->addWidget(m_box);
 	m_box->setToolTip(inputDescription);
 	connect(
-		m_box, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
-		&MyPaintInput::changeBoxState, Qt::QueuedConnection);
+		m_box, &QCheckBox::clicked, this,
+		&MyPaintInput::handleBoxClicked, Qt::QueuedConnection);
 
 	// Constructing these widgets in large volumes is slow and make the brush
 	// setting dialog take a long time to appear, so we lazily initialize them.
@@ -118,9 +118,9 @@ void MyPaintInput::setMyPaintCurve(const brushes::MyPaintCurve &curve)
 	}
 }
 
-void MyPaintInput::changeBoxState(compat::CheckBoxState state)
+void MyPaintInput::handleBoxClicked(bool checked)
 {
-	setCurveVisible(state != Qt::Unchecked);
+	setCurveVisible(checked);
 	emit controlPointsChanged();
 }
 
