@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "save_video.h"
+#include "process.h"
 #include "save.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpcommon/output.h>
+#include <dpcommon/vector.h>
 #include <dpengine/canvas_state.h>
 #include <dpengine/image.h>
 #include <dpengine/view_mode.h>
@@ -37,16 +39,21 @@ typedef const uint8_t *DP_WriteAvioPacketBuf;
 
 
 static bool is_destination_ok(DP_SaveVideoDestination destination,
-                              void *path_or_output)
+                              void *destination_param)
 {
     switch (destination) {
     case DP_SAVE_VIDEO_DESTINATION_PATH: {
-        const char *path = path_or_output;
+        const char *path = destination_param;
         return path && path[0] != '\0';
     }
     case DP_SAVE_VIDEO_DESTINATION_OUTPUT: {
-        DP_Output *output = path_or_output;
+        DP_Output *output = destination_param;
         return output != NULL;
+    }
+    case DP_SAVE_VIDEO_DESTINATION_FFMPEG: {
+        const DP_SaveVideoFfmpegParams *ffmpeg = destination_param;
+        return ffmpeg && ffmpeg->program && ffmpeg->program[0] != '\0'
+            && ffmpeg->output && ffmpeg->output[0] != '\0';
     }
     default:
         return false;
@@ -151,10 +158,8 @@ static int get_format_loops(int format, int loops)
     }
 }
 
-static int get_format_dimension(int format, int target_dimension,
-                                int input_dimension)
+static int get_format_dimension(int format, int dimension)
 {
-    int dimension = target_dimension > 0 ? target_dimension : input_dimension;
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         // H264 dimensions must be divisible by 2.
@@ -470,7 +475,7 @@ static DP_SaveResult filter_frame(AVCodecContext *codec_context,
     }
 }
 
-DP_SaveResult DP_save_video(DP_SaveVideoParams params)
+static DP_SaveResult save_video_libav(DP_SaveVideoParams params)
 {
     DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
     AVCodecContext *codec_context = NULL;
@@ -490,38 +495,23 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
     AVPacket *packet = NULL;
     struct SwsContext *sws_context = NULL;
 
-    const char *format_name;
-    enum AVCodecID codec_id;
-    bool params_ok =
-        is_destination_ok(params.destination, params.path_or_output)
-        && params.width > 0 && params.height > 0
-        && (format_name = get_format_name(params.format))
-        && (codec_id = get_format_codec_id(params.format)) != AV_CODEC_ID_NONE;
-    if (!params_ok) {
-        DP_error_set("Invalid arguments");
-        result = DP_SAVE_RESULT_BAD_ARGUMENTS;
+    const char *format_name = get_format_name(params.format);
+    if (!format_name) {
+        DP_error_set("Unknown format");
+        result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
         goto cleanup;
     }
 
-    int output_width = params.width;
-    int output_height = params.height;
-    if (!check_format_dimensions(output_width, output_height, params.format)) {
-        result = DP_SAVE_RESULT_BAD_DIMENSIONS;
+    enum AVCodecID codec_id = get_format_codec_id(params.format);
+    if (codec_id == AV_CODEC_ID_NONE) {
+        DP_error_set("Unknown codec");
+        result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
         goto cleanup;
     }
 
-    if (params.palette_data
-        && params.palette_size != DP_SAVE_VIDEO_GIF_PALETTE_BYTES) {
-        DP_error_set("Incorrect palette size, got %zu, should be %zu",
-                     params.palette_size, DP_SAVE_VIDEO_GIF_PALETTE_BYTES);
-        result = DP_SAVE_RESULT_BAD_ARGUMENTS;
-        goto cleanup;
-    }
-
+    int output_width = get_format_dimension(params.format, params.width);
+    int output_height = get_format_dimension(params.format, params.height);
     double framerate = params.framerate;
-    if (framerate <= 0.0 || !isfinite(framerate)) {
-        framerate = 24.0;
-    }
 
     const AVOutputFormat *output_format =
         av_guess_format(format_name, NULL, NULL);
@@ -557,7 +547,7 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
     int err = avformat_alloc_output_context2(
         &format_context, REMOVE_CONST(output_format), NULL,
         params.destination == DP_SAVE_VIDEO_DESTINATION_PATH
-            ? params.path_or_output
+            ? params.destination_param
             : NULL);
     if (err != 0) {
         DP_error_set("Error creating output context: %s", av_err2str(err));
@@ -789,14 +779,14 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
     }
 
     if (params.destination == DP_SAVE_VIDEO_DESTINATION_PATH) {
-        output = DP_file_output_new_from_path(params.path_or_output);
+        output = DP_file_output_new_from_path(params.destination_param);
         if (!output) {
             result = DP_SAVE_RESULT_OPEN_ERROR;
             goto cleanup;
         }
     }
     else {
-        output = params.path_or_output;
+        output = params.destination_param;
     }
 
     unsigned char *buffer = av_malloc(BUFFER_SIZE);
@@ -1051,6 +1041,299 @@ cleanup:
     return result;
 }
 
+static void argv_init(DP_Vector *args)
+{
+    DP_VECTOR_INIT_TYPE(args, const char *, 32);
+}
+
+static void argv_dispose(DP_Vector *args)
+{
+    DP_vector_dispose(args);
+}
+
+static void argv_push(DP_Vector *args, const char *s)
+{
+    DP_VECTOR_PUSH_TYPE(args, const char *, s);
+}
+
+static bool push_format_ffmpeg_args(DP_Vector *args, int format)
+{
+    switch (format) {
+    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
+        if (args) {
+            argv_push(args, "-c:v");
+            argv_push(args, "libvpx-vp9");
+            argv_push(args, "-pix_fmt");
+            argv_push(args, "yuv420p");
+            argv_push(args, "-crf");
+            argv_push(args, "20");
+            argv_push(args, "-b:v");
+            argv_push(args, "0");
+            argv_push(args, "-an");
+            argv_push(args, "-f");
+            argv_push(args, "mp4");
+        }
+        return true;
+    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
+        if (args) {
+            argv_push(args, "-c:v");
+            argv_push(args, "libvpx");
+            argv_push(args, "-pix_fmt");
+            argv_push(args, "yuv420p");
+            argv_push(args, "-crf");
+            argv_push(args, "15");
+            argv_push(args, "-b:v");
+            argv_push(args, "1M");
+            argv_push(args, "-an");
+            argv_push(args, "-f");
+            argv_push(args, "webm");
+        }
+        return true;
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+        if (args) {
+            argv_push(args, "-c:v");
+            argv_push(args, "libx264");
+            argv_push(args, "-pix_fmt");
+            argv_push(args, "yuv420p");
+            argv_push(args, "-crf");
+            argv_push(args, "19");
+            argv_push(args, "-tune");
+            argv_push(args, "animation");
+            argv_push(args, "-an");
+            argv_push(args, "-f");
+            argv_push(args, "mp4");
+        }
+        return true;
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
+        if (args) {
+            argv_push(args, "-c:v");
+            argv_push(args, "libsvtav1");
+            argv_push(args, "-pix_fmt");
+            argv_push(args, "yuv420p");
+            argv_push(args, "-crf");
+            argv_push(args, "23");
+            argv_push(args, "-b:v");
+            argv_push(args, "0");
+            argv_push(args, "-an");
+            argv_push(args, "-f");
+            argv_push(args, "mp4");
+        }
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool is_valid_ffmpeg_format(int format)
+{
+    return push_format_ffmpeg_args(NULL, format);
+}
+
+bool DP_save_video_format_supported_ffmpeg(int format)
+{
+    return DP_process_supported() && is_valid_ffmpeg_format(format);
+}
+
+static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
+{
+    DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
+    DP_Vector args = DP_VECTOR_NULL;
+    char *dimensions_arg = NULL;
+    char *framerate_arg = NULL;
+    DP_Process *process = NULL;
+    struct SwsContext *sws_context = NULL;
+    unsigned char *output_buffer = NULL;
+
+    if (!is_valid_ffmpeg_format(params.format)) {
+        DP_error_set("Unsupported ffmpeg format");
+        result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
+        goto cleanup;
+    }
+
+    if (!DP_process_supported()) {
+        DP_error_set("Process spawning not supported");
+        result = DP_SAVE_RESULT_BAD_ARGUMENTS;
+        goto cleanup;
+    }
+
+    int output_width = get_format_dimension(params.format, params.width);
+    int output_height = get_format_dimension(params.format, params.height);
+
+    dimensions_arg = DP_format("%dx%d", output_width, output_height);
+    framerate_arg = DP_format("%f", params.framerate);
+
+    DP_SaveVideoFfmpegParams *ffmpeg = params.destination_param;
+
+    argv_init(&args);
+    argv_push(&args, ffmpeg->program);
+    argv_push(&args, "-f");
+    argv_push(&args, "rawvideo");
+    argv_push(&args, "-pix_fmt");
+    argv_push(&args, "rgb32");
+    argv_push(&args, "-s:v");
+    argv_push(&args, dimensions_arg);
+    argv_push(&args, "-r");
+    argv_push(&args, framerate_arg);
+    argv_push(&args, "-i");
+    argv_push(&args, "pipe:0");
+
+    if (!push_format_ffmpeg_args(&args, params.format)) {
+        DP_error_set("Unhandled format for ffmpeg");
+        result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
+        goto cleanup;
+    }
+
+    if (ffmpeg->custom_args) {
+        for (int i = 0; ffmpeg->custom_args[i]; ++i) {
+            argv_push(&args, ffmpeg->custom_args[i]);
+        }
+    }
+
+    argv_push(&args, "-y");
+    argv_push(&args, ffmpeg->output);
+
+    process = DP_process_new(DP_size_to_int(args.used), args.elements);
+    if (!process) {
+        result = DP_SAVE_RESULT_INTERNAL_ERROR;
+        goto cleanup;
+    }
+
+    double last_progress = 0.0;
+    DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
+    int frame_format = get_format_pix_fmt(params.format, true);
+    size_t frame_size = DP_int_to_size(output_width)
+                      * DP_int_to_size(output_height) * (size_t)4;
+    while (params.next_frame_fn(params.user, &f)) {
+        int input_width = f.width;
+        int input_height = f.height;
+        if (input_width <= 0 || input_height <= 0 || !f.pixels) {
+            DP_error_set("Frame has no image");
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        if (f.instances < 1) {
+            DP_error_set("Frame has %d instances (should be >= 1)",
+                         f.instances);
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        const unsigned char *frame;
+        if (input_width == input_height && output_width == output_height) {
+            frame = f.pixels;
+        }
+        else {
+            sws_context = sws_getCachedContext(
+                sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
+                output_width, output_height, frame_format,
+                get_scaling_flags(params.flags, input_width, input_height,
+                                  output_width, output_height),
+                NULL, NULL, NULL);
+            if (!sws_context) {
+                DP_error_set("Failed to allocate scaling context");
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
+            if (!output_buffer) {
+                output_buffer = DP_malloc(frame_size);
+            }
+
+            DP_image_swscale_pixels_into(sws_context, f.pixels, f.width,
+                                         f.height, output_buffer, output_width,
+                                         output_height);
+            frame = output_buffer;
+        }
+
+        for (int i = 0; i < f.instances; ++i) {
+            if (!DP_process_write(process, frame_size, frame)) {
+                result = DP_SAVE_RESULT_WRITE_ERROR;
+                goto cleanup;
+            }
+        }
+
+        if (isfinite(f.progress) && f.progress >= last_progress) {
+            last_progress = DP_min_double(f.progress, 1.0);
+        }
+
+        if (!report_progress(params.progress_fn, params.user,
+                             last_progress * 0.97)) {
+            result = DP_SAVE_RESULT_CANCEL;
+            goto cleanup;
+        }
+    }
+
+    if (f.result != DP_SAVE_RESULT_SUCCESS) {
+        result = f.result;
+        goto cleanup;
+    }
+
+    DP_process_close(process);
+    do {
+        if (!report_progress(params.progress_fn, params.user, 0.99)) {
+            result = DP_SAVE_RESULT_CANCEL;
+            goto cleanup;
+        }
+    } while (DP_process_wait(process, 1000));
+
+    DP_process_free_close_wait(process);
+    process = NULL;
+
+    if (!report_progress(params.progress_fn, params.user, 1.0)) {
+        result = DP_SAVE_RESULT_CANCEL;
+        goto cleanup;
+    }
+
+cleanup:
+    DP_free(output_buffer);
+    sws_freeContext(sws_context);
+    if (process) {
+        DP_process_close(process);
+        if (!DP_process_wait(process, 10000)) {
+            DP_process_kill(process);
+        }
+        DP_process_free_close_wait(process);
+    }
+    argv_dispose(&args);
+    DP_free(framerate_arg);
+    DP_free(dimensions_arg);
+    return result;
+}
+
+DP_SaveResult DP_save_video(DP_SaveVideoParams params)
+{
+    bool params_ok =
+        is_destination_ok(params.destination, params.destination_param)
+        && params.width > 0 && params.height > 0;
+    if (!params_ok) {
+        DP_error_set("Invalid arguments");
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+
+    if (!check_format_dimensions(params.width, params.height, params.format)) {
+        return DP_SAVE_RESULT_BAD_DIMENSIONS;
+    }
+
+    if (params.palette_data
+        && params.palette_size != DP_SAVE_VIDEO_GIF_PALETTE_BYTES) {
+        DP_error_set("Incorrect palette size, got %zu, should be %zu",
+                     params.palette_size, DP_SAVE_VIDEO_GIF_PALETTE_BYTES);
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+
+    if (params.framerate <= 0.0 || !isfinite(params.framerate)) {
+        params.framerate = 24.0;
+    }
+
+    if (params.destination == DP_SAVE_VIDEO_DESTINATION_FFMPEG) {
+        return save_video_ffmpeg(params);
+    }
+    else {
+        return save_video_libav(params);
+    }
+}
+
 struct DP_SaveAnimationVideoContext {
     DP_CanvasState *cs;
     DP_Image *img;
@@ -1159,7 +1442,7 @@ DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params)
                          : params.framerate;
 
     DP_SaveResult result = DP_save_video((DP_SaveVideoParams){
-        params.destination, params.path_or_output, params.palette_data,
+        params.destination, params.destination_param, params.palette_data,
         params.palette_size, params.flags, params.format, params.width,
         params.height, framerate, save_animation_video_next_frame,
         params.progress_fn ? save_animation_progress : NULL, &c});
@@ -1200,10 +1483,12 @@ DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params)
 
     int input_width = DP_rect_width(crop);
     int input_height = DP_rect_height(crop);
-    int output_width = get_format_dimension(DP_SAVE_VIDEO_FORMAT_GIF,
-                                            params.width, input_width);
-    int output_height = get_format_dimension(DP_SAVE_VIDEO_FORMAT_GIF,
-                                             params.height, input_height);
+    int output_width =
+        get_format_dimension(DP_SAVE_VIDEO_FORMAT_GIF,
+                             params.width > 0 ? params.width : input_width);
+    int output_height =
+        get_format_dimension(DP_SAVE_VIDEO_FORMAT_GIF,
+                             params.height > 0 ? params.height : input_height);
     if (!check_format_dimensions(output_width, output_height,
                                  DP_SAVE_VIDEO_FORMAT_GIF)) {
         return DP_SAVE_RESULT_BAD_DIMENSIONS;

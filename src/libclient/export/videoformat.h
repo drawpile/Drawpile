@@ -15,4 +15,6 @@ enum class VideoFormat {
 
 bool isVideoFormatSupported(VideoFormat format);
 
+bool isVideoFormatSupportedFfmpeg(VideoFormat format);
+
 #endif

@@ -631,6 +631,38 @@ get_sws_flags_from_interpolation(DP_ImageScaleInterpolation interpolation,
 }
 #endif
 
+void DP_image_swscale_pixels_into(SwsContext *sws_context,
+                                  const void *src_pixels, int src_width,
+                                  int src_height, void *dst_pixels,
+                                  int dst_width, int dst_height)
+{
+    const uint8_t *src_data = src_pixels;
+    const int src_stride = src_width * 4;
+    uint8_t *dst_data = (uint8_t *)dst_pixels;
+    const int dst_stride = dst_width * 4;
+
+    sws_scale(sws_context, &src_data, &src_stride, 0, src_height, &dst_data,
+              &dst_stride);
+
+    // libswscale doesn't correctly scale premultiplied data, so it
+    // may end up with slight off-by-one errors. Clamp the channels.
+    long long pixel_count =
+        DP_int_to_llong(dst_width) * DP_int_to_llong(dst_height);
+    for (long long i = 0; i < pixel_count; ++i) {
+        DP_Pixel8 pixel = ((DP_Pixel8 *)dst_pixels)[i];
+        if (pixel.b > pixel.a) {
+            pixel.b = pixel.a;
+        }
+        if (pixel.g > pixel.a) {
+            pixel.g = pixel.a;
+        }
+        if (pixel.r > pixel.a) {
+            pixel.r = pixel.a;
+        }
+        ((DP_Pixel8 *)dst_pixels)[i] = pixel;
+    }
+}
+
 DP_Image *DP_image_scale_pixels(int src_width, int src_height,
                                 const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
                                 int width, int height, int interpolation)
@@ -640,40 +672,15 @@ DP_Image *DP_image_scale_pixels(int src_width, int src_height,
     if (width > 0 && height > 0) {
         if (interpolation < 0) {
 #ifdef DP_LIBSWSCALE
-            struct SwsContext *sws_context = DP_draw_context_sws_context(
+            SwsContext *sws_context = DP_draw_context_sws_context(
                 dc, src_width, src_height, width, height,
                 get_sws_flags_from_interpolation(interpolation, src_width,
                                                  src_height, width, height));
             if (sws_context) {
-                const uint8_t *src_data = (const uint8_t *)src_pixels;
-                const int src_stride = src_width * 4;
-
                 DP_Image *dst = DP_image_new(width, height);
-                DP_Pixel8 *dst_pixels = DP_image_pixels(dst);
-                uint8_t *dst_data = (uint8_t *)dst_pixels;
-                const int dst_stride = width * 4;
-
-                sws_scale(sws_context, &src_data, &src_stride, 0, src_height,
-                          &dst_data, &dst_stride);
-
-                // libswscale doesn't correctly scale premultiplied data, so it
-                // may end up with slight off-by-one errors. Clamp the channels.
-                long long pixel_count =
-                    DP_int_to_llong(width) * DP_int_to_llong(height);
-                for (long long i = 0; i < pixel_count; ++i) {
-                    DP_Pixel8 pixel = dst_pixels[i];
-                    if (pixel.b > pixel.a) {
-                        pixel.b = pixel.a;
-                    }
-                    if (pixel.g > pixel.a) {
-                        pixel.g = pixel.a;
-                    }
-                    if (pixel.r > pixel.a) {
-                        pixel.r = pixel.a;
-                    }
-                    dst_pixels[i] = pixel;
-                }
-
+                DP_image_swscale_pixels_into(sws_context, src_pixels, src_width,
+                                             src_height, DP_image_pixels(dst),
+                                             width, height);
                 return dst;
             }
             else if (interpolation == DP_IMAGE_SCALE_INTERPOLATION_NEAREST) {

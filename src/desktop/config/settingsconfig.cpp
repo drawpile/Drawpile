@@ -251,6 +251,9 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::eraseCursorChanged, this,
 		&SettingsConfig::changeEraseCursor, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::ffmpegPathChanged, this,
+		&SettingsConfig::changeFfmpegPath, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::filterClosedChanged, this,
 		&SettingsConfig::changeFilterClosed, Qt::DirectConnection);
 	connect(
@@ -801,6 +804,10 @@ SettingsConfig::SettingsConfig(
 		m_settings,
 		&desktop::settings::Settings::timelapseMaxQueueEntriesChanged, this,
 		&SettingsConfig::changeTimelapseMaxQueueEntries, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapsePreferFfmpegChanged,
+		this, &SettingsConfig::changeTimelapsePreferFfmpeg,
+		Qt::DirectConnection);
 	connect(
 		m_settings, &desktop::settings::Settings::timelapseShowAdvancedChanged,
 		this, &SettingsConfig::changeTimelapseShowAdvanced,
@@ -1525,6 +1532,16 @@ int SettingsConfig::getEraseCursor() const
 void SettingsConfig::setEraseCursor(int value)
 {
 	m_settings->setEraseCursor(value);
+}
+
+QString SettingsConfig::getFfmpegPath() const
+{
+	return m_settings->ffmpegPath();
+}
+
+void SettingsConfig::setFfmpegPath(const QString &value)
+{
+	m_settings->setFfmpegPath(value);
 }
 
 bool SettingsConfig::getFilterClosed() const
@@ -3159,6 +3176,16 @@ int SettingsConfig::getTimelapseMaxQueueEntries() const
 void SettingsConfig::setTimelapseMaxQueueEntries(int value)
 {
 	m_settings->setTimelapseMaxQueueEntries(value);
+}
+
+bool SettingsConfig::getTimelapsePreferFfmpeg() const
+{
+	return m_settings->timelapsePreferFfmpeg();
+}
+
+void SettingsConfig::setTimelapsePreferFfmpeg(bool value)
+{
+	m_settings->setTimelapsePreferFfmpeg(value);
 }
 
 bool SettingsConfig::getTimelapseShowAdvanced() const

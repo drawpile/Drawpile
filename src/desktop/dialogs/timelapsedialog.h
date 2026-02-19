@@ -84,6 +84,7 @@ private:
 	bool selectInterpolation(int interpolation);
 	int getDurationSeconds() const;
 	void setDurationSeconds(int seconds);
+	void updateFfmpeg();
 	void updateWidth(int value);
 	void updateHeight(int value);
 	void updateAspectRatio(bool checked);
@@ -102,6 +103,8 @@ private:
 	QRect getLogoRect();
 	const QImage &getLogoImage();
 
+	void showFfmpegSettings();
+	void setFfmpegPath(const QString &ffmpegPath);
 	void pickBackdropColor();
 	void pickFlashColor();
 	void pickColor(
@@ -132,6 +135,7 @@ private:
 	QWidget *m_progressPage;
 	QWidget *m_finishPage;
 	QComboBox *m_formatCombo;
+	utils::FormNote *m_ffmpegNote = nullptr;
 	QTimeEdit *m_durationEdit;
 	QSpinBox *m_widthSpinner;
 	QSpinBox *m_heightSpinner;
@@ -143,6 +147,7 @@ private:
 	utils::FormNote *m_dimensionsNote;
 	QPushButton *m_advancedButton;
 	QWidget *m_advancedWidget;
+	QCheckBox *m_ffmpegCheckBox = nullptr;
 	QComboBox *m_interpolationCombo;
 	QCheckBox *m_ownCheckBox;
 	color_widgets::ColorPreview *m_backdropPreview;
@@ -159,10 +164,12 @@ private:
 	KisSliderSpinBox *m_maxQueueEntriesSlider;
 	KisDoubleSliderSpinBox *m_framerateSlider;
 	utils::FormNote *m_framerateNote;
+	QPushButton *m_ffmpegButton = nullptr;
 	QLabel *m_progressLabel;
 	QProgressBar *m_progressBar;
 	QLabel *m_finishLabel;
 	QDialogButtonBox *m_buttons;
+	QString m_ffmpegPath;
 	TimelapseSaverRunnable *m_saver = nullptr;
 	QImage m_logoImage;
 	QSize m_fullResolution;

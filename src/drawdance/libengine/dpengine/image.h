@@ -30,6 +30,9 @@ typedef struct DP_Input DP_Input;
 typedef struct DP_Output DP_Output;
 typedef struct DP_Quad DP_Quad;
 typedef struct ZSTD_DCtx_s ZSTD_DCtx;
+#ifdef DP_LIBSWSCALE
+typedef struct SwsContext SwsContext;
+#endif
 
 // A bit larger than 8K. TODO: make this limit configurable in sessions.
 #define DP_IMAGE_TRANSFORM_MAX_AREA 35000000LL
@@ -139,6 +142,13 @@ bool DP_image_thumbnail_from_canvas_write(
     DP_CanvasState *cs, DP_DrawContext *dc_or_null, int max_width,
     int max_height, bool (*write_fn)(void *, DP_Image *, DP_Output *),
     void *user, void **out_buffer, size_t *out_size);
+
+#ifdef DP_LIBSWSCALE
+void DP_image_swscale_pixels_into(struct SwsContext *sws_context,
+                                  const void *src_pixels, int src_width,
+                                  int src_height, void *dst_pixels,
+                                  int dst_width, int dst_height);
+#endif
 
 DP_Image *DP_image_scale_pixels(int src_width, int src_height,
                                 const DP_Pixel8 *src_pixels, DP_DrawContext *dc,

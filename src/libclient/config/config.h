@@ -490,6 +490,10 @@ public:
 	virtual void setEraseCursor(int value) = 0;
 	static int defaultEraseCursor();
 
+	virtual QString getFfmpegPath() const = 0;
+	virtual void setFfmpegPath(const QString &value) = 0;
+	static QString defaultFfmpegPath();
+
 	virtual bool getFilterClosed() const = 0;
 	virtual void setFilterClosed(bool value) = 0;
 	static bool defaultFilterClosed();
@@ -1146,6 +1150,10 @@ public:
 	virtual void setTimelapseMaxQueueEntries(int value) = 0;
 	static int defaultTimelapseMaxQueueEntries();
 
+	virtual bool getTimelapsePreferFfmpeg() const = 0;
+	virtual void setTimelapsePreferFfmpeg(bool value) = 0;
+	static bool defaultTimelapsePreferFfmpeg();
+
 	virtual bool getTimelapseShowAdvanced() const = 0;
 	virtual void setTimelapseShowAdvanced(bool value) = 0;
 	static bool defaultTimelapseShowAdvanced();
@@ -1315,6 +1323,7 @@ Q_SIGNALS:
 	void changeEngineSnapshotInterval(int value);
 	void changeEngineUndoDepth(int value);
 	void changeEraseCursor(int value);
+	void changeFfmpegPath(const QString &value);
 	void changeFilterClosed(bool value);
 	void changeFilterDuplicates(bool value);
 	void changeFilterInactive(bool value);
@@ -1482,6 +1491,7 @@ Q_SIGNALS:
 	void changeTimelapseLogoScale(double value);
 	void changeTimelapseMaxDeltaSeconds(double value);
 	void changeTimelapseMaxQueueEntries(int value);
+	void changeTimelapsePreferFfmpeg(bool value);
 	void changeTimelapseShowAdvanced(bool value);
 	void changeTimelapseTimeOwnOnly(bool value);
 	void changeToolBarConfig(const QVariantHash &value);

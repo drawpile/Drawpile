@@ -183,6 +183,8 @@ SETTING_GETSET_V(
 	V1, eraseCursor, EraseCursor, "settings/erasecursor",
 	config::Config::defaultEraseCursor(), &any::get, &viewCursor::set)
 SETTING(
+	ffmpegPath, FfmpegPath, "ffmpeg/path", config::Config::defaultFfmpegPath())
+SETTING(
 	filterClosed, FilterClosed, "history/filterclosed",
 	config::Config::defaultFilterClosed())
 SETTING(
@@ -651,6 +653,9 @@ SETTING(
 	timelapseMaxQueueEntries, TimelapseMaxQueueEntries,
 	"timelapse/maxqueueentries",
 	config::Config::defaultTimelapseMaxQueueEntries())
+SETTING(
+	timelapsePreferFfmpeg, TimelapsePreferFfmpeg, "timelapse/preferffmpeg",
+	config::Config::defaultTimelapsePreferFfmpeg())
 SETTING(
 	timelapseShowAdvanced, TimelapseShowAdvanced, "timelapse/showadvanced",
 	config::Config::defaultTimelapseShowAdvanced())

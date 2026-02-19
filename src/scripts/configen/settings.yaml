@@ -518,6 +518,12 @@ settings:
     legacy_version: 1
     legacy_set: viewCursor::set
 
+  - id: ffmpegPath
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'ffmpeg/path'
+    legacy_package: 'desktop'
+
   - id: filterClosed
     type: 'bool'
     default: 'false'
@@ -1437,6 +1443,12 @@ settings:
     type: 'int'
     default: '8'
     qsettings: 'timelapse/maxqueueentries'
+    legacy_package: 'desktop'
+
+  - id: timelapsePreferFfmpeg
+    type: 'bool'
+    default: 'false'
+    qsettings: 'timelapse/preferffmpeg'
     legacy_package: 'desktop'
 
   - id: timelapseShowAdvanced

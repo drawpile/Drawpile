@@ -4,6 +4,7 @@ extern "C" {
 #include <dpmsg/messages.h>
 }
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/dialogs/ffmpegdialog.h"
 #include "desktop/dialogs/timelapsedialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
@@ -175,12 +176,33 @@ TimelapseDialog::TimelapseDialog(
 			 "dialogs::AnimationExportDialog", "WEBM Video (VP8)"),
 		 VideoFormat::WebmVp8},
 	};
+	bool anyFormatFfmpegSupported = false;
 	for(const QPair<QString, VideoFormat> &p : formats) {
-		if(isVideoFormatSupported(p.second)) {
-			int format = int(p.second);
-			m_formatCombo->addItem(p.first, format);
+		VideoFormat format = p.second;
+		bool ffmpegSupported = isVideoFormatSupportedFfmpeg(format);
+		if(ffmpegSupported) {
+			anyFormatFfmpegSupported = true;
+		}
+
+		if(ffmpegSupported || isVideoFormatSupported(format)) {
+			m_formatCombo->addItem(p.first, int(format));
 		}
 	}
+
+	if(anyFormatFfmpegSupported) {
+		m_ffmpegNote = new utils::FormNote(
+			tr("This format requires FFmpeg, click here to set it up."), false,
+			QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
+		m_ffmpegNote->hide();
+		settingsForm->addRow(nullptr, m_ffmpegNote);
+		connect(
+			m_ffmpegNote, &utils::FormNote::linkClicked, this,
+			&TimelapseDialog::showFfmpegSettings);
+	}
+
+	connect(
+		m_formatCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &TimelapseDialog::updateFfmpeg);
 
 	QHBoxLayout *durationLayout = new QHBoxLayout;
 	durationLayout->setContentsMargins(0, 0, 0, 0);
@@ -303,13 +325,31 @@ TimelapseDialog::TimelapseDialog(
 		}
 	}
 
-	utils::addFormSpacer(settingsLayout);
+	if(anyFormatFfmpegSupported) {
+		QHBoxLayout *ffmpegButtonLayout = new QHBoxLayout;
+		ffmpegButtonLayout->setContentsMargins(0, 0, 0, 0);
+		settingsLayout->addLayout(ffmpegButtonLayout);
+
+		m_ffmpegButton = new QPushButton(
+			QIcon::fromTheme(QStringLiteral("kdenlive-show-video")), QString());
+		utils::setWidgetRetainSizeWhenHidden(m_ffmpegButton, true);
+		m_ffmpegButton->setFlat(true);
+		m_ffmpegButton->hide();
+		ffmpegButtonLayout->addWidget(m_ffmpegButton);
+		connect(
+			m_ffmpegButton, &QPushButton::clicked, this,
+			&TimelapseDialog::showFfmpegSettings);
+
+		ffmpegButtonLayout->addStretch();
+	} else {
+		utils::addFormSpacer(settingsLayout);
+	}
 
 	QHBoxLayout *advancedButtonLayout = new QHBoxLayout;
 	advancedButtonLayout->setContentsMargins(0, 0, 0, 0);
 	settingsLayout->addLayout(advancedButtonLayout);
 
-	m_advancedButton = new QPushButton(tr("Advanced Settings"));
+	m_advancedButton = new QPushButton(tr("Advanced settings"));
 	m_advancedButton->setFlat(true);
 	advancedButtonLayout->addWidget(m_advancedButton);
 	connect(
@@ -326,6 +366,14 @@ TimelapseDialog::TimelapseDialog(
 
 	QFormLayout *advancedForm = new QFormLayout(m_advancedWidget);
 	advancedForm->setContentsMargins(0, 0, 0, 0);
+
+	if(anyFormatFfmpegSupported) {
+		m_ffmpegCheckBox = new QCheckBox(tr("Use FFmpeg if available"));
+		advancedForm->addRow(tr("Encoder:"), m_ffmpegCheckBox);
+		connect(
+			m_ffmpegCheckBox, &QCheckBox::clicked, this,
+			&TimelapseDialog::updateFfmpeg);
+	}
 
 	QPair<QString, int> interpolationPairs[] = {
 		//: Image scaling option that picks an algorithm automatically.
@@ -537,6 +585,7 @@ TimelapseDialog::TimelapseDialog(
 	updateCurrentResolution();
 	updateAnimation();
 	loadSettings();
+	updateFfmpeg();
 }
 
 void TimelapseDialog::setInputPath(const QString &inputPath)
@@ -548,8 +597,29 @@ void TimelapseDialog::setInputPath(const QString &inputPath)
 void TimelapseDialog::accept()
 {
 	if(!m_saver) {
-		saveSettings();
 		int format = m_formatCombo->currentData().toInt();
+
+		bool useFfmpeg;
+		if(isVideoFormatSupported(VideoFormat(format))) {
+			useFfmpeg = m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked() &&
+						!m_ffmpegPath.isEmpty();
+		} else {
+			useFfmpeg = true;
+		}
+
+		if(useFfmpeg & m_ffmpegPath.isEmpty()) {
+			QMessageBox *box = utils::showQuestion(
+				this, tr("FFmpeg"),
+				tr("The selected format requires FFmpeg. Do you want to set it "
+				   "up now?"));
+			connect(
+				box, &QMessageBox::accepted, this,
+				&TimelapseDialog::showFfmpegSettings);
+			return;
+		}
+
+		saveSettings();
+
 		QString outputPath = choosePath(format);
 		if(!outputPath.isEmpty()) {
 			bool lingerAnimation = m_animationResultCheckBox &&
@@ -601,8 +671,9 @@ void TimelapseDialog::accept()
 
 			const config::Config *cfg = dpAppConfig();
 			m_saver = new TimelapseSaverRunnable(
-				m_canvasState, &m_vmf, outputPath, m_inputPath, format,
-				m_widthSpinner->value(), m_heightSpinner->value(),
+				m_canvasState, &m_vmf, useFfmpeg ? m_ffmpegPath : QString(),
+				outputPath, m_inputPath, format, m_widthSpinner->value(),
+				m_heightSpinner->value(),
 				m_interpolationCombo->currentData().toInt(),
 				m_cropCheckBox->isChecked() ? m_crop : QRect(),
 				m_backdropPreview->color(), cfg->getCheckerColor1(),
@@ -760,6 +831,10 @@ void TimelapseDialog::resetToDefaultSettings()
 	if(!checkLogoLocation(config::Config::defaultTimelapseLogoLocation())) {
 		checkLogoLocation(int(LogoLocation::Default));
 	}
+	if(m_ffmpegCheckBox) {
+		m_ffmpegCheckBox->setChecked(
+			config::Config::defaultTimelapsePreferFfmpeg());
+	}
 	if(!selectInterpolation(config::Config::defaultTimelapseInterpolation())) {
 		m_interpolationCombo->setCurrentIndex(0);
 	}
@@ -801,6 +876,7 @@ void TimelapseDialog::resetToDefaultSettings()
 	updateLogoRect();
 	updateLogoOpacity(m_logoOpacitySlider->value());
 	updateFramerateNote();
+	updateFfmpeg();
 }
 
 void TimelapseDialog::resetDefaultExportFormat()
@@ -811,9 +887,17 @@ void TimelapseDialog::resetDefaultExportFormat()
 		int(VideoFormat::Mp4Vp9),
 		int(VideoFormat::WebmVp8),
 	};
+	// Pick a format that doesn't require ffmpeg if possible.
+	for(int format : formats) {
+		if(isVideoFormatSupported(VideoFormat(format)) &&
+		   selectExportFormat(format)) {
+			return;
+		}
+	}
+	// Otherwise fall back to whatever we are able to use.
 	for(int format : formats) {
 		if(selectExportFormat(format)) {
-			break;
+			return;
 		}
 	}
 }
@@ -821,6 +905,7 @@ void TimelapseDialog::resetDefaultExportFormat()
 void TimelapseDialog::loadSettings()
 {
 	config::Config *cfg = dpAppConfig();
+	m_ffmpegPath = cfg->getFfmpegPath();
 	if(!selectExportFormat(cfg->getTimelapseExportFormat())) {
 		resetDefaultExportFormat();
 	}
@@ -829,6 +914,9 @@ void TimelapseDialog::loadSettings()
 		checkLogoLocation(int(LogoLocation::Default));
 	}
 	updateAdvanced(cfg->getTimelapseShowAdvanced());
+	if(m_ffmpegCheckBox) {
+		m_ffmpegCheckBox->setChecked(cfg->getTimelapsePreferFfmpeg());
+	}
 	if(!selectInterpolation(cfg->getTimelapseLogoLocation())) {
 		m_interpolationCombo->setCurrentIndex(0);
 	}
@@ -870,6 +958,9 @@ void TimelapseDialog::saveSettings()
 	cfg->setTimelapseDurationSeconds(getDurationSeconds());
 	cfg->setTimelapseLogoLocation(m_logoLocationGroup->checkedId());
 	cfg->setTimelapseShowAdvanced(m_advancedWidget->isEnabled());
+	if(m_ffmpegCheckBox) {
+		cfg->setTimelapsePreferFfmpeg(m_ffmpegCheckBox->isChecked());
+	}
 	cfg->setTimelapseInterpolation(m_interpolationCombo->currentData().toInt());
 	cfg->setTimelapseTimeOwnOnly(m_ownCheckBox->isChecked());
 	cfg->setTimelapseBackdropColor(m_backdropPreview->color());
@@ -934,6 +1025,27 @@ int TimelapseDialog::getDurationSeconds() const
 void TimelapseDialog::setDurationSeconds(int seconds)
 {
 	m_durationEdit->setTime(QTime(0, 0).addSecs(seconds));
+}
+
+void TimelapseDialog::updateFfmpeg()
+{
+	if(m_ffmpegNote || m_ffmpegButton) {
+		int format = m_formatCombo->currentData().toInt();
+		bool needsFfmpeg = !isVideoFormatSupported(VideoFormat(format));
+		if(m_ffmpegNote) {
+			m_ffmpegNote->setVisible(needsFfmpeg && m_ffmpegPath.isEmpty());
+		}
+		if(m_ffmpegButton) {
+			if(m_ffmpegPath.isEmpty()) {
+				m_ffmpegButton->setText(tr("Set up FFmpeg"));
+			} else {
+				m_ffmpegButton->setText(tr("FFmpeg settings"));
+			}
+			m_ffmpegButton->setVisible(
+				needsFfmpeg ||
+				(m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked()));
+		}
+	}
 }
 
 void TimelapseDialog::updateWidth(int value)
@@ -1111,6 +1223,33 @@ const QImage &TimelapseDialog::getLogoImage()
 		m_timelapsePreview->setLogoImage(m_logoImage);
 	}
 	return m_logoImage;
+}
+
+void TimelapseDialog::showFfmpegSettings()
+{
+	QString objectName = QStringLiteral("ffmpegdialog");
+	FfmpegDialog *dlg =
+		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new FfmpegDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
+		connect(
+			dlg, &FfmpegDialog::ffmpegPathAccepted, this,
+			&TimelapseDialog::setFfmpegPath);
+		dlg->show();
+	}
+}
+
+void TimelapseDialog::setFfmpegPath(const QString &ffmpegPath)
+{
+	if(ffmpegPath != m_ffmpegPath) {
+		m_ffmpegPath = ffmpegPath;
+		updateFfmpeg();
+	}
 }
 
 void TimelapseDialog::pickBackdropColor()

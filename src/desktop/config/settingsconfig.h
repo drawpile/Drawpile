@@ -223,6 +223,9 @@ public:
 	int getEraseCursor() const override;
 	void setEraseCursor(int value) override;
 
+	QString getFfmpegPath() const override;
+	void setFfmpegPath(const QString &value) override;
+
 	bool getFilterClosed() const override;
 	void setFilterClosed(bool value) override;
 
@@ -715,6 +718,9 @@ public:
 
 	int getTimelapseMaxQueueEntries() const override;
 	void setTimelapseMaxQueueEntries(int value) override;
+
+	bool getTimelapsePreferFfmpeg() const override;
+	void setTimelapsePreferFfmpeg(bool value) override;
 
 	bool getTimelapseShowAdvanced() const override;
 	void setTimelapseShowAdvanced(bool value) override;

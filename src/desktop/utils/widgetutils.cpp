@@ -1096,14 +1096,19 @@ QCheckBox *addCheckable(
 	return check;
 }
 
-QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
+void setLabelLargeIconPixmap(QLabel *label, const QIcon &icon, QWidget *parent)
 {
-	QLabel *label = new QLabel;
 	QWidget *widget = parent ? parent : label;
 	QStyle *style = widget->style();
 	int labelSize =
 		style->pixelMetric(QStyle::PM_LargeIconSize, nullptr, widget);
 	label->setPixmap(icon.pixmap(labelSize));
+}
+
+QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
+{
+	QLabel *label = new QLabel;
+	setLabelLargeIconPixmap(label, icon, parent);
 	label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return label;
 }

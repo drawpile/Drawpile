@@ -757,6 +757,8 @@ if(NOT EMSCRIPTEN)
 		DRAWPILE_TIMELAPSE_DIALOG=1
 	)
 	target_sources(drawpile PRIVATE
+		dialogs/ffmpegdialog.cpp
+		dialogs/ffmpegdialog.h
 		dialogs/projectdialog.cpp
 		dialogs/projectdialog.h
 		dialogs/startdialog/recent.cpp

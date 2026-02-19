@@ -232,6 +232,9 @@ QButtonGroup *addRadioGroup(
 QCheckBox *addCheckable(
 	const QString &accessibleName, EncapsulatedLayout *layout, QWidget *child);
 
+void setLabelLargeIconPixmap(
+	QLabel *label, const QIcon &icon, QWidget *parent = nullptr);
+
 QLabel *makeIconLabel(const QIcon &icon, QWidget *parent = nullptr);
 
 enum class Modality {

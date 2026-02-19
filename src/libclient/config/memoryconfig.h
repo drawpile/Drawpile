@@ -216,6 +216,9 @@ public:
 	int getEraseCursor() const override;
 	void setEraseCursor(int value) override;
 
+	QString getFfmpegPath() const override;
+	void setFfmpegPath(const QString &value) override;
+
 	bool getFilterClosed() const override;
 	void setFilterClosed(bool value) override;
 
@@ -709,6 +712,9 @@ public:
 	int getTimelapseMaxQueueEntries() const override;
 	void setTimelapseMaxQueueEntries(int value) override;
 
+	bool getTimelapsePreferFfmpeg() const override;
+	void setTimelapsePreferFfmpeg(bool value) override;
+
 	bool getTimelapseShowAdvanced() const override;
 	void setTimelapseShowAdvanced(bool value) override;
 
@@ -860,6 +866,7 @@ private:
 	int m_engineSnapshotInterval = defaultEngineSnapshotInterval();
 	int m_engineUndoDepth = defaultEngineUndoDepth();
 	int m_eraseCursor = defaultEraseCursor();
+	QString m_ffmpegPath = defaultFfmpegPath();
 	bool m_filterClosed = defaultFilterClosed();
 	bool m_filterDuplicates = defaultFilterDuplicates();
 	bool m_filterInactive = defaultFilterInactive();
@@ -1027,6 +1034,7 @@ private:
 	double m_timelapseLogoScale = defaultTimelapseLogoScale();
 	double m_timelapseMaxDeltaSeconds = defaultTimelapseMaxDeltaSeconds();
 	int m_timelapseMaxQueueEntries = defaultTimelapseMaxQueueEntries();
+	bool m_timelapsePreferFfmpeg = defaultTimelapsePreferFfmpeg();
 	bool m_timelapseShowAdvanced = defaultTimelapseShowAdvanced();
 	bool m_timelapseTimeOwnOnly = defaultTimelapseTimeOwnOnly();
 	QVariantHash m_toolBarConfig = defaultToolBarConfig();

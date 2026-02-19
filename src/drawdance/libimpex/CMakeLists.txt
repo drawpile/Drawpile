@@ -19,6 +19,7 @@ dp_target_sources(dpimpex
     dpimpex/paint_engine_playback.h
     dpimpex/player_index.c
     dpimpex/player_index.h
+    dpimpex/process.h
     dpimpex/save.c
     dpimpex/save.h
     dpimpex/save_psd.c
@@ -34,6 +35,13 @@ target_link_libraries(dpimpex PUBLIC
     dpengine dpmsg dpcommon dpwebp::dpwebp psd_sdk
     "Qt${QT_VERSION_MAJOR}::Core" "Qt${QT_VERSION_MAJOR}::Xml"
 )
+
+if(ANDROID OR EMSCRIPTEN)
+    target_sources(dpimpex PRIVATE dpimpex/process_dummy.c)
+else()
+    target_sources(dpimpex PRIVATE dpimpex/process_qt.cpp)
+    target_link_libraries(dpimpex PUBLIC "Qt${QT_VERSION_MAJOR}::Core")
+endif()
 
 if(ZIP_IMPL STREQUAL "LIBZIP")
     target_sources(dpimpex PRIVATE dpimpex/zip_archive_libzip.c)

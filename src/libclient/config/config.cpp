@@ -363,6 +363,11 @@ int Config::defaultEraseCursor()
 	return int(view::Cursor::SameAsBrush);
 }
 
+QString Config::defaultFfmpegPath()
+{
+	return QString();
+}
+
 bool Config::defaultFilterClosed()
 {
 	return false;
@@ -1196,6 +1201,11 @@ double Config::defaultTimelapseMaxDeltaSeconds()
 int Config::defaultTimelapseMaxQueueEntries()
 {
 	return 8;
+}
+
+bool Config::defaultTimelapsePreferFfmpeg()
+{
+	return false;
 }
 
 bool Config::defaultTimelapseShowAdvanced()

@@ -845,6 +845,19 @@ void MemoryConfig::setEraseCursor(int value)
 	}
 }
 
+QString MemoryConfig::getFfmpegPath() const
+{
+	return m_ffmpegPath;
+}
+
+void MemoryConfig::setFfmpegPath(const QString &value)
+{
+	if(value != m_ffmpegPath) {
+		m_ffmpegPath = value;
+		Q_EMIT changeFfmpegPath(m_ffmpegPath);
+	}
+}
+
 bool MemoryConfig::getFilterClosed() const
 {
 	return m_filterClosed;
@@ -2966,6 +2979,19 @@ void MemoryConfig::setTimelapseMaxQueueEntries(int value)
 	if(value != m_timelapseMaxQueueEntries) {
 		m_timelapseMaxQueueEntries = value;
 		Q_EMIT changeTimelapseMaxQueueEntries(m_timelapseMaxQueueEntries);
+	}
+}
+
+bool MemoryConfig::getTimelapsePreferFfmpeg() const
+{
+	return m_timelapsePreferFfmpeg;
+}
+
+void MemoryConfig::setTimelapsePreferFfmpeg(bool value)
+{
+	if(value != m_timelapsePreferFfmpeg) {
+		m_timelapsePreferFfmpeg = value;
+		Q_EMIT changeTimelapsePreferFfmpeg(m_timelapsePreferFfmpeg);
 	}
 }
 

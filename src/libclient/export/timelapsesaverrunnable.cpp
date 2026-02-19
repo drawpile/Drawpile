@@ -31,18 +31,20 @@ Q_LOGGING_CATEGORY(
 
 TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const drawdance::CanvasState &canvasState,
-	const DP_ViewModeFilter *vmfOrNull, const QString &outputPath,
-	const QString &inputPath, int format, int width, int height,
-	int interpolation, const QRect &crop, const QColor &backdropColor,
-	const QColor &checkerColor1, const QColor &checkerColor2,
-	const QColor &flashColor, const QRect &logoRect, double logoOpacity,
-	const QImage &logoImage, double framerate, double lingerBeforeSeconds,
-	double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
-	double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
-	int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
-	int frameRangeLast, double animationFramerate, QObject *parent)
+	const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
+	const QString &outputPath, const QString &inputPath, int format, int width,
+	int height, int interpolation, const QRect &crop,
+	const QColor &backdropColor, const QColor &checkerColor1,
+	const QColor &checkerColor2, const QColor &flashColor,
+	const QRect &logoRect, double logoOpacity, const QImage &logoImage,
+	double framerate, double lingerBeforeSeconds, double playbackSeconds,
+	double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
+	int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
+	int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
+	double animationFramerate, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
+	, m_ffmpegPath(ffmpegPath)
 	, m_outputPath(outputPath)
 	, m_inputPath(inputPath)
 	, m_format(format)
@@ -807,10 +809,29 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 
 	DP_SaveResult result;
 	{
+		DP_SaveVideoDestination destination;
+		void *destinationParam;
+		DP_SaveVideoFfmpegParams ffmpegParams;
+		QByteArray ffmpegPathBytes;
 		QByteArray outputPathBytes = m_outputPath.toUtf8();
+
+		if(m_ffmpegPath.isEmpty()) {
+			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
+			destinationParam = outputPathBytes.data();
+		} else {
+			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
+			destinationParam = &ffmpegParams;
+			ffmpegPathBytes = m_ffmpegPath.toUtf8();
+			ffmpegParams = {
+				ffmpegPathBytes.constData(),
+				nullptr,
+				outputPathBytes.constData(),
+			};
+		}
+
 		DP_SaveVideoParams params = {
-			DP_SAVE_VIDEO_DESTINATION_PATH,
-			outputPathBytes.data(),
+			destination,
+			destinationParam,
 			nullptr,
 			0,
 			DP_SAVE_VIDEO_FLAGS_NONE,

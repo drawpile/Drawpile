@@ -31,17 +31,17 @@ class TimelapseSaverRunnable final : public QObject, public QRunnable {
 public:
 	TimelapseSaverRunnable(
 		const drawdance::CanvasState &canvasState,
-		const DP_ViewModeFilter *vmfOrNull, const QString &outputPath,
-		const QString &inputPath, int format, int width, int height,
-		int interpolation, const QRect &crop, const QColor &backdropColor,
-		const QColor &checkerColor1, const QColor &checkerColor2,
-		const QColor &flashColor, const QRect &logoRect, double logoOpacity,
-		const QImage &logoImage, double framerate, double lingerBeforeSeconds,
-		double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
-		double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
-		int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
-		int frameRangeLast, double animationFramerate,
-		QObject *parent = nullptr);
+		const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
+		const QString &outputPath, const QString &inputPath, int format,
+		int width, int height, int interpolation, const QRect &crop,
+		const QColor &backdropColor, const QColor &checkerColor1,
+		const QColor &checkerColor2, const QColor &flashColor,
+		const QRect &logoRect, double logoOpacity, const QImage &logoImage,
+		double framerate, double lingerBeforeSeconds, double playbackSeconds,
+		double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
+		int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
+		int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
+		double animationFramerate, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -160,6 +160,7 @@ private:
 	static void runPlayback(void *user);
 
 	const drawdance::CanvasState m_canvasState;
+	const QString m_ffmpegPath;
 	const QString m_outputPath;
 	const QString m_inputPath;
 	const int m_format;

@@ -30,6 +30,7 @@ typedef enum DP_SaveVideoFormat {
 typedef enum DP_SaveVideoDestination {
     DP_SAVE_VIDEO_DESTINATION_PATH,
     DP_SAVE_VIDEO_DESTINATION_OUTPUT,
+    DP_SAVE_VIDEO_DESTINATION_FFMPEG,
 } DP_SaveVideoDestination;
 
 typedef struct DP_SaveVideoNextFrame {
@@ -43,9 +44,15 @@ typedef struct DP_SaveVideoNextFrame {
 
 typedef bool (*DP_SaveVideoNextFrameFn)(void *user, DP_SaveVideoNextFrame *f);
 
+typedef struct DP_SaveVideoFfmpegParams {
+    const char *program;
+    const char **custom_args;
+    const char *output;
+} DP_SaveVideoFfmpegParams;
+
 typedef struct DP_SaveVideoParams {
     DP_SaveVideoDestination destination;
-    void *path_or_output;
+    void *destination_param;
     const unsigned char *palette_data;
     size_t palette_size;
     unsigned int flags;
@@ -62,7 +69,7 @@ typedef struct DP_SaveAnimationVideoParams {
     DP_CanvasState *cs;
     const DP_Rect *area;
     DP_SaveVideoDestination destination;
-    void *path_or_output;
+    void *destination_param;
     const unsigned char *palette_data;
     size_t palette_size;
     unsigned int flags;
@@ -93,6 +100,8 @@ typedef struct DP_SaveAnimationGifParams {
 } DP_SaveAnimationGifParams;
 
 bool DP_save_video_format_supported(int format);
+
+bool DP_save_video_format_supported_ffmpeg(int format);
 
 DP_SaveResult DP_save_video(DP_SaveVideoParams params);
 
