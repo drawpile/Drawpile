@@ -17,7 +17,7 @@
 #include <QPaintEvent>
 #include <QList>
 
-class QSpinBox;
+class QDoubleSpinBox;
 class KisCubicCurve;
 
 /**
@@ -99,7 +99,7 @@ signals:
 	void curveChanged(const KisCubicCurve &curve);
 
 protected slots:
-    void inOutChanged(int);
+    void inOutChanged();
 	void removeCurrentPoint();
 
 protected:
@@ -130,10 +130,12 @@ public:
 
     /**
      * Connect/disconnect external spinboxes to the curve
-     * @min/@max - is the range for their values
      */
-    void setupInOutControls(QSpinBox *in, QSpinBox *out, int min, int max);
+    void setupInOutControls(QDoubleSpinBox *in, QDoubleSpinBox *out);
     void dropInOutControls();
+
+    void setInOutControlRanges(
+		double inMin, double inMax, double outMin, double outMax);
 
     /**
      * Handy function that creates new point in the middle

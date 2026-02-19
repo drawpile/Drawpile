@@ -3,8 +3,10 @@
 #include "desktop/dialogs/curvepresetdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
+#include "desktop/widgets/kis_double_parse_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
 #include <QClipboard>
+#include <QFormLayout>
 #include <QGridLayout>
 #include <QGuiApplication>
 #include <QIcon>
@@ -130,6 +132,17 @@ CurveWidget::CurveWidget(
 	connect(
 		m_presetsButton, &QPushButton::clicked, this, &CurveWidget::loadCurve);
 
+	QFormLayout *spinnerForm = new QFormLayout;
+	m_buttonLayout->addLayout(spinnerForm);
+
+	m_xSpinner = new KisDoubleParseSpinBox;
+	m_ySpinner = new KisDoubleParseSpinBox;
+	m_xSpinner->setSingleStep(0.01);
+	m_ySpinner->setSingleStep(0.01);
+	spinnerForm->addRow(QStringLiteral("X"), m_xSpinner);
+	spinnerForm->addRow(QStringLiteral("Y"), m_ySpinner);
+	m_curve->setupInOutControls(m_xSpinner, m_ySpinner);
+
 	m_buttonLayout->addStretch();
 
 	grid->setContentsMargins(0, 0, 0, 0);
@@ -160,8 +173,6 @@ CurveWidget::CurveWidget(
 
 	setCurveSize(300, 300);
 }
-
-CurveWidget::~CurveWidget() {}
 
 void CurveWidget::setCurveSize(int width, int height)
 {
@@ -196,7 +207,7 @@ void CurveWidget::addVerticalSpacingLabel(const QString &text)
 void CurveWidget::addButton(QAbstractButton *button)
 {
 	button->setParent(this);
-	m_buttonLayout->insertWidget(m_buttonLayout->count() - 2, button);
+	m_buttonLayout->insertWidget(m_buttonLayout->count() - 3, button);
 }
 
 void CurveWidget::setAxisTitleLabels(
@@ -219,6 +230,12 @@ void CurveWidget::setAxisValueLabels(
 	m_xMaxLabel->setText(xMax);
 	m_yMinLabel->setText(yMin);
 	m_yMaxLabel->setText(yMax);
+}
+
+void CurveWidget::setSpinnerRanges(
+	double xMin, double xMax, double yMin, double yMax)
+{
+	m_curve->setInOutControlRanges(xMin, xMax, yMin, yMax);
 }
 
 void CurveWidget::copyCurve()

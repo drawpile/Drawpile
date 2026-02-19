@@ -40,8 +40,8 @@ KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
 	d->m_pixmapCache = nullptr;
 	d->setState(ST_NORMAL);
 
-	d->m_intIn = nullptr;
-	d->m_intOut = nullptr;
+	d->m_doubleIn = nullptr;
+	d->m_doubleOut = nullptr;
 
 	d->m_ctxmenu = new QMenu(this);
 	d->m_removeCurrentPointAction = d->m_ctxmenu->addAction(tr("Remove point"));
@@ -68,46 +68,60 @@ KisCurveWidget::~KisCurveWidget()
 	delete d;
 }
 
-void KisCurveWidget::setupInOutControls(QSpinBox *in, QSpinBox *out, int min, int max)
+void KisCurveWidget::setupInOutControls(QDoubleSpinBox *in, QDoubleSpinBox *out)
 {
-	d->m_intIn = in;
-	d->m_intOut = out;
+	d->m_doubleIn = in;
+	d->m_doubleOut = out;
 
-	if (!d->m_intIn || !d->m_intOut)
+	if (!d->m_doubleIn || !d->m_doubleOut)
 		return;
 
-	d->m_inOutMin = min;
-	d->m_inOutMax = max;
+	d->m_inMin = 0.0;
+	d->m_inMax = 1.0;
+	d->m_outMin = 0.0;
+	d->m_outMax = 1.0;
 
-	d->m_intIn->setRange(d->m_inOutMin, d->m_inOutMax);
-	d->m_intOut->setRange(d->m_inOutMin, d->m_inOutMax);
+	d->m_doubleIn->setRange(d->m_inMin, d->m_outMax);
+	d->m_doubleOut->setRange(d->m_inMin, d->m_outMax);
 
 
-	connect(d->m_intIn, SIGNAL(valueChanged(int)), this, SLOT(inOutChanged(int)));
-	connect(d->m_intOut, SIGNAL(valueChanged(int)), this, SLOT(inOutChanged(int)));
+	connect(d->m_doubleIn, SIGNAL(valueChanged(double)), this, SLOT(inOutChanged()));
+	connect(d->m_doubleOut, SIGNAL(valueChanged(double)), this, SLOT(inOutChanged()));
 	d->syncIOControls();
 
 }
 void KisCurveWidget::dropInOutControls()
 {
-	if (!d->m_intIn || !d->m_intOut)
+	if (!d->m_doubleIn || !d->m_doubleOut)
 		return;
 
-	disconnect(d->m_intIn, SIGNAL(valueChanged(int)), this, SLOT(inOutChanged(int)));
-	disconnect(d->m_intOut, SIGNAL(valueChanged(int)), this, SLOT(inOutChanged(int)));
+	disconnect(d->m_doubleIn, SIGNAL(valueChanged(double)), this, SLOT(inOutChanged()));
+	disconnect(d->m_doubleOut, SIGNAL(valueChanged(double)), this, SLOT(inOutChanged()));
 
-	d->m_intIn = d->m_intOut = nullptr;
+	d->m_doubleIn = d->m_doubleOut = nullptr;
 
 }
 
-void KisCurveWidget::inOutChanged(int)
+void KisCurveWidget::setInOutControlRanges(
+	double inMin, double inMax, double outMin, double outMax)
+{
+	if (d->m_doubleIn && d->m_doubleOut && (!qFuzzyCompare(inMin, d->m_inMin) || !qFuzzyCompare(inMax, d->m_inMax) || !qFuzzyCompare(outMin, d->m_outMin) || !qFuzzyCompare(outMax, d->m_outMax))) {
+		d->m_inMin = inMin;
+		d->m_inMax = inMax;
+		d->m_outMin = outMin;
+		d->m_outMax = outMax;
+		d->syncIOControls();
+	}
+}
+
+void KisCurveWidget::inOutChanged()
 {
 	QPointF pt;
 
 	Q_ASSERT(d->m_grab_point_index >= 0);
 
-	pt.setX(d->io2sp(d->m_intIn->value()));
-	pt.setY(d->io2sp(d->m_intOut->value()));
+	pt.setX(d->in2sp(d->m_doubleIn->value()));
+	pt.setY(d->out2sp(d->m_doubleOut->value()));
 
 	if (d->jumpOverExistingPoints(pt, d->m_grab_point_index)) {
 		d->m_curve.setPoint(d->m_grab_point_index, pt);
@@ -116,14 +130,14 @@ void KisCurveWidget::inOutChanged(int)
 		pt = d->m_curve.points()[d->m_grab_point_index];
 
 
-	d->m_intIn->blockSignals(true);
-	d->m_intOut->blockSignals(true);
+	d->m_doubleIn->blockSignals(true);
+	d->m_doubleOut->blockSignals(true);
 
-	d->m_intIn->setValue(d->sp2io(pt.x()));
-	d->m_intOut->setValue(d->sp2io(pt.y()));
+	d->m_doubleIn->setValue(d->sp2in(pt.x()));
+	d->m_doubleOut->setValue(d->sp2out(pt.y()));
 
-	d->m_intIn->blockSignals(false);
-	d->m_intOut->blockSignals(false);
+	d->m_doubleIn->blockSignals(false);
+	d->m_doubleOut->blockSignals(false);
 
 	d->setCurveModified();
 	emit curveChanged(curve());
@@ -239,8 +253,8 @@ void KisCurveWidget::addPointInTheMiddle()
 
 	d->m_grab_point_index = d->m_curve.addPoint(pt);
 
-	if (d->m_intIn)
-		d->m_intIn->setFocus(Qt::TabFocusReason);
+	if (d->m_doubleIn)
+		d->m_doubleIn->setFocus(Qt::TabFocusReason);
 	d->setCurveModified();
 	emit curveChanged(curve());
 }

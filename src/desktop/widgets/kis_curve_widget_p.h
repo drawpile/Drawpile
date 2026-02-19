@@ -50,12 +50,14 @@ public:
     QPixmap *m_pixmapCache;
 
     /* In/Out controls */
-    QSpinBox *m_intIn;
-    QSpinBox *m_intOut;
+    QDoubleSpinBox *m_doubleIn;
+    QDoubleSpinBox *m_doubleOut;
 
     /* Working range of them */
-    int m_inOutMin;
-    int m_inOutMax;
+    double m_inMin;
+    double m_inMax;
+    double m_outMin;
+    double m_outMax;
 
 	/* Context menu */
 	QMenu *m_ctxmenu;
@@ -89,8 +91,10 @@ public:
      * In/Out controls to normalized
      * range of spline (and reverse)
      */
-    double io2sp(int x);
-    int sp2io(double x);
+    double in2sp(double x);
+    double out2sp(double y);
+    double sp2in(double x);
+    double sp2out(double y);
 
 
     /**
@@ -129,16 +133,28 @@ KisCurveWidget::Private::Private(KisCurveWidget *parent)
     m_curveWidget = parent;
 }
 
-double KisCurveWidget::Private::io2sp(int x)
+double KisCurveWidget::Private::in2sp(double x)
 {
-    int rangeLen = m_inOutMax - m_inOutMin;
-    return double(x - m_inOutMin) / rangeLen;
+    double rangeLen = m_inMax - m_inMin;
+    return (x - m_inMin) / rangeLen;
 }
 
-int KisCurveWidget::Private::sp2io(double x)
+double KisCurveWidget::Private::out2sp(double y)
 {
-    int rangeLen = m_inOutMax - m_inOutMin;
-    return int(x*rangeLen + 0.5) + m_inOutMin;
+    double rangeLen = m_outMax - m_outMin;
+    return (y - m_outMin) / rangeLen;
+}
+
+double KisCurveWidget::Private::sp2in(double x)
+{
+    double rangeLen = m_inMax - m_inMin;
+    return x * rangeLen + m_inMin;
+}
+
+double KisCurveWidget::Private::sp2out(double y)
+{
+    double rangeLen = m_outMax - m_outMin;
+    return y * rangeLen + m_outMin;
 }
 
 
@@ -216,23 +232,25 @@ void KisCurveWidget::Private::drawGrid(QPainter &p, int wWidth, int wHeight)
 
 void KisCurveWidget::Private::syncIOControls()
 {
-    if (!m_intIn || !m_intOut)
+    if (!m_doubleIn || !m_doubleOut)
         return;
 
     bool somethingSelected = (m_grab_point_index >= 0);
 
-    m_intIn->setEnabled(somethingSelected);
-    m_intOut->setEnabled(somethingSelected);
+    m_doubleIn->setEnabled(somethingSelected);
+    m_doubleOut->setEnabled(somethingSelected);
 
     if (m_grab_point_index >= 0) {
-        m_intIn->blockSignals(true);
-        m_intOut->blockSignals(true);
+        m_doubleIn->blockSignals(true);
+        m_doubleOut->blockSignals(true);
 
-        m_intIn->setValue(sp2io(m_curve.points()[m_grab_point_index].x()));
-        m_intOut->setValue(sp2io(m_curve.points()[m_grab_point_index].y()));
+        m_doubleIn->setRange(m_inMin, m_inMax);
+        m_doubleOut->setRange(m_outMin, m_outMax);
+        m_doubleIn->setValue(sp2in(m_curve.points()[m_grab_point_index].x()));
+        m_doubleOut->setValue(sp2out(m_curve.points()[m_grab_point_index].y()));
 
-        m_intIn->blockSignals(false);
-        m_intOut->blockSignals(false);
+        m_doubleIn->blockSignals(false);
+        m_doubleOut->blockSignals(false);
     } else {
         /*FIXME: Ideally, these controls should hide away now */
     }

@@ -5,6 +5,7 @@
 #include <QWidget>
 
 class KisCurveWidget;
+class KisDoubleParseSpinBox;
 class QAbstractButton;
 class QLabel;
 class QPushButton;
@@ -20,8 +21,6 @@ public:
 	CurveWidget(
 		const QString &xTitle, const QString &yTitle, bool linear,
 		QWidget *parent = nullptr);
-
-	~CurveWidget() override;
 
 	CurveWidget(const CurveWidget &) = delete;
 	CurveWidget(CurveWidget &&) = delete;
@@ -47,6 +46,8 @@ public:
 		const QString &xMin, const QString &xMax, const QString &yMin,
 		const QString &yMax);
 
+	void setSpinnerRanges(double xMin, double xMax, double yMin, double yMax);
+
 	void setPressure(bool pressure) { m_pressure = pressure; }
 
 signals:
@@ -70,6 +71,8 @@ private:
 	QPushButton *m_copyButton;
 	QPushButton *m_pasteButton;
 	QPushButton *m_presetsButton;
+	KisDoubleParseSpinBox *m_xSpinner;
+	KisDoubleParseSpinBox *m_ySpinner;
 	bool m_pressure = false;
 };
 

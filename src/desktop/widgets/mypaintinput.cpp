@@ -233,6 +233,7 @@ void MyPaintInput::updateRanges()
 		m_curve->setAxisValueLabels(
 			QString::number(m_xMin, 'f', 2), QString::number(m_xMax, 'f', 2),
 			QString::number(m_yMin, 'f', 2), QString::number(m_yMax, 'f', 2));
+		m_curve->setSpinnerRanges(m_xMin, m_xMax, m_yMin, m_yMax);
 		m_ySpinner->setValue(m_yMax);
 		m_xMinSpinner->setValue(m_xMin);
 		m_xMaxSpinner->setValue(m_xMax);
