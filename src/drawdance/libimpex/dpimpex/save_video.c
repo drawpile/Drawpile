@@ -554,6 +554,7 @@ static DP_SaveResult save_video_libav(DP_SaveVideoParams params)
         goto cleanup;
     }
 
+    stream->avg_frame_rate = codec_context->framerate;
     stream->time_base = codec_context->time_base;
     err = avcodec_open2(codec_context, codec, NULL);
     if (err != 0) {
