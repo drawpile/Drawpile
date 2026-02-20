@@ -39,6 +39,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Properly enable clipping and alpha lock controls in layer dock when switching from a non-editable to an editable layer. Thanks xxxx for reporting.
  * Fix: Don't clamp brushes with out of range inputs from the mere act of opening the brush editor. Thanks Phoneme for reporting.
  * Feature: Add numeric input fields to curve inputs to allow the exact numeric values of each curve point to be set exactly.
+ * Fix: Render repeated animation frames into exports, since some players get confused by frames held longer.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

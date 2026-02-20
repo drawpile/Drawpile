@@ -300,21 +300,6 @@ static const enum AVPixelFormat *get_format_filter_pix_fmts(int format)
     }
 }
 
-static int64_t get_format_frame_duration(int format,
-                                         AVCodecContext *codec_context,
-                                         AVStream *stream)
-{
-    switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_WEBP:
-    case DP_SAVE_VIDEO_FORMAT_PALETTE:
-        return 1;
-    default: {
-        AVRational pts = av_div_q(codec_context->time_base, stream->time_base);
-        return DP_double_to_int64(av_q2d(pts) + 0.5);
-    }
-    }
-}
-
 static unsigned int get_format_flat_image_flags(int format)
 {
     switch (format) {
@@ -407,7 +392,8 @@ static bool report_progress(DP_SaveProgressFn progress_fn, void *user,
 
 static DP_SaveResult handle_frame(AVCodecContext *codec_context,
                                   AVFormatContext *format_context,
-                                  AVFrame *frame, AVPacket *packet)
+                                  AVStream *stream, AVFrame *frame,
+                                  AVPacket *packet)
 {
     int err = avcodec_send_frame(codec_context, frame);
     if (err != 0) {
@@ -425,6 +411,10 @@ static DP_SaveResult handle_frame(AVCodecContext *codec_context,
             return DP_SAVE_RESULT_INTERNAL_ERROR;
         }
 
+        av_packet_rescale_ts(packet, codec_context->time_base,
+                             stream->time_base);
+        packet->stream_index = stream->index;
+
         err = av_interleaved_write_frame(format_context, packet);
         if (err != 0) {
             DP_error_set("Error writing frame: %s", av_err2str(err));
@@ -433,12 +423,11 @@ static DP_SaveResult handle_frame(AVCodecContext *codec_context,
     }
 }
 
-static DP_SaveResult filter_frame(AVCodecContext *codec_context,
-                                  AVFormatContext *format_context,
-                                  AVFrame *frame, AVPacket *packet,
-                                  AVFilterContext *buffersrc_context,
-                                  AVFilterContext *buffersink_context,
-                                  AVFrame *filtered_frame)
+static DP_SaveResult
+filter_frame(AVCodecContext *codec_context, AVFormatContext *format_context,
+             AVStream *stream, AVFrame *frame, AVPacket *packet,
+             AVFilterContext *buffersrc_context,
+             AVFilterContext *buffersink_context, AVFrame *filtered_frame)
 {
     if (buffersrc_context) {
         DP_ASSERT(buffersink_context);
@@ -461,7 +450,7 @@ static DP_SaveResult filter_frame(AVCodecContext *codec_context,
             }
 
             DP_SaveResult result = handle_frame(codec_context, format_context,
-                                                filtered_frame, packet);
+                                                stream, filtered_frame, packet);
             av_frame_unref(filtered_frame);
             if (result != DP_SAVE_RESULT_SUCCESS) {
                 return result;
@@ -471,7 +460,8 @@ static DP_SaveResult filter_frame(AVCodecContext *codec_context,
     else {
         DP_ASSERT(!buffersink_context);
         DP_ASSERT(!filtered_frame);
-        return handle_frame(codec_context, format_context, frame, packet);
+        return handle_frame(codec_context, format_context, stream, frame,
+                            packet);
     }
 }
 
@@ -886,10 +876,7 @@ static DP_SaveResult save_video_libav(DP_SaveVideoParams params)
         }
     }
 
-    int64_t duration =
-        get_format_frame_duration(params.format, codec_context, stream);
     frame->pts = 0;
-
     double last_progress = 0.0;
     DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
     while (params.next_frame_fn(params.user, &f)) {
@@ -932,14 +919,15 @@ static DP_SaveResult save_video_libav(DP_SaveVideoParams params)
         sws_scale(sws_context, &data, &stride, 0, input_height, frame->data,
                   frame->linesize);
 
-        result =
-            filter_frame(codec_context, format_context, frame, packet,
-                         buffersrc_context, buffersink_context, filtered_frame);
-        if (result != DP_SAVE_RESULT_SUCCESS) {
-            goto cleanup;
+        for (int i = 0; i < f.instances; ++i) {
+            result = filter_frame(codec_context, format_context, stream, frame,
+                                  packet, buffersrc_context, buffersink_context,
+                                  filtered_frame);
+            if (result != DP_SAVE_RESULT_SUCCESS) {
+                goto cleanup;
+            }
+            ++frame->pts;
         }
-
-        frame->pts += duration * f.instances;
 
         if (isfinite(f.progress) && f.progress >= last_progress) {
             last_progress = DP_min_double(f.progress, 1.0);
@@ -957,16 +945,6 @@ static DP_SaveResult save_video_libav(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    if (f.instances > 1) {
-        frame->pts -= duration;
-        result =
-            filter_frame(codec_context, format_context, frame, packet,
-                         buffersrc_context, buffersink_context, filtered_frame);
-        if (result != DP_SAVE_RESULT_SUCCESS) {
-            goto cleanup;
-        }
-    }
-
     av_frame_free(&frame);
 
     if (!report_progress(params.progress_fn, params.user, 0.98)) {
@@ -975,7 +953,7 @@ static DP_SaveResult save_video_libav(DP_SaveVideoParams params)
     }
 
     result =
-        filter_frame(codec_context, format_context, NULL, packet,
+        filter_frame(codec_context, format_context, stream, NULL, packet,
                      buffersrc_context, buffersink_context, filtered_frame);
     if (result != DP_SAVE_RESULT_SUCCESS) {
         goto cleanup;
