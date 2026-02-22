@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DRAWDANCE_BRUSH_PREVIEW_H
-#define DRAWDANCE_BRUSH_PREVIEW_H
-
+#ifndef LIBCLIENT_DRAWDANCE_BRUSH_PREVIEW_H
+#define LIBCLIENT_DRAWDANCE_BRUSH_PREVIEW_H
 extern "C" {
 #include <dpengine/brush_preview.h>
 }
-
 #include <QPixmap>
 #include <QSize>
 
@@ -14,34 +11,35 @@ namespace drawdance {
 
 class BrushPreview final {
 public:
-    BrushPreview();
-    ~BrushPreview();
+	BrushPreview();
+	~BrushPreview();
 
-    BrushPreview(const BrushPreview &) = delete;
-    BrushPreview(BrushPreview &&) = delete;
-    BrushPreview &operator=(const BrushPreview &) = delete;
-    BrushPreview &operator=(BrushPreview &&) = delete;
+	BrushPreview(const BrushPreview &) = delete;
+	BrushPreview(BrushPreview &&) = delete;
+	BrushPreview &operator=(const BrushPreview &) = delete;
+	BrushPreview &operator=(BrushPreview &&) = delete;
 
-    const QPixmap &pixmap() const { return m_pixmap; }
+	const QPixmap &pixmap() const { return m_pixmap; }
 
-    void reset(QSize size);
+	void reset(QSize size);
 
-    void setSizeLimit(int limit);
+	void setSizeLimit(int limit);
 
-    void renderClassic(const DP_ClassicBrush &brush, DP_BrushPreviewShape shape);
+	void
+	renderClassic(const DP_ClassicBrush &brush, DP_BrushPreviewShape shape);
 
-    void renderMyPaint(
-        const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-        DP_BrushPreviewShape shape);
+	void renderMyPaint(
+		const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
+		DP_BrushPreviewShape shape);
 
-    void paint(const QPixmap &background);
+	void paint(const QPixmap &background);
 
-    static QPixmap classicBrushPreviewDab(
-        const DP_ClassicBrush &cb, int width, int height, const QColor &color);
+	static QPixmap classicBrushPreviewDab(
+		const DP_ClassicBrush &cb, int width, int height, const QColor &color);
 
 private:
-    DP_BrushPreview *m_data;
-    QPixmap m_pixmap;
+	DP_BrushPreview *m_data;
+	QPixmap m_pixmap;
 };
 
 }
