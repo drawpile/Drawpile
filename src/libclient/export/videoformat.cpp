@@ -33,7 +33,7 @@ static bool isSaveVideoFormatSupported(VideoFormat format, bool ffmpeg)
 	}
 #else
 	Q_UNUSED(format);
-	Q_UNUSED(predicate);
+	Q_UNUSED(ffmpeg);
 #endif
 	return false;
 }
