@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/brushpreview.h"
+#include "desktop/main.h"
+#include "libclient/config/config.h"
 #include <QEvent>
 #include <QFontMetrics>
 #include <QIcon>
@@ -14,18 +16,25 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	, m_debounce(1000 / 60, this)
 {
 	setMinimumSize(32, 32);
-	updateBackground();
 	setCursor(Qt::PointingHandCursor);
 	setToolTip(tr("Click to edit brush"));
 	connect(
 		&m_debounce, &DebounceTimer::noneChanged, this,
 		&BrushPreview::triggerPreviewUpdate);
+
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_NOTIFY(
+		cfg, CheckerColor1, this, BrushPreview::setBackgroundChanged);
+	CFG_BIND_NOTIFY(
+		cfg, CheckerColor2, this, BrushPreview::setBackgroundChanged);
+	m_debounce.stopTimer();
 }
 
 void BrushPreview::setPreviewStyle(DP_BrushPreviewStyle style)
 {
 	if(m_style != style) {
 		m_style = style;
+		m_needBackground = true;
 		triggerPreviewUpdate();
 	}
 }
@@ -158,7 +167,7 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 void BrushPreview::changeEvent(QEvent *event)
 {
 	if(event->type() == QEvent::PaletteChange) {
-		updateBackground();
+		m_needBackground = true;
 		m_changeIconCache = QPixmap();
 	}
 	triggerPreviewUpdate();
@@ -181,6 +190,9 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 
 	qreal dpr = devicePixelRatioF();
 	bool dprChanged = m_lastDpr != dpr;
+	if(m_needBackground || dprChanged) {
+		updateBackground(dpr);
+	}
 	if(m_needUpdate || dprChanged) {
 		updatePreview(dpr);
 	}
@@ -227,6 +239,12 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	}
 }
 
+void BrushPreview::setBackgroundChanged()
+{
+	m_needBackground = true;
+	m_debounce.noneChanged();
+}
+
 void BrushPreview::triggerPreviewUpdate()
 {
 	m_debounce.stopTimer();
@@ -234,16 +252,21 @@ void BrushPreview::triggerPreviewUpdate()
 	update();
 }
 
-void BrushPreview::updateBackground()
+void BrushPreview::updateBackground(qreal dpr)
 {
-	int w = 16;
-	bool dark = palette().color(QPalette::Window).lightness() < 128;
-	m_background = QPixmap(w * 2, w * 2);
-	m_background.fill(dark ? QColor(153, 153, 153) : QColor(204, 204, 204));
-	QColor alt = dark ? QColor(102, 102, 102) : Qt::white;
-	QPainter p(&m_background);
-	p.fillRect(0, 0, w, w, alt);
-	p.fillRect(w, w, w, w, alt);
+	// Plain style always has an opaque background, so don't bother.
+	if(m_style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
+		m_background = QPixmap();
+	} else {
+		int w = qRound(16.0 * dpr);
+		m_background = QPixmap(w * 2, w * 2);
+		config::Config *cfg = dpAppConfig();
+		m_background.fill(cfg->getCheckerColor1());
+		QPainter p(&m_background);
+		QColor checkerColor2 = cfg->getCheckerColor2();
+		p.fillRect(0, 0, w, w, checkerColor2);
+		p.fillRect(w, w, w, w, checkerColor2);
+	}
 }
 
 void BrushPreview::updatePreview(qreal dpr)

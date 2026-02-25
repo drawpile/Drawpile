@@ -65,10 +65,11 @@ void BrushPreview::paint(const QPixmap &background)
 {
 	QImage img = wrapImage(DP_brush_preview_to_image(m_data));
 	m_pixmap.convertFromImage(img);
-
-	QPainter painter(&m_pixmap);
-	painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
-	painter.drawTiledPixmap(m_pixmap.rect(), background);
+	if(!background.isNull()) {
+		QPainter painter(&m_pixmap);
+		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+		painter.drawTiledPixmap(m_pixmap.rect(), background);
+	}
 }
 
 QPixmap BrushPreview::classicBrushPreviewDab(

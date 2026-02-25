@@ -45,9 +45,10 @@ protected:
 	void paintEvent(QPaintEvent *event) override;
 
 private:
+	void setBackgroundChanged();
 	void triggerPreviewUpdate();
 
-	void updateBackground();
+	void updateBackground(qreal dpr);
 	void updatePreview(qreal dpr);
 	void updatePreset(qreal dpr);
 
@@ -69,6 +70,7 @@ private:
 	bool m_showThumbnail = false;
 	bool m_presetChanged = false;
 	bool m_presetEnabled = false;
+	bool m_needBackground = true;
 	bool m_needPalette = true;
 	bool m_needTextBounds = true;
 	bool m_needUpdate = false;
