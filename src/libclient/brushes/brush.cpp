@@ -1674,13 +1674,14 @@ void ActiveBrush::setInStrokeWorker(
 }
 
 void ActiveBrush::renderPreview(
-	drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const
+	drawdance::BrushPreview &bp, DP_BrushPreviewStyle style,
+	DP_BrushPreviewShape shape) const
 {
 	if(m_activeType == CLASSIC) {
-		bp.renderClassic(m_classic, shape);
+		bp.renderClassic(m_classic, style, shape);
 	} else {
 		bp.renderMyPaint(
-			m_myPaint.constBrush(), m_myPaint.constSettings(), shape);
+			m_myPaint.constBrush(), m_myPaint.constSettings(), style, shape);
 	}
 }
 

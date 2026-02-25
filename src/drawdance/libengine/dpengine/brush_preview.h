@@ -31,6 +31,11 @@ typedef struct DP_MyPaintBrush DP_MyPaintBrush;
 typedef struct DP_MyPaintSettings DP_MyPaintSettings;
 
 
+typedef enum DP_BrushPreviewStyle {
+    DP_BRUSH_PREVIEW_STYLE_PLAIN,
+    DP_BRUSH_PREVIEW_STYLE_FULL,
+} DP_BrushPreviewStyle;
+
 typedef enum DP_BrushPreviewShape {
     DP_BRUSH_PREVIEW_STROKE,
     DP_BRUSH_PREVIEW_LINE,
@@ -44,17 +49,22 @@ DP_BrushPreview *DP_brush_preview_new(void);
 
 void DP_brush_preview_free(DP_BrushPreview *bp);
 
+void DP_brush_preview_palette_set(DP_BrushPreview *bp, uint32_t foreground,
+                                  uint32_t background);
+
 void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit);
 
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
                                      const DP_ClassicBrush *brush,
+                                     DP_BrushPreviewStyle style,
                                      DP_BrushPreviewShape shape);
 
 void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
                                      const DP_MyPaintBrush *brush,
                                      const DP_MyPaintSettings *settings,
+                                     DP_BrushPreviewStyle style,
                                      DP_BrushPreviewShape shape);
 
 DP_Image *DP_brush_preview_to_image(DP_BrushPreview *bp);

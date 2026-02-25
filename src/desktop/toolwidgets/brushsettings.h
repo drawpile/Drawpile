@@ -139,6 +139,8 @@ private:
 
 	void changeBrushType(const QAction *action);
 	void changePaintMode(const QAction *action);
+	void changePreviewStyle(const QAction *action);
+	void updatePreviewStyleFromSettings(int value);
 	void changeSizeSetting(int size);
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
 	void updateBlendMode(int blendMode, bool eraseMode);

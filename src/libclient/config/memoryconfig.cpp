@@ -256,6 +256,45 @@ void MemoryConfig::setBrushPresetsAttach(bool value)
 	}
 }
 
+int MemoryConfig::getBrushPreviewStyle() const
+{
+	return m_brushPreviewStyle;
+}
+
+void MemoryConfig::setBrushPreviewStyle(int value)
+{
+	if(value != m_brushPreviewStyle) {
+		m_brushPreviewStyle = value;
+		Q_EMIT changeBrushPreviewStyle(m_brushPreviewStyle);
+	}
+}
+
+bool MemoryConfig::getBrushPreviewThumbnail() const
+{
+	return m_brushPreviewThumbnail;
+}
+
+void MemoryConfig::setBrushPreviewThumbnail(bool value)
+{
+	if(value != m_brushPreviewThumbnail) {
+		m_brushPreviewThumbnail = value;
+		Q_EMIT changeBrushPreviewThumbnail(m_brushPreviewThumbnail);
+	}
+}
+
+bool MemoryConfig::getBrushPreviewTitle() const
+{
+	return m_brushPreviewTitle;
+}
+
+void MemoryConfig::setBrushPreviewTitle(bool value)
+{
+	if(value != m_brushPreviewTitle) {
+		m_brushPreviewTitle = value;
+		Q_EMIT changeBrushPreviewTitle(m_brushPreviewTitle);
+	}
+}
+
 int MemoryConfig::getBrushSlotCount() const
 {
 	return m_brushSlotCount;

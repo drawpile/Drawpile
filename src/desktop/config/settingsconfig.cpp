@@ -92,6 +92,16 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::brushPresetsAttachChanged,
 		this, &SettingsConfig::changeBrushPresetsAttach, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::brushPreviewStyleChanged,
+		this, &SettingsConfig::changeBrushPreviewStyle, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::brushPreviewThumbnailChanged,
+		this, &SettingsConfig::changeBrushPreviewThumbnail,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::brushPreviewTitleChanged,
+		this, &SettingsConfig::changeBrushPreviewTitle, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::brushSlotCountChanged, this,
 		&SettingsConfig::changeBrushSlotCount, Qt::DirectConnection);
 	connect(
@@ -1078,6 +1088,36 @@ bool SettingsConfig::getBrushPresetsAttach() const
 void SettingsConfig::setBrushPresetsAttach(bool value)
 {
 	m_settings->setBrushPresetsAttach(value);
+}
+
+int SettingsConfig::getBrushPreviewStyle() const
+{
+	return m_settings->brushPreviewStyle();
+}
+
+void SettingsConfig::setBrushPreviewStyle(int value)
+{
+	m_settings->setBrushPreviewStyle(value);
+}
+
+bool SettingsConfig::getBrushPreviewThumbnail() const
+{
+	return m_settings->brushPreviewThumbnail();
+}
+
+void SettingsConfig::setBrushPreviewThumbnail(bool value)
+{
+	m_settings->setBrushPreviewThumbnail(value);
+}
+
+bool SettingsConfig::getBrushPreviewTitle() const
+{
+	return m_settings->brushPreviewTitle();
+}
+
+void SettingsConfig::setBrushPreviewTitle(bool value)
+{
+	m_settings->setBrushPreviewTitle(value);
 }
 
 int SettingsConfig::getBrushSlotCount() const

@@ -50,6 +50,16 @@ struct DP_BrushPreview {
     DP_BrushEngine *be;
     DP_CanvasState *cs;
     DP_Vector messages;
+    uint32_t foreground;
+    uint32_t background;
+    union {
+        int dummy; // To stop the compiler from whinging about initialization.
+        DP_ClassicBrush classic;
+        struct {
+            DP_MyPaintBrush brush;
+            DP_MyPaintSettings settings;
+        } mypaint;
+    };
 };
 
 static void push_message(void *user, DP_Message *msg)
@@ -62,8 +72,13 @@ DP_BrushPreview *DP_brush_preview_new(void)
 {
     DP_BrushPreview *bp = DP_malloc(sizeof(*bp));
     *bp = (DP_BrushPreview){
-        DP_brush_engine_new(NULL, push_message, NULL, NULL, bp), NULL,
-        DP_VECTOR_NULL};
+        DP_brush_engine_new(NULL, push_message, NULL, NULL, bp),
+        NULL,
+        DP_VECTOR_NULL,
+        0xff000000u,
+        0xffffffffu,
+        {0},
+    };
     DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
     return bp;
 }
@@ -83,6 +98,14 @@ void DP_brush_preview_free(DP_BrushPreview *bp)
         DP_brush_engine_free(bp->be);
         DP_free(bp);
     }
+}
+
+void DP_brush_preview_palette_set(DP_BrushPreview *bp, uint32_t foreground,
+                                  uint32_t background)
+{
+    DP_ASSERT(bp);
+    bp->foreground = foreground;
+    bp->background = background;
 }
 
 void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit)
@@ -207,11 +230,11 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
 static void stroke_line(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
                         long long *in_out_time_msec)
 {
-    stroke_to(be, DP_int_to_float(DP_rect_x(rect)),
-              DP_int_to_float(DP_rect_y(rect)), 1.0f, cs, in_out_time_msec);
-    stroke_to(be, DP_int_to_float(DP_rect_right(rect)),
+    stroke_to(be, DP_int_to_float(DP_rect_left(rect)),
               DP_int_to_float(DP_rect_bottom(rect)), 1.0f, cs,
               in_out_time_msec);
+    stroke_to(be, DP_int_to_float(DP_rect_right(rect)),
+              DP_int_to_float(DP_rect_top(rect)), 1.0f, cs, in_out_time_msec);
 }
 
 static void stroke_rectangle(DP_BrushEngine *be, DP_CanvasState *cs,
@@ -242,12 +265,23 @@ static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
     }
 }
 
+static void canvas_background_image_set(DP_UNUSED size_t size,
+                                        unsigned char *data, void *user)
+{
+    DP_ASSERT(size == 4);
+    DP_UPixel8 p = {*(uint32_t *)user};
+    data[0] = p.b;
+    data[1] = p.g;
+    data[2] = p.r;
+    data[3] = p.a;
+}
+
 void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
-                          int height, DP_BrushPreviewShape shape,
+                          int height, DP_BrushPreviewStyle style,
+                          DP_BrushPreviewShape shape,
                           DP_UPixelFloat initial_color,
-                          void (*set_brush)(void *, DP_BrushEngine *,
-                                            DP_UPixelFloat, bool),
-                          void *user)
+                          void (*set_brush)(DP_BrushPreview *, DP_UPixelFloat,
+                                            bool))
 {
     DP_ASSERT(bp);
     DP_ASSERT(dc);
@@ -257,24 +291,56 @@ void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
         return;
     }
 
+    uint32_t background_color;
+    DP_UPixelFloat stroke_color;
+    bool want_foreground_dabs;
+    DP_BrushPreviewShape effective_shape;
+    switch (style) {
+    case DP_BRUSH_PREVIEW_STYLE_FULL:
+        background_color = 0u;
+        stroke_color = initial_color;
+        want_foreground_dabs = true;
+        effective_shape = shape;
+        break;
+    default:
+        background_color = bp->background;
+        stroke_color = DP_upixel8_to_float((DP_UPixel8){bp->foreground});
+        want_foreground_dabs = false;
+        effective_shape = DP_BRUSH_PREVIEW_STROKE;
+        break;
+    }
+
     DP_CanvasState *cs = DP_canvas_state_new();
     cs = handle_preview_message_dec(
         cs, dc,
         DP_msg_canvas_resize_new(0, 0, DP_int_to_int32(width),
                                  DP_int_to_int32(height), 0));
+    if (background_color != 0u) {
+        cs = handle_preview_message_dec(
+            cs, dc,
+            DP_msg_canvas_background_zstd_new(0, canvas_background_image_set, 4,
+                                              &background_color));
+    }
     cs = handle_preview_message_dec(
-        cs, dc, DP_msg_layer_tree_create_new(0, 1, 0, 0, 0, 0, "", 0));
+        cs, dc, DP_msg_layer_tree_create_new(0, 1, 0, 0, 0u, 0, "", 0));
 
-    cs = draw_foreground_dabs(cs, dc, width, height);
+    if (want_foreground_dabs) {
+        cs = draw_foreground_dabs(cs, dc, width, height);
+    }
 
-    DP_Rect rect = DP_rect_make(width / 8, height / 4, width - width / 4,
-                                height - height / 2);
+    set_brush(bp, stroke_color, shape == DP_BRUSH_PREVIEW_STROKE);
+
     DP_BrushEngine *be = bp->be;
-    set_brush(user, be, initial_color, shape == DP_BRUSH_PREVIEW_STROKE);
     DP_brush_engine_stroke_begin(be, cs, 1, false, false, false, false, 1.0f,
                                  0.0f);
+
+    int padding_x = DP_min_int(width / 8, 24);
+    int padding_y = DP_min_int(height / 3, 24);
+    DP_Rect rect = DP_rect_make(padding_x, padding_y, width - (padding_x * 2),
+                                height - (padding_y * 2));
+
     long long time_msec = 0;
-    switch (shape) {
+    switch (effective_shape) {
     case DP_BRUSH_PREVIEW_STROKE:
         stroke_freehand(be, cs, rect, &time_msec);
         break;
@@ -301,54 +367,137 @@ void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
     bp->cs = handle_preview_message_dec(cs, dc, DP_msg_pen_up_new(1, 1));
 }
 
-static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
-                                      DP_UPixelFloat color,
-                                      bool allow_pixel_perfect)
+static DP_BrushEngineStrokeParams
+preview_stroke_params(bool allow_pixel_perfect)
 {
-    DP_BrushEngineStrokeParams besp = {
+    return (DP_BrushEngineStrokeParams){
         {0, 0, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
         allow_pixel_perfect};
-    DP_brush_engine_classic_brush_set(be, user, &besp, &color, false);
+}
+
+static void set_preview_classic_brush(DP_BrushPreview *bp, DP_UPixelFloat color,
+                                      bool allow_pixel_perfect)
+{
+    DP_BrushEngineStrokeParams besp =
+        preview_stroke_params(allow_pixel_perfect);
+    DP_brush_engine_classic_brush_set(bp->be, &bp->classic, &besp, &color,
+                                      false);
+}
+
+static DP_BlendMode plainify_blend_mode(DP_BlendMode blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_WASH:
+    case DP_BLEND_MODE_MARKER_ALPHA:
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+        return DP_BLEND_MODE_MARKER_ALPHA;
+    case DP_BLEND_MODE_GREATER:
+    case DP_BLEND_MODE_GREATER_WASH:
+    case DP_BLEND_MODE_GREATER_ALPHA:
+    case DP_BLEND_MODE_GREATER_ALPHA_WASH:
+        return DP_BLEND_MODE_GREATER_ALPHA;
+    default:
+        return DP_BLEND_MODE_NORMAL;
+    }
 }
 
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
                                      const DP_ClassicBrush *brush,
+                                     DP_BrushPreviewStyle style,
                                      DP_BrushPreviewShape shape)
 {
     DP_ASSERT(bp);
     DP_ASSERT(dc);
     DP_ASSERT(brush);
-    render_brush_preview(bp, dc, width, height, shape, brush->color,
-                         set_preview_classic_brush, (void *)brush);
+
+    DP_classic_brush_clone(&bp->classic, brush);
+    if (style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
+        bp->classic.brush_mode =
+            plainify_blend_mode(DP_classic_brush_blend_mode(&bp->classic));
+        bp->classic.erase = false;
+        bp->classic.smudge.min = 0.0f;
+        bp->classic.smudge.max = 0.0f;
+        bp->classic.smudge_dynamic.type = DP_CLASSIC_BRUSH_DYNAMIC_NONE;
+        bp->classic.smudge_alpha = false;
+    }
+
+    render_brush_preview(bp, dc, width, height, style, shape, brush->color,
+                         set_preview_classic_brush);
 }
 
-static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
-                                      DP_UPixelFloat color,
+static void set_preview_mypaint_brush(DP_BrushPreview *bp, DP_UPixelFloat color,
                                       bool allow_pixel_perfect)
 {
-    const DP_MyPaintBrush *brush = ((void **)user)[0];
-    const DP_MyPaintSettings *settings = ((void **)user)[1];
-    DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
-        allow_pixel_perfect};
-    DP_brush_engine_mypaint_brush_set(be, brush, settings, &besp, &color,
+    DP_BrushEngineStrokeParams besp =
+        preview_stroke_params(allow_pixel_perfect);
+    DP_brush_engine_mypaint_brush_set(bp->be, &bp->mypaint.brush,
+                                      &bp->mypaint.settings, &besp, &color,
                                       false);
+}
+
+static void preview_disable_mypaint_setting(DP_BrushPreview *bp, int setting,
+                                            float base_value)
+{
+    DP_MyPaintMapping *mapping = &bp->mypaint.settings.mappings[setting];
+    mapping->base_value = base_value;
+    for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+        mapping->inputs[i].n = 0;
+    }
 }
 
 void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
                                      const DP_MyPaintBrush *brush,
                                      const DP_MyPaintSettings *settings,
+                                     DP_BrushPreviewStyle style,
                                      DP_BrushPreviewShape shape)
 {
     DP_ASSERT(bp);
     DP_ASSERT(dc);
     DP_ASSERT(brush);
     DP_ASSERT(settings);
-    render_brush_preview(bp, dc, width, height, shape, brush->color,
-                         set_preview_mypaint_brush,
-                         (void *[]){(void *)brush, (void *)settings});
+
+    DP_mypaint_brush_clone(&bp->mypaint.brush, brush);
+    DP_mypaint_settings_clone(&bp->mypaint.settings, settings);
+    if (style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
+        bp->mypaint.brush.brush_mode = plainify_blend_mode(
+            DP_mypaint_brush_blend_mode(&bp->mypaint.brush));
+        bp->mypaint.brush.erase = false;
+
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_ERASER, 0.0f);
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_LOCK_ALPHA,
+                                        0.0f);
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_COLORIZE,
+                                        0.0f);
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_POSTERIZE,
+                                        0.0f);
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_SMUDGE, 0.0f);
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH,
+                                        0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG, 0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG, 0.0f);
+        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET,
+                                        0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY, 0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H, 0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S, 0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSL_S, 0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V, 0.0f);
+        preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L, 0.0f);
+    }
+
+    render_brush_preview(bp, dc, width, height, style, shape, brush->color,
+                         set_preview_mypaint_brush);
 }
 
 

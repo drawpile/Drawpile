@@ -8,6 +8,7 @@ extern "C" {
 #include "libclient/drawdance/global.h"
 #include "libclient/drawdance/image.h"
 #include <QPainter>
+#include <QPalette>
 
 namespace drawdance {
 
@@ -19,6 +20,12 @@ BrushPreview::BrushPreview()
 BrushPreview::~BrushPreview()
 {
 	DP_brush_preview_free(m_data);
+}
+
+void BrushPreview::setPalette(
+	const QColor &foreground, const QColor &background)
+{
+	DP_brush_preview_palette_set(m_data, foreground.rgb(), background.rgb());
 }
 
 void BrushPreview::reset(QSize size)
@@ -34,7 +41,8 @@ void BrushPreview::setSizeLimit(int limit)
 }
 
 void BrushPreview::renderClassic(
-	const DP_ClassicBrush &brush, DP_BrushPreviewShape shape)
+	const DP_ClassicBrush &brush, DP_BrushPreviewStyle style,
+	DP_BrushPreviewShape shape)
 {
 	QSize size = m_pixmap.size();
 	DrawContext dc = DrawContextPool::acquire();
@@ -44,7 +52,7 @@ void BrushPreview::renderClassic(
 
 void BrushPreview::renderMyPaint(
 	const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-	DP_BrushPreviewShape shape)
+	DP_BrushPreviewStyle style, DP_BrushPreviewShape shape)
 {
 	QSize size = m_pixmap.size();
 	DrawContext dc = DrawContextPool::acquire();

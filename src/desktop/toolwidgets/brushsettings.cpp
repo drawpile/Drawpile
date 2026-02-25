@@ -140,6 +140,12 @@ struct BrushSettings::Private {
 	Slot eraserSlot;
 	QWidget *brushSlotWidget = nullptr;
 
+	QActionGroup *previewStyleGroup;
+	QAction *previewStyleNoneAction;
+	QAction *previewStylePlainAction;
+	QAction *previewStyleFullAction;
+	QAction *previewTitleAction;
+	QAction *previewThumbnailAction;
 	QAction *editBrushAction;
 	QAction *resetBrushAction;
 	QAction *resetSlotPresetsAction;
@@ -349,6 +355,8 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 
 QWidget *BrushSettings::createUiWidget(QWidget *parent)
 {
+	config::Config *cfg = dpAppConfig();
+
 	d->brushSlotWidget = new QWidget(parent);
 	auto brushSlotWidgetLayout = new QHBoxLayout;
 	brushSlotWidgetLayout->setSpacing(0);
@@ -364,6 +372,35 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	d->menu = new QMenu(menuButton);
 	menuButton->setMenu(d->menu);
+
+	d->previewStyleGroup = new QActionGroup(this);
+	QMenu *previewStyleMenu = d->menu->addMenu(tr("Preview"));
+	d->previewStyleNoneAction = previewStyleMenu->addAction(tr("None"));
+	d->previewStylePlainAction = previewStyleMenu->addAction(tr("Plain"));
+	d->previewStyleFullAction = previewStyleMenu->addAction(tr("Full"));
+	d->previewStyleNoneAction->setCheckable(true);
+	d->previewStylePlainAction->setCheckable(true);
+	d->previewStyleFullAction->setCheckable(true);
+	d->previewStylePlainAction->setChecked(true);
+	d->previewStyleGroup->addAction(d->previewStyleNoneAction);
+	d->previewStyleGroup->addAction(d->previewStylePlainAction);
+	d->previewStyleGroup->addAction(d->previewStyleFullAction);
+	connect(
+		d->previewStyleGroup, &QActionGroup::triggered, this,
+		&BrushSettings::changePreviewStyle);
+
+	previewStyleMenu->addSeparator();
+
+	d->previewTitleAction = previewStyleMenu->addAction(tr("Show Title"));
+	d->previewTitleAction->setCheckable(true);
+	CFG_BIND_ACTION(cfg, BrushPreviewTitle, d->previewTitleAction);
+
+	d->previewThumbnailAction =
+		previewStyleMenu->addAction(tr("Show Thumbnail"));
+	d->previewThumbnailAction->setCheckable(true);
+	CFG_BIND_ACTION(cfg, BrushPreviewThumbnail, d->previewThumbnailAction);
+
+	d->menu->addSeparator();
 
 	d->editBrushAction =
 		d->menu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush…"));
@@ -661,11 +698,21 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		d->ui.blendmode, d->ui.erasemode, d->ui.alphaPreserve, d->ui.modeEraser,
 		this);
 	CFG_BIND_SET(
-		dpAppConfig(), AutomaticAlphaPreserve, d->blendModeManager,
+		cfg, AutomaticAlphaPreserve, d->blendModeManager,
 		BlendModeManager::setAutomaticAlphaPerserve);
 	connect(
 		d->blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&BrushSettings::updateBlendMode);
+
+	CFG_BIND_SET(
+		cfg, BrushPreviewStyle, this,
+		BrushSettings::updatePreviewStyleFromSettings);
+	CFG_BIND_SET(
+		cfg, BrushPreviewTitle, d->ui.preview,
+		widgets::BrushPreview::setShowTitle);
+	CFG_BIND_SET(
+		cfg, BrushPreviewThumbnail, d->ui.preview,
+		widgets::BrushPreview::setShowThumbnail);
 
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
@@ -809,7 +856,8 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 					emit presetIdChanged(preset.id, preset.attached);
 					if(preset.attached) {
 						d->ui.preview->setPreset(
-							preset.effectiveThumbnail(), preset.hasChanges());
+							preset.effectiveName(), preset.effectiveThumbnail(),
+							preset.hasChanges());
 						updateChangesInCurrentBrushPreset();
 					}
 				}
@@ -1065,6 +1113,7 @@ void BrushSettings::changeCurrentPresetName(const QString &name)
 {
 	Preset &preset = d->currentPreset();
 	if(preset.changeName(name)) {
+		d->ui.preview->setPresetTitle(name);
 		d->ui.preview->setPresetChanged(preset.hasChanges());
 		updateChangesInCurrentBrushPreset();
 	}
@@ -1239,6 +1288,41 @@ void BrushSettings::changePaintMode(const QAction *action)
 	}
 	updateFromUi();
 	updateUi();
+}
+
+void BrushSettings::changePreviewStyle(const QAction *action)
+{
+	int style;
+	if(action == d->previewStyleNoneAction) {
+		style = -1;
+	} else if(action == d->previewStyleFullAction) {
+		style = int(DP_BRUSH_PREVIEW_STYLE_FULL);
+	} else {
+		style = int(DP_BRUSH_PREVIEW_STYLE_PLAIN);
+	}
+	dpAppConfig()->setBrushPreviewStyle(style);
+}
+
+void BrushSettings::updatePreviewStyleFromSettings(int value)
+{
+	bool visible;
+	DP_BrushPreviewStyle style;
+	if(value == int(DP_BRUSH_PREVIEW_STYLE_FULL)) {
+		visible = true;
+		style = DP_BRUSH_PREVIEW_STYLE_FULL;
+		d->previewStyleFullAction->setChecked(true);
+	} else {
+		style = DP_BRUSH_PREVIEW_STYLE_PLAIN;
+		if(value == -1) {
+			visible = false;
+			d->previewStyleNoneAction->setChecked(true);
+		} else {
+			visible = true;
+			d->previewStylePlainAction->setChecked(true);
+		}
+	}
+	d->ui.preview->setVisible(visible);
+	d->ui.preview->setPreviewStyle(style);
 }
 
 void BrushSettings::changeSizeSetting(int size)
@@ -1475,7 +1559,8 @@ void BrushSettings::updateUi()
 	const Preset &preset = d->currentPreset();
 	if(preset.isAttached()) {
 		d->ui.preview->setPreset(
-			preset.effectiveThumbnail(), preset.hasChanges());
+			preset.effectiveName(), preset.effectiveThumbnail(),
+			preset.hasChanges());
 	} else {
 		d->ui.preview->clearPreset();
 	}
@@ -2080,7 +2165,7 @@ void BrushSettings::handlePresetChanged(
 			}
 			preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
 			if(i == d->current) {
-				d->ui.preview->setPreset(thumbnail, preset.hasChanges());
+				d->ui.preview->setPreset(name, thumbnail, preset.hasChanges());
 			}
 		}
 	}

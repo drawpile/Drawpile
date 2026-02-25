@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/brushpreview.h"
 #include <QEvent>
+#include <QFontMetrics>
 #include <QIcon>
 #include <QPaintEvent>
 #include <QPainter>
@@ -21,11 +22,39 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 		&BrushPreview::triggerPreviewUpdate);
 }
 
+void BrushPreview::setPreviewStyle(DP_BrushPreviewStyle style)
+{
+	if(m_style != style) {
+		m_style = style;
+		triggerPreviewUpdate();
+	}
+}
+
 void BrushPreview::setPreviewShape(DP_BrushPreviewShape shape)
 {
 	if(m_shape != shape) {
 		m_shape = shape;
 		m_debounce.setNone();
+	}
+}
+
+void BrushPreview::setShowTitle(bool showTitle)
+{
+	if(showTitle != m_showTitle) {
+		m_showTitle = showTitle;
+		if(m_presetEnabled && !m_presetTitle.isEmpty()) {
+			triggerPreviewUpdate();
+		}
+	}
+}
+
+void BrushPreview::setShowThumbnail(bool showThumbnail)
+{
+	if(showThumbnail != m_showThumbnail) {
+		m_showThumbnail = showThumbnail;
+		if(m_presetEnabled) {
+			triggerPreviewUpdate();
+		}
 	}
 }
 
@@ -45,25 +74,41 @@ void BrushPreview::clearPreset()
 {
 	if(m_presetEnabled) {
 		m_presetEnabled = false;
+		m_presetTitle = QString();
 		m_presetThumbnail = QPixmap();
 		m_presetCache = QPixmap();
 		triggerPreviewUpdate();
 	}
 }
 
-void BrushPreview::setPreset(const QPixmap &thumbnail, bool changed)
+void BrushPreview::setPreset(
+	const QString &title, const QPixmap &thumbnail, bool changed)
 {
-	if(!m_presetEnabled ||
+	if(!m_presetEnabled || m_presetTitle != title ||
 	   thumbnail.cacheKey() != m_presetThumbnail.cacheKey() ||
 	   changed != m_presetChanged) {
 		m_presetEnabled = true;
+		m_presetTitle = title;
 		m_presetThumbnail = thumbnail;
 		m_presetChanged = changed;
 		m_presetCache = QPixmap();
-		if(m_presetEnabled) {
+		m_needTextBounds = true;
+		if(m_presetEnabled && (m_showTitle || m_showThumbnail)) {
 			update();
 		} else {
 			triggerPreviewUpdate();
+		}
+	}
+}
+
+void BrushPreview::setPresetTitle(const QString &title)
+{
+	if(title != m_presetTitle) {
+		m_presetTitle = title;
+		m_needTextBounds = true;
+		if(m_presetEnabled && m_showTitle) {
+			m_presetCache = QPixmap();
+			update();
 		}
 	}
 }
@@ -72,7 +117,7 @@ void BrushPreview::setPresetThumbnail(const QPixmap &thumbnail)
 {
 	if(thumbnail.cacheKey() != m_presetThumbnail.cacheKey()) {
 		m_presetThumbnail = thumbnail;
-		if(m_presetEnabled) {
+		if(m_presetEnabled && m_showThumbnail) {
 			m_presetCache = QPixmap();
 			update();
 		}
@@ -87,6 +132,20 @@ void BrushPreview::setPresetChanged(bool changed)
 			update();
 		}
 	}
+}
+
+bool BrushPreview::event(QEvent *event)
+{
+	switch(event->type()) {
+	case QEvent::ApplicationPaletteChange:
+	case QEvent::PaletteChange:
+		m_needPalette = true;
+		triggerPreviewUpdate();
+		break;
+	default:
+		break;
+	}
+	return QFrame::event(event);
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)
@@ -114,6 +173,12 @@ void BrushPreview::mouseReleaseEvent(QMouseEvent *event)
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
+	QPalette pal = palette();
+	if(m_needPalette) {
+		m_brushPreview.setPalette(
+			pal.color(QPalette::Text), pal.color(QPalette::Window));
+	}
+
 	qreal dpr = devicePixelRatioF();
 	bool dprChanged = m_lastDpr != dpr;
 	if(m_needUpdate || dprChanged) {
@@ -124,25 +189,41 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	}
 
 	QPainter painter(this);
-	if(m_presetEnabled) {
+	if(m_presetEnabled && m_showThumbnail) {
 		painter.drawPixmap(presetRect(), m_presetCache);
-		if(m_presetChanged) {
-			QRect changeRect = changeIconRect();
-			QSize changeSize = changeRect.size();
-			if(m_changeIconCache.size() != changeSize) {
-				m_changeIconCache =
-					QIcon::fromTheme(QStringLiteral("drawpile_presetchanged"))
-						.pixmap(changeSize);
-			}
-			painter.drawPixmap(changeRect, m_changeIconCache);
-		}
 	}
-	painter.drawPixmap(previewRect(), m_brushPreview.pixmap());
+
+	QRect pr = previewRect();
+	painter.drawPixmap(pr, m_brushPreview.pixmap());
+
+	if(m_presetEnabled && m_showTitle && !m_presetTitle.isEmpty()) {
+		if(m_needTextBounds) {
+			m_textBounds = painter.fontMetrics().boundingRect(m_presetTitle);
+		}
+
+		QRect textRect = m_textBounds.marginsAdded(QMargins(4, 1, 4, 1));
+		textRect.moveBottomRight(pr.bottomRight());
+		painter.setOpacity(0.7);
+		painter.fillRect(textRect, pal.window());
+		painter.setOpacity(1.0);
+		painter.drawText(
+			textRect, Qt::AlignCenter | Qt::TextDontClip, m_presetTitle);
+	}
+
+	if(m_presetEnabled && m_presetChanged) {
+		QRect changeRect = changeIconRect();
+		QSize changeSize = changeRect.size();
+		if(m_changeIconCache.size() != changeSize) {
+			m_changeIconCache =
+				QIcon::fromTheme(QStringLiteral("drawpile_presetchanged"))
+					.pixmap(changeSize);
+		}
+		painter.drawPixmap(changeRect, m_changeIconCache);
+	}
 
 	if(!isEnabled()) {
-		QColor color = palette().color(QPalette::Window);
-		color.setAlphaF(0.75);
-		painter.fillRect(event->rect(), color);
+		painter.setOpacity(0.75);
+		painter.fillRect(event->rect(), pal.window());
 	}
 }
 
@@ -169,7 +250,7 @@ void BrushPreview::updatePreview(qreal dpr)
 {
 	QSize size = previewRect().size() * dpr;
 	m_brushPreview.reset(size);
-	m_brush.renderPreview(m_brushPreview, m_shape);
+	m_brush.renderPreview(m_brushPreview, m_style, m_shape);
 	m_brushPreview.paint(m_background);
 	m_needUpdate = false;
 	m_lastDpr = dpr;
@@ -192,7 +273,7 @@ void BrushPreview::updatePreset(qreal dpr)
 QRect BrushPreview::previewRect() const
 {
 	QRect r = contentsRect();
-	if(m_presetEnabled) {
+	if(m_presetEnabled && m_showThumbnail) {
 		int margin = r.height() + 4;
 		if(r.width() > margin) {
 			return r.marginsRemoved(QMargins(margin, 0, 0, 0));
@@ -216,7 +297,13 @@ QRect BrushPreview::presetRect() const
 
 QRect BrushPreview::changeIconRect() const
 {
-	QRect r = presetRect();
+	QRect r;
+	if(m_showThumbnail) {
+		r = presetRect();
+	} else {
+		r = previewRect();
+	}
+
 	int minDimension = qMin(r.width(), r.height());
 	int editDimension = qMax(minDimension / 4, qMin(8, minDimension));
 	int editOffset = editDimension / 8;

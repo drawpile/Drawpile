@@ -77,6 +77,15 @@ public:
 	bool getBrushPresetsAttach() const override;
 	void setBrushPresetsAttach(bool value) override;
 
+	int getBrushPreviewStyle() const override;
+	void setBrushPreviewStyle(int value) override;
+
+	bool getBrushPreviewThumbnail() const override;
+	void setBrushPreviewThumbnail(bool value) override;
+
+	bool getBrushPreviewTitle() const override;
+	void setBrushPreviewTitle(bool value) override;
+
 	int getBrushSlotCount() const override;
 	void setBrushSlotCount(int value) override;
 
@@ -817,6 +826,9 @@ private:
 	int m_brushCursor = defaultBrushCursor();
 	double m_brushOutlineWidth = defaultBrushOutlineWidth();
 	bool m_brushPresetsAttach = defaultBrushPresetsAttach();
+	int m_brushPreviewStyle = defaultBrushPreviewStyle();
+	bool m_brushPreviewThumbnail = defaultBrushPreviewThumbnail();
+	bool m_brushPreviewTitle = defaultBrushPreviewTitle();
 	int m_brushSlotCount = defaultBrushSlotCount();
 	bool m_cancelDeselects = defaultCancelDeselects();
 	bool m_canvasScrollBars = defaultCanvasScrollBars();

@@ -44,6 +44,14 @@ bool DP_anti_overflow_equal(const DP_AntiOverflow *a, DP_AntiOverflow *b)
     return a == b || (a && b && anti_overflow_equal(a, b));
 }
 
+void DP_classic_brush_clone(DP_ClassicBrush *DP_RESTRICT dst,
+                            const DP_ClassicBrush *DP_RESTRICT src)
+{
+    DP_ASSERT(dst);
+    DP_ASSERT(src);
+    *dst = *src;
+}
+
 static bool preset_equal_classic_brush_curve(const DP_ClassicBrushCurve *a,
                                              const DP_ClassicBrushCurve *b)
 {
@@ -268,6 +276,14 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
 }
 
 
+void DP_mypaint_settings_clone(DP_MyPaintSettings *DP_RESTRICT dst,
+                               const DP_MyPaintSettings *DP_RESTRICT src)
+{
+    DP_ASSERT(dst);
+    DP_ASSERT(src);
+    *dst = *src;
+}
+
 float DP_mypaint_settings_max_size_for(const DP_MyPaintSettings *settings,
                                        float base_value)
 {
@@ -440,6 +456,14 @@ bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
     return a == b || (a && b && preset_equal_mypaint_settings(a, b));
 }
 
+
+void DP_mypaint_brush_clone(DP_MyPaintBrush *DP_RESTRICT dst,
+                            const DP_MyPaintBrush *DP_RESTRICT src)
+{
+    DP_ASSERT(dst);
+    DP_ASSERT(src);
+    *dst = *src;
+}
 
 static bool preset_equal_mypaint_brush(const DP_MyPaintBrush *a,
                                        const DP_MyPaintBrush *b,

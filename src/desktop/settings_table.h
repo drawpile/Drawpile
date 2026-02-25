@@ -49,6 +49,16 @@ SETTING(
 	brushPresetsAttach, BrushPresetsAttach, "settings/brushpresetsattach",
 	config::Config::defaultBrushPresetsAttach())
 SETTING(
+	brushPreviewStyle, BrushPreviewStyle, "settings/brushpreviewstyle",
+	config::Config::defaultBrushPreviewStyle())
+SETTING(
+	brushPreviewThumbnail, BrushPreviewThumbnail,
+	"settings/brushpreviewthumbnail",
+	config::Config::defaultBrushPreviewThumbnail())
+SETTING(
+	brushPreviewTitle, BrushPreviewTitle, "settings/brushpreviewtitle",
+	config::Config::defaultBrushPreviewTitle())
+SETTING(
 	brushSlotCount, BrushSlotCount, "settings/brushslotcount",
 	config::Config::defaultBrushSlotCount())
 SETTING(

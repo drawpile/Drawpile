@@ -40,6 +40,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't clamp brushes with out of range inputs from the mere act of opening the brush editor. Thanks Phoneme for reporting.
  * Feature: Add numeric input fields to curve inputs to allow the exact numeric values of each curve point to be set exactly.
  * Fix: Render repeated animation frames into exports, since some players get confused by frames held longer.
+ * Feature: Brush preview styles. You can now toggle between the full style with the rainbow circles and a plain style that matches the UI colors and doesn't try to preview every aspect of the brush. You can also toggle the display of the brush's title and thumbnail. There's also the option of disabling the preview altogether. The default is to show the thumbnail and title with plain style, since that gives the best tradeoff between showing the relevant information without being too distracting. Thanks fadi123go for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

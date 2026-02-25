@@ -306,6 +306,18 @@ public:
 	virtual void setBrushPresetsAttach(bool value) = 0;
 	static bool defaultBrushPresetsAttach();
 
+	virtual int getBrushPreviewStyle() const = 0;
+	virtual void setBrushPreviewStyle(int value) = 0;
+	static int defaultBrushPreviewStyle();
+
+	virtual bool getBrushPreviewThumbnail() const = 0;
+	virtual void setBrushPreviewThumbnail(bool value) = 0;
+	static bool defaultBrushPreviewThumbnail();
+
+	virtual bool getBrushPreviewTitle() const = 0;
+	virtual void setBrushPreviewTitle(bool value) = 0;
+	static bool defaultBrushPreviewTitle();
+
 	virtual int getBrushSlotCount() const = 0;
 	virtual void setBrushSlotCount(int value) = 0;
 	static int defaultBrushSlotCount();
@@ -1274,6 +1286,9 @@ Q_SIGNALS:
 	void changeBrushCursor(int value);
 	void changeBrushOutlineWidth(double value);
 	void changeBrushPresetsAttach(bool value);
+	void changeBrushPreviewStyle(int value);
+	void changeBrushPreviewThumbnail(bool value);
+	void changeBrushPreviewTitle(bool value);
 	void changeBrushSlotCount(int value);
 	void changeCancelDeselects(bool value);
 	void changeCanvasScrollBars(bool value);

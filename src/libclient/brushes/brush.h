@@ -431,7 +431,8 @@ public:
 		const QColor &colorOverride) const;
 
 	void renderPreview(
-		drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;
+		drawdance::BrushPreview &bp, DP_BrushPreviewStyle style,
+		DP_BrushPreviewShape shape) const;
 
 private:
 	ActiveType m_activeType;

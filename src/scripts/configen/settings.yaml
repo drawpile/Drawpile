@@ -278,6 +278,24 @@ settings:
     qsettings: 'settings/brushpresetsattach'
     legacy_package: 'desktop'
 
+  - id: brushPreviewStyle
+    type: 'int'
+    default: 'int(DP_BRUSH_PREVIEW_STYLE_PLAIN)'
+    qsettings: 'settings/brushpreviewstyle'
+    legacy_package: 'desktop'
+
+  - id: brushPreviewTitle
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/brushpreviewtitle'
+    legacy_package: 'desktop'
+
+  - id: brushPreviewThumbnail
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/brushpreviewthumbnail'
+    legacy_package: 'desktop'
+
   - id: brushSlotCount
     type: 'int'
     default: '5'

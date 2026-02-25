@@ -84,6 +84,15 @@ public:
 	bool getBrushPresetsAttach() const override;
 	void setBrushPresetsAttach(bool value) override;
 
+	int getBrushPreviewStyle() const override;
+	void setBrushPreviewStyle(int value) override;
+
+	bool getBrushPreviewThumbnail() const override;
+	void setBrushPreviewThumbnail(bool value) override;
+
+	bool getBrushPreviewTitle() const override;
+	void setBrushPreviewTitle(bool value) override;
+
 	int getBrushSlotCount() const override;
 	void setBrushSlotCount(int value) override;
 

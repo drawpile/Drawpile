@@ -136,6 +136,9 @@ DP_INLINE float DP_brush_size_maxf(bool compatibility_mode)
     }
 }
 
+void DP_classic_brush_clone(DP_ClassicBrush *DP_RESTRICT dst,
+                            const DP_ClassicBrush *DP_RESTRICT src);
+
 bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
                                    const DP_ClassicBrush *b,
                                    bool in_eraser_slot);
@@ -180,6 +183,9 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
                                          float distance);
 
 
+void DP_mypaint_settings_clone(DP_MyPaintSettings *DP_RESTRICT dst,
+                               const DP_MyPaintSettings *DP_RESTRICT src);
+
 float DP_mypaint_settings_max_size_for(const DP_MyPaintSettings *settings,
                                        float base_value);
 
@@ -191,6 +197,9 @@ bool DP_mypaint_settings_fixed_offset(const DP_MyPaintSettings *settings,
 
 bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
                                       const DP_MyPaintSettings *b);
+
+void DP_mypaint_brush_clone(DP_MyPaintBrush *DP_RESTRICT dst,
+                            const DP_MyPaintBrush *DP_RESTRICT src);
 
 bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
                                    const DP_MyPaintBrush *b,
