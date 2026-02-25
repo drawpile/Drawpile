@@ -17,6 +17,8 @@ target_sources(dpclient PRIVATE
 	brushes/brush.h
 	brushes/brushpresetmodel.cpp
 	brushes/brushpresetmodel.h
+	brushes/lazythumbnail.cpp
+	brushes/lazythumbnail.h
 	canvas/acl.cpp
 	canvas/acl.h
 	canvas/blendmodes.cpp

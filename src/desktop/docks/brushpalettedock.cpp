@@ -402,7 +402,7 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 		parent, tr("Overwrite Brush"),
 		tr("Really overwrite brush '%1' with the current one?")
 			.arg(opt->originalName));
-	box->setIconPixmap(opt->originalThumbnail);
+	box->setIconPixmap(opt->originalThumbnailPixmap());
 	box->button(QMessageBox::Yes)->setText(tr("Overwrite"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
 	box->setDefaultButton(QMessageBox::No);
@@ -761,7 +761,7 @@ void BrushPalette::deleteCurrentPreset()
 	QMessageBox *box = utils::makeQuestion(
 		this, tr("Delete Brush"),
 		tr("Really delete brush '%1'?").arg(opt->effectiveName()));
-	box->setIconPixmap(opt->effectiveThumbnail());
+	box->setIconPixmap(opt->effectiveThumbnailPixmap());
 	box->button(QMessageBox::Yes)->setText(tr("Delete"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
 	box->setDefaultButton(QMessageBox::No);

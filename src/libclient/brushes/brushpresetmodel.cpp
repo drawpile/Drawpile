@@ -44,7 +44,7 @@ struct CachedPreset : Preset {
 struct PresetChange {
 	std::optional<QString> name;
 	std::optional<QString> description;
-	std::optional<QPixmap> thumbnail;
+	std::optional<LazyThumbnail> thumbnail;
 	std::optional<ActiveBrush> brush;
 };
 
@@ -327,22 +327,6 @@ public:
 		}
 	}
 
-	bool readPresetBrushDataById(
-		int id, QString &outName, QPixmap &outThumbnail, ActiveBrush &outBrush)
-	{
-		drawdance::Query query = db.query();
-		const char *sql =
-			"select name, thumbnail, data from preset where id = ?";
-		if(query.exec(sql, {id}) && query.next()) {
-			outName = query.columnText16(0);
-			outThumbnail.loadFromData(query.columnBlob(1));
-			outBrush = loadBrush(id, query.columnBlob(2));
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	bool updatePreset(
 		int id, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QString &type,
@@ -583,8 +567,7 @@ public:
 					params.append(
 						drawdance::Query::Param::fromOptional(it->description));
 					if(it->thumbnail.has_value()) {
-						params.append(
-							BrushPresetModel::toPng(it->thumbnail.value()));
+						params.append(it->thumbnail->bytes());
 					} else {
 						params.append(std::nullopt);
 					}
@@ -695,7 +678,7 @@ public:
 				ShortcutPreset sp;
 				sp.id = query.columnInt(0);
 				sp.name = query.columnText16(1);
-				sp.thumbnail.loadFromData(query.columnBlob(2));
+				sp.thumbnail.setBytes(query.columnBlob(2));
 				sp.shortcut = QKeySequence::fromString(
 					query.columnText16(3), QKeySequence::PortableText);
 				parseGroupedTagIds(query.columnText16(4), sp.tagIds);
@@ -822,13 +805,8 @@ private:
 		preset.originalName = query.columnText16(1);
 		preset.originalDescription = query.columnText16(2);
 
-		QPixmap pixmap;
 		if(!query.columnNull(3)) {
-			if(pixmap.loadFromData(query.columnBlob(3))) {
-				preset.originalThumbnail = pixmap;
-			} else {
-				qWarning("Error loading thumbnail for preset %d", preset.id);
-			}
+			preset.originalThumbnail.setBytes(query.columnBlob(3));
 		}
 
 		preset.originalBrush = loadBrush(preset.id, query.columnBlob(4));
@@ -842,12 +820,7 @@ private:
 		}
 
 		if(!query.columnNull(7)) {
-			if(pixmap.loadFromData(query.columnBlob(7))) {
-				preset.changedThumbnail = pixmap;
-			} else {
-				qWarning(
-					"Error loading changed thumbnail for preset %d", preset.id);
-			}
+			preset.originalThumbnail.setBytes(query.columnBlob(3));
 		}
 
 		if(!query.columnNull(8)) {
@@ -1504,7 +1477,7 @@ void BrushPresetTagModel::readImportBrushes(
 					.arg(slashIndex < 0 ? prefix : prefix.mid(slashIndex + 1));
 
 			int presetId = d->createPreset(
-				name, description, BrushPresetModel::toPng(thumbnail),
+				name, description, LazyThumbnail::toPng(thumbnail),
 				brush.presetType(), brush.presetData());
 			if(presetId < 1) {
 				result.errors.append(
@@ -1917,8 +1890,7 @@ void BrushPresetTagModel::exportPreset(
 	}
 
 	QString thumbnailPath = QStringLiteral("%1_prev.png").arg(presetPath);
-	if(!zw.addFile(
-		   thumbnailPath, BrushPresetModel::toPng(preset.originalThumbnail))) {
+	if(!zw.addFile(thumbnailPath, preset.originalThumbnail.bytes())) {
 		qWarning(
 			"Error exporting preset thumbnail '%s': %s",
 			qUtf8Printable(thumbnailPath), DP_error());
@@ -2083,7 +2055,7 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 		}
 	case EffectiveThumbnailRole: {
 		if(cached) {
-			return d->getCachedPreset(index.row()).effectiveThumbnail();
+			return d->getCachedPreset(index.row()).effectiveThumbnailPixmap();
 		} else {
 			QPixmap pixmap;
 			if(pixmap.loadFromData(
@@ -2173,7 +2145,7 @@ QPixmap BrushPresetModel::searchPresetThumbnail(int presetId)
 			return QPixmap();
 		}
 	} else {
-		return d->getCachedPreset(i).effectiveThumbnail();
+		return d->getCachedPreset(i).effectiveThumbnailPixmap();
 	}
 }
 
@@ -2240,9 +2212,9 @@ std::optional<Preset> BrushPresetModel::newPreset(
 	const ActiveBrush &brush, int tagId)
 {
 	beginResetModel();
+	LazyThumbnail lt = LazyThumbnail::fromPixmap(thumbnail);
 	int presetId = d->createPreset(
-		name, description, toPng(thumbnail), brush.presetType(),
-		brush.presetData());
+		name, description, lt.bytes(), brush.presetType(), brush.presetData());
 	if(presetId > 0 && tagId > 0) {
 		d->createPresetTag(presetId, tagId);
 	}
@@ -2251,7 +2223,7 @@ std::optional<Preset> BrushPresetModel::newPreset(
 	d->refreshShortcuts();
 	if(presetId > 0) {
 		return Preset{
-			presetId, name, description, thumbnail, brush, {}, {}, {}, {},
+			presetId, name, description, lt, brush, {}, {}, {}, {},
 		};
 	} else {
 		return {};
@@ -2265,8 +2237,8 @@ bool BrushPresetModel::updatePreset(
 	beginResetModel();
 	d->removePresetChange(presetId);
 	bool ok = d->updatePreset(
-		presetId, name, description, toPng(thumbnail), brush.presetType(),
-		brush.presetData());
+		presetId, name, description, LazyThumbnail::toPng(thumbnail),
+		brush.presetType(), brush.presetData());
 	d->refreshPresetCache();
 	endResetModel();
 	d->refreshShortcuts();
@@ -2312,7 +2284,7 @@ bool BrushPresetModel::deletePreset(int presetId)
 void BrushPresetModel::changePreset(
 	int presetId, const std::optional<QString> &name,
 	const std::optional<QString> &description,
-	const std::optional<QPixmap> &thumbnail,
+	const std::optional<LazyThumbnail> &thumbnail,
 	const std::optional<ActiveBrush> &brush, bool inEraserSlot)
 {
 	int i = d->getCachedPresetIndexById(presetId);
@@ -2420,16 +2392,6 @@ QPixmap BrushPresetModel::loadBrushPreview(const QFileInfo &fileInfo)
 	} else {
 		return QPixmap();
 	}
-}
-
-QByteArray BrushPresetModel::toPng(const QPixmap &pixmap)
-{
-	QByteArray bytes;
-	QBuffer buffer(&bytes);
-	buffer.open(DP_QT_WRITE_FLAGS);
-	pixmap.save(&buffer, "PNG");
-	buffer.close();
-	return bytes;
 }
 
 }

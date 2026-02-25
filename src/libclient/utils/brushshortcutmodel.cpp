@@ -17,9 +17,10 @@ BrushShortcutModel::BrushShortcutModel(
 	, m_presets(m_presetModel->getShortcutPresets())
 {
 	for(brushes::ShortcutPreset &sp : m_presets) {
-		if(!sp.thumbnail.isNull() && sp.thumbnail.size() != m_iconSize) {
-			sp.thumbnail = sp.thumbnail.scaled(
-				m_iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+		const QPixmap &thumbnail = sp.thumbnail.pixmap(sp.id);
+		if(!thumbnail.isNull() && thumbnail.size() != m_iconSize) {
+			sp.thumbnail.setPixmap(thumbnail.scaled(
+				m_iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 		}
 	}
 	updateConflictRows(false);
@@ -84,8 +85,10 @@ QVariant BrushShortcutModel::data(const QModelIndex &index, int role) const
 		}
 	case Qt::DecorationRole:
 		switch(index.column()) {
-		case int(PresetName):
-			return m_presets[row].thumbnail;
+		case int(PresetName): {
+			const brushes::ShortcutPreset &sp = m_presets[row];
+			return sp.thumbnail.pixmap(sp.id);
+		}
 		case int(Shortcut):
 			if(m_conflictRows.contains(row)) {
 				return QIcon::fromTheme("dialog-warning");

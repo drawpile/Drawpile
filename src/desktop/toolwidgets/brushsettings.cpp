@@ -99,15 +99,15 @@ struct Preset : brushes::Preset {
 	bool changeThumbnail(const QPixmap &thumbnail)
 	{
 		qint64 cacheKey = thumbnail.cacheKey();
-		if(cacheKey == originalThumbnail.cacheKey()) {
+		if(cacheKey == originalThumbnailPixmap().cacheKey()) {
 			if(changedThumbnail.has_value()) {
 				changedThumbnail = {};
 				return true;
 			}
 		} else {
 			if(!changedThumbnail.has_value() ||
-			   cacheKey != changedThumbnail->cacheKey()) {
-				changedThumbnail = thumbnail;
+			   cacheKey != changedThumbnail->pixmap(id).cacheKey()) {
+				changedThumbnail->setPixmap(thumbnail);
 				return true;
 			}
 		}
@@ -904,7 +904,8 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 					if(preset.attached) {
 						d->ui.preview->setPreset(
 							preset.effectivePreviewTitle(),
-							preset.effectiveThumbnail(), preset.hasChanges());
+							preset.effectiveThumbnailPixmap(),
+							preset.hasChanges());
 						updateChangesInCurrentBrushPreset();
 					}
 				}
@@ -1034,7 +1035,7 @@ const QString &BrushSettings::currentPresetDescription() const
 
 const QPixmap &BrushSettings::currentPresetThumbnail() const
 {
-	return d->currentPreset().effectiveThumbnail();
+	return d->currentPreset().effectiveThumbnailPixmap();
 }
 
 bool BrushSettings::isCurrentPresetAttached() const
@@ -1606,7 +1607,7 @@ void BrushSettings::updateUi()
 	const Preset &preset = d->currentPreset();
 	if(preset.isAttached()) {
 		d->ui.preview->setPreset(
-			preset.effectivePreviewTitle(), preset.effectiveThumbnail(),
+			preset.effectivePreviewTitle(), preset.effectiveThumbnailPixmap(),
 			preset.hasChanges());
 	} else {
 		d->ui.preview->clearPreset();
@@ -2199,7 +2200,7 @@ void BrushSettings::handlePresetChanged(
 		if(preset.isAttached() && preset.id == presetId) {
 			preset.originalName = name;
 			preset.originalDescription = description;
-			preset.originalThumbnail = thumbnail;
+			preset.originalThumbnail.setPixmap(thumbnail);
 			preset.originalBrush = brush;
 			if(preset.changedName.has_value()) {
 				preset.changeName(preset.changedName.value());
@@ -2208,7 +2209,8 @@ void BrushSettings::handlePresetChanged(
 				preset.changeDescription(preset.changedDescription.value());
 			}
 			if(preset.changedThumbnail.has_value()) {
-				preset.changeThumbnail(preset.changedThumbnail.value());
+				preset.changeThumbnail(
+					preset.changedThumbnail->pixmap(presetId));
 			}
 			preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
 			if(i == d->current) {

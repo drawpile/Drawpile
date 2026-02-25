@@ -2,6 +2,7 @@
 #ifndef LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #define LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #include "libclient/brushes/brush.h"
+#include "libclient/brushes/lazythumbnail.h"
 #include <QAbstractItemModel>
 #include <QJsonValue>
 #include <QKeySequence>
@@ -42,12 +43,17 @@ struct Preset {
 	int id = 0;
 	QString originalName;
 	QString originalDescription;
-	QPixmap originalThumbnail;
+	LazyThumbnail originalThumbnail;
 	ActiveBrush originalBrush;
 	std::optional<QString> changedName;
 	std::optional<QString> changedDescription;
-	std::optional<QPixmap> changedThumbnail;
+	std::optional<LazyThumbnail> changedThumbnail;
 	std::optional<ActiveBrush> changedBrush;
+
+	const QPixmap &originalThumbnailPixmap() const
+	{
+		return originalThumbnail.pixmap(id);
+	}
 
 	const QString &effectiveName() const
 	{
@@ -60,10 +66,11 @@ struct Preset {
 											  : originalDescription;
 	}
 
-	const QPixmap &effectiveThumbnail() const
+	const QPixmap &effectiveThumbnailPixmap() const
 	{
-		return changedThumbnail.has_value() ? changedThumbnail.value()
-											: originalThumbnail;
+		return changedThumbnail.has_value()
+				   ? changedThumbnail.value().pixmap(id)
+				   : originalThumbnail.pixmap(id);
 	}
 
 	const ActiveBrush &effectiveBrush() const
@@ -81,7 +88,7 @@ struct Preset {
 struct ShortcutPreset {
 	int id;
 	QString name;
-	QPixmap thumbnail;
+	LazyThumbnail thumbnail;
 	QKeySequence shortcut;
 	QSet<int> tagIds;
 };
@@ -283,7 +290,7 @@ public:
 	void changePreset(
 		int presetId, const std::optional<QString> &name = {},
 		const std::optional<QString> &description = {},
-		const std::optional<QPixmap> &thumbnail = {},
+		const std::optional<LazyThumbnail> &thumbnail = {},
 		const std::optional<ActiveBrush> &brush = {},
 		bool inEraserSlot = false);
 	void resetAllPresetChanges();
@@ -322,7 +329,6 @@ signals:
 
 private:
 	static QPixmap loadBrushPreview(const QFileInfo &fileInfo);
-	static QByteArray toPng(const QPixmap &pixmap);
 
 	BrushPresetTagModel::Private *d;
 };
