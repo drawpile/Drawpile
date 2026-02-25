@@ -2359,6 +2359,12 @@ void DP_brush_engine_size_limit_set(DP_BrushEngine *be, int size_limit)
     DP_atomic_set(&be->size_limit, size_limit);
 }
 
+void DP_brush_engine_random_seed_set(DP_BrushEngine *be, long seed)
+{
+    DP_ASSERT(be);
+    rng_double_set_seed(mypaint_brush_rng(be->mypaint_brush), seed);
+}
+
 static void set_common_stroke_params(DP_BrushEngine *be,
                                      const DP_BrushEngineStrokeParams *besp)
 {

@@ -331,6 +331,7 @@ void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
     set_brush(bp, stroke_color, shape == DP_BRUSH_PREVIEW_STROKE);
 
     DP_BrushEngine *be = bp->be;
+    DP_brush_engine_random_seed_set(be, 1L);
     DP_brush_engine_stroke_begin(be, cs, 1, false, false, false, false, 1.0f,
                                  0.0f);
 

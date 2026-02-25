@@ -111,6 +111,8 @@ void DP_brush_engine_free(DP_BrushEngine *be);
 
 void DP_brush_engine_size_limit_set(DP_BrushEngine *be, int size_limit);
 
+void DP_brush_engine_random_seed_set(DP_BrushEngine *be, long seed);
+
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
                                        const DP_BrushEngineStrokeParams *besp,
