@@ -176,7 +176,7 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	QPalette pal = palette();
 	if(m_needPalette) {
 		m_brushPreview.setPalette(
-			pal.color(QPalette::Text), pal.color(QPalette::Window));
+			pal.color(QPalette::Text), pal.color(QPalette::Base));
 	}
 
 	qreal dpr = devicePixelRatioF();
@@ -204,7 +204,7 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 		QRect textRect = m_textBounds.marginsAdded(QMargins(4, 1, 4, 1));
 		textRect.moveBottomRight(pr.bottomRight());
 		painter.setOpacity(0.7);
-		painter.fillRect(textRect, pal.window());
+		painter.fillRect(textRect, pal.base());
 		painter.setOpacity(1.0);
 		painter.drawText(
 			textRect, Qt::AlignCenter | Qt::TextDontClip, m_presetTitle);
