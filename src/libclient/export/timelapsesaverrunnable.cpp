@@ -515,7 +515,7 @@ const QBrush &TimelapseSaverRunnable::PlaybackRunnable::getBackgroundBrush(
 							color, backdropColor, backdropAlpha));
 				}
 				m_lastBackgroundBrush = QBrush(img);
-			} else if(backdropAlpha > 0) {
+			} else {
 				// Just a solid color.
 				m_lastBackgroundBrush = QBrush(
 					mixBackgroundColors(color, backdropColor, backdropAlpha));
