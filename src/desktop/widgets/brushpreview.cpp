@@ -274,7 +274,7 @@ QRect BrushPreview::previewRect() const
 {
 	QRect r = contentsRect();
 	if(m_presetEnabled && m_showThumbnail) {
-		int margin = r.height() + 4;
+		int margin = r.height();
 		if(r.width() > margin) {
 			return r.marginsRemoved(QMargins(margin, 0, 0, 0));
 		} else {
