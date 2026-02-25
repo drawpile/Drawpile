@@ -1199,7 +1199,7 @@ static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
         }
 
         const unsigned char *frame;
-        if (input_width == input_height && output_width == output_height) {
+        if (input_width == output_width && input_height == output_height) {
             frame = f.pixels;
         }
         else {
