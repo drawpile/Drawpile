@@ -368,8 +368,10 @@ TimelapseDialog::TimelapseDialog(
 	advancedForm->setContentsMargins(0, 0, 0, 0);
 
 	if(anyFormatFfmpegSupported) {
-		m_ffmpegCheckBox = new QCheckBox(tr("Use FFmpeg if available"));
-		advancedForm->addRow(tr("Encoder:"), m_ffmpegCheckBox);
+		m_ffmpegLabel = new QLabel(tr("Encoder:"));
+		m_ffmpegCheckBox =
+			new QCheckBox(tr("Prefer FFmpeg over internal encoder"));
+		advancedForm->addRow(m_ffmpegLabel, m_ffmpegCheckBox);
 		connect(
 			m_ffmpegCheckBox, &QCheckBox::clicked, this,
 			&TimelapseDialog::updateFfmpeg);
@@ -1029,12 +1031,17 @@ void TimelapseDialog::setDurationSeconds(int seconds)
 
 void TimelapseDialog::updateFfmpeg()
 {
-	if(m_ffmpegNote || m_ffmpegButton) {
+	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegLabel || m_ffmpegCheckBox) {
 		int format = m_formatCombo->currentData().toInt();
-		bool needsFfmpeg = !isVideoFormatSupported(VideoFormat(format));
+		bool libavSupported = isVideoFormatSupported(VideoFormat(format));
+		bool ffmpegSupported =
+			isVideoFormatSupportedFfmpeg(VideoFormat(format));
+
 		if(m_ffmpegNote) {
-			m_ffmpegNote->setVisible(needsFfmpeg && m_ffmpegPath.isEmpty());
+			m_ffmpegNote->setVisible(
+				!libavSupported && ffmpegSupported && m_ffmpegPath.isEmpty());
 		}
+
 		if(m_ffmpegButton) {
 			if(m_ffmpegPath.isEmpty()) {
 				m_ffmpegButton->setText(tr("Set up FFmpeg"));
@@ -1042,8 +1049,15 @@ void TimelapseDialog::updateFfmpeg()
 				m_ffmpegButton->setText(tr("FFmpeg settings"));
 			}
 			m_ffmpegButton->setVisible(
-				needsFfmpeg ||
+				(!libavSupported && ffmpegSupported) ||
 				(m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked()));
+		}
+
+		if(m_ffmpegLabel) {
+			m_ffmpegLabel->setVisible(libavSupported && ffmpegSupported);
+		}
+		if(m_ffmpegCheckBox) {
+			m_ffmpegCheckBox->setVisible(libavSupported && ffmpegSupported);
 		}
 	}
 }

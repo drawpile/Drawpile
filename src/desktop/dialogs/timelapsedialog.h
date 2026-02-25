@@ -147,6 +147,7 @@ private:
 	utils::FormNote *m_dimensionsNote;
 	QPushButton *m_advancedButton;
 	QWidget *m_advancedWidget;
+	QLabel *m_ffmpegLabel = nullptr;
 	QCheckBox *m_ffmpegCheckBox = nullptr;
 	QComboBox *m_interpolationCombo;
 	QCheckBox *m_ownCheckBox;
