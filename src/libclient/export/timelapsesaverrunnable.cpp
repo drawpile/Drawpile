@@ -411,9 +411,9 @@ QImage TimelapseSaverRunnable::PlaybackRunnable::toOutputImage(
 			targetHeight = scaledHeight;
 		} else if(xratio <= yratio) {
 			targetWidth = scaledWidth;
-			targetHeight = int(double(scaledHeight) * xratio);
+			targetHeight = int(double(height) * xratio);
 		} else {
-			targetWidth = int(double(scaledWidth) * yratio);
+			targetWidth = int(double(width) * yratio);
 			targetHeight = scaledHeight;
 		}
 
