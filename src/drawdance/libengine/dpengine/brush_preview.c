@@ -216,9 +216,14 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
     float phase = 0.0f;
     for (int x = 0; x < rw; ++x) {
         float xf = DP_int_to_float(x);
+
         float p = xf / rwf;
-        float raw_pressure = (p * p - p * p * p) * 6.756f;
+        if(p > 0.5f) {
+            p = 1.0f - p;
+        }
+        float raw_pressure = p / 0.5f + 0.1f;
         float pressure = CLAMP(raw_pressure, 0.0f, 1.0f);
+
         long long dt = DP_float_to_llong((1.0f - pressure) * 20.0f + 0.1f);
         float y = sinf(phase) * h;
         stroke_to_time(be, rxf + xf, offy + y, pressure, cs, dt,
