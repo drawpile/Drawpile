@@ -1179,7 +1179,6 @@ static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
 
     double last_progress = 0.0;
     DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
-    int frame_format = get_format_pix_fmt(params.format, true);
     size_t frame_size = DP_int_to_size(output_width)
                       * DP_int_to_size(output_height) * (size_t)4;
     while (params.next_frame_fn(params.user, &f)) {
@@ -1205,7 +1204,7 @@ static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
         else {
             sws_context = sws_getCachedContext(
                 sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
-                output_width, output_height, frame_format,
+                output_width, output_height, AV_PIX_FMT_BGRA,
                 get_scaling_flags(params.flags, input_width, input_height,
                                   output_width, output_height),
                 NULL, NULL, NULL);
