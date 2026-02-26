@@ -7,6 +7,7 @@
 #include "libclient/config/config.h"
 #include "libclient/tools/lassofill.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/icons.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QCheckBox>
@@ -199,20 +200,25 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 	m_stabilizerButton->setMenu(stabilizerMenu);
 
 	m_stabilizationModeGroup = new QActionGroup(stabilizerMenu);
-	m_stabilizerAction = stabilizerMenu->addAction(QCoreApplication::translate(
-		"tools::BrushSettings", "Time-Based Stabilizer", nullptr));
-	m_smoothingAction = stabilizerMenu->addAction(QCoreApplication::translate(
-		"tools::BrushSettings", "Average Smoothing", nullptr));
-	m_stabilizerAction->setStatusTip(QCoreApplication::translate(
-		"tools::BrushSettings",
-		"Slows down the stroke and stabilizes it over time. Can produce very "
-		"smooth results, but may feel sluggish.",
-		nullptr));
-	m_smoothingAction->setStatusTip(QCoreApplication::translate(
-		"tools::BrushSettings",
-		"Simply averages inputs to get a smoother result. Faster than the "
-		"time-based stabilizer, but not as smooth.",
-		nullptr));
+	m_stabilizerAction = stabilizerMenu->addAction(
+		QCoreApplication::translate(
+			"tools::BrushSettings", "Time-Based Stabilizer", nullptr));
+	m_smoothingAction = stabilizerMenu->addAction(
+		QCoreApplication::translate(
+			"tools::BrushSettings", "Average Smoothing", nullptr));
+	m_stabilizerAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Slows down the stroke and stabilizes it over time. Can produce "
+			"very "
+			"smooth results, but may feel sluggish.",
+			nullptr));
+	m_smoothingAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Simply averages inputs to get a smoother result. Faster than the "
+			"time-based stabilizer, but not as smooth.",
+			nullptr));
 	m_stabilizerAction->setCheckable(true);
 	m_smoothingAction->setCheckable(true);
 	m_stabilizationModeGroup->addAction(m_stabilizerAction);
@@ -230,14 +236,6 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 
 	m_alphaPreserveButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
-	QIcon alphaLockedUnlockedIcon;
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_unlocked.svg"), QSize(),
-		QIcon::Normal, QIcon::Off);
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_locked.svg"), QSize(),
-		QIcon::Normal, QIcon::On);
-	m_alphaPreserveButton->setIcon(alphaLockedUnlockedIcon);
 	m_alphaPreserveButton->setToolTip(
 		QCoreApplication::translate("BrushDock", "Preserve alpha"));
 	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
@@ -307,7 +305,17 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&LassoFillSettings::pushSettings);
 
+	connect(
+		&dpApp(), &DrawpileApp::iconThemeChanged, this,
+		&LassoFillSettings::refreshIcons);
+	refreshIcons();
+
 	return widget;
+}
+
+void LassoFillSettings::refreshIcons()
+{
+	m_alphaPreserveButton->setIcon(utils::Icons::alphaLock());
 }
 
 void LassoFillSettings::updateStabilizationMode(QAction *action)

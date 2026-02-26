@@ -20,6 +20,7 @@ extern "C" {
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/config/config.h"
+#include "libclient/utils/icons.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QComboBox>
@@ -168,37 +169,18 @@ LayerList::LayerList(QWidget *parent)
 		&LayerList::clipChanged);
 	titlebar->addCustomWidget(m_clipButton);
 
-	m_alphaPreserveButton =
+	m_alphaInheritButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	QIcon alphaOffOnIcon;
-	alphaOffOnIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_on.svg"), QSize(), QIcon::Normal,
-		QIcon::Off);
-	alphaOffOnIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_off.svg"), QSize(), QIcon::Normal,
-		QIcon::On);
-	m_alphaPreserveButton->setIcon(alphaOffOnIcon);
-	m_alphaPreserveButton->setToolTip(tr("Inherit alpha"));
-	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
-	m_alphaPreserveButton->setCheckable(true);
+	m_alphaInheritButton->setToolTip(tr("Inherit alpha"));
+	m_alphaInheritButton->setStatusTip(m_alphaInheritButton->toolTip());
+	m_alphaInheritButton->setCheckable(true);
 	connect(
-		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
+		m_alphaInheritButton, &widgets::GroupedToolButton::clicked, this,
 		&LayerList::alphaPreserveChanged);
-	titlebar->addCustomWidget(m_alphaPreserveButton);
+	titlebar->addCustomWidget(m_alphaInheritButton);
 
 	m_alphaLockButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	QIcon alphaLockedUnlockedIcon;
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_unlocked.svg"), QSize(),
-		QIcon::Normal, QIcon::Off);
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_locked.svg"), QSize(),
-		QIcon::Normal, QIcon::On);
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_disabled.svg"), QSize(),
-		QIcon::Disabled);
-	m_alphaLockButton->setIcon(alphaLockedUnlockedIcon);
 	m_alphaLockButton->setCheckable(true);
 	titlebar->addCustomWidget(m_alphaLockButton);
 
@@ -310,6 +292,11 @@ LayerList::LayerList(QWidget *parent)
 	CFG_BIND_SET(
 		cfg, AutomaticAlphaPreserve, this,
 		LayerList::setAutomaticAlphaPreserve);
+
+	connect(
+		&dpApp(), &DrawpileApp::iconThemeChanged, this,
+		&LayerList::refreshIcons);
+	refreshIcons();
 }
 
 
@@ -702,7 +689,7 @@ void LayerList::updateLockedControls()
 		m_actions.layerAlphaGroup->setEnabled(canEditSelected);
 	}
 
-	m_alphaPreserveButton->setEnabled(
+	m_alphaInheritButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
 		!compatibilityMode && m_actions.layerAlphaPreserve &&
 		m_actions.layerAlphaPreserve->isEnabled());
@@ -1870,6 +1857,12 @@ void LayerList::showContextMenu(const QPoint &pos)
 	}
 }
 
+void LayerList::refreshIcons()
+{
+	m_alphaInheritButton->setIcon(utils::Icons::alphaInherit());
+	m_alphaLockButton->setIcon(utils::Icons::alphaLock());
+}
+
 void LayerList::beforeLayerReset()
 {
 	m_nearestToDeletedId = m_canvas->layerlist()->findNearestLayer(m_currentId);
@@ -2178,7 +2171,7 @@ void LayerList::updateUiFromCurrent()
 	bool alphaPreserve =
 		!layer.clip &&
 		canvas::blendmode::presentsAsAlphaPreserving(layer.blend);
-	m_alphaPreserveButton->setChecked(alphaPreserve);
+	m_alphaInheritButton->setChecked(alphaPreserve);
 	m_sketchMode = layer.sketchOpacity > 0.0f;
 	m_sketchButton->setChecked(m_sketchMode);
 	m_sketchButton->setGroupPosition(

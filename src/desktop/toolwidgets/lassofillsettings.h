@@ -52,6 +52,7 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	void refreshIcons();
 	void updateStabilizationMode(QAction *action);
 	int getCurrentStabilizationMode() const;
 

@@ -71,6 +71,8 @@ private:
 
 	static void checkGroupButton(QButtonGroup *group, int id);
 
+	void refreshIcons();
+
 	void updateColor();
 
 	void setButtonState(bool pending);

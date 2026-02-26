@@ -124,6 +124,7 @@ public:
 #endif
 
 signals:
+	void iconThemeChanged();
 	void tabletEventReceived();
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	void tabletProximityChanged(bool enter, bool eraser);

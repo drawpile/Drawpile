@@ -40,6 +40,7 @@
 #include <QUrl>
 #include <QWidget>
 #include <libclient/utils/cursors.h>
+#include <libclient/utils/icons.h>
 #include <memory>
 #if defined(Q_OS_MACOS)
 #	include "desktop/utils/macui.h"
@@ -135,6 +136,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	drawdance::initStaticTiles();
 	drawdance::DrawContextPool::init();
 	utils::Cursors::init();
+	utils::Icons::init();
 
 	m_globalEventFilter = new GlobalKeyEventFilter{this};
 	installEventFilter(m_globalEventFilter);
@@ -367,6 +369,8 @@ void DrawpileApp::updateThemeIcons()
 
 	QDir::setSearchPaths("theme", fallbackIconPaths);
 	QIcon::setThemeName(iconTheme);
+	utils::Icons::reset();
+	Q_EMIT iconThemeChanged();
 }
 
 void DrawpileApp::initTheme()

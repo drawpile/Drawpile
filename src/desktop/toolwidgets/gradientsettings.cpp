@@ -7,6 +7,7 @@
 #include "libclient/config/config.h"
 #include "libclient/tools/gradient.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/icons.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QComboBox>
@@ -389,14 +390,6 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 
 	m_alphaPreserveButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
-	QIcon alphaLockedUnlockedIcon;
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_unlocked.svg"), QSize(),
-		QIcon::Normal, QIcon::Off);
-	alphaLockedUnlockedIcon.addFile(
-		QStringLiteral("theme:drawpile_alpha_locked.svg"), QSize(),
-		QIcon::Normal, QIcon::On);
-	m_alphaPreserveButton->setIcon(alphaLockedUnlockedIcon);
 	m_alphaPreserveButton->setToolTip(
 		QCoreApplication::translate("BrushDock", "Preserve alpha"));
 	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
@@ -485,6 +478,11 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 
 	selLayout->addStretch();
 
+	connect(
+		&dpApp(), &DrawpileApp::iconThemeChanged, this,
+		&GradientSettings::refreshIcons);
+	refreshIcons();
+
 	return m_stack;
 }
 
@@ -494,6 +492,11 @@ void GradientSettings::checkGroupButton(QButtonGroup *group, int id)
 	if(button) {
 		button->setChecked(true);
 	}
+}
+
+void GradientSettings::refreshIcons()
+{
+	m_alphaPreserveButton->setIcon(utils::Icons::alphaLock());
 }
 
 void GradientSettings::updateColor()

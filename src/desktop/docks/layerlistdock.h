@@ -122,6 +122,8 @@ signals:
 	void layerCommands(int count, const net::Message *msgs);
 
 private:
+	void refreshIcons();
+
 	void beforeLayerReset();
 	void afterLayerReset();
 
@@ -273,7 +275,7 @@ private:
 	widgets::GroupedToolButton *m_lockButton;
 	widgets::GroupedToolButton *m_alphaLockButton;
 	widgets::GroupedToolButton *m_clipButton;
-	widgets::GroupedToolButton *m_alphaPreserveButton;
+	widgets::GroupedToolButton *m_alphaInheritButton;
 	QComboBox *m_blendModeCombo;
 	KisSliderSpinBox *m_opacitySlider;
 	widgets::GroupedToolButton *m_sketchButton;

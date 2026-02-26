@@ -228,6 +228,8 @@ target_sources(dpclient PRIVATE
 	utils/html.cpp
 	utils/html.h
 	utils/html_gen.cpp
+	utils/icons.cpp
+	utils/icons.h
 	utils/identicon.cpp
 	utils/identicon.h
 	utils/images.cpp

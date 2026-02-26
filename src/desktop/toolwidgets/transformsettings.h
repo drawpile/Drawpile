@@ -68,6 +68,8 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	void refreshIcons();
+
 	void mirror();
 	void flip();
 	void rotateCw();

@@ -12,6 +12,7 @@
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/tools/transform.h"
+#include "libclient/utils/icons.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QComboBox>
@@ -421,7 +422,17 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&TransformSettings::blendModeChanged);
 
+	connect(
+		&dpApp(), &DrawpileApp::iconThemeChanged, this,
+		&TransformSettings::refreshIcons);
+	refreshIcons();
+
 	return widget;
+}
+
+void TransformSettings::refreshIcons()
+{
+	m_alphaPreserveButton->setIcon(utils::Icons::alphaLock());
 }
 
 void TransformSettings::mirror()

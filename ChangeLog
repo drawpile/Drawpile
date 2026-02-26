@@ -43,6 +43,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Brush preview styles. You can now toggle between the full style with the rainbow circles and a plain style that matches the UI colors and doesn't try to preview every aspect of the brush. You can also toggle the display of the brush's title and thumbnail. There's also the option of disabling the preview altogether. The default is to show the thumbnail and title with plain style, since that gives the best tradeoff between showing the relevant information without being too distracting. Thanks fadi123go for suggesting.
  * Fix: Use a fixed random seed for the brush preview so that it doesn't change erratically when adjusting a parameter, which made it hard to see what was actually changing.
  * Feature: Only load brush thumbnails as they are needed. This should speed up startup if you have a lot of brushes.
+ * Fix: Properly update alpha inherit icon when switching between dark and light themes. Thanks xxxx for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
