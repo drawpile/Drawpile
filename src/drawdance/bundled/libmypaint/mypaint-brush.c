@@ -180,6 +180,11 @@ brush_reset(MyPaintBrush *self)
         self->max_bucket_used = -1;
       }
     }
+    // Drawpile patch: clear the current settings values properly. The brush
+    // reads from these before setting them, causing random jitter in previews.
+    for(int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
+        self->settings_value[i] = 0.0f;
+    }
 }
 
 /**
