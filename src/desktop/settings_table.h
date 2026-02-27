@@ -46,6 +46,9 @@ SETTING(
 	brushOutlineWidth, BrushOutlineWidth, "settings/brushoutlinewidth",
 	config::Config::defaultBrushOutlineWidth())
 SETTING(
+	brushPaletteDisplay, BrushPaletteDisplay, "settings/brushpalettedisplay",
+	config::Config::defaultBrushPaletteDisplay())
+SETTING(
 	brushPresetsAttach, BrushPresetsAttach, "settings/brushpresetsattach",
 	config::Config::defaultBrushPresetsAttach())
 SETTING(

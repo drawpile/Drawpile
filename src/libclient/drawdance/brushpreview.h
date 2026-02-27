@@ -35,7 +35,7 @@ public:
 		const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
 		DP_BrushPreviewStyle style, DP_BrushPreviewShape shape);
 
-	void paint(const QPixmap &background);
+	void paint(const QPixmap &background = QPixmap());
 
 	static QPixmap classicBrushPreviewDab(
 		const DP_ClassicBrush &cb, int width, int height, const QColor &color);

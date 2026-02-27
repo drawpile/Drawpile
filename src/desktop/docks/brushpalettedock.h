@@ -30,6 +30,12 @@ namespace docks {
 class BrushPalette final : public DockBase {
 	Q_OBJECT
 public:
+	enum class Display {
+		Both,
+		Thumbnails,
+		Strokes,
+	};
+
 	BrushPalette(QWidget *parent = nullptr);
 	~BrushPalette() override;
 
@@ -56,6 +62,9 @@ public slots:
 signals:
 	void editBrushRequested();
 
+protected:
+	void changeEvent(QEvent *event) override;
+
 private slots:
 	void tagIndexChanged(int proxyRow);
 	void setSelectedPresetIdFromBrushSettings(int presetId, bool attached);
@@ -77,6 +86,9 @@ private slots:
 private:
 	struct Private;
 	Private *d;
+
+	void handleDisplayAction(QAction *action);
+	void setDisplay(int display);
 
 	void applyToBrushSettings(const QModelIndex &proxyIndex);
 	void changeTagAssignment(int tagId, bool assigned);

@@ -78,6 +78,8 @@ struct Preset {
 		return changedBrush.has_value() ? changedBrush.value() : originalBrush;
 	}
 
+	QString effectivePreviewTitle() const;
+
 	bool hasChanges() const
 	{
 		return changedName.has_value() || changedDescription.has_value() ||

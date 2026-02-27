@@ -1152,6 +1152,51 @@ bool Tag::accepts(const QSet<int> &tagIds) const
 	}
 }
 
+QString Preset::effectivePreviewTitle() const
+{
+	const QString &originalTitle = effectiveName();
+	QString title = originalTitle.trimmed();
+
+	// Strip any category and number prefix.
+	static QRegularExpression prefixRe(
+		QStringLiteral("\\A(.*/)?(?>[0-9]*[\\s+_-]*)(?=\\S)"),
+		QRegularExpression::DotMatchesEverythingOption |
+			QRegularExpression::DontCaptureOption);
+	title.replace(prefixRe, QString());
+	if(title.isEmpty()) {
+		return originalTitle;
+	}
+
+	// Split by:
+	static QRegularExpression splitRe(QStringLiteral(
+		// Whitespace, plus, underscores and dashes
+		"[\\s+_-]+"
+		// or a lowercase letter followed by an uppercase letter
+		"|(?<=\\p{Ll})(?=\\p{Lu})"
+		// or any non-whitespace character followed by a #
+		"|(?<=\\S)(?=#)"
+		// or a letter followed by a number.
+		"|(?<=\\p{L})(?=\\p{N})"));
+	{
+		QStringList pieces = title.split(splitRe, compat::SkipEmptyParts);
+
+		// Uppercase the first grapheme cluster (what a human would see as a
+		// single character) of each split piece and join with a space.
+		static QRegularExpression ucfirstRe(
+			QStringLiteral("\\A(\\p{N}*)(\\X)"));
+		for(QString &piece : pieces) {
+			QRegularExpressionMatch match = ucfirstRe.match(piece);
+			if(match.hasMatch()) {
+				piece = match.captured(1) + match.captured(2).toUpper() +
+						piece.mid(match.capturedEnd());
+			}
+		}
+		title = pieces.join(QChar(' '));
+	}
+
+	return title.isEmpty() ? originalTitle : title;
+}
+
 BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 	: QAbstractItemModel(parent)
 	, d(new Private)

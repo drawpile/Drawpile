@@ -81,6 +81,9 @@ public:
 	double getBrushOutlineWidth() const override;
 	void setBrushOutlineWidth(double value) override;
 
+	int getBrushPaletteDisplay() const override;
+	void setBrushPaletteDisplay(int value) override;
+
 	bool getBrushPresetsAttach() const override;
 	void setBrushPresetsAttach(bool value) override;
 

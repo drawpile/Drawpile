@@ -74,6 +74,9 @@ public:
 	double getBrushOutlineWidth() const override;
 	void setBrushOutlineWidth(double value) override;
 
+	int getBrushPaletteDisplay() const override;
+	void setBrushPaletteDisplay(int value) override;
+
 	bool getBrushPresetsAttach() const override;
 	void setBrushPresetsAttach(bool value) override;
 
@@ -825,6 +828,7 @@ private:
 	int m_automaticAlphaPreserve = defaultAutomaticAlphaPreserve();
 	int m_brushCursor = defaultBrushCursor();
 	double m_brushOutlineWidth = defaultBrushOutlineWidth();
+	int m_brushPaletteDisplay = defaultBrushPaletteDisplay();
 	bool m_brushPresetsAttach = defaultBrushPresetsAttach();
 	int m_brushPreviewStyle = defaultBrushPreviewStyle();
 	bool m_brushPreviewThumbnail = defaultBrushPreviewThumbnail();

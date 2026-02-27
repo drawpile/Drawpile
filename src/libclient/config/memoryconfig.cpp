@@ -243,6 +243,19 @@ void MemoryConfig::setBrushOutlineWidth(double value)
 	}
 }
 
+int MemoryConfig::getBrushPaletteDisplay() const
+{
+	return m_brushPaletteDisplay;
+}
+
+void MemoryConfig::setBrushPaletteDisplay(int value)
+{
+	if(value != m_brushPaletteDisplay) {
+		m_brushPaletteDisplay = value;
+		Q_EMIT changeBrushPaletteDisplay(m_brushPaletteDisplay);
+	}
+}
+
 bool MemoryConfig::getBrushPresetsAttach() const
 {
 	return m_brushPresetsAttach;

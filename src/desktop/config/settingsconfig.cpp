@@ -89,6 +89,9 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::brushOutlineWidthChanged,
 		this, &SettingsConfig::changeBrushOutlineWidth, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::brushPaletteDisplayChanged,
+		this, &SettingsConfig::changeBrushPaletteDisplay, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::brushPresetsAttachChanged,
 		this, &SettingsConfig::changeBrushPresetsAttach, Qt::DirectConnection);
 	connect(
@@ -1078,6 +1081,16 @@ double SettingsConfig::getBrushOutlineWidth() const
 void SettingsConfig::setBrushOutlineWidth(double value)
 {
 	m_settings->setBrushOutlineWidth(value);
+}
+
+int SettingsConfig::getBrushPaletteDisplay() const
+{
+	return m_settings->brushPaletteDisplay();
+}
+
+void SettingsConfig::setBrushPaletteDisplay(int value)
+{
+	m_settings->setBrushPaletteDisplay(value);
 }
 
 bool SettingsConfig::getBrushPresetsAttach() const

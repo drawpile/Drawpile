@@ -272,6 +272,12 @@ settings:
     qsettings: 'settings/brushoutlinewidth'
     legacy_package: 'desktop'
 
+  - id: brushPaletteDisplay
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/brushpalettedisplay'
+    legacy_package: 'desktop'
+
   - id: brushPresetsAttach
     type: 'bool'
     default: 'true'

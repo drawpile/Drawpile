@@ -10,6 +10,8 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/brushes/brush.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/config/config.h"
+#include <QActionGroup>
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -90,7 +92,12 @@ struct BrushPalette::Private {
 	QAction *importBrushesAction;
 	QAction *exportTagAction;
 	QAction *exportPresetAction;
+	QActionGroup *displayGroup;
+	QAction *displayThumbnailsAction;
+	QAction *displayStrokesAction;
+	QAction *displayBothAction;
 	IgnoreEnsureVisibleListView *presetListView;
+	BrushPaletteDelegate *delegate;
 
 	int selectedPresetId = 0;
 	int lastSelectedPresetId = 0;
@@ -132,6 +139,26 @@ BrushPalette::BrushPalette(QWidget *parent)
 	titleWidget->addSpace(4);
 
 	d->tagMenu = new QMenu(this);
+
+	QMenu *displayMenu = d->tagMenu->addMenu(tr("Display"));
+	d->displayThumbnailsAction = displayMenu->addAction(tr("Thumbnails"));
+	d->displayStrokesAction = displayMenu->addAction(tr("Strokes"));
+	d->displayBothAction = displayMenu->addAction(tr("Both"));
+	d->displayThumbnailsAction->setCheckable(true);
+	d->displayStrokesAction->setCheckable(true);
+	d->displayBothAction->setCheckable(true);
+	d->displayThumbnailsAction->setChecked(true);
+
+	d->displayGroup = new QActionGroup(this);
+	d->displayGroup->addAction(d->displayThumbnailsAction);
+	d->displayGroup->addAction(d->displayStrokesAction);
+	d->displayGroup->addAction(d->displayBothAction);
+	connect(
+		d->displayGroup, &QActionGroup::triggered, this,
+		&BrushPalette::handleDisplayAction);
+
+	d->tagMenu->addSeparator();
+
 	d->editBrushAction =
 		d->tagMenu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush"));
 	d->resetBrushAction = d->tagMenu->addAction(
@@ -159,6 +186,8 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->menuButton->setMenu(d->tagMenu);
 
 	d->brushMenu = new QMenu(this);
+	d->brushMenu->addMenu(displayMenu);
+	d->brushMenu->addSeparator();
 	d->brushMenu->addAction(d->editBrushAction);
 	d->brushMenu->addAction(d->resetBrushAction);
 	d->brushMenu->addAction(d->resetAllAction);
@@ -185,12 +214,14 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->presetListView = new IgnoreEnsureVisibleListView(this);
 	d->presetListView->setUniformItemSizes(true);
 	d->presetListView->setFlow(QListView::LeftToRight);
+	d->presetListView->setMovement(QListView::Static);
 	d->presetListView->setWrapping(true);
+	d->presetListView->setSpacing(0);
 	d->presetListView->setResizeMode(QListView::Adjust);
 	d->presetListView->setContextMenuPolicy(Qt::CustomContextMenu);
 	d->presetListView->setSelectionMode(QAbstractItemView::SingleSelection);
-	BrushPaletteDelegate *delegate = new BrushPaletteDelegate(this);
-	d->presetListView->setItemDelegate(delegate);
+	d->delegate = new BrushPaletteDelegate(this);
+	d->presetListView->setItemDelegate(d->delegate);
 	utils::bindKineticScrolling(d->presetListView);
 	setWidget(d->presetListView);
 
@@ -201,23 +232,23 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->presetModel, &QAbstractItemModel::modelReset, this,
 		&BrushPalette::presetsReset);
 	connect(
-		d->presetModel, &QAbstractItemModel::modelReset, delegate,
+		d->presetModel, &QAbstractItemModel::modelReset, d->delegate,
 		&BrushPaletteDelegate::clearCache);
 	connect(
-		d->presetModel, &QAbstractItemModel::rowsInserted, delegate,
+		d->presetModel, &QAbstractItemModel::rowsInserted, d->delegate,
 		&BrushPaletteDelegate::clearCache);
 	connect(
-		d->presetModel, &QAbstractItemModel::rowsRemoved, delegate,
+		d->presetModel, &QAbstractItemModel::rowsRemoved, d->delegate,
 		&BrushPaletteDelegate::clearCache);
 	connect(
-		d->presetModel, &QAbstractItemModel::columnsInserted, delegate,
+		d->presetModel, &QAbstractItemModel::columnsInserted, d->delegate,
 		&BrushPaletteDelegate::clearCache);
 	connect(
-		d->presetModel, &QAbstractItemModel::columnsRemoved, delegate,
+		d->presetModel, &QAbstractItemModel::columnsRemoved, d->delegate,
 		&BrushPaletteDelegate::clearCache);
 	connect(
-		d->presetModel, &QAbstractItemModel::dataChanged, delegate,
-		&BrushPaletteDelegate::clearCache);
+		d->presetModel, &QAbstractItemModel::dataChanged, d->delegate,
+		&BrushPaletteDelegate::handleDataChanged);
 	connect(
 		d->tagComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &BrushPalette::tagIndexChanged);
@@ -273,6 +304,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 	connect(
 		d->presetListView, &QWidget::customContextMenuRequested, this,
 		&BrushPalette::showPresetContextMenu);
+
+	config::Config *cfg = dpAppConfig();
+	CFG_BIND_SET(cfg, BrushPaletteDisplay, this, BrushPalette::setDisplay);
 
 	int selectedTagId = d->tagModel->getStateInt(SELECTED_TAG_ID_KEY, 0);
 	int selectedTagRow =
@@ -579,6 +613,20 @@ void BrushPalette::selectPreviousTag()
 	}
 }
 
+void BrushPalette::changeEvent(QEvent *event)
+{
+	switch(event->type()) {
+	case QEvent::ApplicationPaletteChange:
+	case QEvent::PaletteChange:
+		d->delegate->clearCache();
+		update();
+		break;
+	default:
+		break;
+	}
+	DockBase::changeEvent(event);
+}
+
 void BrushPalette::tagIndexChanged(int row)
 {
 	d->currentTag = d->tagModel->getTagAt(row);
@@ -796,6 +844,37 @@ void BrushPalette::applyToDetachedBrushSettings(const QModelIndex &proxyIndex)
 							!d->brushSettings->isCurrentPresetAttached())) {
 		applyToBrushSettings(proxyIndex);
 	}
+}
+
+void BrushPalette::handleDisplayAction(QAction *action)
+{
+	if(action == d->displayThumbnailsAction) {
+		dpAppConfig()->setBrushPaletteDisplay(int(Display::Thumbnails));
+	} else if(action == d->displayStrokesAction) {
+		dpAppConfig()->setBrushPaletteDisplay(int(Display::Strokes));
+	} else if(action == d->displayBothAction) {
+		dpAppConfig()->setBrushPaletteDisplay(int(Display::Both));
+	}
+}
+
+void BrushPalette::setDisplay(int mode)
+{
+	utils::ScopedUpdateDisabler disabler(this);
+
+	switch(mode) {
+	case int(Display::Strokes):
+		d->displayStrokesAction->setChecked(true);
+		break;
+	case int(Display::Both):
+		d->displayBothAction->setChecked(true);
+		break;
+	default:
+		d->displayThumbnailsAction->setChecked(true);
+		break;
+	}
+
+	d->delegate->setDisplay(mode);
+	d->presetListView->reset();
 }
 
 void BrushPalette::applyToBrushSettings(const QModelIndex &proxyIndex)
