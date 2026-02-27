@@ -8,9 +8,11 @@
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/brushes/brush.h"
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/config/config.h"
+#include "libclient/utils/debouncetimer.h"
 #include <QActionGroup>
 #include <QComboBox>
 #include <QDialog>
@@ -26,6 +28,7 @@
 #include <QTemporaryFile>
 #include <QTextBrowser>
 #include <QVBoxLayout>
+#include <QWidgetAction>
 #include <functional>
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -83,7 +86,6 @@ struct BrushPalette::Private {
 	QAction *resetBrushAction;
 	QAction *resetAllAction;
 	QAction *deleteBrushAction;
-	QMenu *iconSizeMenu;
 	QMenu *tagMenu;
 	QMenu *brushMenu;
 	QAction *newTagAction;
@@ -96,12 +98,16 @@ struct BrushPalette::Private {
 	QAction *displayThumbnailsAction;
 	QAction *displayStrokesAction;
 	QAction *displayBothAction;
+	KisSliderSpinBox *tagDisplaySizeSlider;
+	KisSliderSpinBox *brushDisplaySizeSlider;
 	IgnoreEnsureVisibleListView *presetListView;
 	BrushPaletteDelegate *delegate;
 
 	int selectedPresetId = 0;
 	int lastSelectedPresetId = 0;
 	bool navigationInProgress = false;
+
+	DebounceTimer sizeDebounce = DebounceTimer(250);
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
@@ -140,25 +146,6 @@ BrushPalette::BrushPalette(QWidget *parent)
 
 	d->tagMenu = new QMenu(this);
 
-	QMenu *displayMenu = d->tagMenu->addMenu(tr("Display"));
-	d->displayThumbnailsAction = displayMenu->addAction(tr("Thumbnails"));
-	d->displayStrokesAction = displayMenu->addAction(tr("Strokes"));
-	d->displayBothAction = displayMenu->addAction(tr("Both"));
-	d->displayThumbnailsAction->setCheckable(true);
-	d->displayStrokesAction->setCheckable(true);
-	d->displayBothAction->setCheckable(true);
-	d->displayThumbnailsAction->setChecked(true);
-
-	d->displayGroup = new QActionGroup(this);
-	d->displayGroup->addAction(d->displayThumbnailsAction);
-	d->displayGroup->addAction(d->displayStrokesAction);
-	d->displayGroup->addAction(d->displayBothAction);
-	connect(
-		d->displayGroup, &QActionGroup::triggered, this,
-		&BrushPalette::handleDisplayAction);
-
-	d->tagMenu->addSeparator();
-
 	d->editBrushAction =
 		d->tagMenu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush"));
 	d->resetBrushAction = d->tagMenu->addAction(
@@ -172,7 +159,6 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->deleteBrushAction = d->tagMenu->addAction(
 		QIcon::fromTheme("trash-empty"), tr("&Delete Brush"));
 	d->assignmentMenu = d->tagMenu->addMenu(tr("Brush &Tags"));
-	d->iconSizeMenu = d->tagMenu->addMenu(tr("&Icon Size"));
 	d->tagMenu->addSeparator();
 	d->newTagAction =
 		d->tagMenu->addAction(QIcon::fromTheme("folder-new"), tr("Ne&w Tag"));
@@ -183,10 +169,29 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->tagMenu->addSeparator();
 	d->importBrushesAction = d->tagMenu->addAction(tr("Im&port Brushes…"));
 	d->exportTagAction = d->tagMenu->addAction(tr("E&xport Tag…"));
+
+	QString displayTitle = tr("Display:");
+	d->tagMenu->addSection(displayTitle);
+
+	d->displayThumbnailsAction = d->tagMenu->addAction(tr("Thumbnails"));
+	d->displayStrokesAction = d->tagMenu->addAction(tr("Strokes"));
+	d->displayBothAction = d->tagMenu->addAction(tr("Both"));
+	d->displayThumbnailsAction->setCheckable(true);
+	d->displayStrokesAction->setCheckable(true);
+	d->displayBothAction->setCheckable(true);
+	d->displayThumbnailsAction->setChecked(true);
+
+	d->displayGroup = new QActionGroup(this);
+	d->displayGroup->addAction(d->displayThumbnailsAction);
+	d->displayGroup->addAction(d->displayStrokesAction);
+	d->displayGroup->addAction(d->displayBothAction);
+	connect(
+		d->displayGroup, &QActionGroup::triggered, this,
+		&BrushPalette::handleDisplayAction);
+
 	d->menuButton->setMenu(d->tagMenu);
 
 	d->brushMenu = new QMenu(this);
-	d->brushMenu->addMenu(displayMenu);
 	d->brushMenu->addSeparator();
 	d->brushMenu->addAction(d->editBrushAction);
 	d->brushMenu->addAction(d->resetBrushAction);
@@ -196,20 +201,38 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->brushMenu->addAction(d->overwriteBrushAction);
 	d->brushMenu->addAction(d->deleteBrushAction);
 	d->brushMenu->addMenu(d->assignmentMenu);
-	d->brushMenu->addMenu(d->iconSizeMenu);
 	d->brushMenu->addSeparator();
 	d->brushMenu->addAction(d->importBrushesAction);
 	d->exportPresetAction = d->brushMenu->addAction(tr("Export Brush…"));
+	d->brushMenu->addSection(displayTitle);
+	d->brushMenu->addAction(d->displayThumbnailsAction);
+	d->brushMenu->addAction(d->displayStrokesAction);
+	d->brushMenu->addAction(d->displayBothAction);
 
-	for(int dimension = 16; dimension <= 128; dimension += 16) {
-		QAction *sizeAction =
-			d->iconSizeMenu->addAction(tr("%1x%1").arg(dimension));
-		sizeAction->setCheckable(true);
-		sizeAction->setData(dimension);
-		connect(sizeAction, &QAction::triggered, [=]() {
-			d->presetModel->setIconDimension(dimension);
-		});
+	for(KisSliderSpinBox **pp :
+		{&d->tagDisplaySizeSlider, &d->brushDisplaySizeSlider}) {
+		KisSliderSpinBox *slider = new KisSliderSpinBox;
+		slider->setRange(16, 128);
+		slider->setValue(64);
+		slider->setBlockUpdateSignalOnDrag(true);
+		connect(
+			slider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+			&d->sizeDebounce, &DebounceTimer::setInt);
+		connect(
+			&d->sizeDebounce, &DebounceTimer::intChanged, d->presetModel,
+			&brushes::BrushPresetModel::setIconDimension);
+		*pp = slider;
 	}
+
+	QWidgetAction *tagDisplaySizeAction = new QWidgetAction(d->tagMenu);
+	QWidgetAction *brushDisplaySizeAction = new QWidgetAction(d->brushMenu);
+	tagDisplaySizeAction->setDefaultWidget(d->tagDisplaySizeSlider);
+	brushDisplaySizeAction->setDefaultWidget(d->brushDisplaySizeSlider);
+	QString sizeTitle = tr("Size:");
+	d->tagMenu->addSection(sizeTitle);
+	d->brushMenu->addSection(sizeTitle);
+	d->tagMenu->addAction(tagDisplaySizeAction);
+	d->brushMenu->addAction(brushDisplaySizeAction);
 
 	d->presetListView = new IgnoreEnsureVisibleListView(this);
 	d->presetListView->setUniformItemSizes(true);
@@ -696,9 +719,10 @@ void BrushPalette::presetsReset()
 {
 	updateSelectedPreset();
 	int iconDimension = d->presetModel->iconDimension();
-	for(QAction *action : d->iconSizeMenu->actions()) {
-		action->setChecked(action->data().toInt() == iconDimension);
-	}
+	QSignalBlocker tagBlocker(d->tagDisplaySizeSlider);
+	QSignalBlocker brushBlocker(d->brushDisplaySizeSlider);
+	d->tagDisplaySizeSlider->setValue(iconDimension);
+	d->brushDisplaySizeSlider->setValue(iconDimension);
 }
 
 void BrushPalette::presetCurrentIndexChanged(

@@ -46,6 +46,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Properly update alpha inherit icon when switching between dark and light themes. Thanks xxxx for reporting.
  * Feature: Allow choosing between thumbnails, strokes or both in the brushes dock. The default is both, since it gives the most amount of information at a glance.
  * Fix: Center brush dock thumbnails instead of having them left-aligned. Thanks MorrowShore for reporting.
+ * Feature: Allow arbitrary scaling of brush dock sizes with a slider instead of a fixed set of sizes.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
