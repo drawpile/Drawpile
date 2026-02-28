@@ -143,6 +143,19 @@ void CanvasShortcuts::loadDefaults()
 		QString(),
 		SWAP_AXES,
 	});
+	// In the browser, Qt::TaskButton is what gets pressed when the eraser tip
+	// of a stylus is pressed down, so we shouldn't bind anything to it.
+#ifndef __EMSCRIPTEN__
+	addShortcut({
+		MOUSE_BUTTON,
+		{},
+		{},
+		Qt::TaskButton,
+		TOGGLE_ERASER,
+		QString(),
+		NORMAL,
+	});
+#endif
 	// Unlike other platforms, macOS has two-dimensional scrolling by default,
 	// so it makes more sense to assign canvas panning to it.
 	addShortcut({

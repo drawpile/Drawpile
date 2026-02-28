@@ -48,6 +48,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Center brush dock thumbnails instead of having them left-aligned. Thanks MorrowShore for reporting.
  * Feature: Allow arbitrary scaling of brush dock sizes with a slider instead of a fixed set of sizes.
  * Fix: Handle additional stylus buttons on Android correctly. This makes some three-button styluses no longer interpret two of the side buttons as middle mouse.
+ * Feature: Bind mouse button 5 to toggling the eraser by default. This makes three-button styluses have useful behavior.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
