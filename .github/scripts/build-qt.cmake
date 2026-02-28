@@ -368,6 +368,7 @@ if(KRITA_QT)
 				qtbase:patches/android-wacom-qt5-krita.diff
 				qtbase:patches/android-xiaomi-qt5-krita.diff
 				qtbase:patches/android-screen-density-adjustment-qt5-krita.diff
+				qtbase:patches/android-mousebuttons-qt5-krita.diff
 				TARGET_BITS=64@qtbase:patches/android-16k-alignment-qt5-krita.diff
 	)
 else()

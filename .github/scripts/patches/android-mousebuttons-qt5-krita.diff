@@ -1,0 +1,18 @@
+Description: Handles additional buttons coming from stylus inputs properly,
+since otherwise multiple buttons get mapped to e.g. the middle mouse button.
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -430,6 +430,12 @@
+                 buttons = Qt::MiddleButton;
+             else if (buttonState == AMOTION_EVENT_BUTTON_STYLUS_SECONDARY)
+                 buttons = Qt::RightButton;
++            else if (buttonState == AMOTION_EVENT_BUTTON_TERTIARY)
++                buttons = Qt::TaskButton;
++            else if (buttonState == AMOTION_EVENT_BUTTON_FORWARD)
++                buttons = Qt::ForwardButton;
++            else if (buttonState == AMOTION_EVENT_BUTTON_BACK)
++                buttons = Qt::BackButton;
+             else if (buttonState)
+                 buttons = Qt::MouseButtons(buttonState);
+             break;
+
