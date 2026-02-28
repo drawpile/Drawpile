@@ -547,6 +547,9 @@ SETTING(
 	renderUpdateFull, RenderUpdateFull, "settings/render/updatefull",
 	config::Config::defaultRenderUpdateFull())
 SETTING(
+	samplesToSkip, SamplesToSkip, "settings/input/samplestoskip",
+	config::Config::defaultSamplesToSkip())
+SETTING(
 	samplingRingVisibility, SamplingRingVisibility,
 	"settings/colorpicker/samplingring",
 	config::Config::defaultSamplingRingVisibility())

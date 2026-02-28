@@ -178,6 +178,11 @@
 		CFG, SETTING, SUBJECT, &::QDoubleSpinBox::setValue,                    \
 		::QOverload<double>::of(&::QDoubleSpinBox::valueChanged))
 
+#define CFG_BIND_DOUBLESLIDERSPINBOX(CFG, SETTING, SUBJECT)                    \
+	CFG_BIND_OBJECT(                                                           \
+		CFG, SETTING, SUBJECT, &::KisDoubleSliderSpinBox::setValue,            \
+		::QOverload<double>::of(&::KisDoubleSliderSpinBox::valueChanged))
+
 #define CFG_BIND_LINEEDIT(CFG, SETTING, SUBJECT)                               \
 	CFG_BIND_OBJECT(                                                           \
 		CFG, SETTING, SUBJECT, &::QLineEdit::setText,                          \
@@ -1002,6 +1007,10 @@ public:
 	virtual void setRenderUpdateFull(bool value) = 0;
 	static bool defaultRenderUpdateFull();
 
+	virtual double getSamplesToSkip() const = 0;
+	virtual void setSamplesToSkip(double value) = 0;
+	static double defaultSamplesToSkip();
+
 	virtual int getSamplingRingVisibility() const = 0;
 	virtual void setSamplingRingVisibility(int value) = 0;
 	static int defaultSamplingRingVisibility();
@@ -1470,6 +1479,7 @@ Q_SIGNALS:
 	void changeRenderCanvas(int value);
 	void changeRenderSmooth(bool value);
 	void changeRenderUpdateFull(bool value);
+	void changeSamplesToSkip(double value);
 	void changeSamplingRingVisibility(int value);
 	void changeSelectionColor(const QColor &value);
 	void changeServerAutoReset(bool value);

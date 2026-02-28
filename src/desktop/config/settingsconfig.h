@@ -608,6 +608,9 @@ public:
 	bool getRenderUpdateFull() const override;
 	void setRenderUpdateFull(bool value) override;
 
+	double getSamplesToSkip() const override;
+	void setSamplesToSkip(double value) override;
+
 	int getSamplingRingVisibility() const override;
 	void setSamplingRingVisibility(int value) override;
 

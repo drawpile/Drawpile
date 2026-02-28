@@ -61,6 +61,9 @@ Document::Document(
 		m_cfg, Smoothing, m_toolctrl,
 		tools::ToolController::setGlobalSmoothing);
 	CFG_BIND_SET(
+		m_cfg, SamplesToSkip, m_toolctrl,
+		tools::ToolController::setSamplesToSkip);
+	CFG_BIND_SET(
 		m_cfg, InterpolateInputs, m_toolctrl,
 		tools::ToolController::setInterpolateInputs);
 	CFG_BIND_SET(

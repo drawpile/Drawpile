@@ -186,6 +186,8 @@ struct DP_BrushEngine {
         bool in_progress;
         bool sync_samples;
         bool compatibility_mode;
+        double samples_skipped;
+        double samples_to_skip;
         long long last_time_msec;
     } stroke;
     struct {
@@ -398,9 +400,28 @@ static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
     return NULL;
 }
 
+static bool skip_samples(DP_BrushEngine *be)
+{
+    double samples_to_skip = be->stroke.samples_to_skip;
+    if (samples_to_skip > 0.0) {
+        double samples_skipped = be->stroke.samples_skipped;
+        if (samples_skipped >= samples_to_skip) {
+            be->stroke.samples_skipped = samples_skipped - samples_to_skip;
+            return true;
+        }
+        else {
+            be->stroke.samples_skipped = samples_skipped + 1.0;
+            return false;
+        }
+    }
+    else {
+        return true;
+    }
+}
+
 static DP_LayerContent *update_sample_layer_content(DP_BrushEngine *be)
 {
-    if (be->stroke.sync_samples) {
+    if (be->stroke.sync_samples && skip_samples(be)) {
         DP_ASSERT(be->sync); // Checked when setting sync_samples.
         DP_CanvasState *cs = be->sync(be->user);
         if (cs) {
@@ -2309,7 +2330,7 @@ DP_brush_engine_new(DP_MaskSync *ms_or_null,
          add_dab_mypaint_pigment,
          get_color_mypaint_pigment,
          NULL},
-        {0, 1.0f, 0.0f, false, false, false, false, false, false, 0},
+        {0, 1.0f, 0.0f, false, false, false, false, false, false, 0, 0, 0},
         {false, false, 0, 0, ms_or_null ? ++ms_or_null->last_sync_id : 0,
          DP_mask_sync_incref_nullable(ms_or_null), NULL, 0, NULL, NULL},
         {NULL,
@@ -2365,6 +2386,7 @@ static void set_common_stroke_params(DP_BrushEngine *be,
 {
     be->layer_id = besp->layer_id;
     be->stroke.sync_samples = besp->sync_samples && be->sync;
+    be->stroke.samples_to_skip = besp->samples_to_skip;
     DP_stroke_engine_params_set(&be->se, &besp->se);
     DP_ASSERT(besp->selection_id < 32); // Only have 5 bits for the id.
     be->mask.next_selection_id = besp->selection_id;
@@ -2856,6 +2878,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     be->stroke.mirror = mirror;
     be->stroke.flip = flip;
     be->stroke.compatibility_mode = compatibility_mode;
+    be->stroke.samples_skipped = 0.0;
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }

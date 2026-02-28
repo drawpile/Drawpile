@@ -218,7 +218,7 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
         float xf = DP_int_to_float(x);
 
         float p = xf / rwf;
-        if(p > 0.5f) {
+        if (p > 0.5f) {
             p = 1.0f - p;
         }
         float raw_pressure = p / 0.5f + 0.1f;
@@ -377,7 +377,7 @@ static DP_BrushEngineStrokeParams
 preview_stroke_params(bool allow_pixel_perfect)
 {
     return (DP_BrushEngineStrokeParams){
-        {0, 0, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
+        {0, 0, false, false, false}, NULL, 0.0, 0.0, 0, 1, 0, false, false,
         allow_pixel_perfect};
 }
 
