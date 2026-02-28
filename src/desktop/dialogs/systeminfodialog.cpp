@@ -71,6 +71,8 @@ QString SystemInfoDialog::getSystemInfo() const
 					QLibraryInfo::version().toString(),
 					QLibraryInfo::isDebugBuild() ? QStringLiteral("debug")
 												 : QStringLiteral("release"));
+	info += QStringLiteral("Build type: %1\n")
+				.arg(QString::fromUtf8(cmake_config::buildType()));
 	info += QStringLiteral("Features: %1\n").arg(getCompileFeatures());
 	info += QStringLiteral("\n");
 
@@ -346,6 +348,12 @@ QString SystemInfoDialog::getSystemInfo() const
 QString SystemInfoDialog::getCompileFeatures()
 {
 	QStringList features;
+#ifdef NDEBUG
+	features.append(QStringLiteral("NDEBUG"));
+#endif
+#ifdef DRAWPILE_INTERPROCEDURAL_OPTIMIZATION
+	features.append(QStringLiteral("INTERPROCEDURAL_OPTIMIZATION"));
+#endif
 #ifdef DRAWPILE_SOURCE_ASSETS_DESKTOP
 	features.append(QStringLiteral("SOURCE_ASSETS"));
 #endif
