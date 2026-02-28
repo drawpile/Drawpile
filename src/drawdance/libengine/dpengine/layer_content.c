@@ -455,39 +455,71 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
                                      green, blue, alpha);
 }
 
+DP_UPixelFloat DP_layer_content_sample_color_at_sync(
+    uint16_t *stamp_buffer, int x, int y, int diameter, bool opaque,
+    bool pigment, int *in_out_last_diameter, bool *out_in_bounds,
+    DP_LayerContent *(get_layer_content)(void *), void *user)
+{
+    DP_ASSERT(stamp_buffer);
+    DP_ASSERT(in_out_last_diameter);
+    DP_ASSERT(out_in_bounds);
+    DP_ASSERT(get_layer_content);
+
+    bool in_bounds = false;
+    DP_UPixelFloat color = DP_upixel_float_zero();
+
+    if (diameter < 2) {
+        DP_LayerContent *lc = get_layer_content(user);
+        if (lc) {
+            in_bounds = x >= 0 && y >= 0 && x < lc->width && y < lc->height;
+            if (in_bounds) {
+                DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, x, y);
+                color = DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
+            }
+        }
+    }
+    else {
+        int last_diameter;
+        if (in_out_last_diameter) {
+            last_diameter = *in_out_last_diameter;
+            *in_out_last_diameter = diameter;
+        }
+        else {
+            last_diameter = -1;
+        }
+
+        DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
+            stamp_buffer, diameter, x, y, last_diameter);
+
+        DP_LayerContent *lc = get_layer_content(user);
+        if (lc) {
+            int radius = diameter / 2;
+            in_bounds = x + radius >= 0 && y + radius >= 0
+                     && x - radius < lc->width && y - radius < lc->height;
+            if (in_bounds) {
+                color = sample_dab_color(lc, stamp, opaque, pigment);
+            }
+        }
+    }
+
+    if (out_in_bounds) {
+        *out_in_bounds = in_bounds;
+    }
+    return color;
+}
+
+static DP_LayerContent *get_sample_layer_content(void *user)
+{
+    return user;
+}
+
 DP_UPixelFloat DP_layer_content_sample_color_at(
     DP_LayerContent *lc, uint16_t *stamp_buffer, int x, int y, int diameter,
     bool opaque, bool pigment, int *in_out_last_diameter, bool *out_in_bounds)
 {
-    int radius = diameter < 2 ? 0 : diameter / 2;
-    bool in_bounds = x + radius >= 0 && y + radius >= 0
-                  && x - radius < lc->width && y - radius < lc->height;
-    if (out_in_bounds) {
-        *out_in_bounds = in_bounds;
-    }
-
-    if (in_bounds) {
-        if (diameter < 2) {
-            DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, x, y);
-            return DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
-        }
-        else {
-            int last_diameter;
-            if (in_out_last_diameter) {
-                last_diameter = *in_out_last_diameter;
-                *in_out_last_diameter = diameter;
-            }
-            else {
-                last_diameter = -1;
-            }
-            DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
-                stamp_buffer, diameter, x, y, last_diameter);
-            return sample_dab_color(lc, stamp, opaque, pigment);
-        }
-    }
-    else {
-        return DP_upixel_float_zero();
-    }
+    return DP_layer_content_sample_color_at_sync(
+        stamp_buffer, x, y, diameter, opaque, pigment, in_out_last_diameter,
+        out_in_bounds, get_sample_layer_content, lc);
 }
 
 DP_LayerList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc)
