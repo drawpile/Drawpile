@@ -51,6 +51,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Bind mouse button 5 to toggling the eraser by default. This makes three-button styluses have useful behavior.
  * Fix: Show correct MyPaint outline size when switching tools. It could sometimes end up showing an unadjusted size.
  * Fix: Properly mark MyPaint brushes as having been modified when modifying inputs other than pressure.
+ * Fix: Don't limit flipbook range to 99 when opening it.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
