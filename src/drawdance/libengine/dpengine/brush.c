@@ -409,10 +409,12 @@ bool DP_mypaint_settings_fixed_offset(const DP_MyPaintSettings *settings,
     return false;
 }
 
-static bool preset_equal_mypaint_inputs(const DP_MyPaintControlPoints *a,
-                                        const DP_MyPaintControlPoints *b)
+static bool preset_equal_mypaint_inputs(const DP_MyPaintControlPoints *as,
+                                        const DP_MyPaintControlPoints *bs)
 {
     for (int input_id = 0; input_id < MYPAINT_BRUSH_INPUTS_COUNT; ++input_id) {
+        const DP_MyPaintControlPoints *a = &as[input_id];
+        const DP_MyPaintControlPoints *b = &bs[input_id];
         int n = a->n;
         if (n != b->n) {
             return false;
