@@ -23,11 +23,21 @@ void BrushPaletteDelegate::paint(
 	}
 
 	QStyleOptionViewItem opt = setOptions(index, option);
+	bool selected = option.state & QStyle::State_Selected;
+	bool enabled = option.state & QStyle::State_Enabled;
+
+	painter->setPen(Qt::NoBrush);
+	if(!selected && haveStroke()) {
+		painter->setPen(QPen(opt.palette.window(), 1.0));
+		painter->drawRect(opt.rect.marginsRemoved(QMargins(0, 0, 1, 1)));
+	}
+
 	QRect rect = opt.rect.marginsRemoved(QMargins(4, 4, 4, 4));
 	if(rect.isEmpty()) {
 		return;
 	}
 
+	painter->setPen(Qt::NoPen);
 	qreal dpr = painter->device()->devicePixelRatioF();
 	QSize previewSize(qRound(rect.width() * dpr), qRound(rect.height() * dpr));
 
@@ -47,9 +57,6 @@ void BrushPaletteDelegate::paint(
 		preview = *it;
 	}
 	m_lock.unlock();
-
-	bool selected = option.state & QStyle::State_Selected;
-	bool enabled = option.state & QStyle::State_Enabled;
 
 	int strokeLeft;
 	if(haveThumbnail()) {
