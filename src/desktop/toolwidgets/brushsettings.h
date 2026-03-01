@@ -172,6 +172,8 @@ private:
 	void emitBlendModeChanged();
 	void emitBrushModeChanged();
 
+	int getMyPaintPixelSize(
+		const brushes::ActiveBrush &brush, int radiusLogarithmic) const;
 	void updateRadiusLogarithmicLimit();
 	int clampBrushSize(int size) const;
 	static float myPaintRadiusToRadiusLogarithmic(float myPaintRadius);

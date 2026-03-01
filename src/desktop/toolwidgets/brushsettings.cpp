@@ -1337,9 +1337,7 @@ void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 {
 	const brushes::ActiveBrush &brush = d->currentBrush();
 	if(brush.activeType() == brushes::ActiveBrush::MYPAINT) {
-		int size = qRound(myPaintRadiusToPixelSize(brush.myPaint().maxSizeFor(
-			radiusLogarithmicToMyPaintRadius(radiusLogarithmic))));
-		emit pixelSizeChanged(clampBrushSize(size));
+		emit pixelSizeChanged(getMyPaintPixelSize(brush, radiusLogarithmic));
 	}
 }
 
@@ -2204,11 +2202,11 @@ void BrushSettings::detachCurrentSlot()
 
 int BrushSettings::getSize() const
 {
-	if(d->currentIsMyPaint()) {
-		return radiusLogarithmicToPixelSize(
-			d->ui.radiusLogarithmicBox->value());
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	if(brush.activeType() == brushes::ActiveBrush::MYPAINT) {
+		return getMyPaintPixelSize(brush, d->ui.radiusLogarithmicBox->value());
 	} else {
-		return d->ui.brushsizeBox->value();
+		return clampBrushSize(d->ui.brushsizeBox->value());
 	}
 }
 
@@ -2265,6 +2263,14 @@ void BrushSettings::triggerUpdate()
 {
 	emit blendModeChanged(getBlendMode());
 	emit brushModeChanged(getBrushMode());
+}
+
+int BrushSettings::getMyPaintPixelSize(
+	const brushes::ActiveBrush &brush, int radiusLogarithmic) const
+{
+	return clampBrushSize(
+		qRound(myPaintRadiusToPixelSize(brush.myPaint().maxSizeFor(
+			radiusLogarithmicToMyPaintRadius(radiusLogarithmic)))));
 }
 
 void BrushSettings::updateRadiusLogarithmicLimit()

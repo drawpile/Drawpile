@@ -49,6 +49,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow arbitrary scaling of brush dock sizes with a slider instead of a fixed set of sizes.
  * Fix: Handle additional stylus buttons on Android correctly. This makes some three-button styluses no longer interpret two of the side buttons as middle mouse.
  * Feature: Bind mouse button 5 to toggling the eraser by default. This makes three-button styluses have useful behavior.
+ * Fix: Show correct MyPaint outline size when switching tools. It could sometimes end up showing an unadjusted size.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
