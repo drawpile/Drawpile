@@ -105,6 +105,7 @@ private:
 
 	void showFfmpegSettings();
 	void setFfmpegPath(const QString &ffmpegPath);
+	void updateFfmpegFormatIcons();
 	void pickBackdropColor();
 	void pickFlashColor();
 	void pickColor(

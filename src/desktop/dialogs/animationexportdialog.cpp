@@ -43,37 +43,41 @@ AnimationExportDialog::AnimationExportDialog(
 	QFormLayout *outputForm = new QFormLayout(outputWidget);
 	tabs->addTab(outputWidget, tr("Output"));
 
-	m_formatCombo = new QComboBox;
-	QPair<QString, VideoFormat> formats[] = {
-		{tr("Frames as PNGs"), VideoFormat::Frames},
-		{tr("Frames as PNGs in ZIP"), VideoFormat::Zip},
-		{tr("Animated GIF"), VideoFormat::Gif},
-		{tr("Animated WEBP"), VideoFormat::Webp},
-		{tr("Animated PNG (APNG)"), VideoFormat::Apng},
-		{tr("MP4 Video (H.264)"), VideoFormat::Mp4H264},
-		{tr("MP4 Video (AV1)"), VideoFormat::Mp4Av1},
-		{tr("MP4 Video (VP9)"), VideoFormat::Mp4Vp9},
-		{tr("WEBM Video (VP8)"), VideoFormat::WebmVp8},
-	};
+	bool anyFormatFfmpegSupported;
+	QVector<VideoFormatOption> formatOptions = getVideoFormatOptions(
+		VideoFormatApplication::Animation, &anyFormatFfmpegSupported);
 	int lastFormat = cfg->getAnimationExportFormat();
-	bool anyFormatFfmpegSupported = false;
-	for(const QPair<QString, VideoFormat> &p : formats) {
-		VideoFormat format = p.second;
-		bool ffmpegSupported = isVideoFormatSupportedFfmpeg(format);
-		if(ffmpegSupported) {
-			anyFormatFfmpegSupported = true;
-		}
+	m_formatCombo = new QComboBox;
+	outputForm->addRow(tr("Format:"), m_formatCombo);
 
-		if(ffmpegSupported || isVideoFormatSupported(format)) {
-			m_formatCombo->addItem(p.first, int(format));
-			if(int(format) == lastFormat) {
+	for(const VideoFormatOption &vfo : formatOptions) {
+		if(vfo.libavSupported) {
+			m_formatCombo->addItem(vfo.title, int(vfo.format));
+			if(int(vfo.format) == lastFormat) {
 				m_formatCombo->setCurrentIndex(m_formatCombo->count() - 1);
 			}
 		}
 	}
-	outputForm->addRow(tr("Format:"), m_formatCombo);
 
 	if(anyFormatFfmpegSupported) {
+		bool needSeparator = true;
+		for(const VideoFormatOption &vfo : formatOptions) {
+			if(!vfo.libavSupported && vfo.ffmpegSupported) {
+				if(needSeparator) {
+					needSeparator = false;
+					int separatorIndex = m_formatCombo->count();
+					if(separatorIndex != 0) {
+						m_formatCombo->insertSeparator(separatorIndex);
+					}
+				}
+
+				m_formatCombo->addItem(vfo.title, int(vfo.format));
+				if(int(vfo.format) == lastFormat) {
+					m_formatCombo->setCurrentIndex(m_formatCombo->count() - 1);
+				}
+			}
+		}
+
 		m_ffmpegNote = new utils::FormNote(
 			QCoreApplication::translate(
 				"dialogs::TimelapseDialog",
@@ -257,6 +261,7 @@ AnimationExportDialog::AnimationExportDialog(
 	m_ffmpegPath = cfg->getFfmpegPath();
 	updateOutputUi();
 	updateScalingUi();
+	updateFfmpegFormatIcons();
 }
 
 void AnimationExportDialog::setCanvas(canvas::CanvasModel *canvas)
@@ -411,6 +416,23 @@ void AnimationExportDialog::setFfmpegPath(const QString &ffmpegPath)
 	if(ffmpegPath != m_ffmpegPath) {
 		m_ffmpegPath = ffmpegPath;
 		updateFfmpegUi();
+		updateFfmpegFormatIcons();
+	}
+}
+
+void AnimationExportDialog::updateFfmpegFormatIcons()
+{
+	QIcon icon;
+	if(m_ffmpegPath.isEmpty()) {
+		icon = QIcon::fromTheme(QStringLiteral("dialog-warning"));
+	}
+
+	int count = m_formatCombo->count();
+	for(int i = 0; i < count; ++i) {
+		int format = m_formatCombo->itemData(i).toInt();
+		if(!isVideoFormatSupported(VideoFormat(format))) {
+			m_formatCombo->setItemIcon(i, icon);
+		}
 	}
 }
 

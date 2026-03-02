@@ -159,37 +159,34 @@ TimelapseDialog::TimelapseDialog(
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&TimelapseDialog::updateLogoRect);
 
+	bool anyFormatFfmpegSupported;
+	QVector<VideoFormatOption> formatOptions = getVideoFormatOptions(
+		VideoFormatApplication::Timelapse, &anyFormatFfmpegSupported);
 	m_formatCombo = new QComboBox;
 	settingsForm->addRow(tr("Format:"), m_formatCombo);
 
-	QPair<QString, VideoFormat> formats[] = {
-		{QCoreApplication::translate(
-			 "dialogs::AnimationExportDialog", "MP4 Video (H.264)"),
-		 VideoFormat::Mp4H264},
-		{QCoreApplication::translate(
-			 "dialogs::AnimationExportDialog", "MP4 Video (AV1)"),
-		 VideoFormat::Mp4Av1},
-		{QCoreApplication::translate(
-			 "dialogs::AnimationExportDialog", "MP4 Video (VP9)"),
-		 VideoFormat::Mp4Vp9},
-		{QCoreApplication::translate(
-			 "dialogs::AnimationExportDialog", "WEBM Video (VP8)"),
-		 VideoFormat::WebmVp8},
-	};
-	bool anyFormatFfmpegSupported = false;
-	for(const QPair<QString, VideoFormat> &p : formats) {
-		VideoFormat format = p.second;
-		bool ffmpegSupported = isVideoFormatSupportedFfmpeg(format);
-		if(ffmpegSupported) {
-			anyFormatFfmpegSupported = true;
-		}
-
-		if(ffmpegSupported || isVideoFormatSupported(format)) {
-			m_formatCombo->addItem(p.first, int(format));
+	for(const VideoFormatOption &vfo : formatOptions) {
+		if(vfo.libavSupported) {
+			m_formatCombo->addItem(vfo.title, int(vfo.format));
 		}
 	}
 
 	if(anyFormatFfmpegSupported) {
+		bool needSeparator = true;
+		for(const VideoFormatOption &vfo : formatOptions) {
+			if(!vfo.libavSupported && vfo.ffmpegSupported) {
+				if(needSeparator) {
+					needSeparator = false;
+					int separatorIndex = m_formatCombo->count();
+					if(separatorIndex != 0) {
+						m_formatCombo->insertSeparator(separatorIndex);
+					}
+				}
+
+				m_formatCombo->addItem(vfo.title, int(vfo.format));
+			}
+		}
+
 		m_ffmpegNote = new utils::FormNote(
 			tr("This format requires FFmpeg, click here to set it up."), false,
 			QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
@@ -588,6 +585,7 @@ TimelapseDialog::TimelapseDialog(
 	updateAnimation();
 	loadSettings();
 	updateFfmpeg();
+	updateFfmpegFormatIcons();
 }
 
 void TimelapseDialog::setInputPath(const QString &inputPath)
@@ -1263,6 +1261,23 @@ void TimelapseDialog::setFfmpegPath(const QString &ffmpegPath)
 	if(ffmpegPath != m_ffmpegPath) {
 		m_ffmpegPath = ffmpegPath;
 		updateFfmpeg();
+		updateFfmpegFormatIcons();
+	}
+}
+
+void TimelapseDialog::updateFfmpegFormatIcons()
+{
+	QIcon icon;
+	if(m_ffmpegPath.isEmpty()) {
+		icon = QIcon::fromTheme(QStringLiteral("dialog-warning"));
+	}
+
+	int count = m_formatCombo->count();
+	for(int i = 0; i < count; ++i) {
+		int format = m_formatCombo->itemData(i).toInt();
+		if(!isVideoFormatSupported(VideoFormat(format))) {
+			m_formatCombo->setItemIcon(i, icon);
+		}
 	}
 }
 

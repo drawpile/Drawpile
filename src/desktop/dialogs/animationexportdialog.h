@@ -59,6 +59,7 @@ private:
 	void updateFfmpegUi();
 	void showFfmpegSettings();
 	void setFfmpegPath(const QString &ffmpegPath);
+	void updateFfmpegFormatIcons();
 #ifndef __EMSCRIPTEN__
 	QString choosePath();
 #endif

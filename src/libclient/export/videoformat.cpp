@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/export/videoformat.h"
+#include <QCoreApplication>
 #include <QtGlobal>
 #ifdef DP_LIBAV
 extern "C" {
@@ -39,6 +40,22 @@ static bool isSaveVideoFormatSupported(VideoFormat format, bool ffmpeg)
 #endif
 	return false;
 }
+
+static void appendFormatOption(
+	QVector<VideoFormatOption> &options, VideoFormatApplication application,
+	VideoFormat format, const QString &title, bool forAnimation,
+	bool forTimelapse)
+{
+	if((application == VideoFormatApplication::Animation && forAnimation) ||
+	   (application == VideoFormatApplication::Timelapse && forTimelapse)) {
+		options.append({
+			format,
+			title,
+			isVideoFormatSupported(format),
+			isVideoFormatSupportedFfmpeg(format),
+		});
+	}
+}
 }
 
 bool isVideoFormatSupported(VideoFormat format)
@@ -57,4 +74,69 @@ bool isVideoFormatSupported(VideoFormat format)
 bool isVideoFormatSupportedFfmpeg(VideoFormat format)
 {
 	return isSaveVideoFormatSupported(format, true);
+}
+
+
+QVector<VideoFormatOption> getVideoFormatOptions(
+	VideoFormatApplication application, bool *outAnyFfmpegSupported)
+{
+	QVector<VideoFormatOption> options;
+	appendFormatOption(
+		options, application, VideoFormat::Frames,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "Frames as PNGs"),
+		true, false);
+	appendFormatOption(
+		options, application, VideoFormat::Zip,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "Frames as PNGs in ZIP"),
+		true, false);
+	appendFormatOption(
+		options, application, VideoFormat::Gif,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "Animated GIF"),
+		true, false);
+	appendFormatOption(
+		options, application, VideoFormat::Webp,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "Animated WEBP"),
+		true, false);
+	appendFormatOption(
+		options, application, VideoFormat::Apng,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "Animated PNG (APNG)"),
+		true, false);
+	appendFormatOption(
+		options, application, VideoFormat::Mp4H264,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "MP4 Video (H.264)"),
+		true, true);
+	appendFormatOption(
+		options, application, VideoFormat::Mp4Av1,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "MP4 Video (AV1)"),
+		true, true);
+	appendFormatOption(
+		options, application, VideoFormat::Mp4Vp9,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "MP4 Video (VP9)"),
+		true, true);
+	appendFormatOption(
+		options, application, VideoFormat::WebmVp8,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "WEBM Video (VP8)"),
+		true, true);
+
+	if(outAnyFfmpegSupported) {
+		bool anyFfmpegSupported = false;
+		for(const VideoFormatOption &vfo : options) {
+			if(vfo.ffmpegSupported) {
+				anyFfmpegSupported = true;
+				break;
+			}
+		}
+		*outAnyFfmpegSupported = anyFfmpegSupported;
+	}
+
+	return options;
 }
