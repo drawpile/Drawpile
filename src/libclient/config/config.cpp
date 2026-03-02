@@ -1029,11 +1029,6 @@ bool Config::defaultRenderUpdateFull()
 	return false;
 }
 
-double Config::defaultSamplesToSkip()
-{
-	return 0.0;
-}
-
 int Config::defaultSamplingRingVisibility()
 {
 	return int(view::SamplingRingVisibility::Always);

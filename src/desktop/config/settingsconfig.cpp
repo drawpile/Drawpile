@@ -681,9 +681,6 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::renderUpdateFullChanged, this,
 		&SettingsConfig::changeRenderUpdateFull, Qt::DirectConnection);
 	connect(
-		m_settings, &desktop::settings::Settings::samplesToSkipChanged, this,
-		&SettingsConfig::changeSamplesToSkip, Qt::DirectConnection);
-	connect(
 		m_settings, &desktop::settings::Settings::samplingRingVisibilityChanged,
 		this, &SettingsConfig::changeSamplingRingVisibility,
 		Qt::DirectConnection);
@@ -2850,16 +2847,6 @@ bool SettingsConfig::getRenderUpdateFull() const
 void SettingsConfig::setRenderUpdateFull(bool value)
 {
 	m_settings->setRenderUpdateFull(value);
-}
-
-double SettingsConfig::getSamplesToSkip() const
-{
-	return m_settings->samplesToSkip();
-}
-
-void SettingsConfig::setSamplesToSkip(double value)
-{
-	m_settings->setSamplesToSkip(value);
 }
 
 int SettingsConfig::getSamplingRingVisibility() const

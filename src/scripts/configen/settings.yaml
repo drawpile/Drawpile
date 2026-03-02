@@ -1257,12 +1257,6 @@ settings:
     qsettings: 'settings/render/updatefull'
     legacy_package: 'desktop'
 
-  - id: samplesToSkip
-    type: 'double'
-    default: '0.0'
-    qsettings: 'settings/input/samplestoskip'
-    legacy_package: 'desktop'
-
   - id: samplingRingVisibility
     type: 'int'
     default: 'int(view::SamplingRingVisibility::Always)'

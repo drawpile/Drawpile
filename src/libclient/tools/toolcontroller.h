@@ -160,9 +160,6 @@ public:
 	void setModel(canvas::CanvasModel *model);
 	canvas::CanvasModel *model() const { return m_model; }
 
-	void setSamplesToSkip(double samplesToSkip);
-	double samplesToSkip() const { return m_samplesToSkip; }
-
 	void setGlobalSmoothing(int smoothing);
 	int globalSmoothing() const { return m_globalSmoothing; }
 
@@ -363,7 +360,6 @@ private:
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;
 
-	double m_samplesToSkip = 0.0;
 	int m_globalSmoothing;
 	bool m_interpolateInputs;
 	brushes::StabilizationMode m_stabilizationMode;

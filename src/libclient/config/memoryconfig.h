@@ -607,9 +607,6 @@ public:
 	bool getRenderUpdateFull() const override;
 	void setRenderUpdateFull(bool value) override;
 
-	double getSamplesToSkip() const override;
-	void setSamplesToSkip(double value) override;
-
 	int getSamplingRingVisibility() const override;
 	void setSamplingRingVisibility(int value) override;
 
@@ -1020,7 +1017,6 @@ private:
 	int m_renderCanvas = defaultRenderCanvas();
 	bool m_renderSmooth = defaultRenderSmooth();
 	bool m_renderUpdateFull = defaultRenderUpdateFull();
-	double m_samplesToSkip = defaultSamplesToSkip();
 	int m_samplingRingVisibility = defaultSamplingRingVisibility();
 	QColor m_selectionColor = defaultSelectionColor();
 	bool m_serverAutoReset = defaultServerAutoReset();

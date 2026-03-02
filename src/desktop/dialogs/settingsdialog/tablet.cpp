@@ -174,18 +174,6 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 	form->addRow(nullptr, ignoreHistoricTabletEventsWorkaround);
 #endif
 
-	KisDoubleSliderSpinBox *samplesToSkip = new KisDoubleSliderSpinBox;
-	//: This is a performance thing, it says how often Drawpile should skip
-	//: waiting for the brush to finish drawing before it picks up the color for
-	//: smudging (so it might pick up a slightly wrong color for more speed.)
-	samplesToSkip->setPrefix(tr("Smudge skip: "));
-	samplesToSkip->setRange(0.0, 10.0);
-	samplesToSkip->setDecimals(2);
-	samplesToSkip->setSingleStep(0.1);
-	samplesToSkip->setBlockUpdateSignalOnDrag(true);
-	form->addRow(nullptr, samplesToSkip);
-	CFG_BIND_DOUBLESLIDERSPINBOX(cfg, SamplesToSkip, samplesToSkip);
-
 	QComboBox *eraserAction = new QComboBox;
 	eraserAction->addItem(
 		tr("Treat as regular pen tip"), int(tools::EraserAction::Ignore));

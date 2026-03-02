@@ -468,11 +468,6 @@ void ToolController::clearTransformPreviews()
 	}
 }
 
-void ToolController::setSamplesToSkip(double samplesToSkip)
-{
-	m_samplesToSkip = samplesToSkip;
-}
-
 void ToolController::setGlobalSmoothing(int smoothing)
 {
 	if(m_globalSmoothing != smoothing) {
@@ -813,7 +808,6 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 		},
 		floodLcOrNull,
 		floodTolerance,
-		m_samplesToSkip,
 		floodExpand,
 		activeLayerOrSelection(),
 		m_selectionEditActive || !m_selectionMaskingEnabled

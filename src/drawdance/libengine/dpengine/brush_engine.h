@@ -51,7 +51,6 @@ typedef struct DP_BrushEngineStrokeParams {
     DP_StrokeEngineStrokeParams se;
     DP_LayerContent *flood_lc;
     double flood_tolerance;
-    double samples_to_skip;
     int flood_expand;
     int layer_id;
     int selection_id;

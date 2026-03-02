@@ -2526,19 +2526,6 @@ void MemoryConfig::setRenderUpdateFull(bool value)
 	}
 }
 
-double MemoryConfig::getSamplesToSkip() const
-{
-	return m_samplesToSkip;
-}
-
-void MemoryConfig::setSamplesToSkip(double value)
-{
-	if(value != m_samplesToSkip) {
-		m_samplesToSkip = value;
-		Q_EMIT changeSamplesToSkip(m_samplesToSkip);
-	}
-}
-
 int MemoryConfig::getSamplingRingVisibility() const
 {
 	return m_samplingRingVisibility;
