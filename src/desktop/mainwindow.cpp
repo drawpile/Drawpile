@@ -3255,8 +3255,8 @@ void MainWindow::exportAnimation(
 #ifndef __EMSCRIPTEN__
 	const QString &path,
 #endif
-	int format, int loops, int start, int end, double framerate,
-	const QRect &crop, int scalePercent, bool scaleSmooth)
+	const QString &ffmpegPath, int format, int loops, int start, int end,
+	double framerate, const QRect &crop, int scalePercent, bool scaleSmooth)
 {
 	m_animationExportLoops = loops;
 	m_animationExportScalePercent = scalePercent;
@@ -3282,7 +3282,7 @@ void MainWindow::exportAnimation(
 		path,
 #endif
 		format, size.width(), size.height(), loops, start, end, framerate,
-		effectiveCrop, scaleSmooth, canvasState, this);
+		effectiveCrop, scaleSmooth, canvasState, ffmpegPath, this);
 	saver->setAutoDelete(true);
 
 	connect(

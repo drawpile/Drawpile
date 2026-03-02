@@ -63,6 +63,11 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeAnimationExportFormat,
 		Qt::DirectConnection);
 	connect(
+		m_settings,
+		&desktop::settings::Settings::animationExportPreferFfmpegChanged, this,
+		&SettingsConfig::changeAnimationExportPreferFfmpeg,
+		Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::autoRecordHostChanged, this,
 		&SettingsConfig::changeAutoRecordHost, Qt::DirectConnection);
 	connect(
@@ -1014,6 +1019,16 @@ int SettingsConfig::getAnimationExportFormat() const
 void SettingsConfig::setAnimationExportFormat(int value)
 {
 	m_settings->setAnimationExportFormat(value);
+}
+
+bool SettingsConfig::getAnimationExportPreferFfmpeg() const
+{
+	return m_settings->animationExportPreferFfmpeg();
+}
+
+void SettingsConfig::setAnimationExportPreferFfmpeg(bool value)
+{
+	m_settings->setAnimationExportPreferFfmpeg(value);
 }
 
 bool SettingsConfig::getAutoRecordHost() const

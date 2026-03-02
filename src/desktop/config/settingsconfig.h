@@ -60,6 +60,9 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
+	bool getAnimationExportPreferFfmpeg() const override;
+	void setAnimationExportPreferFfmpeg(bool value) override;
+
 	bool getAutoRecordHost() const override;
 	void setAutoRecordHost(bool value) override;
 

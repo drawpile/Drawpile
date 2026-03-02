@@ -279,6 +279,10 @@ public:
 	virtual void setAnimationExportFormat(int value) = 0;
 	static int defaultAnimationExportFormat();
 
+	virtual bool getAnimationExportPreferFfmpeg() const = 0;
+	virtual void setAnimationExportPreferFfmpeg(bool value) = 0;
+	static bool defaultAnimationExportPreferFfmpeg();
+
 	virtual bool getAutoRecordHost() const = 0;
 	virtual void setAutoRecordHost(bool value) = 0;
 	static bool defaultAutoRecordHost();
@@ -1291,6 +1295,7 @@ Q_SIGNALS:
 	void changeAndroidWorkaroundIgnoreHistoricTabletEvents(bool value);
 #endif
 	void changeAnimationExportFormat(int value);
+	void changeAnimationExportPreferFfmpeg(bool value);
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
 	void changeAutoRecordMetadataIntervalMinutes(int value);

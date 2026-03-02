@@ -22,7 +22,8 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 #endif
 	int format, int width, int height, int loops, int start, int end,
 	double framerate, const QRect &crop, bool scaleSmooth,
-	const drawdance::CanvasState &canvasState, QObject *parent)
+	const drawdance::CanvasState &canvasState, const QString &ffmpegPath,
+	QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
@@ -36,6 +37,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_framerate(framerate)
 	, m_crop(crop)
 	, m_canvasState(canvasState)
+	, m_ffmpegPath(ffmpegPath)
 	, m_scaleSmooth(scaleSmooth)
 	, m_cancelled(false)
 {
@@ -114,11 +116,30 @@ void AnimationSaverRunnable::run()
 	case int(VideoFormat::WebmVp8):
 	case int(VideoFormat::Mp4H264):
 	case int(VideoFormat::Mp4Av1): {
+		DP_SaveVideoDestination destination;
+		void *destinationParam;
+		DP_SaveVideoFfmpegParams ffmpegParams;
+		QByteArray ffmpegPathBytes;
+
+		if(m_ffmpegPath.isEmpty()) {
+			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
+			destinationParam = pathBytes.data();
+		} else {
+			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
+			destinationParam = &ffmpegParams;
+			ffmpegPathBytes = m_ffmpegPath.toUtf8();
+			ffmpegParams = {
+				ffmpegPathBytes.constData(),
+				nullptr,
+				pathBytes.constData(),
+			};
+		}
+
 		DP_SaveAnimationVideoParams params = {
 			m_canvasState.get(),
 			pr,
-			DP_SAVE_VIDEO_DESTINATION_PATH,
-			const_cast<char *>(pathBytes.constData()),
+			destination,
+			destinationParam,
 			nullptr,
 			0,
 			m_scaleSmooth ? DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH

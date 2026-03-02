@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/animationexportdialog.h"
+#include "desktop/dialogs/ffmpegdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/paintengine.h"
@@ -29,8 +31,9 @@ AnimationExportDialog::AnimationExportDialog(
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Export Animation"));
-	resize(400, 300);
+	resize(600, 400);
 
+	config::Config *cfg = dpAppConfig();
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	QTabWidget *tabs = new QTabWidget;
@@ -51,17 +54,36 @@ AnimationExportDialog::AnimationExportDialog(
 		{tr("MP4 Video (VP9)"), VideoFormat::Mp4Vp9},
 		{tr("WEBM Video (VP8)"), VideoFormat::WebmVp8},
 	};
-	int lastFormat = dpAppConfig()->getAnimationExportFormat();
+	int lastFormat = cfg->getAnimationExportFormat();
+	bool anyFormatFfmpegSupported = false;
 	for(const QPair<QString, VideoFormat> &p : formats) {
-		if(isVideoFormatSupported(p.second)) {
-			int format = int(p.second);
-			m_formatCombo->addItem(p.first, format);
-			if(format == lastFormat) {
+		VideoFormat format = p.second;
+		bool ffmpegSupported = isVideoFormatSupportedFfmpeg(format);
+		if(ffmpegSupported) {
+			anyFormatFfmpegSupported = true;
+		}
+
+		if(ffmpegSupported || isVideoFormatSupported(format)) {
+			m_formatCombo->addItem(p.first, int(format));
+			if(int(format) == lastFormat) {
 				m_formatCombo->setCurrentIndex(m_formatCombo->count() - 1);
 			}
 		}
 	}
 	outputForm->addRow(tr("Format:"), m_formatCombo);
+
+	if(anyFormatFfmpegSupported) {
+		m_ffmpegNote = new utils::FormNote(
+			QCoreApplication::translate(
+				"dialogs::TimelapseDialog",
+				"This format requires FFmpeg, click here to set it up."),
+			false, QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
+		m_ffmpegNote->hide();
+		outputForm->addRow(nullptr, m_ffmpegNote);
+		connect(
+			m_ffmpegNote, &utils::FormNote::linkClicked, this,
+			&AnimationExportDialog::showFfmpegSettings);
+	}
 
 	m_loopsLabel = new QLabel(tr("Loops:"));
 	m_loopsSpinner = new QSpinBox;
@@ -84,6 +106,36 @@ AnimationExportDialog::AnimationExportDialog(
 
 	m_scaleLabel = new QLabel;
 	outputForm->addRow(m_scaleLabel);
+
+	if(anyFormatFfmpegSupported) {
+		utils::addFormSpacer(outputForm);
+
+		m_ffmpegCheckBox = new QCheckBox(
+			QCoreApplication::translate(
+				"dialogs::TimelapseDialog",
+				"Prefer FFmpeg over internal encoder"));
+		outputForm->addRow(m_ffmpegCheckBox);
+		CFG_BIND_CHECKBOX(cfg, AnimationExportPreferFfmpeg, m_ffmpegCheckBox);
+		connect(
+			m_ffmpegCheckBox, &QCheckBox::clicked, this,
+			&AnimationExportDialog::updateFfmpegUi);
+
+		QHBoxLayout *ffmpegButtonLayout = new QHBoxLayout;
+		ffmpegButtonLayout->setContentsMargins(0, 0, 0, 0);
+		outputForm->addRow(ffmpegButtonLayout);
+
+		m_ffmpegButton = new QPushButton(
+			QIcon::fromTheme(QStringLiteral("kdenlive-show-video")), QString());
+		utils::setWidgetRetainSizeWhenHidden(m_ffmpegButton, true);
+		m_ffmpegButton->setFlat(true);
+		m_ffmpegButton->hide();
+		ffmpegButtonLayout->addWidget(m_ffmpegButton);
+		connect(
+			m_ffmpegButton, &QPushButton::clicked, this,
+			&AnimationExportDialog::showFfmpegSettings);
+
+		ffmpegButtonLayout->addStretch();
+	}
 
 	QWidget *inputWidget = new QWidget;
 	QFormLayout *inputForm = new QFormLayout(inputWidget);
@@ -201,6 +253,7 @@ AnimationExportDialog::AnimationExportDialog(
 		this, &AnimationExportDialog::accepted, this,
 		&AnimationExportDialog::requestExport, Qt::DirectConnection);
 
+	m_ffmpegPath = cfg->getFfmpegPath();
 	updateOutputUi();
 	updateScalingUi();
 }
@@ -256,6 +309,21 @@ QSize AnimationExportDialog::getScaledSizeFor(
 #ifndef __EMSCRIPTEN__
 void AnimationExportDialog::accept()
 {
+	int format = m_formatCombo->currentData().toInt();
+	bool needsFfmpeg = !isVideoFormatSupported(VideoFormat(format));
+	if(needsFfmpeg & m_ffmpegPath.isEmpty()) {
+		QMessageBox *box = utils::showQuestion(
+			this, tr("FFmpeg"),
+			QCoreApplication::translate(
+				"dialogs::TimelapseDialog",
+				"The selected format requires FFmpeg. Do you want to set it up "
+				"now?"));
+		connect(
+			box, &QMessageBox::accepted, this,
+			&AnimationExportDialog::showFfmpegSettings);
+		return;
+	}
+
 	m_path = choosePath();
 	if(!m_path.isEmpty()) {
 		QDialog::accept();
@@ -272,6 +340,7 @@ void AnimationExportDialog::updateOutputUi()
 					 format == int(VideoFormat::Mp4Av1);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
+	updateFfmpegUi();
 }
 
 void AnimationExportDialog::updateScalingUi()
@@ -281,6 +350,67 @@ void AnimationExportDialog::updateScalingUi()
 	m_scaleLabel->setText(tr("Output resolution will be %1x%2 pixels.")
 							  .arg(size.width())
 							  .arg(size.height()));
+}
+
+void AnimationExportDialog::updateFfmpegUi()
+{
+	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegCheckBox) {
+		int format = m_formatCombo->currentData().toInt();
+		bool libavSupported = isVideoFormatSupported(VideoFormat(format));
+		bool ffmpegSupported =
+			isVideoFormatSupportedFfmpeg(VideoFormat(format));
+
+		if(m_ffmpegNote) {
+			m_ffmpegNote->setVisible(
+				!libavSupported && ffmpegSupported && m_ffmpegPath.isEmpty());
+		}
+
+		if(m_ffmpegButton) {
+			if(m_ffmpegPath.isEmpty()) {
+				m_ffmpegButton->setText(
+					QCoreApplication::translate(
+						"dialogs::TimelapseDialog", "Set up FFmpeg"));
+			} else {
+				m_ffmpegButton->setText(
+					QCoreApplication::translate(
+						"dialogs::TimelapseDialog", "FFmpeg settings"));
+			}
+			m_ffmpegButton->setVisible(
+				(!libavSupported && ffmpegSupported) ||
+				(m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked()));
+		}
+
+		if(m_ffmpegCheckBox) {
+			m_ffmpegCheckBox->setVisible(libavSupported && ffmpegSupported);
+		}
+	}
+}
+
+void AnimationExportDialog::showFfmpegSettings()
+{
+	QString objectName = QStringLiteral("ffmpegdialog");
+	FfmpegDialog *dlg =
+		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new FfmpegDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
+		connect(
+			dlg, &FfmpegDialog::ffmpegPathAccepted, this,
+			&AnimationExportDialog::setFfmpegPath);
+		dlg->show();
+	}
+}
+
+void AnimationExportDialog::setFfmpegPath(const QString &ffmpegPath)
+{
+	if(ffmpegPath != m_ffmpegPath) {
+		m_ffmpegPath = ffmpegPath;
+		updateFfmpegUi();
+	}
 }
 
 #ifndef __EMSCRIPTEN__
@@ -448,14 +578,25 @@ void AnimationExportDialog::setCanvasFramerate(double framerate)
 void AnimationExportDialog::requestExport()
 {
 	int format = m_formatCombo->currentData().toInt();
-	dpAppConfig()->setAnimationExportFormat(format);
+	config::Config *cfg = dpAppConfig();
+	cfg->setAnimationExportFormat(format);
+
+	QString ffmpegPath;
+	bool wantFfmpeg = !isVideoFormatSupported(VideoFormat(format)) ||
+					  (m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked() &&
+					   isVideoFormatSupportedFfmpeg(VideoFormat(format)));
+	if(wantFfmpeg) {
+		ffmpegPath = m_ffmpegPath;
+	}
+
 	emit exportRequested(
 #ifndef __EMSCRIPTEN__
 		m_path,
 #endif
-		format, m_loopsSpinner->value(), m_startSpinner->value() - 1,
-		m_endSpinner->value() - 1, m_framerateSpinner->value(), getCropRect(),
-		m_scaleSpinner->value(), m_scaleSmoothBox->isChecked());
+		ffmpegPath, format, m_loopsSpinner->value(),
+		m_startSpinner->value() - 1, m_endSpinner->value() - 1,
+		m_framerateSpinner->value(), getCropRect(), m_scaleSpinner->value(),
+		m_scaleSmoothBox->isChecked());
 }
 
 QRect AnimationExportDialog::getCropRect() const

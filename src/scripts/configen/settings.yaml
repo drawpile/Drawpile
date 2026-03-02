@@ -252,6 +252,12 @@ settings:
     qsettings: 'animationexport/format'
     legacy_package: 'desktop'
 
+  - id: animationExportPreferFfmpeg
+    type: 'bool'
+    default: 'false'
+    qsettings: 'animationexport/preferffmpeg'
+    legacy_package: 'desktop'
+
   - id: automaticAlphaPreserve
     type: 'int'
     default: '1'

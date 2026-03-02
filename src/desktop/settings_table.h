@@ -36,6 +36,10 @@ SETTING(
 	animationExportFormat, AnimationExportFormat, "animationexport/format",
 	config::Config::defaultAnimationExportFormat())
 SETTING(
+	animationExportPreferFfmpeg, AnimationExportPreferFfmpeg,
+	"animationexport/preferffmpeg",
+	config::Config::defaultAnimationExportPreferFfmpeg())
+SETTING(
 	automaticAlphaPreserve, AutomaticAlphaPreserve,
 	"settings/automaticalphapreserve",
 	config::Config::defaultAutomaticAlphaPreserve())

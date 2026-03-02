@@ -91,6 +91,11 @@ int Config::defaultAnimationExportFormat()
 	return -1;
 }
 
+bool Config::defaultAnimationExportPreferFfmpeg()
+{
+	return false;
+}
+
 bool Config::defaultAutoRecordHost()
 {
 	return false;

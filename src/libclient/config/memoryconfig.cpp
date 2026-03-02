@@ -150,6 +150,19 @@ void MemoryConfig::setAnimationExportFormat(int value)
 	}
 }
 
+bool MemoryConfig::getAnimationExportPreferFfmpeg() const
+{
+	return m_animationExportPreferFfmpeg;
+}
+
+void MemoryConfig::setAnimationExportPreferFfmpeg(bool value)
+{
+	if(value != m_animationExportPreferFfmpeg) {
+		m_animationExportPreferFfmpeg = value;
+		Q_EMIT changeAnimationExportPreferFfmpeg(m_animationExportPreferFfmpeg);
+	}
+}
+
 bool MemoryConfig::getAutoRecordHost() const
 {
 	return m_autoRecordHost;

@@ -52,6 +52,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Show correct MyPaint outline size when switching tools. It could sometimes end up showing an unadjusted size.
  * Fix: Properly mark MyPaint brushes as having been modified when modifying inputs other than pressure.
  * Fix: Don't limit flipbook range to 99 when opening it.
+ * Feature: Allow using external ffmpeg for animation exports. This adds some more video codecs that normally don't come with Drawpile.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

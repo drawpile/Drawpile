@@ -53,6 +53,9 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
+	bool getAnimationExportPreferFfmpeg() const override;
+	void setAnimationExportPreferFfmpeg(bool value) override;
+
 	bool getAutoRecordHost() const override;
 	void setAutoRecordHost(bool value) override;
 
@@ -822,6 +825,7 @@ private:
 		defaultAndroidWorkaroundIgnoreHistoricTabletEvents();
 #endif
 	int m_animationExportFormat = defaultAnimationExportFormat();
+	bool m_animationExportPreferFfmpeg = defaultAnimationExportPreferFfmpeg();
 	bool m_autoRecordHost = defaultAutoRecordHost();
 	bool m_autoRecordJoin = defaultAutoRecordJoin();
 	int m_autoRecordMetadataIntervalMinutes =

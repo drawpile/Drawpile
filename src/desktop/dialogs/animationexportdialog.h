@@ -18,6 +18,10 @@ namespace canvas {
 class CanvasModel;
 }
 
+namespace utils {
+class FormNote;
+}
+
 namespace dialogs {
 
 class AnimationExportDialog final : public QDialog {
@@ -45,12 +49,16 @@ signals:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		int format, int loops, int start, int end, double framerate,
-		const QRect &crop, int scalePercent, bool scaleSmooth);
+		const QString &ffmpegPath, int format, int loops, int start, int end,
+		double framerate, const QRect &crop, int scalePercent,
+		bool scaleSmooth);
 
 private:
 	void updateOutputUi();
 	void updateScalingUi();
+	void updateFfmpegUi();
+	void showFfmpegSettings();
+	void setFfmpegPath(const QString &ffmpegPath);
 #ifndef __EMSCRIPTEN__
 	QString choosePath();
 #endif
@@ -77,11 +85,14 @@ private:
 	QString m_path;
 #endif
 	QComboBox *m_formatCombo;
+	utils::FormNote *m_ffmpegNote = nullptr;
 	QLabel *m_loopsLabel;
 	QSpinBox *m_scaleSpinner;
 	QCheckBox *m_scaleSmoothBox;
 	QLabel *m_scaleLabel;
 	QSpinBox *m_loopsSpinner;
+	QCheckBox *m_ffmpegCheckBox = nullptr;
+	QPushButton *m_ffmpegButton = nullptr;
 	QSpinBox *m_startSpinner;
 	QSpinBox *m_endSpinner;
 	QDoubleSpinBox *m_framerateSpinner;
@@ -102,6 +113,7 @@ private:
 	int m_flipbookEnd = -1;
 	double m_flipbookFramerate = -1.0;
 	QRect m_flipbookCrop;
+	QString m_ffmpegPath;
 };
 
 }

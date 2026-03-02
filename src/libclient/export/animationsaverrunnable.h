@@ -21,7 +21,8 @@ public:
 #endif
 		int format, int width, int height, int loops, int start, int end,
 		double framerate, const QRect &crop, bool scaleSmooth,
-		const drawdance::CanvasState &canvasState, QObject *parent = nullptr);
+		const drawdance::CanvasState &canvasState, const QString &ffmpegPath,
+		QObject *parent = nullptr);
 
 	void run() override;
 
@@ -60,6 +61,7 @@ private:
 	const double m_framerate;
 	const QRect m_crop;
 	const drawdance::CanvasState m_canvasState;
+	const QString m_ffmpegPath;
 	const bool m_scaleSmooth;
 	bool m_cancelled;
 };
