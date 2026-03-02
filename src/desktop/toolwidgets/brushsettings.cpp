@@ -103,8 +103,11 @@ struct Preset : brushes::Preset {
 				return true;
 			}
 		} else {
-			if(!changedThumbnail.has_value() ||
-			   cacheKey != changedThumbnail->pixmap(id).cacheKey()) {
+			if(!changedThumbnail.has_value()) {
+				changedThumbnail =
+					brushes::LazyThumbnail::fromPixmap(thumbnail);
+				return true;
+			} else if(cacheKey != changedThumbnail->pixmap(id).cacheKey()) {
 				changedThumbnail->setPixmap(thumbnail);
 				return true;
 			}
