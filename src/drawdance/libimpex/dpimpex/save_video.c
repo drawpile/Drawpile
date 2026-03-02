@@ -1068,6 +1068,22 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "webm");
         }
         return true;
+    case DP_SAVE_VIDEO_FORMAT_WEBP:
+        if (args) {
+            argv_push(args, "-c:v");
+            argv_push(args, "libwebp");
+            argv_push(args, "-lossless");
+            argv_push(args, "1");
+            argv_push(args, "-preset");
+            argv_push(args, "drawing");
+            argv_push(args, "-quality");
+            argv_push(args, "100");
+            argv_push(args, "-loop");
+            argv_push(args, "0");
+            argv_push(args, "-f");
+            argv_push(args, "webp");
+        }
+        return true;
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         if (args) {
             argv_push(args, "-c:v");
