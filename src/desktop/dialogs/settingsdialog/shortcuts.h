@@ -5,10 +5,11 @@
 #include <QItemEditorFactory>
 #include <QWidget>
 
-class BrushShortcutModel;
 class BrushShortcutFilterProxyModel;
+class BrushShortcutModel;
 class CanvasShortcutsModel;
 class CustomShortcutModel;
+class QCommandLinkButton;
 class QStyledItemDelegate;
 class QTabWidget;
 class QVBoxLayout;
@@ -31,13 +32,18 @@ public:
 	void initiateFixShortcutConflicts();
 	void initiateBrushShortcutChange(int presetId);
 
+	void showActionTab();
+	void showCanvasTab();
+	void showBrushTab();
+
 public slots:
 	void finishEditing();
 
 private:
-	static constexpr int ACTION_TAB = 0;
-	static constexpr int BRUSH_TAB = 1;
-	static constexpr int CANVAS_TAB = 2;
+	static constexpr int OVERVIEW_TAB = 0;
+	static constexpr int ACTION_TAB = 1;
+	static constexpr int BRUSH_TAB = 2;
+	static constexpr int CANVAS_TAB = 3;
 
 	QWidget *initActionShortcuts(
 		config::Config *cfg, QStyledItemDelegate *keySequenceDelegate);
@@ -45,6 +51,8 @@ private:
 	QWidget *initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate);
 
 	QWidget *initCanvasShortcuts(config::Config *cfg);
+
+	QWidget *initOverview();
 
 	void updateConflicts();
 	void updateTabTexts();
@@ -56,6 +64,9 @@ private:
 
 	ShortcutFilterInput *m_filter = nullptr;
 	QTabWidget *m_tabs = nullptr;
+	QCommandLinkButton *m_actionButton = nullptr;
+	QCommandLinkButton *m_brushButton = nullptr;
+	QCommandLinkButton *m_canvasButton = nullptr;
 	CustomShortcutModel *m_actionShortcutsModel = nullptr;
 	CanvasShortcutsModel *m_canvasShortcutsModel = nullptr;
 	BrushShortcutModel *m_brushShortcutsModel = nullptr;

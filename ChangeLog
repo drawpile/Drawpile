@@ -54,6 +54,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't limit flipbook range to 99 when opening it.
  * Feature: Allow using external ffmpeg for animation exports. This adds some more video codecs that normally don't come with Drawpile.
  * Fix: Make color selection in annotation tool asynchronous so that it doesn't crash in the browser. Thanks Curiosity for reporting.
+ * Feature: An overview page for the shortcut preferences, to hopefully cut down on users not being able to find where to assign mouse buttons or similar.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

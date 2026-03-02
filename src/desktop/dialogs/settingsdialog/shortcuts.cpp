@@ -17,6 +17,7 @@
 #include <QAbstractItemView>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QCommandLinkButton>
 #include <QFormLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -85,17 +86,19 @@ Shortcuts::Shortcuts(config::Config *cfg, QWidget *parent)
 	keySequenceDelegate->setItemEditorFactory(&m_itemEditorFactory);
 
 	m_tabs = new QTabWidget;
+	Q_ASSERT(m_tabs->count() == OVERVIEW_TAB);
+	m_tabs->addTab(
+		initOverview(), QIcon::fromTheme("input-keyboard"), tr("Shortcuts"));
 	Q_ASSERT(m_tabs->count() == ACTION_TAB);
 	m_tabs->addTab(
-		initActionShortcuts(cfg, keySequenceDelegate),
-		QIcon::fromTheme("input-keyboard"), QString());
+		initActionShortcuts(cfg, keySequenceDelegate), m_actionButton->icon(),
+		QString());
 	Q_ASSERT(m_tabs->count() == BRUSH_TAB);
 	m_tabs->addTab(
-		initBrushShortcuts(keySequenceDelegate), QIcon::fromTheme("draw-brush"),
+		initBrushShortcuts(keySequenceDelegate), m_brushButton->icon(),
 		QString());
 	Q_ASSERT(m_tabs->count() == CANVAS_TAB);
-	m_tabs->addTab(
-		initCanvasShortcuts(cfg), QIcon::fromTheme("edit-image"), QString());
+	m_tabs->addTab(initCanvasShortcuts(cfg), m_canvasButton->icon(), QString());
 	layout->addWidget(m_tabs);
 
 	updateConflicts();
@@ -122,17 +125,17 @@ void Shortcuts::initiateFixShortcutConflicts()
 {
 	m_filter->checkConflictBox();
 	if(m_actionShortcutsModel->hasConflicts()) {
-		m_tabs->setCurrentIndex(ACTION_TAB);
+		showActionTab();
 	} else if(m_brushShortcutsModel->hasConflicts()) {
-		m_tabs->setCurrentIndex(BRUSH_TAB);
+		showBrushTab();
 	} else if(m_canvasShortcutsModel->hasConflicts()) {
-		m_tabs->setCurrentIndex(CANVAS_TAB);
+		showCanvasTab();
 	}
 }
 
 void Shortcuts::initiateBrushShortcutChange(int presetId)
 {
-	m_tabs->setCurrentIndex(BRUSH_TAB);
+	showBrushTab();
 	QSortFilterProxyModel *model =
 		qobject_cast<QSortFilterProxyModel *>(m_brushesTable->model());
 	QModelIndex idx = m_brushShortcutsModel->indexById(
@@ -143,6 +146,21 @@ void Shortcuts::initiateBrushShortcutChange(int presetId)
 		m_brushesTable->setCurrentIndex(mappedIdx);
 		emit m_brushesTable->clicked(mappedIdx);
 	}
+}
+
+void Shortcuts::showActionTab()
+{
+	m_tabs->setCurrentIndex(ACTION_TAB);
+}
+
+void Shortcuts::showBrushTab()
+{
+	m_tabs->setCurrentIndex(BRUSH_TAB);
+}
+
+void Shortcuts::showCanvasTab()
+{
+	m_tabs->setCurrentIndex(CANVAS_TAB);
 }
 
 void Shortcuts::finishEditing()
@@ -367,6 +385,55 @@ QWidget *Shortcuts::initCanvasShortcuts(config::Config *cfg)
 	});
 	actions->addWidget(restoreDefaults);
 	layout->addLayout(actions);
+
+	return widget;
+}
+
+QWidget *Shortcuts::initOverview()
+{
+	QWidget *widget = new QWidget;
+	QVBoxLayout *layout = new QVBoxLayout(widget);
+
+	QLabel *overviewLabel =
+		new QLabel(tr("Choose which shortcuts you want to modify:"));
+	overviewLabel->setWordWrap(true);
+	layout->addWidget(overviewLabel);
+
+	utils::addFormSpacer(layout);
+
+	m_actionButton = new QCommandLinkButton(
+		actionTabText(), tr("Keyboard shortcuts to trigger actions, like "
+							"switching tools, creating layers or anything else "
+							"you can pick from the top menu bar."));
+	m_actionButton->setIcon(
+		QIcon::fromTheme(QStringLiteral("application-menu")));
+	layout->addWidget(m_actionButton);
+	connect(
+		m_actionButton, &QCommandLinkButton::clicked, this,
+		&Shortcuts::showActionTab);
+
+	m_brushButton = new QCommandLinkButton(
+		brushTabText(),
+		tr("Keyboard shortcuts to switch brushes. Assigning the same shortcut "
+		   "to multiple brushes will toggle through them."));
+	m_brushButton->setIcon(QIcon::fromTheme(QStringLiteral("draw-brush")));
+	layout->addWidget(m_brushButton);
+	connect(
+		m_brushButton, &QCommandLinkButton::clicked, this,
+		&Shortcuts::showBrushTab);
+
+	m_canvasButton = new QCommandLinkButton(
+		canvasTabText(),
+		tr("Shortcuts for mouse or stylus buttons, wheels or keyboard keys "
+		   "that apply only in the canvas view. For example, panning, "
+		   "rotating, zooming, color picking, brush resizing and more."));
+	m_canvasButton->setIcon(QIcon::fromTheme(QStringLiteral("edit-image")));
+	layout->addWidget(m_canvasButton);
+	connect(
+		m_canvasButton, &QCommandLinkButton::clicked, this,
+		&Shortcuts::showCanvasTab);
+
+	layout->addStretch();
 
 	return widget;
 }
