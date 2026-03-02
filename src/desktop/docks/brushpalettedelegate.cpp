@@ -255,8 +255,8 @@ BrushPaletteDelegate::Preview BrushPaletteDelegate::renderPreview(
 			index.data(brushes::BrushPresetModel::PresetRole)
 				.value<brushes::Preset>();
 
-		QRect strokeRect(0, 0, w - h, h);
-		m_brushPreview.reset(QSize(w - h, h));
+		QRect strokeRect(0, 0, strokeWidth, h);
+		m_brushPreview.reset(strokeRect.size());
 		m_brushPreview.setPalette(
 			pal.color(QPalette::Text), pal.color(QPalette::Base));
 		preset.effectiveBrush().renderPreview(
