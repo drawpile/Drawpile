@@ -49,6 +49,7 @@ AnimationExportDialog::AnimationExportDialog(
 		{tr("Frames as PNGs in ZIP"), VideoFormat::Zip},
 		{tr("Animated GIF"), VideoFormat::Gif},
 		{tr("Animated WEBP"), VideoFormat::Webp},
+		{tr("Animated PNG (APNG)"), VideoFormat::Apng},
 		{tr("MP4 Video (H.264)"), VideoFormat::Mp4H264},
 		{tr("MP4 Video (AV1)"), VideoFormat::Mp4Av1},
 		{tr("MP4 Video (VP9)"), VideoFormat::Mp4Vp9},
@@ -426,6 +427,8 @@ QString AnimationExportDialog::choosePath()
 		return FileWrangler(this).getSaveAnimationZipPath();
 	case VideoFormat::Webp:
 		return FileWrangler(this).getSaveAnimationWebpPath();
+	case VideoFormat::Apng:
+		return FileWrangler(this).getSaveAnimationApngPath();
 	case VideoFormat::Mp4Vp9:
 	case VideoFormat::Mp4H264:
 	case VideoFormat::Mp4Av1:

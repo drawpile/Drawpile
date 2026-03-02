@@ -392,6 +392,13 @@ QString FileWrangler::getSaveAnimationWebpPath() const
 		{QStringLiteral("WEBP (*.webp)")});
 }
 
+QString FileWrangler::getSaveAnimationApngPath() const
+{
+	return showSaveFileDialogFilters(
+		tr("Export Animated PNG"), LastPath::IMAGE, ".png",
+		{QStringLiteral("APNG (*.png, *.apng)")});
+}
+
 QString FileWrangler::getSavePerformanceProfilePath() const
 {
 	return showSaveFileDialog(

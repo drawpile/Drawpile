@@ -115,7 +115,8 @@ void AnimationSaverRunnable::run()
 	case int(VideoFormat::Mp4Vp9):
 	case int(VideoFormat::WebmVp8):
 	case int(VideoFormat::Mp4H264):
-	case int(VideoFormat::Mp4Av1): {
+	case int(VideoFormat::Mp4Av1):
+	case int(VideoFormat::Apng): {
 		DP_SaveVideoDestination destination;
 		void *destinationParam;
 		DP_SaveVideoFfmpegParams ffmpegParams;
@@ -205,6 +206,8 @@ QString AnimationSaverRunnable::getFormatExtension() const
 		return QStringLiteral(".mp4");
 	case int(VideoFormat::WebmVp8):
 		return QStringLiteral(".webm");
+	case int(VideoFormat::Apng):
+		return QStringLiteral(".png");
 	default:
 		qWarning("Don't know extension for animation format %d", m_format);
 		return QString();
@@ -226,6 +229,8 @@ int AnimationSaverRunnable::formatToSaveVideoFormat() const
 		return DP_SAVE_VIDEO_FORMAT_MP4_H264;
 	case int(VideoFormat::Mp4Av1):
 		return DP_SAVE_VIDEO_FORMAT_MP4_AV1;
+	case int(VideoFormat::Apng):
+		return DP_SAVE_VIDEO_FORMAT_APNG;
 	default:
 		qWarning("formatToSaveVideoFormat: unhandled format %d", m_format);
 		return -1;
@@ -240,6 +245,7 @@ AnimationSaverRunnable::saveResultToErrorString(DP_SaveResult result) const
 		switch(m_format) {
 		case int(VideoFormat::Frames):
 		case int(VideoFormat::Zip):
+		case int(VideoFormat::Apng):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				2147483647, QStringLiteral("PNG"));
 		case int(VideoFormat::Gif):

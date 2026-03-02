@@ -11,6 +11,7 @@ enum class VideoFormat {
 	WebmVp8,
 	Mp4H264,
 	Mp4Av1,
+	Apng,
 };
 
 bool isVideoFormatSupported(VideoFormat format);

@@ -77,6 +77,8 @@ static enum AVCodecID get_format_codec_id(int format)
         return AV_CODEC_ID_H264;
     case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
         return AV_CODEC_ID_AV1;
+    case DP_SAVE_VIDEO_FORMAT_APNG:
+        return AV_CODEC_ID_APNG;
     default:
         return AV_CODEC_ID_NONE;
     }
@@ -112,6 +114,8 @@ static const char *get_format_name(int format)
         return "rawvideo";
     case DP_SAVE_VIDEO_FORMAT_GIF:
         return "gif";
+    case DP_SAVE_VIDEO_FORMAT_APNG:
+        return "apng";
     default:
         return NULL;
     }
@@ -141,6 +145,7 @@ static bool check_format_dimensions(int output_width, int output_height,
         return DP_save_check_width_height(output_width, output_height, 65536);
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         return DP_save_check_width_height(output_width, output_height, 16384);
+    case DP_SAVE_VIDEO_FORMAT_APNG:
     default:
         return true;
     }
@@ -152,6 +157,7 @@ static int get_format_loops(int format, int loops)
     case DP_SAVE_VIDEO_FORMAT_WEBP:
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
+    case DP_SAVE_VIDEO_FORMAT_APNG:
         return 1;
     default:
         return loops < 1 ? 1 : loops;
@@ -204,6 +210,8 @@ static int get_format_pix_fmt(int format, bool frame)
         return AV_PIX_FMT_BGRA;
     case DP_SAVE_VIDEO_FORMAT_GIF:
         return frame ? AV_PIX_FMT_BGRA : AV_PIX_FMT_PAL8;
+    case DP_SAVE_VIDEO_FORMAT_APNG:
+        return AV_PIX_FMT_RGBA;
     default:
         return AV_PIX_FMT_YUV420P;
     }
@@ -226,6 +234,7 @@ static void set_format_codec_params(int format, AVCodecContext *codec_context)
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
+    case DP_SAVE_VIDEO_FORMAT_APNG:
         break;
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         codec_context->bit_rate = 1 * 1024 * 1024;
@@ -268,6 +277,9 @@ static void set_format_output_params(int format,
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         set_option(format_context->priv_data, "loop", "0");
         break;
+    case DP_SAVE_VIDEO_FORMAT_APNG:
+        set_option(format_context->priv_data, "plays", "0");
+        break;
     default:
         DP_warn("Don't know format params for format %d", format);
         break;
@@ -307,6 +319,7 @@ static unsigned int get_format_flat_image_flags(int format)
     case DP_SAVE_VIDEO_FORMAT_GIF:
         return DP_FLAT_IMAGE_RENDER_FLAGS | DP_FLAT_IMAGE_ONE_BIT_ALPHA;
     case DP_SAVE_VIDEO_FORMAT_WEBP:
+    case DP_SAVE_VIDEO_FORMAT_APNG:
         return DP_FLAT_IMAGE_RENDER_FLAGS | DP_FLAT_IMAGE_UNPREMULTIPLY;
     default:
         return DP_FLAT_IMAGE_RENDER_FLAGS;
@@ -1112,6 +1125,16 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-an");
             argv_push(args, "-f");
             argv_push(args, "mp4");
+        }
+        return true;
+    case DP_SAVE_VIDEO_FORMAT_APNG:
+        if (args) {
+            argv_push(args, "-c:v");
+            argv_push(args, "apng");
+            argv_push(args, "-plays");
+            argv_push(args, "0");
+            argv_push(args, "-f");
+            argv_push(args, "apng");
         }
         return true;
     default:

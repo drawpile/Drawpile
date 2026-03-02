@@ -28,6 +28,8 @@ static bool isSaveVideoFormatSupported(VideoFormat format, bool ffmpeg)
 		return predicate(DP_SAVE_VIDEO_FORMAT_MP4_H264);
 	case VideoFormat::Mp4Av1:
 		return predicate(DP_SAVE_VIDEO_FORMAT_MP4_AV1);
+	case VideoFormat::Apng:
+		return predicate(DP_SAVE_VIDEO_FORMAT_APNG);
 	default:
 		break;
 	}

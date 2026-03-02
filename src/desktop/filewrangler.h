@@ -116,6 +116,7 @@ public:
 	QString getSaveAnimationMp4Path() const;
 	QString getSaveAnimationWebmPath() const;
 	QString getSaveAnimationWebpPath() const;
+	QString getSaveAnimationApngPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
 #ifdef HAVE_VIDEO_EXPORT
