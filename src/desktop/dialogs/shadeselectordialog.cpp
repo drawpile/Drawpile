@@ -186,18 +186,30 @@ ShadeSelectorDialog::RowWidget::RowWidget(ShadeSelectorDialog *dlg, int index)
 
 	m_combo = new widgets::NoScrollComboBox;
 	m_combo->addItem(
-		m_dlg->tr("Custom"), int(widgets::ShadeSelector::Preset::None));
+		QCoreApplication::translate("dialogs::ShadeSelectorDialog", "Custom"),
+		int(widgets::ShadeSelector::Preset::None));
 	m_combo->addItem(
-		m_dlg->tr("Hue"), int(widgets::ShadeSelector::Preset::HueRange));
+		QCoreApplication::translate("dialogs::ShadeSelectorDialog", "Hue"),
+		int(widgets::ShadeSelector::Preset::HueRange));
 	m_combo->addItem(
-		dlg->getColorSpaceText2(m_dlg->tr("Saturation"), m_dlg->tr("Chroma")),
+		dlg->getColorSpaceText2(
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Saturation"),
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Chroma")),
 		int(widgets::ShadeSelector::Preset::SaturationRange));
 	m_combo->addItem(
 		dlg->getColorSpaceText3(
-			m_dlg->tr("Value"), m_dlg->tr("Lightness"), m_dlg->tr("Luminance")),
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Value"),
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Lightness"),
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Luminance")),
 		int(widgets::ShadeSelector::Preset::ValueRange));
 	m_combo->addItem(
-		m_dlg->tr("Shades"), int(widgets::ShadeSelector::Preset::Shades));
+		QCoreApplication::translate("dialogs::ShadeSelectorDialog", "Shades"),
+		int(widgets::ShadeSelector::Preset::Shades));
 	m_combo->setCurrentIndex(0);
 	layout->addWidget(m_combo);
 
@@ -210,7 +222,8 @@ ShadeSelectorDialog::RowWidget::RowWidget(ShadeSelectorDialog *dlg, int index)
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	m_moveUpButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	m_moveUpButton->setIcon(QIcon::fromTheme("arrow-up"));
-	m_moveUpButton->setToolTip(m_dlg->tr("Move Up"));
+	m_moveUpButton->setToolTip(
+		QCoreApplication::translate("dialogs::ShadeSelectorDialog", "Move Up"));
 	moveLayout->addWidget(m_moveUpButton);
 	connect(
 		m_moveUpButton, &widgets::GroupedToolButton::clicked, m_dlg,
@@ -222,7 +235,9 @@ ShadeSelectorDialog::RowWidget::RowWidget(ShadeSelectorDialog *dlg, int index)
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
 	m_moveDownButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	m_moveDownButton->setIcon(QIcon::fromTheme("arrow-down"));
-	m_moveDownButton->setToolTip(m_dlg->tr("Move Down"));
+	m_moveDownButton->setToolTip(
+		QCoreApplication::translate(
+			"dialogs::ShadeSelectorDialog", "Move Down"));
 	moveLayout->addWidget(m_moveDownButton);
 	connect(
 		m_moveDownButton, &widgets::GroupedToolButton::clicked, m_dlg,
@@ -344,43 +359,73 @@ void ShadeSelectorDialog::RowWidget::initSliders()
 {
 	switch(m_preset) {
 	case int(widgets::ShadeSelector::Preset::HueRange):
-		addSlider(m_dlg->tr("Range: "), 10);
+		addSlider(
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Range: "),
+			10);
 		break;
 	case int(widgets::ShadeSelector::Preset::SaturationRange):
 	case int(widgets::ShadeSelector::Preset::ValueRange):
-		addSlider(m_dlg->tr("Range: "), 100);
+		addSlider(
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Range: "),
+			100);
 		break;
 	case int(widgets::ShadeSelector::Preset::Shades):
 		addSlider(
 			m_dlg->getColorSpaceText2(
-				m_dlg->tr("Saturation range: "), m_dlg->tr("Chroma range: ")),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Saturation range: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Chroma range: ")),
 			100);
 		addSlider(
 			m_dlg->getColorSpaceText3(
-				m_dlg->tr("Value range: "), m_dlg->tr("Lightness range: "),
-				m_dlg->tr("Luminance range: ")),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Value range: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Lightness range: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Luminance range: ")),
 			100);
 		break;
 	default:
 		addSlider(tr("Hue range: "), 100);
 		addSlider(
 			m_dlg->getColorSpaceText2(
-				m_dlg->tr("Saturation range: "), m_dlg->tr("Chroma range: ")),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Saturation range: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Chroma range: ")),
 			0);
 		addSlider(
 			m_dlg->getColorSpaceText3(
-				m_dlg->tr("Value range: "), m_dlg->tr("Lightness range: "),
-				m_dlg->tr("Luminance range: ")),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Value range: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Lightness range: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Luminance range: ")),
 			0);
-		addSlider(m_dlg->tr("Hue offset: "), 0);
+		addSlider(
+			QCoreApplication::translate(
+				"dialogs::ShadeSelectorDialog", "Hue offset: "),
+			0);
 		addSlider(
 			m_dlg->getColorSpaceText2(
-				m_dlg->tr("Saturation offset: "), m_dlg->tr("Chroma offset: ")),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Saturation offset: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Chroma offset: ")),
 			0);
 		addSlider(
 			m_dlg->getColorSpaceText3(
-				m_dlg->tr("Value offset: "), m_dlg->tr("Lightness offset: "),
-				m_dlg->tr("Luminance offset: ")),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Value offset: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Lightness offset: "),
+				QCoreApplication::translate(
+					"dialogs::ShadeSelectorDialog", "Luminance offset: ")),
 			0);
 		break;
 	}
@@ -392,7 +437,8 @@ void ShadeSelectorDialog::RowWidget::addSlider(
 	int i = m_sliders.size();
 	KisSliderSpinBox *slider = new widgets::NoScrollKisSliderSpinBox;
 	slider->setPrefix(prefix);
-	slider->setSuffix(m_dlg->tr("%"));
+	slider->setSuffix(
+		QCoreApplication::translate("dialogs::ShadeSelectorDialog", "%"));
 	slider->setRange(-100, 100);
 	slider->setValue(unstashSliderValue(m_preset, i, defaultValue));
 	QVBoxLayout *vl = qobject_cast<QVBoxLayout *>(layout());
