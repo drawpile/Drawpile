@@ -307,7 +307,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_chatbox, &widgets::ChatBox::reattachNowPlease, this, [this, cfg]() {
 			m_splitter->addWidget(m_chatbox);
-			QByteArray state = cfg->getLastWindowState();
+			QByteArray state = cfg->getLastWindowViewState();
 			bool haveSplitterState =
 				!state.isEmpty() && m_splitter->restoreState(state);
 			if(!haveSplitterState || m_chatbox->isCollapsed()) {
