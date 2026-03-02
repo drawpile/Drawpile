@@ -39,6 +39,7 @@ public:
 public slots:
 	//! Set color selection
 	void setColor(const QColor& color);
+	void updateColor(const QColor& color);
 
 signals:
 	void colorChanged(const QColor& color);

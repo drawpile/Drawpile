@@ -37,20 +37,26 @@ void ColorButton::selectColor()
 {
 #ifndef DESIGNER_PLUGIN
 	if(!_locked) {
-		color_widgets::ColorDialog dlg;
-		dialogs::applyColorDialogSettings(&dlg);
-		dlg.setWindowTitle(tr("Select a color"));
-		dlg.setAlphaEnabled(alpha());
-		dlg.setButtonMode(color_widgets::ColorDialog::OkCancel);
-		dlg.setColor(color());
-		if(dlg.exec() == QDialog::Accepted) {
-			if(dlg.color() != color()) {
-				setColor(dlg.color());
-				emit colorChanged(color());
-			}
-		}
+		color_widgets::ColorDialog *dlg =
+			dialogs::newDeleteOnCloseColorDialog(color(), this);
+		dlg->setWindowTitle(tr("Select a color"));
+		dlg->setAlphaEnabled(alpha());
+		dlg->setButtonMode(color_widgets::ColorDialog::OkCancel);
+		dlg->setColor(color());
+		dlg->show();
+		connect(
+			dlg, &color_widgets::ColorDialog::colorSelected, this,
+			&ColorButton::updateColor);
 	}
 #endif
+}
+
+void ColorButton::updateColor(const QColor& color)
+{
+	if(!_locked) {
+		setColor(color);
+		Q_EMIT colorChanged(color);
+	}
 }
 
 /**
