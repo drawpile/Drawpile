@@ -30,9 +30,16 @@ public:
 		const QModelIndex &topLeft, const QModelIndex &bottomRight,
 		const QVector<int> &roles);
 
+	int display() const { return m_display; }
 	void setDisplay(int display);
 
+	int columnCount() const { return m_columnCount; }
+	void setColumnCount(int columnCount);
+
 private:
+	static constexpr int MARGIN = 4;
+	static constexpr int PADDING = MARGIN * 2;
+
 	struct Preview {
 		QPixmap thumbnail;
 		QPixmap stroke;
@@ -50,7 +57,13 @@ private:
 
 	const QPixmap &getEditIcon(const QSize &size) const;
 
+	static int calculateStrokeColumnCount(int width, int height, int multiplier)
+	{
+		return width / ((height + PADDING) * multiplier);
+	}
+
 	int m_display;
+	int m_columnCount = 0;
 	mutable QHash<int, Preview> m_cache;
 	mutable QReadWriteLock m_lock;
 	mutable QPixmap m_editIcon;

@@ -131,6 +131,11 @@ double Config::defaultBrushOutlineWidth()
 	return 1.0;
 }
 
+int Config::defaultBrushPaletteColumns()
+{
+	return 0;
+}
+
 int Config::defaultBrushPaletteDisplay()
 {
 	return 0;

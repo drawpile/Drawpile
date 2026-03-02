@@ -50,6 +50,9 @@ SETTING(
 	brushOutlineWidth, BrushOutlineWidth, "settings/brushoutlinewidth",
 	config::Config::defaultBrushOutlineWidth())
 SETTING(
+	brushPaletteColumns, BrushPaletteColumns, "settings/brushpalettecolumns",
+	config::Config::defaultBrushPaletteColumns())
+SETTING(
 	brushPaletteDisplay, BrushPaletteDisplay, "settings/brushpalettedisplay",
 	config::Config::defaultBrushPaletteDisplay())
 SETTING(

@@ -311,6 +311,10 @@ public:
 	virtual void setBrushOutlineWidth(double value) = 0;
 	static double defaultBrushOutlineWidth();
 
+	virtual int getBrushPaletteColumns() const = 0;
+	virtual void setBrushPaletteColumns(int value) = 0;
+	static int defaultBrushPaletteColumns();
+
 	virtual int getBrushPaletteDisplay() const = 0;
 	virtual void setBrushPaletteDisplay(int value) = 0;
 	static int defaultBrushPaletteDisplay();
@@ -1303,6 +1307,7 @@ Q_SIGNALS:
 	void changeAutomaticAlphaPreserve(int value);
 	void changeBrushCursor(int value);
 	void changeBrushOutlineWidth(double value);
+	void changeBrushPaletteColumns(int value);
 	void changeBrushPaletteDisplay(int value);
 	void changeBrushPresetsAttach(bool value);
 	void changeBrushPreviewStyle(int value);

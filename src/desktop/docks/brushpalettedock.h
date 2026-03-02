@@ -89,6 +89,7 @@ private:
 
 	void handleDisplayAction(QAction *action);
 	void setDisplay(int display);
+	void setColumnCount(int columnCount);
 
 	void applyToBrushSettings(const QModelIndex &proxyIndex);
 	void changeTagAssignment(int tagId, bool assigned);

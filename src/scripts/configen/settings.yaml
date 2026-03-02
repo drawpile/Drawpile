@@ -278,6 +278,12 @@ settings:
     qsettings: 'settings/brushoutlinewidth'
     legacy_package: 'desktop'
 
+  - id: brushPaletteColumns
+    type: 'int'
+    default: '0'
+    qsettings: 'settings/brushpalettecolumns'
+    legacy_package: 'desktop'
+
   - id: brushPaletteDisplay
     type: 'int'
     default: '0'

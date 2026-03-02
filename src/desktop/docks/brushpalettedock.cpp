@@ -100,6 +100,8 @@ struct BrushPalette::Private {
 	QAction *displayBothAction;
 	KisSliderSpinBox *tagDisplaySizeSlider;
 	KisSliderSpinBox *brushDisplaySizeSlider;
+	KisSliderSpinBox *tagDisplayColumnsSlider;
+	KisSliderSpinBox *brushDisplayColumnsSlider;
 	IgnoreEnsureVisibleListView *presetListView;
 	BrushPaletteDelegate *delegate;
 
@@ -234,6 +236,28 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->tagMenu->addAction(tagDisplaySizeAction);
 	d->brushMenu->addAction(brushDisplaySizeAction);
 
+	config::Config *cfg = dpAppConfig();
+	for(KisSliderSpinBox **pp :
+		{&d->tagDisplayColumnsSlider, &d->brushDisplayColumnsSlider}) {
+		KisSliderSpinBox *slider = new KisSliderSpinBox;
+		slider->setRange(0, 9);
+		slider->setValue(0);
+		slider->setBlockUpdateSignalOnDrag(true);
+		slider->setSpecialValueText(tr("Automatic"));
+		CFG_BIND_SLIDERSPINBOX(cfg, BrushPaletteColumns, slider);
+		*pp = slider;
+	}
+
+	QWidgetAction *tagDisplayColumnsAction = new QWidgetAction(d->tagMenu);
+	QWidgetAction *brushDisplayColumnsAction = new QWidgetAction(d->brushMenu);
+	tagDisplayColumnsAction->setDefaultWidget(d->tagDisplayColumnsSlider);
+	brushDisplayColumnsAction->setDefaultWidget(d->brushDisplayColumnsSlider);
+	QString columnsTitle = tr("Columns:");
+	d->tagMenu->addSection(columnsTitle);
+	d->brushMenu->addSection(columnsTitle);
+	d->tagMenu->addAction(tagDisplayColumnsAction);
+	d->brushMenu->addAction(brushDisplayColumnsAction);
+
 	d->presetListView = new IgnoreEnsureVisibleListView(this);
 	d->presetListView->setUniformItemSizes(true);
 	d->presetListView->setFlow(QListView::LeftToRight);
@@ -328,8 +352,8 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->presetListView, &QWidget::customContextMenuRequested, this,
 		&BrushPalette::showPresetContextMenu);
 
-	config::Config *cfg = dpAppConfig();
 	CFG_BIND_SET(cfg, BrushPaletteDisplay, this, BrushPalette::setDisplay);
+	CFG_BIND_SET(cfg, BrushPaletteColumns, this, BrushPalette::setColumnCount);
 
 	int selectedTagId = d->tagModel->getStateInt(SELECTED_TAG_ID_KEY, 0);
 	int selectedTagRow =
@@ -899,6 +923,14 @@ void BrushPalette::setDisplay(int mode)
 
 	d->delegate->setDisplay(mode);
 	d->presetListView->reset();
+}
+
+void BrushPalette::setColumnCount(int columnCount)
+{
+	if(columnCount != d->delegate->columnCount()) {
+		d->delegate->setColumnCount(columnCount);
+		d->presetListView->reset();
+	}
 }
 
 void BrushPalette::applyToBrushSettings(const QModelIndex &proxyIndex)

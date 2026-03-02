@@ -32,7 +32,8 @@ void BrushPaletteDelegate::paint(
 		painter->drawRect(opt.rect.marginsRemoved(QMargins(0, 0, 1, 1)));
 	}
 
-	QRect rect = opt.rect.marginsRemoved(QMargins(4, 4, 4, 4));
+	QRect rect =
+		opt.rect.marginsRemoved(QMargins(MARGIN, MARGIN, MARGIN, MARGIN));
 	if(rect.isEmpty()) {
 		return;
 	}
@@ -97,8 +98,8 @@ void BrushPaletteDelegate::paint(
 		}
 
 		if(!preview.title.isEmpty()) {
-			QRect textRect =
-				preview.textBounds.marginsAdded(QMargins(4, 1, 4, 1));
+			QRect textRect = preview.textBounds.marginsAdded(
+				QMargins(MARGIN, MARGIN / 4, MARGIN, MARGIN / 4));
 			textRect.moveBottomRight(rect.bottomRight());
 			painter->setOpacity(0.7);
 
@@ -144,12 +145,20 @@ QSize BrushPaletteDelegate::sizeHint(
 	const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	Q_UNUSED(option);
-	constexpr int PADDING = 8;
 	int width = option.rect.width();
 	QSize size = index.data(Qt::SizeHintRole).toSize();
 	if(haveStroke()) {
-		int multiplier = haveThumbnail() ? 3 : 2;
-		int columns = width / ((size.height() + PADDING) * multiplier);
+		int columns;
+		if(m_columnCount <= 0) {
+			int multiplier = haveThumbnail() ? 3 : 2;
+			columns =
+				calculateStrokeColumnCount(width, size.height(), multiplier);
+		} else {
+			columns = qMin(
+				m_columnCount,
+				calculateStrokeColumnCount(width, size.height(), 1));
+		}
+
 		if(columns > 1) {
 			return QSize(width / columns - 1, size.height() + PADDING);
 		} else {
@@ -157,6 +166,10 @@ QSize BrushPaletteDelegate::sizeHint(
 		}
 	} else {
 		int columns = width / (size.width() + PADDING + 1);
+		if(m_columnCount > 0 && m_columnCount < columns) {
+			columns = m_columnCount;
+		}
+
 		if(columns > 1) {
 			return QSize(width / columns - 1, size.height() + PADDING);
 		} else {
@@ -198,6 +211,14 @@ void BrushPaletteDelegate::setDisplay(int display)
 {
 	if(display != m_display) {
 		m_display = display;
+		m_cache.clear();
+	}
+}
+
+void BrushPaletteDelegate::setColumnCount(int columnCount)
+{
+	if(columnCount != m_columnCount) {
+		m_columnCount = columnCount;
 		m_cache.clear();
 	}
 }

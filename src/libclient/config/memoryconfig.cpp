@@ -256,6 +256,19 @@ void MemoryConfig::setBrushOutlineWidth(double value)
 	}
 }
 
+int MemoryConfig::getBrushPaletteColumns() const
+{
+	return m_brushPaletteColumns;
+}
+
+void MemoryConfig::setBrushPaletteColumns(int value)
+{
+	if(value != m_brushPaletteColumns) {
+		m_brushPaletteColumns = value;
+		Q_EMIT changeBrushPaletteColumns(m_brushPaletteColumns);
+	}
+}
+
 int MemoryConfig::getBrushPaletteDisplay() const
 {
 	return m_brushPaletteDisplay;
