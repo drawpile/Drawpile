@@ -57,6 +57,7 @@ Unreleased Version 2.3.1-pre
  * Feature: An overview page for the shortcut preferences, to hopefully cut down on users not being able to find where to assign mouse buttons or similar.
  * Fix: Make status bar not end up huge when reattaching chat. Thanks hpar and xxxx for reporting.
  * Fix: Slow down the update rate of the status bar, since it causes performance issues on some devices. Thanks Liz and Hyper ifg for reporting.
+ * Fix: Don't focus flipbook when it's already open to allow refreshing it without it taking away the keyboard focus from the main window.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

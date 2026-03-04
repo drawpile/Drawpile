@@ -3314,8 +3314,6 @@ void MainWindow::showFlipbook()
 		"flipbook", Qt::FindDirectChildrenOnly);
 	if(fp) {
 		fp->setPaintEngine(m_doc->canvas()->paintEngine());
-		fp->activateWindow();
-		fp->raise();
 	} else {
 		fp = new dialogs::Flipbook{m_flipbookState, this};
 		fp->setObjectName("flipbook");
