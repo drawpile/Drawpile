@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/widgets/viewstatusbar.h"
 #include <QScopedValueRollback>
 
@@ -16,23 +15,24 @@ ViewStatusBar::ViewStatusBar(QWidget *parent)
 void ViewStatusBar::setSessionHistorySize(int sessionHistorySize)
 {
 	m_sessionHistorySize = sessionHistorySize;
-	showCoordinatesMessage();
+	scheduleCoordinatesMessage();
 }
 
 void ViewStatusBar::setLatency(qint64 latency)
 {
 	m_latency = latency;
-	showCoordinatesMessage();
+	scheduleCoordinatesMessage();
 }
 
 void ViewStatusBar::setCoordinates(const QPointF &coordinates)
 {
 	m_coordinates = coordinates;
-	showCoordinatesMessage();
+	scheduleCoordinatesMessage();
 }
 
 void ViewStatusBar::showToolMessage(const QString &message)
 {
+	resetMessageTimer();
 	if(message.isEmpty()) {
 		clearMessage();
 	} else {
@@ -40,10 +40,34 @@ void ViewStatusBar::showToolMessage(const QString &message)
 	}
 }
 
+void ViewStatusBar::timerEvent(QTimerEvent *event)
+{
+	Q_UNUSED(event);
+	if(m_timerId != 0) {
+		showCoordinatesMessage();
+		if(m_shouldStopTimer) {
+			resetMessageTimer();
+		} else {
+			m_shouldStopTimer = true;
+		}
+	}
+}
+
 void ViewStatusBar::updateMessage(const QString &message)
 {
+	resetMessageTimer();
 	m_showStatusMessage = m_settingStatusMessage || message.isEmpty();
 	showCoordinatesMessage();
+}
+
+void ViewStatusBar::scheduleCoordinatesMessage()
+{
+	if(m_timerId == 0) {
+		m_shouldStopTimer = true;
+		m_timerId = startTimer(66, Qt::CoarseTimer);
+	} else {
+		m_shouldStopTimer = false;
+	}
 }
 
 void ViewStatusBar::showCoordinatesMessage()
@@ -75,6 +99,14 @@ void ViewStatusBar::showCoordinatesMessage()
 					.arg(x)
 					.arg(y));
 		}
+	}
+}
+
+void ViewStatusBar::resetMessageTimer()
+{
+	if(m_timerId != 0) {
+		killTimer(m_timerId);
+		m_timerId = 0;
 	}
 }
 
