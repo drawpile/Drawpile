@@ -769,17 +769,48 @@ import { UAParser } from "ua-parser-js";
         ".",
       ]);
     }
+    if (os.indexOf("Android") !== -1 && browser.indexOf("Samsung") !== -1) {
+      return tag("p", [
+        tag("strong", ["❌ Incompatible browser:"]),
+        ` Samsung Internet will not let you download your drawings, you'll ` +
+          `end up with empty files instead. Consider using a different ` +
+          `browser or `,
+        tag(
+          "a",
+          { href: "https://drawpile.net/download/" },
+          "the native Android application",
+        ),
+        ".",
+      ]);
+    }
     const iDevice = getIDevice(ua);
     if (iDevice) {
       const engine = ua.getEngine()?.name || "";
-      if (browser.indexOf("Chrome") !== -1 && engine.indexOf("WebKit") !== -1) {
-        return tag("p", [
-          tag("strong", ["❌ Incompatible browser:"]),
-          `Chrome on ${iDevice} has some trouble running Drawpile. It's really ` +
-            "just the system browser (Safari) in a different shell, which " +
-            "causes problems with controls ending up off-screen. Consider " +
-            `using the ${iDevice} system browser (Safari) directly instead.`,
-        ]);
+      if (engine.indexOf("WebKit") !== -1) {
+        if (browser.indexOf("Chrome") !== -1) {
+          return tag("p", [
+            tag("strong", ["❌ Incompatible browser:"]),
+            ` Chrome on ${iDevice} has some trouble running Drawpile. It's really ` +
+              "just the system browser (Safari) in a different shell, which " +
+              "causes problems with controls ending up off-screen. Consider " +
+              `using the ${iDevice} system browser (Safari) directly instead.`,
+          ]);
+        } else if (browser.indexOf("Firefox") !== -1) {
+          return tag("p", [
+            tag("strong", ["❌ Incompatible browser:"]),
+              `Firefox on ${iDevice} will not allow you to save your drawings. ` +
+              `It's really just a shell around the system browser (Safari), so ` +
+              `consider using Safari directly to be able to save your pictures.`
+          ]);
+        } else if (browser.indexOf("Safari") === -1) {
+          return tag("p", [
+            tag("strong", ["⚠️ Possibly incompatible browser:"]),
+              `web browsers on ${iDevice} are just a shell around the system ` +
+              `browser (Safari). These shells have problems like not being able ` +
+              `to download your drawings or controls getting covered. Consider ` +
+              `using Safari directly instead.`
+          ]);
+        }
       }
     }
 
