@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DESKTOP_WIDGETS_VIEWSTATUSBAR_H
 #define DESKTOP_WIDGETS_VIEWSTATUSBAR_H
-
 #include <QPointF>
 #include <QStatusBar>
 
@@ -17,15 +15,20 @@ public:
 	void setLatency(qint64 latency);
 	void setCoordinates(const QPointF &coordinates);
 
-private slots:
-	void updateMessage(const QString &message);
+protected:
+	void timerEvent(QTimerEvent *event) override;
 
 private:
+	void updateMessage(const QString &message);
+	void scheduleCoordinatesMessage();
 	void showCoordinatesMessage();
+	void resetMessageTimer();
 
 	bool m_showStatusMessage = true;
 	bool m_settingStatusMessage = false;
+	bool m_shouldStopTimer = true;
 	int m_sessionHistorySize = -1;
+	int m_timerId = 0;
 	qint64 m_latency = -1;
 	QPointF m_coordinates = {0, 0};
 };
