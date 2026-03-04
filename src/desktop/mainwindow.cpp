@@ -7427,10 +7427,18 @@ void MainWindow::setupActions()
 				.property("markercolor", mc.color)
 				.noDefaultShortcut());
 	}
-	// clang-format off
-	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
-	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
-	// clang-format on
+	QAction *keyFrameProperties =
+		makeAction("key-frame-properties", tr("Key Frame Properties..."))
+			.icon("configure")
+			.shortcut("Ctrl+Shift+P");
+	QAction *keyFrameDeleteLayer =
+		makeAction("key-frame-delete", tr("Delete Key Frame"))
+			.icon("keyframe-remove")
+			.shortcut("Ctrl+Shift+G");
+	QAction *keyFrameUnassign =
+		makeAction("key-frame-unassign", tr("Unassign Key Frame"))
+			.icon("drawpile_keyframe_unlink")
+			.noDefaultShortcut();
 	QAction *keyFrameExposureIncrease =
 		makeAction(
 			"key-frame-exposure-increase",
@@ -7505,7 +7513,8 @@ void MainWindow::setupActions()
 		animationKeyFrameColorMenu->addAction(keyFrameColor);
 	}
 	animationMenu->addAction(keyFrameProperties);
-	animationMenu->addAction(keyFrameDelete);
+	animationMenu->addAction(keyFrameDeleteLayer);
+	animationMenu->addAction(keyFrameUnassign);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameExposureIncrease);
 	animationMenu->addAction(keyFrameExposureDecreaseVisible);
@@ -7600,7 +7609,8 @@ void MainWindow::setupActions()
 			keyFrameCopy,
 			keyFramePaste,
 			keyFrameProperties,
-			keyFrameDelete,
+			keyFrameDeleteLayer,
+			keyFrameUnassign,
 			keyFrameExposureIncrease,
 			keyFrameExposureIncreaseVisible,
 			keyFrameExposureDecrease,

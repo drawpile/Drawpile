@@ -530,7 +530,8 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFramePaste);
 	d->frameMenu->addMenu(actions.animationKeyFrameColorMenu);
 	d->frameMenu->addAction(actions.keyFrameProperties);
-	d->frameMenu->addAction(actions.keyFrameDelete);
+	d->frameMenu->addAction(actions.keyFrameDeleteLayer);
+	d->frameMenu->addAction(actions.keyFrameUnassign);
 	d->frameMenu->addSeparator();
 	d->frameMenu->addAction(actions.keyFrameExposureIncrease);
 	d->frameMenu->addAction(actions.keyFrameExposureIncreaseVisible);
@@ -586,8 +587,11 @@ void TimelineWidget::setActions(const Actions &actions)
 		actions.animationKeyFrameColorMenu, &QMenu::triggered, this,
 		&TimelineWidget::setKeyFrameColor);
 	connect(
-		actions.keyFrameDelete, &QAction::triggered, this,
-		&TimelineWidget::deleteKeyFrame);
+		actions.keyFrameDeleteLayer, &QAction::triggered, this,
+		&TimelineWidget::deleteKeyFrameLayer);
+	connect(
+		actions.keyFrameUnassign, &QAction::triggered, this,
+		&TimelineWidget::unassignKeyFrame);
 	connect(
 		actions.keyFrameExposureIncrease, &QAction::triggered, this,
 		&TimelineWidget::increaseKeyFrameExposure);
@@ -1442,7 +1446,7 @@ void TimelineWidget::setKeyFrameEmpty()
 void TimelineWidget::cutKeyFrame()
 {
 	copyKeyFrame();
-	deleteKeyFrame();
+	unassignKeyFrame();
 }
 
 void TimelineWidget::copyKeyFrame()
@@ -1598,7 +1602,7 @@ void TimelineWidget::keyFramePropertiesChanged(
 		layerVisibility);
 }
 
-void TimelineWidget::deleteKeyFrame()
+void TimelineWidget::deleteKeyFrameWith(bool deleteUnusedLayer)
 {
 	if(!d->editable) {
 		return;
@@ -1606,11 +1610,46 @@ void TimelineWidget::deleteKeyFrame()
 
 	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
 	if(keyFrame) {
-		emitCommand([&](uint8_t contextId) {
-			return net::makeKeyFrameDeleteMessage(
-				contextId, d->currentTrackId, keyFrame->frameIndex, 0, 0);
-		});
+		bool shouldDeleteLayer =
+			deleteUnusedLayer && keyFrame->layerId > 0 &&
+			([this, layerId = keyFrame->layerId, trackId = d->currentTrackId,
+			  frameIndex = keyFrame->frameIndex] {
+				for(const canvas::TimelineTrack &t : d->getTracks()) {
+					for(const canvas::TimelineKeyFrame &kf : t.keyFrames) {
+						if(kf.layerId == layerId &&
+						   (t.id != trackId || kf.frameIndex != frameIndex)) {
+							return false;
+						}
+					}
+				}
+				return true;
+			})();
+
+		net::MessageList msgs;
+		msgs.reserve(shouldDeleteLayer ? 3 : 2);
+
+		uint8_t contextId = d->canvas->localUserId();
+		msgs.append(net::makeUndoPointMessage(contextId));
+		msgs.append(
+			net::makeKeyFrameDeleteMessage(
+				contextId, d->currentTrackId, keyFrame->frameIndex, 0, 0));
+		if(shouldDeleteLayer) {
+			msgs.append(
+				net::makeLayerTreeDeleteMessage(
+					contextId, keyFrame->layerId, 0));
+		}
+		emit timelineEditCommands(msgs.size(), msgs.constData());
 	}
+}
+
+void TimelineWidget::unassignKeyFrame()
+{
+	deleteKeyFrameWith(false);
+}
+
+void TimelineWidget::deleteKeyFrameLayer()
+{
+	deleteKeyFrameWith(true);
 }
 
 void TimelineWidget::increaseKeyFrameExposure()
@@ -2316,7 +2355,8 @@ void TimelineWidget::updateActions()
 		ca->setEnabled(keyFrameEditable);
 	}
 	d->actions.keyFrameProperties->setEnabled(keyFrameEditable);
-	d->actions.keyFrameDelete->setEnabled(keyFrameEditable);
+	d->actions.keyFrameDeleteLayer->setEnabled(keyFrameEditable);
+	d->actions.keyFrameUnassign->setEnabled(keyFrameEditable);
 
 	bool canIncreaseExposure = false;
 	bool canDecreaseExposure = false;
@@ -2488,5 +2528,4 @@ void TimelineWidget::setCheckedSignalBlocked(QAction *action, bool checked)
 	QSignalBlocker blocker{action};
 	action->setChecked(checked);
 }
-
 }

@@ -36,7 +36,8 @@ public:
 		QAction *keyFrameCopy = nullptr;
 		QAction *keyFramePaste = nullptr;
 		QAction *keyFrameProperties = nullptr;
-		QAction *keyFrameDelete = nullptr;
+		QAction *keyFrameDeleteLayer = nullptr;
+		QAction *keyFrameUnassign = nullptr;
 		QAction *keyFrameExposureIncrease = nullptr;
 		QAction *keyFrameExposureIncreaseVisible = nullptr;
 		QAction *keyFrameExposureDecrease = nullptr;
@@ -126,7 +127,9 @@ private:
 	void keyFramePropertiesChanged(
 		int trackId, int frame, const QColor &color, const QString &title,
 		const QHash<int, bool> &layerVisibility);
-	void deleteKeyFrame();
+	void deleteKeyFrameWith(bool deleteUnusedLayer);
+	void deleteKeyFrameLayer();
+	void unassignKeyFrame();
 	void increaseKeyFrameExposure();
 	void increaseKeyFrameExposureVisible();
 	void decreaseKeyFrameExposure();
