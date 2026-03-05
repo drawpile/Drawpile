@@ -7517,7 +7517,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameUnassign);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameExposureIncrease);
-	animationMenu->addAction(keyFrameExposureDecreaseVisible);
+	animationMenu->addAction(keyFrameExposureIncreaseVisible);
 	animationMenu->addAction(keyFrameExposureDecrease);
 	animationMenu->addAction(keyFrameExposureDecreaseVisible);
 	animationMenu->addSeparator();
