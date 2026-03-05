@@ -59,6 +59,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Slow down the update rate of the status bar, since it causes performance issues on some devices. Thanks Liz and Hyper ifg for reporting.
  * Fix: Don't focus flipbook when it's already open to allow refreshing it without it taking away the keyboard focus from the main window.
  * Feature: Make the key frame delete action also delete the associated layer and add a separate unassign key frame action that only gets rid of the key frame.
+ * Feature: Move the timeline track manipulation buttons into the top-left corner of the timeline above the tracks which was previously just a blank space.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

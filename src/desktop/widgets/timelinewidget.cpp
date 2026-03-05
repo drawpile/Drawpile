@@ -6,18 +6,19 @@ extern "C" {
 #include "desktop/dialogs/keyframepropertiesdialog.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/timelinewidget.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
-#include "libclient/drawdance/documentmetadata.h"
 #include "libclient/net/message.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDeadlineTimer>
 #include <QDrag>
+#include <QHBoxLayout>
 #include <QHash>
 #include <QIcon>
 #include <QJsonArray>
@@ -29,8 +30,6 @@ extern "C" {
 #include <QPainter>
 #include <QScrollBar>
 #include <QSignalBlocker>
-#include <algorithm>
-#include <limits>
 
 namespace widgets {
 
@@ -67,6 +66,7 @@ struct TimelineWidget::Private {
 
 	bool haveActions = false;
 	Actions actions;
+	QWidget *trackActionsWidget = nullptr;
 	QMenu *trackMenu = nullptr;
 	QMenu *frameMenu = nullptr;
 
@@ -520,6 +520,44 @@ void TimelineWidget::setActions(const Actions &actions)
 	Q_ASSERT(!d->haveActions);
 	d->haveActions = true;
 	d->actions = actions;
+
+	d->trackActionsWidget = new QWidget(this);
+	d->trackActionsWidget->setContentsMargins(0, 0, 0, 0);
+	d->trackActionsWidget->setCursor(Qt::ArrowCursor);
+
+	QHBoxLayout *trackActionsLayout = new QHBoxLayout(d->trackActionsWidget);
+	trackActionsLayout->setContentsMargins(0, 0, 0, 0);
+	trackActionsLayout->setSpacing(0);
+
+	widgets::GroupedToolButton *trackAddButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	trackAddButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	trackAddButton->setAutoRaise(true);
+	trackAddButton->setDefaultAction(actions.trackAdd);
+	trackActionsLayout->addWidget(trackAddButton);
+
+	widgets::GroupedToolButton *trackDuplicateButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	trackDuplicateButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	trackDuplicateButton->setAutoRaise(true);
+	trackDuplicateButton->setDefaultAction(actions.trackDuplicate);
+	trackActionsLayout->addWidget(trackDuplicateButton);
+
+	widgets::GroupedToolButton *trackRetitleButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	trackRetitleButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	trackRetitleButton->setAutoRaise(true);
+	trackRetitleButton->setDefaultAction(actions.trackRetitle);
+	trackActionsLayout->addWidget(trackRetitleButton);
+
+	widgets::GroupedToolButton *trackDeleteButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	trackDeleteButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	trackDeleteButton->setAutoRaise(true);
+	trackDeleteButton->setDefaultAction(actions.trackDelete);
+	trackActionsLayout->addWidget(trackDeleteButton);
+
+	d->trackActionsWidget->setGeometry(0, 0, d->headerWidth, d->rowHeight);
 
 	d->trackMenu = new QMenu{this};
 	d->frameMenu = new QMenu{this};
@@ -2026,10 +2064,14 @@ void TimelineWidget::updateTracks()
 			anyTrackId = track.id;
 		}
 	}
-	d->headerWidth = maxTrackAdvance + TRACK_PADDING * 4 + ICON_SIZE * 2;
+	d->headerWidth =
+		qMax(64, maxTrackAdvance) + TRACK_PADDING * 4 + ICON_SIZE * 2;
 	int effectiveTrackId = nextTrackId != 0		 ? nextTrackId
 						   : currentTrackId != 0 ? currentTrackId
 												 : anyTrackId;
+	if(d->trackActionsWidget) {
+		d->trackActionsWidget->setGeometry(0, 0, d->headerWidth, d->rowHeight);
+	}
 	setMinimumHeight(
 		d->rowHeight * 3 + d->horizontalScroll->sizeHint().height());
 	setCurrent(effectiveTrackId, d->currentFrame, false, false);
