@@ -14,6 +14,8 @@ extern "C" {
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/net/message.h"
+#include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
 #include <QDeadlineTimer>
@@ -33,16 +35,19 @@ extern "C" {
 
 namespace widgets {
 
+enum class TimelineTool { Normal, Exposure };
 enum class TrackAction { None, ToggleVisible, ToggleOnionSkin };
-
 enum class TargetHeader { None, Header, RangeFirst, RangeLast };
+enum class TargetSide { None, Left, Right };
 
 struct TimelineWidget::Target {
-	int uiTrackIndex;
-	int trackId;
-	int frameIndex;
-	TargetHeader header;
-	TrackAction action;
+	int uiTrackIndex = -1;
+	int trackId = 0;
+	int frameIndex = -1;
+	int rawFrameIndex = -1;
+	TargetHeader header = TargetHeader::None;
+	TrackAction action = TrackAction::None;
+	TargetSide side = TargetSide::None;
 };
 
 struct Exposure {
@@ -57,6 +62,93 @@ struct Exposure {
 	bool canChangeInDirection(bool forward) const
 	{
 		return forward ? canIncrease() : canDecrease();
+	}
+};
+
+struct ExposureToolState {
+	int fromUiTrackIndex = -1;
+	int fromFrameIndex = -1;
+	int toUiTrackIndex = -1;
+	int toFrameIndex = -1;
+	int offset = 0;
+	int leftIndex = -1;
+	int topIndex = -1;
+	int rightIndex = -1;
+	int bottomIndex = -1;
+	bool active = false;
+	bool valid = false;
+
+	void update(const QVector<canvas::TimelineTrack> &tracks, int frameCount)
+	{
+		int trackCount = tracks.size();
+		if(fromUiTrackIndex == -1) {
+			topIndex = -1;
+			bottomIndex = tracks.size() - 1;
+		} else {
+			if(fromUiTrackIndex <= toUiTrackIndex) {
+				topIndex = fromUiTrackIndex;
+				bottomIndex = toUiTrackIndex;
+			} else {
+				topIndex = toUiTrackIndex;
+				bottomIndex = fromUiTrackIndex;
+			}
+
+			if(topIndex >= trackCount) {
+				topIndex = -1;
+				bottomIndex = -1;
+			} else if(bottomIndex >= trackCount) {
+				bottomIndex = trackCount - 1;
+			}
+		}
+
+		offset = toFrameIndex - fromFrameIndex;
+		for(int i = qMax(0, topIndex); offset != 0 && i <= bottomIndex; ++i) {
+			const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
+			if(offset < 0) {
+				clampOffsetDecrease(track);
+			} else {
+				clampOffsetIncrease(track, frameCount);
+			}
+		}
+
+		if(offset >= 0) {
+			leftIndex = fromFrameIndex;
+			rightIndex = fromFrameIndex + offset;
+		} else {
+			rightIndex = fromFrameIndex;
+			leftIndex = fromFrameIndex + offset;
+		}
+	}
+
+	void clampOffsetIncrease(const canvas::TimelineTrack &track, int frameCount)
+	{
+		const QVector<canvas::TimelineKeyFrame> &kfs = track.keyFrames;
+		if(!kfs.isEmpty()) {
+			int frameIndex = kfs.constLast().frameIndex;
+			if(frameIndex >= fromFrameIndex) {
+				int maxOffset = frameCount - frameIndex - 1;
+				if(offset > maxOffset) {
+					offset = maxOffset;
+				}
+			}
+		}
+	}
+
+	void clampOffsetDecrease(const canvas::TimelineTrack &track)
+	{
+		int frameIndexBefore = -1;
+		for(const canvas::TimelineKeyFrame &kf : track.keyFrames) {
+			int frameIndex = kf.frameIndex;
+			if(frameIndex < fromFrameIndex) {
+				frameIndexBefore = frameIndex;
+			} else {
+				break;
+			}
+		}
+		int minOffset = frameIndexBefore - fromFrameIndex + 1;
+		if(offset < minOffset) {
+			offset = minOffset;
+		}
 	}
 };
 
@@ -83,14 +175,17 @@ struct TimelineWidget::Private {
 	int currentTrackId = 0;
 	int currentFrame = 0;
 	int nextTrackId = 0;
-	Target hoverTarget = {-1, 0, -1, TargetHeader::None, TrackAction::None};
+	TimelineTool currentTool = TimelineTool::Normal;
+	Target hoverTarget;
 	TargetHeader pressedHeader = TargetHeader::None;
 	bool editable = false;
+	bool altDown = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
 	Qt::DropAction dropAction;
 	QPoint dragOrigin;
 	QPoint dragPos;
+	ExposureToolState exposureTool;
 	QDeadlineTimer frameViewRequestTimer;
 
 	int selectedLayerId = 0;
@@ -297,6 +392,19 @@ struct TimelineWidget::Private {
 		return nullptr;
 	}
 
+	QVector<int> visibleTrackIds()
+	{
+		const QVector<canvas::TimelineTrack> &tracks = getTracks();
+		QVector<int> trackIds;
+		trackIds.reserve(tracks.size());
+		for(const canvas::TimelineTrack &track : tracks) {
+			if(!track.hidden) {
+				trackIds.append(track.id);
+			}
+		}
+		return trackIds;
+	}
+
 	Exposure currentExposureByTrackId(int trackId)
 	{
 		const canvas::TimelineTrack *track = trackById(trackId);
@@ -459,6 +567,22 @@ struct TimelineWidget::Private {
 	const QIcon &getOnionSkinIcon(const canvas::TimelineTrack &track)
 	{
 		return track.onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
+	}
+
+	bool isCurrentExposureTool()
+	{
+		if(currentTool == TimelineTool::Exposure) {
+			return !altDown;
+		} else {
+			return altDown;
+		}
+	}
+
+	void updateExposureToolState(const QVector<canvas::TimelineTrack> &tracks)
+	{
+		if(exposureTool.active && !exposureTool.valid) {
+			exposureTool.update(tracks, frameCount());
+		}
 	}
 };
 
@@ -725,6 +849,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.keyFrameDuplicatePrev, &QAction::triggered, this,
 		&TimelineWidget::startFrameViewRequestTimer);
+	connect(
+		actions.timelineToolGroup, &QActionGroup::triggered, this,
+		&TimelineWidget::switchTool);
 
 	updateActions();
 }
@@ -840,6 +967,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	}
 
 	const QVector<canvas::TimelineTrack> tracks = d->getTracks();
+	d->updateExposureToolState(tracks);
 	int trackCount = tracks.size();
 	int visibleFrameCount = d->visibleFrameCount();
 	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
@@ -884,7 +1012,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.drawRect(bodyRect);
 
 	// Selected row and column.
-	if(trackCount != 0) {
+	if(trackCount != 0 && !d->isCurrentExposureTool()) {
 		QColor selectedColor = pal.highlight().color();
 		selectedColor.setAlphaF(0.5f);
 		painter.setBrush(selectedColor);
@@ -905,14 +1033,23 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	for(int i = 0; i < trackCount; ++i) {
 		int y = rowHeight + i * rowHeight - yScroll;
 		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
+		bool exposureTrackActive = d->exposureTool.active &&
+								   i >= d->exposureTool.topIndex &&
+								   i <= d->exposureTool.bottomIndex;
 		painter.setOpacity(track.hidden ? 0.5 : 1.0);
 		const QVector<canvas::TimelineKeyFrame> &keyFrames = track.keyFrames;
 		int keyFrameCount = keyFrames.size();
 		for(int j = 0; j < keyFrameCount; ++j) {
 			const canvas::TimelineKeyFrame &keyFrame = keyFrames[j];
 			int frame = keyFrame.frameIndex;
+			int offsetFrame;
+			if(exposureTrackActive && frame >= d->exposureTool.leftIndex) {
+				offsetFrame = frame + d->exposureTool.offset;
+			} else {
+				offsetFrame = frame;
+			}
 
-			int x = headerWidth + frame * columnWidth - xScroll;
+			int x = headerWidth + offsetFrame * columnWidth - xScroll;
 			bool isSelected =
 				currentFrame == frame && d->currentTrackId == track.id;
 			QBrush brush;
@@ -1055,6 +1192,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		int y = d->trackDropIndex(d->dragPos.y()) * rowHeight + rowHeight -
 				d->yScroll;
 		painter.drawLine(0, y, headerWidth, y);
+
 	} else if(d->dragHover == Drag::KeyFrame) {
 		Target target = getMouseTarget(d->dragPos);
 		QBrush brush = pal.highlightedText();
@@ -1063,6 +1201,56 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		int x = headerWidth + target.frameIndex * columnWidth - xScroll;
 		int y = rowHeight + target.uiTrackIndex * rowHeight - yScroll;
 		painter.drawRect(x, y, columnWidth, rowHeight);
+
+	} else if(const ExposureToolState &e = d->exposureTool; e.active) {
+		if(e.topIndex <= e.bottomIndex) {
+			int exposureLeft =
+				headerWidth + e.leftIndex * columnWidth - xScroll;
+			int exposureRight =
+				headerWidth + e.rightIndex * columnWidth - xScroll;
+			int exposureTop = rowHeight + e.topIndex * rowHeight - yScroll;
+			int exposureBottom =
+				2 * rowHeight + e.bottomIndex * rowHeight - yScroll;
+
+			painter.setBrush(Qt::NoBrush);
+			painter.setPen(QPen(pal.highlightedText(), 1));
+			painter.drawLine(
+				exposureLeft, exposureTop, exposureLeft, exposureBottom);
+			if(e.offset != 0) {
+				painter.drawLine(
+					exposureRight, exposureTop, exposureRight, exposureBottom);
+				painter.setPen(Qt::NoPen);
+				painter.setBrush(
+					e.offset > 0 ? pal.highlight() : pal.alternateBase());
+				painter.setOpacity(0.5);
+				painter.drawRect(QRect(
+					QPoint(exposureLeft, 0),
+					QPoint(exposureRight, rowHeight - 1)));
+				painter.setOpacity(1.0);
+			}
+		}
+
+	} else if(
+		d->isCurrentExposureTool() && d->hoverTarget.frameIndex >= 0 &&
+		d->hoverTarget.side != TargetSide::None) {
+
+		int xIndex = d->hoverTarget.frameIndex;
+		if(d->hoverTarget.side == TargetSide::Right) {
+			++xIndex;
+		}
+		int x = headerWidth + xIndex * columnWidth - xScroll;
+
+		painter.setBrush(Qt::NoBrush);
+		painter.setPen(QPen(pal.highlight(), 5));
+		painter.drawLine(x, 0, x, h);
+		painter.setPen(QPen(pal.highlightedText(), 1));
+		if(d->hoverTarget.uiTrackIndex < 0) {
+			painter.drawLine(x, 0, x, h);
+		} else {
+			int y =
+				rowHeight + d->hoverTarget.uiTrackIndex * rowHeight - yScroll;
+			painter.drawLine(x, y, x, y + rowHeight);
+		}
 	}
 
 	if(!d->canvas->isCompatibilityMode()) {
@@ -1171,6 +1359,27 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 		event->accept();
 		trackBelow();
 		break;
+	case Qt::Key_Alt:
+	case Qt::Key_AltGr:
+		d->altDown = true;
+		update();
+		updateCursor();
+		Q_FALLTHROUGH();
+	default:
+		QWidget::keyPressEvent(event);
+		break;
+	}
+}
+
+void TimelineWidget::keyReleaseEvent(QKeyEvent *event)
+{
+	switch(event->key()) {
+	case Qt::Key_Alt:
+	case Qt::Key_AltGr:
+		d->altDown = false;
+		update();
+		updateCursor();
+		Q_FALLTHROUGH();
 	default:
 		QWidget::keyPressEvent(event);
 		break;
@@ -1179,22 +1388,18 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 {
+	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
 	QPoint mousePos = compat::mousePos(*event);
 	Target target = getMouseTarget(mousePos);
+	bool needsUpdate = d->isCurrentExposureTool() &&
+					   (target.frameIndex != d->hoverTarget.frameIndex ||
+						target.uiTrackIndex != d->hoverTarget.uiTrackIndex ||
+						target.side != d->hoverTarget.side);
 	d->hoverTarget = target;
+	updateCursor();
 
 	Drag dragType = d->drag;
-	if((target.header == TargetHeader::RangeFirst ||
-		target.header == TargetHeader::RangeLast) &&
-	   event->buttons() == Qt::NoButton) {
-		setCursor(Qt::SizeHorCursor);
-	} else if(
-		d->pressedHeader != TargetHeader::RangeFirst &&
-		d->pressedHeader != TargetHeader::RangeLast) {
-		setCursor(Qt::ArrowCursor);
-	}
-
-	bool shouldDrag = d->editable &&
+	bool shouldDrag = d->editable && !d->exposureTool.active &&
 					  ((dragType == Drag::Track && d->currentTrack()) ||
 					   (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
 					  (mousePos - d->dragOrigin).manhattanLength() >=
@@ -1251,14 +1456,36 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 #else
 		drag->exec(d->dropAction); // Qt takes ownership of the QDrag.
 #endif
+	} else if(d->exposureTool.active) {
+		if(target.rawFrameIndex != -1) {
+			int exposureFrameIndex = target.rawFrameIndex;
+			if(target.side == TargetSide::Right) {
+				++exposureFrameIndex;
+			}
+
+			if(exposureFrameIndex != d->exposureTool.toFrameIndex) {
+				d->exposureTool.toFrameIndex = exposureFrameIndex;
+				d->exposureTool.valid = false;
+			}
+		}
+		if(d->exposureTool.fromUiTrackIndex != -1 && target.uiTrackIndex >= 0 &&
+		   target.uiTrackIndex != d->exposureTool.toUiTrackIndex) {
+			d->exposureTool.toUiTrackIndex = target.uiTrackIndex;
+			d->exposureTool.valid = false;
+		}
 	} else if(
 		d->pressedHeader != TargetHeader::None && target.frameIndex != -1) {
 		setCurrent(0, target.frameIndex, true, true);
+	}
+
+	if(needsUpdate) {
+		update();
 	}
 }
 
 void TimelineWidget::mousePressEvent(QMouseEvent *event)
 {
+	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
 	Target target = getMouseTarget(compat::mousePos(*event));
 	applyMouseTarget(event, target, true);
 
@@ -1271,14 +1498,29 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			event->accept();
 		} else if(target.trackId != 0 && target.frameIndex == -1) {
 			drag = Drag::Track;
+		} else if(d->isCurrentExposureTool()) {
+			d->exposureTool = ExposureToolState();
+			bool onHeader = target.header == TargetHeader::Header;
+			if((onHeader || (target.trackId > 0 && target.uiTrackIndex >= 0)) &&
+			   target.frameIndex >= 0) {
+				int exposureTrackIndex = onHeader ? -1 : target.uiTrackIndex;
+				int exposureFrameIndex = target.frameIndex;
+				if(target.side == TargetSide::Right) {
+					++exposureFrameIndex;
+				}
+				d->exposureTool.fromUiTrackIndex = exposureTrackIndex;
+				d->exposureTool.fromFrameIndex = exposureFrameIndex;
+				d->exposureTool.toUiTrackIndex = exposureTrackIndex;
+				d->exposureTool.toFrameIndex = exposureFrameIndex;
+				d->exposureTool.active = true;
+			}
+			updateCursor();
+			update();
 		} else if(d->keyFrameBy(target.trackId, target.frameIndex)) {
 			drag = Drag::KeyFrame;
 		} else {
 			d->pressedHeader = target.header;
-			if(target.header == TargetHeader::RangeFirst ||
-			   target.header == TargetHeader::RangeLast) {
-				setCursor(Qt::SizeHorCursor);
-			}
+			updateCursor();
 		}
 	} else if(button == Qt::MiddleButton) {
 		if(d->keyFrameBy(target.trackId, target.frameIndex)) {
@@ -1302,6 +1544,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 
 void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
 	Target target = getMouseTarget(compat::mousePos(*event));
 	applyMouseTarget(event, target, true);
 
@@ -1310,7 +1553,9 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 			executeTargetAction(target);
 		} else if(target.frameIndex == -1 && target.trackId != 0) {
 			retitleTrack();
-		} else if(target.frameIndex != -1 && target.trackId != 0) {
+		} else if(
+			target.frameIndex != -1 && target.trackId != 0 &&
+			!d->isCurrentExposureTool()) {
 			if(d->currentKeyFrame()) {
 				showKeyFrameProperties();
 			} else if(d->editable) {
@@ -1325,8 +1570,11 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
 	if(event->button() == Qt::LeftButton) {
-		if(d->pressedHeader == TargetHeader::RangeFirst) {
+		if(d->exposureTool.active) {
+			finishExposureTool();
+		} else if(d->pressedHeader == TargetHeader::RangeFirst) {
 			int frameRangeFirst =
 				qBound(0, d->currentFrame, d->frameRangeLast());
 			setAnimationProperties(-1.0, frameRangeFirst, -1);
@@ -1335,6 +1583,7 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 				qBound(d->frameRangeFirst(), d->currentFrame, d->frameCount());
 			setAnimationProperties(-1.0, -1, frameRangeLast);
 		}
+		d->exposureTool = ExposureToolState();
 		d->pressedHeader = TargetHeader::None;
 		d->drag = Drag::None;
 	}
@@ -1460,6 +1709,15 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 			});
 		}
 	}
+}
+
+void TimelineWidget::leaveEvent(QEvent *event)
+{
+	QWidget::leaveEvent(event);
+	d->hoverTarget = Target();
+	d->altDown = false;
+	update();
+	updateCursor();
 }
 
 void TimelineWidget::setKeyFrameLayer()
@@ -1692,22 +1950,22 @@ void TimelineWidget::deleteKeyFrameLayer()
 
 void TimelineWidget::increaseKeyFrameExposure()
 {
-	changeFrameExposure(1, false);
+	changeFrameExposure(-1, 1, {d->currentTrackId});
 }
 
 void TimelineWidget::increaseKeyFrameExposureVisible()
 {
-	changeFrameExposure(1, true);
+	changeFrameExposure(-1, 1, d->visibleTrackIds());
 }
 
 void TimelineWidget::decreaseKeyFrameExposure()
 {
-	changeFrameExposure(-1, false);
+	changeFrameExposure(-1, -1, {d->currentTrackId});
 }
 
 void TimelineWidget::decreaseKeyFrameExposureVisible()
 {
-	changeFrameExposure(-1, true);
+	changeFrameExposure(-1, -1, d->visibleTrackIds());
 }
 
 void TimelineWidget::addTrack()
@@ -2030,6 +2288,22 @@ void TimelineWidget::trackBelow()
 		targetTrack >= 0 ? targetTrack : d->trackCount() - 1));
 }
 
+void TimelineWidget::switchTool(QAction *action)
+{
+	TimelineTool tool;
+	if(action == d->actions.timelineToolExposure) {
+		tool = TimelineTool::Exposure;
+	} else {
+		tool = TimelineTool::Normal;
+	}
+
+	if(tool != d->currentTool) {
+		d->currentTool = tool;
+		updateCursor();
+		update();
+	}
+}
+
 void TimelineWidget::updateTracks()
 {
 	if(!d->canvas) {
@@ -2066,6 +2340,7 @@ void TimelineWidget::updateTracks()
 	}
 	d->headerWidth =
 		qMax(64, maxTrackAdvance) + TRACK_PADDING * 4 + ICON_SIZE * 2;
+	d->exposureTool.valid = false;
 	int effectiveTrackId = nextTrackId != 0		 ? nextTrackId
 						   : currentTrackId != 0 ? currentTrackId
 												 : anyTrackId;
@@ -2087,12 +2362,14 @@ void TimelineWidget::updateTracks()
 
 void TimelineWidget::updateFrameCount()
 {
+	d->exposureTool.valid = false;
 	setCurrent(d->currentTrackId, d->currentFrame, false, false);
 	updateFrameRange();
 }
 
 void TimelineWidget::updateFrameRange()
 {
+	d->exposureTool.valid = false;
 	updateActions();
 	updateScrollbars();
 	update();
@@ -2110,6 +2387,39 @@ void TimelineWidget::setVerticalScroll(int pos)
 	update();
 }
 
+void TimelineWidget::finishExposureTool()
+{
+	d->updateExposureToolState(d->getTracks());
+	// Only call update if we do nothing. Otherwise wait for a change to come in
+	// so that there's no flicker.
+	bool needsUpdate = true;
+	if(d->exposureTool.offset != 0) {
+		int topIndex = qMax(d->exposureTool.topIndex, 0);
+		int bottomIndex =
+			qMin(d->exposureTool.bottomIndex, d->trackCount() - 1);
+		int trackCount = bottomIndex - topIndex + 1;
+		if(trackCount > 0) {
+			QVector<int> trackIds;
+			trackIds.reserve(trackCount);
+			for(int i = topIndex; i <= bottomIndex; ++i) {
+				int trackId = d->trackIdByUiIndex(i);
+				if(trackId > 0) {
+					trackIds.append(trackId);
+				}
+			}
+			if(!trackIds.isEmpty()) {
+				needsUpdate = !changeFrameExposure(
+					d->exposureTool.fromFrameIndex, d->exposureTool.offset,
+					trackIds);
+			}
+		}
+	}
+
+	if(needsUpdate) {
+		update();
+	}
+}
+
 void TimelineWidget::updatePasteAction()
 {
 	if(d->canvas && d->haveActions) {
@@ -2118,6 +2428,21 @@ void TimelineWidget::updatePasteAction()
 			d->editable && d->frameCount() > 0 && d->currentTrack() &&
 			d->currentFrame != -1 && mimeData &&
 			mimeData->hasFormat(KEY_FRAME_MIME_TYPE));
+	}
+}
+
+void TimelineWidget::updateCursor()
+{
+	if(d->pressedHeader == TargetHeader::RangeFirst ||
+	   d->pressedHeader == TargetHeader::RangeLast ||
+	   (d->currentTool == TimelineTool::Normal &&
+		(d->hoverTarget.header == TargetHeader::RangeFirst ||
+		 d->hoverTarget.header == TargetHeader::RangeLast))) {
+		setCursor(Qt::SizeHorCursor);
+	} else if(d->isCurrentExposureTool() && d->hoverTarget.frameIndex >= 0) {
+		setCursor(Qt::SplitHCursor);
+	} else {
+		setCursor(Qt::ArrowCursor);
 	}
 }
 
@@ -2209,29 +2534,30 @@ void TimelineWidget::setKeyFrameProperties(
 	}
 }
 
-void TimelineWidget::changeFrameExposure(int direction, bool visible)
+bool TimelineWidget::changeFrameExposure(
+	int start, int offset, const QVector<int> &trackIds)
 {
-	Q_ASSERT(direction == -1 || direction == 1);
-	if(!d->editable) {
-		return;
+	if(!d->editable || offset == 0) {
+		return false;
 	}
 
 	QVector<QPair<int, QVector<int>>> trackFrameIndexes;
-	bool forward = direction == 1;
-	if(visible) {
-		for(const canvas::TimelineTrack &track : d->getTracks()) {
-			if(!track.hidden &&
-			   !collectFrameExposure(trackFrameIndexes, forward, track.id)) {
-				return;
+	bool forward = offset > 0;
+	if(start < 0) {
+		for(int trackId : trackIds) {
+			if(!checkAndCollectFrameExposure(
+				   trackFrameIndexes, forward, trackId)) {
+				return false;
 			}
 		}
-	} else if(!collectFrameExposure(
-				  trackFrameIndexes, forward, d->currentTrackId)) {
-		return;
+	} else {
+		for(int trackId : trackIds) {
+			collectFrameExposure(trackFrameIndexes, start - 1, trackId);
+		}
 	}
 
 	if(trackFrameIndexes.isEmpty()) {
-		return;
+		return false;
 	}
 
 	compat::sizetype reserve = 1;
@@ -2257,13 +2583,14 @@ void TimelineWidget::changeFrameExposure(int direction, bool visible)
 			messages.append(
 				net::makeKeyFrameDeleteMessage(
 					contextId, trackId, frameIndex, trackId,
-					frameIndex + direction));
+					frameIndex + offset));
 		}
 	}
 	emit timelineEditCommands(messages.size(), messages.constData());
+	return true;
 }
 
-bool TimelineWidget::collectFrameExposure(
+bool TimelineWidget::checkAndCollectFrameExposure(
 	QVector<QPair<int, QVector<int>>> &trackFrameIndexes, bool forward,
 	int trackId)
 {
@@ -2283,13 +2610,19 @@ bool TimelineWidget::collectFrameExposure(
 		return true;
 	}
 
+	collectFrameExposure(trackFrameIndexes, exposure.start, trackId);
+	return true;
+}
+
+void TimelineWidget::collectFrameExposure(
+	QVector<QPair<int, QVector<int>>> &trackFrameIndexes, int start,
+	int trackId)
+{
 	QPair<int, QVector<int>> p = {trackId, {}};
-	p.second = d->gatherCurrentExposureFramesByTrackId(trackId, exposure.start);
+	p.second = d->gatherCurrentExposureFramesByTrackId(trackId, start);
 	if(!p.second.isEmpty()) {
 		trackFrameIndexes.append(std::move(p));
 	}
-
-	return true;
 }
 
 void TimelineWidget::updateActions()
@@ -2474,14 +2807,20 @@ void TimelineWidget::startFrameViewRequestTimer()
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
-	Target target{-1, 0, -1, TargetHeader::None, TrackAction::None};
+	Target target;
 	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
+		int frameX = (x - headerWidth + d->xScroll);
+		int frameIndex = frameX / d->columnWidth;
+		int visibleFrameCount = d->visibleFrameCount();
+		target.rawFrameIndex = qBound(0, frameIndex, visibleFrameCount - 1);
 		if(x > headerWidth) {
-			int frameIndex = (x - headerWidth + d->xScroll) / d->columnWidth;
-			if(frameIndex >= 0 && frameIndex < d->visibleFrameCount()) {
+			if(frameIndex >= 0 && frameIndex < visibleFrameCount) {
 				target.frameIndex = frameIndex;
+				target.side = (frameX % d->columnWidth) < d->columnWidth / 2
+								  ? TargetSide::Left
+								  : TargetSide::Right;
 			}
 		}
 
@@ -2501,15 +2840,14 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 		} else {
 			target.header = TargetHeader::Header;
 			if(d->editable && !d->canvas->isCompatibilityMode()) {
-				qreal frameX = qreal(
-					(x - headerWidth + d->xScroll) -
-					(target.frameIndex * d->columnWidth));
+				qreal xInFrame =
+					qreal(frameX - (target.frameIndex * d->columnWidth));
 				qreal handleInsetX = d->rangeHandleInsetX();
-				if(frameX <= handleInsetX &&
+				if(xInFrame <= handleInsetX &&
 				   target.frameIndex == d->frameRangeFirst()) {
 					target.header = TargetHeader::RangeFirst;
 				} else if(
-					frameX >= qreal(d->columnWidth - 1) - handleInsetX &&
+					xInFrame >= qreal(d->columnWidth - 1) - handleInsetX &&
 					target.frameIndex == d->frameRangeLast()) {
 					target.header = TargetHeader::RangeLast;
 				} else {
@@ -2530,10 +2868,10 @@ void TimelineWidget::applyMouseTarget(
 	}
 
 	bool right = event && event->button() == Qt::RightButton;
-	if(!action || right) {
+	bool onTrack = target.frameIndex == -1;
+	if((!action && (onTrack || !d->isCurrentExposureTool())) || right) {
 		int trackId = target.trackId == 0 ? d->currentTrackId : target.trackId;
-		int frame =
-			target.frameIndex == -1 ? d->currentFrame : target.frameIndex;
+		int frame = onTrack ? d->currentFrame : target.frameIndex;
 		setCurrent(trackId, frame, true, event && !right);
 	}
 }

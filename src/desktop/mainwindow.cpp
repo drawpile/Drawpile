@@ -7403,22 +7403,47 @@ void MainWindow::setupActions()
 	m_dockToolSettings->transformSettings()->setActions(
 		transformmirror, transformflip, transformrotatecw, transformrotateccw,
 		transformshrinktoview, stamp);
-	// clang-format off
 
 	//
 	// Animation menu
 	//
-	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).icon("media-playback-start").statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
+	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook"))
+								.icon("media-playback-start")
+								.statusTip(tr("Show animation preview window"))
+								.shortcut("Ctrl+F");
 	QAction *animationProperties =
 		makeAction("frame-count-set", tr("Change Frame Range or FPS..."))
 			.icon("kdenlive-show-video")
 			.noDefaultShortcut();
-	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer")).icon("keyframe").shortcut("Ctrl+Shift+F");
-	QAction *keyFrameSetEmpty = makeAction("key-frame-set-empty", tr("Set Blank Key Frame")).icon("keyframe-disable").shortcut("Ctrl+Shift+B");
-	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut").noDefaultShortcut();
-	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame")).icon("edit-copy").noDefaultShortcut();
-	QAction *keyFramePaste = makeAction("key-frame-paste", tr("Paste Key Frame")).icon("edit-paste").noDefaultShortcut();
-	// clang-format on
+	QAction *timelineToolNormal =
+		makeAction("timeline-tool-normal", tr("Select"))
+			.icon(QStringLiteral("cursor-arrow"))
+			.noDefaultShortcutWithTitle(tr("Timeline tool: select"))
+			.checkable()
+			.checked();
+	QAction *timelineToolExposure =
+		makeAction("timeline-tool-exposure", tr("Exposure"))
+			.icon(QStringLiteral("drawpile_exposure"))
+			.noDefaultShortcutWithTitle(tr("Timeline tool: exposure"))
+			.checkable();
+	QAction *keyFrameSetLayer =
+		makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer"))
+			.icon("keyframe")
+			.shortcut("Ctrl+Shift+F");
+	QAction *keyFrameSetEmpty =
+		makeAction("key-frame-set-empty", tr("Set Blank Key Frame"))
+			.icon("keyframe-disable")
+			.shortcut("Ctrl+Shift+B");
+	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame"))
+							   .icon("edit-cut")
+							   .noDefaultShortcut();
+	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame"))
+								.icon("edit-copy")
+								.noDefaultShortcut();
+	QAction *keyFramePaste =
+		makeAction("key-frame-paste", tr("Paste Key Frame"))
+			.icon("edit-paste")
+			.noDefaultShortcut();
 	QVector<QAction *> keyFrameColors;
 	for(const utils::MarkerColor &mc : utils::markerColors()) {
 		keyFrameColors.append(
@@ -7486,6 +7511,11 @@ void MainWindow::setupActions()
 	QAction *keyFrameDuplicateNext = makeAction("key-frame-duplicate-next", tr("Duplicate to Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Alt+Shift+T");
 	QAction *keyFrameDuplicatePrev = makeAction("key-frame-duplicate-prev", tr("Duplicate to Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Alt+Shift+E");
 
+	// clang-format on
+	QActionGroup *timelineToolGroup = new QActionGroup(this);
+	timelineToolGroup->addAction(timelineToolNormal);
+	timelineToolGroup->addAction(timelineToolExposure);
+
 	QActionGroup *layerKeyFrameGroup = new QActionGroup{this};
 	layerKeyFrameGroup->addAction(keyFrameCreateLayer);
 	layerKeyFrameGroup->addAction(keyFrameCreateLayerNext);
@@ -7496,11 +7526,13 @@ void MainWindow::setupActions()
 	layerKeyFrameGroup->addAction(keyFrameDuplicateNext);
 	layerKeyFrameGroup->addAction(keyFrameDuplicatePrev);
 
-	// clang-format on
 	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
 	animationMenu->addAction(showFlipbook);
 	animationMenu->addAction(animationProperties);
 	animationMenu->addAction(exportAnimation);
+	QMenu *timelineToolMenu = animationMenu->addMenu(tr("Timeline tool"));
+	timelineToolMenu->addAction(timelineToolNormal);
+	timelineToolMenu->addAction(timelineToolExposure);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameSetLayer);
 	animationMenu->addAction(keyFrameSetEmpty);
@@ -7595,6 +7627,9 @@ void MainWindow::setupActions()
 	});
 	m_dockTimeline->setActions(
 		{
+			timelineToolGroup,
+			timelineToolNormal,
+			timelineToolExposure,
 			keyFrameSetLayer,
 			keyFrameSetEmpty,
 			keyFrameCreateLayer,

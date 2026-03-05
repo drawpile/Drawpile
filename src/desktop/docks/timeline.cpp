@@ -123,9 +123,10 @@ void Timeline::setUpTitleWidget(
 
 	titlebar->addStretch();
 
-	addTitleButton(titlebar, layerViewNormal, GroupedToolButton::GroupLeft);
 	addTitleButton(
-		titlebar, layerViewCurrentFrame, GroupedToolButton::GroupRight);
+		titlebar, actions.timelineToolNormal, GroupedToolButton::GroupLeft);
+	addTitleButton(
+		titlebar, actions.timelineToolExposure, GroupedToolButton::GroupRight);
 
 	titlebar->addStretch();
 
@@ -139,6 +140,12 @@ void Timeline::setUpTitleWidget(
 		titlebar, actions.keyFrameProperties, GroupedToolButton::GroupCenter);
 	addTitleButton(
 		titlebar, actions.keyFrameDeleteLayer, GroupedToolButton::GroupRight);
+
+	titlebar->addStretch();
+
+	addTitleButton(titlebar, layerViewNormal, GroupedToolButton::GroupLeft);
+	addTitleButton(
+		titlebar, layerViewCurrentFrame, GroupedToolButton::GroupRight);
 
 	titlebar->addStretch();
 

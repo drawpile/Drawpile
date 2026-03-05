@@ -6,6 +6,7 @@
 #include <functional>
 
 class QAction;
+class QActionGroup;
 class QMenu;
 
 namespace canvas {
@@ -22,6 +23,9 @@ class TimelineWidget final : public QWidget {
 	Q_OBJECT
 public:
 	struct Actions {
+		QActionGroup *timelineToolGroup = nullptr;
+		QAction *timelineToolNormal = nullptr;
+		QAction *timelineToolExposure = nullptr;
 		QAction *keyFrameSetLayer = nullptr;
 		QAction *keyFrameSetEmpty = nullptr;
 		QAction *keyFrameCreateLayer = nullptr;
@@ -98,6 +102,7 @@ protected:
 	void paintEvent(QPaintEvent *) override;
 	void resizeEvent(QResizeEvent *event) override;
 	void keyPressEvent(QKeyEvent *event) override;
+	void keyReleaseEvent(QKeyEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseDoubleClickEvent(QMouseEvent *event) override;
@@ -107,6 +112,7 @@ protected:
 	void dragMoveEvent(QDragMoveEvent *event) override;
 	void dragLeaveEvent(QDragLeaveEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
+	void leaveEvent(QEvent *event) override;
 
 private:
 	static constexpr char KEY_FRAME_MIME_TYPE[] = "x-drawpile/keyframe";
@@ -151,12 +157,15 @@ private:
 	void prevKeyFrame();
 	void trackAbove();
 	void trackBelow();
+	void switchTool(QAction *action);
 	void updateTracks();
 	void updateFrameCount();
 	void updateFrameRange();
 	void setHorizontalScroll(int pos);
 	void setVerticalScroll(int pos);
+	void finishExposureTool();
 	void updatePasteAction();
+	void updateCursor();
 
 	void
 	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
@@ -166,9 +175,13 @@ private:
 		int trackId, int frame, const QString &prevTitle,
 		const QHash<int, bool> prevLayerVisibility, const QString &title,
 		const QHash<int, bool> layerVisibility);
-	void changeFrameExposure(int direction, bool visible);
-	bool collectFrameExposure(
+	bool
+	changeFrameExposure(int start, int offset, const QVector<int> &trackIds);
+	bool checkAndCollectFrameExposure(
 		QVector<QPair<int, QVector<int>>> &trackFrameIndexes, bool forward,
+		int trackId);
+	void collectFrameExposure(
+		QVector<QPair<int, QVector<int>>> &trackFrameIndexes, int start,
 		int trackId);
 	void updateActions();
 	void updateScrollbars();
