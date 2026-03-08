@@ -7,6 +7,7 @@
 
 class QAction;
 class QPushButton;
+class KisSliderSpinBox;
 
 namespace canvas {
 class CanvasModel;
@@ -71,6 +72,7 @@ private:
 
 	widgets::TimelineWidget *m_widget;
 	QPushButton *m_propertiesButton = nullptr;
+	KisSliderSpinBox *m_zoomSlider = nullptr;
 	bool m_featureAccessEnabled = true;
 	bool m_locked = false;
 };

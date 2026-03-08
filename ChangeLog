@@ -61,6 +61,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Make the key frame delete action also delete the associated layer and add a separate unassign key frame action that only gets rid of the key frame.
  * Feature: Move the timeline track manipulation buttons into the top-left corner of the timeline above the tracks which was previously just a blank space.
  * Feature: Add an exposure tool to the timeline, which allows shifting multiple frames around without keyboard shortcuts. It is also accessible by holding Alt.
+ * Feature: Allow zooming the animation timeline. There's a zoom menu on the timeline header now, you can use Ctrl+Mouse Wheel and you can bind keyboard shortcuts to it. Thanks Myathingoss for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

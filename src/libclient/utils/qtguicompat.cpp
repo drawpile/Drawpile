@@ -27,6 +27,15 @@ void setFontFamily(QTextCharFormat &format, const QString &family)
 #endif
 }
 
+QPoint wheelPos(const QWheelEvent &event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+	return event.position().toPoint();
+#else
+	return event.pos();
+#endif
+}
+
 QPointF wheelPosition(const QWheelEvent &event)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)

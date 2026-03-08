@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/timelinewidget.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -10,8 +11,10 @@
 #include <QAction>
 #include <QCheckBox>
 #include <QLabel>
+#include <QMenu>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QWidgetAction>
 
 namespace docks {
 
@@ -145,7 +148,36 @@ void Timeline::setUpTitleWidget(
 
 	addTitleButton(titlebar, layerViewNormal, GroupedToolButton::GroupLeft);
 	addTitleButton(
-		titlebar, layerViewCurrentFrame, GroupedToolButton::GroupRight);
+		titlebar, layerViewCurrentFrame, GroupedToolButton::GroupCenter);
+
+	widgets::GroupedToolButton *zoomButton =
+		new widgets::GroupedToolButton(GroupedToolButton::GroupRight);
+	zoomButton->setIcon(QIcon::fromTheme(QStringLiteral("edit-find")));
+	zoomButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	zoomButton->setPopupMode(QToolButton::InstantPopup);
+	zoomButton->setToolTip(tr("Zoom"));
+	titlebar->addCustomWidget(zoomButton);
+
+	QMenu *zoomMenu = new QMenu(zoomButton);
+	zoomButton->setMenu(zoomMenu);
+	zoomMenu->addAction(actions.timelineZoomReset);
+
+	zoomMenu->addSection(tr("Column width:"));
+	m_zoomSlider = new KisSliderSpinBox;
+	m_zoomSlider->setRange(
+		widgets::TimelineWidget::MIN_COLUMN_WIDTH,
+		widgets::TimelineWidget::MAX_COLUMN_WIDTH);
+	connect(
+		m_widget, &widgets::TimelineWidget::columnWidthChanged, m_zoomSlider,
+		&KisSliderSpinBox::setValue);
+	connect(
+		m_zoomSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		m_widget, &widgets::TimelineWidget::setColumnWidth);
+	m_zoomSlider->setValue(m_widget->columnWidth());
+
+	QWidgetAction *zoomAction = new QWidgetAction(zoomMenu);
+	zoomAction->setDefaultWidget(m_zoomSlider);
+	zoomMenu->addAction(zoomAction);
 
 	titlebar->addStretch();
 

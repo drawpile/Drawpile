@@ -30,8 +30,10 @@ extern "C" {
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QScopedValueRollback>
 #include <QScrollBar>
 #include <QSignalBlocker>
+#include <QtMath>
 
 namespace widgets {
 
@@ -169,22 +171,27 @@ struct TimelineWidget::Private {
 	QIcon uselessIcon;
 	int headerWidth = 64;
 	int rowHeight = 10;
-	int columnWidth = 10;
+	int baseColumnWidth = 10;
+	int columnWidth = baseColumnWidth;
 	int xScroll = 0;
 	int yScroll = 0;
 	int currentTrackId = 0;
 	int currentFrame = 0;
 	int nextTrackId = 0;
+	int zoomAdjust = 0;
 	TimelineTool currentTool = TimelineTool::Normal;
 	Target hoverTarget;
 	TargetHeader pressedHeader = TargetHeader::None;
 	bool editable = false;
 	bool altDown = false;
+	bool lastPosValid = false;
+	bool zoomInProgress = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
 	Qt::DropAction dropAction;
 	QPoint dragOrigin;
 	QPoint dragPos;
+	QPoint lastPos;
 	ExposureToolState exposureTool;
 	QDeadlineTimer frameViewRequestTimer;
 
@@ -532,6 +539,28 @@ struct TimelineWidget::Private {
 		return false;
 	}
 
+	bool updateColumnWidth()
+	{
+		zoomAdjust = qBound(
+			-baseColumnWidth + TimelineWidget::MIN_COLUMN_WIDTH, zoomAdjust,
+			TimelineWidget::MAX_COLUMN_WIDTH - baseColumnWidth);
+		int newColumnWidth = baseColumnWidth + zoomAdjust;
+
+		if(haveActions) {
+			actions.timelineZoomIn->setEnabled(
+				newColumnWidth < TimelineWidget::MAX_COLUMN_WIDTH);
+			actions.timelineZoomOut->setEnabled(
+				newColumnWidth > TimelineWidget::MIN_COLUMN_WIDTH);
+		}
+
+		if(newColumnWidth == columnWidth) {
+			return false;
+		} else {
+			columnWidth = newColumnWidth;
+			return true;
+		}
+	}
+
 	int bodyWidth() const
 	{
 		return columnWidth * visibleFrameCount() - xScroll;
@@ -551,7 +580,7 @@ struct TimelineWidget::Private {
 		return QRect{0, rowHeight, headerWidth, bodyHeight() + 1};
 	}
 
-	qreal rangeHandleInsetX() const { return qreal(columnWidth) / 6.0; }
+	qreal rangeHandleInsetX() const { return rowHeight / 4.0; }
 
 	int trackDropIndex(int y) const
 	{
@@ -567,6 +596,20 @@ struct TimelineWidget::Private {
 	const QIcon &getOnionSkinIcon(const canvas::TimelineTrack &track)
 	{
 		return track.onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
+	}
+
+	void updateMouseState(const QMouseEvent *event)
+	{
+		altDown = event->modifiers().testFlag(Qt::AltModifier);
+		lastPosValid = true;
+		lastPos = compat::mousePos(*event);
+	}
+
+	void updateWheelState(const QWheelEvent *event)
+	{
+		altDown = event->modifiers().testFlag(Qt::AltModifier);
+		lastPosValid = true;
+		lastPos = compat::wheelPos(*event);
 	}
 
 	bool isCurrentExposureTool()
@@ -852,6 +895,15 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.timelineToolGroup, &QActionGroup::triggered, this,
 		&TimelineWidget::switchTool);
+	connect(
+		actions.timelineZoomIn, &QAction::triggered, this,
+		&TimelineWidget::zoomIn);
+	connect(
+		actions.timelineZoomOut, &QAction::triggered, this,
+		&TimelineWidget::zoomOut);
+	connect(
+		actions.timelineZoomReset, &QAction::triggered, this,
+		&TimelineWidget::resetZoom);
 
 	updateActions();
 }
@@ -908,6 +960,24 @@ int TimelineWidget::currentTrackId() const
 int TimelineWidget::currentFrame() const
 {
 	return d->currentFrame;
+}
+
+int TimelineWidget::columnWidth() const
+{
+	return d->columnWidth;
+}
+
+void TimelineWidget::setColumnWidth(int columnWidth)
+{
+	if(!d->zoomInProgress && columnWidth != d->columnWidth) {
+		d->zoomAdjust = columnWidth - d->baseColumnWidth;
+		if(d->updateColumnWidth()) {
+			updateScrollbars();
+			update();
+			QScopedValueRollback<bool> rollback(d->zoomInProgress, true);
+			Q_EMIT columnWidthChanged(d->columnWidth);
+		}
+	}
 }
 
 bool TimelineWidget::event(QEvent *event)
@@ -1012,6 +1082,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.drawRect(bodyRect);
 
 	// Selected row and column.
+	int bodyVisibleRight = qMin(
+		bodyRect.right(),
+		headerWidth + visibleFrameCount * columnWidth - xScroll);
 	if(trackCount != 0 && !d->isCurrentExposureTool()) {
 		QColor selectedColor = pal.highlight().color();
 		selectedColor.setAlphaF(0.5f);
@@ -1023,7 +1096,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		if(currentTrackIndex != -1) {
 			int i = trackCount - currentTrackIndex - 1;
 			int y = rowHeight + i * rowHeight - yScroll;
-			painter.drawRect(bodyRect.left(), y, bodyRect.width(), rowHeight);
+			painter.drawRect(
+				bodyRect.left(), y, bodyVisibleRight - bodyRect.left() + 1,
+				rowHeight);
 		}
 	}
 
@@ -1103,15 +1178,14 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	if(trackCount != 0) {
 		painter.setPen(gridColor);
 		painter.setBrush(Qt::NoBrush);
-		int firstX = columnWidth - (xScroll % columnWidth);
-		for(int x = firstX; x < bodyRect.width(); x += columnWidth) {
-			int xw = x + headerWidth;
-			painter.drawLine(xw, bodyRect.top(), xw, bodyRect.bottom());
+		int firstX = headerWidth + columnWidth - (xScroll % columnWidth);
+		for(int x = firstX; x <= bodyVisibleRight; x += columnWidth) {
+			painter.drawLine(x, bodyRect.top(), x, bodyRect.bottom());
 		}
 		int firstY = rowHeight - (yScroll % rowHeight);
 		for(int y = firstY; y < bodyRect.height(); y += rowHeight) {
 			int yh = y + rowHeight;
-			painter.drawLine(bodyRect.left(), yh, bodyRect.right(), yh);
+			painter.drawLine(bodyRect.left(), yh, bodyVisibleRight, yh);
 		}
 	}
 
@@ -1125,26 +1199,31 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 	// Frame numbers along the top.
 	painter.setClipRect(d->frameHeaderRect());
+
+	int selectedFrameX = headerWidth + d->currentFrame * columnWidth - xScroll;
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(pal.highlight());
+	painter.drawRect(selectedFrameX + 1, 1, columnWidth - 1, rowHeight - 1);
+
+	int frameNumberSkip =
+		qMax(1, qCeil(qreal(d->baseColumnWidth) / qreal(d->columnWidth)));
 	bool nextInRange = 0 >= frameRangeFirst && 0 <= frameRangeLast;
-	for(int i = 0; i < visibleFrameCount; ++i) {
+	for(int i = 0; i < visibleFrameCount; i += frameNumberSkip) {
 		bool currentInRange = nextInRange;
 		nextInRange = (i + 1) >= frameRangeFirst && (i + 1) <= frameRangeLast;
 
 		int x = headerWidth + i * columnWidth - xScroll;
+		int frameColumnWidth = columnWidth * frameNumberSkip;
 		bool isSelected = d->currentFrame == i;
-		if(isSelected) {
-			painter.setPen(Qt::NoPen);
-			painter.setBrush(pal.highlight());
-			painter.drawRect(x + 1, 1, columnWidth - 1, rowHeight - 1);
-		}
 		painter.setPen(isSelected ? highlightedTextColor : textColor);
 		painter.drawText(
-			x, 0, columnWidth, rowHeight, Qt::AlignCenter | Qt::AlignVCenter,
-			QString::number(i + 1));
+			x, 0, d->baseColumnWidth, rowHeight,
+			Qt::AlignCenter | Qt::AlignVCenter, QString::number(i + 1));
 
 		if(currentInRange || nextInRange) {
+			int frameLineX = x + frameColumnWidth;
 			painter.setPen(outlineColor);
-			painter.drawLine(x + columnWidth, 0, x + columnWidth, rowHeight);
+			painter.drawLine(frameLineX, 0, frameLineX, rowHeight);
 		}
 	}
 
@@ -1390,7 +1469,7 @@ void TimelineWidget::keyReleaseEvent(QKeyEvent *event)
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
+	d->updateMouseState(event);
 	QPoint mousePos = compat::mousePos(*event);
 	Target target = getMouseTarget(mousePos);
 	bool needsUpdate = d->isCurrentExposureTool() &&
@@ -1487,7 +1566,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 
 void TimelineWidget::mousePressEvent(QMouseEvent *event)
 {
-	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
+	d->updateMouseState(event);
 	Target target = getMouseTarget(compat::mousePos(*event));
 	applyMouseTarget(event, target, true);
 
@@ -1546,7 +1625,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 
 void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
+	d->updateMouseState(event);
 	Target target = getMouseTarget(compat::mousePos(*event));
 	applyMouseTarget(event, target, true);
 
@@ -1572,7 +1651,7 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	d->altDown = event->modifiers().testFlag(Qt::AltModifier);
+	d->updateMouseState(event);
 	if(event->button() == Qt::LeftButton) {
 		if(d->exposureTool.active) {
 			finishExposureTool();
@@ -1593,15 +1672,24 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void TimelineWidget::wheelEvent(QWheelEvent *event)
 {
+	d->updateWheelState(event);
+	Qt::KeyboardModifiers modifiers = event->modifiers();
 	QPoint pd = event->pixelDelta() * (event->inverted() ? -1 : 1);
-	if(event->modifiers() & Qt::ShiftModifier) {
-		pd = QPoint{pd.y(), pd.x()};
-	}
+	if(modifiers.testFlag(Qt::ControlModifier)) {
+		if(pd.y() != 0) {
+			zoomBy(pd.y() < 0 ? -1 : 1);
+		}
 
-	int x = qMax(0, d->horizontalScroll->value() - pd.x());
-	int y = qMax(0, d->verticalScroll->value() - pd.y());
-	d->horizontalScroll->setValue(x - (x % d->columnWidth));
-	d->verticalScroll->setValue(y - (y % d->rowHeight));
+	} else {
+		if(modifiers.testFlag(Qt::ShiftModifier)) {
+			pd = QPoint(pd.y(), pd.x());
+		}
+
+		int x = qMax(0, d->horizontalScroll->value() - pd.x());
+		int y = qMax(0, d->verticalScroll->value() - pd.y());
+		d->horizontalScroll->setValue(x - (x % d->columnWidth));
+		d->verticalScroll->setValue(y - (y % d->rowHeight));
+	}
 }
 
 void TimelineWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -1718,6 +1806,7 @@ void TimelineWidget::leaveEvent(QEvent *event)
 	QWidget::leaveEvent(event);
 	d->hoverTarget = Target();
 	d->altDown = false;
+	d->lastPosValid = false;
 	update();
 	updateCursor();
 }
@@ -2314,7 +2403,8 @@ void TimelineWidget::updateTracks()
 
 	const QFontMetrics fm = fontMetrics();
 	d->rowHeight = qMax(fm.height() * 3 / 2, ICON_SIZE);
-	d->columnWidth = fm.horizontalAdvance(QStringLiteral("999")) + 8;
+	d->baseColumnWidth = fm.horizontalAdvance(QStringLiteral("999")) + 8;
+	bool updatedColumnWidth = d->updateColumnWidth();
 
 	d->verticalScroll->setSingleStep(d->rowHeight);
 	d->horizontalScroll->setSingleStep(d->columnWidth);
@@ -2355,6 +2445,11 @@ void TimelineWidget::updateTracks()
 	updateActions();
 	updateScrollbars();
 	update();
+
+	if(updatedColumnWidth) {
+		QScopedValueRollback<bool> rollback(d->zoomInProgress, true);
+		Q_EMIT columnWidthChanged(d->columnWidth);
+	}
 
 	if(!d->frameViewRequestTimer.hasExpired()) {
 		d->frameViewRequestTimer.setRemainingTime(0, Qt::VeryCoarseTimer);
@@ -2445,6 +2540,50 @@ void TimelineWidget::updateCursor()
 		setCursor(Qt::SplitHCursor);
 	} else {
 		setCursor(Qt::ArrowCursor);
+	}
+}
+
+void TimelineWidget::zoomIn()
+{
+	zoomBy(1);
+}
+
+void TimelineWidget::zoomOut()
+{
+	zoomBy(-1);
+}
+
+void TimelineWidget::resetZoom()
+{
+	setZoomAdjust(0);
+}
+
+void TimelineWidget::zoomBy(int delta)
+{
+	setZoomAdjust(d->zoomAdjust + delta);
+}
+
+void TimelineWidget::setZoomAdjust(int zoomAdjust)
+{
+	int focusX =
+		d->lastPosValid ? d->lastPos.x() : d->headerWidth + d->bodyWidth() / 2;
+	qreal prevOffset = d->xScroll == 0
+						   ? 0.0
+						   : qreal(d->xScroll + focusX - d->headerWidth) /
+								 qreal(d->columnWidth);
+	d->zoomAdjust = zoomAdjust;
+	if(d->updateColumnWidth()) {
+		updateScrollbars();
+		if(prevOffset > 0.0) {
+			qreal currentOffset = qreal(d->xScroll + focusX - d->headerWidth) /
+								  qreal(d->columnWidth);
+			int scrollDelta =
+				qRound((prevOffset - currentOffset) * qreal(d->columnWidth));
+			d->horizontalScroll->setValue(d->xScroll + scrollDelta);
+		}
+		update();
+		QScopedValueRollback<bool> rollback(d->zoomInProgress, true);
+		Q_EMIT columnWidthChanged(d->columnWidth);
 	}
 }
 
@@ -2818,7 +2957,9 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 		int visibleFrameCount = d->visibleFrameCount();
 		target.rawFrameIndex = qBound(0, frameIndex, visibleFrameCount - 1);
 		if(x > headerWidth) {
-			if(frameIndex >= 0 && frameIndex < visibleFrameCount) {
+			if(frameIndex >= visibleFrameCount) {
+				return target;
+			} else if(frameIndex >= 0) {
 				target.frameIndex = frameIndex;
 				target.side = (frameX % d->columnWidth) < d->columnWidth / 2
 								  ? TargetSide::Left

@@ -22,10 +22,16 @@ namespace widgets {
 class TimelineWidget final : public QWidget {
 	Q_OBJECT
 public:
+	static constexpr int MIN_COLUMN_WIDTH = 6;
+	static constexpr int MAX_COLUMN_WIDTH = 80;
+
 	struct Actions {
 		QActionGroup *timelineToolGroup = nullptr;
 		QAction *timelineToolNormal = nullptr;
 		QAction *timelineToolExposure = nullptr;
+		QAction *timelineZoomIn = nullptr;
+		QAction *timelineZoomOut = nullptr;
+		QAction *timelineZoomReset = nullptr;
 		QAction *keyFrameSetLayer = nullptr;
 		QAction *keyFrameSetEmpty = nullptr;
 		QAction *keyFrameCreateLayer = nullptr;
@@ -87,6 +93,9 @@ public:
 	int currentTrackId() const;
 	int currentFrame() const;
 
+	int columnWidth() const;
+	void setColumnWidth(int columnWidth);
+
 signals:
 	void timelineEditCommands(int count, const net::Message *msgs);
 	void trackSelected(int trackId);
@@ -96,6 +105,7 @@ signals:
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 	void frameViewModeRequested();
+	void columnWidthChanged(int columnWidth);
 
 protected:
 	bool event(QEvent *event) override;
@@ -166,6 +176,11 @@ private:
 	void finishExposureTool();
 	void updatePasteAction();
 	void updateCursor();
+	void zoomIn();
+	void zoomOut();
+	void resetZoom();
+	void zoomBy(int delta);
+	void setZoomAdjust(int zoomAdjust);
 
 	void
 	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);

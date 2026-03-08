@@ -60,6 +60,7 @@ constexpr DeviceType RotationStylusDevice = DeviceType::RotationStylus;
 QString fontFamily(const QTextCharFormat &format);
 void setFontFamily(QTextCharFormat &format, const QString &family);
 
+QPoint wheelPos(const QWheelEvent &event);
 QPointF wheelPosition(const QWheelEvent &event);
 
 QTabletEvent makeTabletEvent(

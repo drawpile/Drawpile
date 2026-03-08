@@ -7426,6 +7426,20 @@ void MainWindow::setupActions()
 			.icon(QStringLiteral("drawpile_exposure"))
 			.noDefaultShortcutWithTitle(tr("Timeline tool: exposure"))
 			.checkable();
+	QAction *timelineZoomIn =
+		makeAction("timeline-zoom-in", tr("Zoom in"))
+			.icon(QStringLiteral("zoom-in"))
+			.noDefaultShortcutWithTitle(tr("Timeline: zoom in"))
+			.autoRepeat();
+	QAction *timelineZoomOut =
+		makeAction("timeline-zoom-out", tr("Zoom out"))
+			.icon(QStringLiteral("zoom-out"))
+			.noDefaultShortcutWithTitle(tr("Timeline: zoom out"))
+			.autoRepeat();
+	QAction *timelineZoomReset =
+		makeAction("timeline-zoom-reset", tr("Reset zoom"))
+			.icon(QStringLiteral("zoom-original"))
+			.noDefaultShortcutWithTitle(tr("Timeline: reset zoom"));
 	QAction *keyFrameSetLayer =
 		makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer"))
 			.icon("keyframe")
@@ -7530,9 +7544,6 @@ void MainWindow::setupActions()
 	animationMenu->addAction(showFlipbook);
 	animationMenu->addAction(animationProperties);
 	animationMenu->addAction(exportAnimation);
-	QMenu *timelineToolMenu = animationMenu->addMenu(tr("Timeline tool"));
-	timelineToolMenu->addAction(timelineToolNormal);
-	timelineToolMenu->addAction(timelineToolExposure);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameSetLayer);
 	animationMenu->addAction(keyFrameSetEmpty);
@@ -7630,6 +7641,9 @@ void MainWindow::setupActions()
 			timelineToolGroup,
 			timelineToolNormal,
 			timelineToolExposure,
+			timelineZoomIn,
+			timelineZoomOut,
+			timelineZoomReset,
 			keyFrameSetLayer,
 			keyFrameSetEmpty,
 			keyFrameCreateLayer,
