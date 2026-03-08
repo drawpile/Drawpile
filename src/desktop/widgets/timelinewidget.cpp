@@ -1210,7 +1210,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				headerWidth + e.rightIndex * columnWidth - xScroll;
 			int exposureTop = rowHeight + e.topIndex * rowHeight - yScroll;
 			int exposureBottom =
-				2 * rowHeight + e.bottomIndex * rowHeight - yScroll;
+				e.topIndex < 0
+					? bodyRect.bottom()
+					: 2 * rowHeight + e.bottomIndex * rowHeight - yScroll;
 
 			painter.setBrush(Qt::NoBrush);
 			painter.setPen(QPen(pal.highlightedText(), 1));
