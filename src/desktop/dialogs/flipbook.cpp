@@ -151,9 +151,22 @@ bool Flipbook::event(QEvent *event)
 
 void Flipbook::updateRange()
 {
+	// Normally, the start of a range is before the end. If it's not, we
+	// interpret that as the user wanting to start playback at the loop start,
+	// go until the end of the canvas frame range, then go back to the start of
+	// the canvas frame range and play until the loop end. This is useful for
+	// when you have a looping animation.
 	int loopStart = d->ui.loopStart->value();
 	int loopEnd = d->ui.loopEnd->value();
-	d->ui.layerIndex->setRange(loopStart, loopEnd);
+	int indexStart, indexEnd;
+	if(loopStart <= loopEnd) {
+		indexStart = loopStart;
+		indexEnd = loopEnd;
+	} else {
+		indexStart = d->state.lastCanvasFrameRangeFirst + 1;
+		indexEnd = d->state.lastCanvasFrameRangeLast + 1;
+	}
+	d->ui.layerIndex->setRange(indexStart, indexEnd);
 	d->state.loopStart = loopStart;
 	d->state.loopEnd = loopEnd;
 	emit stateChanged();
@@ -382,11 +395,25 @@ int Flipbook::getTimerInterval() const
 void Flipbook::renderFrames()
 {
 	d->frames.clear();
+	int loopStart = d->ui.loopStart->value();
+	int loopEnd = d->ui.loopEnd->value();
+	int rangeStart, rangeEndExclusive, skipStart, skipEndExclusive;
+	if(loopStart <= loopEnd) {
+		rangeStart = loopStart - 1;
+		rangeEndExclusive = loopEnd;
+		skipStart = loopEnd;
+		skipEndExclusive = -1;
+	} else {
+		rangeStart = d->state.lastCanvasFrameRangeFirst;
+		rangeEndExclusive = d->state.lastCanvasFrameRangeLast + 1;
+		skipStart = loopEnd;
+		skipEndExclusive = loopStart - 1;
+	}
 	d->batchId = d->animationRenderer->render(
 		d->canvasState, d->crop,
-		compat::widgetScreen(*this)->availableSize() * 0.9,
-		d->ui.loopStart->value() - 1, d->ui.loopEnd->value(),
-		d->ui.layerIndex->value() - 1);
+		compat::widgetScreen(*this)->availableSize() * 0.9, rangeStart,
+		rangeEndExclusive, d->ui.layerIndex->value() - 1, skipStart,
+		skipEndExclusive);
 }
 
 void Flipbook::insertRenderedFrames(
@@ -414,7 +441,20 @@ void Flipbook::nextFrame()
 		d->skipped = true;
 	} else {
 		d->skipped = false;
-		d->ui.layerIndex->stepUp();
+		// With a normal range, we can just increment. With a reverse range, we
+		// need to account for a hole in the middle of playback.
+		int loopStart = d->ui.loopStart->value();
+		int loopEnd = d->ui.loopEnd->value();
+		if(loopStart <= loopEnd) {
+			d->ui.layerIndex->stepUp();
+		} else {
+			int index = d->ui.layerIndex->value();
+			if(index >= loopEnd && index < loopStart) {
+				d->ui.layerIndex->setValue(loopStart);
+			} else {
+				d->ui.layerIndex->stepUp();
+			}
+		}
 	}
 }
 

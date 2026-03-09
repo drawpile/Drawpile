@@ -32,7 +32,7 @@ public:
 	unsigned int render(
 		const drawdance::CanvasState &canvasState, const QRect &crop,
 		const QSize &maxSize, int rangeStart, int rangeEndExclusive,
-		int currentRangeIndex);
+		int currentRangeIndex, int skipStart, int skipEndExclusive);
 
 	// Asynchronous destruction without waiting for running jobs. Orphans this,
 	// cancels current batch and enqueues a job that calls deleteLater.
@@ -50,7 +50,7 @@ private:
 
 	static QVector<int> buildFrameOrder(
 		int frameCount, int rangeStart, int rangeEndExclusive,
-		int currentRangeIndex);
+		int currentRangeIndex, int skipStart, int skipEndExclusive);
 
 	static void gatherFrame(
 		const drawdance::CanvasState &canvasState, QVector<int> &indexes,

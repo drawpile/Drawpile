@@ -58,12 +58,12 @@ AnimationRenderer::~AnimationRenderer()
 unsigned int AnimationRenderer::render(
 	const drawdance::CanvasState &canvasState, const QRect &crop,
 	const QSize &maxSize, int rangeStart, int rangeEndExclusive,
-	int currentRangeIndex)
+	int currentRangeIndex, int skipStart, int skipEndExclusive)
 {
 	unsigned int batchId = ++m_batchId;
 	QVector<int> indexes = buildFrameOrder(
 		canvasState.frameCount(), rangeStart, rangeEndExclusive,
-		currentRangeIndex);
+		currentRangeIndex, skipStart, skipEndExclusive);
 	QVector<int> frameIndexBuffer;
 	while(!indexes.isEmpty()) {
 		gatherFrame(canvasState, indexes, frameIndexBuffer);
@@ -100,7 +100,7 @@ void AnimationRenderer::detachDelete()
 
 QVector<int> AnimationRenderer::buildFrameOrder(
 	int frameCount, int rangeStart, int rangeEndExclusive,
-	int currentRangeIndex)
+	int currentRangeIndex, int skipStart, int skipEndExclusive)
 {
 	// We build the frames in priority order. Stuff that's in the user's
 	// selected frame range is more important than what's outside of it, frames
@@ -113,10 +113,19 @@ QVector<int> AnimationRenderer::buildFrameOrder(
 	int current = qMax(currentRangeIndex, start);
 	for(int i = current; i < endExclusive; ++i) {
 		Q_ASSERT(!indexes.contains(i));
-		indexes.append(i);
+		if(i < skipStart || i >= skipEndExclusive) {
+			indexes.append(i);
+		}
 	}
 	// From the beginning of the frame range to the currently visible frame.
 	for(int i = start; i < current; ++i) {
+		Q_ASSERT(!indexes.contains(i));
+		if(i < skipStart || i >= skipEndExclusive) {
+			indexes.append(i);
+		}
+	}
+	// Frames being skipped in the middle.
+	for(int i = skipStart + 1; i < skipEndExclusive; ++i) {
 		Q_ASSERT(!indexes.contains(i));
 		indexes.append(i);
 	}
