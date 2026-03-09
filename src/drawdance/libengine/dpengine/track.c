@@ -22,6 +22,7 @@ struct DP_Track {
     const bool transient;
     const bool hidden;
     const bool onion_skin;
+    const bool move_lock;
     const int id;
     DP_Text *const title;
     const int count;
@@ -33,6 +34,7 @@ struct DP_TransientTrack {
     bool transient;
     bool hidden;
     bool onion_skin;
+    bool move_lock;
     int id;
     DP_Text *title;
     int count;
@@ -46,6 +48,7 @@ struct DP_Track {
     bool transient;
     bool hidden;
     bool onion_skin;
+    bool move_lock;
     int id;
     DP_Text *title;
     int count;
@@ -144,6 +147,13 @@ bool DP_track_onion_skin(DP_Track *t)
     DP_ASSERT(t);
     DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
     return t->onion_skin;
+}
+
+bool DP_track_move_lock(DP_Track *t)
+{
+    DP_ASSERT(t);
+    DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
+    return t->move_lock;
 }
 
 int DP_track_key_frame_count(DP_Track *t)
@@ -260,6 +270,7 @@ DP_TransientTrack *DP_transient_track_new_init(int reserve)
     DP_TransientTrack *tt = allocate_track(true, reserve);
     tt->hidden = false;
     tt->onion_skin = false;
+    tt->move_lock = false;
     tt->id = 0;
     tt->title = NULL;
     for (int i = 0; i < reserve; ++i) {
@@ -278,6 +289,7 @@ DP_TransientTrack *DP_transient_track_new(DP_Track *t, int reserve)
     DP_TransientTrack *tt = allocate_track(true, count + reserve);
     tt->hidden = t->hidden;
     tt->onion_skin = t->onion_skin;
+    tt->move_lock = t->move_lock;
     tt->id = t->id;
     tt->title = DP_text_incref_nullable(t->title);
     for (int i = 0; i < count; ++i) {
@@ -395,6 +407,14 @@ void DP_transient_track_onion_skin_set(DP_TransientTrack *tt, bool onion_skin)
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
     DP_ASSERT(tt->transient);
     tt->onion_skin = onion_skin;
+}
+
+void DP_transient_track_move_lock_set(DP_TransientTrack *tt, bool move_lock)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    tt->move_lock = move_lock;
 }
 
 void DP_transient_track_truncate(DP_TransientTrack *tt, int to_count)

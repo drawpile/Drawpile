@@ -35,6 +35,8 @@ bool DP_track_hidden(DP_Track *t);
 
 bool DP_track_onion_skin(DP_Track *t);
 
+bool DP_track_move_lock(DP_Track *t);
+
 int DP_track_key_frame_count(DP_Track *t);
 
 int DP_track_frame_index_at_noinc(DP_Track *t, int index);
@@ -82,6 +84,8 @@ void DP_transient_track_title_set(DP_TransientTrack *tt, const char *title,
 void DP_transient_track_hidden_set(DP_TransientTrack *tt, bool hidden);
 
 void DP_transient_track_onion_skin_set(DP_TransientTrack *tt, bool onion_skin);
+
+void DP_transient_track_move_lock_set(DP_TransientTrack *tt, bool move_lock);
 
 void DP_transient_track_truncate(DP_TransientTrack *tt, int to_count);
 

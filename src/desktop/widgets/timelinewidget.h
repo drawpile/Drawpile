@@ -55,6 +55,7 @@ public:
 		QAction *trackAdd = nullptr;
 		QAction *trackVisible = nullptr;
 		QAction *trackOnionSkin = nullptr;
+		QAction *trackMoveLock = nullptr;
 		QAction *trackDuplicate = nullptr;
 		QAction *trackRetitle = nullptr;
 		QAction *trackDelete = nullptr;
@@ -104,6 +105,7 @@ signals:
 	void blankLayerSelected();
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
+	void trackMoveLockEnabled(int trackId, bool moveLock);
 	void frameViewModeRequested();
 	void columnWidthChanged(int columnWidth);
 
@@ -153,6 +155,7 @@ private:
 	void addTrack();
 	void toggleTrackVisible(bool visible);
 	void toggleTrackOnionSkin(bool onionSkin);
+	void toggleTrackMoveLock(bool moveLock);
 	void duplicateTrack();
 	void retitleTrack();
 	void deleteTrack();

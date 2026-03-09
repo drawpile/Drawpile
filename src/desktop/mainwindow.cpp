@@ -864,6 +864,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, paintEngine,
 		&canvas::PaintEngine::setTrackOnionSkin);
 	connect(
+		m_dockTimeline, &docks::Timeline::trackMoveLockEnabled, paintEngine,
+		&canvas::PaintEngine::setTrackMoveLock);
+	connect(
 		m_dockTimeline, &docks::Timeline::frameViewModeRequested, this,
 		&MainWindow::autoSetFrameViewMode);
 
@@ -7502,8 +7505,9 @@ void MainWindow::setupActions()
 			.shortcut("Ctrl+Shift+Alt+-");
 	// clang-format off
 	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add").noDefaultShortcut();
-	QAction *trackVisible = makeAction("track-visible", tr("Track Visible")).checkable().noDefaultShortcut();
-	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin")).checkable().shortcut("Ctrl+Shift+O");
+	QAction *trackVisible = makeAction("track-visible", tr("Track Visible for You")).checkable().noDefaultShortcut();
+	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin for You")).checkable().shortcut("Ctrl+Shift+O");
+	QAction *trackMoveLock = makeAction("track-move-lock", tr("Track Frame Drag Locked for You")).checkable().noDefaultShortcut();
 	QAction *trackDuplicate = makeAction("track-duplicate", tr("Duplicate Track")).icon("edit-copy").noDefaultShortcut();
 	QAction *trackRetitle = makeAction("track-retitle", tr("Rename Track")).icon("edit-rename").noDefaultShortcut();
 	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty").noDefaultShortcut();
@@ -7585,6 +7589,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(trackDelete);
 	animationMenu->addAction(trackVisible);
 	animationMenu->addAction(trackOnionSkin);
+	animationMenu->addAction(trackMoveLock);
 	animationMenu->addSeparator();
 	animationMenu->addAction(frameNext);
 	animationMenu->addAction(framePrev);
@@ -7667,6 +7672,7 @@ void MainWindow::setupActions()
 			trackAdd,
 			trackVisible,
 			trackOnionSkin,
+			trackMoveLock,
 			trackDuplicate,
 			trackRetitle,
 			trackDelete,

@@ -46,6 +46,9 @@ Timeline::Timeline(QWidget *parent)
 		m_widget, &widgets::TimelineWidget::trackOnionSkinEnabled, this,
 		&Timeline::trackOnionSkinEnabled);
 	connect(
+		m_widget, &widgets::TimelineWidget::trackMoveLockEnabled, this,
+		&Timeline::trackMoveLockEnabled);
+	connect(
 		m_widget, &widgets::TimelineWidget::frameViewModeRequested, this,
 		&Timeline::frameViewModeRequested);
 

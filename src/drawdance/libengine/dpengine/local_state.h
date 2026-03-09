@@ -28,6 +28,7 @@ typedef struct DP_LocalTrackState {
     int track_id;
     bool hidden;
     bool onion_skin;
+    bool move_lock;
 } DP_LocalTrackState;
 
 typedef void (*DP_LocalStateViewInvalidatedFn)(void *user, bool check_all,
@@ -128,5 +129,8 @@ DP_Message *DP_local_state_msg_layer_alpha_lock_new(int layer_id,
                                                     bool alpha_lock);
 
 DP_Message *DP_local_state_msg_layer_censored_new(int layer_id, bool censored);
+
+DP_Message *DP_local_state_msg_track_move_lock_new(int track_id,
+                                                   bool move_lock);
 
 #endif

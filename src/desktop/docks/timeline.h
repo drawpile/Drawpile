@@ -54,6 +54,7 @@ signals:
 	void blankLayerSelected();
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
+	void trackMoveLockEnabled(int trackId, bool moveLock);
 	void frameViewModeRequested();
 
 private:

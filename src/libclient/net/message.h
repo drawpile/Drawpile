@@ -197,6 +197,7 @@ Message makeLocalChangeLayerSketchMessage(
 	int layerId, uint16_t opacity, const QColor &tint);
 Message makeLocalChangeLayerAlphaLockMessage(int layerId, bool alphaLock);
 Message makeLocalChangeLayerCensoredMessage(int layerId, bool censored);
+Message makeLocalChangeTrackMoveLockMessage(int trackId, bool moveLock);
 
 DP_Message *makeLocalMatchMessage(const Message &msg, bool disguiseAsPutImage);
 

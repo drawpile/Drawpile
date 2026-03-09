@@ -35,6 +35,8 @@ public:
 
 	bool onionSkin() const;
 
+	bool moveLock() const;
+
 	int keyFrameCount() const;
 
 	KeyFrame keyFrameAt(int index) const;

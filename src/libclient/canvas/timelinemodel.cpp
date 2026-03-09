@@ -142,8 +142,8 @@ TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)
 			lastFrameIndex = frameIndex;
 		}
 	}
-	return {t.id(),		   t.title(),	   t.hidden(),
-			t.onionSkin(), lastFrameIndex, keyFrames};
+	return {t.id(),		  t.title(),	  t.hidden(), t.onionSkin(),
+			t.moveLock(), lastFrameIndex, keyFrames};
 }
 
 TimelineKeyFrame

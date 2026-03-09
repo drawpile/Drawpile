@@ -387,6 +387,13 @@ void PaintEngine::setTrackOnionSkin(int trackId, bool onionSkin)
 	receiveMessages(false, 1, &msg);
 }
 
+void PaintEngine::setTrackMoveLock(int trackId, bool moveLock)
+{
+	net::Message msg =
+		net::makeLocalChangeTrackMoveLockMessage(trackId, moveLock);
+	receiveMessages(false, 1, &msg);
+}
+
 void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 {
 	net::Message msg = net::makeLocalChangeViewModeMessage(vm);

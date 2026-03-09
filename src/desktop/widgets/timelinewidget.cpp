@@ -38,7 +38,7 @@ extern "C" {
 namespace widgets {
 
 enum class TimelineTool { Normal, Exposure };
-enum class TrackAction { None, ToggleVisible, ToggleOnionSkin };
+enum class TrackAction { None, ToggleVisible, ToggleOnionSkin, ToggleMoveLock };
 enum class TargetHeader { None, Header, RangeFirst, RangeLast };
 enum class TargetSide { None, Left, Right };
 
@@ -168,6 +168,8 @@ struct TimelineWidget::Private {
 	QIcon hiddenIcon;
 	QIcon onionSkinOnIcon;
 	QIcon onionSkinOffIcon;
+	QIcon moveLockedIcon;
+	QIcon moveUnlockedIcon;
 	QIcon uselessIcon;
 	int headerWidth = 64;
 	int rowHeight = 10;
@@ -331,6 +333,12 @@ struct TimelineWidget::Private {
 	const canvas::TimelineTrack *hoverTrack() const
 	{
 		return trackById(hoverTarget.trackId);
+	}
+
+	bool trackMoveLockedById(int trackId) const
+	{
+		const canvas::TimelineTrack *track = trackById(trackId);
+		return track && track->moveLock;
 	}
 
 	const canvas::TimelineKeyFrame *keyFrameBy(int trackId, int frame) const
@@ -598,6 +606,11 @@ struct TimelineWidget::Private {
 		return track.onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
 	}
 
+	const QIcon &getMoveLockIcon(const canvas::TimelineTrack &track)
+	{
+		return track.moveLock ? moveLockedIcon : moveUnlockedIcon;
+	}
+
 	void setModifiers(Qt::KeyboardModifiers modifiers)
 	{
 		bool wasExposureTool = isCurrentExposureTool();
@@ -678,6 +691,8 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	d->hiddenIcon = QIcon::fromTheme("view-hidden");
 	d->onionSkinOnIcon = QIcon::fromTheme("onion-on");
 	d->onionSkinOffIcon = QIcon::fromTheme("onion-off");
+	d->moveLockedIcon = QIcon::fromTheme(QStringLiteral("object-locked"));
+	d->moveUnlockedIcon = QIcon::fromTheme(QStringLiteral("object-unlocked"));
 	d->uselessIcon = QIcon::fromTheme("edit-delete");
 	d->verticalScroll = new QScrollBar(Qt::Vertical, this);
 	d->horizontalScroll = new QScrollBar(Qt::Horizontal, this);
@@ -792,6 +807,7 @@ void TimelineWidget::setActions(const Actions &actions)
 		menu->addAction(actions.trackDelete);
 		menu->addAction(actions.trackVisible);
 		menu->addAction(actions.trackOnionSkin);
+		menu->addAction(actions.trackMoveLock);
 		menu->addSeparator();
 		menu->addAction(actions.frameNext);
 		menu->addAction(actions.framePrev);
@@ -855,6 +871,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.trackOnionSkin, &QAction::triggered, this,
 		&TimelineWidget::toggleTrackOnionSkin);
+	connect(
+		actions.trackMoveLock, &QAction::triggered, this,
+		&TimelineWidget::toggleTrackMoveLock);
 	connect(
 		actions.trackDuplicate, &QAction::triggered, this,
 		&TimelineWidget::duplicateTrack);
@@ -1059,9 +1078,11 @@ bool TimelineWidget::event(QEvent *event)
 				}
 			}
 		} else if(d->hoverTarget.action == TrackAction::ToggleVisible) {
-			tip = tr("Toggle visibility");
+			tip = tr("Toggle visibility for you");
 		} else if(d->hoverTarget.action == TrackAction::ToggleOnionSkin) {
-			tip = tr("Toggle onion skin");
+			tip = tr("Toggle onion skin for you");
+		} else if(d->hoverTarget.action == TrackAction::ToggleMoveLock) {
+			tip = tr("Toggle frame drag lock for you");
 		}
 		setToolTip(tip);
 	}
@@ -1281,6 +1302,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		int yIcon = y + (rowHeight - ICON_SIZE) / 2;
 		qreal opacity = track.hidden ? 0.3 : 1.0;
 		qreal onionSkinOpacity = opacity * (track.onionSkin ? 1.0 : 0.3);
+		qreal moveLockOpacity = opacity * (track.moveLock ? 1.0 : 0.3);
 		painter.setPen(isSelected ? highlightedTextColor : textColor);
 		painter.setOpacity(opacity);
 		d->getVisibilityIcon(track).paint(
@@ -1289,6 +1311,11 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		x += TRACK_PADDING + ICON_SIZE;
 		painter.setOpacity(onionSkinOpacity);
 		d->getOnionSkinIcon(track).paint(
+			&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
+
+		x += TRACK_PADDING + ICON_SIZE;
+		painter.setOpacity(moveLockOpacity);
+		d->getMoveLockIcon(track).paint(
 			&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
 
 		x += TRACK_PADDING + ICON_SIZE;
@@ -1625,14 +1652,17 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			}
 			updateCursor();
 			update();
-		} else if(d->keyFrameBy(target.trackId, target.frameIndex)) {
+		} else if(
+			d->keyFrameBy(target.trackId, target.frameIndex) &&
+			!d->trackMoveLockedById(target.trackId)) {
 			drag = Drag::KeyFrame;
 		} else {
 			d->pressedHeader = target.header;
 			updateCursor();
 		}
 	} else if(button == Qt::MiddleButton) {
-		if(d->keyFrameBy(target.trackId, target.frameIndex)) {
+		if(d->keyFrameBy(target.trackId, target.frameIndex) &&
+		   !d->trackMoveLockedById(target.trackId)) {
 			drag = Drag::KeyFrame;
 			dropAction = Qt::CopyAction;
 		}
@@ -1749,12 +1779,23 @@ void TimelineWidget::dragMoveEvent(QDragMoveEvent *event)
 			event->ignore();
 			d->dragHover = Drag::None;
 		}
+
 	} else if(dragType == int(Drag::KeyFrame)) {
+		bool isValid = false;
+		QPoint dragPos;
+
 		QRect rect{
 			d->headerWidth, d->rowHeight,
 			qMin(width() - d->headerWidth, d->fullBodyWidth()),
 			qMin(height() - d->rowHeight, d->bodyHeight())};
 		if(event->source() == this && event->answerRect().intersects(rect)) {
+			dragPos = compat::dropPos(*event);
+			if(!d->trackMoveLockedById(getMouseTarget(dragPos).trackId)) {
+				isValid = true;
+			}
+		}
+
+		if(isValid) {
 			event->accept(rect);
 			d->dragHover = Drag::KeyFrame;
 			d->dragPos = compat::dropPos(*event);
@@ -1810,7 +1851,9 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 		Target target = getMouseTarget(compat::dropPos(*event));
 		bool isValid = target.trackId != 0 && target.frameIndex != -1 &&
 					   (sourceTrackId != target.trackId ||
-						sourceFrameIndex != target.frameIndex);
+						sourceFrameIndex != target.frameIndex) &&
+					   !d->trackMoveLockedById(sourceTrackId) &&
+					   !d->trackMoveLockedById(target.trackId);
 		if(isValid) {
 			applyMouseTarget(nullptr, target, false);
 			emitCommand([&](uint8_t contextId) {
@@ -2120,6 +2163,13 @@ void TimelineWidget::toggleTrackOnionSkin(bool onionSkin)
 {
 	if(d->currentTrackId != 0) {
 		emit trackOnionSkinEnabled(d->currentTrackId, onionSkin);
+	}
+}
+
+void TimelineWidget::toggleTrackMoveLock(bool moveLock)
+{
+	if(d->currentTrackId != 0) {
+		emit trackMoveLockEnabled(d->currentTrackId, moveLock);
 	}
 }
 
@@ -2459,7 +2509,7 @@ void TimelineWidget::updateTracks()
 		}
 	}
 	d->headerWidth =
-		qMax(64, maxTrackAdvance) + TRACK_PADDING * 4 + ICON_SIZE * 2;
+		qMax(64, maxTrackAdvance) + TRACK_PADDING * 6 + ICON_SIZE * 3;
 	d->exposureTool.valid = false;
 	int effectiveTrackId = nextTrackId != 0		 ? nextTrackId
 						   : currentTrackId != 0 ? currentTrackId
@@ -2811,6 +2861,8 @@ void TimelineWidget::updateActions()
 	d->actions.trackOnionSkin->setEnabled(track);
 	setCheckedSignalBlocked(
 		d->actions.trackOnionSkin, track && track->onionSkin);
+	d->actions.trackMoveLock->setEnabled(track);
+	setCheckedSignalBlocked(d->actions.trackMoveLock, track && track->moveLock);
 	d->actions.trackDuplicate->setEnabled(trackEditable);
 	d->actions.trackRetitle->setEnabled(trackEditable);
 	d->actions.trackDelete->setEnabled(trackEditable);
@@ -3003,10 +3055,13 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 			int tp = TRACK_PADDING;
 			int tph = TRACK_PADDING / 2;
 			int mid = tph + ICON_SIZE + tp;
+			int rgt = mid + ICON_SIZE + tp;
 			if(x >= tph && x < mid) {
 				target.action = TrackAction::ToggleVisible;
-			} else if(x >= mid && x < tp * 3 + ICON_SIZE * 2) {
+			} else if(x >= mid && x < rgt) {
 				target.action = TrackAction::ToggleOnionSkin;
+			} else if(x >= rgt && x < tp * 4 + ICON_SIZE * 3) {
+				target.action = TrackAction::ToggleMoveLock;
 			}
 		} else {
 			target.header = TargetHeader::Header;
@@ -3055,6 +3110,8 @@ void TimelineWidget::executeTargetAction(const Target &target)
 			emit trackHidden(track->id, !track->hidden);
 		} else if(target.action == TrackAction::ToggleOnionSkin) {
 			emit trackOnionSkinEnabled(track->id, !track->onionSkin);
+		} else if(target.action == TrackAction::ToggleMoveLock) {
+			emit trackMoveLockEnabled(track->id, !track->moveLock);
 		} else {
 			qWarning("Unknown track action %d", int(target.action));
 		}

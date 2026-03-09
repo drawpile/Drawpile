@@ -42,6 +42,7 @@ struct TimelineTrack final {
 	QString title;
 	bool hidden;
 	bool onionSkin;
+	bool moveLock;
 	int lastFrameIndex;
 	QVector<TimelineKeyFrame> keyFrames;
 };

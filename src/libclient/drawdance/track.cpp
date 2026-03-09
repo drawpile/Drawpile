@@ -82,6 +82,11 @@ bool Track::onionSkin() const
 	return DP_track_onion_skin(m_data);
 }
 
+bool Track::moveLock() const
+{
+	return DP_track_move_lock(m_data);
+}
+
 int Track::keyFrameCount() const
 {
 	return DP_track_key_frame_count(m_data);

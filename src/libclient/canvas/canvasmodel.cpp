@@ -822,6 +822,9 @@ void CanvasModel::applyLocalStateAction(const DP_LocalStateAction &lsa)
 	case DP_LOCAL_STATE_ACTION_TRACK_ENABLE_ONION_SKIN:
 		m_paintengine->setTrackOnionSkin(lsa.data.id, true);
 		return;
+	case DP_LOCAL_STATE_ACTION_TRACK_ENABLE_MOVE_LOCK:
+		m_paintengine->setTrackMoveLock(lsa.data.id, true);
+		return;
 	}
 	qWarning("Unhandled local state action %d", int(lsa.type));
 }

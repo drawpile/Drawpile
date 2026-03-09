@@ -160,6 +160,7 @@ public:
 	void setLayerCensoredLocal(int layerId, bool censored);
 	void setTrackVisibility(int trackId, bool hidden);
 	void setTrackOnionSkin(int trackId, bool onionSkin);
+	void setTrackMoveLock(int trackId, bool moveLock);
 
 	//! Set layerstack rendering mode (normal, solo, frame)
 	void setViewMode(DP_ViewMode vm, bool censor);

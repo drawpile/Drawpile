@@ -70,8 +70,10 @@ static void apply_track_states(DP_Vector *track_states, DP_Timeline *tl)
         DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         bool hidden = DP_track_hidden(t);
         bool onion_skin = DP_track_onion_skin(t);
-        if (hidden || onion_skin) {
-            DP_LocalTrackState lts = {DP_track_id(t), hidden, onion_skin};
+        bool move_lock = DP_track_move_lock(t);
+        if (hidden || onion_skin || move_lock) {
+            DP_LocalTrackState lts = {DP_track_id(t), hidden, onion_skin,
+                                      move_lock};
             DP_VECTOR_PUSH_TYPE(track_states, DP_LocalTrackState, lts);
         }
     }
@@ -195,6 +197,13 @@ void DP_local_state_save(DP_LocalState *ls, bool reveal_censored,
             call_save_fn(save_fn, user,
                          (DP_LocalStateAction){
                              DP_LOCAL_STATE_ACTION_TRACK_ENABLE_ONION_SKIN,
+                             {.id = track_id}});
+        }
+
+        if (lts->move_lock) {
+            call_save_fn(save_fn, user,
+                         (DP_LocalStateAction){
+                             DP_LOCAL_STATE_ACTION_TRACK_ENABLE_MOVE_LOCK,
                              {.id = track_id}});
         }
     }
@@ -561,10 +570,16 @@ static void set_track_state_onion_skin(DP_LocalTrackState *lts, bool onion_skin)
     lts->onion_skin = onion_skin;
 }
 
+static void set_track_state_move_lock(DP_LocalTrackState *lts, bool move_lock)
+{
+    lts->move_lock = move_lock;
+}
+
 static void set_track_state_all(DP_LocalTrackState *lts, bool value)
 {
     set_track_state_hidden(lts, value);
     set_track_state_onion_skin(lts, value);
+    set_track_state_move_lock(lts, value);
 }
 
 static void update_track_state(DP_LocalState *ls, int track_id,
@@ -576,16 +591,17 @@ static void update_track_state(DP_LocalState *ls, int track_id,
                                        is_track_state, &track_id);
     DP_LocalTrackState prev_lts =
         index == -1
-            ? (DP_LocalTrackState){track_id, false, false}
+            ? (DP_LocalTrackState){track_id, false, false, false}
             : DP_VECTOR_AT_TYPE(track_states, DP_LocalTrackState, index);
 
     DP_LocalTrackState lts = prev_lts;
     update(&lts, value);
 
-    bool track_state_changed =
-        prev_lts.hidden != lts.hidden || prev_lts.onion_skin != lts.onion_skin;
+    bool track_state_changed = prev_lts.hidden != lts.hidden
+                            || prev_lts.onion_skin != lts.onion_skin
+                            || prev_lts.move_lock != lts.move_lock;
     if (track_state_changed) {
-        if (lts.hidden || lts.onion_skin) {
+        if (lts.hidden || lts.onion_skin || lts.move_lock) {
             if (index == -1) {
                 DP_VECTOR_PUSH_TYPE(track_states, DP_LocalTrackState, lts);
             }
@@ -618,6 +634,15 @@ static void handle_track_onion_skin(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     if (read_id_bool_message(mlc, "track onion skin", &track_id, &onion_skin)) {
         update_track_state(ls, track_id, set_track_state_onion_skin,
                            onion_skin);
+    }
+}
+
+static void handle_track_move_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+{
+    int track_id;
+    bool move_lock;
+    if (read_id_bool_message(mlc, "track move_lock", &track_id, &move_lock)) {
+        update_track_state(ls, track_id, set_track_state_move_lock, move_lock);
     }
 }
 
@@ -799,6 +824,9 @@ static void handle_local_change(DP_LocalState *ls, DP_DrawContext *dc,
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_CENSORED:
         handle_layer_censored(ls, mlc);
         break;
+    case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_MOVE_LOCK:
+        handle_track_move_lock(ls, mlc);
+        break;
     default:
         DP_warn("Unknown local change type %d", type);
         break;
@@ -936,6 +964,13 @@ static bool reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                     return false;
                 }
             }
+            if (lts.move_lock) {
+                DP_Message *msg =
+                    DP_local_state_msg_track_move_lock_new(lts.track_id, true);
+                if (!fn(user, msg)) {
+                    return false;
+                }
+            }
         }
     }
 
@@ -1054,25 +1089,26 @@ void DP_local_state_layer_states_apply(
 
 static bool get_local_track_state(const DP_LocalTrackState *track_states,
                                   int count, int track_id, bool *out_hidden,
-                                  bool *out_onion_skin)
+                                  bool *out_onion_skin, bool *out_move_lock)
 {
     for (int i = 0; i < count; ++i) {
         const DP_LocalTrackState *lts = &track_states[i];
         if (lts->track_id == track_id) {
             *out_hidden = lts->hidden;
             *out_onion_skin = lts->onion_skin;
+            *out_move_lock = lts->move_lock;
             return true;
         }
     }
     *out_hidden = false;
     *out_onion_skin = false;
+    *out_move_lock = false;
     return false;
 }
 
 void DP_local_state_track_states_apply(
     DP_LocalState *ls, DP_Timeline *tl,
-    DP_TransientTimeline *(*get_transient_timeline_fn)(void *),
-    void *user)
+    DP_TransientTimeline *(*get_transient_timeline_fn)(void *), void *user)
 {
     int lts_count = DP_size_to_int(ls->track_states.used);
     const DP_LocalTrackState *track_states = ls->track_states.elements;
@@ -1081,11 +1117,12 @@ void DP_local_state_track_states_apply(
     int track_count = DP_timeline_track_count(tl);
     for (int i = 0; i < track_count; ++i) {
         DP_Track *t = DP_timeline_track_at_noinc(tl, i);
-        bool hidden, onion_skin;
+        bool hidden, onion_skin, move_lock;
         get_local_track_state(track_states, lts_count, DP_track_id(t), &hidden,
-                              &onion_skin);
+                              &onion_skin, &move_lock);
         bool local_state_changed = DP_track_hidden(t) != hidden
-                                || DP_track_onion_skin(t) != onion_skin;
+                                || DP_track_onion_skin(t) != onion_skin
+                                || DP_track_move_lock(t) != move_lock;
         if (local_state_changed) {
             if (!ttl) {
                 ttl = get_transient_timeline_fn(user);
@@ -1094,6 +1131,7 @@ void DP_local_state_track_states_apply(
                 DP_transient_timeline_transient_track_at_noinc(ttl, i, 0);
             DP_transient_track_hidden_set(tt, hidden);
             DP_transient_track_onion_skin_set(tt, onion_skin);
+            DP_transient_track_move_lock_set(tt, move_lock);
         }
     }
 }
@@ -1323,4 +1361,10 @@ DP_Message *DP_local_state_msg_layer_censored_new(int layer_id, bool censored)
 {
     return make_id_bool_message(DP_MSG_LOCAL_CHANGE_TYPE_LAYER_CENSORED,
                                 layer_id, censored);
+}
+
+DP_Message *DP_local_state_msg_track_move_lock_new(int track_id, bool move_lock)
+{
+    return make_id_bool_message(DP_MSG_LOCAL_CHANGE_TYPE_TRACK_MOVE_LOCK,
+                                track_id, move_lock);
 }

@@ -56,6 +56,7 @@
 #define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_RASTERIZE  (1u << 2u)
 #define DP_PROJECT_SNAPSHOT_TRACK_FLAG_HIDDEN          (1u << 0u)
 #define DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN      (1u << 1u)
+#define DP_PROJECT_SNAPSHOT_TRACK_FLAG_MOVE_LOCK       (1u << 2u)
 
 #define DP_PROJECT_SQL_MAIN_SAV(A, B, COND) ((COND) ? A "sav." B : A "" B)
 
@@ -2351,7 +2352,9 @@ static bool snapshot_handle_track(DP_Project *prj,
     unsigned int flags =
         DP_flag_uint(DP_track_hidden(t), DP_PROJECT_SNAPSHOT_TRACK_FLAG_HIDDEN)
         | DP_flag_uint(DP_track_onion_skin(t),
-                       DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN);
+                       DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN)
+        | DP_flag_uint(DP_track_move_lock(t),
+                       DP_PROJECT_SNAPSHOT_TRACK_FLAG_MOVE_LOCK);
     return ps_bind_int(prj, stmt, 2, ret->track_index)
         && ps_bind_int(prj, stmt, 3, DP_track_id(t))
         && ps_bind_text_length(prj, stmt, 4, title, title_length)
@@ -4990,6 +4993,8 @@ static bool cfs_read_timeline(DP_ProjectCanvasFromSnapshotContext *c,
             tt, flags & DP_PROJECT_SNAPSHOT_TRACK_FLAG_HIDDEN);
         DP_transient_track_onion_skin_set(
             tt, flags & DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN);
+        DP_transient_track_move_lock_set(
+            tt, flags & DP_PROJECT_SNAPSHOT_TRACK_FLAG_MOVE_LOCK);
 
         if (used >= count) {
             ttl = DP_transient_canvas_state_transient_timeline(tcs, 1);
