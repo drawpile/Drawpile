@@ -183,7 +183,7 @@ struct TimelineWidget::Private {
 	Target hoverTarget;
 	TargetHeader pressedHeader = TargetHeader::None;
 	bool editable = false;
-	bool altDown = false;
+	Qt::KeyboardModifiers modifiersDown;
 	bool lastPosValid = false;
 	bool zoomInProgress = false;
 	Drag drag = Drag::None;
@@ -598,26 +598,64 @@ struct TimelineWidget::Private {
 		return track.onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
 	}
 
+	void setModifiers(Qt::KeyboardModifiers modifiers)
+	{
+		bool wasExposureTool = isCurrentExposureTool();
+		modifiersDown = modifiers;
+		if(isCurrentExposureTool() != wasExposureTool) {
+			q->updateCursor();
+			q->update();
+		}
+	}
+
+	bool updateModifierState(const QKeyEvent *event, bool press)
+	{
+		// QKeyEvent::modifiers is unreliable on some platforms, so we use use
+		// the keys straight and hope that's close enough. AltGr is not included
+		// because it doesn't seem to behave consistently.
+		Qt::KeyboardModifier modifier;
+		switch(event->key()) {
+		case Qt::Key_Shift:
+			modifier = Qt::ShiftModifier;
+			break;
+		case Qt::Key_Control:
+			modifier = Qt::ControlModifier;
+			break;
+		case Qt::Key_Meta:
+			modifier = Qt::MetaModifier;
+			break;
+		case Qt::Key_Alt:
+			modifier = Qt::AltModifier;
+			break;
+		default:
+			return false;
+		}
+		Qt::KeyboardModifiers modifiers = modifiersDown;
+		modifiers.setFlag(modifier, press);
+		setModifiers(modifiers);
+		return true;
+	}
+
 	void updateMouseState(const QMouseEvent *event)
 	{
-		altDown = event->modifiers().testFlag(Qt::AltModifier);
 		lastPosValid = true;
 		lastPos = compat::mousePos(*event);
+		setModifiers(event->modifiers());
 	}
 
 	void updateWheelState(const QWheelEvent *event)
 	{
-		altDown = event->modifiers().testFlag(Qt::AltModifier);
 		lastPosValid = true;
 		lastPos = compat::wheelPos(*event);
+		setModifiers(event->modifiers());
 	}
 
 	bool isCurrentExposureTool()
 	{
 		if(currentTool == TimelineTool::Exposure) {
-			return !altDown;
+			return modifiersDown != Qt::ControlModifier;
 		} else {
-			return altDown;
+			return modifiersDown == Qt::ControlModifier;
 		}
 	}
 
@@ -1440,13 +1478,10 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 		event->accept();
 		trackBelow();
 		break;
-	case Qt::Key_Alt:
-	case Qt::Key_AltGr:
-		d->altDown = true;
-		update();
-		updateCursor();
-		Q_FALLTHROUGH();
 	default:
+		if(d->updateModifierState(event, true)) {
+			event->accept();
+		}
 		QWidget::keyPressEvent(event);
 		break;
 	}
@@ -1454,17 +1489,10 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 
 void TimelineWidget::keyReleaseEvent(QKeyEvent *event)
 {
-	switch(event->key()) {
-	case Qt::Key_Alt:
-	case Qt::Key_AltGr:
-		d->altDown = false;
-		update();
-		updateCursor();
-		Q_FALLTHROUGH();
-	default:
-		QWidget::keyPressEvent(event);
-		break;
+	if(d->updateModifierState(event, false)) {
+		event->accept();
 	}
+	QWidget::keyReleaseEvent(event);
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
@@ -1805,7 +1833,7 @@ void TimelineWidget::leaveEvent(QEvent *event)
 {
 	QWidget::leaveEvent(event);
 	d->hoverTarget = Target();
-	d->altDown = false;
+	d->modifiersDown = Qt::NoModifier;
 	d->lastPosValid = false;
 	update();
 	updateCursor();
