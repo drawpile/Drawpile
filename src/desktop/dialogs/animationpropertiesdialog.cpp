@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/animationpropertiesdialog.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include <QDialogButtonBox>
-#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace dialogs {
@@ -27,7 +26,8 @@ AnimationPropertiesDialog::AnimationPropertiesDialog(
 	form->setContentsMargins(0, 0, 0, 0);
 	layout->addLayout(form);
 
-	m_framerateBox = new QDoubleSpinBox;
+	m_framerateBox = new KisDoubleSliderSpinBox;
+	m_framerateBox->setIndeterminate(true);
 	if(compatibilityMode) {
 		m_framerateBox->setDecimals(0);
 		m_framerateBox->setRange(1.0, 999);
@@ -42,7 +42,8 @@ AnimationPropertiesDialog::AnimationPropertiesDialog(
 	framerateLayout->addWidget(new QLabel(tr("FPS")));
 	form->addRow(tr("Framerate:"), framerateLayout);
 
-	m_frameRangeFirstBox = new QSpinBox;
+	m_frameRangeFirstBox = new KisSliderSpinBox;
+	m_frameRangeFirstBox->setIndeterminate(true);
 	m_frameRangeFirstBox->setRange(1, frameRangeLast + 1);
 	if(compatibilityMode) {
 		m_frameRangeFirstBox->setValue(1);
@@ -52,15 +53,18 @@ AnimationPropertiesDialog::AnimationPropertiesDialog(
 	}
 	form->addRow(tr("First frame:"), m_frameRangeFirstBox);
 	connect(
-		m_frameRangeFirstBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_frameRangeFirstBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationPropertiesDialog::updateFrameRangeFirst);
 
-	m_frameRangeLastBox = new QSpinBox;
+	m_frameRangeLastBox = new KisSliderSpinBox;
+	m_frameRangeLastBox->setIndeterminate(true);
 	m_frameRangeLastBox->setRange(frameRangeFirst + 1, 9999);
 	m_frameRangeLastBox->setValue(frameRangeLast + 1);
 	form->addRow(tr("Last frame:"), m_frameRangeLastBox);
 	connect(
-		m_frameRangeLastBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_frameRangeLastBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationPropertiesDialog::updateFrameRangeLast);
 
 	layout->addStretch();

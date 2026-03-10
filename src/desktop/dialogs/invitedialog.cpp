@@ -3,6 +3,7 @@
 #include "cmake-config/config.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/toolmessage.h"
 #include "libclient/config/config.h"
@@ -17,7 +18,6 @@
 #include <QGuiApplication>
 #include <QMenu>
 #include <QRadioButton>
-#include <QSpinBox>
 
 namespace dialogs {
 
@@ -489,7 +489,8 @@ CreateInviteCodeDialog::CreateInviteCodeDialog(QWidget *parent)
 	QFormLayout *form = new QFormLayout;
 	layout->addLayout(form);
 
-	m_maxUsesSpinner = new QSpinBox;
+	m_maxUsesSpinner = new KisSliderSpinBox;
+	m_maxUsesSpinner->setIndeterminate(true);
 	m_maxUsesSpinner->setRange(1, 50);
 	m_maxUsesSpinner->setValue(1);
 	form->addRow(tr("Uses:"), m_maxUsesSpinner);

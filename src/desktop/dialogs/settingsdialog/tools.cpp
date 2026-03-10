@@ -10,7 +10,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
-#include <QDoubleSpinBox>
 #include <QEvent>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -63,35 +62,15 @@ void Tools::initColorSpace(config::Config *cfg, QFormLayout *form)
 
 void Tools::initCursors(config::Config *cfg, QFormLayout *form)
 {
-	QDoubleSpinBox *outlineSize = new QDoubleSpinBox;
-	CFG_BIND_DOUBLESPINBOX(cfg, BrushOutlineWidth, outlineSize);
+	KisDoubleSliderSpinBox *outlineSize = new KisDoubleSliderSpinBox;
+	CFG_BIND_DOUBLESLIDERSPINBOX(cfg, BrushOutlineWidth, outlineSize);
+	outlineSize->setBlockUpdateSignalOnDrag(true);
 	outlineSize->setDecimals(1);
-	outlineSize->setMaximum(25.0);
-	outlineSize->setSingleStep(.5);
+	outlineSize->setMaximum(10.0);
+	outlineSize->setSingleStep(0.5);
 	outlineSize->setSuffix(tr("px"));
-	utils::EncapsulatedLayout *outlineSizeLayout = utils::encapsulate(
-		tr("Show a %1 outline around the brush"), outlineSize);
-	QCheckBox *showOutline = utils::addCheckable(
-		tr("Enable brush outline"), outlineSizeLayout, outlineSize);
-	connect(
-		showOutline, &QCheckBox::toggled, outlineSize,
-		[cfg, outlineSize](bool enable) {
-			if(enable &&
-			   outlineSize->value() < std::numeric_limits<double>::epsilon()) {
-				outlineSize->setValue(1.0);
-			} else if(!enable) {
-				cfg->setBrushOutlineWidth(0.0);
-			}
-		});
-	CFG_BIND_SET_FN(
-		cfg, BrushOutlineWidth, showOutline,
-		([outlineSize, showOutline](double value) {
-			bool enabled = (value >= std::numeric_limits<double>::epsilon());
-			outlineSize->setEnabled(enabled);
-			showOutline->setChecked(enabled);
-		}));
-
-	form->addRow(tr("Brush outline:"), outlineSizeLayout);
+	outlineSize->setSpecialValueText(tr("No outline"));
+	form->addRow(tr("Brush outline:"), outlineSize);
 
 	QComboBox *brushCursor = new QComboBox;
 	QComboBox *eraseCursor = new QComboBox;
@@ -156,11 +135,12 @@ void Tools::initKeyboardShortcuts(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, DoubleTapAltToFocusCanvas, focusCanvas);
 	form->addRow(nullptr, focusCanvas);
 
-	QSpinBox *temporarySwitchMs = new QSpinBox;
+	KisSliderSpinBox *temporarySwitchMs = new KisSliderSpinBox;
+	temporarySwitchMs->setIndeterminate(true);
 	temporarySwitchMs->setRange(0, 4000);
-	CFG_BIND_SPINBOX(cfg, TemporaryToolSwitchMs, temporarySwitchMs);
 	//: This stands for millseconds.
 	temporarySwitchMs->setSuffix(tr("ms"));
+	CFG_BIND_SLIDERSPINBOX(cfg, TemporaryToolSwitchMs, temporarySwitchMs);
 	utils::EncapsulatedLayout *temporarySwitchLayout = utils::encapsulate(
 		tr("Switch tool temporarily by holding primary shortcut for %1"),
 		temporarySwitchMs);

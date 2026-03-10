@@ -3,8 +3,8 @@
 #define DESKTOP_DIALOGS_ANIMATIONPROPERTIESDIALOG_H
 #include <QDialog>
 
-class QDoubleSpinBox;
-class QSpinBox;
+class KisDoubleSliderSpinBox;
+class KisSliderSpinBox;
 
 namespace dialogs {
 
@@ -25,9 +25,9 @@ private:
 
 	void emitPropertiesChanged();
 
-	QDoubleSpinBox *m_framerateBox;
-	QSpinBox *m_frameRangeFirstBox;
-	QSpinBox *m_frameRangeLastBox;
+	KisDoubleSliderSpinBox *m_framerateBox;
+	KisSliderSpinBox *m_frameRangeFirstBox;
+	KisSliderSpinBox *m_frameRangeLastBox;
 };
 
 }

@@ -91,6 +91,8 @@ DumpPlaybackDialog::DumpPlaybackDialog(
 		  drawdance::CanvasHistorySnapshot::null()}}
 {
 	d->ui.setupUi(this);
+	d->ui.positionSpinner->setIndeterminate(true);
+	d->ui.jumpSpinner->setIndeterminate(true);
 	d->ui.positionSpinner->setMaximum(INT_MAX);
 	d->ui.jumpSpinner->setMaximum(INT_MAX);
 

@@ -3,7 +3,7 @@
 #include "desktop/dialogs/curvepresetdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
-#include "desktop/widgets/kis_double_parse_spin_box.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
 #include <QClipboard>
 #include <QFormLayout>
@@ -135,8 +135,10 @@ CurveWidget::CurveWidget(
 	QFormLayout *spinnerForm = new QFormLayout;
 	m_buttonLayout->addLayout(spinnerForm);
 
-	m_xSpinner = new KisDoubleParseSpinBox;
-	m_ySpinner = new KisDoubleParseSpinBox;
+	m_xSpinner = new KisDoubleSliderSpinBox;
+	m_ySpinner = new KisDoubleSliderSpinBox;
+	m_xSpinner->setIndeterminate(true);
+	m_ySpinner->setIndeterminate(true);
 	m_xSpinner->setSingleStep(0.01);
 	m_ySpinner->setSingleStep(0.01);
 	spinnerForm->addRow(QStringLiteral("X"), m_xSpinner);

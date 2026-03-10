@@ -13,12 +13,12 @@
   <property name="windowTitle">
    <string>Flipbook</string>
   </property>
-  <layout class="QVBoxLayout" stretch="1,0">
+  <layout class="QVBoxLayout" name="flipbookLayout" stretch="1,0">
    <item>
     <widget class="FlipbookView" name="view" native="true"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" stretch="0,0,1,0,0,0,0,0,0,0,1,1,1,0,0">
+    <layout class="QHBoxLayout" name="buttonsLayout" stretch="0,0,1,0,0,0,0,0,0,0,1,1,1,0,0">
      <item>
       <widget class="QToolButton" name="refreshButton">
        <property name="toolTip">
@@ -57,7 +57,7 @@
       </widget>
      </item>
      <item>
-      <spacer>
+      <spacer name="leftSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -116,7 +116,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="layerIndex">
+      <widget class="KisSliderSpinBox" name="layerIndex">
        <property name="wrapping">
         <bool>true</bool>
        </property>
@@ -129,14 +129,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel">
+      <widget class="QLabel" name="rangeLabel">
        <property name="text">
         <string>Range</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="loopStart">
+      <widget class="KisSliderSpinBox" name="loopStart">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -146,14 +146,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel">
+      <widget class="QLabel" name="rangeSeparatorLabel">
        <property name="text">
         <string notr="true">-</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="loopEnd">
+      <widget class="KisSliderSpinBox" name="loopEnd">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -163,7 +163,7 @@
       </widget>
      </item>
      <item>
-      <spacer>
+      <spacer name="middleSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -192,7 +192,7 @@
       </widget>
      </item>
      <item>
-      <spacer>
+      <spacer name="rightSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -233,6 +233,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
   <customwidget>
    <class>FlipbookView</class>
    <extends>QWidget</extends>

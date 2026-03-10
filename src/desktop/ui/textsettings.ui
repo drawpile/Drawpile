@@ -42,7 +42,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="size">
+      <widget class="KisDoubleSliderSpinBox" name="size">
        <property name="decimals">
         <number>0</number>
        </property>
@@ -309,17 +309,22 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>widgets::GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>desktop/widgets/groupedtoolbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KisDoubleSliderSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+  <customwidget>
    <class>widgets::ColorButton</class>
    <extends>QToolButton</extends>
    <header>desktop/widgets/colorbutton.h</header>
    <slots>
     <signal>colorChanged(QColor)</signal>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>widgets::GroupedToolButton</class>
-   <extends>QToolButton</extends>
-   <header>desktop/widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

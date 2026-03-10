@@ -4,9 +4,9 @@
 #include <QDialog>
 #include <QSet>
 
+class KisSliderSpinBox;
 class QButtonGroup;
 class QDialogButtonBox;
-class QSpinBox;
 
 namespace net {
 class InviteListModel;
@@ -86,7 +86,7 @@ private:
 
 	void emitCreateInviteCode();
 
-	QSpinBox *m_maxUsesSpinner;
+	KisSliderSpinBox *m_maxUsesSpinner;
 	QButtonGroup *m_roleGroup;
 	QDialogButtonBox *m_buttons;
 };

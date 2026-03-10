@@ -23,6 +23,8 @@ ResizeDialog::ResizeDialog(
 {
 	m_ui = new Ui_ResizeDialog;
 	m_ui->setupUi(this);
+	m_ui->width->setIndeterminate(true);
+	m_ui->height->setIndeterminate(true);
 
 	m_ui->resizer->setOriginalSize(oldsize);
 	m_ui->resizer->setTargetSize(oldsize);
@@ -58,10 +60,10 @@ ResizeDialog::ResizeDialog(
 	updateError();
 
 	connect(
-		m_ui->width, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_ui->width, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ResizeDialog::widthChanged);
 	connect(
-		m_ui->height, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_ui->height, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ResizeDialog::heightChanged);
 	connect(
 		m_ui->keepaspect, &QCheckBox::toggled, this,

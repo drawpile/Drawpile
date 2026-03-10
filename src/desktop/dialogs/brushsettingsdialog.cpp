@@ -799,7 +799,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->spacingSpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(d->spacingSpinner);
 	connect(
-		d->spacingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->spacingSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().spacing = value / 100.0;
 			emitChange();
@@ -829,7 +829,8 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->stabilizerSpinner->setExponentRatio(3.0);
 	kineticScroller->disableKineticScrollingOnWidget(d->stabilizerSpinner);
 	connect(
-		d->stabilizerSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->stabilizerSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.setStabilizerSampleCount(value);
 			emitChange();
@@ -842,7 +843,8 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->smoothingSpinner->setSingleStep(1);
 	kineticScroller->disableKineticScrollingOnWidget(d->smoothingSpinner);
 	connect(
-		d->smoothingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->smoothingSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.setSmoothing(value - d->globalSmoothing);
 			emitChange();
@@ -909,7 +911,7 @@ QWidget *BrushSettingsDialog::buildAntiOverflowPageUi()
 		d->antiOverflowToleranceSpinner);
 	connect(
 		d->antiOverflowToleranceSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.antiOverflow().tolerance = value;
 			emitChange();
@@ -925,7 +927,7 @@ QWidget *BrushSettingsDialog::buildAntiOverflowPageUi()
 		d->antiOverflowExpandSpinner);
 	connect(
 		d->antiOverflowExpandSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.antiOverflow().expand = value;
 			emitChange();
@@ -954,7 +956,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	d->classicSizeSpinner->setSuffix(tr("px"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSizeSpinner);
 	connect(
-		d->classicSizeSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicSizeSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().size.max = value;
 			emitChange();
@@ -973,7 +976,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	d->classicSizeMinSpinner->setSuffix(tr("px"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSizeMinSpinner);
 	connect(
-		d->classicSizeMinSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicSizeMinSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().size.min = value;
 			emitChange();
@@ -1018,7 +1022,8 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	d->classicOpacitySpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicOpacitySpinner);
 	connect(
-		d->classicOpacitySpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicOpacitySpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().opacity.max = value / 100.0;
 			emitChange();
@@ -1038,7 +1043,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 		d->classicOpacityMinSpinner);
 	connect(
 		d->classicOpacityMinSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().opacity.min = value / 100.0;
 			emitChange();
@@ -1083,7 +1088,8 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	d->classicHardnessSpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicHardnessSpinner);
 	connect(
-		d->classicHardnessSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicHardnessSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().hardness.max = value / 100.0;
 			emitChange();
@@ -1103,7 +1109,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 		d->classicHardnessMinSpinner);
 	connect(
 		d->classicHardnessMinSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().hardness.min = value / 100.0;
 			emitChange();
@@ -1169,7 +1175,8 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingSpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSmudgingSpinner);
 	connect(
-		d->classicSmudgingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicSmudgingSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().smudge.max = value / 100.0;
 			emitChange();
@@ -1183,7 +1190,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		d->classicColorPickupSpinner);
 	connect(
 		d->classicColorPickupSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().resmudge = value;
 			emitChange();
@@ -1202,7 +1209,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		d->classicSmudgingMinSpinner);
 	connect(
 		d->classicSmudgingMinSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().smudge.min = value / 100.0;
 			emitChange();
@@ -1247,7 +1254,8 @@ QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
 	d->classicJitterSpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicJitterSpinner);
 	connect(
-		d->classicJitterSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicJitterSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().jitter.max = value / 100.0;
 			emitChange();
@@ -1266,7 +1274,8 @@ QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicJitterMinSpinner);
 	connect(
-		d->classicJitterMinSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->classicJitterMinSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().jitter.min = value / 100.0;
 			emitChange();
@@ -1326,7 +1335,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 	velocitySlider->setRange(1, 1000);
 	velocitySlider->setPrefix(tr("Maximum Velocity: "));
 	connect(
-		velocitySlider, QOverload<int>::of(&QSpinBox::valueChanged),
+		velocitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([=](int value) {
 			(d->brush.classic().*setVelocity)(float(value) / 100.0f);
 			emitChange();
@@ -1337,7 +1346,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 	distanceSlider->setExponentRatio(3.0);
 	distanceSlider->setPrefix(tr("Maximum Distance: "));
 	connect(
-		distanceSlider, QOverload<int>::of(&QSpinBox::valueChanged),
+		distanceSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([=](int value) {
 			(d->brush.classic().*setDistance)(float(value));
 			emitChange();

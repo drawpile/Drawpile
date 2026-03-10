@@ -33,7 +33,6 @@ extern "C" {
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSignalBlocker>
-#include <QSpinBox>
 #include <QThreadPool>
 #include <QTimeEdit>
 #include <QVBoxLayout>
@@ -231,8 +230,10 @@ TimelapseDialog::TimelapseDialog(
 			std::bind(&TimelapseDialog::setDurationSeconds, this, seconds));
 	}
 
-	m_widthSpinner = new QSpinBox;
-	m_heightSpinner = new QSpinBox;
+	m_widthSpinner = new KisSliderSpinBox;
+	m_heightSpinner = new KisSliderSpinBox;
+	m_widthSpinner->setIndeterminate(true);
+	m_heightSpinner->setIndeterminate(true);
 	m_widthSpinner->setRange(1, 9999);
 	m_heightSpinner->setRange(1, 9999);
 
@@ -269,11 +270,11 @@ TimelapseDialog::TimelapseDialog(
 	settingsForm->addRow(nullptr, m_dimensionsNote);
 
 	connect(
-		m_widthSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&TimelapseDialog::updateWidth);
+		m_widthSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &TimelapseDialog::updateWidth);
 	connect(
-		m_heightSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&TimelapseDialog::updateHeight);
+		m_heightSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &TimelapseDialog::updateHeight);
 	connect(
 		m_keepAspectCheckBox, &QCheckBox::clicked, this,
 		&TimelapseDialog::updateAspectRatio);

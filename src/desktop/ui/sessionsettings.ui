@@ -54,7 +54,7 @@
           <item row="1" column="1">
            <layout class="QHBoxLayout" name="autoresetLayout">
             <item>
-             <widget class="QDoubleSpinBox" name="autoresetThreshold">
+             <widget class="KisDoubleSliderSpinBox" name="autoresetThreshold">
               <property name="toolTip">
                <string>Session history size at which autoreset triggers</string>
               </property>
@@ -196,7 +196,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="maxUsers">
+           <widget class="KisSliderSpinBox" name="maxUsers">
             <property name="toolTip">
              <string>How many users to let in. Does not affect users already logged in</string>
             </property>
@@ -805,6 +805,16 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KisDoubleSliderSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
   <customwidget>
    <class>widgets::PresetSelector</class>
    <extends>QWidget</extends>

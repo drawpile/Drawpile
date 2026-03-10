@@ -4,15 +4,14 @@
 #include <QDialog>
 #include <QHash>
 
+class KisDoubleSliderSpinBox;
 class KisSliderSpinBox;
 class QCheckBox;
 class QComboBox;
 class QDialogButtonBox;
-class QDoubleSpinBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class QSpinBox;
 
 namespace canvas {
 class CanvasModel;
@@ -88,19 +87,19 @@ private:
 	QComboBox *m_formatCombo;
 	utils::FormNote *m_ffmpegNote = nullptr;
 	QLabel *m_loopsLabel;
-	QSpinBox *m_scaleSpinner;
+	KisSliderSpinBox *m_scaleSpinner;
 	QCheckBox *m_scaleSmoothBox;
 	QLabel *m_scaleLabel;
-	QSpinBox *m_loopsSpinner;
+	KisSliderSpinBox *m_loopsSpinner;
 	QCheckBox *m_ffmpegCheckBox = nullptr;
 	QPushButton *m_ffmpegButton = nullptr;
-	QSpinBox *m_startSpinner;
-	QSpinBox *m_endSpinner;
-	QDoubleSpinBox *m_framerateSpinner;
-	QSpinBox *m_x1Spinner;
-	QSpinBox *m_x2Spinner;
-	QSpinBox *m_y1Spinner;
-	QSpinBox *m_y2Spinner;
+	KisSliderSpinBox *m_startSpinner;
+	KisSliderSpinBox *m_endSpinner;
+	KisDoubleSliderSpinBox *m_framerateSpinner;
+	KisSliderSpinBox *m_x1Spinner;
+	KisSliderSpinBox *m_x2Spinner;
+	KisSliderSpinBox *m_y1Spinner;
+	KisSliderSpinBox *m_y2Spinner;
 	QPushButton *m_inputResetButton;
 	QPushButton *m_inputToFlipbookButton;
 	QDialogButtonBox *m_buttons;

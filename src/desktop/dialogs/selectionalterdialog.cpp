@@ -5,12 +5,12 @@ extern "C" {
 #include "desktop/dialogs/selectionalterdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/expandshrinkspinner.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace dialogs {
@@ -32,7 +32,8 @@ SelectionAlterDialog::SelectionAlterDialog(QWidget *parent)
 		&widgets::ExpandShrinkSpinner::spinnerValueChanged, this,
 		&SelectionAlterDialog::updateControls);
 
-	m_featherSpinner = new QSpinBox;
+	m_featherSpinner = new KisSliderSpinBox;
+	m_featherSpinner->setIndeterminate(true);
 	m_featherSpinner->setRange(0, 999);
 	m_featherSpinner->setValue(getIntProperty(parent, PROP_FEATHER));
 	//: "Feather" is a verb here, referring to blurring the selection.
@@ -40,8 +41,8 @@ SelectionAlterDialog::SelectionAlterDialog(QWidget *parent)
 	m_featherSpinner->setSuffix(tr("px"));
 	layout->addWidget(m_featherSpinner);
 	connect(
-		m_featherSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&SelectionAlterDialog::updateControls);
+		m_featherSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &SelectionAlterDialog::updateControls);
 
 	m_fromEdgeBox = new QCheckBox;
 	m_fromEdgeBox->setChecked(getBoolProperty(parent, PROP_FROM_EDGE));

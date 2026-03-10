@@ -54,6 +54,9 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	, d(new Private(state))
 {
 	d->ui.setupUi(this);
+	d->ui.layerIndex->setIndeterminate(true);
+	d->ui.loopStart->setIndeterminate(true);
+	d->ui.loopEnd->setIndeterminate(true);
 	d->animationRenderer = new utils::AnimationRenderer(this);
 	connect(
 		d->animationRenderer, &utils::AnimationRenderer::frameRendered, this,
@@ -100,17 +103,17 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	connect(
 		d->ui.playButton, &QToolButton::clicked, this, &Flipbook::playPause);
 	connect(
-		d->ui.layerIndex, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&Flipbook::loadFrame);
+		d->ui.layerIndex, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &Flipbook::loadFrame);
 	connect(
-		d->ui.loopStart, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&Flipbook::updateRange);
+		d->ui.loopStart, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &Flipbook::updateRange);
 	connect(
-		d->ui.loopEnd, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&Flipbook::updateRange);
+		d->ui.loopEnd, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &Flipbook::updateRange);
 	connect(
 		d->ui.speedSpinner,
-		QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		&Flipbook::updateSpeed);
 	connect(&d->timer, &QTimer::timeout, this, &Flipbook::nextFrame);
 	connect(d->ui.view, &FlipbookView::cropped, this, &Flipbook::setCrop);

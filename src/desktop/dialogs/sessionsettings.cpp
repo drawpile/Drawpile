@@ -63,6 +63,8 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 {
 	Q_ASSERT(doc);
 	m_ui->setupUi(this);
+	m_ui->maxUsers->setIndeterminate(true);
+	m_ui->autoresetThreshold->setIndeterminate(true);
 
 	initPermissionComboBoxes();
 	initPermissionLimitSliders();
@@ -83,7 +85,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->title, &QLineEdit::textEdited, this,
 		&SessionSettingsDialog::titleChanged);
 	connect(
-		m_ui->maxUsers, &QSpinBox::editingFinished, this,
+		m_ui->maxUsers, &KisSliderSpinBox::editingFinished, this,
 		&SessionSettingsDialog::maxUsersChanged);
 	connect(
 		m_ui->denyJoins, &QCheckBox::clicked, this,
@@ -95,7 +97,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->allowWeb, &QCheckBox::clicked, this,
 		&SessionSettingsDialog::allowWebChanged);
 	connect(
-		m_ui->autoresetThreshold, &QDoubleSpinBox::editingFinished, this,
+		m_ui->autoresetThreshold, &KisDoubleSliderSpinBox::editingFinished, this,
 		&SessionSettingsDialog::autoresetThresholdChanged);
 	connect(
 		m_ui->preserveChat, &QCheckBox::clicked, this,
@@ -166,10 +168,10 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		&SessionSettingsDialog::updateIdleSettings);
 	connect(
 		m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers,
-		&QSpinBox::setValue);
+		&KisSliderSpinBox::setValue);
 	connect(
 		m_doc, &Document::sessionResetThresholdChanged,
-		m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
+		m_ui->autoresetThreshold, &KisDoubleSliderSpinBox::setValue);
 	connect(
 		m_doc, &Document::baseResetThresholdChanged, this,
 		[this](int threshold) {

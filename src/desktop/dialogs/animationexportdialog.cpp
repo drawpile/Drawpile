@@ -4,6 +4,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/paintengine.h"
@@ -12,7 +13,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
-#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -20,7 +20,6 @@
 #include <QPair>
 #include <QPushButton>
 #include <QSignalBlocker>
-#include <QSpinBox>
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -91,12 +90,14 @@ AnimationExportDialog::AnimationExportDialog(
 	}
 
 	m_loopsLabel = new QLabel(tr("Loops:"));
-	m_loopsSpinner = new QSpinBox;
+	m_loopsSpinner = new KisSliderSpinBox;
+	m_loopsSpinner->setIndeterminate(true);
 	m_loopsSpinner->setRange(1, 99);
 	m_loopsSpinner->setValue(loops);
 	outputForm->addRow(m_loopsLabel, m_loopsSpinner);
 
-	m_scaleSpinner = new QSpinBox;
+	m_scaleSpinner = new KisSliderSpinBox;
+	m_scaleSpinner->setIndeterminate(true);
 	m_scaleSpinner->setRange(1, 1000);
 	m_scaleSpinner->setValue(scalePercent);
 	m_scaleSpinner->setSuffix(tr("%"));
@@ -149,15 +150,18 @@ AnimationExportDialog::AnimationExportDialog(
 	QHBoxLayout *rangeLayout = new QHBoxLayout;
 	inputForm->addRow(tr("Frame Range:"), rangeLayout);
 
-	m_startSpinner = new QSpinBox;
+	m_startSpinner = new KisSliderSpinBox;
+	m_startSpinner->setIndeterminate(true);
 	rangeLayout->addWidget(m_startSpinner, 1);
 
 	rangeLayout->addWidget(new QLabel(QStringLiteral("-")));
 
-	m_endSpinner = new QSpinBox;
+	m_endSpinner = new KisSliderSpinBox;
+	m_endSpinner->setIndeterminate(true);
 	rangeLayout->addWidget(m_endSpinner, 1);
 
-	m_framerateSpinner = new QDoubleSpinBox;
+	m_framerateSpinner = new KisDoubleSliderSpinBox;
+	m_framerateSpinner->setIndeterminate(true);
 	m_framerateSpinner->setDecimals(2);
 	m_framerateSpinner->setRange(0.01, 999.99);
 	m_framerateSpinner->setSuffix(tr(" FPS"));
@@ -166,23 +170,27 @@ AnimationExportDialog::AnimationExportDialog(
 	QHBoxLayout *xCropLayout = new QHBoxLayout;
 	inputForm->addRow(tr("Crop X:"), xCropLayout);
 
-	m_x1Spinner = new QSpinBox;
+	m_x1Spinner = new KisSliderSpinBox;
+	m_x1Spinner->setIndeterminate(true);
 	xCropLayout->addWidget(m_x1Spinner, 1);
 
 	xCropLayout->addWidget(new QLabel(QStringLiteral("-")));
 
-	m_x2Spinner = new QSpinBox;
+	m_x2Spinner = new KisSliderSpinBox;
+	m_x2Spinner->setIndeterminate(true);
 	xCropLayout->addWidget(m_x2Spinner, 1);
 
 	QHBoxLayout *yCropLayout = new QHBoxLayout;
 	inputForm->addRow(tr("Crop Y:"), yCropLayout);
 
-	m_y1Spinner = new QSpinBox;
+	m_y1Spinner = new KisSliderSpinBox;
+	m_y1Spinner->setIndeterminate(true);
 	yCropLayout->addWidget(m_y1Spinner, 1);
 
 	yCropLayout->addWidget(new QLabel(QStringLiteral("-")));
 
-	m_y2Spinner = new QSpinBox;
+	m_y2Spinner = new KisSliderSpinBox;
+	m_y2Spinner->setIndeterminate(true);
 	yCropLayout->addWidget(m_y2Spinner, 1);
 
 	QHBoxLayout *inputButtonsLayout = new QHBoxLayout;
@@ -210,37 +218,37 @@ AnimationExportDialog::AnimationExportDialog(
 		m_formatCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &AnimationExportDialog::updateOutputUi);
 	connect(
-		m_scaleSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&AnimationExportDialog::updateScalingUi);
+		m_scaleSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &AnimationExportDialog::updateScalingUi);
 	connect(
-		m_startSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&AnimationExportDialog::updateEndRange);
+		m_startSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &AnimationExportDialog::updateEndRange);
 	connect(
-		m_endSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_endSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateStartRange);
 	connect(
-		m_x1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_x1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX2Range);
 	connect(
-		m_x1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_x1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateScalingUi);
 	connect(
-		m_x2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_x2Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX1Range);
 	connect(
-		m_x2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_x2Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateScalingUi);
 	connect(
-		m_y1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_y1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateY2Range);
 	connect(
-		m_y1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_y1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateScalingUi);
 	connect(
-		m_y2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_y2Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateY1Range);
 	connect(
-		m_y2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_y2Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateScalingUi);
 	connect(
 		m_inputResetButton, &QPushButton::clicked, this,

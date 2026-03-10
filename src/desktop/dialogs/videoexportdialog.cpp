@@ -27,6 +27,9 @@ VideoExportDialog::VideoExportDialog(QWidget *parent)
 	, m_ffmpegPathDebounce(1000, this)
 {
 	m_ui->setupUi(this);
+	m_ui->fps->setIndeterminate(true);
+	m_ui->framewidth->setIndeterminate(true);
+	m_ui->frameheight->setIndeterminate(true);
 
 	m_ui->exportFormatChoice->addItem(
 		tr("Image Series"), int(VideoExporter::IMAGE_SERIES));

@@ -57,6 +57,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	QWidget *uiWidget = new QWidget(parent);
 	m_ui = new Ui_TextSettings;
 	m_ui->setupUi(uiWidget);
+	m_ui->size->setIndeterminate(true);
 	m_stack->addWidget(uiWidget);
 
 	// Set up the header widget

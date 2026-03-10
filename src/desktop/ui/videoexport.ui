@@ -29,7 +29,7 @@
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="framerateLayout">
         <item>
-         <widget class="QSpinBox" name="fps">
+         <widget class="KisSliderSpinBox" name="fps">
           <property name="suffix">
            <string> FPS</string>
           </property>
@@ -86,7 +86,7 @@
          <widget class="QComboBox" name="sizeChoice"/>
         </item>
         <item>
-         <widget class="QSpinBox" name="framewidth">
+         <widget class="KisSliderSpinBox" name="framewidth">
           <property name="minimum">
            <number>10</number>
           </property>
@@ -112,7 +112,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="frameheight">
+         <widget class="KisSliderSpinBox" name="frameheight">
           <property name="minimum">
            <number>10</number>
           </property>
@@ -338,6 +338,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

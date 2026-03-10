@@ -8,7 +8,6 @@ extern "C" {
 #include <QActionGroup>
 #include <QHBoxLayout>
 #include <QMenu>
-#include <QSpinBox>
 #include <QToolButton>
 #include <functional>
 
@@ -19,14 +18,11 @@ ExpandShrinkSpinner::ExpandShrinkSpinner(bool slider, QWidget *parent)
 	, m_shrink(false)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 {
-	if(slider) {
-		m_spinner = new KisSliderSpinBox;
-	} else {
-		m_spinner = new QSpinBox;
-	}
+	m_spinner = new KisSliderSpinBox;
+	m_spinner->setIndeterminate(!slider);
 	m_spinner->setSuffix(tr("px"));
 	connect(
-		m_spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ExpandShrinkSpinner::spinnerValueChanged);
 
 	m_directionButton = new QToolButton;
@@ -107,8 +103,8 @@ int ExpandShrinkSpinner::spinnerValue() const
 
 int ExpandShrinkSpinner::effectiveValue() const
 {
-    int value = spinnerValue();
-    return m_shrink ? -value : value;
+	int value = spinnerValue();
+	return m_shrink ? -value : value;
 }
 
 void ExpandShrinkSpinner::setShrink(bool shrink)

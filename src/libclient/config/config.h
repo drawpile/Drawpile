@@ -178,6 +178,11 @@
 		CFG, SETTING, SUBJECT, &::QDoubleSpinBox::setValue,                    \
 		::QOverload<double>::of(&::QDoubleSpinBox::valueChanged))
 
+#define CFG_BIND_DOUBLESLIDERSPINBOX(CFG, SETTING, SUBJECT)                    \
+	CFG_BIND_OBJECT(                                                           \
+		CFG, SETTING, SUBJECT, &::KisDoubleSliderSpinBox::setValue,            \
+		::QOverload<double>::of(&::KisDoubleSliderSpinBox::valueChanged))
+
 #define CFG_BIND_LINEEDIT(CFG, SETTING, SUBJECT)                               \
 	CFG_BIND_OBJECT(                                                           \
 		CFG, SETTING, SUBJECT, &::QLineEdit::setText,                          \

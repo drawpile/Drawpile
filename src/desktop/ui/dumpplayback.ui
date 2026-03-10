@@ -48,7 +48,7 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="QSpinBox" name="jumpSpinner"/>
+    <widget class="KisSliderSpinBox" name="jumpSpinner"/>
    </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="previousResetButton">
@@ -72,7 +72,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QSpinBox" name="positionSpinner">
+    <widget class="KisSliderSpinBox" name="positionSpinner">
      <property name="readOnly">
       <bool>true</bool>
      </property>

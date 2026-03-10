@@ -20,7 +20,6 @@
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QSlider>
-#include <QSpinBox>
 #include <QToolButton>
 #include <QVBoxLayout>
 #ifdef Q_OS_ANDROID
@@ -85,10 +84,10 @@ void Network::initAvatars(QVBoxLayout *layout)
 
 void Network::initBuiltinServer(config::Config *cfg, QFormLayout *form)
 {
-	QSpinBox *port = new QSpinBox;
-	port->setAlignment(Qt::AlignLeft);
+	KisSliderSpinBox *port = new KisSliderSpinBox;
+	port->setIndeterminate(true);
 	port->setRange(1, UINT16_MAX);
-	CFG_BIND_SPINBOX(cfg, ServerPort, port);
+	CFG_BIND_SLIDERSPINBOX(cfg, ServerPort, port);
 	form->addRow(
 		tr("Builtin server:"),
 		utils::encapsulate(tr("Host on port %1 if available"), port));
@@ -124,8 +123,8 @@ void Network::initNetwork(config::Config *cfg, QFormLayout *form)
 		{{tr("Good"), 1}, {tr("Poor"), 0}});
 	CFG_BIND_BUTTONGROUP(cfg, ServerAutoReset, autoReset);
 
-	QSpinBox *timeout = new QSpinBox(this);
-	timeout->setAlignment(Qt::AlignLeft);
+	KisSliderSpinBox *timeout = new KisSliderSpinBox(this);
+	timeout->setIndeterminate(true);
 	timeout->setRange(15, 600);
 	CFG_BIND_SPINBOX(cfg, ServerTimeout, timeout);
 	form->addRow(

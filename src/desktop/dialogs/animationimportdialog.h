@@ -5,15 +5,15 @@
 #include <QCollator>
 #include <QDialog>
 
+class KisSliderSpinBox;
+class KisDoubleSliderSpinBox;
 class QAbstractButton;
 class QDialogButtonBox;
-class QDoubleSpinBox;
 class QLineEdit;
 class QListWidget;
 class QPushButton;
 class QTabWidget;
 class QTemporaryFile;
-class QSpinBox;
 
 namespace color_widgets {
 class ColorPreview;
@@ -69,8 +69,8 @@ private:
 #endif
 	QLineEdit *m_layersPathEdit;
 	QPushButton *m_chooseButton;
-	QSpinBox *m_holdTime;
-	QDoubleSpinBox *m_framerate;
+	KisSliderSpinBox *m_holdTime;
+	KisDoubleSliderSpinBox *m_framerate;
 	QDialogButtonBox *m_buttons;
 	QPushButton *m_importButton;
 	QTemporaryFile *m_tempFile = nullptr;

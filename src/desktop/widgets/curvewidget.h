@@ -5,7 +5,7 @@
 #include <QWidget>
 
 class KisCurveWidget;
-class KisDoubleParseSpinBox;
+class KisDoubleSliderSpinBox;
 class QAbstractButton;
 class QLabel;
 class QPushButton;
@@ -71,8 +71,8 @@ private:
 	QPushButton *m_copyButton;
 	QPushButton *m_pasteButton;
 	QPushButton *m_presetsButton;
-	KisDoubleParseSpinBox *m_xSpinner;
-	KisDoubleParseSpinBox *m_ySpinner;
+	KisDoubleSliderSpinBox *m_xSpinner;
+	KisDoubleSliderSpinBox *m_ySpinner;
 	bool m_pressure = false;
 };
 

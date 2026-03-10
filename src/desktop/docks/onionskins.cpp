@@ -4,6 +4,7 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QFrame>
@@ -14,7 +15,6 @@
 #include <QPalette>
 #include <QPushButton>
 #include <QSlider>
-#include <QSpinBox>
 #include <QToolTip>
 #include <QVBoxLayout>
 #include <QVector>
@@ -105,7 +105,7 @@ private:
 struct OnionSkinsDock::Private {
 	int debounceTimerId = 0;
 	int frameCount = FRAME_COUNT_MIN - 1;
-	QSpinBox *frameCountSpinner = nullptr;
+	KisSliderSpinBox *frameCountSpinner = nullptr;
 	QCheckBox *wrapCheckBox = nullptr;
 	ColorPreview *belowPreview = nullptr;
 	ColorPreview *abovePreview = nullptr;
@@ -137,7 +137,8 @@ OnionSkinsDock::OnionSkinsDock(QWidget *parent)
 	QLabel *frameCountLabel = new QLabel{titlebar};
 	frameCountLabel->setText(tr("Frames: "));
 	titlebar->addCustomWidget(frameCountLabel);
-	d->frameCountSpinner = new QSpinBox{titlebar};
+	d->frameCountSpinner = new KisSliderSpinBox(titlebar);
+	d->frameCountSpinner->setIndeterminate(true);
 	d->frameCountSpinner->setRange(FRAME_COUNT_MIN, FRAME_COUNT_MAX);
 	titlebar->addCustomWidget(d->frameCountSpinner);
 	titlebar->addStretch();

@@ -3,8 +3,8 @@
 #define DESKTOP_WIDGETS_EXPANDSHRINKSPINNER_H
 #include <QWidget>
 
+class KisSliderSpinBox;
 class QActionGroup;
-class QSpinBox;
 class QToolButton;
 
 namespace widgets {
@@ -38,7 +38,7 @@ private:
 	static void
 	updateButtonLabelFromAction(QToolButton *button, QAction *action);
 
-	QSpinBox *m_spinner;
+	KisSliderSpinBox *m_spinner;
 	QToolButton *m_directionButton;
 	QToolButton *m_kernelButton;
 	QAction *m_expandAction;

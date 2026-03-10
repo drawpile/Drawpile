@@ -7,6 +7,7 @@
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include <QAction>
 #include <QActionGroup>
@@ -17,7 +18,6 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QScopedValueRollback>
-#include <QSpinBox>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QtColorWidgets/color_line_edit.hpp>
@@ -53,12 +53,12 @@ struct ColorSliderDock::Private {
 	color_widgets::GradientSlider *green = nullptr;
 	color_widgets::GradientSlider *blue = nullptr;
 
-	QSpinBox *huebox = nullptr;
-	QSpinBox *saturationbox = nullptr;
-	QSpinBox *valuebox = nullptr;
-	QSpinBox *redbox = nullptr;
-	QSpinBox *greenbox = nullptr;
-	QSpinBox *bluebox = nullptr;
+	KisSliderSpinBox *huebox = nullptr;
+	KisSliderSpinBox *saturationbox = nullptr;
+	KisSliderSpinBox *valuebox = nullptr;
+	KisSliderSpinBox *redbox = nullptr;
+	KisSliderSpinBox *greenbox = nullptr;
+	KisSliderSpinBox *bluebox = nullptr;
 
 	widgets::GroupedToolButton *hsvButton = nullptr;
 	widgets::GroupedToolButton *rgbButton = nullptr;
@@ -169,7 +169,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->hueLabel = new QLabel;
 	d->hue = new color_widgets::HueSlider;
 	d->hue->setMaximum(359);
-	d->huebox = new QSpinBox;
+	d->huebox = new KisSliderSpinBox;
+	d->huebox->setIndeterminate(true);
 	d->huebox->setMaximum(359);
 	d->hue->setMaximumHeight(d->huebox->height());
 	hsvGrid->addWidget(d->hueLabel, 0, 0);
@@ -179,7 +180,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->saturationLabel = new QLabel;
 	d->saturation = new color_widgets::GradientSlider;
 	d->saturation->setMaximum(255);
-	d->saturationbox = new QSpinBox;
+	d->saturationbox = new KisSliderSpinBox;
+	d->saturationbox ->setIndeterminate(true);
 	d->saturationbox->setMaximum(255);
 	d->saturation->setMaximumHeight(d->saturationbox->height());
 	hsvGrid->addWidget(d->saturationLabel, 1, 0);
@@ -189,7 +191,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->valueLabel = new QLabel;
 	d->value = new color_widgets::GradientSlider;
 	d->value->setMaximum(255);
-	d->valuebox = new QSpinBox;
+	d->valuebox = new KisSliderSpinBox;
+	d->valuebox ->setIndeterminate(true);
 	d->valuebox->setMaximum(255);
 	d->value->setMaximumHeight(d->valuebox->height());
 	hsvGrid->addWidget(d->valueLabel, 2, 0);
@@ -205,7 +208,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 
 	d->red = new color_widgets::GradientSlider;
 	d->red->setMaximum(255);
-	d->redbox = new QSpinBox;
+	d->redbox = new KisSliderSpinBox;
+	d->redbox ->setIndeterminate(true);
 	d->redbox->setMaximum(255);
 	d->red->setMaximumHeight(d->redbox->height());
 	//: The "Red" R of RGB.
@@ -215,7 +219,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 
 	d->green = new color_widgets::GradientSlider;
 	d->green->setMaximum(255);
-	d->greenbox = new QSpinBox;
+	d->greenbox = new KisSliderSpinBox;
+	d->greenbox ->setIndeterminate(true);
 	d->greenbox->setMaximum(255);
 	d->green->setMaximumHeight(d->greenbox->height());
 	//: The "Green" G of RGB.
@@ -225,7 +230,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 
 	d->blue = new color_widgets::GradientSlider;
 	d->blue->setMaximum(255);
-	d->bluebox = new QSpinBox;
+	d->bluebox = new KisSliderSpinBox;
+	d->bluebox ->setIndeterminate(true);
 	d->bluebox->setMaximum(255);
 	d->blue->setMaximumHeight(d->bluebox->height());
 	//: The "Blue" B of RGB.
@@ -269,7 +275,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		d->hue, QOverload<int>::of(&color_widgets::HueSlider::valueChanged),
 		this, &ColorSliderDock::updateFromHsvSliders);
 	connect(
-		d->huebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->huebox, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromHsvSpinbox);
 
 	connect(
@@ -277,15 +283,15 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
 		&ColorSliderDock::updateFromHsvSliders);
 	connect(
-		d->saturationbox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&ColorSliderDock::updateFromHsvSpinbox);
+		d->saturationbox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &ColorSliderDock::updateFromHsvSpinbox);
 
 	connect(
 		d->value,
 		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
 		&ColorSliderDock::updateFromHsvSliders);
 	connect(
-		d->valuebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->valuebox, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromHsvSpinbox);
 
 	connect(
@@ -293,7 +299,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSliders);
 	connect(
-		d->redbox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->redbox, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSpinbox);
 
 	connect(
@@ -301,7 +307,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSliders);
 	connect(
-		d->greenbox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->greenbox, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSpinbox);
 
 	connect(
@@ -309,7 +315,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSliders);
 	connect(
-		d->bluebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->bluebox, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSpinbox);
 
 	connect(

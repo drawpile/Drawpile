@@ -3,10 +3,10 @@
 #define DESKTOP_DIALOGS_SELECTIONALTERDIALOG_H
 #include <QDialog>
 
+class KisSliderSpinBox;
 class QButtonGroup;
 class QCheckBox;
 class QDialogButtonBox;
-class QSpinBox;
 
 namespace widgets {
 class ExpandShrinkSpinner;
@@ -37,7 +37,7 @@ private:
 	void emitAlterSelectionRequested();
 
 	widgets::ExpandShrinkSpinner *m_expandShrinkSpinner;
-	QSpinBox *m_featherSpinner;
+	KisSliderSpinBox *m_featherSpinner;
 	QCheckBox *m_fromEdgeBox;
 	QDialogButtonBox *m_buttons;
 };

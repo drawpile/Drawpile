@@ -8,12 +8,12 @@ extern "C" {
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include "libclient/import/animationimporter.h"
 #include <QAction>
 #include <QApplication>
 #include <QDialogButtonBox>
-#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -23,7 +23,6 @@ extern "C" {
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSpinBox>
 #include <QTabWidget>
 #include <QTemporaryFile>
 #include <QThreadPool>
@@ -160,17 +159,19 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 	QFormLayout *form = new QFormLayout;
 	layout->addLayout(form);
 
-	m_holdTime = new QSpinBox;
+	m_holdTime = new KisSliderSpinBox;
+	m_holdTime->setIndeterminate(true);
 	m_holdTime->setRange(1, 99);
 	m_holdTime->setValue(1);
 	//: How many frames each imported key frame gets in the timeline.
 	form->addRow(tr("Key frame length:"), m_holdTime);
 	updateHoldTimeSuffix(m_holdTime->value());
 	connect(
-		m_holdTime, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_holdTime, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationImportDialog::updateHoldTimeSuffix);
 
-	m_framerate = new QDoubleSpinBox;
+	m_framerate = new KisDoubleSliderSpinBox;
+	m_framerate->setIndeterminate(true);
 	m_framerate->setDecimals(2);
 	m_framerate->setRange(0.01, 999.99);
 	m_framerate->setValue(24.0);

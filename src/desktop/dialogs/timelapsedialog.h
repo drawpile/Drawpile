@@ -18,7 +18,6 @@ class QLabel;
 class QProgressBar;
 class QPushButton;
 class QScrollArea;
-class QSpinBox;
 class QTimeEdit;
 class TimelapseSaverRunnable;
 
@@ -138,8 +137,8 @@ private:
 	QComboBox *m_formatCombo;
 	utils::FormNote *m_ffmpegNote = nullptr;
 	QTimeEdit *m_durationEdit;
-	QSpinBox *m_widthSpinner;
-	QSpinBox *m_heightSpinner;
+	KisSliderSpinBox *m_widthSpinner;
+	KisSliderSpinBox *m_heightSpinner;
 	QCheckBox *m_keepAspectCheckBox;
 	QCheckBox *m_cropCheckBox;
 	QCheckBox *m_animationResultCheckBox = nullptr;

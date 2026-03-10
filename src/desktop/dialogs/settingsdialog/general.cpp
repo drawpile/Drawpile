@@ -3,6 +3,7 @@
 #include "cmake-config/config.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include "libclient/view/enums.h"
 #include "libshared/util/paths.h"
@@ -11,7 +12,6 @@
 #include <QComboBox>
 #include <QDir>
 #include <QFormLayout>
-#include <QSpinBox>
 #include <QString>
 #include <QStyleFactory>
 #include <QVBoxLayout>
@@ -257,18 +257,20 @@ void General::initPerformance(config::Config *cfg, QFormLayout *form)
 
 void General::initSnapshots(config::Config *cfg, QFormLayout *form)
 {
-	QSpinBox *snapshotCount = new QSpinBox;
+	KisSliderSpinBox *snapshotCount = new KisSliderSpinBox;
+	snapshotCount->setIndeterminate(true);
 	snapshotCount->setRange(0, 99);
-	CFG_BIND_SPINBOX(cfg, EngineSnapshotCount, snapshotCount);
+	CFG_BIND_SLIDERSPINBOX(cfg, EngineSnapshotCount, snapshotCount);
 	utils::EncapsulatedLayout *snapshotCountLayout =
 		utils::encapsulate(tr("Keep %1 canvas snapshots"), snapshotCount);
 	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Canvas snapshots:"), snapshotCountLayout);
 
-	QSpinBox *snapshotInterval = new QSpinBox;
+	KisSliderSpinBox *snapshotInterval = new KisSliderSpinBox;
+	snapshotInterval->setIndeterminate(true);
 	snapshotInterval->setRange(1, 600);
 	snapshotInterval->setSingleStep(5);
-	CFG_BIND_SPINBOX(cfg, EngineSnapshotInterval, snapshotInterval);
+	CFG_BIND_SLIDERSPINBOX(cfg, EngineSnapshotInterval, snapshotInterval);
 	CFG_BIND_SET_FN(
 		cfg, EngineSnapshotCount, snapshotInterval,
 		[snapshotInterval](int count) {
@@ -363,9 +365,10 @@ void General::initTheme(config::Config *cfg, QFormLayout *form)
 
 void General::initUndo(config::Config *cfg, QFormLayout *form)
 {
-	QSpinBox *undoLimit = new QSpinBox;
+	KisSliderSpinBox *undoLimit = new KisSliderSpinBox;
+	undoLimit->setIndeterminate(true);
 	undoLimit->setRange(3, 255);
-	CFG_BIND_SPINBOX(cfg, EngineUndoDepth, undoLimit);
+	CFG_BIND_SLIDERSPINBOX(cfg, EngineUndoDepth, undoLimit);
 	utils::EncapsulatedLayout *undoLimitLayout =
 		utils::encapsulate(tr("%1 offline undo levels by default"), undoLimit);
 	undoLimitLayout->setControlTypes(QSizePolicy::CheckBox);

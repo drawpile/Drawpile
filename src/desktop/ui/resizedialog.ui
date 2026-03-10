@@ -17,7 +17,7 @@
    <item>
     <layout class="QHBoxLayout" name="dimensionsLayout" stretch="1,0,1,1">
      <item>
-      <widget class="QSpinBox" name="width">
+      <widget class="KisSliderSpinBox" name="width">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -34,7 +34,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="height">
+      <widget class="KisSliderSpinBox" name="height">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -131,6 +131,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
   <customwidget>
    <class>widgets::ResizerWidget</class>
    <extends>QWidget</extends>
