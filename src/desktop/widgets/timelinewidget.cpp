@@ -666,9 +666,9 @@ struct TimelineWidget::Private {
 	bool isCurrentExposureTool()
 	{
 		if(currentTool == TimelineTool::Exposure) {
-			return modifiersDown != Qt::ControlModifier;
+			return modifiersDown != Qt::AltModifier;
 		} else {
-			return modifiersDown == Qt::ControlModifier;
+			return modifiersDown == Qt::AltModifier;
 		}
 	}
 

@@ -60,7 +60,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't focus flipbook when it's already open to allow refreshing it without it taking away the keyboard focus from the main window.
  * Feature: Make the key frame delete action also delete the associated layer and add a separate unassign key frame action that only gets rid of the key frame.
  * Feature: Move the timeline track manipulation buttons into the top-left corner of the timeline above the tracks which was previously just a blank space.
- * Feature: Add an exposure tool to the timeline, which allows shifting multiple frames around without keyboard shortcuts. It is also accessible by holding Ctrl.
+ * Feature: Add an exposure tool to the timeline, which allows shifting multiple frames around without keyboard shortcuts. It is also accessible by holding Alt.
  * Feature: Allow zooming the animation timeline. There's a zoom menu on the timeline header now, you can use Ctrl+Mouse Wheel and you can bind keyboard shortcuts to it. Thanks Myathingoss for suggesting.
  * Feature: Allow playing back the tail end of an animation loop by setting the playback start larger than the end in the flipbook. This will play from flipbook range start to timeline range end, restarting from the timelie range start and playing until the flipbook range end, skipping the frames in the middle. Thanks Saphiros for suggesting.
  * Feature: Allow locking frame dragging on timeline tracks to prevent accidental frame moving and overwriting. Thanks Saphiros for suggesting.
