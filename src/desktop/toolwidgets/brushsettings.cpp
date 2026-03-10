@@ -602,11 +602,12 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		&BrushSettings::editBrushRequested);
 
 	connect(
-		d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::changeSizeSetting);
+		d->ui.brushsizeBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &BrushSettings::changeSizeSetting);
 	connect(
-		d->ui.radiusLogarithmicBox, QOverload<int>::of(&QSpinBox::valueChanged),
-		this, &BrushSettings::changeRadiusLogarithmicSetting);
+		d->ui.radiusLogarithmicBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&BrushSettings::changeRadiusLogarithmicSetting);
 
 	connect(
 		d->ui.modeEraser, &QToolButton::clicked, this,
@@ -620,51 +621,55 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		&BrushSettings::changePaintMode);
 
 	connect(
-		d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
+		d->ui.brushsizeBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &BrushSettings::updateFromUi);
 	connect(
 		d->ui.pressureSize, &QToolButton::toggled, this,
 		&BrushSettings::updateFromUi);
 
 	connect(
-		d->ui.opacityBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
+		d->ui.opacityBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &BrushSettings::updateFromUi);
 	connect(
 		d->ui.pressureOpacity, &QToolButton::toggled, this,
 		&BrushSettings::updateFromUi);
 
 	connect(
-		d->ui.hardnessBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
+		d->ui.hardnessBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &BrushSettings::updateFromUi);
 	connect(
 		d->ui.pressureHardness, &QToolButton::toggled, this,
 		&BrushSettings::updateFromUi);
 
 	connect(
-		d->ui.smudgingBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
+		d->ui.smudgingBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &BrushSettings::updateFromUi);
 	connect(
 		d->ui.pressureSmudging, &QToolButton::toggled, this,
 		&BrushSettings::updateFromUi);
 
 	connect(
-		d->ui.radiusLogarithmicBox, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->ui.radiusLogarithmicBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&BrushSettings::updateFromUi);
+	connect(
+		d->ui.colorpickupBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&BrushSettings::updateFromUi);
+	connect(
+		d->ui.brushspacingBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&BrushSettings::updateFromUi);
+	connect(
+		d->ui.gainBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &BrushSettings::updateFromUi);
 	connect(
-		d->ui.colorpickupBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->ui.stabilizerBox,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&BrushSettings::updateFromUi);
 	connect(
-		d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged),
+		d->ui.smoothingBox, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &BrushSettings::updateFromUi);
-	connect(
-		d->ui.gainBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
-	connect(
-		d->ui.stabilizerBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
-	connect(
-		d->ui.smoothingBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&BrushSettings::updateFromUi);
 
 	connect(
 		d->ui.antiOverflow, &QToolButton::clicked, this,

@@ -18,7 +18,6 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QSlider>
-#include <QSpinBox>
 #include <QtColorWidgets/color_utils.hpp>
 
 namespace tools {

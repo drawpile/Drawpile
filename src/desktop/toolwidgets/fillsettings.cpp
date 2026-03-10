@@ -137,16 +137,16 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	m_ui->alphaPreserve->setStatusTip(m_ui->alphaPreserve->toolTip());
 
 	connect(
-		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_ui->size, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&FillSettings::updateSize);
 	connect(
-		m_ui->opacity, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::updateSettings);
+		m_ui->opacity, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &FillSettings::updateSettings);
 	connect(
-		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::updateTolerance);
+		m_ui->tolerance, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &FillSettings::updateTolerance);
 	connect(
-		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_ui->size, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&FillSettings::updateSettings);
 	connect(
 		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::spinnerValueChanged,
@@ -158,10 +158,10 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::kernelChanged, this,
 		&FillSettings::updateSettings);
 	connect(
-		m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::updateSettings);
+		m_ui->feather, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &FillSettings::updateSettings);
 	connect(
-		m_ui->gap, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_ui->gap, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&FillSettings::updateSettings);
 	connect(
 		m_sourceGroup,

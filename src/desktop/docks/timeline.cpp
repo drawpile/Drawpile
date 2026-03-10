@@ -13,7 +13,6 @@
 #include <QLabel>
 #include <QMenu>
 #include <QPushButton>
-#include <QSpinBox>
 #include <QWidgetAction>
 
 namespace docks {

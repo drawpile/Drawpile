@@ -8,7 +8,6 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QFormLayout>
-#include <QSpinBox>
 #include <QVBoxLayout>
 #include <QWidget>
 

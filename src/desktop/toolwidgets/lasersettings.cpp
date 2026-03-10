@@ -71,8 +71,8 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 		m_ui->trackpointer, &QCheckBox::clicked, this,
 		&LaserPointerSettings::togglePointerTracking);
 	connect(
-		m_ui->persistence, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&LaserPointerSettings::pushSettings);
+		m_ui->persistence, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &LaserPointerSettings::pushSettings);
 	connect(
 		m_ui->color0, &QAbstractButton::toggled, this,
 		&LaserPointerSettings::pushSettings);
@@ -202,7 +202,7 @@ void LaserPointerSettings::quickAdjust1(qreal adjustment, bool wheel)
 
 void LaserPointerSettings::stepAdjust1(bool increase)
 {
-	QSpinBox *persistence = m_ui->persistence;
+	KisSliderSpinBox *persistence = m_ui->persistence;
 	persistence->setValue(stepLogarithmic(
 		persistence->minimum(), persistence->maximum(), persistence->value(),
 		increase));
