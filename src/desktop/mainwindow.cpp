@@ -6192,7 +6192,7 @@ void MainWindow::setupActions()
 
 	setMenuBar(new widgets::NonAltStealingMenuBar(this));
 
-	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
+	QMenu *filemenu = menuBar()->addMenu(tr("File"));
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
 #ifndef __EMSCRIPTEN__
@@ -6552,7 +6552,7 @@ void MainWindow::setupActions()
 			&MainWindow::resizeCanvas, this,
 			int(dialogs::ResizeDialog::ExpandDirection::Right)));
 
-	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
+	QMenu *editmenu = menuBar()->addMenu(tr("Edit"));
 	editmenu->addAction(undo);
 	editmenu->addAction(redo);
 	editmenu->addSeparator();
@@ -6896,7 +6896,7 @@ void MainWindow::setupActions()
 	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, {zoomorig, zoomfit, zoomfitwidth, zoomfitheight});
 
 	// clang-format on
-	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
+	QMenu *viewmenu = menuBar()->addMenu(tr("View"));
 #if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
 	viewmenu->addAction(interfaceScaleAction);
 #endif
@@ -7154,7 +7154,7 @@ void MainWindow::setupActions()
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
 
 	// clang-format on
-	QMenu *layerMenu = menuBar()->addMenu(tr("&Layer"));
+	QMenu *layerMenu = menuBar()->addMenu(tr("Layer"));
 	layerMenu->addAction(layerAdd);
 	layerMenu->addAction(groupAdd);
 	layerMenu->addAction(layerDupe);
@@ -7373,7 +7373,7 @@ void MainWindow::setupActions()
 		maskselection, &QAction::triggered, m_doc->toolCtrl(),
 		&tools::ToolController::setSelectionMaskingEnabled);
 
-	QMenu *selectMenu = menuBar()->addMenu(tr("Selectio&n"));
+	QMenu *selectMenu = menuBar()->addMenu(tr("Selection"));
 	selectMenu->addAction(selectall);
 	selectMenu->addAction(selectnone);
 	selectMenu->addAction(selectinvert);
@@ -7547,7 +7547,7 @@ void MainWindow::setupActions()
 	layerKeyFrameGroup->addAction(keyFrameDuplicateNext);
 	layerKeyFrameGroup->addAction(keyFrameDuplicatePrev);
 
-	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
+	QMenu *animationMenu = menuBar()->addMenu(tr("Animation"));
 	animationMenu->addAction(showFlipbook);
 	animationMenu->addAction(animationProperties);
 	animationMenu->addAction(exportAnimation);
@@ -7750,7 +7750,7 @@ void MainWindow::setupActions()
 	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);
 	connect(terminatesession, &QAction::triggered, this, &MainWindow::terminateSession);
 
-	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
+	QMenu *sessionmenu = menuBar()->addMenu(tr("Session"));
 	sessionmenu->addAction(host);
 	sessionmenu->addAction(invite);
 	sessionmenu->addAction(join);
@@ -7840,7 +7840,7 @@ void MainWindow::setupActions()
 		m_deselecttools->addAction(deselectAction);
 	}
 
-	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
+	QMenu *toolsmenu = menuBar()->addMenu(tr("Tools"));
 	toolsmenu->addActions(m_drawingtools->actions());
 	toolsmenu->addAction(toolbarconfig);
 	toolsmenu->addSeparator();
@@ -8179,7 +8179,7 @@ void MainWindow::setupActions()
 #endif
 	});
 
-	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
+	QMenu *helpmenu = menuBar()->addMenu(tr("Help"));
 	helpmenu->addAction(homepage);
 	helpmenu->addAction(donate);
 	helpmenu->addAction(tablettester);
@@ -8198,14 +8198,50 @@ void MainWindow::setupActions()
 #endif
 
 	// clang-format on
-	// Hooks to disable menu actions the user doesn't have permission for when
-	// the menus are shown and then reenable them afterwards so that shortcuts
-	// still attempt to activate them and trigger a permission denied message.
-	for(QMenu *menu :
-		{filemenu, editmenu, viewmenu, layerMenu, selectMenu, animationMenu,
-		 sessionmenu, toolsmenu, helpmenu}) {
+
+	QAction *menuFileAction =
+		makeAction("menu-file", tr("File menu")).shortcut("Alt+F");
+	QAction *menuEditAction =
+		makeAction("menu-edit", tr("Edit menu")).shortcut("Alt+E");
+	QAction *menuViewAction =
+		makeAction("menu-view", tr("View menu")).shortcut("Alt+V");
+	QAction *menuLayerAction =
+		makeAction("menu-layer", tr("Layer menu")).shortcut("Alt+L");
+	QAction *menuSelectionAction =
+		makeAction("menu-selection", tr("Selection menu")).shortcut("Alt+N");
+	QAction *menuAnimationAction =
+		makeAction("menu-animation", tr("Animation menu")).shortcut("Alt+A");
+	QAction *menuSessionAction =
+		makeAction("menu-session", tr("Session menu")).shortcut("Alt+S");
+	QAction *menuToolsAction =
+		makeAction("menu-tools", tr("Tools menu")).shortcut("Alt+T");
+	QAction *menuHelpAction =
+		makeAction("menu-help", tr("Help menu")).shortcut("Alt+H");
+
+	QPair<QAction *, QMenu *> menuPairs[] = {
+		{menuFileAction, filemenu},		   {menuEditAction, editmenu},
+		{menuViewAction, viewmenu},		   {menuLayerAction, layerMenu},
+		{menuSelectionAction, selectMenu}, {menuAnimationAction, animationMenu},
+		{menuSessionAction, sessionmenu},  {menuToolsAction, toolsmenu},
+		{menuHelpAction, helpmenu},
+	};
+
+	for(const QPair<QAction *, QMenu *> &p : menuPairs) {
+		QAction *action = p.first;
+		QMenu *menu = p.second;
+		// Hooks to disable menu actions the user doesn't have permission for
+		// when the menus are shown and then reenable them afterwards so that
+		// shortcuts still attempt to activate them and trigger a permission
+		// denied message.
 		connect(menu, &QMenu::aboutToShow, this, &MainWindow::aboutToShowMenu);
 		connect(menu, &QMenu::aboutToHide, this, &MainWindow::aboutToHideMenu);
+		// Menu action shortcuts, effectively emulating Alt+Mnemonic behavior,
+		// but letting the user configure shortcuts for them.
+		connect(
+			action, &QAction::triggered, this,
+			[this, menuAction = menu->menuAction()] {
+				menuBar()->setActiveAction(menuAction);
+			});
 	}
 
 	// Brush slot shortcuts
