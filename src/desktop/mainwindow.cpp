@@ -66,6 +66,7 @@ extern "C" {
 #include "desktop/widgets/canvasframe.h"
 #include "desktop/widgets/dualcolorbutton.h"
 #include "desktop/widgets/netstatus.h"
+#include "desktop/widgets/nonaltstealingmenubar.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/canvas/blendmodes.h"
@@ -6188,6 +6189,8 @@ void MainWindow::setupActions()
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
 #	endif
 #endif
+
+	setMenuBar(new widgets::NonAltStealingMenuBar(this));
 
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(newdocument);

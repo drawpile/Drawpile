@@ -64,6 +64,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow zooming the animation timeline. There's a zoom menu on the timeline header now, you can use Ctrl+Mouse Wheel and you can bind keyboard shortcuts to it. Thanks Myathingoss for suggesting.
  * Feature: Allow playing back the tail end of an animation loop by setting the playback start larger than the end in the flipbook. This will play from flipbook range start to timeline range end, restarting from the timelie range start and playing until the flipbook range end, skipping the frames in the middle. Thanks Saphiros for suggesting.
  * Feature: Allow locking frame dragging on timeline tracks to prevent accidental frame moving and overwriting. Thanks Saphiros for suggesting.
+ * Fix: Make lone presses of the Alt key not focus the menu bar, since that interferes with shortcuts. Alt plus a letter still opens menus though.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

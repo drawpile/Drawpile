@@ -444,6 +444,8 @@ target_sources(drawpile PRIVATE
 	widgets/mypaintinput.h
 	widgets/netstatus.cpp
 	widgets/netstatus.h
+	widgets/nonaltstealingmenubar.cpp
+	widgets/nonaltstealingmenubar.h
 	widgets/noscroll.h
 	widgets/notifbar.cpp
 	widgets/notifbar.h
