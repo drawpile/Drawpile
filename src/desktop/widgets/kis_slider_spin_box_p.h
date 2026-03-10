@@ -376,6 +376,19 @@ public:
         return isSoftRangeValid() && m_isSoftRangeActive;
     }
 
+    bool isIndeterminate() const
+    {
+        return m_indeterminate;
+    }
+
+    void setIndeterminate(bool indeterminate)
+    {
+        if (indeterminate != m_indeterminate) {
+            m_indeterminate = indeterminate;
+            m_q->update();
+        }
+    }
+
     void updateWidgetRangeToggleTooltip()
     {
         m_widgetRangeToggle->setToolTip(
@@ -636,11 +649,13 @@ public:
     // Generic "style aware" helper function to draw a rect
     void paintSliderRect(QPainter &painter, const QRectF &rect, const QBrush &brush)
     {
-        painter.save();
-        painter.setBrush(brush);
-        painter.setPen(Qt::NoPen);
-        painter.drawRoundedRect(rect, 1, 1);
-        painter.restore();
+        if (!m_indeterminate) {
+            painter.save();
+            painter.setBrush(brush);
+            painter.setPen(Qt::NoPen);
+            painter.drawRoundedRect(rect, 1, 1);
+            painter.restore();
+        }
     }
 
     void paintSliderText(QPainter &painter, const QString &text, const QRectF &rect, const QRectF &clipRect, const QColor &color, const QTextOption &textOption)
@@ -657,10 +672,14 @@ public:
     {
         QTextOption textOption(Qt::AlignAbsolute | Qt::AlignHCenter | Qt::AlignVCenter);
         textOption.setWrapMode(QTextOption::NoWrap);
-        // Draw portion of the text that is over the background
-        paintSliderText(painter, text, rect, rect.adjusted(sliderRect.width(), 0, 0, 0), m_lineEdit->palette().text().color(), textOption);
-        // Draw portion of the text that is over the progress bar
-        paintSliderText(painter, text, rect, sliderRect, m_lineEdit->palette().highlightedText().color(), textOption);
+        if (m_indeterminate) {
+            paintSliderText(painter, text, rect, rect, m_lineEdit->palette().text().color(), textOption);
+        } else {
+            // Draw portion of the text that is over the background
+            paintSliderText(painter, text, rect, rect.adjusted(sliderRect.width(), 0, 0, 0), m_lineEdit->palette().text().color(), textOption);
+            // Draw portion of the text that is over the progress bar
+            paintSliderText(painter, text, rect, sliderRect, m_lineEdit->palette().highlightedText().color(), textOption);
+        }
     }
 
     void paintSlider(QPainter &painter, const QString &text, double slider01Width, double slider02Width = -1.0)
@@ -721,6 +740,23 @@ public:
         const double normalizedValue = std::pow(localPosition / rangeSize, 1.0 / m_exponentRatio);
         const double width = static_cast<double>(m_lineEdit->width());
         return qBound(0.0, std::round(normalizedValue * width), width);
+    }
+
+    double indeterminateSingleStep() const
+    {
+        // Make spin boxes with small ranges less sensitive, within limits.
+        // These values are arbitrary, but it's what feels good to me.
+        double singleStep = qMax(1.0, double(m_q->singleStep()));
+        if (singleStep < 1.0) {
+            return singleStep;
+        } else {
+            double rangeSize = m_q->maximum() - m_q->minimum();
+            if (rangeSize < 1.0) {
+                return singleStep;
+            } else {
+                return qBound(0.05, rangeSize / 400.0 * singleStep, 1.0);
+            }
+        }
     }
 
     bool lineEditPaintEvent(QPaintEvent*)
@@ -811,12 +847,23 @@ public:
             // a signal
             } else if (e->button() == Qt::LeftButton) {
                 if (m_blockUpdateSignalOnDrag) {
-                    const QPoint p(m_useRelativeDragging ? e->pos().x() + m_relativeDraggingOffset : e->pos().x(),
-                                   e->pos().y());
-                    setValue(valueForPoint(p, e->modifiers()), false, true);
+                    ValueType value;
+                    if (m_indeterminate) {
+                        value = ValueType(m_indeterminateValue);
+                    } else {
+                        const QPoint p(m_useRelativeDragging ? e->pos().x() + m_relativeDraggingOffset : e->pos().x(),
+                                       e->pos().y());
+                        value = valueForPoint(p, e->modifiers());
+                    }
+                    setValue(value, false, true);
                 } else {
                     if (!m_isDragging) {
-                        setValue(valueForPoint(e->pos(), e->modifiers()), false, true);
+                        if (m_indeterminate) {
+                            requestStartEditing();
+                            return true;
+                        } else {
+                            setValue(valueForPoint(e->pos(), e->modifiers()), false, true);
+                        }
                     }
                 }
 
@@ -833,16 +880,52 @@ public:
         if (!m_q->isEnabled()) {
             return false;
         }
-        if (!isEditModeActive()) {
-            if (e->buttons() & Qt::LeftButton) {
+        if (!isEditModeActive() && e->buttons() & Qt::LeftButton) {
+            if (m_indeterminate) {
+                double x = compat::mousePosition(*e).x();
+                if (m_isDragging) {
+                    double dx = x - m_lastIndeterminateDragX;
+                    bool roundToFastSliderStep = false;
+                    if (e->modifiers().testFlag(Qt::ShiftModifier)) {
+                        if (e->modifiers().testFlag(Qt::ControlModifier)) {
+                            dx *= 0.01 * indeterminateSingleStep();
+                        } else {
+                            dx *= 0.1 * indeterminateSingleStep();
+                        }
+                    } else if (e->modifiers().testFlag(Qt::ControlModifier)) {
+                        dx *= m_fastSliderStep;
+                        roundToFastSliderStep = true;
+                    } else {
+                        dx *= indeterminateSingleStep();
+                    }
+
+                    double value = m_indeterminateValue + dx;
+                    if (roundToFastSliderStep) {
+                        value = std::round(value / m_fastSliderStep) * m_fastSliderStep;
+                    }
+
+                    m_indeterminateValue = qBound(
+                        double(m_q->minimum()), value, double(m_q->maximum()));
+                    setValue(ValueType(m_indeterminateValue), m_blockUpdateSignalOnDrag);
+                } else {
+                    int dx = e->pos().x() - m_lastMousePressPosition.x();
+                    int dy = e->pos().y() - m_lastMousePressPosition.y();
+                    int startDragDistanceSquared = 4;
+                    if (dx * dx + dy * dy > startDragDistanceSquared) {
+                        m_isDragging = true;
+                        m_indeterminateValue = m_q->value();
+                    }
+                }
+                m_lastIndeterminateDragX = x;
+            } else {
                 m_isDragging = true;
                 // At this point we are dragging so record the position and set
                 // the value
                 const QPoint p(m_useRelativeDragging ? e->pos().x() + m_relativeDraggingOffset : e->pos().x(),
                                e->pos().y());
                 setValue(valueForPoint(p, e->modifiers()), m_blockUpdateSignalOnDrag);
-                return true;
             }
+            return true;
         }
         return false;
     }
@@ -983,6 +1066,8 @@ private:
     ValueType m_softMinimum {static_cast<ValueType>(0)};
     ValueType m_softMaximum {static_cast<ValueType>(0)};
     double m_exponentRatio {1.0};
+    double m_indeterminateValue {0.0};
+    double m_lastIndeterminateDragX {0};
     bool m_blockUpdateSignalOnDrag {false};
     ValueType m_fastSliderStep {static_cast<ValueType>(5)};
     mutable ValueType m_valueBeforeEditing {static_cast<ValueType>(0)};
@@ -993,6 +1078,7 @@ private:
     int m_rightClickCounter {0};
     bool m_focusLostDueToMenu {false};
     bool m_isSoftRangeActive {true};
+    bool m_indeterminate {false};
     QVariantAnimation m_sliderAnimation;
     QVariantAnimation m_rangeToggleHoverAnimation;
     QString m_overrideText; // Drawpile patch

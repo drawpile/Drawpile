@@ -193,6 +193,9 @@ public:
     // Drawpile addition: check whether the soft range is clamping the input.
     bool isSoftRangeActive() const;
 
+    bool isIndeterminate() const;
+    void setIndeterminate(bool indeterminate);
+
 Q_SIGNALS:
     void draggingFinished();
 
@@ -249,6 +252,9 @@ public:
     void setSoftRange(qreal newSoftMinimum, qreal newSoftMaximum);
     void setSoftMinimum(qreal newSoftMinimum);
     void setSoftMaximum(qreal newSoftMaximum);
+
+    bool isIndeterminate() const;
+    void setIndeterminate(bool indeterminate);
 
 protected:
     virtual void setInternalValue(qreal newValue, bool newBlockUpdateSignal);

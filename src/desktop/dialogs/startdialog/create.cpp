@@ -3,12 +3,12 @@
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/resizedialog.h"
 #include "desktop/main.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include "libclient/utils/images.h"
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QSpinBox>
 #include <QtColorWidgets/ColorPreview>
 
 using color_widgets::ColorDialog;
@@ -26,15 +26,19 @@ Create::Create(QWidget *parent)
 
 	QHBoxLayout *widthLayout = new QHBoxLayout;
 	layout->addRow(tr("Width:"), widthLayout);
-	m_widthSpinner = new QSpinBox;
-	m_widthSpinner->setRange(1, 99999999);
+	m_widthSpinner = new KisSliderSpinBox;
+	m_widthSpinner->setIndeterminate(true);
+	m_widthSpinner->setRange(1, 9999999);
+	m_widthSpinner->setFastSliderStep(10);
 	widthLayout->addWidget(m_widthSpinner);
 	widthLayout->addWidget(new QLabel(tr("px")), 1);
 
 	QHBoxLayout *heightLayout = new QHBoxLayout;
 	layout->addRow(tr("Height:"), heightLayout);
-	m_heightSpinner = new QSpinBox;
-	m_heightSpinner->setRange(1, 99999999);
+	m_heightSpinner = new KisSliderSpinBox;
+	m_heightSpinner->setIndeterminate(true);
+	m_heightSpinner->setRange(1, 9999999);
+	m_heightSpinner->setFastSliderStep(10);
 	heightLayout->addWidget(m_heightSpinner);
 	heightLayout->addWidget(new QLabel(tr("px")), 1);
 
@@ -57,11 +61,11 @@ Create::Create(QWidget *parent)
 	layout->addRow(m_errorLabel);
 
 	connect(
-		m_widthSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&Create::updateCreateButton);
+		m_widthSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &Create::updateCreateButton);
 	connect(
-		m_heightSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&Create::updateCreateButton);
+		m_heightSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &Create::updateCreateButton);
 	connect(
 		m_backgroundPreview, &ColorPreview::clicked, this,
 		&Create::showColorPicker);

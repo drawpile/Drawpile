@@ -116,6 +116,16 @@ bool KisSliderSpinBox::isSoftRangeActive() const
     return d->isSoftRangeActive();
 }
 
+bool KisSliderSpinBox::isIndeterminate() const
+{
+    return d->isIndeterminate();
+}
+
+void KisSliderSpinBox::setIndeterminate(bool indeterminate)
+{
+    d->setIndeterminate(indeterminate);
+}
+
 void KisSliderSpinBox::setInternalValue(int newValue, bool newBlockUpdateSignal)
 {
     d->setValue(newValue, newBlockUpdateSignal);
@@ -213,6 +223,16 @@ void KisDoubleSliderSpinBox::setSoftMinimum(double newSoftMinimum)
 void KisDoubleSliderSpinBox::setSoftMaximum(double newSoftMaximum)
 {
     setSoftRange(d->softMinimum(), newSoftMaximum);
+}
+
+bool KisDoubleSliderSpinBox::isIndeterminate() const
+{
+    return d->isIndeterminate();
+}
+
+void KisDoubleSliderSpinBox::setIndeterminate(bool indeterminate)
+{
+    d->setIndeterminate(indeterminate);
 }
 
 void KisDoubleSliderSpinBox::setInternalValue(double newValue, bool newBlockUpdateSignal)

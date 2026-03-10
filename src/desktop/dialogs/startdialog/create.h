@@ -6,8 +6,8 @@
 #include "desktop/dialogs/startdialog/page.h"
 #include <QWidget>
 
+class KisSliderSpinBox;
 class QLabel;
-class QSpinBox;
 
 namespace color_widgets {
 class ColorPreview;
@@ -36,8 +36,8 @@ private slots:
 	void showColorPicker();
 
 private:
-	QSpinBox *m_widthSpinner;
-	QSpinBox *m_heightSpinner;
+	KisSliderSpinBox *m_widthSpinner;
+	KisSliderSpinBox *m_heightSpinner;
 	color_widgets::ColorPreview *m_backgroundPreview;
 	QLabel *m_errorLabel;
 };
