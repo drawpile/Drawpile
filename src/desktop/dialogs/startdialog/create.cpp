@@ -6,6 +6,7 @@
 #include "libclient/config/config.h"
 #include "libclient/utils/images.h"
 #include <QFormLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QSpinBox>
 #include <QtColorWidgets/ColorPreview>
@@ -19,23 +20,23 @@ namespace startdialog {
 Create::Create(QWidget *parent)
 	: Page{parent}
 {
-	// TODO: make the form layout work with RTL or go back to a QFormLayout.
-	setLayoutDirection(Qt::LeftToRight);
 	QFormLayout *layout = new QFormLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 
+	QHBoxLayout *widthLayout = new QHBoxLayout;
+	layout->addRow(tr("Width:"), widthLayout);
 	m_widthSpinner = new QSpinBox;
-	m_widthSpinner->setSuffix(tr("px"));
 	m_widthSpinner->setRange(1, 99999999);
-	m_widthSpinner->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	layout->addRow(tr("Width:"), m_widthSpinner);
+	widthLayout->addWidget(m_widthSpinner);
+	widthLayout->addWidget(new QLabel(tr("px")), 1);
 
+	QHBoxLayout *heightLayout = new QHBoxLayout;
+	layout->addRow(tr("Height:"), heightLayout);
 	m_heightSpinner = new QSpinBox;
-	m_heightSpinner->setSuffix(tr("px"));
 	m_heightSpinner->setRange(1, 99999999);
-	m_heightSpinner->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-	layout->addRow(tr("Height:"), m_heightSpinner);
+	heightLayout->addWidget(m_heightSpinner);
+	heightLayout->addWidget(new QLabel(tr("px")), 1);
 
 	DrawpileApp &app = dpApp();
 	QSize lastSize = app.safeNewCanvasSize();
