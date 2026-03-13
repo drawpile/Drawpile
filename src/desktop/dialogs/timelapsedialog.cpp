@@ -918,7 +918,7 @@ void TimelapseDialog::loadSettings()
 	if(m_ffmpegCheckBox) {
 		m_ffmpegCheckBox->setChecked(cfg->getTimelapsePreferFfmpeg());
 	}
-	if(!selectInterpolation(cfg->getTimelapseLogoLocation())) {
+	if(!selectInterpolation(cfg->getTimelapseInterpolation())) {
 		m_interpolationCombo->setCurrentIndex(0);
 	}
 	m_ownCheckBox->setChecked(cfg->getTimelapseTimeOwnOnly());
