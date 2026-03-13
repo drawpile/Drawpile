@@ -200,8 +200,12 @@ void TimelapsePreview::paintEvent(QPaintEvent *event)
 							cacheSize, Qt::IgnoreAspectRatio,
 							Qt::SmoothTransformation);
 					}
+					painter.setClipRect(m_canvasRect);
+					painter.setClipping(true);
 					painter.setOpacity(m_logoOpacity);
 					painter.drawPixmap(m_scaledLogoRect, m_logoCache);
+					painter.setClipRect(QRect());
+					painter.setClipping(false);
 				}
 			}
 		}
