@@ -427,12 +427,26 @@ TimelapseDialog::TimelapseDialog(
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		&TimelapseDialog::updateLogoRect);
 
-	m_logoOffsetSlider = new KisDoubleSliderSpinBox;
-	m_logoOffsetSlider->setRange(0.0, 0.5, 3);
-	m_logoOffsetSlider->setSingleStep(0.01);
-	advancedForm->addRow(tr("Logo padding:"), m_logoOffsetSlider);
+	m_logoOffsetXSlider = new KisDoubleSliderSpinBox;
+	m_logoOffsetYSlider = new KisDoubleSliderSpinBox;
+	m_logoOffsetXSlider->setRange(0.0, 0.5, 3);
+	m_logoOffsetYSlider->setRange(0.0, 0.5, 3);
+	m_logoOffsetXSlider->setSingleStep(0.01);
+	m_logoOffsetYSlider->setSingleStep(0.01);
+
+	QHBoxLayout *logoOffsetLayout = new QHBoxLayout;
+	logoOffsetLayout->setSpacing(8);
+	logoOffsetLayout->addWidget(m_logoOffsetXSlider, 1);
+	logoOffsetLayout->addWidget(new QLabel(QStringLiteral("x")));
+	logoOffsetLayout->addWidget(m_logoOffsetYSlider, 1);
+
+	advancedForm->addRow(tr("Logo padding:"), logoOffsetLayout);
 	connect(
-		m_logoOffsetSlider,
+		m_logoOffsetXSlider,
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
+		&TimelapseDialog::updateLogoRect);
+	connect(
+		m_logoOffsetYSlider,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		&TimelapseDialog::updateLogoRect);
 
@@ -844,8 +858,12 @@ void TimelapseDialog::resetToDefaultSettings()
 		config::Config::defaultTimelapseBackdropColor());
 	QSignalBlocker logoScaleBlocker(m_logoScaleSlider);
 	m_logoScaleSlider->setValue(config::Config::defaultTimelapseLogoScale());
-	QSignalBlocker logoOffsetBlocker(m_logoOffsetSlider);
-	m_logoOffsetSlider->setValue(config::Config::defaultTimelapseLogoOffset());
+	QSignalBlocker logoOffsetXBlocker(m_logoOffsetXSlider);
+	QSignalBlocker logoOffsetYBlocker(m_logoOffsetYSlider);
+	m_logoOffsetXSlider->setValue(
+		config::Config::defaultTimelapseLogoOffsetX());
+	m_logoOffsetYSlider->setValue(
+		config::Config::defaultTimelapseLogoOffsetY());
 	QSignalBlocker logoOpacityBlocker(m_logoOpacitySlider);
 	m_logoOpacitySlider->setValue(
 		config::Config::defaultTimelapseLogoOpacity());
@@ -925,8 +943,10 @@ void TimelapseDialog::loadSettings()
 	m_backdropPreview->setColor(cfg->getTimelapseBackdropColor());
 	QSignalBlocker logoScaleBlocker(m_logoScaleSlider);
 	m_logoScaleSlider->setValue(cfg->getTimelapseLogoScale());
-	QSignalBlocker logoOffsetBlocker(m_logoOffsetSlider);
-	m_logoOffsetSlider->setValue(cfg->getTimelapseLogoOffset());
+	QSignalBlocker logoOffsetXBlocker(m_logoOffsetXSlider);
+	QSignalBlocker logoOffsetYBlocker(m_logoOffsetYSlider);
+	m_logoOffsetXSlider->setValue(cfg->getTimelapseLogoOffsetX());
+	m_logoOffsetYSlider->setValue(cfg->getTimelapseLogoOffsetY());
 	QSignalBlocker logoOpacityBlocker(m_logoOpacitySlider);
 	m_logoOpacitySlider->setValue(cfg->getTimelapseLogoOpacity());
 	m_lingerBeforeSlider->setValue(cfg->getTimelapseLingerBeforeSeconds());
@@ -966,7 +986,8 @@ void TimelapseDialog::saveSettings()
 	cfg->setTimelapseTimeOwnOnly(m_ownCheckBox->isChecked());
 	cfg->setTimelapseBackdropColor(m_backdropPreview->color());
 	cfg->setTimelapseLogoScale(m_logoScaleSlider->value());
-	cfg->setTimelapseLogoOffset(m_logoOffsetSlider->value());
+	cfg->setTimelapseLogoOffsetX(m_logoOffsetXSlider->value());
+	cfg->setTimelapseLogoOffsetY(m_logoOffsetYSlider->value());
 	cfg->setTimelapseLogoOpacity(m_logoOpacitySlider->value());
 	cfg->setTimelapseLingerBeforeSeconds(m_lingerBeforeSlider->value());
 	cfg->setTimelapseFlashColor(m_flashPreview->color());
@@ -1188,26 +1209,27 @@ QRect TimelapseDialog::getLogoRect()
 		if(!logoSize.isEmpty()) {
 			QRect outputRect(QPoint(0, 0), outputSize);
 			QRect logoRect(QPoint(0, 0), logoSize);
-			qreal logoOffsetRatio = m_logoOffsetSlider->value();
-			int offset = qMin(
-				qRound(outputSize.width() * logoOffsetRatio),
-				qRound(outputSize.height() * logoOffsetRatio));
+			qreal logoOffsetRatioX = m_logoOffsetXSlider->value();
+			qreal logoOffsetRatioY = m_logoOffsetYSlider->value();
+			int offsetX = qRound(outputSize.width() * logoOffsetRatioX);
+			int offsetY = qRound(outputSize.height() * logoOffsetRatioY);
 
 			switch(location) {
 			case int(LogoLocation::TopLeft):
-				logoRect.moveTopLeft(QPoint(offset, offset));
+				logoRect.moveTopLeft(QPoint(offsetX, offsetY));
 				break;
 			case int(LogoLocation::TopRight):
 				logoRect.moveTopRight(
-					QPoint(outputRect.right() - offset, offset));
+					QPoint(outputRect.right() - offsetX, offsetY));
 				break;
 			case int(LogoLocation::BottomLeft):
 				logoRect.moveBottomLeft(
-					QPoint(offset, outputRect.bottom() - offset));
+					QPoint(offsetX, outputRect.bottom() - offsetY));
 				break;
 			default:
 				logoRect.moveBottomRight(QPoint(
-					outputRect.right() - offset, outputRect.bottom() - offset));
+					outputRect.right() - offsetX,
+					outputRect.bottom() - offsetY));
 				break;
 			}
 

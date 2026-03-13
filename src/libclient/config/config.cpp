@@ -1209,7 +1209,12 @@ int Config::defaultTimelapseLogoLocation()
 	return -1;
 }
 
-double Config::defaultTimelapseLogoOffset()
+double Config::defaultTimelapseLogoOffsetX()
+{
+	return 0.05;
+}
+
+double Config::defaultTimelapseLogoOffsetY()
 {
 	return 0.05;
 }

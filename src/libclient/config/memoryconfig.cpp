@@ -2995,16 +2995,29 @@ void MemoryConfig::setTimelapseLogoLocation(int value)
 	}
 }
 
-double MemoryConfig::getTimelapseLogoOffset() const
+double MemoryConfig::getTimelapseLogoOffsetX() const
 {
-	return m_timelapseLogoOffset;
+	return m_timelapseLogoOffsetX;
 }
 
-void MemoryConfig::setTimelapseLogoOffset(double value)
+void MemoryConfig::setTimelapseLogoOffsetX(double value)
 {
-	if(value != m_timelapseLogoOffset) {
-		m_timelapseLogoOffset = value;
-		Q_EMIT changeTimelapseLogoOffset(m_timelapseLogoOffset);
+	if(value != m_timelapseLogoOffsetX) {
+		m_timelapseLogoOffsetX = value;
+		Q_EMIT changeTimelapseLogoOffsetX(m_timelapseLogoOffsetX);
+	}
+}
+
+double MemoryConfig::getTimelapseLogoOffsetY() const
+{
+	return m_timelapseLogoOffsetY;
+}
+
+void MemoryConfig::setTimelapseLogoOffsetY(double value)
+{
+	if(value != m_timelapseLogoOffsetY) {
+		m_timelapseLogoOffsetY = value;
+		Q_EMIT changeTimelapseLogoOffsetY(m_timelapseLogoOffsetY);
 	}
 }
 

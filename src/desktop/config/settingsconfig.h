@@ -722,8 +722,11 @@ public:
 	int getTimelapseLogoLocation() const override;
 	void setTimelapseLogoLocation(int value) override;
 
-	double getTimelapseLogoOffset() const override;
-	void setTimelapseLogoOffset(double value) override;
+	double getTimelapseLogoOffsetX() const override;
+	void setTimelapseLogoOffsetX(double value) override;
+
+	double getTimelapseLogoOffsetY() const override;
+	void setTimelapseLogoOffsetY(double value) override;
 
 	int getTimelapseLogoOpacity() const override;
 	void setTimelapseLogoOpacity(int value) override;

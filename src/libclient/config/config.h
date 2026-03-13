@@ -1159,9 +1159,13 @@ public:
 	virtual void setTimelapseLogoLocation(int value) = 0;
 	static int defaultTimelapseLogoLocation();
 
-	virtual double getTimelapseLogoOffset() const = 0;
-	virtual void setTimelapseLogoOffset(double value) = 0;
-	static double defaultTimelapseLogoOffset();
+	virtual double getTimelapseLogoOffsetX() const = 0;
+	virtual void setTimelapseLogoOffsetX(double value) = 0;
+	static double defaultTimelapseLogoOffsetX();
+
+	virtual double getTimelapseLogoOffsetY() const = 0;
+	virtual void setTimelapseLogoOffsetY(double value) = 0;
+	static double defaultTimelapseLogoOffsetY();
 
 	virtual int getTimelapseLogoOpacity() const = 0;
 	virtual void setTimelapseLogoOpacity(int value) = 0;
@@ -1521,7 +1525,8 @@ Q_SIGNALS:
 	void changeTimelapseLingerBeforeLoops(int value);
 	void changeTimelapseLingerBeforeSeconds(int value);
 	void changeTimelapseLogoLocation(int value);
-	void changeTimelapseLogoOffset(double value);
+	void changeTimelapseLogoOffsetX(double value);
+	void changeTimelapseLogoOffsetY(double value);
 	void changeTimelapseLogoOpacity(int value);
 	void changeTimelapseLogoScale(double value);
 	void changeTimelapseMaxDeltaSeconds(double value);

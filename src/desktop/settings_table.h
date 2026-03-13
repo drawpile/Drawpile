@@ -657,8 +657,11 @@ SETTING(
 	timelapseLogoLocation, TimelapseLogoLocation, "timelapse/logolocation",
 	config::Config::defaultTimelapseLogoLocation())
 SETTING(
-	timelapseLogoOffset, TimelapseLogoOffset, "timelapse/logooffset",
-	config::Config::defaultTimelapseLogoOffset())
+	timelapseLogoOffsetX, TimelapseLogoOffsetX, "timelapse/logooffsetx",
+	config::Config::defaultTimelapseLogoOffsetX())
+SETTING(
+	timelapseLogoOffsetY, TimelapseLogoOffsetY, "timelapse/logooffsety",
+	config::Config::defaultTimelapseLogoOffsetY())
 SETTING(
 	timelapseLogoOpacity, TimelapseLogoOpacity, "timelapse/logoopacity",
 	config::Config::defaultTimelapseLogoOpacity())

@@ -808,8 +808,13 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeTimelapseLogoLocation,
 		Qt::DirectConnection);
 	connect(
-		m_settings, &desktop::settings::Settings::timelapseLogoOffsetChanged,
-		this, &SettingsConfig::changeTimelapseLogoOffset, Qt::DirectConnection);
+		m_settings, &desktop::settings::Settings::timelapseLogoOffsetXChanged,
+		this, &SettingsConfig::changeTimelapseLogoOffsetX,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseLogoOffsetYChanged,
+		this, &SettingsConfig::changeTimelapseLogoOffsetY,
+		Qt::DirectConnection);
 	connect(
 		m_settings, &desktop::settings::Settings::timelapseLogoOpacityChanged,
 		this, &SettingsConfig::changeTimelapseLogoOpacity,
@@ -3209,14 +3214,24 @@ void SettingsConfig::setTimelapseLogoLocation(int value)
 	m_settings->setTimelapseLogoLocation(value);
 }
 
-double SettingsConfig::getTimelapseLogoOffset() const
+double SettingsConfig::getTimelapseLogoOffsetX() const
 {
-	return m_settings->timelapseLogoOffset();
+	return m_settings->timelapseLogoOffsetX();
 }
 
-void SettingsConfig::setTimelapseLogoOffset(double value)
+void SettingsConfig::setTimelapseLogoOffsetX(double value)
 {
-	m_settings->setTimelapseLogoOffset(value);
+	m_settings->setTimelapseLogoOffsetX(value);
+}
+
+double SettingsConfig::getTimelapseLogoOffsetY() const
+{
+	return m_settings->timelapseLogoOffsetY();
+}
+
+void SettingsConfig::setTimelapseLogoOffsetY(double value)
+{
+	m_settings->setTimelapseLogoOffsetY(value);
 }
 
 int SettingsConfig::getTimelapseLogoOpacity() const

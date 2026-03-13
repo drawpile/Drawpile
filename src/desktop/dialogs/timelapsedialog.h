@@ -153,7 +153,8 @@ private:
 	QCheckBox *m_ownCheckBox;
 	color_widgets::ColorPreview *m_backdropPreview;
 	KisDoubleSliderSpinBox *m_logoScaleSlider;
-	KisDoubleSliderSpinBox *m_logoOffsetSlider;
+	KisDoubleSliderSpinBox *m_logoOffsetXSlider;
+	KisDoubleSliderSpinBox *m_logoOffsetYSlider;
 	KisSliderSpinBox *m_logoOpacitySlider;
 	KisDoubleSliderSpinBox *m_lingerBeforeSlider;
 	KisSliderSpinBox *m_lingerAnimationBeforeSlider = nullptr;

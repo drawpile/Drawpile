@@ -715,8 +715,11 @@ public:
 	int getTimelapseLogoLocation() const override;
 	void setTimelapseLogoLocation(int value) override;
 
-	double getTimelapseLogoOffset() const override;
-	void setTimelapseLogoOffset(double value) override;
+	double getTimelapseLogoOffsetX() const override;
+	void setTimelapseLogoOffsetX(double value) override;
+
+	double getTimelapseLogoOffsetY() const override;
+	void setTimelapseLogoOffsetY(double value) override;
 
 	int getTimelapseLogoOpacity() const override;
 	void setTimelapseLogoOpacity(int value) override;
@@ -1053,7 +1056,8 @@ private:
 	int m_timelapseLingerBeforeLoops = defaultTimelapseLingerBeforeLoops();
 	int m_timelapseLingerBeforeSeconds = defaultTimelapseLingerBeforeSeconds();
 	int m_timelapseLogoLocation = defaultTimelapseLogoLocation();
-	double m_timelapseLogoOffset = defaultTimelapseLogoOffset();
+	double m_timelapseLogoOffsetX = defaultTimelapseLogoOffsetX();
+	double m_timelapseLogoOffsetY = defaultTimelapseLogoOffsetY();
 	int m_timelapseLogoOpacity = defaultTimelapseLogoOpacity();
 	double m_timelapseLogoScale = defaultTimelapseLogoScale();
 	double m_timelapseMaxDeltaSeconds = defaultTimelapseMaxDeltaSeconds();

@@ -1427,10 +1427,16 @@ settings:
     qsettings: 'timelapse/logolocation'
     legacy_package: 'desktop'
 
-  - id: timelapseLogoOffset
+  - id: timelapseLogoOffsetX
     type: 'double'
     default: '0.05'
-    qsettings: 'timelapse/logooffset'
+    qsettings: 'timelapse/logooffsetx'
+    legacy_package: 'desktop'
+
+  - id: timelapseLogoOffsetY
+    type: 'double'
+    default: '0.05'
+    qsettings: 'timelapse/logooffsety'
     legacy_package: 'desktop'
 
   - id: timelapseLogoOpacity
