@@ -37,7 +37,6 @@ signals:
 	void playbackToggled(bool play);
 
 protected:
-	void closeEvent(QCloseEvent *) override;
 	void keyPressEvent(QKeyEvent *) override;
 
 private slots:

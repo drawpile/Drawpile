@@ -98,6 +98,15 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent)
 
 PlaybackDialog::~PlaybackDialog()
 {
+	m_paintengine->closePlayback();
+#ifdef HAVE_VIDEO_EXPORT
+	if(m_exporter) {
+		// Exporter still working? Disown it and let it finish.
+		// It will delete itself once done.
+		m_exporter->setParent(nullptr);
+		m_exporter->finish();
+	}
+#endif
 	delete m_ui;
 }
 
@@ -286,20 +295,6 @@ void PlaybackDialog::skipForward()
 		return m_haveIndex ? m_paintengine->skipPlaybackBy(1, true)
 						   : m_paintengine->stepPlayback(10000);
 	});
-}
-
-void PlaybackDialog::closeEvent(QCloseEvent *event)
-{
-	m_paintengine->closePlayback();
-#ifdef HAVE_VIDEO_EXPORT
-	if(m_exporter) {
-		// Exporter still working? Disown it and let it finish.
-		// It will delete itself once done.
-		m_exporter->setParent(nullptr);
-		m_exporter->finish();
-	}
-#endif
-	QDialog::closeEvent(event);
 }
 
 void PlaybackDialog::keyPressEvent(QKeyEvent *event)
