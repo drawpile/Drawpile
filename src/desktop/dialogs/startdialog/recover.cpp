@@ -96,8 +96,8 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 	bool canRemove = true;
 	switch(entry.status()) {
 	case project::RecoveryStatus::Available: {
-		//: How long you've worked on an autosave file. %1 is either a time span
-		//: like "1 hour and 15 minutes" or "unknown".
+		//: How long you've worked on an autorecovery file. %1 is either a time
+		//: span like "1 hour and 15 minutes" or "unknown".
 		statusLabel->setText(
 			tr("Work time: %1")
 				.arg(utils::formatWorkMinutes(entry.ownWorkMinutes())));
@@ -148,8 +148,9 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 void RecoveryEntryWidget::promptRemoval()
 {
 	QMessageBox *box = utils::makeQuestion(
-		this, tr("Delete Autosave"),
-		tr("Are you sure you want to permanently delete this autosave file?"),
+		this, tr("Delete Autorecovery File"),
+		tr("Are you sure you want to permanently delete this autorecovery "
+		   "file?"),
 		tr("Any unrecovered data will be lost."));
 	box->button(QMessageBox::Yes)->setText(tr("Yes, delete"));
 	box->button(QMessageBox::No)->setText(tr("No, keep"));
@@ -178,7 +179,7 @@ void RecoveryEntryWidget::download()
 	} else {
 		utils::showCritical(
 			this, tr("Download Error"),
-			tr("Failed to read autosave file: %1").arg(error));
+			tr("Failed to read autorecovery file: %1").arg(error));
 	}
 }
 #else
@@ -207,7 +208,8 @@ void RecoveryEntryWidget::save()
 		this, tr("Exported"),
 		tr("Export successful. Do you want to open the file now?"));
 
-	QCheckBox *removeCheckBox = new QCheckBox(tr("Delete original autosave"));
+	QCheckBox *removeCheckBox =
+		new QCheckBox(tr("Delete original autorecovery file"));
 	removeCheckBox->setChecked(!m_locked);
 	removeCheckBox->setEnabled(!m_locked);
 	box->setCheckBox(removeCheckBox);
@@ -237,8 +239,8 @@ bool RecoveryEntryWidget::saveTo(const QString &savePath, QString &outError)
 
 	QFile inputFile(m_path);
 	if(!inputFile.open(QIODevice::ReadOnly)) {
-		outError =
-			tr("Failed to open autosave file: %1").arg(inputFile.errorString());
+		outError = tr("Failed to open autorecovery file: %1")
+					   .arg(inputFile.errorString());
 		return false;
 	}
 
@@ -255,7 +257,7 @@ bool RecoveryEntryWidget::saveTo(const QString &savePath, QString &outError)
 	while(true) {
 		qint64 read = inputFile.read(buffer.data(), BUFSIZ);
 		if(read < 0) {
-			outError = tr("Failed to read from autosave file: %1")
+			outError = tr("Failed to read from autorecovery file: %1")
 						   .arg(inputFile.errorString());
 			return false;
 		} else if(read == 0) {
@@ -288,7 +290,7 @@ bool RecoveryEntryWidget::compareSaved(
 {
 	QFile inputFile(m_path);
 	if(!inputFile.open(QIODevice::ReadOnly)) {
-		outError = tr("Failed to open autosave file for verification: %1")
+		outError = tr("Failed to open autorecovery file for verification: %1")
 					   .arg(inputFile.errorString());
 		return false;
 	}
@@ -312,8 +314,9 @@ bool RecoveryEntryWidget::compareSaved(
 	while(true) {
 		qint64 read1 = inputFile.read(buffer1.data(), BUFSIZ);
 		if(read1 == -1) {
-			outError = tr("Autosave file read error during verification: %1")
-						   .arg(inputFile.errorString());
+			outError =
+				tr("Autorecovery file read error during verification: %1")
+					.arg(inputFile.errorString());
 			return false;
 		}
 
@@ -331,9 +334,9 @@ bool RecoveryEntryWidget::compareSaved(
 			break;
 		} else if(
 			std::memcmp(buffer1.constData(), buffer2.constData(), read1) != 0) {
-			outError =
-				tr("Verification failed: autosave and target file data does "
-				   "not match");
+			outError = tr(
+				"Verification failed: autorecovery and target file data does "
+				"not match");
 			return false;
 		}
 	}
@@ -415,9 +418,8 @@ void Recover::updateRecoveryEntries()
 		QLabel *label = new QLabel;
 		label->setWordWrap(true);
 		label->setTextFormat(Qt::RichText);
-		label->setText(
-			QStringLiteral("<em style=\"font-size:large;\">%1</em>")
-				.arg(tr("No autosaves to recover.").toHtmlEscaped()));
+		label->setText(QStringLiteral("<em style=\"font-size:large;\">%1</em>")
+						   .arg(tr("No files to recover.").toHtmlEscaped()));
 
 		QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect;
 		effect->setOpacity(0.8);
@@ -470,8 +472,9 @@ void Recover::removePath(const QString &path)
 	QString error;
 	if(!tryRemovePath(fileInfo, error)) {
 		utils::showWarning(
-			this, tr("Autosave Removal Failed"),
-			tr("Could not remove autosave file %1.").arg(fileInfo.fileName()),
+			this, tr("Autorecovery Removal Failed"),
+			tr("Could not remove autorecovery file %1.")
+				.arg(fileInfo.fileName()),
 			error);
 	}
 

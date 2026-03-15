@@ -49,7 +49,7 @@ void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 	} else {
 		m_autoRecordCurrent->setEnabled(false);
 	}
-	form->addRow(tr("Autosave:"), m_autoRecordCurrent);
+	form->addRow(tr("Autorecovery:"), m_autoRecordCurrent);
 
 	QCheckBox *autoRecordHost =
 		new QCheckBox(tr("When offline or hosting sessions"));
@@ -77,7 +77,8 @@ void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 	updateSnapshotIntervalText(snapshotInterval->value());
 
 	QString autosaveNote =
-		tr("You can control autosaving during a session via the File menu.");
+		tr("You can control autorecovery for individual sessions via the File "
+		   "menu.");
 	form->addRow(nullptr, utils::formNote(autosaveNote));
 }
 

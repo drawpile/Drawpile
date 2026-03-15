@@ -56,8 +56,8 @@ ProjectDialog::ProjectDialog(bool dirty, QWidget *parent)
 	}
 	dirtyLabelText.append(
 		tr("These statistics only reflect sessions saved in the project. "
-		   "Sessions where you disabled autosave or quit without saving and "
-		   "otherwise unsaved changes will not be present.")
+		   "Sessions where you disabled autorecovery or quit without saving "
+		   "and otherwise unsaved changes will not be present.")
 			.toHtmlEscaped());
 
 	QLabel *dirtyLabel = new QLabel(dirtyLabelText);

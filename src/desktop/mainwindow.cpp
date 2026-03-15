@@ -1692,8 +1692,8 @@ void MainWindow::toggleProjectRecording(bool enabled)
 			canvas->startProjectRecording(dpAppConfig(), sourceType);
 		} else {
 			QMessageBox *box = utils::makeQuestion(
-				this, tr("Disable Autosave"),
-				tr("Are you sure you want to disable autosaving for this "
+				this, tr("Disable Autorecovery"),
+				tr("Are you sure you want to disable autorecovery for this "
 				   "session?"),
 				tr("Unsaved data will be discarded and can't be recovered. You "
 				   "will not be able to create a timelapse."));
@@ -1729,7 +1729,7 @@ void MainWindow::onProjectRecordingStopped(bool notify)
 	getAction("autorecord")->setChecked(false);
 	updateProjectActions();
 	if(notify) {
-		m_canvasView->showPopupNotice(tr("Autosave deactivated"));
+		m_canvasView->showPopupNotice(tr("Autorecovery deactivated"));
 	}
 }
 
@@ -1738,10 +1738,11 @@ void MainWindow::showProjectRecordingError(const QString &message)
 	QString objectName = QStringLiteral("projectrecordingerrormessagebox");
 	if(!findChild<QMessageBox *>(objectName, Qt::FindDirectChildrenOnly)) {
 		QMessageBox *box = utils::showWarning(
-			this, tr("Autosave Error"), tr("Autosave error: %1").arg(message),
-			tr("Autosave will be disabled for the current session. The file "
-			   "will be left available for recovery. If you continue, you will "
-			   "not be able to create a timelapse."));
+			this, tr("Autorecovery Error"),
+			tr("Autorecovery error: %1").arg(message),
+			tr("Autorecovery will be disabled for the current session. The "
+			   "file will be left available for recovery. If you continue, you "
+			   "will not be able to create a timelapse."));
 		box->setObjectName(objectName);
 		connect(box, &QMessageBox::finished, this, [this] {
 			canvas::CanvasModel *canvas = m_doc->canvas();
@@ -6020,7 +6021,7 @@ void MainWindow::setupActions()
 	QAction *closefile =
 		makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
-	QAction *autoRecord = makeAction("autorecord", tr("Autosave"))
+	QAction *autoRecord = makeAction("autorecord", tr("Autorecovery"))
 							  .noDefaultShortcut()
 							  .checkable();
 #ifdef __EMSCRIPTEN__

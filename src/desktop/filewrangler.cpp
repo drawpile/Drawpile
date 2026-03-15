@@ -530,7 +530,7 @@ QString FileWrangler::getAutosaveExportPath(
 		LastPath::AUTOSAVE, directory + QDir::separator() + defaultName);
 
 	QString path = showSaveFileDialogFilters(
-		tr("Export Autosave"), LastPath::AUTOSAVE, ext,
+		tr("Export Autorecovery File"), LastPath::AUTOSAVE, ext,
 		{QStringLiteral("%1 (*.dppr)").arg(tr("Drawpile Project"))});
 	if(!path.isEmpty()) {
 		updateLastPath(LastPath::IMAGE, path);

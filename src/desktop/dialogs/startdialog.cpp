@@ -159,8 +159,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		tr("Reopen a recently used file"), recentPage};
 #endif
 	defs[Entry::Recover] = {
-		"backup", tr("Recover"), tr("Restore autosaves or corrupted files"),
-		recoverPage};
+		"backup", tr("Recover"), tr("Restore autorecovery files"), recoverPage};
 	defs[Entry::Layouts] = {
 		"window_", tr("Layouts"), tr("Choose application layout"), nullptr};
 	defs[Entry::Preferences] = {
