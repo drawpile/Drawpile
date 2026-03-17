@@ -67,6 +67,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make lone presses of the Alt key not focus the menu bar, since that interferes with shortcuts.
  * Feature: You can now configure the main menu bar actions in the shortcuts. They are also no longer dependent on which language you have Drawpile set to.
  * Feature: Allow dragging over numeric inputs to adjust their value. They also now don't annoyingly select the prefix and suffix anymore when you click on them. Thanks LingjenKaos for suggesting.
+ * Fix: Don't consider the canvas eligible for long-pressing to open a (nonexistent) context menu.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

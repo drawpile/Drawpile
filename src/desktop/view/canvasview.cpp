@@ -44,6 +44,8 @@ CanvasView::CanvasView(
 	vp->ungrabGesture(Qt::PanGesture);
 	vp->ungrabGesture(Qt::PinchGesture);
 	vp->ungrabGesture(Qt::SwipeGesture);
+	vp->setContextMenuPolicy(Qt::PreventContextMenu);
+	setContextMenuPolicy(Qt::PreventContextMenu);
 
 	m_notificationBar = new widgets::NotificationBar(this);
 	connect(

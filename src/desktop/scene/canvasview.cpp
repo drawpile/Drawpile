@@ -198,8 +198,10 @@ CanvasView::CanvasView(QWidget *parent)
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
 	viewport()->setMouseTracking(true);
+	viewport()->setContextMenuPolicy(Qt::PreventContextMenu);
 	setAcceptDrops(true);
 	setFrameShape(QFrame::NoFrame);
+	setContextMenuPolicy(Qt::PreventContextMenu);
 
 	DrawpileApp &app = dpApp();
 	connect(
