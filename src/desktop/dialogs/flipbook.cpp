@@ -271,7 +271,7 @@ void Flipbook::setSpeedByFps()
 							d->ui.speedSpinner->value() / 100.0;
 		utils::getOrRaiseInputDouble(
 			this, QStringLiteral("setspeedbyfpsinputdialog"),
-			d->setSpeedByFpsAction->text(), tr("FPS"), 2, currentFps, 0.01,
+			d->setSpeedByFpsAction->text(), tr("FPS:"), 2, currentFps, 0.01,
 			999.99, [this](double value) {
 				if(!d->canvasState.isNull()) {
 					d->ui.speedSpinner->setValue(
