@@ -68,6 +68,7 @@ Unreleased Version 2.3.1-pre
  * Feature: You can now configure the main menu bar actions in the shortcuts. They are also no longer dependent on which language you have Drawpile set to.
  * Feature: Allow dragging over numeric inputs to adjust their value. They also now don't annoyingly select the prefix and suffix anymore when you click on them. Thanks LingjenKaos for suggesting.
  * Fix: Don't consider the canvas eligible for long-pressing to open a (nonexistent) context menu.
+ * Fix: Ignore motions right before releasing a numeric slider so that lifting the stylus doesn't annoyingly nudge the value off what you meant to pick.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

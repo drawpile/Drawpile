@@ -224,6 +224,22 @@ public:
         }
     }
 
+    static bool isSafeReleaseDelayExpired(qint64 currentTimestamp, qint64 lastTimestamp)
+    {
+        return currentTimestamp - lastTimestamp > 50;
+    }
+
+    void updateSafeReleaseValue(ValueType value, qint64 timestamp)
+    {
+        if (isSafeReleaseDelayExpired(timestamp, m_lastDragTimestamp)) {
+            m_haveSafeReleaseValue = true;
+            m_safeReleaseValue = m_lastDragValue;
+            m_safeReleaseTimestamp = timestamp;
+        }
+        m_lastDragTimestamp = timestamp;
+        m_lastDragValue = value;
+    }
+
     void resetRangeMode()
     {
         if (isSoftRangeValid() && m_softRangeViewMode == SoftRangeViewMode_ShowBothRanges) {
@@ -844,11 +860,15 @@ public:
                 requestStartEditing();
             // Releasing the left mouse button stops the dragging. If signals
             // must be blocked when dragging then we set the value here and emit
-            // a signal
+            // a signal. If the user moved their mouse immediately before the
+            // release, this is probably accidental jitter and we revert to the
+            // last "safe" value where we had something stable.
             } else if (e->button() == Qt::LeftButton) {
                 if (m_blockUpdateSignalOnDrag) {
                     ValueType value;
-                    if (m_indeterminate) {
+                    if (m_haveSafeReleaseValue && !isSafeReleaseDelayExpired(e->timestamp(), m_safeReleaseTimestamp)) {
+                        value = m_safeReleaseValue;
+                    } else if (m_indeterminate) {
                         value = ValueType(m_indeterminateValue);
                     } else {
                         const QPoint p(m_useRelativeDragging ? e->pos().x() + m_relativeDraggingOffset : e->pos().x(),
@@ -864,10 +884,15 @@ public:
                         } else {
                             setValue(valueForPoint(e->pos(), e->modifiers()), false, true);
                         }
+                    } else if (m_haveSafeReleaseValue && !isSafeReleaseDelayExpired(e->timestamp(), m_safeReleaseTimestamp)) {
+                        setValue(m_safeReleaseValue);
                     }
                 }
 
                 m_isDragging = false;
+                m_haveSafeReleaseValue = false;
+                m_lastDragTimestamp = 0;
+                m_safeReleaseTimestamp = 0;
                 emit m_q->draggingFinished();
             }
             return true;
@@ -907,6 +932,7 @@ public:
                     m_indeterminateValue = qBound(
                         double(m_q->minimum()), value, double(m_q->maximum()));
                     setValue(ValueType(m_indeterminateValue), m_blockUpdateSignalOnDrag);
+                    updateSafeReleaseValue(ValueType(m_indeterminateValue), e->timestamp());
                 } else {
                     int dx = e->pos().x() - m_lastMousePressPosition.x();
                     int dy = e->pos().y() - m_lastMousePressPosition.y();
@@ -914,16 +940,25 @@ public:
                     if (dx * dx + dy * dy > startDragDistanceSquared) {
                         m_isDragging = true;
                         m_indeterminateValue = m_q->value();
+                        m_haveSafeReleaseValue = false;
+                        m_lastDragTimestamp = e->timestamp();
+                        m_lastDragValue = m_indeterminateValue;
                     }
                 }
                 m_lastIndeterminateDragX = x;
             } else {
-                m_isDragging = true;
-                // At this point we are dragging so record the position and set
-                // the value
                 const QPoint p(m_useRelativeDragging ? e->pos().x() + m_relativeDraggingOffset : e->pos().x(),
                                e->pos().y());
-                setValue(valueForPoint(p, e->modifiers()), m_blockUpdateSignalOnDrag);
+                ValueType value = valueForPoint(p, e->modifiers());
+                setValue(value, m_blockUpdateSignalOnDrag);
+                if (m_isDragging) {
+                    updateSafeReleaseValue(value, e->timestamp());
+                } else {
+                    m_isDragging = true;
+                    m_haveSafeReleaseValue = false;
+                    m_lastDragTimestamp = e->timestamp();
+                    m_lastDragValue = value;
+                }
             }
             return true;
         }
@@ -1071,6 +1106,9 @@ private:
     bool m_blockUpdateSignalOnDrag {false};
     ValueType m_fastSliderStep {static_cast<ValueType>(5)};
     mutable ValueType m_valueBeforeEditing {static_cast<ValueType>(0)};
+    ValueType m_safeReleaseValue {static_cast<ValueType>(0)};
+    ValueType m_lastDragValue {static_cast<ValueType>(0)};
+    bool m_haveSafeReleaseValue {false};
     bool m_isDragging {false};
     bool m_useRelativeDragging {false};
     int m_relativeDraggingOffset {0};
@@ -1081,6 +1119,8 @@ private:
     bool m_indeterminate {false};
     QVariantAnimation m_sliderAnimation;
     QVariantAnimation m_rangeToggleHoverAnimation;
+    qint64 m_safeReleaseTimestamp {0};
+    qint64 m_lastDragTimestamp {0};
     QString m_overrideText; // Drawpile patch
 
     enum SoftRangeViewMode
