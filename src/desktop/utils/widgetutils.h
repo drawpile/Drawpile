@@ -16,10 +16,10 @@ class QBoxLayout;
 class QButtonGroup;
 class QCheckBox;
 class QCursor;
+class QDialog;
 class QFormLayout;
 class QFrame;
 class QHeaderView;
-class QInputDialog;
 class QKeySequence;
 class QLabel;
 class QSpacerItem;
@@ -297,29 +297,29 @@ QMessageBox *showCritical(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
 
-QInputDialog *getInputText(
+QDialog *getInputText(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn);
 
-QInputDialog *getInputPassword(
+QDialog *getInputPassword(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn);
 
-QInputDialog *getInputInt(
+QDialog *getInputInt(
 	QWidget *parent, const QString &title, const QString &label, int value,
 	int minValue, int maxValue, const std::function<void(int)> &fn);
 
-QInputDialog *getOrRaiseInputInt(
+QDialog *getOrRaiseInputInt(
 	QWidget *parent, const QString &objectName, const QString &title,
 	const QString &label, int value, int minValue, int maxValue,
 	const std::function<void(int)> &fn);
 
-QInputDialog *getInputDouble(
+QDialog *getInputDouble(
 	QWidget *parent, const QString &title, const QString &label, int decimals,
 	double value, double minValue, double maxValue,
 	const std::function<void(double)> &fn);
 
-QInputDialog *getOrRaiseInputDouble(
+QDialog *getOrRaiseInputDouble(
 	QWidget *parent, const QString &objectName, const QString &title,
 	const QString &label, int decimals, double value, double minValue,
 	double maxValue, const std::function<void(double)> &fn);

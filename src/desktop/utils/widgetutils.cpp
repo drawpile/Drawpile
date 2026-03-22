@@ -3,6 +3,7 @@
 #include "desktop/main.h"
 #include "desktop/utils/longpresseventfilter.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
 #include "libclient/view/enums.h"
 #include "libshared/util/qtcompat.h"
@@ -12,6 +13,7 @@
 #include <QCheckBox>
 #include <QCursor>
 #include <QDesktopServices>
+#include <QDialogButtonBox>
 #include <QEvent>
 #include <QFont>
 #include <QFontMetrics>
@@ -1318,7 +1320,7 @@ QString getDonationLink()
 }
 
 namespace {
-static QInputDialog *getInputTextWith(
+static QDialog *getInputTextWith(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn,
 	QLineEdit::EchoMode echoMode)
@@ -1335,11 +1337,10 @@ static QInputDialog *getInputTextWith(
 	return dlg;
 }
 
-static QInputDialog *
-raiseExistingInput(QWidget *parent, const QString &objectName)
+static QDialog *raiseExistingDialog(QWidget *parent, const QString &objectName)
 {
 	if(parent && !objectName.isEmpty()) {
-		QInputDialog *existingDlg = parent->findChild<QInputDialog *>(
+		QDialog *existingDlg = parent->findChild<QDialog *>(
 			objectName, Qt::FindDirectChildrenOnly);
 		if(existingDlg) {
 			existingDlg->activateWindow();
@@ -1351,14 +1352,14 @@ raiseExistingInput(QWidget *parent, const QString &objectName)
 }
 }
 
-QInputDialog *getInputText(
+QDialog *getInputText(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn)
 {
 	return getInputTextWith(parent, title, label, text, fn, QLineEdit::Normal);
 }
 
-QInputDialog *getInputPassword(
+QDialog *getInputPassword(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn)
 {
@@ -1366,66 +1367,105 @@ QInputDialog *getInputPassword(
 		parent, title, label, text, fn, QLineEdit::Password);
 }
 
-QInputDialog *getInputInt(
+QDialog *getInputInt(
 	QWidget *parent, const QString &title, const QString &label, int value,
 	int minValue, int maxValue, const std::function<void(int)> &fn)
 {
-	QInputDialog *dlg = new QInputDialog(parent);
+	QDialog *dlg = new QDialog(parent);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowTitle(title);
-	dlg->setLabelText(label);
-	dlg->setInputMode(QInputDialog::IntInput);
-	dlg->setIntMinimum(minValue);
-	dlg->setIntMaximum(maxValue);
-	dlg->setIntValue(value);
-	QObject::connect(dlg, &QInputDialog::intValueSelected, parent, fn);
+
+	QVBoxLayout *layout = new QVBoxLayout(dlg);
+	layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+	QLabel *inputLabel = new QLabel(label);
+	layout->addWidget(inputLabel);
+
+	KisSliderSpinBox *inputSpinner = new KisSliderSpinBox;
+	inputSpinner->setIndeterminate(true);
+	inputSpinner->setRange(minValue, maxValue);
+	inputSpinner->setValue(value);
+	inputLabel->setBuddy(inputSpinner);
+	layout->addWidget(inputSpinner);
+
+	QDialogButtonBox *buttons =
+		new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	layout->addWidget(buttons);
+
+	QObject::connect(
+		buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
+	QObject::connect(
+		buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
+	QObject::connect(dlg, &QDialog::accepted, parent, [fn, inputSpinner] {
+		fn(inputSpinner->value());
+	});
+
 	dlg->show();
 	return dlg;
 }
 
-QInputDialog *getOrRaiseInputInt(
+QDialog *getOrRaiseInputInt(
 	QWidget *parent, const QString &objectName, const QString &title,
 	const QString &label, int value, int minValue, int maxValue,
 	const std::function<void(int)> &fn)
 {
-	if(QInputDialog *existingDlg = raiseExistingInput(parent, objectName)) {
+	if(QDialog *existingDlg = raiseExistingDialog(parent, objectName)) {
 		return existingDlg;
 	} else {
-		QInputDialog *dlg =
+		QDialog *dlg =
 			getInputInt(parent, title, label, value, minValue, maxValue, fn);
 		dlg->setObjectName(objectName);
 		return dlg;
 	}
 }
 
-QInputDialog *getInputDouble(
+QDialog *getInputDouble(
 	QWidget *parent, const QString &title, const QString &label, int decimals,
 	double value, double minValue, double maxValue,
 	const std::function<void(double)> &fn)
 {
-	QInputDialog *dlg = new QInputDialog(parent);
+	QDialog *dlg = new QDialog(parent);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowTitle(title);
-	dlg->setLabelText(label);
-	dlg->setInputMode(QInputDialog::DoubleInput);
-	dlg->setDoubleDecimals(decimals);
-	dlg->setDoubleMinimum(minValue);
-	dlg->setDoubleMaximum(maxValue);
-	dlg->setDoubleValue(value);
-	QObject::connect(dlg, &QInputDialog::doubleValueSelected, parent, fn);
+
+	QVBoxLayout *layout = new QVBoxLayout(dlg);
+	layout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+	QLabel *inputLabel = new QLabel(label);
+	layout->addWidget(inputLabel);
+
+	KisDoubleSliderSpinBox *inputSpinner = new KisDoubleSliderSpinBox;
+	inputSpinner->setIndeterminate(true);
+	inputSpinner->setRange(minValue, maxValue, decimals);
+	inputSpinner->setValue(value);
+	inputLabel->setBuddy(inputSpinner);
+	layout->addWidget(inputSpinner);
+
+	QDialogButtonBox *buttons =
+		new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	layout->addWidget(buttons);
+
+	QObject::connect(
+		buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
+	QObject::connect(
+		buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
+	QObject::connect(dlg, &QDialog::accepted, parent, [fn, inputSpinner] {
+		fn(inputSpinner->value());
+	});
+
 	dlg->show();
 	return dlg;
 }
 
-QInputDialog *getOrRaiseInputDouble(
+QDialog *getOrRaiseInputDouble(
 	QWidget *parent, const QString &objectName, const QString &title,
 	const QString &label, int decimals, double value, double minValue,
 	double maxValue, const std::function<void(double)> &fn)
 {
-	if(QInputDialog *existingDlg = raiseExistingInput(parent, objectName)) {
+	if(QDialog *existingDlg = raiseExistingDialog(parent, objectName)) {
 		return existingDlg;
 	} else {
-		QInputDialog *dlg = getInputDouble(
+		QDialog *dlg = getInputDouble(
 			parent, title, label, decimals, value, minValue, maxValue, fn);
 		dlg->setObjectName(objectName);
 		return dlg;
