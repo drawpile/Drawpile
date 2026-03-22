@@ -1657,15 +1657,18 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			}
 			updateCursor();
 			update();
-		} else if(d->keyFrameBy(target.trackId, target.frameIndex)) {
-			if(d->trackMoveLockedById(target.trackId)) {
-				d->pressedHeader = TargetHeader::Header;
-				updateCursor();
-			} else {
-				drag = Drag::KeyFrame;
-			}
+		} else if(
+			d->keyFrameBy(target.trackId, target.frameIndex) &&
+			!d->trackMoveLockedById(target.trackId)) {
+			drag = Drag::KeyFrame;
 		} else {
-			d->pressedHeader = target.header;
+			// If the user pressed nowhere useful, let them drag around to
+			// change the current frame. That's done via the "Header" target.
+			if(target.header == TargetHeader::None) {
+				d->pressedHeader = TargetHeader::Header;
+			} else {
+				d->pressedHeader = target.header;
+			}
 			updateCursor();
 		}
 	} else if(button == Qt::MiddleButton) {
