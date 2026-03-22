@@ -1636,7 +1636,9 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			drag = Drag::Track;
 		} else if(d->isCurrentExposureTool()) {
 			d->exposureTool = ExposureToolState();
-			bool onHeader = target.header == TargetHeader::Header;
+			bool onHeader = target.header == TargetHeader::Header ||
+							target.header == TargetHeader::RangeFirst ||
+							target.header == TargetHeader::RangeLast;
 			if((onHeader || (target.trackId > 0 && target.uiTrackIndex >= 0)) &&
 			   target.frameIndex >= 0) {
 				int exposureTrackIndex = onHeader ? -1 : target.uiTrackIndex;
@@ -2612,7 +2614,8 @@ void TimelineWidget::updateCursor()
 	   d->pressedHeader == TargetHeader::RangeLast ||
 	   (d->currentTool == TimelineTool::Normal &&
 		(d->hoverTarget.header == TargetHeader::RangeFirst ||
-		 d->hoverTarget.header == TargetHeader::RangeLast))) {
+		 d->hoverTarget.header == TargetHeader::RangeLast) &&
+		!d->isCurrentExposureTool())) {
 		setCursor(Qt::SizeHorCursor);
 	} else if(d->isCurrentExposureTool() && d->hoverTarget.frameIndex >= 0) {
 		setCursor(Qt::SplitHCursor);
