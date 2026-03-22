@@ -1167,9 +1167,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	for(int i = 0; i < trackCount; ++i) {
 		int y = rowHeight + i * rowHeight - yScroll;
 		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
-		bool exposureTrackActive = d->exposureTool.active &&
-								   i >= d->exposureTool.topIndex &&
-								   i <= d->exposureTool.bottomIndex;
+		bool exposureTrackActive =
+			d->exposureTool.active && i >= d->exposureTool.topIndex &&
+			i <= d->exposureTool.bottomIndex && !track.moveLock;
 		painter.setOpacity(track.hidden ? 0.5 : 1.0);
 		const QVector<canvas::TimelineKeyFrame> &keyFrames = track.keyFrames;
 		int keyFrameCount = keyFrames.size();
@@ -1640,7 +1640,8 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 							target.header == TargetHeader::RangeFirst ||
 							target.header == TargetHeader::RangeLast;
 			if((onHeader || (target.trackId > 0 && target.uiTrackIndex >= 0)) &&
-			   target.frameIndex >= 0) {
+			   target.frameIndex >= 0 &&
+			   !d->trackMoveLockedById(target.trackId)) {
 				int exposureTrackIndex = onHeader ? -1 : target.uiTrackIndex;
 				int exposureFrameIndex = target.frameIndex;
 				if(target.side == TargetSide::Right) {
@@ -2580,7 +2581,7 @@ void TimelineWidget::finishExposureTool()
 			trackIds.reserve(trackCount);
 			for(int i = topIndex; i <= bottomIndex; ++i) {
 				int trackId = d->trackIdByUiIndex(i);
-				if(trackId > 0) {
+				if(trackId > 0 && !d->trackMoveLockedById(trackId)) {
 					trackIds.append(trackId);
 				}
 			}
@@ -2618,7 +2619,12 @@ void TimelineWidget::updateCursor()
 		!d->isCurrentExposureTool())) {
 		setCursor(Qt::SizeHorCursor);
 	} else if(d->isCurrentExposureTool() && d->hoverTarget.frameIndex >= 0) {
-		setCursor(Qt::SplitHCursor);
+		if(!d->exposureTool.active &&
+		   d->trackMoveLockedById(d->hoverTarget.trackId)) {
+			setCursor(Qt::ForbiddenCursor);
+		} else {
+			setCursor(Qt::SplitHCursor);
+		}
 	} else {
 		setCursor(Qt::ArrowCursor);
 	}
