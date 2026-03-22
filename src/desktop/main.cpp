@@ -73,6 +73,7 @@
 #if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
 static QPointer<QScreen> initialPrimaryScreen;
 static double initialPrimaryScreenDevicePixelRatio;
+static bool initialAndroidScalingDialog;
 #endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
@@ -121,9 +122,8 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 			}
 		}
 
-		if(mustShowScalingDialog || m_config->getAndroidScalingAskOnStartup()) {
-			showAndroidScalingDialog();
-		}
+		initialAndroidScalingDialog =
+			mustShowScalingDialog || m_config->getAndroidScalingAskOnStartup();
 
 	} else {
 		qWarning("No primary screen");
@@ -1272,8 +1272,10 @@ static void startApplication(
 	}
 
 #if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
-	if(scalingDialogActive) {
+	if(initialAndroidScalingDialog) {
+		initialAndroidScalingDialog = false;
 		scalingMainWindow = new MainWindow(false);
+		app->showAndroidScalingDialog();
 		return;
 	}
 #endif
