@@ -691,8 +691,10 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	d->hiddenIcon = QIcon::fromTheme("view-hidden");
 	d->onionSkinOnIcon = QIcon::fromTheme("onion-on");
 	d->onionSkinOffIcon = QIcon::fromTheme("onion-off");
-	d->moveLockedIcon = QIcon::fromTheme(QStringLiteral("object-locked"));
-	d->moveUnlockedIcon = QIcon::fromTheme(QStringLiteral("object-unlocked"));
+	d->moveLockedIcon =
+		QIcon::fromTheme(QStringLiteral("drawpile_keyframe_movelocked"));
+	d->moveUnlockedIcon =
+		QIcon::fromTheme(QStringLiteral("drawpile_keyframe_moveunlocked"));
 	d->uselessIcon = QIcon::fromTheme("edit-delete");
 	d->verticalScroll = new QScrollBar(Qt::Vertical, this);
 	d->horizontalScroll = new QScrollBar(Qt::Horizontal, this);
