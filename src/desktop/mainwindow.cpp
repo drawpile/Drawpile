@@ -7491,10 +7491,10 @@ void MainWindow::setupActions()
 			tr("Increase Exposure on Current Track"))
 			.icon("sidebar-expand-left")
 			.shortcut("Ctrl+Shift++");
-	QAction *keyFrameExposureIncreaseVisible =
+	QAction *keyFrameExposureIncreaseAll =
 		makeAction(
 			"key-frame-exposure-increase-visible",
-			tr("Increase Exposure on All Visible Tracks"))
+			tr("Increase Exposure on All Tracks"))
 			.shortcut("Ctrl+Shift+Alt++");
 	QAction *keyFrameExposureDecrease =
 		makeAction(
@@ -7502,10 +7502,10 @@ void MainWindow::setupActions()
 			tr("Decrease Exposure on Current Track"))
 			.icon("sidebar-collapse-left")
 			.shortcut("Ctrl+Shift+-");
-	QAction *keyFrameExposureDecreaseVisible =
+	QAction *keyFrameExposureDecreaseAll =
 		makeAction(
 			"key-frame-exposure-decrease-visible",
-			tr("Decrease Exposure on All Visible Tracks"))
+			tr("Decrease Exposure on All Tracks"))
 			.shortcut("Ctrl+Shift+Alt+-");
 	// clang-format off
 	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add").noDefaultShortcut();
@@ -7568,9 +7568,9 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameUnassign);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameExposureIncrease);
-	animationMenu->addAction(keyFrameExposureIncreaseVisible);
+	animationMenu->addAction(keyFrameExposureIncreaseAll);
 	animationMenu->addAction(keyFrameExposureDecrease);
-	animationMenu->addAction(keyFrameExposureDecreaseVisible);
+	animationMenu->addAction(keyFrameExposureDecreaseAll);
 	animationMenu->addSeparator();
 	QMenu *animationLayerMenu = animationMenu->addMenu(
 		QIcon::fromTheme("layer-visible-on"), tr("Create Layers on Key Frame"));
@@ -7670,9 +7670,9 @@ void MainWindow::setupActions()
 			keyFrameDeleteLayer,
 			keyFrameUnassign,
 			keyFrameExposureIncrease,
-			keyFrameExposureIncreaseVisible,
+			keyFrameExposureIncreaseAll,
 			keyFrameExposureDecrease,
-			keyFrameExposureDecreaseVisible,
+			keyFrameExposureDecreaseAll,
 			trackAdd,
 			trackVisible,
 			trackOnionSkin,

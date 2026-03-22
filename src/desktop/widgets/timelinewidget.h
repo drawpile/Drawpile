@@ -49,9 +49,9 @@ public:
 		QAction *keyFrameDeleteLayer = nullptr;
 		QAction *keyFrameUnassign = nullptr;
 		QAction *keyFrameExposureIncrease = nullptr;
-		QAction *keyFrameExposureIncreaseVisible = nullptr;
+		QAction *keyFrameExposureIncreaseAll = nullptr;
 		QAction *keyFrameExposureDecrease = nullptr;
-		QAction *keyFrameExposureDecreaseVisible = nullptr;
+		QAction *keyFrameExposureDecreaseAll = nullptr;
 		QAction *trackAdd = nullptr;
 		QAction *trackVisible = nullptr;
 		QAction *trackOnionSkin = nullptr;
@@ -149,9 +149,9 @@ private:
 	void deleteKeyFrameLayer();
 	void unassignKeyFrame();
 	void increaseKeyFrameExposure();
-	void increaseKeyFrameExposureVisible();
+	void increaseKeyFrameExposureAll();
 	void decreaseKeyFrameExposure();
-	void decreaseKeyFrameExposureVisible();
+	void decreaseKeyFrameExposureAll();
 	void addTrack();
 	void toggleTrackVisible(bool visible);
 	void toggleTrackOnionSkin(bool onionSkin);

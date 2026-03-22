@@ -407,13 +407,13 @@ struct TimelineWidget::Private {
 		return nullptr;
 	}
 
-	QVector<int> visibleTrackIds()
+	QVector<int> unlockedTrackIds()
 	{
 		const QVector<canvas::TimelineTrack> &tracks = getTracks();
 		QVector<int> trackIds;
 		trackIds.reserve(tracks.size());
 		for(const canvas::TimelineTrack &track : tracks) {
-			if(!track.hidden) {
+			if(!track.moveLock) {
 				trackIds.append(track.id);
 			}
 		}
@@ -792,9 +792,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameUnassign);
 	d->frameMenu->addSeparator();
 	d->frameMenu->addAction(actions.keyFrameExposureIncrease);
-	d->frameMenu->addAction(actions.keyFrameExposureIncreaseVisible);
+	d->frameMenu->addAction(actions.keyFrameExposureIncreaseAll);
 	d->frameMenu->addAction(actions.keyFrameExposureDecrease);
-	d->frameMenu->addAction(actions.keyFrameExposureDecreaseVisible);
+	d->frameMenu->addAction(actions.keyFrameExposureDecreaseAll);
 	d->frameMenu->addSeparator();
 	d->frameMenu->addMenu(actions.animationLayerMenu);
 	d->frameMenu->addMenu(actions.animationGroupMenu);
@@ -855,14 +855,14 @@ void TimelineWidget::setActions(const Actions &actions)
 		actions.keyFrameExposureIncrease, &QAction::triggered, this,
 		&TimelineWidget::increaseKeyFrameExposure);
 	connect(
-		actions.keyFrameExposureIncreaseVisible, &QAction::triggered, this,
-		&TimelineWidget::increaseKeyFrameExposureVisible);
+		actions.keyFrameExposureIncreaseAll, &QAction::triggered, this,
+		&TimelineWidget::increaseKeyFrameExposureAll);
 	connect(
 		actions.keyFrameExposureDecrease, &QAction::triggered, this,
 		&TimelineWidget::decreaseKeyFrameExposure);
 	connect(
-		actions.keyFrameExposureDecreaseVisible, &QAction::triggered, this,
-		&TimelineWidget::decreaseKeyFrameExposureVisible);
+		actions.keyFrameExposureDecreaseAll, &QAction::triggered, this,
+		&TimelineWidget::decreaseKeyFrameExposureAll);
 	connect(
 		actions.trackAdd, &QAction::triggered, this, &TimelineWidget::addTrack);
 	connect(
@@ -2117,9 +2117,9 @@ void TimelineWidget::increaseKeyFrameExposure()
 	changeFrameExposure(-1, 1, {d->currentTrackId});
 }
 
-void TimelineWidget::increaseKeyFrameExposureVisible()
+void TimelineWidget::increaseKeyFrameExposureAll()
 {
-	changeFrameExposure(-1, 1, d->visibleTrackIds());
+	changeFrameExposure(-1, 1, d->unlockedTrackIds());
 }
 
 void TimelineWidget::decreaseKeyFrameExposure()
@@ -2127,9 +2127,9 @@ void TimelineWidget::decreaseKeyFrameExposure()
 	changeFrameExposure(-1, -1, {d->currentTrackId});
 }
 
-void TimelineWidget::decreaseKeyFrameExposureVisible()
+void TimelineWidget::decreaseKeyFrameExposureAll()
 {
-	changeFrameExposure(-1, -1, d->visibleTrackIds());
+	changeFrameExposure(-1, -1, d->unlockedTrackIds());
 }
 
 void TimelineWidget::addTrack()
@@ -2959,7 +2959,7 @@ void TimelineWidget::updateActions()
 
 	bool canIncreaseExposure = false;
 	bool canDecreaseExposure = false;
-	if(timelineEditable && track) {
+	if(timelineEditable && track && !track->moveLock) {
 		Exposure exposure = d->currentExposure();
 		canIncreaseExposure = exposure.canIncrease();
 		canDecreaseExposure = exposure.canDecrease();
@@ -2967,8 +2967,8 @@ void TimelineWidget::updateActions()
 	d->actions.keyFrameExposureIncrease->setEnabled(canIncreaseExposure);
 	d->actions.keyFrameExposureDecrease->setEnabled(canDecreaseExposure);
 
-	bool canIncreaseExposureVisible = false;
-	bool canDecreaseExposureVisible = false;
+	bool canIncreaseExposureAll = false;
+	bool canDecreaseExposureAll = false;
 	if(timelineEditable) {
 		bool blockIncrease = false;
 		for(const canvas::TimelineTrack &exposureTrack : d->getTracks()) {
@@ -2982,26 +2982,23 @@ void TimelineWidget::updateActions()
 						// would mess things up potentially far out of view, so
 						// we don't allow it on any tracks in the set.
 						if(exposure.hasFrameAtEnd) {
-							canIncreaseExposureVisible = false;
+							canIncreaseExposureAll = false;
 							blockIncrease = true;
 						} else if(
-							!canIncreaseExposureVisible &&
-							exposure.canIncrease()) {
-							canIncreaseExposureVisible = true;
+							!canIncreaseExposureAll && exposure.canIncrease()) {
+							canIncreaseExposureAll = true;
 						}
 					}
 
-					if(!canDecreaseExposureVisible && exposure.canDecrease()) {
-						canDecreaseExposureVisible = true;
+					if(!canDecreaseExposureAll && exposure.canDecrease()) {
+						canDecreaseExposureAll = true;
 					}
 				}
 			}
 		}
 	}
-	d->actions.keyFrameExposureIncreaseVisible->setEnabled(
-		canIncreaseExposureVisible);
-	d->actions.keyFrameExposureDecreaseVisible->setEnabled(
-		canDecreaseExposureVisible);
+	d->actions.keyFrameExposureIncreaseAll->setEnabled(canIncreaseExposureAll);
+	d->actions.keyFrameExposureDecreaseAll->setEnabled(canDecreaseExposureAll);
 
 	updatePasteAction();
 }
