@@ -1082,7 +1082,7 @@ bool TimelineWidget::event(QEvent *event)
 		} else if(d->hoverTarget.action == TrackAction::ToggleOnionSkin) {
 			tip = tr("Toggle onion skin for you");
 		} else if(d->hoverTarget.action == TrackAction::ToggleMoveLock) {
-			tip = tr("Toggle frame drag lock for you");
+			tip = tr("Toggle frame move lock for you");
 		}
 		setToolTip(tip);
 	}
