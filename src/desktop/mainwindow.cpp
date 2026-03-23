@@ -7862,6 +7862,14 @@ void MainWindow::setupActions()
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 	QAction *projectInfo = makeAction("projectinfo", tr("Project Information…"));
 #endif
+	// clang-format on
+#ifdef Q_OS_ANDROID
+	QAction *androidTextDebug =
+		makeAction("androidtextdebug", tr("Text Input Debug Overlay"))
+			.checkable()
+			.noDefaultShortcut();
+#endif
+	// clang-format off
 	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
 	devtoolsmenu->addAction(systeminfo);
 	devtoolsmenu->addAction(tableteventlog);
@@ -7873,7 +7881,12 @@ void MainWindow::setupActions()
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 	devtoolsmenu->addAction(projectInfo);
 #endif
+	// clang-format on
+#ifdef Q_OS_ANDROID
+	devtoolsmenu->addAction(androidTextDebug);
+#endif
 	devtoolsmenu->addAction(showNetStats);
+	// clang-format off
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(systeminfo, &QAction::triggered, this, &MainWindow::showSystemInfo);
 	connect(tableteventlog, &QAction::triggered, this, &MainWindow::toggleTabletEventLog);
@@ -7885,6 +7898,18 @@ void MainWindow::setupActions()
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 	connect(projectInfo, &QAction::triggered, this, &MainWindow::openProjectInfo);
 #endif
+	// clang-format on
+#ifdef Q_OS_ANDROID
+	connect(androidTextDebug, &QAction::triggered, this, [](bool checked) {
+		if(checked) {
+			qputenv(
+				"KRITA_ANDROID_EDIT_TEXT_DEBUG_DRAW", QByteArrayLiteral("1"));
+		} else {
+			qunsetenv("KRITA_ANDROID_EDIT_TEXT_DEBUG_DRAW");
+		}
+	});
+#endif
+	// clang-format off
 	connect(showNetStats, &QAction::triggered, m_netstatus, &widgets::NetStatus::showNetStats);
 
 	// clang-format on
