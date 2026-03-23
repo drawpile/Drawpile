@@ -1,40 +1,430 @@
-Description: Move focus to the root layout when the soft keyboard is hidden so
-that Android doesn't forwarding the key presses to the hidden soft keyboard.
-With some keyboards, this is benign, but others like GBoard will happily just
-eat the key presses and not do anything with them, breaking most keyboard
-shortcuts.
-
-Fixes https://github.com/drawpile/Drawpile/issues/1495 and
-https://bugs.kde.org/show_bug.cgi?id=431681 in Krita.
+Description: A bunch of rewriting of Qt's keyboard handling on Android because
+it has infinite problems. This doesn't fix all of them, but should make things
+significantly better when using a physical keyboard.
 
 --- a/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
 +++ b/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
-@@ -430,6 +430,8 @@
-                                     }
-                                 break;
-                             case InputMethodManager.RESULT_HIDDEN:
-+                                m_layout.requestFocus();
-+                                //FALLTHROUGH
-                             case InputMethodManager.RESULT_UNCHANGED_HIDDEN:
-                                 setKeyboardVisibility(false, System.nanoTime());
-                                 break;
-@@ -457,6 +459,8 @@
-                         setKeyboardVisibility(true, System.nanoTime());
-                         break;
-                     case InputMethodManager.RESULT_HIDDEN:
-+                        m_layout.requestFocus();
-+                        //FALLTHROUGH
-                     case InputMethodManager.RESULT_UNCHANGED_HIDDEN:
-                         setKeyboardVisibility(false, System.nanoTime());
-                         break;
---- a/src/android/jar/src/org/qtproject/qt5/android/QtLayout.java
-+++ b/src/android/jar/src/org/qtproject/qt5/android/QtLayout.java
-@@ -64,6 +64,8 @@
-         m_startApplicationRunnable = startRunnable;
-         initializeGestureDetector(context);
-         inputEventDispatcher = QtNative.getInputEventDispatcher();
-+        setFocusable(true);
-+        setFocusableInTouchMode(true);
+@@ -123,6 +123,12 @@ public class QtActivityDelegate
+     private static final String EXTRACT_STYLE_KEY = "extract.android.style";
+     private static final String EXTRACT_STYLE_MINIMAL_KEY = "extract.android.style.option";
+ 
++    // Keep these in sync with the values in qnamespace.h!
++    private static final int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_RESIZE = 1;
++    private static final int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_PAN = 2;
++    private static final int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_NOTHING = 3;
++    private static final int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_MASK = 3;
++
+     private static String m_environmentVariables = null;
+     private static String m_applicationParameters = null;
+ 
+@@ -133,6 +139,7 @@ public class QtActivityDelegate
+     private long m_metaState;
+     private int m_lastChar = 0;
+     private int m_softInputMode = 0;
++    private int m_nextEditTextId = 0;
+     private boolean m_fullScreen = false;
+     private boolean m_started = false;
+     private HashMap<Integer, QtSurface> m_surfaces = null;
+@@ -257,18 +264,21 @@ public class QtActivityDelegate
+     }
+     public void resetSoftwareKeyboard()
+     {
+-        if (m_imm == null)
++        if (m_imm == null || m_editText == null)
+             return;
++        final int editTextId = m_editText.m_id;
+         m_editText.postDelayed(new Runnable() {
+             @Override
+             public void run() {
++                if (m_editText == null || m_editText.m_id != editTextId)
++                    return;
+                 m_imm.restartInput(m_editText);
+                 m_editText.m_optionsChanged = false;
+             }
+         }, 5);
      }
  
+-    public void showSoftwareKeyboard(final int x, final int y, final int width, final int height, final int inputHints, final int enterKeyType)
++    public void showSoftwareKeyboard(final int x, final int y, final int width, final int height, final int inputHints, final int enterKeyType, final int platformData)
+     {
+         if (m_imm == null)
+             return;
+@@ -290,10 +300,20 @@ public class QtActivityDelegate
+             if (softInputIsHidden)
+                 return;
+         } else {
+-            if (height > visibleHeight)
+-                m_activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+-            else
+-                m_activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
++            int softInputMode;
++            int platformSoftInputMode = platformData & ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_MASK;
++            if (platformSoftInputMode == ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_RESIZE) {
++                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
++            } else if (platformSoftInputMode == ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_PAN) {
++                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
++            } else if (platformSoftInputMode == ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_NOTHING) {
++                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
++            } else if (height > visibleHeight) {
++                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
++            } else {
++                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
++            }
++            m_activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED | softInputMode);
+         }
+ 
+         int initialCapsMode = 0;
+@@ -378,15 +398,19 @@ public class QtActivityDelegate
+         if (enterKeyType == 0 && (inputHints & ImhMultiLine) != 0)
+             imeOptions = android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION;
+ 
++        ensureEditTextView();
+         m_editText.setInitialCapsMode(initialCapsMode);
+         m_editText.setImeOptions(imeOptions);
+         m_editText.setInputType(inputType);
+ 
+         m_layout.setLayoutParams(m_editText, new QtLayout.LayoutParams(width, height, x, y), false);
+         m_editText.requestFocus();
++        final int editTextId = m_editText.m_id;
+         m_editText.postDelayed(new Runnable() {
+             @Override
+             public void run() {
++                if (m_editText == null || m_editText.m_id != editTextId)
++                    return;
+                 m_imm.showSoftInput(m_editText, 0, new ResultReceiver(new Handler()) {
+                     @Override
+                     protected void onReceiveResult(int resultCode, Bundle resultData) {
+@@ -411,12 +435,12 @@ public class QtActivityDelegate
+                                                     if (metrics.widthPixels > metrics.heightPixels) { // landscape
+                                                         if (m_landscapeKeyboardHeight != r.bottom) {
+                                                             m_landscapeKeyboardHeight = r.bottom;
+-                                                            showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType);
++                                                            showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType, platformData);
+                                                         }
+                                                     } else {
+                                                         if (m_portraitKeyboardHeight != r.bottom) {
+                                                             m_portraitKeyboardHeight = r.bottom;
+-                                                            showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType);
++                                                            showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType, platformData);
+                                                         }
+                                                     }
+                                                 } else {
+@@ -431,6 +455,7 @@ public class QtActivityDelegate
+                                 break;
+                             case InputMethodManager.RESULT_HIDDEN:
+                             case InputMethodManager.RESULT_UNCHANGED_HIDDEN:
++                                removeEditTextView(editTextId);
+                                 setKeyboardVisibility(false, System.nanoTime());
+                                 break;
+                         }
+@@ -446,7 +471,7 @@ public class QtActivityDelegate
+ 
+     public void hideSoftwareKeyboard()
+     {
+-        if (m_imm == null)
++        if (m_imm == null || m_editText == null)
+             return;
+         m_imm.hideSoftInputFromWindow(m_editText.getWindowToken(), 0, new ResultReceiver(new Handler()) {
+             @Override
+@@ -463,6 +488,7 @@ public class QtActivityDelegate
+                 }
+             }
+         });
++        removeEditTextView(m_editText.m_id);
+     }
+ 
+     String getAppIconSize(Activity a)
+@@ -483,7 +509,7 @@ public class QtActivityDelegate
+ 
+     public void updateSelection(int selStart, int selEnd, int candidatesStart, int candidatesEnd)
+     {
+-        if (m_imm == null)
++        if (m_imm == null || m_editText == null)
+             return;
+ 
+         m_imm.updateSelection(m_editText, selStart, selEnd, candidatesStart, candidatesEnd);
+@@ -789,7 +815,6 @@ public class QtActivityDelegate
+             e.printStackTrace();
+         }
+ 
+-        m_editText = new QtEditText(m_activity, this);
+         m_imm = (InputMethodManager)m_activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+         m_surfaces =  new HashMap<Integer, QtSurface>();
+         m_nativeViews = new HashMap<Integer, View>();
+@@ -1066,6 +1091,25 @@ public class QtActivityDelegate
+         if (QtNative.dispatchKeyEvent(event))
+             return true;
+ 
++        // IME interferes *horribly* with physical keyboard input, depending on
++        // which keyboard application you use you get garbage behavior like
++        // random keyboard toolbars popping up, inputs being buffered and
++        // vomited into text boxes as soon as they gain focus, spacebar inputs
++        // being eaten altogether and more. So if we're not supposed to be
++        // taking any actual text input right now, just send it directly to Qt
++        // and don't let IME see it.
++        if (m_editText == null) {
++            if (event.getAction() == KeyEvent.ACTION_DOWN) {
++                if (onKeyDown(event.getKeyCode(), event)) {
++                    return true;
++                }
++            } else if (event.getAction() == KeyEvent.ACTION_UP) {
++                if (onKeyUp(event.getKeyCode(), event)) {
++                    return true;
++                }
++            }
++        }
++
+         try {
+             return (Boolean) m_super_dispatchKeyEvent.invoke(m_activity, event);
+         } catch (Exception e) {
+@@ -1136,9 +1180,13 @@ public class QtActivityDelegate
+ 
+     public void openContextMenu(final int x, final int y, final int w, final int h)
+     {
++        if (m_editText == null)
++            return;
+         m_layout.postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
++                    if (m_editText == null)
++                        return;
+                     m_layout.setLayoutParams(m_editText, new QtLayout.LayoutParams(w, h, x, y), false);
+                     PopupMenu popup = new PopupMenu(m_activity, m_editText);
+                     QtActivityDelegate.this.onCreatePopupMenu(popup.getMenu());
+@@ -1319,4 +1367,28 @@ public class QtActivityDelegate
+     {
+         QtNative.sendRequestPermissionsResult(requestCode, permissions, grantResults);
+     }
++
++    private void ensureEditTextView()
++    {
++        if (m_editText == null) {
++            // Integer overflow in Java is well-defined, it wraps around. This
++            // is fine for our purposes, we just want a unique id for the sake
++            // of synchronization.
++            m_editText = new QtEditText(m_activity, this, m_nextEditTextId++, System.getenv("KRITA_ANDROID_EDIT_TEXT_DEBUG_DRAW") != null);
++        }
++    }
++
++    private void removeEditTextView(int editTextId)
++    {
++        if (m_editText != null && m_editText.m_id == editTextId) {
++            m_imm.invalidateInput(m_editText);
++            m_editText.clearFocus();
++            m_editText.setFocusable(false);
++            m_editText.setFocusableInTouchMode(false);
++            m_layout.removeView(m_editText);
++            m_editText = null;
++            m_layout.requestFocus();
++            m_imm.restartInput(m_layout);
++        }
++    }
+ }
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtEditText.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtEditText.java
+@@ -48,10 +48,12 @@ import android.view.inputmethod.InputConnection;
+ 
+ public class QtEditText extends View
+ {
++    final int m_id;
+     int m_initialCapsMode = 0;
+     int m_imeOptions = 0;
+     int m_inputType = InputType.TYPE_CLASS_TEXT;
+     boolean m_optionsChanged = false;
++    final boolean m_debugDrawEnabled;
+     QtActivityDelegate m_activityDelegate;
+ 
+     public void setImeOptions(int m_imeOptions)
+@@ -79,9 +81,11 @@ public class QtEditText extends View
+         m_optionsChanged = true;
+     }
+ 
+-    public QtEditText(Context context, QtActivityDelegate activityDelegate)
++    public QtEditText(Context context, QtActivityDelegate activityDelegate, int id, boolean debugDrawEnabled)
+     {
+         super(context);
++        m_id = id;
++        m_debugDrawEnabled = debugDrawEnabled;
+         setFocusable(true);
+         setFocusableInTouchMode(true);
+         m_activityDelegate = activityDelegate;
+@@ -101,10 +105,11 @@ public class QtEditText extends View
+         return new QtInputConnection(this);
+     }
+ 
+-// // DEBUG CODE
+-//    @Override
+-//    protected void onDraw(Canvas canvas) {
+-//        canvas.drawARGB(127, 255, 0, 255);
+-//        super.onDraw(canvas);
+-//    }
++   @Override
++   protected void onDraw(android.graphics.Canvas canvas) {
++       if (m_debugDrawEnabled) {
++           canvas.drawARGB(127, 255, 0, 255);
++       }
++       super.onDraw(canvas);
++   }
+ }
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtLayout.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtLayout.java
+@@ -42,6 +42,7 @@ package org.qtproject.qt5.android;
+ 
+ import android.app.Activity;
+ import android.content.Context;
++import android.os.Build;
+ import android.util.AttributeSet;
+ import android.util.DisplayMetrics;
+ import android.view.View;
+@@ -62,6 +63,7 @@ public class QtLayout extends ViewGroup
+     {
+         super(context);
+         m_startApplicationRunnable = startRunnable;
++        initializeFocus();
+         initializeGestureDetector(context);
+         inputEventDispatcher = QtNative.getInputEventDispatcher();
+     }
+@@ -69,6 +71,7 @@ public class QtLayout extends ViewGroup
      public QtLayout(Context context, AttributeSet attrs)
+     {
+         super(context, attrs);
++        initializeFocus();
+         initializeGestureDetector(context);
+         inputEventDispatcher = QtNative.getInputEventDispatcher();
+     }
+@@ -76,10 +79,23 @@ public class QtLayout extends ViewGroup
+     public QtLayout(Context context, AttributeSet attrs, int defStyle)
+     {
+         super(context, attrs, defStyle);
++        initializeFocus();
+         initializeGestureDetector(context);
+         inputEventDispatcher = QtNative.getInputEventDispatcher();
+     }
+ 
++    private void initializeFocus()
++    {
++        setFocusable(true);
++        setFocusableInTouchMode(true);
++        setFocusedByDefault(true);
++        // On some devices, the entire view gets tinted blue when a key is
++        // pressed to let the user know it's in focus. This should disable it.
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++            setDefaultFocusHighlightEnabled(false);
++        }
++    }
++
+     private void initializeGestureDetector(Context context)
+     {
+         m_gestureDetector =
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+@@ -520,13 +520,14 @@ public class QtNative
+                                              final int width,
+                                              final int height,
+                                              final int inputHints,
+-                                             final int enterKeyType)
++                                             final int enterKeyType,
++                                             final int platformData)
+     {
+         runAction(new Runnable() {
+             @Override
+             public void run() {
+                 if (m_activityDelegate != null)
+-                    m_activityDelegate.showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType);
++                    m_activityDelegate.showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType, platformData);
+             }
+         });
+     }
+--- a/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java
++++ b/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java
+@@ -1091,9 +1091,9 @@ public class QtActivity extends Activity
+ 
+     public void showSoftwareKeyboard(final int x, final int y, final int width,
+                                      final int height, final int inputHints,
+-                                     final int enterKeyType)
++                                     final int enterKeyType, final int platformData)
+     {
+-        QtNative.activityDelegate().showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType);
++        QtNative.activityDelegate().showSoftwareKeyboard(x, y, width, height, inputHints, enterKeyType, platformData);
+     }
+ 
+     public boolean startApplication()
+--- a/src/corelib/global/qnamespace.h
++++ b/src/corelib/global/qnamespace.h
+@@ -1474,6 +1474,17 @@ public:
+     Q_DECLARE_FLAGS(InputMethodHints, InputMethodHint)
+     Q_DECLARE_OPERATORS_FOR_FLAGS(InputMethodHints)
+ 
++#ifdef Q_OS_ANDROID
++    // Set these values on an input method query's ImPlatformData value to set
++    // the soft input mode for when the widget shows a keyboard. See the
++    // equivalent LayoutParams.SOFT_INPUT_ADJUST_* values for what these do.
++    // Keep these in sync with the values in QtActivityDelegate.java!
++    static constexpr unsigned int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_RESIZE = 1u;
++    static constexpr unsigned int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_PAN = 2;
++    static constexpr unsigned int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_NOTHING = 3u;
++    static constexpr unsigned int ANDROID_INPUT_PLATFORM_DATA_SOFT_INPUT_ADJUST_MASK = 3u;
++#endif
++
+     enum EnterKeyType {
+         EnterKeyDefault,
+         EnterKeyReturn,
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -102,19 +102,20 @@ namespace QtAndroidInput
+                                                   candidatesEnd);
+     }
+ 
+-    void showSoftwareKeyboard(int left, int top, int width, int height, int inputHints, int enterKeyType)
++    void showSoftwareKeyboard(int left, int top, int width, int height, int inputHints, int enterKeyType, int platformData)
+     {
+         QJNIObjectPrivate::callStaticMethod<void>(applicationClass(),
+                                                   "showSoftwareKeyboard",
+-                                                  "(IIIIII)V",
++                                                  "(IIIIIII)V",
+                                                   left,
+                                                   top,
+                                                   width,
+                                                   height,
+                                                   inputHints,
+-                                                  enterKeyType);
++                                                  enterKeyType,
++                                                  platformData);
+ #ifdef QT_DEBUG_ANDROID_IM_PROTOCOL
+-        qDebug() << "@@@ SHOWSOFTWAREKEYBOARD" << left << top << width << height << inputHints << enterKeyType;
++        qDebug() << "@@@ SHOWSOFTWAREKEYBOARD" << left << top << width << height << inputHints << enterKeyType << platformData;
+ #endif
+     }
+ 
+--- a/src/plugins/platforms/android/androidjniinput.h
++++ b/src/plugins/platforms/android/androidjniinput.h
+@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
+ namespace QtAndroidInput
+ {
+     // Software keyboard support
+-    void showSoftwareKeyboard(int top, int left, int width, int height, int inputHints, int enterKeyType);
++    void showSoftwareKeyboard(int top, int left, int width, int height, int inputHints, int enterKeyType, int platformData);
+     void resetSoftwareKeyboard();
+     void hideSoftwareKeyboard();
+     bool isSoftwareKeyboardVisible();
+--- a/src/plugins/platforms/android/qandroidinputcontext.cpp
++++ b/src/plugins/platforms/android/qandroidinputcontext.cpp
+@@ -648,7 +648,7 @@ void QAndroidInputContext::updateSelectionHandles()
+ 
+         auto curRect = im->cursorRectangle();
+         QPoint cursorPoint(window->mapToGlobal(QPoint(curRect.x() + (curRect.width() / 2), curRect.y() + curRect.height())));
+-        QPoint editMenuPoint(cursorPoint.x(), cursorPoint.y());
++        QPoint editMenuPoint(cursorPoint.x(), curRect.y());
+         m_handleMode &= ShowEditPopup;
+         m_handleMode |= ShowCursor;
+         uint32_t buttons = EditContext::PasteButton;
+@@ -947,7 +947,8 @@ void QAndroidInputContext::showInputPanel()
+     QRect rect = inputItemRectangle();
+     QtAndroidInput::showSoftwareKeyboard(rect.left(), rect.top(), rect.width(), rect.height(),
+                                          query->value(Qt::ImHints).toUInt(),
+-                                         query->value(Qt::ImEnterKeyType).toUInt());
++                                         query->value(Qt::ImEnterKeyType).toUInt(),
++                                         query->value(Qt::ImPlatformData).toUInt());
+ }
+ 
+ void QAndroidInputContext::showInputPanelLater(Qt::ApplicationState state)
