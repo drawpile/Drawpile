@@ -1929,8 +1929,9 @@ bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
 			if(const canvas::TransformModel *transform = canvas->transform();
 			   transform->isActive()) {
 				crop = transform->dstQuad().boundingRect().toAlignedRect();
-			} else if(canvas::SelectionModel *sel = canvas->selection();
-					  sel->isValid()) {
+			} else if(
+				canvas::SelectionModel *sel = canvas->selection();
+				sel->isValid()) {
 				crop = sel->bounds();
 			}
 
@@ -2741,9 +2742,8 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 			delete tempFile;
 		}
 
-	} else if(QRegularExpression{"\\.drawdancedump$", opt}
-				  .match(path)
-				  .hasMatch()) {
+	} else if(
+		QRegularExpression{"\\.drawdancedump$", opt}.match(path).hasMatch()) {
 		DP_LoadResult result = m_doc->loadRecording(loadPath, true);
 		if(result == DP_LOAD_RESULT_SUCCESS) {
 			QFileInfo fileinfo{path};
@@ -5397,8 +5397,8 @@ void MainWindow::resizeCanvas(int expandDirection)
 	   transform->isActive()) {
 		dlg->setBounds(
 			transform->dstQuad().boundingRect().toAlignedRect(), false);
-	} else if(canvas::SelectionModel *sel = canvas->selection();
-			  sel->isValid()) {
+	} else if(
+		canvas::SelectionModel *sel = canvas->selection(); sel->isValid()) {
 		dlg->setBounds(sel->bounds(), true);
 	}
 
