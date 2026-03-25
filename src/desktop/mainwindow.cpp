@@ -2821,6 +2821,11 @@ void MainWindow::open()
 	});
 }
 
+void MainWindow::showRecover()
+{
+	showStartDialogOnPage(int(dialogs::StartDialog::Entry::Recover));
+}
+
 #ifdef __EMSCRIPTEN__
 void MainWindow::download()
 {
@@ -6021,6 +6026,9 @@ void MainWindow::setupActions()
 	QAction *closefile =
 		makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
+	QAction *recover = makeAction("recover", tr("Recover…"))
+						   .icon(QStringLiteral("backup"))
+						   .noDefaultShortcut();
 	QAction *autoRecord = makeAction("autorecord", tr("Autorecovery"))
 							  .noDefaultShortcut()
 							  .checkable();
@@ -6147,6 +6155,7 @@ void MainWindow::setupActions()
 
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
+	connect(recover, &QAction::triggered, this, &MainWindow::showRecover);
 	connect(
 		autoRecord, &QAction::triggered, this,
 		&MainWindow::toggleProjectRecording);
@@ -6202,6 +6211,7 @@ void MainWindow::setupActions()
 		m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
 	}
 #endif
+	filemenu->addAction(recover);
 	filemenu->addSeparator();
 
 #ifdef __EMSCRIPTEN__

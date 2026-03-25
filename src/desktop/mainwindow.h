@@ -154,6 +154,7 @@ public slots:
 	void start();
 	void showNew();
 	void open();
+	void showRecover();
 #ifdef __EMSCRIPTEN__
 	void download();
 	void downloadSelection();
