@@ -17,6 +17,7 @@ class QButtonGroup;
 class QCheckBox;
 class QCursor;
 class QDialog;
+class QDoubleSpinBox;
 class QFormLayout;
 class QFrame;
 class QHeaderView;
@@ -215,6 +216,8 @@ EncapsulatedLayout *encapsulate(const QString &label, QWidget *child);
 EncapsulatedLayout *indent(QWidget *child);
 
 void encapsulateSpinBoxPrefixSuffix(QSpinBox *spinBox, const QString &text);
+void encapsulateDoubleSpinBoxPrefixSuffix(
+	QDoubleSpinBox *spinBox, const QString &text);
 
 FormNote *formNote(
 	const QString &text, QSizePolicy::ControlType type = QSizePolicy::Label,

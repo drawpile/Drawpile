@@ -14,6 +14,7 @@
 #include <QCursor>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
+#include <QDoubleSpinBox>
 #include <QEvent>
 #include <QFont>
 #include <QFontMetrics>
@@ -1007,6 +1008,20 @@ EncapsulatedLayout *indent(QWidget *child)
 }
 
 void encapsulateSpinBoxPrefixSuffix(QSpinBox *spinBox, const QString &text)
+{
+	QString splitter = QStringLiteral("%1");
+	compat::sizetype index = text.indexOf(splitter);
+	if(index == compat::sizetype(-1)) {
+		spinBox->setPrefix(text);
+		spinBox->setSuffix(QString());
+	} else {
+		spinBox->setPrefix(text.mid(0, index));
+		spinBox->setSuffix(text.mid(index + splitter.length()));
+	}
+}
+
+void encapsulateDoubleSpinBoxPrefixSuffix(
+	QDoubleSpinBox *spinBox, const QString &text)
 {
 	QString splitter = QStringLiteral("%1");
 	compat::sizetype index = text.indexOf(splitter);
