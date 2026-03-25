@@ -253,6 +253,12 @@ public:
     void setSoftMinimum(qreal newSoftMinimum);
     void setSoftMaximum(qreal newSoftMaximum);
 
+    // Drawpile addition: override text to be shown, set empty to clear.
+    void setOverrideText(const QString &overrideText);
+
+    // Drawpile addition: check whether the soft range is clamping the input.
+    bool isSoftRangeActive() const;
+
     bool isIndeterminate() const;
     void setIndeterminate(bool indeterminate);
 

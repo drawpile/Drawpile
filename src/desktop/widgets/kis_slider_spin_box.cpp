@@ -225,6 +225,18 @@ void KisDoubleSliderSpinBox::setSoftMaximum(double newSoftMaximum)
     setSoftRange(d->softMinimum(), newSoftMaximum);
 }
 
+// Drawpile patch
+void KisDoubleSliderSpinBox::setOverrideText(const QString &overrideText)
+{
+    d->setOverrideText(overrideText);
+}
+
+// Drawpile patch
+bool KisDoubleSliderSpinBox::isSoftRangeActive() const
+{
+    return d->isSoftRangeActive();
+}
+
 bool KisDoubleSliderSpinBox::isIndeterminate() const
 {
     return d->isIndeterminate();
