@@ -1045,6 +1045,16 @@ static StartupOptions initApp(DrawpileApp &app)
 		}));
 #endif
 
+#ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS
+	CFG_BIND_SET_FN(
+		cfg, AndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys, &app,
+		([](bool enabled) {
+			QCoreApplication::setKritaAttribute(
+				KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS,
+				enabled);
+		}));
+#endif
+
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);

@@ -1,0 +1,112 @@
+Description: OnePlus tablet handling: interpret F13 to F24 keys on Android and
+add a hack to translate F21 to middle click.
+
+--- a/src/corelib/kernel/qcoreapplication.h
++++ b/src/corelib/kernel/qcoreapplication.h
+@@ -87,6 +87,13 @@ class QAbstractNativeEventFilter;
+ #   define KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS 1u
+ #endif
+ 
++// OnePlus workaround. The stylus inputs F21 for its button. Turn it into proper
++// middle clicks instead. This constant name is kept generic in case we need to
++// add additional function keys.
++#ifdef Q_OS_ANDROID
++#   define KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS 2u
++#endif
++
+ // End of Krita attributes.
+ 
+ class Q_CORE_EXPORT QCoreApplication
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -87,6 +87,7 @@ namespace QtAndroidInput
+     static long m_lastTabletTime;
+     static bool m_emulatedPageUpPressed = false;
+     static bool m_emulatedPageDownPressed = false;
++    static bool m_emulatedF21Pressed = false;
+ 
+     void updateSelection(int selStart, int selEnd, int candidatesStart, int candidatesEnd)
+     {
+@@ -640,6 +641,10 @@ namespace QtAndroidInput
+         if (key >= 0x00000083 && key <= 0x0000008e)
+             return Qt::Key_F1 + key - 0x00000083;
+ 
++        // F13--F24     0x00000146 -- 0x00000151
++        if (key >= 0x00000146 && key <= 0x00000151)
++            return Qt::Key_F13 + key - 0x00000146;
++
+         // NUMPAD_0--NUMPAD_9     0x00000090 -- 0x00000099
+         if (key >= 0x00000090 && key <= 0x00000099)
+             return Qt::KeypadModifier + Qt::Key_0 + key - 0x00000090;
+@@ -1052,14 +1057,11 @@ namespace QtAndroidInput
+     }
+ 
+     // Xiaomi insanity, their stylus buttons input page up and down key presses.
+-    static bool emulateTabletButtonsFromPageUpAndPageDown(
++    // And also OnePlus, their stylus button inputs F21.
++    static bool emulateTabletButtonsFromKeyboard(
+         int key, jint modifier, jboolean autoRepeat, bool down)
+     {
+-        if (!QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)) {
+-            return false;
+-        }
+-
+-        if ((m_emulatedPageUpPressed || m_emulatedPageDownPressed) && autoRepeat) {
++        if ((m_emulatedPageUpPressed || m_emulatedPageDownPressed || m_emulatedF21Pressed) && autoRepeat) {
+             return true;
+         }
+ 
+@@ -1070,13 +1072,29 @@ namespace QtAndroidInput
+         int buttonState;
+         switch (key) {
+         case 0x0000005c: // KEYCODE_PAGE_UP
+-            buttonState = AMOTION_EVENT_BUTTON_STYLUS_SECONDARY;
+-            m_emulatedPageUpPressed = down;
+-            break;
++            if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)) {
++                buttonState = AMOTION_EVENT_BUTTON_STYLUS_SECONDARY;
++                m_emulatedPageUpPressed = down;
++                break;
++            } else {
++                return false;
++            }
+         case 0x0000005d: // KEYCODE_PAGE_DOWN
+-            buttonState = AMOTION_EVENT_BUTTON_STYLUS_PRIMARY;
+-            m_emulatedPageDownPressed = down;
+-            break;
++            if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)) {
++                buttonState = AMOTION_EVENT_BUTTON_STYLUS_PRIMARY;
++                m_emulatedPageDownPressed = down;
++                break;
++            } else {
++                return false;
++            }
++        case 0x0000014e: // KEYCODE_F21
++            if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)) {
++                buttonState = AMOTION_EVENT_BUTTON_STYLUS_PRIMARY;
++                m_emulatedF21Pressed = down;
++                break;
++            } else {
++                return false;
++            }
+         default:
+             return false;
+         }
+@@ -1099,7 +1117,7 @@ namespace QtAndroidInput
+ 
+     static void keyDown(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
+     {
+-        if (!emulateTabletButtonsFromPageUpAndPageDown(key, modifier, autoRepeat, true)) {
++        if (!emulateTabletButtonsFromKeyboard(key, modifier, autoRepeat, true)) {
+             QWindowSystemInterface::handleKeyEvent(0,
+                                                    QEvent::KeyPress,
+                                                    mapAndroidKey(key),
+@@ -1111,7 +1129,7 @@ namespace QtAndroidInput
+ 
+     static void keyUp(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
+     {
+-        if (!emulateTabletButtonsFromPageUpAndPageDown(key, modifier, autoRepeat, false)) {
++        if (!emulateTabletButtonsFromKeyboard(key, modifier, autoRepeat, false)) {
+             QWindowSystemInterface::handleKeyEvent(0,
+                                                    QEvent::KeyRelease,
+                                                    mapAndroidKey(key),

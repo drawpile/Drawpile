@@ -23,6 +23,15 @@ SETTING(
 	"settings/androidscaling/targetscale",
 	config::Config::defaultAndroidScalingTargetScale())
 #endif
+#if defined(                                                                   \
+	KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)
+SETTING(
+	androidWorkaroundEmulateMouseButtonsForHighFunctionKeys,
+	AndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys,
+	"settings/androidworkaround/emulatemousebuttonsforfkeys",
+	config::Config::
+		defaultAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys())
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 SETTING(
 	androidWorkaroundEmulateMouseButtonsForPageUpDown,

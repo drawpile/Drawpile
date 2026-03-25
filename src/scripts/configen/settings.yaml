@@ -22,6 +22,18 @@ settings:
     legacy_package: 'libclient'
     condition: 'defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)'
 
+  - id: androidWorkaroundEmulateMouseButtonsForHighFunctionKeys
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/androidworkaround/emulatemousebuttonsforfkeys'
+    legacy_package: 'libclient'
+    condition: 'defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)'
+    comment: |
+      OnePlus workaround. Their stylus inputs F21 for its button. This
+      workaround turns them into middle mouse clicks instead. We just enable
+      this by default unconditionally because it's doubtful anything inputs
+      those keys.
+
   - id: androidWorkaroundEmulateMouseButtonsForPageUpDown
     type: 'bool'
     default:

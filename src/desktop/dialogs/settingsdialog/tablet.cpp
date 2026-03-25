@@ -152,11 +152,22 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, InterpolateInputs, interpolate);
 	form->addRow(tr("Workarounds:"), interpolate);
 
+#ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS
+	QCheckBox *highFunctionKeysWorkaround =
+		//: OnePlus is a brand that makes Android tablets. This is a setting for
+		//: a workaround that matters for those tablets.
+		new QCheckBox(tr("Translate F21 key to middle click (OnePlus)"));
+	CFG_BIND_CHECKBOX(
+		cfg, AndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys,
+		highFunctionKeysWorkaround);
+	form->addRow(nullptr, highFunctionKeysWorkaround);
+#endif
+
 #ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN
 	QCheckBox *pageUpDownWorkaround =
 		//: Xiaomi is a brand that makes Android tablets. This is a setting for
 		//: a workaround that matters for those tablets.
-		new QCheckBox(tr("Translate stylus buttons to clicks (Xiaomi)"));
+		new QCheckBox(tr("Translate page keys to clicks (Xiaomi)"));
 	CFG_BIND_CHECKBOX(
 		cfg, AndroidWorkaroundEmulateMouseButtonsForPageUpDown,
 		pageUpDownWorkaround);

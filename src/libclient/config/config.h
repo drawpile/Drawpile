@@ -261,6 +261,16 @@ public:
 	static double defaultAndroidScalingTargetScale();
 #endif
 
+#if defined(                                                                   \
+	KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)
+	virtual bool
+	getAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys() const = 0;
+	virtual void
+	setAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys(bool value) = 0;
+	static bool
+	defaultAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys();
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	virtual bool
 	getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const = 0;
@@ -1291,6 +1301,11 @@ Q_SIGNALS:
 #endif
 #if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
 	void changeAndroidScalingTargetScale(double value);
+#endif
+#if defined(                                                                   \
+	KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)
+	void
+	changeAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys(bool value);
 #endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	void changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value);

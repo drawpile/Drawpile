@@ -39,6 +39,17 @@ SettingsConfig::SettingsConfig(
 		&desktop::settings::Settings::androidScalingTargetScaleChanged, this,
 		&SettingsConfig::changeAndroidScalingTargetScale, Qt::DirectConnection);
 #endif
+#if defined(                                                                   \
+	KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::
+			androidWorkaroundEmulateMouseButtonsForHighFunctionKeysChanged,
+		this,
+		&SettingsConfig::
+			changeAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys,
+		Qt::DirectConnection);
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	connect(
 		m_settings,
@@ -987,6 +998,23 @@ double SettingsConfig::getAndroidScalingTargetScale() const
 void SettingsConfig::setAndroidScalingTargetScale(double value)
 {
 	m_settings->setAndroidScalingTargetScale(value);
+}
+#endif
+
+#if defined(                                                                   \
+	KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)
+bool SettingsConfig::
+	getAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys() const
+{
+	return m_settings
+		->androidWorkaroundEmulateMouseButtonsForHighFunctionKeys();
+}
+
+void SettingsConfig::setAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys(
+	bool value)
+{
+	m_settings->setAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys(
+		value);
 }
 #endif
 

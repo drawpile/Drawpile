@@ -70,6 +70,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't consider the canvas eligible for long-pressing to open a (nonexistent) context menu.
  * Fix: Ignore motions right before releasing a numeric slider so that lifting the stylus doesn't annoyingly nudge the value off what you meant to pick.
  * Fix: Some text input on Android where spacebar wouldn't work, the view would turn blue on some devices, the text area would block stylus input or the text menu would cover up the text.
+ * Fix: Handle F13 to F24 keys on Android and translate F21 to middle click by default. This is a workaround for OnePlus devices that inexplicably press this keyboard key when you press the button on their stylus. Thanks Clover_Yan for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

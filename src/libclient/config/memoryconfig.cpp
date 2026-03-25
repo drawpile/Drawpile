@@ -104,6 +104,25 @@ void MemoryConfig::setAndroidScalingTargetScale(double value)
 }
 #endif
 
+#if defined(                                                                   \
+	KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)
+bool MemoryConfig::getAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys()
+	const
+{
+	return m_androidWorkaroundEmulateMouseButtonsForHighFunctionKeys;
+}
+
+void MemoryConfig::setAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys(
+	bool value)
+{
+	if(value != m_androidWorkaroundEmulateMouseButtonsForHighFunctionKeys) {
+		m_androidWorkaroundEmulateMouseButtonsForHighFunctionKeys = value;
+		Q_EMIT changeAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys(
+			m_androidWorkaroundEmulateMouseButtonsForHighFunctionKeys);
+	}
+}
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 bool MemoryConfig::getAndroidWorkaroundEmulateMouseButtonsForPageUpDown() const
 {
