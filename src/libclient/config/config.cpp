@@ -119,6 +119,17 @@ int Config::defaultAutoRecordMetadataIntervalMinutes()
 	return 4;
 }
 
+double Config::defaultAutoRecordSizeLimitGiB()
+{
+#if defined(__EMSCRIPTEN__)
+	return 0.5;
+#elif defined(Q_OS_ANDROID)
+	return 1.0;
+#else
+	return 5.0;
+#endif
+}
+
 int Config::defaultAutoRecordSnapshotIntervalMinutes()
 {
 	return 10;

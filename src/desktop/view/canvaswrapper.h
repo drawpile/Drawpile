@@ -122,6 +122,8 @@ public:
 	virtual void hideDisconnectedWarning() = 0;
 	virtual void showResetNotice(bool saveInProgress) = 0;
 	virtual void hideResetNotice() = 0;
+	virtual void showProjectSizeLimitWarning(const QString &message) = 0;
+	virtual void hideProjectSizeLimitWarning() = 0;
 
 	virtual void showPopupNotice(const QString &message) = 0;
 

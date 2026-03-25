@@ -305,6 +305,10 @@ public:
 	virtual void setAutoRecordMetadataIntervalMinutes(int value) = 0;
 	static int defaultAutoRecordMetadataIntervalMinutes();
 
+	virtual double getAutoRecordSizeLimitGiB() const = 0;
+	virtual void setAutoRecordSizeLimitGiB(double value) = 0;
+	static double defaultAutoRecordSizeLimitGiB();
+
 	virtual int getAutoRecordSnapshotIntervalMinutes() const = 0;
 	virtual void setAutoRecordSnapshotIntervalMinutes(int value) = 0;
 	static int defaultAutoRecordSnapshotIntervalMinutes();
@@ -1318,6 +1322,7 @@ Q_SIGNALS:
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
 	void changeAutoRecordMetadataIntervalMinutes(int value);
+	void changeAutoRecordSizeLimitGiB(double value);
 	void changeAutoRecordSnapshotIntervalMinutes(int value);
 	void changeAutomaticAlphaPreserve(int value);
 	void changeBrushCursor(int value);

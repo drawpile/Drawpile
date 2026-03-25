@@ -147,6 +147,10 @@ public:
 
 	bool isProjectRecording() const;
 
+	size_t projectRecordingLastReportedSizeInBytes() const;
+	size_t projectRecordingSizeLimitInBytes() const;
+	void setProjectRecordingSizeLimitInBytes(size_t sizeLimitInBytes);
+
 	bool isRetainProjectRecordings() const { return m_retainProjectRecordings; }
 	void setRetainProjectRecordings(bool retainProjectRecordings);
 
@@ -229,6 +233,8 @@ signals:
 
 	void projectRecordingStarted();
 	void projectRecordingStopped(bool notify);
+	void projectRecordingSizeLimitWarning(
+		size_t sizeInBytes, size_t sizeLimitInBytes);
 	void projectRecordingErrorOccurred(const QString &message);
 	void retainProjectRecordingsChanged(bool retainProjectRecordings);
 
@@ -254,6 +260,8 @@ private:
 	void updatePaintEngineTransform();
 
 	bool stopProjectRecording(bool remove, bool notify);
+	void handleProjectRecordingSizeChanged(
+		size_t sizeInBytes, size_t sizeLimitInBytes);
 	void handleProjectRecordingError(const QString &message);
 
 	void applyLocalStateActions(
@@ -282,6 +290,7 @@ private:
 
 	QString m_title;
 	QString m_pinnedMessage;
+	size_t m_projectRecordingLastWarnedSizeLimit = 0;
 
 	uint8_t m_localUserId = 1;
 	bool m_dirty = false;

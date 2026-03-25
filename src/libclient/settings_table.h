@@ -57,6 +57,10 @@ SETTING(
 	"settings/autorecord/metadatainterval",
 	config::Config::defaultAutoRecordMetadataIntervalMinutes())
 SETTING(
+	autoRecordSizeLimitGiB, AutoRecordSizeLimitGiB,
+	"settings/autorecord/sizelimitgib",
+	config::Config::defaultAutoRecordSizeLimitGiB())
+SETTING(
 	autoRecordSnapshotIntervalMinutes, AutoRecordSnapshotIntervalMinutes,
 	"settings/autorecord/snapshotinterval",
 	config::Config::defaultAutoRecordSnapshotIntervalMinutes())

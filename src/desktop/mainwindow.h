@@ -63,10 +63,11 @@ class Timeline;
 
 namespace dialogs {
 class DumpPlaybackDialog;
-class PlaybackDialog;
 class HostDialog;
-class SessionSettingsDialog;
+class PlaybackDialog;
+class ProjectRecordingSettingsDialog;
 class ServerLogDialog;
+class SessionSettingsDialog;
 class SettingsDialog;
 class StartDialog;
 class TabletTestDialog;
@@ -216,6 +217,7 @@ public slots:
 	void savePreResetImageAs();
 	void showCompatibilityModeWarning();
 	void discardPreResetImage();
+	void showProjectRecordingSettings();
 
 private slots:
 	void showSystemInfo();
@@ -406,9 +408,13 @@ private:
 	void showResetImageTooLargeErrorMessage(int maxSize, bool autoReset);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 
+	void stopProjectRecording();
 	void toggleProjectRecording(bool enabled);
 	void onProjectRecordingStarted();
 	void onProjectRecordingStopped(bool notify);
+	void setProjectRecordingSizeLimitInBytes(size_t sizeLimitInBytes);
+	void showProjectRecordingSizeLimitWarning(
+		size_t sizeInBytes, size_t sizeLimitInBytes);
 	void showProjectRecordingError(const QString &message);
 	void updateProjectActions();
 #ifdef DRAWPILE_PROJECT_DIALOG

@@ -140,6 +140,7 @@ void ProjectWrangler::handleEvent(const DP_ProjectWorkerEvent *event)
 	case DP_PROJECT_WORKER_EVENT_THUMBNAIL_MAKE_ERROR:
 	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR:
 	case DP_PROJECT_WORKER_EVENT_SAVE_ERROR:
+	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR:
 		Q_EMIT unhandledErrorOccurred(
 			tr("Unhandled error %d of type %d: %s")
 				.arg(
@@ -165,6 +166,8 @@ void ProjectWrangler::handleEvent(const DP_ProjectWorkerEvent *event)
 		DP_MUTEX_MUST_UNLOCK(m_mutex);
 		Q_EMIT overviewGenerated();
 		return;
+	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT:
+		return; // Don't care.
 	}
 	qCWarning(lcDpProjectWrangler, "Unhandled event %d", int(type));
 }

@@ -32,6 +32,8 @@ public:
 	void hideDisconnectedWarning();
 	void showResetNotice(bool saveInProgress);
 	void hideResetNotice();
+	void showProjectSizeLimitWarning(const QString &message);
+	void hideProjectSizeLimitWarning();
 
 signals:
 	void colorDropped(const QColor &color);
@@ -41,6 +43,8 @@ signals:
 	void reconnectDismissed();
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
+	void projectSizeSettingsRequested();
+	void projectSizeDismissed();
 
 protected:
 	void focusInEvent(QFocusEvent *event) override;
@@ -61,7 +65,7 @@ protected:
 	void scrollContentsBy(int dx, int dy) override;
 
 private:
-	enum class NotificationBarState { None, Reconnect, Reset };
+	enum class NotificationBarState { None, Reconnect, Reset, ProjectSize };
 
 	void setEnableScrollBars(bool enableScrollBars);
 	void setTouchUseGestureEvents(bool touchUseGestureEvents);

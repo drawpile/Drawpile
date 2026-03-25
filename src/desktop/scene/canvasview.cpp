@@ -392,6 +392,26 @@ void CanvasView::hideResetNotice()
 	}
 }
 
+void CanvasView::showProjectSizeLimitWarning(const QString &message)
+{
+	if(m_notificationBarState != NotificationBarState::ProjectSize) {
+		dismissNotificationBar();
+		m_notificationBarState = NotificationBarState::ProjectSize;
+		m_notificationBar->show(
+			message, QIcon::fromTheme(QStringLiteral("configure")),
+			tr("Manage…"), widgets::NotificationBar::RoleColor::Notice);
+		m_notificationBar->setActionButtonEnabled(true);
+	}
+}
+
+void CanvasView::hideProjectSizeLimitWarning()
+{
+	if(m_notificationBarState == NotificationBarState::ProjectSize) {
+		m_notificationBarState = NotificationBarState::None;
+		m_notificationBar->hide();
+	}
+}
+
 void CanvasView::activateNotificationBarAction()
 {
 	switch(m_notificationBarState) {
@@ -401,6 +421,9 @@ void CanvasView::activateNotificationBarAction()
 		break;
 	case NotificationBarState::Reset:
 		emit savePreResetStateRequested();
+		break;
+	case NotificationBarState::ProjectSize:
+		Q_EMIT projectSizeSettingsRequested();
 		break;
 	default:
 		qWarning(
@@ -422,6 +445,9 @@ void CanvasView::dismissNotificationBar()
 		break;
 	case NotificationBarState::Reset:
 		emit savePreResetStateDismissed();
+		break;
+	case NotificationBarState::ProjectSize:
+		Q_EMIT projectSizeDismissed();
 		break;
 	default:
 		qWarning("Unknown notification bar state %d", int(state));

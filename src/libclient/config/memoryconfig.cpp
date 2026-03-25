@@ -222,6 +222,19 @@ void MemoryConfig::setAutoRecordMetadataIntervalMinutes(int value)
 	}
 }
 
+double MemoryConfig::getAutoRecordSizeLimitGiB() const
+{
+	return m_autoRecordSizeLimitGiB;
+}
+
+void MemoryConfig::setAutoRecordSizeLimitGiB(double value)
+{
+	if(value != m_autoRecordSizeLimitGiB) {
+		m_autoRecordSizeLimitGiB = value;
+		Q_EMIT changeAutoRecordSizeLimitGiB(m_autoRecordSizeLimitGiB);
+	}
+}
+
 int MemoryConfig::getAutoRecordSnapshotIntervalMinutes() const
 {
 	return m_autoRecordSnapshotIntervalMinutes;

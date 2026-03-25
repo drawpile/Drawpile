@@ -31,6 +31,9 @@ ProjectRecorder::ProjectRecorder(config::Config *cfg, QObject *parent)
 	CFG_BIND_SET(
 		cfg, AutoRecordSnapshotIntervalMinutes, this,
 		ProjectRecorder::setSnapshotTimerIntervalMinutes);
+	connect(
+		this, &ProjectRecorder::sizeReported, this,
+		&ProjectRecorder::setReportedSize, Qt::QueuedConnection);
 }
 
 ProjectRecorder::~ProjectRecorder()
@@ -86,6 +89,7 @@ bool ProjectRecorder::startProjectRecording(
 		m_metaDb.close();
 	}
 
+	m_lastReportedSizeInBytes = 0;
 	m_fileId = DP_project_worker_open(
 		m_pw, m_path.toUtf8().constData(), DP_PROJECT_OPEN_TRUNCATE,
 		sourceParam.isEmpty() ? nullptr : sourceParam.toUtf8().constData(),
@@ -234,6 +238,13 @@ void ProjectRecorder::addMetadataSource(
 	}
 }
 
+void ProjectRecorder::setSizeLimitInBytes(size_t sizeLimitInBytes)
+{
+	m_sizeLimitInBytes = sizeLimitInBytes;
+	sizeChanged(m_lastReportedSizeInBytes, sizeLimitInBytes);
+	checkSizeLimit();
+}
+
 void ProjectRecorder::setMetadataTimerIntervalMinutes(
 	int metadataTimerIntervalMinutes)
 {
@@ -356,6 +367,11 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 		return;
 	case DP_PROJECT_WORKER_EVENT_INFO_ERROR:
 		break; // Shouldn't occur.
+	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR:
+		qCWarning(
+			lcDpProjectWorker, "Error %d reporting size: %s",
+			int(event->data.error.error), event->data.error.message);
+		return;
 	case DP_PROJECT_WORKER_EVENT_OPEN:
 		qCDebug(lcDpProjectWorker, "Project %u opened", event->data.file_id);
 		return;
@@ -368,6 +384,9 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 		return;
 	case DP_PROJECT_WORKER_EVENT_INFO_DONE:
 		break; // Shouldn't occur.
+	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT:
+		Q_EMIT sizeReported(event->data.size_in_bytes);
+		return;
 	}
 	qCWarning(lcDpProjectWorker, "Unhandled event type %d", int(type));
 }
@@ -406,6 +425,27 @@ bool ProjectRecorder::writeThumbnailCallback(
 {
 	return static_cast<ProjectRecorder *>(user)->writeThumbnail(
 		thumb, outputOrNull);
+}
+
+void ProjectRecorder::setReportedSize(size_t sizeInBytes)
+{
+	if(sizeInBytes != m_lastReportedSizeInBytes) {
+		m_lastReportedSizeInBytes = sizeInBytes;
+		sizeChanged(sizeInBytes, m_sizeLimitInBytes);
+		checkSizeLimit();
+	}
+}
+
+void ProjectRecorder::checkSizeLimit()
+{
+	bool sizeLimitExceeded = m_sizeLimitInBytes != 0 &&
+							 m_lastReportedSizeInBytes > m_sizeLimitInBytes;
+	if(sizeLimitExceeded && shouldEmitErrorBlock()) {
+		Q_EMIT errorOccurred(
+			//: %1 is the size, something like "5 GB".
+			tr("Size limit of %1 exceeded")
+				.arg(utils::paths::formatFileSize(qint64(m_sizeLimitInBytes))));
+	}
 }
 
 void ProjectRecorder::emitError(

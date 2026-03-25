@@ -47,6 +47,7 @@ struct DP_ProjectWorker {
     char *continue_source_param;
     long long continue_sequence_id;
     long long open_snapshot_id;
+    size_t accumulated_size;
     DP_Queue queue;
 };
 
@@ -183,6 +184,7 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
         DP_free(pw->continue_source_param);
         pw->continue_source_param = NULL;
         pw->continue_sequence_id = 0LL;
+        pw->accumulated_size = (size_t)0;
         DP_MUTEX_MUST_UNLOCK(mutex);
         return;
     }
@@ -194,6 +196,7 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
     DP_free(pw->continue_source_param);
     pw->continue_source_param = NULL;
     pw->continue_sequence_id = 0LL;
+    pw->accumulated_size = (size_t)0;
     DP_MUTEX_MUST_UNLOCK(mutex);
 
     bool ok = DP_project_close(prj);
@@ -227,6 +230,7 @@ static void handle_open(DP_ProjectWorker *pw, unsigned int file_id, char *path,
         pw->open_file_id = file_id;
         pw->continue_source_param = continue_source_param;
         pw->continue_sequence_id = continue_sequence_id;
+        pw->accumulated_size = (size_t)0;
         DP_MUTEX_MUST_UNLOCK(mutex);
         emit_event(pw, (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_OPEN,
                                                .file_id = file_id});
@@ -291,6 +295,52 @@ static void handle_session_close(DP_ProjectWorker *pw, unsigned int file_id,
     }
 }
 
+static void report_size_reset(DP_ProjectWorker *pw)
+{
+    pw->accumulated_size = (size_t)0;
+
+    long long page_count;
+    long long page_size;
+    int result = DP_project_size(pw->prj, &page_count, &page_size);
+    if (result == 0) {
+        size_t size_in_bytes;
+        if (page_count > 0LL && page_size > 0LL) {
+            size_in_bytes =
+                DP_llong_to_size(page_count) * DP_llong_to_size(page_size);
+        }
+        else {
+            size_in_bytes = (size_t)0;
+        }
+        DP_PROJECT_WORKER_DEBUG(
+            "reporting %zu bytes (%lld pages at %lld bytes)", size_in_bytes,
+            page_count, page_size);
+        emit_event(pw,
+                   (DP_ProjectWorkerEvent){DP_PROJECT_WORKER_EVENT_SIZE_REPORT,
+                                           .size_in_bytes = size_in_bytes});
+    }
+    else {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR,
+                           .error = {pw->open_file_id, result, DP_error()}});
+    }
+}
+
+static void check_message_size_limit(DP_ProjectWorker *pw, size_t body_length)
+{
+    // We'll use a kind of arbitrary fixed constant for the fixed fields:
+    // session id, sequence id, recorded at, flags, type, context id. This is
+    // just for guessing the frequency of size checks, so this'll do.
+    size_t message_size = (size_t)32 + body_length;
+    size_t total_size = pw->accumulated_size + message_size;
+    size_t limit_size = (size_t)(1024 * 128);
+    if (total_size < limit_size) {
+        pw->accumulated_size = total_size;
+    }
+    else {
+        report_size_reset(pw);
+    }
+}
+
 static void handle_message_record(DP_ProjectWorker *pw, unsigned int file_id,
                                   DP_Message *msg, unsigned int flags)
 {
@@ -302,9 +352,13 @@ static void handle_message_record(DP_ProjectWorker *pw, unsigned int file_id,
         return;
     }
 
-    int result = DP_project_message_record(pw->prj, msg, flags);
+    size_t body_length;
+    int result = DP_project_message_record(pw->prj, msg, flags, &body_length);
     DP_message_decref(msg);
-    if (result != 0) {
+    if (result == 0) {
+        check_message_size_limit(pw, body_length);
+    }
+    else {
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_MESSAGE_RECORD_ERROR,
                            .error = {file_id, result, DP_error()}});
@@ -330,7 +384,10 @@ static void handle_message_internal_record(DP_ProjectWorker *pw,
     int result = DP_project_message_internal_record(pw->prj, type, context_id,
                                                     body_or_null, size, flags);
     DP_free(body_or_null);
-    if (result != 0) {
+    if (result == 0) {
+        check_message_size_limit(pw, size);
+    }
+    else {
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_MESSAGE_RECORD_ERROR,
                            .error = {file_id, result, DP_error()}});
@@ -577,7 +634,10 @@ static void handle_save(DP_ProjectWorker *pw, unsigned int file_id,
         finish_fn(user, DP_project_save_error_to_save_result(result));
     }
 
-    if (result != 0) {
+    if (result == 0) {
+        report_size_reset(pw);
+    }
+    else {
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
                            .error = {file_id, result, DP_error()}});
@@ -797,6 +857,7 @@ DP_project_worker_new(DP_ProjectWorkerHandleEventFn handle_event_fn,
         NULL,
         0LL,
         0LL,
+        (size_t)0,
         DP_QUEUE_NULL,
     };
     DP_queue_init(&pw->queue, 1024, sizeof(DP_ProjectWorkerCommand));

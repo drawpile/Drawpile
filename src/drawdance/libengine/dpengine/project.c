@@ -67,6 +67,7 @@ typedef enum DP_ProjectPersistentStatement {
     DP_PROJECT_STATEMENT_PLAYBACK_SNAPSHOT_MESSAGES,
     DP_PROJECT_STATEMENT_PLAYBACK_MESSAGES,
     DP_PROJECT_STATEMENT_PLAYBACK_CONTINUE_SELECT,
+    DP_PROJECT_STATEMENT_SIZE,
     DP_PROJECT_STATEMENT_COUNT,
 } DP_ProjectPersistentStatement;
 
@@ -848,6 +849,11 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
                "where (h.flags & 256) <> 0\n"
                "and mi.value = ?\n"
                "and mq.value = ?";
+    case DP_PROJECT_STATEMENT_SIZE:
+        return "select pc.page_count, ps.page_size\n"
+               "from pragma_page_count pc\n"
+               "join pragma_page_size ps\n"
+               "limit 1";
     case DP_PROJECT_STATEMENT_COUNT:
         break;
     }
@@ -1278,6 +1284,19 @@ static bool ps_exec_write(DP_Project *prj, sqlite3_stmt *stmt,
     }
 }
 
+static bool ps_reset(DP_Project *prj, sqlite3_stmt *stmt)
+{
+    int reset_result = sqlite3_reset(stmt);
+    if (is_ok(reset_result)) {
+        return true;
+    }
+    else {
+        DP_error_set("Error %d resetting %s: %s", reset_result,
+                     sqlite3_sql(stmt), prj_db_error(prj));
+        return false;
+    }
+}
+
 static bool ps_exec_step(DP_Project *prj, sqlite3_stmt *stmt, bool *out_error)
 {
     int step_result = sqlite3_step(stmt);
@@ -1286,15 +1305,8 @@ static bool ps_exec_step(DP_Project *prj, sqlite3_stmt *stmt, bool *out_error)
         return true;
     }
     else if (step_result == SQLITE_DONE) {
-        int reset_result = sqlite3_reset(stmt);
-        if (is_ok(reset_result)) {
-            *out_error = false;
-        }
-        else {
-            DP_error_set("Error %d resetting %s: %s", reset_result,
-                         sqlite3_sql(stmt), prj_db_error(prj));
-            *out_error = true;
-        }
+        bool reset_ok = ps_reset(prj, stmt);
+        *out_error = !reset_ok;
         return false;
     }
     else {
@@ -1318,6 +1330,47 @@ static void ps_clear_bindings(DP_Project *prj, sqlite3_stmt *stmt)
         DP_warn("Error clearing bindings on %s: %s", sqlite3_sql(stmt),
                 prj_db_error(prj));
     }
+}
+
+
+int DP_project_size(DP_Project *prj, long long *out_page_count,
+                    long long *out_page_size)
+{
+    if (!prj) {
+        return DP_PROJECT_SIZE_ERROR_MISUSE;
+    }
+
+    sqlite3_stmt *stmt = pps_prepare(prj, DP_PROJECT_STATEMENT_SIZE);
+    if (!stmt) {
+        return DP_PROJECT_SIZE_ERROR_PREPARE;
+    }
+
+    int result;
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        if (out_page_count) {
+            *out_page_count = sqlite3_column_int64(stmt, 0);
+        }
+        if (out_page_size) {
+            *out_page_size = sqlite3_column_int64(stmt, 1);
+        }
+
+        if (ps_reset(prj, stmt)) {
+            result = 0;
+        }
+        else {
+            result = DP_PROJECT_SIZE_ERROR_QUERY;
+        }
+    }
+    else if (error) {
+        result = DP_PROJECT_SIZE_ERROR_QUERY;
+    }
+    else {
+        DP_error_set("Project size query had no results");
+        result = DP_PROJECT_SIZE_ERROR_EMPTY;
+    }
+
+    return result;
 }
 
 
@@ -1445,7 +1498,7 @@ static int record_message(DP_Project *prj, long long session_id,
 }
 
 int DP_project_message_record(DP_Project *prj, DP_Message *msg,
-                              unsigned int flags)
+                              unsigned int flags, size_t *out_body_length)
 {
     if (!prj) {
         DP_error_set("No project given");
@@ -1466,6 +1519,10 @@ int DP_project_message_record(DP_Project *prj, DP_Message *msg,
     size_t length;
     if (!DP_message_serialize_body(msg, get_serialize_buffer, prj, &length)) {
         return DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE;
+    }
+
+    if (out_body_length) {
+        *out_body_length = length;
     }
 
     return record_message(prj, session_id, flags, (int)DP_message_type(msg),

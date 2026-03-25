@@ -22,12 +22,14 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_SNAPSHOT_ERROR,
     DP_PROJECT_WORKER_EVENT_THUMBNAIL_MAKE_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
+    DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR,
     DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
     DP_PROJECT_WORKER_EVENT_INFO_ERROR,
     DP_PROJECT_WORKER_EVENT_OPEN,
     DP_PROJECT_WORKER_EVENT_CLOSE,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
     DP_PROJECT_WORKER_EVENT_INFO_DONE,
+    DP_PROJECT_WORKER_EVENT_SIZE_REPORT,
 } DP_ProjectWorkerEventType;
 
 typedef struct DP_ProjectWorkerEventError {
@@ -42,6 +44,7 @@ typedef struct DP_ProjectWorkerEvent {
         unsigned int file_id;
         long long session_id;
         long long own_work_minutes;
+        size_t size_in_bytes;
         DP_ProjectWorkerEventError error;
     } DP_ANONYMOUS(data);
 } DP_ProjectWorkerEvent;

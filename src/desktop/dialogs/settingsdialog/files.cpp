@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/files.h"
+#include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
@@ -76,10 +77,32 @@ void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 		snapshotInterval, updateSnapshotIntervalText);
 	updateSnapshotIntervalText(snapshotInterval->value());
 
-	QString autosaveNote =
-		tr("You can control autorecovery for individual sessions via the File "
-		   "menu.");
-	form->addRow(nullptr, utils::formNote(autosaveNote));
+	KisDoubleSliderSpinBox *sizeLimit = new KisDoubleSliderSpinBox;
+	dialogs::ProjectRecordingSettingsDialog::initSizeLimitSlider(
+		sizeLimit, 0.5);
+	connect(
+		sizeLimit, QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
+		sizeLimit, [cfg, sizeLimit](double gib) {
+			if(gib < sizeLimit->maximum()) {
+				cfg->setAutoRecordSizeLimitGiB(gib);
+			} else {
+				cfg->setAutoRecordSizeLimitGiB(0.0);
+			}
+		});
+	CFG_BIND_SET_FN(cfg, AutoRecordSizeLimitGiB, this, [sizeLimit](double gib) {
+		if(gib < sizeLimit->minimum()) {
+			sizeLimit->setValue(sizeLimit->maximum());
+		} else {
+			sizeLimit->setValue(gib);
+		}
+	});
+	form->addRow(nullptr, sizeLimit);
+
+	QString autorecordNote =
+		dialogs::ProjectRecordingSettingsDialog::getAutorecordNoteText() +
+		tr(" You can change the size limit and toggle autorecovery for "
+		   "individual sessions via the File menu.");
+	form->addRow(nullptr, utils::formNote(autorecordNote));
 }
 
 void Files::initDialogs(config::Config *cfg, QFormLayout *form)

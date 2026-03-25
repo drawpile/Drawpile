@@ -55,11 +55,19 @@ public:
 
 	void addMetadataSource(int sourceType, const QString &sourceParam);
 
+	size_t lastReportedSizeInBytes() const { return m_lastReportedSizeInBytes; }
+
+	// A size limit of 0 means unlimited.
+	size_t sizeLimitInBytes() const { return m_sizeLimitInBytes; }
+	void setSizeLimitInBytes(size_t sizeLimitInBytes);
+
 Q_SIGNALS:
 	void metadataRequested();
 	void snapshotRequested();
+	void sizeChanged(size_t sizeInBytes, size_t sizeLimitInBytes);
 	// The following signals are emitted from the worker thread, use
 	// Qt::QueuedConnection to attach to them.
+	void sizeReported(size_t sizeInBytes);
 	void errorOccurred(const QString &message);
 
 private:
@@ -86,6 +94,9 @@ private:
 	static bool writeThumbnailCallback(
 		void *user, DP_Image *thumb, DP_Output *outputOrNull);
 
+	void setReportedSize(size_t sizeInBytes);
+	void checkSizeLimit();
+
 	void
 	emitError(const char *messageTemplate, const DP_ProjectWorkerEventError &e);
 
@@ -104,6 +115,8 @@ private:
 	drawdance::Database m_metaDb;
 	QAtomicInt m_errorsBlocked = 0;
 	unsigned int m_fileId = 0;
+	size_t m_lastReportedSizeInBytes = 0;
+	size_t m_sizeLimitInBytes = 0;
 };
 
 }

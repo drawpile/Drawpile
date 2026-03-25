@@ -192,6 +192,16 @@ void ViewWrapper::hideResetNotice()
 	m_view->hideResetNotice();
 }
 
+void ViewWrapper::showProjectSizeLimitWarning(const QString &message)
+{
+	m_view->showProjectSizeLimitWarning(message);
+}
+
+void ViewWrapper::hideProjectSizeLimitWarning()
+{
+	m_view->hideProjectSizeLimitWarning();
+}
+
 void ViewWrapper::showPopupNotice(const QString &message)
 {
 	m_scene->hud()->showPopupNotice(message);
@@ -430,6 +440,9 @@ void ViewWrapper::connectMainWindow(MainWindow *mainWindow)
 	connect(
 		m_view, &CanvasView::savePreResetStateDismissed, mainWindow,
 		&MainWindow::discardPreResetImage);
+	connect(
+		m_view, &CanvasView::projectSizeSettingsRequested, mainWindow,
+		&MainWindow::showProjectRecordingSettings);
 	connect(
 		mainWindow, &MainWindow::viewShifted, m_controller,
 		&CanvasController::scrollByF);

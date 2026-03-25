@@ -143,6 +143,12 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_PLAYBACK_ERROR_QUERY   (-1703)
 #define DP_PROJECT_PLAYBACK_ERROR_EMPTY   (-1704)
 
+#define DP_PROJECT_SIZE_ERROR_UNKNOWN (-1800)
+#define DP_PROJECT_SIZE_ERROR_MISUSE  (-1801)
+#define DP_PROJECT_SIZE_ERROR_PREPARE (-1802)
+#define DP_PROJECT_SIZE_ERROR_QUERY   (-1803)
+#define DP_PROJECT_SIZE_ERROR_EMPTY   (-1804)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -343,6 +349,13 @@ void DP_project_cancel(DP_Project *prj);
 DP_ProjectVerifyStatus DP_project_verify(DP_Project *prj, unsigned int flags);
 
 
+// Retrieves the project's page count and size, which can be used to get a
+// somewhat accurate file size. The out parameters are both optional. Returns 0
+// on success and a negative DP_PROJECT_SIZE_ERROR_* value on failure.
+int DP_project_size(DP_Project *prj, long long *out_page_count,
+                    long long *out_page_size);
+
+
 long long DP_project_session_id(DP_Project *prj);
 
 // Opens a new session. Returns 0 on success and a negative
@@ -359,8 +372,11 @@ int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set);
 
 // Records a message to the current session. Returns 0 on success and a negative
 // DP_PROJECT_MESSAGE_RECORD_ERROR_* value on failure. A session must be open.
+// If out_size is given, it will be filled with the size of the serialized
+// message body (which is used to guess a sensible interval at which to check
+// whether the project size limit is reached.)
 int DP_project_message_record(DP_Project *prj, DP_Message *msg,
-                              unsigned int flags);
+                              unsigned int flags, size_t *out_body_length);
 
 // Like DP_project_message_record, but for internal messages like resets.
 int DP_project_message_internal_record(DP_Project *prj, int type,

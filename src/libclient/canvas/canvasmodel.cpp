@@ -671,12 +671,19 @@ bool CanvasModel::startProjectRecording(
 	}
 
 	m_projectRecorder = new project::ProjectRecorder(cfg, this);
+	m_projectRecorder->setSizeLimitInBytes(size_t(
+		qMax(0.0, cfg->getAutoRecordSizeLimitGiB()) * 1024.0 * 1024.0 *
+		1024.0));
+	m_projectRecordingLastWarnedSizeLimit = 0;
 	connect(
 		m_projectRecorder, &project::ProjectRecorder::metadataRequested,
 		m_paintengine, &PaintEngine::enqueueProjectMetadataRequest);
 	connect(
 		m_projectRecorder, &project::ProjectRecorder::snapshotRequested,
 		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
+		&CanvasModel::handleProjectRecordingSizeChanged);
 	connect(
 		m_projectRecorder, &project::ProjectRecorder::errorOccurred, this,
 		&CanvasModel::handleProjectRecordingError, Qt::QueuedConnection);
@@ -719,6 +726,36 @@ bool CanvasModel::discardProjectRecordingReinit()
 bool CanvasModel::isProjectRecording() const
 {
 	return m_projectRecorder != nullptr;
+}
+
+size_t CanvasModel::projectRecordingLastReportedSizeInBytes() const
+{
+	if(m_projectRecorder) {
+		return m_projectRecorder->lastReportedSizeInBytes();
+	} else {
+		qWarning(
+			"projectRecordingLastReportedSizeInBytes: no project recorder");
+		return 0;
+	}
+}
+
+size_t CanvasModel::projectRecordingSizeLimitInBytes() const
+{
+	if(m_projectRecorder) {
+		return m_projectRecorder->sizeLimitInBytes();
+	} else {
+		qWarning("projectRecordingSizeLimitInBytes: no project recorder");
+		return 0;
+	}
+}
+
+void CanvasModel::setProjectRecordingSizeLimitInBytes(size_t sizeLimitInBytes)
+{
+	if(m_projectRecorder) {
+		m_projectRecorder->setSizeLimitInBytes(sizeLimitInBytes);
+	} else {
+		qWarning("setProjectRecordingSizeLimitInBytes: no project recorder");
+	}
 }
 
 void CanvasModel::setRetainProjectRecordings(bool retainProjectRecordings)
@@ -769,6 +806,19 @@ bool CanvasModel::stopProjectRecording(bool remove, bool notify)
 
 	Q_EMIT projectRecordingStopped(notify);
 	return ok;
+}
+
+void CanvasModel::handleProjectRecordingSizeChanged(
+	size_t sizeInBytes, size_t sizeLimitInBytes)
+{
+	if(m_projectRecordingLastWarnedSizeLimit != sizeLimitInBytes &&
+	   sizeLimitInBytes != 0 && sizeInBytes <= sizeLimitInBytes) {
+		if(double(sizeInBytes) / double(sizeLimitInBytes) >= 0.75) {
+			m_projectRecordingLastWarnedSizeLimit = sizeLimitInBytes;
+			Q_EMIT projectRecordingSizeLimitWarning(
+				sizeInBytes, sizeLimitInBytes);
+		}
+	}
 }
 
 void CanvasModel::handleProjectRecordingError(const QString &message)

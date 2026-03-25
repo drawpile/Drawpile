@@ -200,6 +200,16 @@ void SceneWrapper::showResetNotice(bool saveInProgress)
 	m_view->showResetNotice(saveInProgress);
 }
 
+void SceneWrapper::showProjectSizeLimitWarning(const QString &message)
+{
+	m_view->showProjectSizeLimitWarning(message);
+}
+
+void SceneWrapper::hideProjectSizeLimitWarning()
+{
+	m_view->hideProjectSizeLimitWarning();
+}
+
 void SceneWrapper::showPopupNotice(const QString &message)
 {
 	if(m_scene) {
@@ -443,6 +453,9 @@ void SceneWrapper::connectMainWindow(MainWindow *mainWindow)
 	connect(
 		m_view, &CanvasView::savePreResetStateDismissed, mainWindow,
 		&MainWindow::discardPreResetImage);
+	connect(
+		m_view, &CanvasView::projectSizeSettingsRequested, mainWindow,
+		&MainWindow::showProjectRecordingSettings);
 	connect(
 		mainWindow, &MainWindow::viewShifted, m_view, &CanvasView::scrollByF);
 	connect(

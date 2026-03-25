@@ -80,6 +80,9 @@ public:
 	int getAutoRecordMetadataIntervalMinutes() const override;
 	void setAutoRecordMetadataIntervalMinutes(int value) override;
 
+	double getAutoRecordSizeLimitGiB() const override;
+	void setAutoRecordSizeLimitGiB(double value) override;
+
 	int getAutoRecordSnapshotIntervalMinutes() const override;
 	void setAutoRecordSnapshotIntervalMinutes(int value) override;
 

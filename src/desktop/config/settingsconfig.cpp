@@ -90,6 +90,10 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeAutoRecordMetadataIntervalMinutes,
 		Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::autoRecordSizeLimitGiBChanged,
+		this, &SettingsConfig::changeAutoRecordSizeLimitGiB,
+		Qt::DirectConnection);
+	connect(
 		m_settings,
 		&desktop::settings::Settings::autoRecordSnapshotIntervalMinutesChanged,
 		this, &SettingsConfig::changeAutoRecordSnapshotIntervalMinutes,
@@ -1092,6 +1096,16 @@ int SettingsConfig::getAutoRecordMetadataIntervalMinutes() const
 void SettingsConfig::setAutoRecordMetadataIntervalMinutes(int value)
 {
 	m_settings->setAutoRecordMetadataIntervalMinutes(value);
+}
+
+double SettingsConfig::getAutoRecordSizeLimitGiB() const
+{
+	return m_settings->autoRecordSizeLimitGiB();
+}
+
+void SettingsConfig::setAutoRecordSizeLimitGiB(double value)
+{
+	m_settings->setAutoRecordSizeLimitGiB(value);
 }
 
 int SettingsConfig::getAutoRecordSnapshotIntervalMinutes() const

@@ -129,6 +129,8 @@ public:
 	void hideDisconnectedWarning();
 	void showResetNotice(bool saveInProgress);
 	void hideResetNotice();
+	void showProjectSizeLimitWarning(const QString &message);
+	void hideProjectSizeLimitWarning();
 
 signals:
 	//! An image has been dropped on the widget
@@ -171,6 +173,8 @@ signals:
 	void reconnectDismissed();
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
+	void projectSizeSettingsRequested();
+	void projectSizeDismissed();
 
 	void canvasShortcutActionActivated(const QString &name);
 	void touchTapActionActivated(int action);
@@ -291,7 +295,7 @@ private:
 	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
 	static constexpr qreal ROTATION_STEP_SIZE = 15.0;
 
-	enum class NotificationBarState { None, Reconnect, Reset };
+	enum class NotificationBarState { None, Reconnect, Reset, ProjectSize };
 
 	class SetDragParams;
 

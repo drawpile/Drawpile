@@ -14,6 +14,7 @@ extern "C" {
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/dialogs/playbackdialog.h"
+#include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/dialogs/resizedialog.h"
 #include "desktop/dialogs/selectionalterdialog.h"
@@ -887,6 +888,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		canvas, &canvas::CanvasModel::projectRecordingStopped, this,
 		&MainWindow::onProjectRecordingStopped);
 	connect(
+		canvas, &canvas::CanvasModel::projectRecordingSizeLimitWarning, this,
+		&MainWindow::showProjectRecordingSizeLimitWarning);
+	connect(
 		canvas, &canvas::CanvasModel::projectRecordingErrorOccurred, this,
 		&MainWindow::showProjectRecordingError);
 
@@ -1675,6 +1679,10 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 	box->show();
 }
 
+void MainWindow::stopProjectRecording()
+{
+	toggleProjectRecording(false);
+}
 
 void MainWindow::toggleProjectRecording(bool enabled)
 {
@@ -1728,9 +1736,40 @@ void MainWindow::onProjectRecordingStopped(bool notify)
 {
 	getAction("autorecord")->setChecked(false);
 	updateProjectActions();
+	m_canvasView->hideProjectSizeLimitWarning();
 	if(notify) {
 		m_canvasView->showPopupNotice(tr("Autorecovery deactivated"));
 	}
+
+	dialogs::ProjectRecordingSettingsDialog *dlg =
+		findChild<dialogs::ProjectRecordingSettingsDialog *>(
+			QStringLiteral("projectrecordingsettingsdialog"),
+			Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->close();
+	}
+}
+
+void MainWindow::setProjectRecordingSizeLimitInBytes(size_t sizeLimitInBytes)
+{
+	m_canvasView->hideProjectSizeLimitWarning();
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas && canvas->isProjectRecording()) {
+		canvas->setProjectRecordingSizeLimitInBytes(sizeLimitInBytes);
+	}
+}
+
+void MainWindow::showProjectRecordingSizeLimitWarning(
+	size_t sizeInBytes, size_t sizeLimitInBytes)
+{
+	int percent =
+		qFloor(double(sizeInBytes) / double(sizeLimitInBytes) * 100.0);
+	m_canvasView->showProjectSizeLimitWarning(
+		tr("The autorecovery file has exceeded %1% of the %2 size limit. "
+		   "Autorecovery will be disabled if the limit is reached.")
+			.arg(
+				QString::number(percent),
+				utils::paths::formatFileSize(qint64(sizeLimitInBytes))));
 }
 
 void MainWindow::showProjectRecordingError(const QString &message)
@@ -1755,10 +1794,12 @@ void MainWindow::showProjectRecordingError(const QString &message)
 
 void MainWindow::updateProjectActions()
 {
+	bool isProjectRecording = m_doc->isProjectRecording();
+	getAction(QStringLiteral("autorecordsettings"))
+		->setEnabled(isProjectRecording);
 #if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
-	bool enabled =
-		!m_doc->isSaveInProgress() &&
-		(!m_doc->projectPath().isEmpty() || m_doc->isProjectRecording());
+	bool enabled = !m_doc->isSaveInProgress() &&
+				   (!m_doc->projectPath().isEmpty() || isProjectRecording);
 #endif
 #ifdef DRAWPILE_PROJECT_DIALOG
 	getAction(QStringLiteral("projectoverview"))->setEnabled(enabled);
@@ -3171,6 +3212,36 @@ void MainWindow::discardPreResetImage()
 {
 	m_preResetCanvasState = drawdance::CanvasState::null();
 	m_canvasView->hideResetNotice();
+}
+
+void MainWindow::showProjectRecordingSettings()
+{
+	QString objectName = QStringLiteral("projectrecordingsettingsdialog");
+	dialogs::ProjectRecordingSettingsDialog *dlg =
+		findChild<dialogs::ProjectRecordingSettingsDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		canvas::CanvasModel *canvas = m_doc->canvas();
+		if(canvas && canvas->isProjectRecording()) {
+			dlg = new dialogs::ProjectRecordingSettingsDialog(
+				canvas->projectRecordingLastReportedSizeInBytes(),
+				canvas->projectRecordingSizeLimitInBytes(), this);
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			dlg->setObjectName(objectName);
+			connect(
+				dlg,
+				&dialogs::ProjectRecordingSettingsDialog::
+					setSizeLimitInBytesRequested,
+				this, &MainWindow::setProjectRecordingSizeLimitInBytes);
+			connect(
+				dlg, &dialogs::ProjectRecordingSettingsDialog::stopRequested,
+				this, &MainWindow::stopProjectRecording);
+			utils::showWindow(dlg);
+		}
+	}
 }
 
 void MainWindow::showCompatibilityModeWarning()
@@ -6032,6 +6103,9 @@ void MainWindow::setupActions()
 	QAction *autoRecord = makeAction("autorecord", tr("Autorecovery"))
 							  .noDefaultShortcut()
 							  .checkable();
+	QAction *autoRecordSettings =
+		makeAction("autorecordsettings", tr("Manage autorecovery…"))
+			.noDefaultShortcut();
 #ifdef __EMSCRIPTEN__
 	QAction *download = makeAction("downloaddocument", tr("&Download Image…"))
 							.icon("document-save")
@@ -6159,6 +6233,9 @@ void MainWindow::setupActions()
 	connect(
 		autoRecord, &QAction::triggered, this,
 		&MainWindow::toggleProjectRecording);
+	connect(
+		autoRecordSettings, &QAction::triggered, this,
+		&MainWindow::showProjectRecordingSettings);
 
 	connect(
 		exportAnimation, &QAction::triggered, this,
@@ -6253,6 +6330,7 @@ void MainWindow::setupActions()
 	filemenu->addAction(record);
 #endif
 	filemenu->addAction(autoRecord);
+	filemenu->addAction(autoRecordSettings);
 #if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
 	filemenu->addSeparator();
 #endif

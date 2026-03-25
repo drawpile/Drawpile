@@ -57,6 +57,8 @@ public:
 	void hideDisconnectedWarning() override;
 	void showResetNotice(bool saveInProgress) override;
 	void hideResetNotice() override;
+	void showProjectSizeLimitWarning(const QString &message) override;
+	void hideProjectSizeLimitWarning() override;
 
 	void showPopupNotice(const QString &message) override;
 

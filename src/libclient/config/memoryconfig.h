@@ -73,6 +73,9 @@ public:
 	int getAutoRecordMetadataIntervalMinutes() const override;
 	void setAutoRecordMetadataIntervalMinutes(int value) override;
 
+	double getAutoRecordSizeLimitGiB() const override;
+	void setAutoRecordSizeLimitGiB(double value) override;
+
 	int getAutoRecordSnapshotIntervalMinutes() const override;
 	void setAutoRecordSnapshotIntervalMinutes(int value) override;
 
@@ -846,6 +849,7 @@ private:
 	bool m_autoRecordJoin = defaultAutoRecordJoin();
 	int m_autoRecordMetadataIntervalMinutes =
 		defaultAutoRecordMetadataIntervalMinutes();
+	double m_autoRecordSizeLimitGiB = defaultAutoRecordSizeLimitGiB();
 	int m_autoRecordSnapshotIntervalMinutes =
 		defaultAutoRecordSnapshotIntervalMinutes();
 	int m_automaticAlphaPreserve = defaultAutomaticAlphaPreserve();

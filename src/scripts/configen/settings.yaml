@@ -88,6 +88,21 @@ settings:
       Time in minutes between creating thumbnails and updating the work time
       during automatic recording ("autosaving").
 
+  - id: autoRecordSizeLimitGiB
+    type: 'double'
+    default:
+      - value: '0.5'
+        condition: 'defined(__EMSCRIPTEN__)'
+      - value: '1.0'
+        condition: 'defined(Q_OS_ANDROID)'
+      - value: '5.0'
+    qsettings: 'settings/autorecord/sizelimitgib'
+    legacy_package: 'libclient'
+    comment: |
+      The hard size limit for autorecordings in GiB. Once an autorecording
+      reaches this size, it is terminated to avoid the file bloating to an
+      unreasonable size.
+
   - id: autoRecordSnapshotIntervalMinutes
     type: 'int'
     default: '10'
