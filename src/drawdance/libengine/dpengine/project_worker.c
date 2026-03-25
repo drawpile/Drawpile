@@ -513,7 +513,7 @@ static void handle_session_times_update(DP_ProjectWorker *pw,
     else {
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR,
-                           .error = {file_id, -1, DP_error()}});
+                           .error = {file_id, result, DP_error()}});
     }
 }
 
