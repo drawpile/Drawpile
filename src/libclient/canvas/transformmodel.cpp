@@ -404,6 +404,20 @@ void TransformModel::applyMoveRect(
 	int sourceId, int srcX, int srcY, int dstTopLeftX, int dstTopLeftY,
 	int srcW, int srcH, const QImage &mask, bool needsCutAndPaste) const
 {
+	if(!needsCutAndPaste) {
+		net::Message msg = net::makeMoveRectMessageCompat(
+			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
+			srcW, srcH, uint8_t(getEffectiveBlendModeForLayer(layerId)),
+			getUint8Opacity(), mask, m_canvas->isCompatibilityMode());
+		// The message may be null if it ends up too large. Fall back to cutting
+		// and pasting in that case, which can be done in smaller chunks.
+		if(msg.isNull()) {
+			needsCutAndPaste = true;
+		} else {
+			msgs.append(msg);
+		}
+	}
+
 	if(needsCutAndPaste) {
 		QImage img = getLayerImageWithMask(sourceId, mask);
 		if(img.isNull()) {
@@ -416,13 +430,6 @@ void TransformModel::applyMoveRect(
 				uint8_t(getEffectiveBlendModeForLayer(layerId)), dstTopLeftX,
 				dstTopLeftY, img, m_canvas->isCompatibilityMode());
 		}
-	} else {
-		msgs.append(
-			net::makeMoveRectMessageCompat(
-				contextId, layerId, sourceId, srcX, srcY, dstTopLeftX,
-				dstTopLeftY, srcW, srcH,
-				uint8_t(getEffectiveBlendModeForLayer(layerId)),
-				getUint8Opacity(), mask, m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -433,6 +440,23 @@ void TransformModel::applyTransformRegion(
 	int dstBottomRightY, int dstBottomLeftX, int dstBottomLeftY,
 	int interpolation, const QImage &mask, bool needsCutAndPaste) const
 {
+	if(!needsCutAndPaste) {
+		net::Message msg = net::makeTransformRegionMessageCompat(
+			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
+			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
+			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+			getEffectiveInterpolation(interpolation),
+			uint8_t(getEffectiveBlendModeForLayer(layerId)), getUint8Opacity(),
+			mask, m_canvas->isCompatibilityMode());
+		// The message may be null if it ends up too large. Fall back to cutting
+		// and pasting in that case, which can be done in smaller chunks.
+		if(msg.isNull()) {
+			needsCutAndPaste = true;
+		} else {
+			msgs.append(msg);
+		}
+	}
+
 	if(needsCutAndPaste) {
 		QPoint offset;
 		QImage img = drawdance::transformImage(
@@ -452,15 +476,6 @@ void TransformModel::applyTransformRegion(
 				uint8_t(getEffectiveBlendModeForLayer(layerId)), offset.x(),
 				offset.y(), img, m_canvas->isCompatibilityMode());
 		}
-	} else {
-		msgs.append(
-			net::makeTransformRegionMessageCompat(
-				contextId, layerId, sourceId, srcX, srcY, srcW, srcH,
-				dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
-				dstBottomRightX, dstBottomRightY, dstBottomLeftX,
-				dstBottomLeftY, getEffectiveInterpolation(interpolation),
-				uint8_t(getEffectiveBlendModeForLayer(layerId)),
-				getUint8Opacity(), mask, m_canvas->isCompatibilityMode()));
 	}
 }
 
