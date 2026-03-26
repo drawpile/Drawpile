@@ -27,7 +27,36 @@ add a hack to translate F21 to middle click.
  
      void updateSelection(int selStart, int selEnd, int candidatesStart, int candidatesEnd)
      {
-@@ -640,6 +641,10 @@ namespace QtAndroidInput
+@@ -417,17 +418,27 @@ namespace QtAndroidInput
+         case AMOTION_EVENT_ACTION_UP:
+             m_mouseGrabber = nullptr;
+             buttons = Qt::NoButton;
++            m_emulatedPageUpPressed = false;
++            m_emulatedPageDownPressed = false;
++            m_emulatedF21Pressed = false;
+             break;
+         case AMOTION_EVENT_ACTION_DOWN:
+             m_mouseGrabber = tlw;
+             checkAndSetTopLevelWindow(m_mouseGrabber);
++            m_emulatedPageUpPressed = false;
++            m_emulatedPageDownPressed = false;
++            m_emulatedF21Pressed = false;
+             // fall through
+         case AMOTION_EVENT_ACTION_MOVE:
+             if (!buttonState)
+                 buttons = Qt::LeftButton;
+         case AMOTION_EVENT_ACTION_HOVER_MOVE:
+         default:
+-            if (buttonState == AMOTION_EVENT_BUTTON_STYLUS_PRIMARY)
++            if (m_emulatedPageUpPressed)
++                buttons = Qt::RightButton;
++            else if (m_emulatedPageDownPressed || m_emulatedF21Pressed)
++                buttons = Qt::MiddleButton;
++            else if (buttonState == AMOTION_EVENT_BUTTON_STYLUS_PRIMARY)
+                 buttons = Qt::MiddleButton;
+             else if (buttonState == AMOTION_EVENT_BUTTON_STYLUS_SECONDARY)
+                 buttons = Qt::RightButton;
+@@ -640,6 +651,10 @@ namespace QtAndroidInput
          if (key >= 0x00000083 && key <= 0x0000008e)
              return Qt::Key_F1 + key - 0x00000083;
  
@@ -38,7 +67,7 @@ add a hack to translate F21 to middle click.
          // NUMPAD_0--NUMPAD_9     0x00000090 -- 0x00000099
          if (key >= 0x00000090 && key <= 0x00000099)
              return Qt::KeypadModifier + Qt::Key_0 + key - 0x00000090;
-@@ -1052,14 +1057,11 @@ namespace QtAndroidInput
+@@ -1052,14 +1067,11 @@ namespace QtAndroidInput
      }
  
      // Xiaomi insanity, their stylus buttons input page up and down key presses.
@@ -56,8 +85,11 @@ add a hack to translate F21 to middle click.
              return true;
          }
  
-@@ -1070,13 +1072,29 @@ namespace QtAndroidInput
+@@ -1068,15 +1080,32 @@ namespace QtAndroidInput
+         }
+ 
          int buttonState;
++        bool *emulatedButtonPressed;
          switch (key) {
          case 0x0000005c: // KEYCODE_PAGE_UP
 -            buttonState = AMOTION_EVENT_BUTTON_STYLUS_SECONDARY;
@@ -65,7 +97,7 @@ add a hack to translate F21 to middle click.
 -            break;
 +            if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)) {
 +                buttonState = AMOTION_EVENT_BUTTON_STYLUS_SECONDARY;
-+                m_emulatedPageUpPressed = down;
++                emulatedButtonPressed = &m_emulatedPageUpPressed;
 +                break;
 +            } else {
 +                return false;
@@ -76,7 +108,7 @@ add a hack to translate F21 to middle click.
 -            break;
 +            if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)) {
 +                buttonState = AMOTION_EVENT_BUTTON_STYLUS_PRIMARY;
-+                m_emulatedPageDownPressed = down;
++                emulatedButtonPressed = &m_emulatedPageDownPressed;
 +                break;
 +            } else {
 +                return false;
@@ -84,7 +116,7 @@ add a hack to translate F21 to middle click.
 +        case 0x0000014e: // KEYCODE_F21
 +            if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS)) {
 +                buttonState = AMOTION_EVENT_BUTTON_STYLUS_PRIMARY;
-+                m_emulatedF21Pressed = down;
++                emulatedButtonPressed = &m_emulatedF21Pressed;
 +                break;
 +            } else {
 +                return false;
@@ -92,7 +124,16 @@ add a hack to translate F21 to middle click.
          default:
              return false;
          }
-@@ -1099,7 +1117,7 @@ namespace QtAndroidInput
+@@ -1094,12 +1123,16 @@ namespace QtAndroidInput
+             m_lastTabletTiltY,
+             m_lastTabletRotation,
+             modifier);
++        // Must come *after* the tabletEvent call, it resets these emulated
++        // press values down and up actions!
++        *emulatedButtonPressed = down;
++
+         return true;
+     }
  
      static void keyDown(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
      {
@@ -101,7 +142,7 @@ add a hack to translate F21 to middle click.
              QWindowSystemInterface::handleKeyEvent(0,
                                                     QEvent::KeyPress,
                                                     mapAndroidKey(key),
-@@ -1111,7 +1129,7 @@ namespace QtAndroidInput
+@@ -1111,7 +1144,7 @@ namespace QtAndroidInput
  
      static void keyUp(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
      {
