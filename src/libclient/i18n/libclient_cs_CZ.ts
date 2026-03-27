@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation>Avatar</translation>
+        <translation>Přidat avatara…</translation>
     </message>
 </context>
 <context>
@@ -39,17 +39,17 @@
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Načítání aplikace</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spouštění…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spouštění – toto by mělo trvat jen chvilku…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -64,7 +64,7 @@
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation>Připravuji</translation>
+        <translation>Připravuje se</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -79,7 +79,7 @@
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation>Nastavení</translation>
+        <translation>Nastavování…</translation>
     </message>
     <message>
         <location line="+1"/>
