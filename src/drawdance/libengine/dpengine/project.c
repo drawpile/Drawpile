@@ -1200,6 +1200,20 @@ static bool ps_bind_int64(DP_Project *prj, sqlite3_stmt *stmt, int param,
     }
 }
 
+static bool ps_bind_double(DP_Project *prj, sqlite3_stmt *stmt, int param,
+                           double value)
+{
+    int bind_result = sqlite3_bind_double(stmt, param, value);
+    if (is_ok(bind_result)) {
+        return true;
+    }
+    else {
+        DP_error_set("Error %d binding double parameter %d to %s: %s",
+                     bind_result, param, sqlite3_sql(stmt), prj_db_error(prj));
+        return false;
+    }
+}
+
 static bool ps_bind_blob(DP_Project *prj, sqlite3_stmt *stmt, int param,
                          const void *value, size_t length)
 {
@@ -3149,35 +3163,305 @@ static int project_save_append_session(DP_Project *prj,
     return 0;
 }
 
+// Messages saved to dppr files get bundled and compressed. This makes for
+// pretty huge space savings, more than halving the required space depending on
+// what kind of brushes you use. In the messages table, the sequence id will be
+// that of the last message to indicate that some were skipped, the type will be
+// MULTI_ZSTD for zstd-compressed ones and rarely MULTI for uncompressed ones,
+// for the pathological case where compressing a tiny buffer actually increases
+// the size. Each message in the buffer has its type as a u8 followed by its
+// body length as a u16 and then its body afterwards. Messages after the first
+// also have a u16 with the recorded timestamp delta in milliseconds.
+
+#define COPY_MESSAGE_BODY_CAPACITY       (size_t)(1024 * 1024)
+#define COPY_MESSAGE_INITIAL_HEADER_SIZE (sizeof(uint8_t) + sizeof(uint16_t))
+#define COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE \
+    (sizeof(uint16_t) + COPY_MESSAGE_INITIAL_HEADER_SIZE)
+
+typedef struct DP_ProjectSaveCopyMessagesContext {
+    DP_Project *prj;
+    sqlite3_stmt *insert_stmt;
+    ZSTD_CCtx *cctx;
+    unsigned char *body_buffer;
+    unsigned char *compression_buffer;
+    size_t body_fill;
+    long long last_sequence_id;
+    long long prev_recorded_at_msec;
+    long long first_recorded_at_msec;
+    unsigned int first_context_id;
+    unsigned int first_flags;
+    int first_type;
+    int message_count;
+} DP_ProjectSaveCopyMessagesContext;
+
+static void
+project_save_copy_messages_context_init(DP_ProjectSaveCopyMessagesContext *c,
+                                        DP_Project *prj,
+                                        sqlite3_stmt *insert_stmt)
+{
+    c->prj = prj;
+    c->insert_stmt = insert_stmt;
+    c->cctx = NULL;
+    c->body_buffer = DP_malloc(COPY_MESSAGE_BODY_CAPACITY);
+    c->compression_buffer =
+        DP_malloc(DP_compress_zstd_bounds(COPY_MESSAGE_BODY_CAPACITY));
+    c->body_fill = 0;
+    c->message_count = 0;
+}
+
+static void
+project_save_copy_messages_context_dispose(DP_ProjectSaveCopyMessagesContext *c)
+{
+    DP_free(c->compression_buffer);
+    DP_free(c->body_buffer);
+    DP_compress_zstd_free(&c->cctx);
+}
+
+static bool project_save_copy_messages_is_bufferable(int type,
+                                                     size_t body_length)
+{
+    return type >= 0 && type <= UINT8_MAX && body_length <= UINT16_MAX;
+}
+
+static void
+project_save_copy_messages_buffer_write(DP_ProjectSaveCopyMessagesContext *c,
+                                        int type, const void *body,
+                                        size_t body_length, size_t pos)
+{
+    pos += DP_write_littleendian_uint8(DP_int_to_uint8(type),
+                                       c->body_buffer + pos);
+    pos += DP_write_littleendian_uint16(DP_size_to_uint16(body_length),
+                                        c->body_buffer + pos);
+    if (body_length != 0) {
+        memcpy(c->body_buffer + pos, body, body_length);
+        pos += body_length;
+    }
+    c->body_fill = pos;
+}
+
+static bool project_save_copy_messages_try_buffer_next(
+    DP_ProjectSaveCopyMessagesContext *c, long long recorded_at_msec,
+    unsigned int flags, int type, unsigned int context_id, const void *body,
+    size_t body_length)
+{
+    DP_ASSERT(project_save_copy_messages_is_bufferable(type, body_length));
+
+    size_t pos = c->body_fill;
+    long long delta_msec = recorded_at_msec - c->prev_recorded_at_msec;
+    bool should_buffer =
+        flags == c->first_flags && context_id == c->first_context_id
+        && delta_msec >= 0 && delta_msec <= UINT16_MAX
+        && pos + COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE + body_length
+               <= COPY_MESSAGE_BODY_CAPACITY;
+    if (should_buffer) {
+        pos += DP_write_littleendian_uint16(DP_llong_to_uint16(delta_msec),
+                                            c->body_buffer + pos);
+        project_save_copy_messages_buffer_write(c, type, body, body_length,
+                                                pos);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static bool project_save_copy_messages_insert(
+    DP_ProjectSaveCopyMessagesContext *c, long long sequence_id,
+    long long recorded_at_msec, unsigned int flags, int type,
+    unsigned int context_id, const void *body, size_t body_length)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = c->insert_stmt;
+    DP_Mutex *mutex = prj->snapshot.mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    bool ok = ps_bind_int64(prj, stmt, 2, sequence_id)
+           && ps_bind_double(prj, stmt, 3,
+                             DP_llong_to_double(recorded_at_msec) / 1000.0)
+           && ps_bind_int64(prj, stmt, 4, flags)
+           && ps_bind_int(prj, stmt, 5, type)
+           && ps_bind_int64(prj, stmt, 6, context_id)
+           && ps_bind_blob_or_null(prj, stmt, 7, body, body_length)
+           && ps_exec_write(prj, stmt, NULL);
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    return ok;
+}
+
+static unsigned char *
+project_save_copy_messages_get_output_buffer(DP_UNUSED size_t size, void *user)
+{
+    DP_ProjectSaveCopyMessagesContext *c = user;
+    return c->compression_buffer;
+}
+
+static bool project_save_copy_messages_flush_buffer_multi(
+    DP_ProjectSaveCopyMessagesContext *c)
+{
+    size_t body_fill = c->body_fill;
+    size_t compressed_size =
+        DP_compress_zstd(&c->cctx, c->body_buffer, body_fill,
+                         project_save_copy_messages_get_output_buffer, c);
+
+    int type;
+    const void *body;
+    size_t body_size;
+    if (compressed_size > 0 && compressed_size < body_fill) {
+        type = DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD;
+        body = c->compression_buffer;
+        body_size = compressed_size;
+    }
+    else {
+        type = DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI;
+        body = c->body_buffer;
+        body_size = body_fill;
+    }
+
+    return project_save_copy_messages_insert(
+        c, c->last_sequence_id, c->first_recorded_at_msec, c->first_flags, type,
+        c->first_context_id, body, body_size);
+}
+
+static bool
+project_save_copy_messages_flush_buffer(DP_ProjectSaveCopyMessagesContext *c)
+{
+    bool ok;
+    switch (c->message_count) {
+    case 0:
+        return true;
+    case 1:
+        ok = project_save_copy_messages_insert(
+            c, c->last_sequence_id, c->first_recorded_at_msec, c->first_flags,
+            c->first_type, c->first_context_id,
+            c->body_buffer + COPY_MESSAGE_INITIAL_HEADER_SIZE,
+            c->body_fill - COPY_MESSAGE_INITIAL_HEADER_SIZE);
+        break;
+    default:
+        ok = project_save_copy_messages_flush_buffer_multi(c);
+        break;
+    }
+    c->body_fill = 0;
+    c->message_count = 0;
+    return ok;
+}
+
+static bool project_save_copy_messages_handle(
+    DP_ProjectSaveCopyMessagesContext *c, long long sequence_id,
+    double recorded_at, unsigned int flags, int type, unsigned int context_id,
+    const void *body, size_t body_length)
+{
+    long long recorded_at_msec = DP_double_to_llong(recorded_at * 1000.0);
+    bool is_bufferable =
+        project_save_copy_messages_is_bufferable(type, body_length);
+
+    if (c->message_count != 0) {
+        if (is_bufferable
+            && project_save_copy_messages_try_buffer_next(
+                c, recorded_at_msec, flags, type, context_id, body,
+                body_length)) {
+            c->last_sequence_id = sequence_id;
+            c->prev_recorded_at_msec = recorded_at_msec;
+            ++c->message_count;
+            return true;
+        }
+        else if (!project_save_copy_messages_flush_buffer(c)) {
+            return false;
+        }
+    }
+
+    if (is_bufferable) {
+        c->last_sequence_id = sequence_id;
+        c->prev_recorded_at_msec = recorded_at_msec;
+        c->first_recorded_at_msec = recorded_at_msec;
+        c->first_context_id = context_id;
+        c->first_flags = flags;
+        c->first_type = type;
+        c->message_count = 1;
+        project_save_copy_messages_buffer_write(c, type, body, body_length, 0);
+        return true;
+    }
+    else {
+        return project_save_copy_messages_insert(c, sequence_id,
+                                                 recorded_at_msec, flags, type,
+                                                 context_id, body, body_length);
+    }
+}
+
 static int project_save_copy_messages(DP_Project *prj,
                                       long long save_session_id,
                                       long long last_sequence_id)
 {
-    sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj,
-        "insert into sav.messages (session_id, sequence_id, recorded_at,\n"
-        "flags, type, context_id, body)\n"
-        "select ?, sequence_id, recorded_at, flags, type, context_id, body\n"
-        "from main.messages where session_id = ? and sequence_id > ?\n"
-        "order by sequence_id");
-    if (!stmt) {
+    DP_Mutex *mutex = prj->snapshot.mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    sqlite3_stmt *select_stmt = ps_prepare_ephemeral(
+        prj, "select sequence_id, recorded_at, flags, type, context_id, body\n"
+             "from main.messages where session_id = ? and sequence_id > ?\n"
+             "order by sequence_id");
+    if (!select_stmt) {
+        DP_MUTEX_MUST_UNLOCK(mutex);
         return DP_PROJECT_SAVE_ERROR_PREPARE;
     }
 
-    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_session_id)
-                && ps_bind_int64(prj, stmt, 2, prj->session_id)
-                && ps_bind_int64(prj, stmt, 3, last_sequence_id);
+    sqlite3_stmt *insert_stmt = ps_prepare_ephemeral(
+        prj, "insert into sav.messages (session_id, sequence_id,\n"
+             "recorded_at, flags, type, context_id, body)\n"
+             "values (?, ?, ?, ?, ?, ? ,?)");
+
+    bool bind_ok = ps_bind_int64(prj, select_stmt, 1, prj->session_id)
+                && ps_bind_int64(prj, select_stmt, 2, last_sequence_id)
+                && ps_bind_int64(prj, insert_stmt, 1, save_session_id);
     if (!bind_ok) {
-        sqlite3_finalize(stmt);
+        sqlite3_finalize(insert_stmt);
+        sqlite3_finalize(select_stmt);
+        DP_MUTEX_MUST_UNLOCK(mutex);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+    DP_MUTEX_MUST_UNLOCK(mutex);
+
+    DP_ProjectSaveCopyMessagesContext c;
+    project_save_copy_messages_context_init(&c, prj, insert_stmt);
+    bool error;
+    while (true) {
+        DP_MUTEX_MUST_LOCK(mutex);
+        if (!ps_exec_step(prj, select_stmt, &error)) {
+            DP_MUTEX_MUST_UNLOCK(mutex);
+            break;
+        }
+        long long sequence_id = sqlite3_column_int64(select_stmt, 0);
+        double recorded_at = sqlite3_column_double(select_stmt, 1);
+        unsigned int flags = DP_int_to_uint(sqlite3_column_int(select_stmt, 2));
+        int type = sqlite3_column_int(select_stmt, 3);
+        unsigned int context_id =
+            DP_int_to_uint(sqlite3_column_int(select_stmt, 4));
+        size_t body_length =
+            DP_int_to_size(sqlite3_column_bytes(select_stmt, 5));
+        const void *body;
+        if (body_length == 0) {
+            body = NULL;
+        }
+        else {
+            body = sqlite3_column_blob(select_stmt, 5);
+        }
+        DP_MUTEX_MUST_UNLOCK(mutex);
+        if (!project_save_copy_messages_handle(&c, sequence_id, recorded_at,
+                                               flags, type, context_id, body,
+                                               body_length)) {
+            error = true;
+        }
     }
 
-    bool write_ok = ps_exec_write(prj, stmt, NULL);
-    sqlite3_finalize(stmt);
-    if (!write_ok) {
+    if (!error) {
+        error = !project_save_copy_messages_flush_buffer(&c);
+    }
+
+    project_save_copy_messages_context_dispose(&c);
+
+    DP_MUTEX_MUST_LOCK(mutex);
+    sqlite3_finalize(insert_stmt);
+    sqlite3_finalize(select_stmt);
+    DP_MUTEX_MUST_UNLOCK(mutex);
+
+    if (error) {
         return DP_PROJECT_SAVE_ERROR_WRITE;
     }
-
-    DP_debug("Copied %lld message(s)", sqlite3_changes64(prj->db));
     return 0;
 }
 
@@ -3193,11 +3477,8 @@ static void project_save_copy_messages_pre_join(void *user)
     // Analogous to snapshot_handle_entry_callback
     DP_Project *prj = params->prj;
     if (prj->snapshot.state == DP_PROJECT_SNAPSHOT_STATE_OK) {
-        DP_Mutex *mutex = prj->snapshot.mutex;
-        DP_MUTEX_MUST_LOCK(mutex);
         int result = project_save_copy_messages(
             params->prj, params->save_session_id, params->last_sequence_id);
-        DP_MUTEX_MUST_UNLOCK(mutex);
         if (result != 0) {
             prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_ERROR;
             DP_warn("Error %d copying messages: %s", result, DP_error());
@@ -5345,6 +5626,8 @@ struct DP_ProjectPlaybackContext {
     DP_CanvasHistory *ch;
     DP_DrawContext *dc;
     DP_LocalState *ls;
+    ZSTD_DCtx *dctx;
+    unsigned char *decompression_buffer;
     DP_Message **multidab_msgs;
     int multidab_count;
     DP_Vector continues;
@@ -5364,6 +5647,8 @@ playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
         DP_canvas_history_new_no_mutex(),
         dc,
         DP_local_state_new(NULL, NULL, NULL),
+        NULL,
+        DP_malloc(COPY_MESSAGE_BODY_CAPACITY),
         DP_malloc(sizeof(*c->multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT),
         0,
         DP_VECTOR_NULL,
@@ -5382,6 +5667,8 @@ static void playback_context_dispose(DP_ProjectPlaybackContext *c)
         DP_message_decref(c->multidab_msgs[i]);
     }
     DP_free(c->multidab_msgs);
+    DP_free(c->decompression_buffer);
+    DP_decompress_zstd_free(&c->dctx);
     DP_local_state_free(c->ls);
     DP_canvas_history_free(c->ch);
 }
@@ -5569,97 +5856,245 @@ static void playback_query_handle_continue(DP_Project *prj,
     }
 }
 
+static bool playback_query_handle_message(
+    DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
+    long long filter_sequence_id, int type, unsigned int context_id,
+    size_t body_length, const unsigned char *body,
+    long long message_sequence_id, unsigned int flags, double recorded_at)
+{
+    DP_ProjectPlaybackMessageContext mc = {
+        session_id,  message_sequence_id,
+        recorded_at, {{body_length, body}},
+        type,        flags,
+        context_id,  false,
+    };
+
+    DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
+    if (filter_fn) {
+        switch (filter_fn(c->filter_user, &mc)) {
+        case FILTER_PASS:
+            break;
+        case FILTER_IGNORE:
+            playback_message_context_dispose(&mc);
+            playback_query_handle_continue(prj, c, session_id,
+                                           filter_sequence_id, flags);
+            return true;
+        case FILTER_ABORT:
+            playback_message_context_dispose(&mc);
+            return false;
+        default:
+            DP_UNREACHABLE();
+        }
+    }
+
+    if (type < 0) { // Internal message.
+        switch (type) {
+        case DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET:
+            DP_canvas_history_reset(c->ch);
+            break;
+        default:
+            DP_debug("Unhandled internal project message type %d", type);
+            break;
+        }
+    }
+    else {
+        DP_ProjectPlaybackHandleFn handle_fn = playback_get_handle_fn(type);
+        if (handle_fn) {
+            DP_Message *msg = playback_message_context_deserialize(&mc);
+            if (msg) {
+                handle_fn(c, msg);
+            }
+            else {
+                DP_warn("Error deserializing project message: %s", DP_error());
+            }
+        }
+        else {
+            playback_message_context_dispose(&mc);
+        }
+    }
+
+    playback_query_handle_continue(prj, c, session_id, filter_sequence_id,
+                                   flags);
+    return true;
+}
+
+static int playback_query_handle_multi_count(const unsigned char *body,
+                                             size_t body_length)
+{
+    if (body_length >= COPY_MESSAGE_INITIAL_HEADER_SIZE) {
+        size_t first_length =
+            DP_read_littleendian_uint16(body + sizeof(uint8_t));
+        size_t pos = COPY_MESSAGE_INITIAL_HEADER_SIZE + first_length;
+        int message_count = 1;
+
+        while (pos + COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE <= body_length) {
+            size_t current_length = DP_read_littleendian_uint16(
+                body + pos + sizeof(uint16_t) + sizeof(uint8_t));
+            pos += COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE + current_length;
+            ++message_count;
+        }
+
+        if (pos == body_length) {
+            return message_count;
+        }
+    }
+    return 0;
+}
+
+static bool playback_query_handle_multi(
+    DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
+    long long last_sequence_id, unsigned int context_id, size_t body_length,
+    const unsigned char *body, unsigned int flags, double first_recorded_at)
+{
+    int message_count = playback_query_handle_multi_count(body, body_length);
+    if (message_count <= 0) {
+        DP_warn("Invalid multi message at sequence id %lld", last_sequence_id);
+        return true;
+    }
+
+    long long current_sequence_id =
+        last_sequence_id - DP_int_to_llong(message_count - 1);
+
+    {
+        int first_type = body[0];
+        body += sizeof(uint8_t);
+
+        size_t first_length = DP_read_littleendian_uint16(body);
+        body += sizeof(uint16_t);
+
+        if (!playback_query_handle_message(
+                prj, c, session_id, current_sequence_id, first_type, context_id,
+                first_length, body, current_sequence_id, flags,
+                first_recorded_at)) {
+            return false;
+        }
+
+        body += first_length;
+    }
+
+    double current_recorded_at = first_recorded_at;
+    for (int i = 1; i < message_count; ++i) {
+        current_recorded_at +=
+            DP_uint16_to_double(DP_read_littleendian_uint16(body)) / 1000.0;
+        body += sizeof(uint16_t);
+
+        int current_type = body[0];
+        body += sizeof(uint8_t);
+
+        size_t current_length = DP_read_littleendian_uint16(body);
+        body += sizeof(uint16_t);
+
+        if (!playback_query_handle_message(
+                prj, c, session_id, current_sequence_id, current_type,
+                context_id, current_length, body, current_sequence_id, flags,
+                current_recorded_at)) {
+            return false;
+        }
+
+        body += current_length;
+    }
+
+    return true;
+}
+
+struct DP_ProjectPlaybackQueryHandleMultiZstdParams {
+    unsigned char *decompression_buffer;
+    size_t size;
+};
+
+static unsigned char *
+playback_query_handle_multi_zstd_get_output_buffer(size_t size, void *user)
+{
+    if (size <= COPY_MESSAGE_BODY_CAPACITY) {
+        struct DP_ProjectPlaybackQueryHandleMultiZstdParams *params = user;
+        params->size = size;
+        return params->decompression_buffer;
+    }
+    else {
+        DP_error_set("Multi decompression buffer too large: %zu", size);
+        return NULL;
+    }
+}
+
+static bool playback_query_handle_multi_zstd(
+    DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
+    long long last_sequence_id, unsigned int context_id, size_t body_length,
+    const unsigned char *body, unsigned int flags, double first_recorded_at)
+{
+    struct DP_ProjectPlaybackQueryHandleMultiZstdParams params = {
+        c->decompression_buffer, 0};
+    bool ok = DP_decompress_zstd(
+        &c->dctx, body, body_length,
+        playback_query_handle_multi_zstd_get_output_buffer, &params);
+    if (ok) {
+        return playback_query_handle_multi(
+            prj, c, session_id, last_sequence_id, context_id, params.size,
+            params.decompression_buffer, flags, first_recorded_at);
+    }
+    else {
+        DP_warn("Multi decompression failed: %s", DP_error());
+        return true;
+    }
+}
+
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                            DP_ProjectPlaybackContext *c, long long session_id,
                            bool snapshot_message, long long first_sequence_id,
                            long long *out_last_sequence_id)
 {
-    DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
-    void *filter_user = c->filter_user;
-
     // The first sequence id is the first one we're supposed to play back,
     // meaning the current state is actually one before that.
     long long sequence_id = first_sequence_id - 1LL;
-    DP_ProjectPlaybackMessageContext mc = {
-        session_id, -1LL, 0.0, {{0, NULL}}, 0, 0u, 0u, false,
-    };
 
     bool error;
     while (ps_exec_step(prj, stmt, &error) && !error) {
-        mc.type = sqlite3_column_int(stmt, 0);
-        mc.context_id = DP_int_to_uint(sqlite3_column_int(stmt, 1));
-        mc.length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
-
-        if (mc.length == 0) {
-            mc.body = NULL;
+        int type = sqlite3_column_int(stmt, 0);
+        unsigned int context_id = DP_int_to_uint(sqlite3_column_int(stmt, 1));
+        size_t body_length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
+        const unsigned char *body;
+        if (body_length == 0) {
+            body = NULL;
         }
         else {
-            mc.body = sqlite3_column_blob(stmt, 2);
+            body = sqlite3_column_blob(stmt, 2);
         }
 
         if (!snapshot_message) {
             sequence_id = sqlite3_column_int64(stmt, 3);
         }
 
-        mc.deserialized = false;
-
-        if (filter_fn) {
-            if (snapshot_message) {
-                mc.sequence_id = -1;
-                mc.recorded_at = 0.0;
-            }
-            else {
-                mc.sequence_id = sequence_id;
-                mc.flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
-                mc.recorded_at = sqlite3_column_double(stmt, 5);
-            }
-
-            switch (filter_fn(filter_user, &mc)) {
-            case FILTER_PASS:
-                break;
-            case FILTER_IGNORE:
-                playback_message_context_dispose(&mc);
-                playback_query_handle_continue(prj, c, session_id, sequence_id,
-                                               mc.flags);
-                continue;
-            case FILTER_ABORT:
-                playback_message_context_dispose(&mc);
-                return false;
-            default:
-                DP_UNREACHABLE();
-            }
-        }
-
-        if (mc.type < 0) { // Internal message.
-            switch (mc.type) {
-            case DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET:
-                DP_canvas_history_reset(c->ch);
-                break;
-            default:
-                DP_debug("Unhandled internal project message type %d", mc.type);
-                break;
-            }
+        bool ok;
+        if (snapshot_message) {
+            ok = playback_query_handle_message(
+                prj, c, session_id, first_sequence_id, type, context_id,
+                body_length, body, -1LL, 0u, 0.0);
         }
         else {
-            DP_ProjectPlaybackHandleFn handle_fn =
-                playback_get_handle_fn(mc.type);
-            if (handle_fn) {
-                DP_Message *msg = playback_message_context_deserialize(&mc);
-                if (msg) {
-                    handle_fn(c, msg);
-                }
-                else {
-                    DP_warn("Error deserializing project message: %s",
-                            DP_error());
-                }
-            }
-            else {
-                playback_message_context_dispose(&mc);
+            sequence_id = sqlite3_column_int64(stmt, 3);
+            unsigned int flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
+            double recorded_at = sqlite3_column_double(stmt, 5);
+            switch (type) {
+            case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI:
+                ok = playback_query_handle_multi(
+                    prj, c, session_id, sequence_id, context_id, body_length,
+                    body, flags, recorded_at);
+                break;
+            case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD:
+                ok = playback_query_handle_multi_zstd(
+                    prj, c, session_id, sequence_id, context_id, body_length,
+                    body, flags, recorded_at);
+                break;
+            default:
+                ok = playback_query_handle_message(
+                    prj, c, session_id, sequence_id, type, context_id,
+                    body_length, body, sequence_id, flags, recorded_at);
+                break;
             }
         }
 
-        playback_query_handle_continue(prj, c, session_id, sequence_id,
-                                       mc.flags);
+        if (!ok) {
+            break;
+        }
     }
 
     if (out_last_sequence_id) {

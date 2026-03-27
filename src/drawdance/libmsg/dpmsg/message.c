@@ -255,7 +255,7 @@ void *DP_message_cast(DP_Message *msg, DP_MessageType type)
     return NULL;
 }
 
-static size_t message_length(DP_Message *msg, size_t header)
+size_t DP_message_length_with(DP_Message *msg, size_t header)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
@@ -264,12 +264,12 @@ static size_t message_length(DP_Message *msg, size_t header)
 
 size_t DP_message_length(DP_Message *msg)
 {
-    return message_length(msg, DP_MESSAGE_HEADER_LENGTH);
+    return DP_message_length_with(msg, DP_MESSAGE_HEADER_LENGTH);
 }
 
 size_t DP_message_ws_length(DP_Message *msg)
 {
-    return message_length(msg, DP_MESSAGE_WS_HEADER_LENGTH);
+    return DP_message_length_with(msg, DP_MESSAGE_WS_HEADER_LENGTH);
 }
 
 static size_t serialize_message(

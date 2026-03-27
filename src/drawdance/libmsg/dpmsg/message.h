@@ -88,6 +88,7 @@ DP_Message *DP_message_from_internal(void *internal);
 
 void *DP_message_cast(DP_Message *msg, DP_MessageType type);
 
+size_t DP_message_length_with(DP_Message *msg, size_t header);
 size_t DP_message_length(DP_Message *msg);
 size_t DP_message_ws_length(DP_Message *msg);
 
