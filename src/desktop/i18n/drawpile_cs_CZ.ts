@@ -34,7 +34,7 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>Session:</translation>
+        <translation>Relace:</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -265,7 +265,7 @@
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation>Otisk prstu SHA1</translation>
+        <translation>SHA1 otisk:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -280,7 +280,7 @@
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation>Otisk prstu MD5</translation>
+        <translation>MD5 otisk:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10811,7 +10811,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">Šířka: </translation>
+        <translation>Šířka:</translation>
     </message>
     <message>
         <location line="+6"/>
