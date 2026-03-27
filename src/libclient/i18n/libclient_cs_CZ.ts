@@ -64,7 +64,7 @@
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Připravuji</translation>
     </message>
     <message>
         <location line="+1"/>
