@@ -25,6 +25,7 @@ dp_target_sources(dpcommon
     dpcommon/queue.c
     dpcommon/stable_sort.cpp
     dpcommon/threading_common.c
+    dpcommon/timing.c
     dpcommon/vector.c
     dpcommon/worker.c
     dpcommon/atomic.h
@@ -45,6 +46,7 @@ dp_target_sources(dpcommon
     dpcommon/queue.h
     dpcommon/stable_sort.h
     dpcommon/threading.h
+    dpcommon/timing.h
     dpcommon/vector.h
     dpcommon/worker.h
 )

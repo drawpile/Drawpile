@@ -823,8 +823,7 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
     switch (pps) {
     case DP_PROJECT_STATEMENT_MESSAGE_RECORD:
         return "insert into messages (session_id, sequence_id, recorded_at, "
-               "flags, type, context_id, body) values (?, ?, "
-               "unixepoch('subsec'), ?, ?, ?, ?)";
+               "flags, type, context_id, body) values (?, ?, ?, ?, ?, ?, ?)";
     case DP_PROJECT_STATEMENT_SESSION_TIMES_SELECT:
         return "select sequence_id, recorded_at from messages "
                "where session_id = ? and sequence_id > ? and (flags & 1) <> 0 "
@@ -1487,8 +1486,9 @@ static unsigned char *get_serialize_buffer(void *user, DP_UNUSED size_t length)
 }
 
 static int record_message(DP_Project *prj, long long session_id,
-                          unsigned int flags, int type, unsigned int context_id,
-                          const void *body_or_null, size_t length)
+                          double recoded_at, unsigned int flags, int type,
+                          unsigned int context_id, const void *body_or_null,
+                          size_t length)
 {
     sqlite3_stmt *stmt = pps_prepare(prj, DP_PROJECT_STATEMENT_MESSAGE_RECORD);
     if (!stmt) {
@@ -1497,10 +1497,11 @@ static int record_message(DP_Project *prj, long long session_id,
 
     bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
                  && ps_bind_int64(prj, stmt, 2, ++prj->sequence_id)
-                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
-                 && ps_bind_int(prj, stmt, 4, type)
-                 && ps_bind_int64(prj, stmt, 5, context_id)
-                 && ps_bind_blob_or_null(prj, stmt, 6, body_or_null, length)
+                 && ps_bind_double(prj, stmt, 3, recoded_at)
+                 && ps_bind_int64(prj, stmt, 4, DP_uint_to_llong(flags))
+                 && ps_bind_int(prj, stmt, 5, type)
+                 && ps_bind_int64(prj, stmt, 6, context_id)
+                 && ps_bind_blob_or_null(prj, stmt, 7, body_or_null, length)
                  && ps_exec_write(prj, stmt, NULL);
     ps_clear_bindings(prj, stmt);
     if (write_ok) {
@@ -1511,8 +1512,9 @@ static int record_message(DP_Project *prj, long long session_id,
     }
 }
 
-int DP_project_message_record(DP_Project *prj, DP_Message *msg,
-                              unsigned int flags, size_t *out_body_length)
+int DP_project_message_record(DP_Project *prj, double recorded_at,
+                              DP_Message *msg, unsigned int flags,
+                              size_t *out_body_length)
 {
     if (!prj) {
         DP_error_set("No project given");
@@ -1539,13 +1541,13 @@ int DP_project_message_record(DP_Project *prj, DP_Message *msg,
         *out_body_length = length;
     }
 
-    return record_message(prj, session_id, flags, (int)DP_message_type(msg),
-                          DP_message_context_id(msg), prj->serialize_buffer,
-                          length);
+    return record_message(prj, session_id, recorded_at, flags,
+                          (int)DP_message_type(msg), DP_message_context_id(msg),
+                          prj->serialize_buffer, length);
 }
 
-int DP_project_message_internal_record(DP_Project *prj, int type,
-                                       unsigned int context_id,
+int DP_project_message_internal_record(DP_Project *prj, double recorded_at,
+                                       int type, unsigned int context_id,
                                        const void *body_or_null, size_t size,
                                        unsigned int flags)
 {
@@ -1565,7 +1567,7 @@ int DP_project_message_internal_record(DP_Project *prj, int type,
         return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
     }
 
-    return record_message(prj, session_id, flags, type, context_id,
+    return record_message(prj, session_id, recorded_at, flags, type, context_id,
                           body_or_null, size);
 }
 
@@ -1714,8 +1716,7 @@ static const char *snapshot_sql(DP_ProjectSnapshotPersistentStatement psps,
         return DP_PROJECT_SQL_MAIN_SAV(
             "insert into ",
             "snapshot_messages (snapshot_id, sequence_id, recorded_at, flags, "
-            "type, context_id, body) values (?, ?, unixepoch('subsec'), ?, ?, "
-            "?, ?)",
+            "type, context_id, body) values (?, ?, ?, ?, ?, ?, ?)",
             attached);
     case DP_PROJECT_SNAPSHOT_STATEMENT_COUNT:
         break;
@@ -1810,8 +1811,9 @@ long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags)
     return project_snapshot_open(prj, flags, prj->session_id, false);
 }
 
-static int record_snapshot_message(DP_Project *prj, unsigned int flags,
-                                   int type, unsigned int context_id,
+static int record_snapshot_message(DP_Project *prj, double recorded_at,
+                                   unsigned int flags, int type,
+                                   unsigned int context_id,
                                    const void *body_or_null, size_t length)
 {
     sqlite3_stmt *stmt =
@@ -1821,10 +1823,11 @@ static int record_snapshot_message(DP_Project *prj, unsigned int flags,
     }
 
     bool write_ok = ps_bind_int64(prj, stmt, 2, ++prj->snapshot.sequence_id)
-                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
-                 && ps_bind_int(prj, stmt, 4, type)
-                 && ps_bind_int64(prj, stmt, 5, context_id)
-                 && ps_bind_blob_or_null(prj, stmt, 6, body_or_null, length)
+                 && ps_bind_double(prj, stmt, 3, recorded_at)
+                 && ps_bind_int64(prj, stmt, 4, DP_uint_to_llong(flags))
+                 && ps_bind_int(prj, stmt, 5, type)
+                 && ps_bind_int64(prj, stmt, 6, context_id)
+                 && ps_bind_blob_or_null(prj, stmt, 7, body_or_null, length)
                  && ps_exec_write(prj, stmt, NULL);
 
     // Don't want to clear all bindings because parameter 1 always stays bound
@@ -1842,7 +1845,8 @@ static int record_snapshot_message(DP_Project *prj, unsigned int flags,
 }
 
 int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
-                                       DP_Message *msg, unsigned int flags)
+                                       double recorded_at, DP_Message *msg,
+                                       unsigned int flags)
 {
     if (!prj) {
         DP_error_set("No project given");
@@ -1876,9 +1880,9 @@ int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
         return DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE;
     }
 
-    return record_snapshot_message(prj, flags, (int)DP_message_type(msg),
-                                   DP_message_context_id(msg),
-                                   prj->serialize_buffer, (size_t)length);
+    return record_snapshot_message(
+        prj, recorded_at, flags, (int)DP_message_type(msg),
+        DP_message_context_id(msg), prj->serialize_buffer, (size_t)length);
 }
 
 static void snapshot_close(DP_Project *prj)

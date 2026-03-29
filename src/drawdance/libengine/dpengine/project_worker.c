@@ -8,6 +8,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
+#include <dpcommon/timing.h>
 #include <dpmsg/message.h>
 
 #ifdef DP_PROJECT_WORKER_DEBUG_ENABLED
@@ -98,12 +99,14 @@ typedef struct DP_ProjectWorkerCommand {
         } session_close;
         struct {
             DP_Message *msg;
+            long long recorded_at_msec;
             unsigned int flags;
             unsigned int file_id;
         } message_record;
         struct {
             void *body_or_null;
             size_t size;
+            long long recorded_at_msec;
             int type;
             unsigned int context_id;
             unsigned int flags;
@@ -116,6 +119,7 @@ typedef struct DP_ProjectWorkerCommand {
         } snapshot_open;
         struct {
             DP_Message *msg;
+            long long recorded_at_msec;
             unsigned int flags;
             unsigned int file_id;
         } snapshot_message_record;
@@ -342,7 +346,8 @@ static void check_message_size_limit(DP_ProjectWorker *pw, size_t body_length)
 }
 
 static void handle_message_record(DP_ProjectWorker *pw, unsigned int file_id,
-                                  DP_Message *msg, unsigned int flags)
+                                  DP_Message *msg, long long recorded_at_msec,
+                                  unsigned int flags)
 {
     unsigned int open_file_id = pw->open_file_id;
     if (file_id != open_file_id) {
@@ -353,7 +358,9 @@ static void handle_message_record(DP_ProjectWorker *pw, unsigned int file_id,
     }
 
     size_t body_length;
-    int result = DP_project_message_record(pw->prj, msg, flags, &body_length);
+    int result = DP_project_message_record(
+        pw->prj, DP_llong_to_double(recorded_at_msec) / 1000.0, msg, flags,
+        &body_length);
     DP_message_decref(msg);
     if (result == 0) {
         check_message_size_limit(pw, body_length);
@@ -370,6 +377,7 @@ static void handle_message_internal_record(DP_ProjectWorker *pw,
                                            unsigned int file_id, int type,
                                            unsigned int context_id,
                                            void *body_or_null, size_t size,
+                                           long long recorded_at_msec,
                                            unsigned int flags)
 {
     unsigned int open_file_id = pw->open_file_id;
@@ -381,8 +389,9 @@ static void handle_message_internal_record(DP_ProjectWorker *pw,
         return;
     }
 
-    int result = DP_project_message_internal_record(pw->prj, type, context_id,
-                                                    body_or_null, size, flags);
+    int result = DP_project_message_internal_record(
+        pw->prj, DP_llong_to_double(recorded_at_msec) / 1000.0, type,
+        context_id, body_or_null, size, flags);
     DP_free(body_or_null);
     if (result == 0) {
         check_message_size_limit(pw, size);
@@ -450,7 +459,9 @@ static void handle_snapshot_open(DP_ProjectWorker *pw, unsigned int file_id,
 
 static void handle_snapshot_message_record(DP_ProjectWorker *pw,
                                            unsigned int file_id,
-                                           DP_Message *msg, unsigned int flags)
+                                           DP_Message *msg,
+                                           long long recorded_at_msec,
+                                           unsigned int flags)
 {
     unsigned int open_file_id = pw->open_file_id;
     if (file_id != open_file_id) {
@@ -470,8 +481,9 @@ static void handle_snapshot_message_record(DP_ProjectWorker *pw,
         return;
     }
 
-    int result =
-        DP_project_snapshot_message_record(pw->prj, snapshot_id, msg, flags);
+    int result = DP_project_snapshot_message_record(
+        pw->prj, snapshot_id, DP_llong_to_double(recorded_at_msec) / 1000.0,
+        msg, flags);
     DP_message_decref(msg);
     if (result != 0) {
         emit_event(pw, (DP_ProjectWorkerEvent){
@@ -720,6 +732,7 @@ static void handle_command(DP_ProjectWorker *pw,
             command->message_record.flags);
         handle_message_record(pw, command->message_record.file_id,
                               command->message_record.msg,
+                              command->message_record.recorded_at_msec,
                               command->message_record.flags);
         return;
     case DP_PROJECT_WORKER_COMMAND_MESSAGE_INTERNAL_RECORD:
@@ -735,6 +748,7 @@ static void handle_command(DP_ProjectWorker *pw,
             command->message_internal_record.context_id,
             command->message_internal_record.body_or_null,
             command->message_internal_record.size,
+            command->message_internal_record.recorded_at_msec,
             command->message_internal_record.flags);
         return;
     case DP_PROJECT_WORKER_COMMAND_SNAPSHOT_OPEN:
@@ -754,10 +768,11 @@ static void handle_command(DP_ProjectWorker *pw,
                 DP_message_type(command->snapshot_message_record.msg)),
             DP_message_context_id(command->snapshot_message_record.msg),
             command->snapshot_message_record.flags);
-        handle_snapshot_message_record(pw,
-                                       command->snapshot_message_record.file_id,
-                                       command->snapshot_message_record.msg,
-                                       command->snapshot_message_record.flags);
+        handle_snapshot_message_record(
+            pw, command->snapshot_message_record.file_id,
+            command->snapshot_message_record.msg,
+            command->snapshot_message_record.recorded_at_msec,
+            command->snapshot_message_record.flags);
         return;
     case DP_PROJECT_WORKER_COMMAND_SNAPSHOT_FINISH:
         DP_PROJECT_WORKER_DEBUG("handle snapshot finish %u",
@@ -967,8 +982,9 @@ void DP_project_worker_message_record_noinc(DP_ProjectWorker *pw,
     DP_ASSERT(pw);
     DP_ASSERT(msg);
     push_command(
-        pw, (DP_ProjectWorkerCommand){DP_PROJECT_WORKER_COMMAND_MESSAGE_RECORD,
-                                      .message_record = {msg, flags, file_id}});
+        pw, (DP_ProjectWorkerCommand){
+                DP_PROJECT_WORKER_COMMAND_MESSAGE_RECORD,
+                .message_record = {msg, DP_time_unix_msec(), flags, file_id}});
 }
 
 void DP_project_worker_message_record_inc(DP_ProjectWorker *pw,
@@ -988,11 +1004,11 @@ void DP_project_worker_message_internal_record(DP_ProjectWorker *pw,
                                                unsigned int flags)
 {
     DP_ASSERT(pw);
-    push_command(pw,
-                 (DP_ProjectWorkerCommand){
-                     DP_PROJECT_WORKER_COMMAND_MESSAGE_INTERNAL_RECORD,
-                     .message_internal_record = {body_or_null, size, type,
-                                                 context_id, flags, file_id}});
+    push_command(pw, (DP_ProjectWorkerCommand){
+                         DP_PROJECT_WORKER_COMMAND_MESSAGE_INTERNAL_RECORD,
+                         .message_internal_record = {
+                             body_or_null, size, DP_time_unix_msec(), type,
+                             context_id, flags, file_id}});
 }
 
 void DP_project_worker_snapshot_open_noinc(DP_ProjectWorker *pw,
@@ -1026,7 +1042,8 @@ void DP_project_worker_snapshot_message_record_noinc(DP_ProjectWorker *pw,
     DP_ASSERT(msg);
     push_command(pw, (DP_ProjectWorkerCommand){
                          DP_PROJECT_WORKER_COMMAND_SNAPSHOT_MESSAGE_RECORD,
-                         .snapshot_message_record = {msg, flags, file_id}});
+                         .snapshot_message_record = {msg, DP_time_unix_msec(),
+                                                     flags, file_id}});
 }
 
 void DP_project_worker_snapshot_finish(DP_ProjectWorker *pw,

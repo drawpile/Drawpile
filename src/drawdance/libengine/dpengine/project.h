@@ -377,12 +377,13 @@ int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set);
 // If out_size is given, it will be filled with the size of the serialized
 // message body (which is used to guess a sensible interval at which to check
 // whether the project size limit is reached.)
-int DP_project_message_record(DP_Project *prj, DP_Message *msg,
-                              unsigned int flags, size_t *out_body_length);
+int DP_project_message_record(DP_Project *prj, double recorded_at,
+                              DP_Message *msg, unsigned int flags,
+                              size_t *out_body_length);
 
 // Like DP_project_message_record, but for internal messages like resets.
-int DP_project_message_internal_record(DP_Project *prj, int type,
-                                       unsigned int context_id,
+int DP_project_message_internal_record(DP_Project *prj, double recorded_at,
+                                       int type, unsigned int context_id,
                                        const void *body_or_null, size_t size,
                                        unsigned int flags);
 
@@ -402,7 +403,8 @@ long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags);
 // currently open snapshot. This will cause the snapshot to get the flag
 // DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES attached to it upon finishing it.
 int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
-                                       DP_Message *msg, unsigned int flags);
+                                       double recorded_at, DP_Message *msg,
+                                       unsigned int flags);
 
 // Marks the given snapshot completed. Returns 0 on success and a negative
 // DP_PROJECT_SNAPSHOT_FINISH_ERROR_* value on failure. The snapshot id must
