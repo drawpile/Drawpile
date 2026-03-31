@@ -248,9 +248,11 @@ bool PaletteWidget::event(QEvent *event)
 		const int index = indexAt(pos);
 		if(index >= 0 && index < m_colorPalette.count()) {
 			QColor color = m_colorPalette.colorAt(index);
+			QString name = m_colorPalette.nameAt(index);
 			QToolTip::showText(
 				mapToGlobal(pos),
-				tr("Red: %1\nGreen: %2\nBlue: %3\nHex: %4")
+				tr("%1\nRed: %2\nGreen: %3\nBlue: %4\nHex: %5")
+					.arg(name)
 					.arg(color.red())
 					.arg(color.green())
 					.arg(color.blue())
