@@ -246,6 +246,7 @@ bool Document::loadBlank(
 	const QString &initialLayerName, const QString &initialTrackName,
 	bool autoRecord)
 {
+	m_client->resetMyId();
 	initCanvas();
 	unmarkDirty();
 
@@ -266,6 +267,7 @@ void Document::loadState(
 	DP_SaveImageType type, bool dirty, bool autoRecord,
 	const QString &continueSourceParam, long long continueSequenceId)
 {
+	m_client->resetMyId();
 	initCanvas();
 
 	if(type == DP_SAVE_IMAGE_PROJECT) {
@@ -325,6 +327,7 @@ DP_LoadResult Document::loadRecording(
 	bool isTemplate;
 	switch(result) {
 	case DP_LOAD_RESULT_SUCCESS:
+		m_client->resetMyId();
 		initCanvas();
 		unmarkDirty();
 		m_canvas->loadPlayer(player);

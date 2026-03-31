@@ -69,6 +69,7 @@ public:
 	 * @return user ID
 	 */
 	uint8_t myId() const { return m_myId; }
+	void resetMyId() { m_myId = 1; }
 
 	/**
 	 * Return the URL of the current (or last connected) session
