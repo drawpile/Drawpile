@@ -5956,6 +5956,7 @@ static bool playback_query_handle_multi(
         return true;
     }
 
+    unsigned int message_flags = flags & ~DP_PROJECT_MESSAGE_FLAG_CONTINUE;
     long long current_sequence_id =
         last_sequence_id - DP_int_to_llong(message_count - 1);
 
@@ -5968,7 +5969,7 @@ static bool playback_query_handle_multi(
 
         if (!playback_query_handle_message(
                 prj, c, session_id, current_sequence_id, first_type, context_id,
-                first_length, body, current_sequence_id, flags,
+                first_length, body, current_sequence_id, message_flags,
                 first_recorded_at)) {
             return false;
         }
@@ -5988,15 +5989,19 @@ static bool playback_query_handle_multi(
         size_t current_length = DP_read_littleendian_uint16(body);
         body += sizeof(uint16_t);
 
+        ++current_sequence_id;
         if (!playback_query_handle_message(
                 prj, c, session_id, current_sequence_id, current_type,
-                context_id, current_length, body, current_sequence_id, flags,
-                current_recorded_at)) {
+                context_id, current_length, body, current_sequence_id,
+                message_flags, current_recorded_at)) {
             return false;
         }
 
         body += current_length;
     }
+
+    playback_query_handle_continue(prj, c, session_id, current_sequence_id,
+                                   flags);
 
     return true;
 }
