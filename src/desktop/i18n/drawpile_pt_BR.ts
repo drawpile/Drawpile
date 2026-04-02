@@ -1709,13 +1709,13 @@ Para evitar este passo extra no futuro, use a página Procurar ou um link direto
     <message>
         <location line="+5"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você tem alterações não salvas, gostaria de salvá-las antes de reconectar ou reconectar em uma nova janela?</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nova Janela</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -1756,17 +1756,17 @@ Para evitar este passo extra no futuro, use a página Procurar ou um link direto
     <message>
         <location line="+126"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>O seu canvas contém muitos dados, o limite do servidor é de %1 MB. Junte ou exclua algumas camadas para simplificar o canvas.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>O canvas que você tentou reiniciar contém muitos dados, o limite do servidor é de %1 MB.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>A imagem de restauração é muito grande</translation>
     </message>
     <message>
         <location line="+554"/>
@@ -1797,7 +1797,7 @@ Para evitar este passo extra no futuro, use a página Procurar ou um link direto
     <message>
         <location line="+5"/>
         <source>Arrange Docks</source>
-        <translation>Organizar Painéis</translation>
+        <translation>Organizar painéis</translation>
     </message>
     <message>
         <location line="+36"/>
