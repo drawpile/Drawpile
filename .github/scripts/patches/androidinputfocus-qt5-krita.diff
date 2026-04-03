@@ -191,7 +191,7 @@ significantly better when using a physical keyboard.
                      m_layout.setLayoutParams(m_editText, new QtLayout.LayoutParams(w, h, x, y), false);
                      PopupMenu popup = new PopupMenu(m_activity, m_editText);
                      QtActivityDelegate.this.onCreatePopupMenu(popup.getMenu());
-@@ -1319,4 +1367,28 @@ public class QtActivityDelegate
+@@ -1319,4 +1367,32 @@ public class QtActivityDelegate
      {
          QtNative.sendRequestPermissionsResult(requestCode, permissions, grantResults);
      }
@@ -209,7 +209,11 @@ significantly better when using a physical keyboard.
 +    private void removeEditTextView(int editTextId)
 +    {
 +        if (m_editText != null && m_editText.m_id == editTextId) {
-+            m_imm.invalidateInput(m_editText);
++            if (Build.VERSION.SDK_INT < 33) {
++                m_imm.restartInput(m_editText);
++            } else {
++                m_imm.invalidateInput(m_editText);
++            }
 +            m_editText.clearFocus();
 +            m_editText.setFocusable(false);
 +            m_editText.setFocusableInTouchMode(false);
