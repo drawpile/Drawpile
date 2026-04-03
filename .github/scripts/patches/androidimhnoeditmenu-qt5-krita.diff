@@ -1,0 +1,69 @@
+commit 5ff983af63a23102a2acf9a5108f007d247ee2cf
+Author: askmeaboutloom <askmeaboutlo0m@users.noreply.github.com>
+Date:   Fri Apr 3 22:40:57 2026 +0200
+
+    [android] Observe ImhNoEditMenu input method hint
+    
+    And don't show an edit menu in that case.
+
+diff --git a/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java b/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
+index d30426c56e..3c97ab891e 100644
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
+@@ -520,6 +520,7 @@ public class QtActivityDelegate
+     private static final int CursorHandleShowNormal     = 1;
+     private static final int CursorHandleShowSelection  = 2;
+     private static final int CursorHandleShowEdit       = 0x100;
++    private static final int CursorHandleNoEdit         = 0x200;
+ 
+     /* called from the C++ code when the position of the cursor or selection handles needs to
+        be adjusted.
+@@ -584,7 +585,7 @@ public class QtActivityDelegate
+         else
+             editButtons &= ~EditContextView.PASTE_BUTTON;
+ 
+-        if ((mode & CursorHandleShowEdit) == CursorHandleShowEdit && editButtons != 0) {
++        if ((mode & (CursorHandleShowEdit | CursorHandleNoEdit)) == CursorHandleShowEdit && editButtons != 0) {
+             m_editPopupMenu.setPosition(editX, editY, editButtons, m_cursorHandle, m_leftSelectionHandle,
+                                         m_rightSelectionHandle);
+         } else {
+diff --git a/src/plugins/platforms/android/qandroidinputcontext.cpp b/src/plugins/platforms/android/qandroidinputcontext.cpp
+index b412478eeb..1a662f85f5 100644
+--- a/src/plugins/platforms/android/qandroidinputcontext.cpp
++++ b/src/plugins/platforms/android/qandroidinputcontext.cpp
+@@ -651,6 +651,10 @@ void QAndroidInputContext::updateSelectionHandles()
+         QPoint editMenuPoint(cursorPoint.x(), curRect.y());
+         m_handleMode &= ShowEditPopup;
+         m_handleMode |= ShowCursor;
++        if (query.value(Qt::ImHints).toUInt() & Qt::ImhNoEditMenu) {
++            m_handleMode |= NoEditPopup;
++        }
++
+         uint32_t buttons = EditContext::PasteButton;
+         if (!query.value(Qt::ImSurroundingText).toString().isEmpty())
+             buttons |= EditContext::SelectAllButton;
+@@ -662,6 +666,9 @@ void QAndroidInputContext::updateSelectionHandles()
+     }
+ 
+     m_handleMode = ShowSelection | ShowEditPopup ;
++    if (query.value(Qt::ImHints).toUInt() & Qt::ImhNoEditMenu) {
++        m_handleMode |= NoEditPopup;
++    }
+     auto leftRect = im->cursorRectangle();
+     auto rightRect = im->anchorRectangle();
+     if (cpos > anchor)
+diff --git a/src/plugins/platforms/android/qandroidinputcontext.h b/src/plugins/platforms/android/qandroidinputcontext.h
+index e9bfb98e66..091a96d1f9 100644
+--- a/src/plugins/platforms/android/qandroidinputcontext.h
++++ b/src/plugins/platforms/android/qandroidinputcontext.h
+@@ -72,7 +72,9 @@ public:
+         Hidden        = 0,
+         ShowCursor    = 1,
+         ShowSelection = 2,
+-        ShowEditPopup = 0x100
++        ShowEditPopup = 0x100,
++        // Overrides ShowEditPopup, represents Qt::ImhNoEditMenu.
++        NoEditPopup = 0x200,
+     };
+     Q_DECLARE_FLAGS(HandleModes, HandleMode)
+ 
