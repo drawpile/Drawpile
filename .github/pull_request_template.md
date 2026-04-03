@@ -1,6 +1,6 @@
 ## Description
 
-(Delete this line and write your your pull request here!)
+(Delete this line and write a short description!)
 
 ## Formalities
 
