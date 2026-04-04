@@ -2037,8 +2037,12 @@ bool DP_flood_fill_dab(DP_TransientLayerContent **in_out_state, int origin_x,
     flood_fill_dab_fill(&c, flood_fill_dab_inside_dab, origin_x, origin_y,
                         FILLED_DAB);
 
-    if (flood_fill_dab_all_filled(&c, left, top, right, bottom)) {
+    if (flood_fill_dab_all_filled(&c, DP_max_int(0, left), DP_max_int(0, top),
+                                  DP_min_int(right, canvas_width - 1),
+                                  DP_min_int(bottom, canvas_height - 1))) {
         *out_should_mask = false;
+        DP_queue_dispose(&c.queue);
+        DP_free(c.output);
         return true;
     }
 

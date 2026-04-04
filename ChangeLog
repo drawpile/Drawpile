@@ -74,6 +74,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Translate transforms with oversized selection masks to cut and paste operations instead of cancelling the transform. Thanks phanie for reporting.
  * Fix: Properly reset user id after leaving an online session and opening a file or creating a new image in the same window. Previously you would count as different users in different contexts, leading to permissions appearing wrong and your own strokes getting a user marker. Thanks grimsley for reporting.
  * Feature: Translate double-tap gesture on Huawei styluses on Android to the F25 key. Thanks noalero for suggesting.
+ * Fix: Occasional crashes when using anti-overflow with a non-zero expand value at the edge of the canvas. Thanks Ausjamcian for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
