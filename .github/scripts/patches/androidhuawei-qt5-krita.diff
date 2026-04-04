@@ -1,0 +1,25 @@
+commit 81477258be7526150104951da8cabdeb805121a4
+Author: askmeaboutloom <askmeaboutlo0m@users.noreply.github.com>
+Date:   Sat Apr 4 14:45:19 2026 +0200
+
+    [android] Handle Huawei stylus double-tap gesture
+    
+    The stylus inputs key code 718 when performing that gesture. That's an
+    invalid key code in both Android and Qt, so this translates it to the
+    F25 key. That should be safe to do, since Android only goes from F1 to
+    F24.
+
+diff --git a/src/plugins/platforms/android/androidjniinput.cpp b/src/plugins/platforms/android/androidjniinput.cpp
+index 50642bf608..9d94e45a51 100644
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -1035,6 +1035,9 @@ namespace QtAndroidInput
+         case 0x000000de: // KEYCODE_MEDIA_AUDIO_TRACK
+             return Qt::Key_AudioCycleTrack;
+ 
++        case 0x000002ce: // Key code 718, used by Huawei styluses for a double-tap gesture.
++            return Qt::Key_F25;
++
+         default:
+             qWarning() << "Unhandled key code " << key << '!';
+             return 0;
