@@ -113,6 +113,10 @@ void DP_brush_engine_size_limit_set(DP_BrushEngine *be, int size_limit);
 
 void DP_brush_engine_random_seed_set(DP_BrushEngine *be, long seed);
 
+// Intended for stroke previews, so this is not atomic!
+void DP_brush_engine_override_smudge_color_set(DP_BrushEngine *be,
+                                               DP_UPixelFloat *color_or_null);
+
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
                                        const DP_BrushEngineStrokeParams *besp,

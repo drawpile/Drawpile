@@ -50,7 +50,7 @@ DP_BrushPreview *DP_brush_preview_new(void);
 void DP_brush_preview_free(DP_BrushPreview *bp);
 
 void DP_brush_preview_palette_set(DP_BrushPreview *bp, uint32_t foreground,
-                                  uint32_t background);
+                                  uint32_t background, uint32_t smudge);
 
 void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit);
 

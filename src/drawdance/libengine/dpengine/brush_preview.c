@@ -52,6 +52,7 @@ struct DP_BrushPreview {
     DP_Vector messages;
     uint32_t foreground;
     uint32_t background;
+    uint32_t smudge;
     union {
         int dummy; // To stop the compiler from whinging about initialization.
         DP_ClassicBrush classic;
@@ -77,6 +78,7 @@ DP_BrushPreview *DP_brush_preview_new(void)
         DP_VECTOR_NULL,
         0xff000000u,
         0xffffffffu,
+        0xffffffffu,
         {0},
     };
     DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
@@ -101,11 +103,12 @@ void DP_brush_preview_free(DP_BrushPreview *bp)
 }
 
 void DP_brush_preview_palette_set(DP_BrushPreview *bp, uint32_t foreground,
-                                  uint32_t background)
+                                  uint32_t background, uint32_t smudge)
 {
     DP_ASSERT(bp);
     bp->foreground = foreground;
     bp->background = background;
+    bp->smudge = smudge;
 }
 
 void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit)
@@ -298,18 +301,23 @@ void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
 
     uint32_t background_color;
     DP_UPixelFloat stroke_color;
+    DP_UPixelFloat override_smudge_color;
     bool want_foreground_dabs;
+    bool have_override_smudge_color;
     DP_BrushPreviewShape effective_shape;
     switch (style) {
     case DP_BRUSH_PREVIEW_STYLE_FULL:
         background_color = 0u;
         stroke_color = initial_color;
         want_foreground_dabs = true;
+        have_override_smudge_color = false;
         effective_shape = shape;
         break;
     default:
         background_color = bp->background;
         stroke_color = DP_upixel8_to_float((DP_UPixel8){bp->foreground});
+        override_smudge_color = DP_upixel8_to_float((DP_UPixel8){bp->smudge});
+        have_override_smudge_color = true;
         want_foreground_dabs = false;
         effective_shape = DP_BRUSH_PREVIEW_STROKE;
         break;
@@ -337,6 +345,8 @@ void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
 
     DP_BrushEngine *be = bp->be;
     DP_brush_engine_random_seed_set(be, 1L);
+    DP_brush_engine_override_smudge_color_set(
+        be, have_override_smudge_color ? &override_smudge_color : NULL);
     DP_brush_engine_stroke_begin(be, cs, 1, false, false, false, false, 1.0f,
                                  0.0f);
 
@@ -393,6 +403,15 @@ static void set_preview_classic_brush(DP_BrushPreview *bp, DP_UPixelFloat color,
 static DP_BlendMode plainify_blend_mode(DP_BlendMode blend_mode)
 {
     switch (blend_mode) {
+    case DP_BLEND_MODE_ERASE:
+    case DP_BLEND_MODE_ERASE_PRESERVE:
+    case DP_BLEND_MODE_COLOR_ERASE:
+    case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
+        return DP_BLEND_MODE_ERASE;
+    case DP_BLEND_MODE_NORMAL_AND_ERASER:
+    case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+    case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
+        return DP_BLEND_MODE_NORMAL_AND_ERASER;
     case DP_BLEND_MODE_MARKER:
     case DP_BLEND_MODE_MARKER_WASH:
     case DP_BLEND_MODE_MARKER_ALPHA:
@@ -423,10 +442,6 @@ void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
         bp->classic.brush_mode =
             plainify_blend_mode(DP_classic_brush_blend_mode(&bp->classic));
         bp->classic.erase = false;
-        bp->classic.smudge.min = 0.0f;
-        bp->classic.smudge.max = 0.0f;
-        bp->classic.smudge_dynamic.type = DP_CLASSIC_BRUSH_DYNAMIC_NONE;
-        bp->classic.smudge_alpha = false;
     }
 
     render_brush_preview(bp, dc, width, height, style, shape, brush->color,
@@ -479,17 +494,6 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
                                         0.0f);
         preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_POSTERIZE,
                                         0.0f);
-        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_SMUDGE, 0.0f);
-        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH,
-                                        0.0f);
-        preview_disable_mypaint_setting(
-            bp, MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG, 0.0f);
-        preview_disable_mypaint_setting(
-            bp, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG, 0.0f);
-        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET,
-                                        0.0f);
-        preview_disable_mypaint_setting(
-            bp, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY, 0.0f);
         preview_disable_mypaint_setting(
             bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H, 0.0f);
         preview_disable_mypaint_setting(

@@ -168,7 +168,9 @@ struct DP_BrushEngine {
     DP_StrokeEngine se;
     DP_CanvasState *cs;
     DP_LayerContent *lc;
+    DP_UPixelFloat override_smudge_color;
     bool lc_valid;
+    bool override_smudge_color_valid;
     void *buffer;
     int layer_id;
     int last_diameter;
@@ -2169,6 +2171,23 @@ static DP_LayerContent *get_sample_layer_content(void *user)
     return update_sample_layer_content(user);
 }
 
+static DP_UPixelFloat sample_color_at(DP_BrushEngine *be, int x, int y,
+                                      int diameter, bool opaque,
+                                      DP_BlendMode blend_mode,
+                                      bool *out_in_bounds)
+{
+    if (be->override_smudge_color_valid) {
+        *out_in_bounds = true;
+        return be->override_smudge_color;
+    }
+    else {
+        return DP_layer_content_sample_color_at_sync(
+            get_stamp_buffer(be), x, y, diameter, opaque,
+            is_pigment_mode(blend_mode), &be->last_diameter, out_in_bounds,
+            get_sample_layer_content, be);
+    }
+}
+
 static int get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                      float radius, float *color_r,
                                      float *color_g, float *color_b,
@@ -2177,11 +2196,9 @@ static int get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
     DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
     bool in_bounds;
     int diameter = DP_min_int(DP_float_to_int(radius * 2.0f + 0.5f), 255);
-    DP_UPixelFloat color = DP_layer_content_sample_color_at_sync(
-        get_stamp_buffer(be), DP_float_to_int(x + 0.5f),
-        DP_float_to_int(y + 0.5f), diameter, false,
-        is_pigment_mode(be->mypaint.blend_mode), &be->last_diameter, &in_bounds,
-        get_sample_layer_content, be);
+    DP_UPixelFloat color = sample_color_at(
+        be, DP_float_to_int(x + 0.5f), DP_float_to_int(y + 0.5f), diameter,
+        false, be->mypaint.blend_mode, &in_bounds);
     *color_r = color.r;
     *color_g = color.g;
     *color_b = color.b;
@@ -2298,6 +2315,8 @@ DP_brush_engine_new(DP_MaskSync *ms_or_null,
                            brush_engine_handle_stroke_engine_poll_control, be),
         NULL,
         NULL,
+        DP_upixel_float_zero(),
+        false,
         false,
         NULL,
         0,
@@ -2358,6 +2377,19 @@ void DP_brush_engine_random_seed_set(DP_BrushEngine *be, long seed)
 {
     DP_ASSERT(be);
     rng_double_set_seed(mypaint_brush_rng(be->mypaint_brush), seed);
+}
+
+void DP_brush_engine_override_smudge_color_set(DP_BrushEngine *be,
+                                               DP_UPixelFloat *color_or_null)
+{
+    DP_ASSERT(be);
+    if (color_or_null) {
+        be->override_smudge_color = *color_or_null;
+        be->override_smudge_color_valid = true;
+    }
+    else {
+        be->override_smudge_color_valid = false;
+    }
 }
 
 static void set_common_stroke_params(DP_BrushEngine *be,
@@ -2943,12 +2975,12 @@ static bool sample_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,
 {
     int diameter =
         get_classic_smudge_diameter(cb, pressure, velocity, distance);
-    DP_UPixelFloat color = DP_layer_content_sample_color_at_sync(
-        get_stamp_buffer(be), DP_float_to_int(x), DP_float_to_int(y), diameter,
-        !cb->smudge_alpha || be->stroke.compatibility_mode,
-        is_pigment_mode(get_classic_brush_blend_mode(be, cb)),
-        &be->last_diameter, NULL, get_sample_layer_content, be);
-    if (be->lc) {
+    bool in_bounds;
+    DP_UPixelFloat color =
+        sample_color_at(be, DP_float_to_int(x), DP_float_to_int(y), diameter,
+                        !cb->smudge_alpha || be->stroke.compatibility_mode,
+                        get_classic_brush_blend_mode(be, cb), &in_bounds);
+    if (in_bounds) {
         *out_color = color;
         return true;
     }

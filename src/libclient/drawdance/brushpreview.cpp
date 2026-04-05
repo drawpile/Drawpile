@@ -23,9 +23,10 @@ BrushPreview::~BrushPreview()
 }
 
 void BrushPreview::setPalette(
-	const QColor &foreground, const QColor &background)
+	const QColor &foreground, const QColor &background, const QColor &smudge)
 {
-	DP_brush_preview_palette_set(m_data, foreground.rgb(), background.rgb());
+	DP_brush_preview_palette_set(
+		m_data, foreground.rgb(), background.rgb(), smudge.rgb());
 }
 
 void BrushPreview::reset(QSize size)

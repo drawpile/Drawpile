@@ -502,9 +502,7 @@ DP_UPixelFloat DP_layer_content_sample_color_at_sync(
         }
     }
 
-    if (out_in_bounds) {
-        *out_in_bounds = in_bounds;
-    }
+    *out_in_bounds = in_bounds;
     return color;
 }
 
