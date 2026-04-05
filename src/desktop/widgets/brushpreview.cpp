@@ -34,7 +34,6 @@ void BrushPreview::setPreviewStyle(DP_BrushPreviewStyle style)
 {
 	if(m_style != style) {
 		m_style = style;
-		m_needBackground = true;
 		triggerPreviewUpdate();
 	}
 }
@@ -167,7 +166,6 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 void BrushPreview::changeEvent(QEvent *event)
 {
 	if(event->type() == QEvent::PaletteChange) {
-		m_needBackground = true;
 		m_changeIconCache = QPixmap();
 	}
 	triggerPreviewUpdate();
@@ -191,11 +189,8 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 
 	qreal dpr = devicePixelRatioF();
 	bool dprChanged = m_lastDpr != dpr;
-	if(m_needBackground || dprChanged) {
-		updateBackground(dpr);
-	}
 	if(m_needUpdate || dprChanged) {
-		updatePreview(dpr);
+		updatePreview(pal, dpr);
 	}
 	if(m_presetEnabled && (m_presetCache.isNull() || dprChanged)) {
 		updatePreset(dpr);
@@ -242,7 +237,6 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 
 void BrushPreview::setBackgroundChanged()
 {
-	m_needBackground = true;
 	m_debounce.noneChanged();
 }
 
@@ -253,31 +247,24 @@ void BrushPreview::triggerPreviewUpdate()
 	update();
 }
 
-void BrushPreview::updateBackground(qreal dpr)
-{
-	// Plain style always has an opaque background, so don't bother.
-	if(m_style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
-		m_background = QPixmap();
-	} else {
-		int w = qRound(16.0 * dpr);
-		m_background = QPixmap(w * 2, w * 2);
-		config::Config *cfg = dpAppConfig();
-		m_background.fill(cfg->getCheckerColor1());
-		QPainter p(&m_background);
-		QColor checkerColor2 = cfg->getCheckerColor2();
-		p.fillRect(0, 0, w, w, checkerColor2);
-		p.fillRect(w, w, w, w, checkerColor2);
-	}
-}
-
-void BrushPreview::updatePreview(qreal dpr)
+void BrushPreview::updatePreview(const QPalette &pal, qreal dpr)
 {
 	QSize size = previewRect().size() * dpr;
 	m_brushPreview.reset(size);
 	m_brush.renderPreview(m_brushPreview, m_style, m_shape);
-	m_brushPreview.paint(m_background);
+	m_brushPreview.paint(getPreviewBackground(pal, dpr));
 	m_needUpdate = false;
 	m_lastDpr = dpr;
+}
+
+const QPixmap &
+BrushPreview::getPreviewBackground(const QPalette &pal, qreal dpr)
+{
+	if(m_style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
+		return m_strokeBackground.getPixmapPlain(pal, dpr);
+	} else {
+		return m_strokeBackground.getPixmapConfig(dpAppConfig(), dpr);
+	}
 }
 
 void BrushPreview::updatePreset(qreal dpr)

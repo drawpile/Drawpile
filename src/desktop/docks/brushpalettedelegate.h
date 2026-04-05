@@ -2,6 +2,7 @@
 #ifndef DESKTOP_DOCKS_BRUSHPALLETEDELEGATE_H
 #define DESKTOP_DOCKS_BRUSHPALLETEDELEGATE_H
 #include "libclient/drawdance/brushpreview.h"
+#include "libclient/utils/checkerbackground.h"
 #include <QHash>
 #include <QItemDelegate>
 #include <QPair>
@@ -53,7 +54,7 @@ private:
 
 	Preview renderPreview(
 		const QModelIndex &index, const QPalette &pal,
-		const QFontMetrics &fontMetrics, int w, int h) const;
+		const QFontMetrics &fontMetrics, int w, int h, qreal dpr) const;
 
 	const QPixmap &getEditIcon(const QSize &size) const;
 
@@ -68,6 +69,7 @@ private:
 	mutable QReadWriteLock m_lock;
 	mutable QPixmap m_editIcon;
 	mutable drawdance::BrushPreview m_brushPreview;
+	mutable CheckerBackground m_strokeBackground;
 };
 
 }

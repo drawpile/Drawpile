@@ -273,17 +273,6 @@ static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
     }
 }
 
-static void canvas_background_image_set(DP_UNUSED size_t size,
-                                        unsigned char *data, void *user)
-{
-    DP_ASSERT(size == 4);
-    DP_UPixel8 p = {*(uint32_t *)user};
-    data[0] = p.b;
-    data[1] = p.g;
-    data[2] = p.r;
-    data[3] = p.a;
-}
-
 void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
                           int height, DP_BrushPreviewStyle style,
                           DP_BrushPreviewShape shape,
@@ -328,14 +317,9 @@ void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
         cs, dc,
         DP_msg_canvas_resize_new(0, 0, DP_int_to_int32(width),
                                  DP_int_to_int32(height), 0));
-    if (background_color != 0u) {
-        cs = handle_preview_message_dec(
-            cs, dc,
-            DP_msg_canvas_background_zstd_new(0, canvas_background_image_set, 4,
-                                              &background_color));
-    }
     cs = handle_preview_message_dec(
-        cs, dc, DP_msg_layer_tree_create_new(0, 1, 0, 0, 0u, 0, "", 0));
+        cs, dc,
+        DP_msg_layer_tree_create_new(0, 1, 0, 0, background_color, 0, "", 0));
 
     if (want_foreground_dabs) {
         cs = draw_foreground_dabs(cs, dc, width, height);
@@ -439,9 +423,8 @@ void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
 
     DP_classic_brush_clone(&bp->classic, brush);
     if (style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
-        bp->classic.brush_mode =
-            plainify_blend_mode(DP_classic_brush_blend_mode(&bp->classic));
-        bp->classic.erase = false;
+        bp->classic.brush_mode = plainify_blend_mode(bp->classic.brush_mode);
+        bp->classic.erase_mode = plainify_blend_mode(bp->classic.erase_mode);
     }
 
     render_brush_preview(bp, dc, width, height, style, shape, brush->color,
@@ -483,11 +466,11 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
     DP_mypaint_brush_clone(&bp->mypaint.brush, brush);
     DP_mypaint_settings_clone(&bp->mypaint.settings, settings);
     if (style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
-        bp->mypaint.brush.brush_mode = plainify_blend_mode(
-            DP_mypaint_brush_blend_mode(&bp->mypaint.brush));
-        bp->mypaint.brush.erase = false;
+        bp->mypaint.brush.brush_mode =
+            plainify_blend_mode(bp->mypaint.brush.brush_mode);
+        bp->mypaint.brush.erase_mode =
+            plainify_blend_mode(bp->mypaint.brush.erase_mode);
 
-        preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_ERASER, 0.0f);
         preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_LOCK_ALPHA,
                                         0.0f);
         preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_COLORIZE,

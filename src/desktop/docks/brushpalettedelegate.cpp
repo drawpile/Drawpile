@@ -51,7 +51,7 @@ void BrushPaletteDelegate::paint(
 		m_lock.lockForWrite();
 		preview = renderPreview(
 			index, opt.palette, opt.fontMetrics, previewSize.width(),
-			previewSize.height());
+			previewSize.height(), dpr);
 		preview.size = previewSize;
 		m_cache.insert(id, preview);
 	} else {
@@ -246,7 +246,7 @@ bool BrushPaletteDelegate::haveStroke() const
 
 BrushPaletteDelegate::Preview BrushPaletteDelegate::renderPreview(
 	const QModelIndex &index, const QPalette &pal,
-	const QFontMetrics &fontMetrics, int w, int h) const
+	const QFontMetrics &fontMetrics, int w, int h, qreal dpr) const
 {
 	Preview preview;
 	int minDimension = qMin(w, h);
@@ -284,7 +284,7 @@ BrushPaletteDelegate::Preview BrushPaletteDelegate::renderPreview(
 		preset.effectiveBrush().renderPreview(
 			m_brushPreview, DP_BRUSH_PREVIEW_STYLE_PLAIN,
 			DP_BRUSH_PREVIEW_STROKE);
-		m_brushPreview.paint();
+		m_brushPreview.paint(m_strokeBackground.getPixmapPlain(pal, dpr));
 		preview.stroke = m_brushPreview.pixmap();
 
 		preview.title = preset.effectivePreviewTitle();

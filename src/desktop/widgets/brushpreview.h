@@ -3,6 +3,7 @@
 #define DESKTOP_WIDGETS_BRUSHPREVIEW_H
 #include "libclient/brushes/brush.h"
 #include "libclient/drawdance/brushpreview.h"
+#include "libclient/utils/checkerbackground.h"
 #include "libclient/utils/debouncetimer.h"
 #include <QFrame>
 
@@ -48,15 +49,15 @@ private:
 	void setBackgroundChanged();
 	void triggerPreviewUpdate();
 
-	void updateBackground(qreal dpr);
-	void updatePreview(qreal dpr);
+	void updatePreview(const QPalette &pal, qreal dpr);
+	const QPixmap &getPreviewBackground(const QPalette &pal, qreal dpr);
 	void updatePreset(qreal dpr);
 
 	QRect previewRect() const;
 	QRect presetRect() const;
 	QRect changeIconRect() const;
 
-	QPixmap m_background;
+	CheckerBackground m_strokeBackground;
 	brushes::ActiveBrush m_brush;
 	drawdance::BrushPreview m_brushPreview;
 	DP_BrushPreviewStyle m_style = DP_BRUSH_PREVIEW_STYLE_PLAIN;
@@ -70,7 +71,6 @@ private:
 	bool m_showThumbnail = false;
 	bool m_presetChanged = false;
 	bool m_presetEnabled = false;
-	bool m_needBackground = true;
 	bool m_needPalette = true;
 	bool m_needTextBounds = true;
 	bool m_needUpdate = false;

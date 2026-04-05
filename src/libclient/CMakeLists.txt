@@ -211,6 +211,8 @@ target_sources(dpclient PRIVATE
 	utils/canvastoimagerunnable.h
 	utils/certificatestoremodel.cpp
 	utils/certificatestoremodel.h
+	utils/checkerbackground.cpp
+	utils/checkerbackground.h
 	utils/clickeventfilter.cpp
 	utils/clickeventfilter.h
 	utils/colorscheme.cpp
