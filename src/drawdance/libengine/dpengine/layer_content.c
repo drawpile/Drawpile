@@ -462,7 +462,6 @@ DP_UPixelFloat DP_layer_content_sample_color_at_sync(
 {
     DP_ASSERT(stamp_buffer);
     DP_ASSERT(in_out_last_diameter);
-    DP_ASSERT(out_in_bounds);
     DP_ASSERT(get_layer_content);
 
     bool in_bounds = false;
@@ -502,7 +501,9 @@ DP_UPixelFloat DP_layer_content_sample_color_at_sync(
         }
     }
 
-    *out_in_bounds = in_bounds;
+    if (out_in_bounds) {
+        *out_in_bounds = in_bounds;
+    }
     return color;
 }
 
