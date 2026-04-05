@@ -101,23 +101,12 @@ void BrushPaletteDelegate::paint(
 			QRect textRect = preview.textBounds.marginsAdded(
 				QMargins(MARGIN, MARGIN / 4, MARGIN, MARGIN / 4));
 			textRect.moveBottomRight(rect.bottomRight());
-			painter->setOpacity(0.7);
 
-			// This is the same logic used in QItemDelegate::selectedPixmap.
-			QColor fillColor =
-				opt.palette.color(QPalette::Normal, QPalette::Base);
-			if(selected) {
-				QColor highlightColor = opt.palette.color(
-					enabled ? QPalette::Normal : QPalette::Disabled,
-					QPalette::Highlight);
-				fillColor.setRedF(
-					fillColor.redF() * 0.7 + highlightColor.redF() * 0.3);
-				fillColor.setGreenF(
-					fillColor.greenF() * 0.7 + highlightColor.greenF() * 0.3);
-				fillColor.setBlueF(
-					fillColor.blueF() * 0.7 + highlightColor.blueF() * 0.3);
-			}
-			painter->fillRect(textRect.intersected(rect), fillColor);
+			painter->setOpacity(0.9);
+			painter->fillRect(
+				textRect.intersected(rect).marginsAdded(
+					QMargins(MARGIN - MARGIN / 4, 0, 0, 0)),
+				selected ? opt.palette.highlight() : opt.palette.base());
 
 			painter->setOpacity(1.0);
 			painter->setPen(QPen(

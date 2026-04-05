@@ -211,7 +211,7 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 
 		QRect textRect = m_textBounds.marginsAdded(QMargins(4, 1, 4, 1));
 		textRect.moveBottomRight(pr.bottomRight());
-		painter.setOpacity(0.7);
+		painter.setOpacity(0.9);
 		painter.fillRect(textRect, pal.base());
 		painter.setOpacity(1.0);
 		painter.drawText(
