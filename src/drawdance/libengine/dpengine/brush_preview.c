@@ -221,7 +221,7 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
         float xf = DP_int_to_float(x);
 
         float p = xf / rwf;
-        if(p > 0.5f) {
+        if (p > 0.5f) {
             p = 1.0f - p;
         }
         float raw_pressure = p / 0.5f + 0.1f;
