@@ -332,6 +332,11 @@ void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
                 p->color_from = &utils::color_from_lch;
                 p->rainbow_from_hue = &utils::rainbow_lch;
                 break;
+            case ColorOKLCH:
+                utils::color_oklab_set(old_col, nullptr, &p->sat, &p->val);
+                p->color_from = &utils::color_from_oklch;
+                p->rainbow_from_hue = &utils::rainbow_oklch;
+                break;
         }
 
         p->render_ring();

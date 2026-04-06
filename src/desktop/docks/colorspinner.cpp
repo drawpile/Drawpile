@@ -64,6 +64,7 @@ struct ColorSpinnerDock::Private {
 	QAction *colorSpaceHsvAction = nullptr;
 	QAction *colorSpaceHslAction = nullptr;
 	QAction *colorSpaceHclAction = nullptr;
+	QAction *colorSpaceOklabAction = nullptr;
 	QAction *directionAscendingAction = nullptr;
 	QAction *directionDescendingAction = nullptr;
 	QAction *alignTopAction = nullptr;
@@ -193,6 +194,18 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 			if(toggled && !d->updating) {
 				cfg->setColorWheelSpace(
 					int(color_widgets::ColorWheel::ColorLCH));
+			}
+		});
+
+	d->colorSpaceOklabAction = colorSpaceMenu->addAction(tr("OKLAB"));
+	d->colorSpaceOklabAction->setCheckable(true);
+	colorSpaceGroup->addAction(d->colorSpaceOklabAction);
+	connect(
+		d->colorSpaceOklabAction, &QAction::toggled, this,
+		[this, cfg](bool toggled) {
+			if(toggled && !d->updating) {
+				cfg->setColorWheelSpace(
+					int(color_widgets::ColorWheel::ColorOKLCH));
 			}
 		});
 
@@ -436,6 +449,10 @@ void ColorSpinnerDock::setColorSpace(int colorSpace)
 	case int(color_widgets::ColorWheel::ColorLCH):
 		d->colorSpaceHclAction->setChecked(true);
 		d->colorwheel->setColorSpace(color_widgets::ColorWheel::ColorLCH);
+		break;
+	case int(color_widgets::ColorWheel::ColorOKLCH):
+		d->colorSpaceOklabAction->setChecked(true);
+		d->colorwheel->setColorSpace(color_widgets::ColorWheel::ColorOKLCH);
 		break;
 	default:
 		d->colorSpaceHsvAction->setChecked(true);

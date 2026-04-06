@@ -733,6 +733,7 @@ else()
 		bundled/QtColorWidgets/gradient_slider.cpp
 		bundled/QtColorWidgets/harmony_color_wheel.cpp
 		bundled/QtColorWidgets/hue_slider.cpp
+		bundled/QtColorWidgets/oklab.cpp
 		bundled/QtColorWidgets/swatch.cpp
 	)
 	target_include_directories(drawpile-QtColorWidgets SYSTEM PUBLIC

@@ -56,6 +56,7 @@ public:
         ColorHSV,       ///< Use the HSV color space
         ColorHSL,       ///< Use the HSL color space
         ColorLCH,       ///< Use Luma Chroma Hue (Y_601')
+        ColorOKLCH,     ///< Use OKLAB Luma Chroma Hue
     };
 
     Q_ENUM(ShapeEnum);

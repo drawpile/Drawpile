@@ -5,6 +5,7 @@
  */
 
 #include "QtColorWidgets/color_utils.hpp"
+#include "QtColorWidgets/oklab.hpp"
 
 #include <QScreen>
 #include <QApplication>
@@ -12,6 +13,23 @@
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include<QDesktopWidget>
 #endif
+
+static constexpr double OKHSL_HUE_OFFSET = 0.0812052;
+
+void color_widgets::utils::color_oklab_set(const QColor &c, qreal *out_hue, qreal *out_chroma, qreal *out_luma)
+{
+
+    color_widgets::Triplet result = color_widgets::oklab_to_okhsl(color_widgets::rgb_to_oklab({c.redF(), c.greenF(), c.blueF()}));
+    if (out_hue) {
+        *out_hue = std::fmod(result[0] + (1.0 - OKHSL_HUE_OFFSET), 1.0);
+    }
+    if (out_chroma) {
+        *out_chroma = result[1];
+    }
+    if (out_luma) {
+        *out_luma = result[2];
+    }
+}
 
 QColor color_widgets::utils::color_from_lch(qt_color_type hue, qt_color_type chroma, qt_color_type luma, qt_color_type alpha )
 {
@@ -38,6 +56,12 @@ QColor color_widgets::utils::color_from_lch(qt_color_type hue, qt_color_type chr
         qBound(0.0,col.greenF()+m,1.0),
         qBound(0.0,col.blueF()+m,1.0),
         alpha);
+}
+
+QColor color_widgets::utils::color_from_oklch(qt_color_type hue, qt_color_type chroma, qt_color_type luma, qt_color_type alpha )
+{
+    color_widgets::Triplet result = color_widgets::oklab_to_rgb(color_widgets::okhsl_to_oklab({std::fmod(hue + OKHSL_HUE_OFFSET, 1.0), chroma, luma}));
+    return QColor::fromRgbF(qBound(0.0, result[0], 1.0), qBound(0.0, result[1], 1.0), qBound(0.0, result[2], 1.0), alpha);
 }
 
 QColor color_widgets::utils::color_from_hsl(qt_color_type hue, qt_color_type sat, qt_color_type lig, qt_color_type alpha )

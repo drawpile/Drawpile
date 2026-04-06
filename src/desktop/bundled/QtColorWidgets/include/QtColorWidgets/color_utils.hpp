@@ -31,11 +31,20 @@ QCP_EXPORT inline qreal color_lumaF(const QColor& c)
     return 0.30 * c.redF() + 0.59 * c.greenF() + 0.11 * c.blueF();
 }
 
+QCP_EXPORT void color_oklab_set(const QColor &c, qreal *out_hue, qreal *out_chroma, qreal *out_luma);
+
 QCP_EXPORT QColor color_from_lch(qt_color_type hue, qt_color_type chroma, qt_color_type luma, qt_color_type alpha = 1 );
+
+QCP_EXPORT QColor color_from_oklch(qt_color_type hue, qt_color_type chroma, qt_color_type luma, qt_color_type alpha = 1 );
 
 QCP_EXPORT inline QColor rainbow_lch(qreal hue)
 {
     return color_from_lch(hue,1,0.5);
+}
+
+QCP_EXPORT inline QColor rainbow_oklch(qreal hue)
+{
+    return color_from_oklch(hue,1,0.66);
 }
 
 QCP_EXPORT inline QColor rainbow_hsv(qreal hue)

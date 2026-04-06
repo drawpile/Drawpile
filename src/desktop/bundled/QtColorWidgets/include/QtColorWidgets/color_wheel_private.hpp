@@ -281,6 +281,10 @@ public:
                 sat = utils::color_chromaF(c);
                 val = utils::color_lumaF(c);
                 break;
+            case ColorOKLCH:
+                hue = nice_hue;
+                utils::color_oklab_set(c, nullptr, &sat, &val);
+                break;
         }
     }
 
