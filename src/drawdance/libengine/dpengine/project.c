@@ -5549,6 +5549,121 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
 }
 
 
+typedef struct DP_ProjectMultiIterator {
+    int message_count;
+    int index;
+    int type;
+    size_t length;
+    double recorded_at_delta;
+    const unsigned char *body;
+} DP_ProjectMultiIterator;
+
+static bool multi_iterator_init(DP_ProjectMultiIterator *mit,
+                                size_t body_length, const unsigned char *body)
+{
+    if (body && body_length >= COPY_MESSAGE_INITIAL_HEADER_SIZE) {
+        size_t first_length =
+            DP_read_littleendian_uint16(body + sizeof(uint8_t));
+        size_t pos = COPY_MESSAGE_INITIAL_HEADER_SIZE + first_length;
+        int message_count = 1;
+
+        while (pos + COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE <= body_length) {
+            size_t current_length = DP_read_littleendian_uint16(
+                body + pos + sizeof(uint16_t) + sizeof(uint8_t));
+            pos += COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE + current_length;
+            ++message_count;
+        }
+
+        if (pos == body_length) {
+            *mit = (DP_ProjectMultiIterator){
+                message_count, -1, 0, 0, 0.0, body,
+            };
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool multi_iterator_next(DP_ProjectMultiIterator *mit)
+{
+    int i = ++mit->index;
+    if (i < mit->message_count) {
+        if (i != 0) {
+            mit->body += mit->length;
+
+            mit->recorded_at_delta +=
+                DP_uint16_to_double(DP_read_littleendian_uint16(mit->body))
+                / 1000.0;
+            mit->body += sizeof(uint16_t);
+        }
+
+        mit->type = mit->body[0];
+        mit->body += sizeof(uint8_t);
+
+        mit->length = DP_read_littleendian_uint16(mit->body);
+        mit->body += sizeof(uint16_t);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+typedef struct DP_ProjectMultiZstdContext {
+    ZSTD_DCtx *dctx;
+    unsigned char *decompression_buffer;
+    size_t size;
+} DP_ProjectMultiZstdContext;
+
+static DP_ProjectMultiZstdContext multi_zstd_make(void)
+{
+    return (DP_ProjectMultiZstdContext){
+        NULL,
+        NULL,
+        0,
+    };
+}
+
+static void multi_zstd_dispose(DP_ProjectMultiZstdContext *c)
+{
+    DP_free(c->decompression_buffer);
+    DP_decompress_zstd_free(&c->dctx);
+}
+
+static unsigned char *multi_zstd_get_output_buffer(size_t size, void *user)
+{
+    if (size <= COPY_MESSAGE_BODY_CAPACITY) {
+        DP_ProjectMultiZstdContext *c = user;
+        c->size = size;
+        if (!c->decompression_buffer) {
+            c->decompression_buffer = DP_malloc(COPY_MESSAGE_BODY_CAPACITY);
+        }
+        return c->decompression_buffer;
+    }
+    else {
+        DP_error_set("Multi decompression buffer too large: %zu", size);
+        return NULL;
+    }
+}
+
+static bool multi_zstd_handle(DP_ProjectMultiZstdContext *c, size_t body_length,
+                              const unsigned char *body,
+                              bool (*fn)(void *, size_t, const unsigned char *),
+                              void *user)
+{
+    bool ok = body
+           && DP_decompress_zstd(&c->dctx, body, body_length,
+                                 multi_zstd_get_output_buffer, c);
+    if (ok) {
+        return fn(user, c->size, c->decompression_buffer);
+    }
+    else {
+        DP_warn("Multi decompression failed: %s", DP_error());
+        return true;
+    }
+}
+
+
 #define MAX_MULTIDAB_COUNT 8192
 #define FILTER_PASS        0
 #define FILTER_IGNORE      1
@@ -5630,8 +5745,7 @@ struct DP_ProjectPlaybackContext {
     DP_CanvasHistory *ch;
     DP_DrawContext *dc;
     DP_LocalState *ls;
-    ZSTD_DCtx *dctx;
-    unsigned char *decompression_buffer;
+    DP_ProjectMultiZstdContext mzc;
     DP_Message **multidab_msgs;
     int multidab_count;
     DP_Vector continues;
@@ -5651,8 +5765,7 @@ playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
         DP_canvas_history_new_no_mutex(),
         dc,
         DP_local_state_new(NULL, NULL, NULL),
-        NULL,
-        DP_malloc(COPY_MESSAGE_BODY_CAPACITY),
+        multi_zstd_make(),
         DP_malloc(sizeof(*c->multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT),
         0,
         DP_VECTOR_NULL,
@@ -5671,8 +5784,7 @@ static void playback_context_dispose(DP_ProjectPlaybackContext *c)
         DP_message_decref(c->multidab_msgs[i]);
     }
     DP_free(c->multidab_msgs);
-    DP_free(c->decompression_buffer);
-    DP_decompress_zstd_free(&c->dctx);
+    multi_zstd_dispose(&c->mzc);
     DP_local_state_free(c->ls);
     DP_canvas_history_free(c->ch);
 }
@@ -5922,128 +6034,56 @@ static bool playback_query_handle_message(
     return true;
 }
 
-static int playback_query_handle_multi_count(const unsigned char *body,
-                                             size_t body_length)
-{
-    if (body_length >= COPY_MESSAGE_INITIAL_HEADER_SIZE) {
-        size_t first_length =
-            DP_read_littleendian_uint16(body + sizeof(uint8_t));
-        size_t pos = COPY_MESSAGE_INITIAL_HEADER_SIZE + first_length;
-        int message_count = 1;
-
-        while (pos + COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE <= body_length) {
-            size_t current_length = DP_read_littleendian_uint16(
-                body + pos + sizeof(uint16_t) + sizeof(uint8_t));
-            pos += COPY_MESSAGE_TIMESTAMPED_HEADER_SIZE + current_length;
-            ++message_count;
-        }
-
-        if (pos == body_length) {
-            return message_count;
-        }
-    }
-    return 0;
-}
-
 static bool playback_query_handle_multi(
     DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
     long long last_sequence_id, unsigned int context_id, size_t body_length,
     const unsigned char *body, unsigned int flags, double first_recorded_at)
 {
-    int message_count = playback_query_handle_multi_count(body, body_length);
-    if (message_count <= 0) {
+    DP_ProjectMultiIterator mit;
+    if (multi_iterator_init(&mit, body_length, body)) {
+        unsigned int message_flags = flags & ~DP_PROJECT_MESSAGE_FLAG_CONTINUE;
+        long long first_sequence_id =
+            last_sequence_id - DP_int_to_llong(mit.message_count - 1);
+
+        while (multi_iterator_next(&mit)) {
+            long long current_sequence_id =
+                first_sequence_id + DP_int_to_llong(mit.index);
+            if (!playback_query_handle_message(
+                    prj, c, session_id, current_sequence_id, mit.type,
+                    context_id, mit.length, mit.body, current_sequence_id,
+                    message_flags, first_recorded_at + mit.recorded_at_delta)) {
+                return false;
+            }
+        }
+
+        playback_query_handle_continue(prj, c, session_id, last_sequence_id,
+                                       flags);
+    }
+    else {
         DP_warn("Invalid multi message at sequence id %lld", last_sequence_id);
-        return true;
     }
-
-    unsigned int message_flags = flags & ~DP_PROJECT_MESSAGE_FLAG_CONTINUE;
-    long long current_sequence_id =
-        last_sequence_id - DP_int_to_llong(message_count - 1);
-
-    {
-        int first_type = body[0];
-        body += sizeof(uint8_t);
-
-        size_t first_length = DP_read_littleendian_uint16(body);
-        body += sizeof(uint16_t);
-
-        if (!playback_query_handle_message(
-                prj, c, session_id, current_sequence_id, first_type, context_id,
-                first_length, body, current_sequence_id, message_flags,
-                first_recorded_at)) {
-            return false;
-        }
-
-        body += first_length;
-    }
-
-    double current_recorded_at = first_recorded_at;
-    for (int i = 1; i < message_count; ++i) {
-        current_recorded_at +=
-            DP_uint16_to_double(DP_read_littleendian_uint16(body)) / 1000.0;
-        body += sizeof(uint16_t);
-
-        int current_type = body[0];
-        body += sizeof(uint8_t);
-
-        size_t current_length = DP_read_littleendian_uint16(body);
-        body += sizeof(uint16_t);
-
-        ++current_sequence_id;
-        if (!playback_query_handle_message(
-                prj, c, session_id, current_sequence_id, current_type,
-                context_id, current_length, body, current_sequence_id,
-                message_flags, current_recorded_at)) {
-            return false;
-        }
-
-        body += current_length;
-    }
-
-    playback_query_handle_continue(prj, c, session_id, current_sequence_id,
-                                   flags);
 
     return true;
 }
 
-struct DP_ProjectPlaybackQueryHandleMultiZstdParams {
-    unsigned char *decompression_buffer;
-    size_t size;
+struct DP_ProjectPlaybackMultiZstdParams {
+    DP_Project *prj;
+    DP_ProjectPlaybackContext *c;
+    long long session_id;
+    long long last_sequence_id;
+    unsigned int context_id;
+    unsigned int flags;
+    double first_recorded_at;
 };
 
-static unsigned char *
-playback_query_handle_multi_zstd_get_output_buffer(size_t size, void *user)
+static bool playback_query_handle_multi_zstd(void *user, size_t body_size,
+                                             const unsigned char *body)
 {
-    if (size <= COPY_MESSAGE_BODY_CAPACITY) {
-        struct DP_ProjectPlaybackQueryHandleMultiZstdParams *params = user;
-        params->size = size;
-        return params->decompression_buffer;
-    }
-    else {
-        DP_error_set("Multi decompression buffer too large: %zu", size);
-        return NULL;
-    }
-}
-
-static bool playback_query_handle_multi_zstd(
-    DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
-    long long last_sequence_id, unsigned int context_id, size_t body_length,
-    const unsigned char *body, unsigned int flags, double first_recorded_at)
-{
-    struct DP_ProjectPlaybackQueryHandleMultiZstdParams params = {
-        c->decompression_buffer, 0};
-    bool ok = DP_decompress_zstd(
-        &c->dctx, body, body_length,
-        playback_query_handle_multi_zstd_get_output_buffer, &params);
-    if (ok) {
-        return playback_query_handle_multi(
-            prj, c, session_id, last_sequence_id, context_id, params.size,
-            params.decompression_buffer, flags, first_recorded_at);
-    }
-    else {
-        DP_warn("Multi decompression failed: %s", DP_error());
-        return true;
-    }
+    struct DP_ProjectPlaybackMultiZstdParams *params = user;
+    return playback_query_handle_multi(
+        params->prj, params->c, params->session_id, params->last_sequence_id,
+        params->context_id, body_size, body, params->flags,
+        params->first_recorded_at);
 }
 
 static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
@@ -6088,11 +6128,16 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
                     prj, c, session_id, sequence_id, context_id, body_length,
                     body, flags, recorded_at);
                 break;
-            case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD:
-                ok = playback_query_handle_multi_zstd(
-                    prj, c, session_id, sequence_id, context_id, body_length,
-                    body, flags, recorded_at);
+            case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD: {
+                struct DP_ProjectPlaybackMultiZstdParams params = {
+                    prj,        c,     session_id,  sequence_id,
+                    context_id, flags, recorded_at,
+                };
+                ok = multi_zstd_handle(&c->mzc, body_length, body,
+                                       playback_query_handle_multi_zstd,
+                                       &params);
                 break;
+            }
             default:
                 ok = playback_query_handle_message(
                     prj, c, session_id, sequence_id, type, context_id,
@@ -6638,6 +6683,47 @@ static void project_info_work_times_flush(
     }
 }
 
+static void
+project_info_work_times_handle(struct DP_ProjectInfoWorkTimesContext *c,
+                               double recorded_at)
+{
+    if (has_minute_passed(c->own_last_recorded_at, recorded_at)) {
+        c->own_last_recorded_at = recorded_at;
+        ++c->own_work_minutes;
+    }
+}
+
+static void project_info_work_times_handle_multi(
+    struct DP_ProjectInfoWorkTimesContext *c, double first_recorded_at,
+    size_t body_length, const unsigned char *body)
+{
+    DP_ProjectMultiIterator mit;
+    if (multi_iterator_init(&mit, body_length, body)) {
+        while (multi_iterator_next(&mit)) {
+            project_info_work_times_handle(c, first_recorded_at
+                                                  + mit.recorded_at_delta);
+        }
+    }
+    else {
+        DP_warn("Invalid multi message");
+    }
+}
+
+struct ProjectInfoWorkTimesMultiZstdParams {
+    struct DP_ProjectInfoWorkTimesContext *c;
+    double first_recorded_at;
+};
+
+static bool project_info_work_times_handle_multi_zstd(void *user,
+                                                      size_t body_length,
+                                                      const unsigned char *body)
+{
+    struct ProjectInfoWorkTimesMultiZstdParams *params = user;
+    project_info_work_times_handle_multi(params->c, params->first_recorded_at,
+                                         body_length, body);
+    return true;
+}
+
 static int project_info_work_times(DP_Project *prj,
                                    void (*callback)(void *,
                                                     const DP_ProjectInfo *),
@@ -6646,13 +6732,14 @@ static int project_info_work_times(DP_Project *prj,
     static_assert(DP_PROJECT_MESSAGE_FLAG_OWN == 1,
                   "message own flag matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "select session_id, recorded_at from messages\n"
+        prj, "select session_id, recorded_at, type, body from messages\n"
              "where (flags & 1) <> 0 order by session_id, sequence_id");
     if (!stmt) {
         return DP_PROJECT_INFO_ERROR_PREPARE;
     }
 
     struct DP_ProjectInfoWorkTimesContext c = {0LL, 0LL, 0.0};
+    DP_ProjectMultiZstdContext mzc = multi_zstd_make();
 
     bool error;
     while (ps_exec_step(prj, stmt, &error)) {
@@ -6661,11 +6748,31 @@ static int project_info_work_times(DP_Project *prj,
 
         project_info_work_times_flush(&c, session_id, callback, user);
 
-        if (has_minute_passed(c.own_last_recorded_at, recorded_at)) {
-            c.own_last_recorded_at = recorded_at;
-            ++c.own_work_minutes;
+        int type = sqlite3_column_int(stmt, 2);
+        switch (type) {
+        case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI:
+            project_info_work_times_handle_multi(
+                &c, recorded_at, DP_int_to_size(sqlite3_column_bytes(stmt, 3)),
+                sqlite3_column_blob(stmt, 3));
+            break;
+        case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD: {
+            struct ProjectInfoWorkTimesMultiZstdParams params = {
+                &c,
+                recorded_at,
+            };
+            multi_zstd_handle(
+                &mzc, DP_int_to_size(sqlite3_column_bytes(stmt, 3)),
+                sqlite3_column_blob(stmt, 3),
+                project_info_work_times_handle_multi_zstd, &params);
+            break;
+        }
+        default:
+            project_info_work_times_handle(&c, recorded_at);
+            break;
         }
     }
+
+    multi_zstd_dispose(&mzc);
     sqlite3_finalize(stmt);
 
     if (error) {
