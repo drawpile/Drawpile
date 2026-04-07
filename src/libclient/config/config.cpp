@@ -106,12 +106,12 @@ bool Config::defaultAnimationExportPreferFfmpeg()
 
 bool Config::defaultAutoRecordHost()
 {
-	return false;
+	return true;
 }
 
 bool Config::defaultAutoRecordJoin()
 {
-	return false;
+	return true;
 }
 
 int Config::defaultAutoRecordMetadataIntervalMinutes()

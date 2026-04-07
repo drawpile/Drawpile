@@ -63,7 +63,7 @@ settings:
 
   - id: autoRecordHost
     type: 'bool'
-    default: 'false'
+    default: 'true'
     qsettings: 'settings/autorecord/host'
     legacy_package: 'libclient'
     comment: |
@@ -72,7 +72,7 @@ settings:
 
   - id: autoRecordJoin
     type: 'bool'
-    default: 'false'
+    default: 'true'
     qsettings: 'settings/autorecord/join'
     legacy_package: 'libclient'
     comment: |
