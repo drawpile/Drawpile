@@ -25,12 +25,9 @@ const QPixmap &CheckerBackground::getPixmap(
 
 const QPixmap &CheckerBackground::getPixmapPlain(const QPalette &pal, qreal dpr)
 {
-	QColor baseColor = pal.color(QPalette::Base);
-	if(baseColor.lightnessF() < 0.5) {
-		return getPixmap(baseColor.darker(150), baseColor.lighter(250), dpr);
-	} else {
-		return getPixmap(baseColor.darker(200), baseColor.lighter(150), dpr);
-	}
+	return getPixmap(
+		pal.color(QPalette::Active, QPalette::AlternateBase),
+		pal.color(QPalette::Active, QPalette::Text), dpr);
 }
 
 const QPixmap &
