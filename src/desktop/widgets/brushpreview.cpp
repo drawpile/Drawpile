@@ -214,6 +214,7 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 		painter.setOpacity(0.9);
 		painter.fillRect(textRect, pal.base());
 		painter.setOpacity(1.0);
+		painter.setPen(QPen(pal.text(), 1.0));
 		painter.drawText(
 			textRect, Qt::AlignCenter | Qt::TextDontClip, m_presetTitle);
 	}
