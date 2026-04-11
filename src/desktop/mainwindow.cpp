@@ -6097,9 +6097,6 @@ void MainWindow::setupActions()
 	QAction *closefile =
 		makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
-	QAction *recover = makeAction("recover", tr("Recover…"))
-						   .icon(QStringLiteral("backup"))
-						   .noDefaultShortcut();
 	QAction *autoRecord = makeAction("autorecord", tr("Autorecovery"))
 							  .noDefaultShortcut()
 							  .checkable();
@@ -6173,6 +6170,9 @@ void MainWindow::setupActions()
 		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
 #endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
+	QAction *recover = makeAction("recover", tr("Recover…"))
+						   .icon(QStringLiteral("backup"))
+						   .noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
 	QAction *quit = makeAction("exitprogram", tr("&Quit"))
 						.icon("application-exit")
@@ -6229,7 +6229,6 @@ void MainWindow::setupActions()
 
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
-	connect(recover, &QAction::triggered, this, &MainWindow::showRecover);
 	connect(
 		autoRecord, &QAction::triggered, this,
 		&MainWindow::toggleProjectRecording);
@@ -6266,6 +6265,7 @@ void MainWindow::setupActions()
 		&MainWindow::requestTimelapseDialog);
 #endif
 	connect(start, &QAction::triggered, this, &MainWindow::start);
+	connect(recover, &QAction::triggered, this, &MainWindow::showRecover);
 
 #ifndef __EMSCRIPTEN__
 #	ifdef Q_OS_MACOS
@@ -6288,7 +6288,6 @@ void MainWindow::setupActions()
 		m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
 	}
 #endif
-	filemenu->addAction(recover);
 	filemenu->addSeparator();
 
 #ifdef __EMSCRIPTEN__
@@ -6342,6 +6341,7 @@ void MainWindow::setupActions()
 #endif
 	filemenu->addSeparator();
 	filemenu->addAction(start);
+	filemenu->addAction(recover);
 #ifndef __EMSCRIPTEN__
 	filemenu->addAction(quit);
 #endif
