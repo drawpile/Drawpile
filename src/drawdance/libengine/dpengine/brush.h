@@ -198,6 +198,8 @@ bool DP_mypaint_settings_fixed_offset(const DP_MyPaintSettings *settings,
 bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
                                       const DP_MyPaintSettings *b);
 
+bool DP_mypaint_settings_guess_sync_samples(const DP_MyPaintSettings *settings);
+
 void DP_mypaint_brush_clone(DP_MyPaintBrush *DP_RESTRICT dst,
                             const DP_MyPaintBrush *DP_RESTRICT src);
 

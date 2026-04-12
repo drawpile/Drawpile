@@ -926,8 +926,17 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.m_stabilizerSampleCount = stabilizerSampleCount;
 	b.m_smoothing = o["smoothing"].toInt();
-	b.m_syncSamples = o.value(QStringLiteral("syncsamples")).toBool(true);
 	b.m_confidential = o.value(QStringLiteral("confidential")).toBool();
+
+	QJsonValue syncSamplesValue = o.value(QStringLiteral("syncsamples"));
+	if(syncSamplesValue.isBool()) {
+		b.m_syncSamples = syncSamplesValue.toBool();
+	} else {
+		// A good number of MyPaint brushes have a really tiny amount of
+		// smudging that isn't worth the slowdown of synchronization. We guess
+		// whether we have such a case here if the sync isn't set explicitly.
+		b.m_syncSamples = DP_mypaint_settings_guess_sync_samples(b.m_settings);
+	}
 
 	return b;
 }

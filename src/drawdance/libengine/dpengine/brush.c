@@ -486,6 +486,28 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
         || (a && b && preset_equal_mypaint_brush(a, b, in_eraser_slot));
 }
 
+bool DP_mypaint_settings_guess_sync_samples(const DP_MyPaintSettings *settings)
+{
+    // We'll guess that any brush with a low, fixed smudge rate doesn't need
+    // synchronized smudging. Anything with smudge dynamics or a higher smudge
+    // rate does probably look noticeably different. If the brush doesn't
+    // smudge at all, we also enable the setting, since it will never actually
+    // make a synchronization call.
+    if (settings) {
+        const DP_MyPaintMapping *mapping =
+            &settings->mappings[MYPAINT_BRUSH_SETTING_SMUDGE];
+        if (mapping->base_value > 0.0f && mapping->base_value < 0.12f) {
+            for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+                if (mapping->inputs[i].n > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
 DP_BlendMode DP_mypaint_brush_blend_mode(const DP_MyPaintBrush *mb)
 {
     DP_ASSERT(mb);
