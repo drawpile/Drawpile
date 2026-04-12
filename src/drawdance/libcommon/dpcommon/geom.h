@@ -25,6 +25,7 @@
 #include "common.h"
 #include <math.h>
 
+#define DP_RECT_ZERO_INIT    {0, 0, 0, 0}
 #define DP_RECT_INVALID_INIT {INT_MAX, INT_MAX, INT_MIN, INT_MIN}
 #define DP_RECT_INVALID      (DP_Rect) DP_RECT_INVALID_INIT
 

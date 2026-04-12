@@ -458,7 +458,7 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
 DP_UPixelFloat DP_layer_content_sample_color_at_sync(
     uint16_t *stamp_buffer, int x, int y, int diameter, bool opaque,
     bool pigment, int *in_out_last_diameter, bool *out_in_bounds,
-    DP_LayerContent *(get_layer_content)(void *), void *user)
+    DP_LayerContent *(get_layer_content)(void *, const DP_Rect *), void *user)
 {
     DP_ASSERT(stamp_buffer);
     DP_ASSERT(in_out_last_diameter);
@@ -468,7 +468,8 @@ DP_UPixelFloat DP_layer_content_sample_color_at_sync(
     DP_UPixelFloat color = DP_upixel_float_zero();
 
     if (diameter < 2) {
-        DP_LayerContent *lc = get_layer_content(user);
+        DP_Rect area = {x, y, x, y};
+        DP_LayerContent *lc = get_layer_content(user, &area);
         if (lc) {
             in_bounds = x >= 0 && y >= 0 && x < lc->width && y < lc->height;
             if (in_bounds) {
@@ -490,7 +491,9 @@ DP_UPixelFloat DP_layer_content_sample_color_at_sync(
         DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
             stamp_buffer, diameter, x, y, last_diameter);
 
-        DP_LayerContent *lc = get_layer_content(user);
+        DP_Rect area =
+            DP_rect_make(stamp.left, stamp.top, stamp.diameter, stamp.diameter);
+        DP_LayerContent *lc = get_layer_content(user, &area);
         if (lc) {
             int radius = diameter / 2;
             in_bounds = x + radius >= 0 && y + radius >= 0
@@ -507,7 +510,8 @@ DP_UPixelFloat DP_layer_content_sample_color_at_sync(
     return color;
 }
 
-static DP_LayerContent *get_sample_layer_content(void *user)
+static DP_LayerContent *get_sample_layer_content(void *user,
+                                                 DP_UNUSED const DP_Rect *area)
 {
     return user;
 }

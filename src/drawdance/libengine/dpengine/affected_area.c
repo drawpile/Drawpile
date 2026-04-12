@@ -85,6 +85,39 @@ static DP_AffectedArea make_everything(void)
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_EVERYTHING, 0, DP_RECT_INVALID};
 }
 
+
+static DP_Rect pixel_dab_area(int x, int y, uint16_t dab_size)
+{
+    int d = dab_size + 1;
+    int r = d / 2;
+    return DP_rect_make(DP_double_to_int(x - r), DP_double_to_int(y - r), d, d);
+}
+
+DP_Rect DP_affected_area_pixel_dab_area(int32_t dab_x, int32_t dab_y,
+                                        uint16_t dab_size)
+{
+    return pixel_dab_area(DP_int32_to_int(dab_x), DP_int32_to_int(dab_y),
+                          dab_size);
+}
+
+
+static DP_Rect subpixel_dab_area(double x, double y, uint32_t dab_size)
+{
+    double d = DP_uint32_to_double(dab_size) / 256.0;
+    double r = d / 2.0;
+    int dim = DP_double_to_int(d) + 1;
+    return DP_rect_make(DP_double_to_int(x - r), DP_double_to_int(y - r), dim,
+                        dim);
+}
+
+DP_Rect DP_affected_area_subpixel_dab_area(int32_t dab_x, int32_t dab_y,
+                                           uint32_t dab_size)
+{
+    double x = DP_int32_to_double(dab_x) / 4.0;
+    double y = DP_int32_to_double(dab_y) / 4.0;
+    return subpixel_dab_area(x, y, dab_size);
+}
+
 struct SubpixelDabs {
     double last_x, last_y;
     DP_Rect bounds;
@@ -105,12 +138,7 @@ static void subpixel_dabs_update(struct SubpixelDabs *s, int32_t dab_x,
 {
     double x = s->last_x + DP_int32_to_double(dab_x) / 4.0;
     double y = s->last_y + DP_int32_to_double(dab_y) / 4.0;
-    double d = DP_uint32_to_double(dab_size) / 256.0;
-    double r = d / 2.0;
-    int dim = DP_double_to_int(d) + 1;
-    s->bounds = DP_rect_union(s->bounds,
-                              DP_rect_make(DP_double_to_int(x - r),
-                                           DP_double_to_int(y - r), dim, dim));
+    s->bounds = DP_rect_union(s->bounds, subpixel_dab_area(x, y, dab_size));
     s->last_x = x;
     s->last_y = y;
 }
@@ -172,11 +200,8 @@ static DP_Rect pixel_dabs_bounds(DP_MsgDrawDabsPixel *mddp)
         const DP_PixelDab *dab = DP_pixel_dab_at(dabs, i);
         int x = last_x + DP_pixel_dab_x(dab);
         int y = last_y + DP_pixel_dab_y(dab);
-        int d = DP_pixel_dab_size(dab) + 1;
-        int r = d / 2;
         bounds =
-            DP_rect_union(bounds, DP_rect_make(DP_double_to_int(x - r),
-                                               DP_double_to_int(y - r), d, d));
+            DP_rect_union(bounds, pixel_dab_area(x, y, DP_pixel_dab_size(dab)));
         last_x = x;
         last_y = y;
     }

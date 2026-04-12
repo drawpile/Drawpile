@@ -104,6 +104,12 @@ typedef struct DP_AffectedIndirectAreas {
 } DP_AffectedIndirectAreas;
 
 
+DP_Rect DP_affected_area_pixel_dab_area(int32_t dab_x, int32_t dab_y,
+                                        uint16_t dab_size);
+
+DP_Rect DP_affected_area_subpixel_dab_area(int32_t dab_x, int32_t dab_y,
+                                           uint32_t dab_size);
+
 // If the message is an indirect stroke, the affected indirect areas for that
 // user are amended with that stroke's bounds. If it's a pen up message, the
 // collected bounds are used as the area for that message and the indirect area

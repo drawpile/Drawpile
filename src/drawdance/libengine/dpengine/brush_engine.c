@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "brush_engine.h"
+#include "affected_area.h"
 #include "brush.h"
 #include "canvas_state.h"
 #include "compress.h"
@@ -50,6 +51,8 @@
 #define CLASSIC_VELOCITY_M        1.493972f
 #define CLASSIC_VELOCITY_Q        -6.373980f
 #define CLASSIC_VELOCITY_SLOWNESS 0.04f
+
+#define SMUDGE_AREA_COUNT 32
 
 typedef enum DP_BrushEngineActiveType {
     DP_BRUSH_ENGINE_ACTIVE_PIXEL,
@@ -190,6 +193,10 @@ struct DP_BrushEngine {
         bool compatibility_mode;
         long long last_time_msec;
     } stroke;
+    struct {
+        DP_Rect areas[SMUDGE_AREA_COUNT];
+        int used;
+    } smudge;
     struct {
         bool active;
         bool preview;
@@ -386,6 +393,44 @@ static float brush_engine_randf(DP_BrushEngine *be)
 }
 
 
+static void push_smudge_area(DP_BrushEngine *be, DP_Rect area)
+{
+    int count = be->smudge.used;
+    if (count < SMUDGE_AREA_COUNT) {
+        be->smudge.areas[count] = area;
+        be->smudge.used = count + 1;
+    }
+    else {
+        // Just accumulate the changed area at the last index.
+        be->smudge.areas[SMUDGE_AREA_COUNT - 1] =
+            DP_rect_union(be->smudge.areas[SMUDGE_AREA_COUNT - 1], area);
+    }
+}
+
+static bool should_sync(DP_BrushEngine *be, DP_Rect area)
+{
+    // We want to sync if synchronized smudging is turned on and if the canvas
+    // has been modified in the spot where we're about to draw (or we don't have
+    // any canvas yet.) Each dab placed down will be added to the smudge areas
+    // and we check if they intereset with the area we want to sample.
+    if (be->stroke.sync_samples) {
+        if (be->cs) {
+            int count = be->smudge.used;
+            for (int i = 0; i < count; ++i) {
+                if (DP_rect_intersects(area, be->smudge.areas[i])) {
+                    DP_brush_engine_dabs_flush(be);
+                    be->smudge.used = 0;
+                    return true;
+                }
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    return false;
+}
+
 static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
 {
     if (cs && layer_id > 0) {
@@ -400,9 +445,10 @@ static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
     return NULL;
 }
 
-static DP_LayerContent *update_sample_layer_content(DP_BrushEngine *be)
+static DP_LayerContent *update_sample_layer_content(DP_BrushEngine *be,
+                                                    const DP_Rect *area)
 {
-    if (be->stroke.sync_samples) {
+    if (should_sync(be, *area)) {
         DP_ASSERT(be->sync); // Checked when setting sync_samples.
         DP_CanvasState *cs = be->sync(be->user);
         if (cs) {
@@ -1665,6 +1711,11 @@ static void append_pixel_dab(DP_BrushEngine *be, const DP_PixelDabParams *dab)
     DP_BrushEnginePixelDab *dabs = get_dab_buffer(be, sizeof(*dabs));
     dabs[be->dabs.used++] =
         (DP_BrushEnginePixelDab){dx, dy, dab->size, dab->opacity};
+
+    if (be->stroke.sync_samples) {
+        push_smudge_area(
+            be, DP_affected_area_pixel_dab_area(dab->x, dab->y, dab->size));
+    }
 }
 
 static void pixel_perfect_append_pixel(DP_BrushEngine *be, void *user)
@@ -1823,6 +1874,11 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
             dx, dy, dab.size,
             DP_classic_brush_dab_hardness_at(cb, pressure, velocity, distance),
             dab.opacity};
+
+        if (be->stroke.sync_samples) {
+            push_smudge_area(
+                be, DP_affected_area_subpixel_dab_area(dab.x, dab.y, dab.size));
+        }
     }
 }
 
@@ -1986,6 +2042,11 @@ static void append_mypaint_dab(DP_BrushEngine *be,
     dabs[be->dabs.used++] = (DP_BrushEngineMyPaintDab){
         dx,           dy,         dab->size,        dab->hardness,
         dab->opacity, dab->angle, dab->aspect_ratio};
+
+    if (be->stroke.sync_samples) {
+        push_smudge_area(
+            be, DP_affected_area_subpixel_dab_area(dab->x, dab->y, dab->size));
+    }
 }
 
 static void pixel_perfect_append_mypaint(DP_BrushEngine *be, void *user)
@@ -2166,9 +2227,10 @@ static bool is_pigment_mode(DP_BlendMode blend_mode)
         || blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA;
 }
 
-static DP_LayerContent *get_sample_layer_content(void *user)
+static DP_LayerContent *get_sample_layer_content(void *user,
+                                                 const DP_Rect *area)
 {
-    return update_sample_layer_content(user);
+    return update_sample_layer_content(user, area);
 }
 
 static DP_UPixelFloat sample_color_at(DP_BrushEngine *be, int x, int y,
@@ -2329,6 +2391,20 @@ DP_brush_engine_new(DP_MaskSync *ms_or_null,
          get_color_mypaint_pigment,
          NULL},
         {0, 1.0f, 0.0f, false, false, false, false, false, false, 0},
+        {{
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+             DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
+         },
+         0},
         {false, false, 0, 0, ms_or_null ? ++ms_or_null->last_sync_id : 0,
          DP_mask_sync_incref_nullable(ms_or_null), NULL, 0, NULL, NULL},
         {NULL,
@@ -2888,6 +2964,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     be->stroke.mirror = mirror;
     be->stroke.flip = flip;
     be->stroke.compatibility_mode = compatibility_mode;
+    be->smudge.used = 0;
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
