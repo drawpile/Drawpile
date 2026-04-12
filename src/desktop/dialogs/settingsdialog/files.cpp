@@ -4,13 +4,18 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
+#include "libclient/utils/logging.h"
+#include "libshared/util/paths.h"
 #include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
+#include <QFile>
+#include <QFileInfo>
 #include <QFormLayout>
 #include <QFrame>
 #include <QLabel>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -174,6 +179,44 @@ void Files::initLogging(config::Config *cfg, QFormLayout *form)
 	QCheckBox *enableLogging = new QCheckBox(tr("Write debugging log to file"));
 	CFG_BIND_CHECKBOX(cfg, WriteLogFile, enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);
+
+	QPushButton *clearButton = new QPushButton(
+		QIcon::fromTheme(QStringLiteral("trash-empty")),
+		tr("Clear log files…"));
+	clearButton->setAutoDefault(false);
+	form->addRow(nullptr, clearButton);
+	connect(clearButton, &QPushButton::clicked, this, &Files::clearLogFiles);
+}
+
+void Files::clearLogFiles()
+{
+	QFileInfoList infos = utils::allLogFilesExceptCurrent();
+	int count = infos.size();
+	if(count == 0) {
+		utils::showInformation(
+			this, tr("Clear Log Files"), tr("No log files to clear found."));
+	} else {
+		qint64 totalSize = 0;
+		for(const QFileInfo &info : infos) {
+			totalSize += info.size();
+		}
+		QMessageBox *box = utils::showQuestion(
+			this, tr("Clear Log Files"),
+			tr("Do you want to delete %n log file(s)?", nullptr, count),
+			tr("It/They take(s) up %1 of space.", nullptr, count)
+				.arg(utils::paths::formatFileSize(totalSize)));
+		connect(box, &QMessageBox::accepted, this, [infos] {
+			for(const QFileInfo &info : infos) {
+				QFile file(info.filePath());
+				if(!file.remove()) {
+					qWarning(
+						"Failed to remove log file '%s': %s",
+						qUtf8Printable(file.fileName()),
+						qUtf8Printable(file.errorString()));
+				}
+			}
+		});
+	}
 }
 
 }

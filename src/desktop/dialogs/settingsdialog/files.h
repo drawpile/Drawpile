@@ -26,6 +26,8 @@ private:
 	void initAutorecord(config::Config *cfg, QFormLayout *form);
 	void initDialogs(config::Config *cfg, QFormLayout *form);
 	void initLogging(config::Config *cfg, QFormLayout *form);
+
+	void clearLogFiles();
 };
 
 }

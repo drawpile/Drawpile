@@ -6,6 +6,7 @@ extern "C" {
 #include "libclient/utils/logging.h"
 #include "libshared/util/paths.h"
 #include <QDateTime>
+#include <QDir>
 #include <QFile>
 #include <QMessageLogContext>
 
@@ -15,8 +16,8 @@ static DP_Mutex *const logmutex = DP_mutex_new();
 static QFile *logfile;
 static QtMessageHandler defaultLogger;
 
-void logToFile(
-	QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
+static void
+logToFile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
 {
 	QString label;
 	switch(type) {
@@ -57,7 +58,7 @@ void logToFile(
 QString logFilePath()
 {
 	return utils::paths::writablePath(
-		QStandardPaths::AppLocalDataLocation, "logs/",
+		QStandardPaths::AppLocalDataLocation, QStringLiteral("logs/"),
 		QStringLiteral("drawpile-%1-%2.log")
 			.arg(cmake_config::version())
 			.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
@@ -88,6 +89,29 @@ void enableLogFile(bool enable)
 		DP_MUTEX_MUST_UNLOCK(logmutex);
 		delete f;
 	}
+}
+
+QFileInfoList allLogFilesExceptCurrent()
+{
+	QString currentFileName;
+	DP_MUTEX_MUST_LOCK(logmutex);
+	if(logfile) {
+		currentFileName = logfile->fileName();
+	}
+	DP_MUTEX_MUST_UNLOCK(logmutex);
+
+	QDir dir(
+		QFileInfo(currentFileName.isEmpty() ? logFilePath() : currentFileName)
+			.path());
+	dir.setNameFilters({QStringLiteral("*.log")});
+	dir.setFilter(QDir::Files | QDir::NoSymLinks);
+
+	QFileInfoList infos = dir.entryInfoList();
+	if(!currentFileName.isEmpty()) {
+		QFileInfo currentInfo(currentFileName);
+		infos.removeOne(currentInfo);
+	}
+	return infos;
 }
 
 }
