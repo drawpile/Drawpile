@@ -250,9 +250,6 @@ void Freehand::finish()
 	cancelStroke();
 	DP_SEMAPHORE_MUST_POST(m_sem);
 	m_strokeWorker.finishThread();
-	// There may be messages not yet emitted that would POST to m_sem. Those
-	// need to be executed early, otherwise the following WAIT may hang.
-	executePendingSyncMessages();
 	DP_SEMAPHORE_MUST_WAIT(m_sem);
 	m_cancelling = false;
 }
@@ -275,14 +272,19 @@ void Freehand::cancelStroke()
 	m_strokeWorker.cancelStroke(QDateTime::currentMSecsSinceEpoch(), true);
 }
 
-void Freehand::pushMessage(DP_Message *msg)
+void Freehand::pushMessage(DP_Message *rawMsg)
 {
-	DP_MUTEX_MUST_LOCK(m_mutex);
-	bool needsSignal = m_messages.isEmpty();
-	m_messages.append(net::Message::noinc(msg));
-	DP_MUTEX_MUST_UNLOCK(m_mutex);
-	if(needsSignal) {
-		emit m_owner.freehandMessagesAvailable();
+	net::Message msg = net::Message::noinc(rawMsg);
+	net::Client *client = m_owner.client();
+	client->sendLocalFreehandMessage(msg);
+	if(msg.type() != DP_MSG_INTERNAL) {
+		DP_MUTEX_MUST_LOCK(m_mutex);
+		bool needsSignal = m_messages.isEmpty();
+		m_messages.append(std::move(msg));
+		DP_MUTEX_MUST_UNLOCK(m_mutex);
+		if(needsSignal) {
+			emit m_owner.freehandMessagesAvailable();
+		}
 	}
 }
 
@@ -291,31 +293,8 @@ void Freehand::flushMessages()
 	DP_MUTEX_MUST_LOCK(m_mutex);
 	int count = m_messages.size();
 	if(count != 0) {
-		net::Client *client = m_owner.client();
-		const net::Message *msgs = m_messages.constData();
-		// The message list is a mixture of drawing commands and internal sync
-		// messages, the latter of which must only be sent locally.
-		int start = 0;
-		do {
-			int chunk = 1;
-			bool firstInternal = msgs[start].type() == DP_MSG_INTERNAL;
-			for(int i = start + 1; i < count; ++i) {
-				bool internal = msgs[i].type() == DP_MSG_INTERNAL;
-				if(internal == firstInternal) {
-					++chunk;
-				} else {
-					break;
-				}
-			}
-
-			if(firstInternal) {
-				client->sendLocalMessages(chunk, msgs + start);
-			} else {
-				client->sendCommands(chunk, msgs + start);
-			}
-
-			start += chunk;
-		} while(start < count);
+		m_owner.client()->matchAndSendRemoteMessages(
+			count, m_messages.constData());
 		m_messages.clear();
 	}
 	DP_MUTEX_MUST_UNLOCK(m_mutex);
@@ -368,31 +347,6 @@ void Freehand::syncUnlockCallback(void *user)
 {
 	Freehand *freehand = static_cast<Freehand *>(user);
 	freehand->syncUnlock();
-}
-
-void Freehand::executePendingSyncMessages()
-{
-	DP_MUTEX_MUST_LOCK(m_mutex);
-	int i = 0;
-	int count = m_messages.size();
-	QVector<QThread *> threads;
-	while(i < count) {
-		if(isPaintSyncInternalMessage(m_messages[i])) {
-			m_messages.removeAt(i);
-			DP_SEMAPHORE_MUST_POST(m_sem);
-			--count;
-		} else {
-			++i;
-		}
-	}
-	DP_MUTEX_MUST_UNLOCK(m_mutex);
-}
-
-bool Freehand::isPaintSyncInternalMessage(const net::Message &msg)
-{
-	return msg.type() == DP_MSG_INTERNAL &&
-		   DP_msg_internal_type(msg.toInternal()) ==
-			   DP_MSG_INTERNAL_TYPE_PAINT_SYNC;
 }
 
 bool Freehand::isOnMainThread()

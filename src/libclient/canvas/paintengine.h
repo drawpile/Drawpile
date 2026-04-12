@@ -102,6 +102,8 @@ public:
 		bool local, int count, const net::Message *msgs,
 		bool overrideAcls = false);
 
+	void receiveLocalFreehandCommand(const net::Message &msg);
+
 	void enqueueReset();
 
 	void enqueueLoadBlank(

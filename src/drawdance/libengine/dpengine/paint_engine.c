@@ -1614,6 +1614,18 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
     return pushed;
 }
 
+void DP_paint_engine_handle_local_freehand_command_inc(DP_PaintEngine *pe,
+                                                       DP_Message *msg)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(msg);
+    DP_Mutex *queue_mutex = pe->queue_mutex;
+    DP_MUTEX_MUST_LOCK(queue_mutex);
+    DP_message_queue_push_inc(&pe->local_queue, msg);
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
+}
+
 
 static DP_CanvasState *apply_previews(DP_PaintEngine *pe, DP_CanvasState *cs)
 {

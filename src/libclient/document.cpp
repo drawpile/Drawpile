@@ -1022,6 +1022,13 @@ void Document::handleLocalCommands(int count, const net::Message *msgs)
 	}
 }
 
+void Document::handleLocalFreehandCommand(const net::Message &msg)
+{
+	if(m_canvas) {
+		m_canvas->handleLocalFreehandCommand(msg);
+	}
+}
+
 bool Document::checkPermission(int feature)
 {
 	return m_canvas && m_canvas->checkPermission(feature);

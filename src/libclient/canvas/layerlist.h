@@ -174,6 +174,10 @@ public:
 	 *
 	 * When the local user hasn't yet drawn anything, any newly created layer
 	 * should be selected.
+	 *
+	 * This is called from other threads, don't add any logic to this that does
+	 * anything more complicated than setting a boolean without thinking about
+	 * atomicity!
 	 */
 	void setAutoselectAny(bool autoselect) { m_autoselectAny = autoselect; }
 

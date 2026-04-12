@@ -387,17 +387,10 @@ void Client::sendMessage(const net::Message &msg)
 void Client::sendMessages(int count, const net::Message *msgs)
 {
 	if(count > 0) {
-		m_commandHandler->handleLocalCommands(count, msgs);
 		// Note: we could only send only local commands here when offline, but
 		// do the remote part anyway to not have to deal with two code paths.
-		QVector<net::Message> matched = replaceLocalMatchMessages(count, msgs);
-		int matchedCount = matched.size();
-		if(matchedCount == 0) {
-			sendRemoteMessages(count, msgs);
-		} else {
-			Q_ASSERT(matchedCount == count);
-			sendRemoteMessages(matchedCount, matched.constData());
-		}
+		m_commandHandler->handleLocalCommands(count, msgs);
+		matchAndSendRemoteMessages(count, msgs);
 	}
 }
 
@@ -428,6 +421,24 @@ void Client::sendRemoteMessages(int count, const net::Message *msgs)
 	} else {
 		m_commandHandler->handleCommands(count, msgs);
 	}
+}
+
+void Client::matchAndSendRemoteMessages(int count, const net::Message *msgs)
+{
+	Q_ASSERT(count > 0);
+	QVector<net::Message> matched = replaceLocalMatchMessages(count, msgs);
+	int matchedCount = matched.size();
+	if(matchedCount == 0) {
+		sendRemoteMessages(count, msgs);
+	} else {
+		Q_ASSERT(matchedCount == count);
+		sendRemoteMessages(matchedCount, matched.constData());
+	}
+}
+
+void Client::sendLocalFreehandMessage(const net::Message &msg)
+{
+	m_commandHandler->handleLocalFreehandCommand(msg);
 }
 
 QVector<net::Message>

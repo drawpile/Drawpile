@@ -188,6 +188,8 @@ public:
 	//! Handle a local drawing command (will be put in the local fork)
 	void handleLocalCommands(int count, const net::Message *msgs);
 
+	void handleLocalFreehandCommand(const net::Message &msg);
+
 	bool checkPermission(int feature);
 
 	void finishColorPick();

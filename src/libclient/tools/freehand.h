@@ -64,16 +64,13 @@ public:
 private:
 	void strokeTo(const canvas::Point &point);
 	void cancelStroke();
-	void pushMessage(DP_Message *msg);
+	void pushMessage(DP_Message *rawMsg);
 	void flushMessages();
 	void pollControl(bool enable);
 	void poll();
 	DP_CanvasState *sync();
 	void syncUnlock();
 	static void syncUnlockCallback(void *user);
-
-	void executePendingSyncMessages();
-	static bool isPaintSyncInternalMessage(const net::Message &msg);
 
 	static bool isOnMainThread();
 

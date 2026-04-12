@@ -191,6 +191,7 @@ public:
 
 	void handleCommands(int count, const net::Message *msgs) override;
 	void handleLocalCommands(int count, const net::Message *msgs) override;
+	void handleLocalFreehandCommand(const net::Message &msg) override;
 
 	bool checkPermission(int feature);
 

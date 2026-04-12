@@ -289,6 +289,13 @@ void CanvasModel::handleLocalCommands(int count, const net::Message *msgs)
 	}
 }
 
+void CanvasModel::handleLocalFreehandCommand(const net::Message &msg)
+{
+	m_paintengine->receiveLocalFreehandCommand(msg);
+	// This just sets a boolean, it's okay to call this from another thread.
+	m_layerlist->setAutoselectAny(false);
+}
+
 bool CanvasModel::checkPermission(int feature)
 {
 	if(m_aclstate->canUseFeature(DP_Feature(feature))) {

@@ -194,6 +194,12 @@ int PaintEngine::receiveMessages(
 		&PaintEngine::onLaserTrail, &PaintEngine::onMovePointer, this);
 }
 
+void PaintEngine::receiveLocalFreehandCommand(const net::Message &msg)
+{
+	DP_paint_engine_handle_local_freehand_command_inc(
+		m_paintEngine.get(), msg.get());
+}
+
 void PaintEngine::enqueueReset()
 {
 	net::Message msg = net::makeInternalResetMessage(0);

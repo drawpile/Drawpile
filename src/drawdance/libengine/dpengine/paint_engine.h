@@ -193,6 +193,9 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
                                DP_PaintEngineMovePointerFn move_pointer,
                                void *user);
 
+void DP_paint_engine_handle_local_freehand_command_inc(DP_PaintEngine *pe,
+                                                       DP_Message *msg);
+
 void DP_paint_engine_tick(
     DP_PaintEngine *pe, DP_Rect tile_bounds, bool render_outside_tile_bounds,
     DP_PaintEngineCatchupFn catchup,

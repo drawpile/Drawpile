@@ -76,6 +76,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Translate double-tap gesture on Huawei styluses on Android to the F25 key. Thanks noalero for suggesting.
  * Fix: Occasional crashes when using anti-overflow with a non-zero expand value at the edge of the canvas. Thanks Ausjamcian for reporting.
  * Feature: Allow clearing log files in the Files preferences. This is particularly useful on Android, where you can't manually delete them (although they probably don't take up much space either way.)
+ * Fix: Immediately send local drawing commands from freehand strokes to the paint engine. This makes synchronized smudging way faster on some devices (and no perceptible difference on most others.)
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

@@ -47,6 +47,8 @@ public:
 
 		virtual void
 		handleLocalCommands(int count, const net::Message *msgs) = 0;
+
+		virtual void handleLocalFreehandCommand(const net::Message &msg) = 0;
 	};
 
 	explicit Client(CommandHandler *commandHandler, QObject *parent = nullptr);
@@ -248,6 +250,17 @@ public slots:
 	void sendResetMessages(int count, const net::Message *msgs);
 
 	void sendLocalMessages(int count, const net::Message *msgs);
+
+	void matchAndSendRemoteMessages(int count, const net::Message *msgs);
+
+	/**
+	 * @brief Send a freehand tool message locally.
+	 *
+	 * This message may come from a different thread! It should either be an
+	 * internal sync, undo point, draw dabs, pen up, or undo message. It must
+	 * not touch anything that's not thread-safe.
+	 */
+	void sendLocalFreehandMessage(const net::Message &msg);
 
 	void handleMessages(int count, net::Message *msgs);
 
