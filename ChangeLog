@@ -79,6 +79,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Immediately send local drawing commands from freehand strokes to the paint engine. This makes synchronized smudging way faster on some devices (and no perceptible difference on most others.)
  * Fix: Cancel strokes lingering from synchronized smudging when a new one is started. This prevents long-running strokes from just taking forever to finish and prevents the program hanging in some pathological cases.
  * Fix: Don't enable synchronized smudging on MyPaint brushes that don't have it explicitly set and only have infinitesimal smudge factor. There's several brushes where all it does is slow down the stroke with no perceptible difference.
+ * Fix: Set frame ranges properly when only changing one side of the frame range in a session that doesn't have both sides set yet. Thanks dAVePAGE for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

@@ -20,6 +20,8 @@ public:
 	int frameCount() const { return m_frameCount; }
 	int frameRangeFirst() const { return m_frameRangeFirst; }
 	int frameRangeLast() const { return m_frameRangeLast; }
+	int actualFrameRangeFirst() const { return m_actualFrameRangeFirst; }
+	int actualFrameRangeLast() const { return m_actualFrameRangeLast; }
 
 signals:
 	void framerateChanged(double fps);
@@ -35,6 +37,8 @@ private:
 	int m_frameCount = 0;
 	int m_frameRangeFirst = -1;
 	int m_frameRangeLast = -1;
+	int m_actualFrameRangeFirst = -1;
+	int m_actualFrameRangeLast = -1;
 };
 
 }

@@ -33,6 +33,9 @@ void DocumentMetadata::refreshMetadata(const drawdance::DocumentMetadata &dm)
 		emit frameCountChanged(frameCount);
 	}
 
+	m_actualFrameRangeFirst = dm.frameRangeFirst();
+	m_actualFrameRangeLast = dm.frameRangeLast();
+
 	int frameRangeFirst, frameRangeLast;
 	dm.effectiveFrameRange(frameRangeFirst, frameRangeLast);
 	if(m_frameRangeFirst != frameRangeFirst ||

@@ -2285,14 +2285,55 @@ void TimelineWidget::setAnimationProperties(
 		bool compatibilityMode = d->canvas->isCompatibilityMode();
 		const canvas::DocumentMetadata *metadata = d->canvas->metadata();
 
+		int actualFrameRangeFirst = metadata->actualFrameRangeFirst();
+		int actualFrameRangeLast = metadata->actualFrameRangeLast();
+
 		bool framerateChanged =
 			framerate != -1 && metadata->framerate() != framerate;
-		bool frameRangeFirstChanged =
-			!compatibilityMode && frameRangeFirst != -1 &&
-			frameRangeFirst != metadata->frameRangeFirst();
-		bool frameRangeLastChanged =
-			!compatibilityMode && frameRangeLast != -1 &&
-			frameRangeLast != metadata->frameRangeLast();
+		bool frameRangeFirstChanged = !compatibilityMode &&
+									  frameRangeFirst != -1 &&
+									  frameRangeFirst != actualFrameRangeFirst;
+		bool frameRangeLastChanged = !compatibilityMode &&
+									 frameRangeLast != -1 &&
+									 frameRangeLast != actualFrameRangeLast;
+
+		// If the frame range is unset and we would only be setting one of the
+		// sides, force the other one as well so that we get a valid range.
+		bool haveInvalidFrameRange =
+			!compatibilityMode &&
+			(actualFrameRangeFirst < 0 || actualFrameRangeLast < 0) &&
+			frameRangeFirstChanged != frameRangeLastChanged;
+		if(haveInvalidFrameRange) {
+			int frameCount = metadata->frameCount();
+
+			// Fix up whichever side we're not updating.
+			if(frameRangeFirstChanged && !frameRangeLastChanged) {
+				frameRangeLastChanged = true;
+				if(actualFrameRangeLast < 0) {
+					frameRangeLast = frameCount - 1;
+				} else {
+					frameRangeLast = frameCount;
+				}
+			} else if(!frameRangeFirstChanged && frameRangeLastChanged) {
+				frameRangeFirstChanged = true;
+				if(actualFrameRangeFirst < 0) {
+					frameRangeFirst = 0;
+				} else {
+					frameRangeFirst = actualFrameRangeFirst;
+				}
+			} else {
+				// Should not be reached, since haveInvalidFrameRange checks
+				// whether the first and last range are different.
+			}
+
+			// Some extra bounds checks just in case.
+			if(frameRangeLast >= frameCount) {
+				frameRangeLast = frameCount - 1;
+			}
+			if(frameRangeFirst > frameRangeLast) {
+				frameRangeFirst = frameRangeLast;
+			}
+		}
 
 		int frameCount;
 		if(compatibilityMode) {
