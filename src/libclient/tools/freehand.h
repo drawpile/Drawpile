@@ -80,6 +80,7 @@ private:
 	DP_Mutex *m_mutex;
 	DP_Semaphore *m_sem;
 	net::MessageList m_messages;
+	net::MessageList m_outbox;
 	bool m_drawing = false;
 	bool m_firstPoint = false;
 	bool m_mirror = false;

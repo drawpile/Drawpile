@@ -291,13 +291,14 @@ void Freehand::pushMessage(DP_Message *rawMsg)
 void Freehand::flushMessages()
 {
 	DP_MUTEX_MUST_LOCK(m_mutex);
-	int count = m_messages.size();
+	m_outbox.swap(m_messages);
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
+	int count = m_outbox.size();
 	if(count != 0) {
 		m_owner.client()->matchAndSendRemoteMessages(
-			count, m_messages.constData());
-		m_messages.clear();
+			count, m_outbox.constData());
+		m_outbox.clear();
 	}
-	DP_MUTEX_MUST_UNLOCK(m_mutex);
 }
 
 void Freehand::pollControl(bool enable)
