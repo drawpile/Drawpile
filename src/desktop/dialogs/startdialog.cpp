@@ -9,6 +9,7 @@
 #include "desktop/dialogs/startdialog/links.h"
 #include "desktop/dialogs/startdialog/page.h"
 #include "desktop/dialogs/startdialog/recover.h"
+#include "desktop/dialogs/startdialog/recovernotice.h"
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
@@ -94,6 +95,10 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	m_updateNotice = new startdialog::UpdateNotice;
 	layout->addWidget(m_updateNotice);
 #endif
+
+	m_recoverNotice = new startdialog::RecoverNotice;
+	m_recoverNotice->hide();
+	layout->addWidget(m_recoverNotice);
 
 	QBoxLayout *mainLayout = new QBoxLayout(
 		vertical ? QBoxLayout::LeftToRight : QBoxLayout::TopToBottom);
@@ -421,8 +426,17 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 #endif
 
 	connect(
+		m_recoverNotice,
+		&startdialog::RecoverNotice::switchToRecoverPageRequested, this,
+		[this] {
+			showPage(Entry::Recover);
+		});
+	connect(
 		recoverPage, &startdialog::Recover::hideLinks, this,
 		&StartDialog::hideLinks);
+	connect(
+		recoverPage, &startdialog::Recover::hideRecoveryNotice, m_recoverNotice,
+		&startdialog::RecoverNotice::hide);
 	connect(
 		recoverPage, &startdialog::Recover::openPath, this,
 		&StartDialog::openRecovery);
@@ -440,6 +454,10 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	connect(
 		m_stack, &QStackedWidget::currentChanged, this,
 		&StartDialog::rememberLastPage);
+
+	if(recoverPage->checkPotentialRecovery()) {
+		m_recoverNotice->show();
+	}
 
 #ifdef __EMSCRIPTEN__
 	welcomePage->showStandaloneText();

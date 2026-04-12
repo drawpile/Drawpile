@@ -391,6 +391,7 @@ void Recover::activate()
 {
 	utils::ScopedOverrideCursor overrideCursor;
 	Q_EMIT hideLinks();
+	Q_EMIT hideRecoveryNotice();
 	m_recoveryModel->load();
 }
 

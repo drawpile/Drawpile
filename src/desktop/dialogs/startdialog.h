@@ -24,6 +24,7 @@ namespace dialogs {
 namespace startdialog {
 class Links;
 class Page;
+class RecoverNotice;
 class UpdateNotice;
 }
 
@@ -130,6 +131,7 @@ private:
 #ifndef __EMSCRIPTEN__
 	startdialog::UpdateNotice *m_updateNotice;
 #endif
+	startdialog::RecoverNotice *m_recoverNotice;
 	QStackedWidget *m_stack;
 	QFrame *m_linksSeparator;
 	startdialog::Links *m_links;

@@ -51,6 +51,7 @@ public:
 
 Q_SIGNALS:
 	void hideLinks();
+	void hideRecoveryNotice();
 	void openPath(const QString &path);
 
 private:
