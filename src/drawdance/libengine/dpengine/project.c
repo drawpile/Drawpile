@@ -849,9 +849,10 @@ static const char *pps_sql(DP_ProjectPersistentStatement pps)
                "and mi.value = ?\n"
                "and mq.value = ?";
     case DP_PROJECT_STATEMENT_SIZE:
-        return "select pc.page_count, ps.page_size\n"
+        return "select pc.page_count, ps.page_size, fc.freelist_count\n"
                "from pragma_page_count pc\n"
                "join pragma_page_size ps\n"
+               "join pragma_freelist_count fc\n"
                "limit 1";
     case DP_PROJECT_STATEMENT_COUNT:
         break;
@@ -1347,7 +1348,7 @@ static void ps_clear_bindings(DP_Project *prj, sqlite3_stmt *stmt)
 
 
 int DP_project_size(DP_Project *prj, long long *out_page_count,
-                    long long *out_page_size)
+                    long long *out_page_size, long long *out_free_count)
 {
     if (!prj) {
         return DP_PROJECT_SIZE_ERROR_MISUSE;
@@ -1366,6 +1367,9 @@ int DP_project_size(DP_Project *prj, long long *out_page_count,
         }
         if (out_page_size) {
             *out_page_size = sqlite3_column_int64(stmt, 1);
+        }
+        if (out_free_count) {
+            *out_free_count = sqlite3_column_int64(stmt, 2);
         }
 
         if (ps_reset(prj, stmt)) {

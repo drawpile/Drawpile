@@ -305,12 +305,14 @@ static void report_size_reset(DP_ProjectWorker *pw)
 
     long long page_count;
     long long page_size;
-    int result = DP_project_size(pw->prj, &page_count, &page_size);
+    long long free_count;
+    int result = DP_project_size(pw->prj, &page_count, &page_size, &free_count);
     if (result == 0) {
         size_t size_in_bytes;
-        if (page_count > 0LL && page_size > 0LL) {
-            size_in_bytes =
-                DP_llong_to_size(page_count) * DP_llong_to_size(page_size);
+        if (page_count > 0LL && page_size > 0LL && free_count >= 0LL
+            && free_count <= page_count) {
+            size_in_bytes = DP_llong_to_size(page_count - free_count)
+                          * DP_llong_to_size(page_size);
         }
         else {
             size_in_bytes = (size_t)0;

@@ -355,7 +355,7 @@ DP_ProjectVerifyStatus DP_project_verify(DP_Project *prj, unsigned int flags);
 // somewhat accurate file size. The out parameters are both optional. Returns 0
 // on success and a negative DP_PROJECT_SIZE_ERROR_* value on failure.
 int DP_project_size(DP_Project *prj, long long *out_page_count,
-                    long long *out_page_size);
+                    long long *out_page_size, long long *out_free_count);
 
 
 long long DP_project_session_id(DP_Project *prj);
