@@ -233,6 +233,8 @@ signals:
 
 	void projectRecordingStarted();
 	void projectRecordingStopped(bool notify);
+	void
+	projectRecordingSizeChanged(size_t sizeInBytes, size_t sizeLimitInBytes);
 	void projectRecordingSizeLimitWarning(
 		size_t sizeInBytes, size_t sizeLimitInBytes);
 	void projectRecordingErrorOccurred(const QString &message);

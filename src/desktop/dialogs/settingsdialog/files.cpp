@@ -9,24 +9,25 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QFormLayout>
+#include <QFrame>
+#include <QLabel>
 #include <QVBoxLayout>
 #include <QWidget>
 
 namespace dialogs {
 namespace settingsdialog {
 
-Files::Files(config::Config *cfg, QAction *autorecordAction, QWidget *parent)
+Files::Files(config::Config *cfg, QWidget *parent)
 	: Page(parent)
-	, m_autorecordAction(autorecordAction)
 {
 	init(cfg);
 }
 
 void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
-	initFormats(cfg, utils::addFormSection(layout));
-	utils::addFormSeparator(layout);
 	initAutorecord(cfg, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
+	initFormats(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initLogging(cfg, utils::addFormSection(layout));
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
@@ -37,25 +38,39 @@ void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 
 void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 {
-	m_autoRecordCurrent = new QCheckBox(tr("Enable for the current session"));
-	if(m_autorecordAction) {
-		m_autoRecordCurrent->setEnabled(m_autorecordAction);
-		m_autoRecordCurrent->setChecked(m_autorecordAction->isChecked());
-		connect(
-			m_autoRecordCurrent, &QCheckBox::clicked, m_autorecordAction,
-			&QAction::trigger);
-		connect(
-			m_autorecordAction, &QAction::changed, this,
-			&Files::updateAutoRecordCurrent);
-	} else {
-		m_autoRecordCurrent->setEnabled(false);
-	}
-	form->addRow(tr("Autorecovery:"), m_autoRecordCurrent);
+	QFrame *currentFrame = new QFrame;
+	currentFrame->setFrameShape(QFrame::StyledPanel);
+	currentFrame->setFrameShadow(QFrame::Sunken);
+	form->addRow(currentFrame);
+
+	QHBoxLayout *currentLayout = new QHBoxLayout(currentFrame);
+
+	currentLayout->addWidget(
+		utils::makeIconLabel(
+			QIcon::fromTheme(QStringLiteral("backup")), currentFrame));
+
+	QLabel *currentLabel = new QLabel(
+		utils::toHtmlWithLink(
+			//: The stuff in [] will turn into a link. Don't remove the [] or
+			//: replace them with different symbols!
+			tr("Changing autorecovery preferences will not affect the status "
+			   "or limits of any running sessions. [Click here to manage "
+			   "autorecovery on your current session.]"),
+			QStringLiteral("#")));
+	currentLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+	currentLabel->setTextFormat(Qt::RichText);
+	currentLabel->setWordWrap(true);
+	currentLayout->addWidget(currentLabel, 1);
+	connect(
+		currentLabel, &QLabel::linkActivated, this,
+		&Files::projectRecordingSettingsRequested);
+
+	utils::addFormSpacer(form);
 
 	QCheckBox *autoRecordHost =
 		new QCheckBox(tr("When offline or hosting sessions"));
 	CFG_BIND_CHECKBOX(cfg, AutoRecordHost, autoRecordHost);
-	form->addRow(nullptr, autoRecordHost);
+	form->addRow(tr("Autorecovery:"), autoRecordHost);
 
 	QCheckBox *autoRecordJoin = new QCheckBox(tr("When joining sessions"));
 	CFG_BIND_CHECKBOX(cfg, AutoRecordJoin, autoRecordJoin);
@@ -98,11 +113,10 @@ void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 	});
 	form->addRow(nullptr, sizeLimit);
 
-	QString autorecordNote =
-		dialogs::ProjectRecordingSettingsDialog::getAutorecordNoteText() +
-		tr(" You can change the size limit and toggle autorecovery for "
-		   "individual sessions via the File menu.");
-	form->addRow(nullptr, utils::formNote(autorecordNote));
+	form->addRow(
+		nullptr,
+		utils::formNote(
+			dialogs::ProjectRecordingSettingsDialog::getAutorecordNoteText()));
 }
 
 void Files::initDialogs(config::Config *cfg, QFormLayout *form)
@@ -160,12 +174,6 @@ void Files::initLogging(config::Config *cfg, QFormLayout *form)
 	QCheckBox *enableLogging = new QCheckBox(tr("Write debugging log to file"));
 	CFG_BIND_CHECKBOX(cfg, WriteLogFile, enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);
-}
-
-void Files::updateAutoRecordCurrent()
-{
-	m_autoRecordCurrent->setEnabled(m_autorecordAction->isEnabled());
-	m_autoRecordCurrent->setChecked(m_autorecordAction->isChecked());
 }
 
 }

@@ -29,8 +29,7 @@
 namespace dialogs {
 
 SettingsDialog::SettingsDialog(
-	bool singleSession, bool smallScreenMode, QAction *autorecordAction,
-	QWidget *parent)
+	bool singleSession, bool smallScreenMode, QWidget *parent)
 	: QDialog(parent)
 	, m_cfg(dpAppConfig())
 {
@@ -82,6 +81,7 @@ SettingsDialog::SettingsDialog(
 	settingsdialog::UserInterface *userInterfacePage;
 	settingsdialog::Tablet *tabletPage;
 	settingsdialog::Touch *touchPage;
+	settingsdialog::Files *filesPage;
 	const std::initializer_list<
 		std::tuple<const char *, QString, QWidget *, bool>>
 		panels = {
@@ -98,7 +98,7 @@ SettingsDialog::SettingsDialog(
 			{"tools", tr("Tools"), new settingsdialog::Tools(m_cfg, this),
 			 true},
 			{"document-open", tr("Files"),
-			 new settingsdialog::Files(m_cfg, autorecordAction, this), true},
+			 (filesPage = new settingsdialog::Files(m_cfg, this)), true},
 			{"network-modem", tr("Network"),
 			 new settingsdialog::Network(m_cfg, this), true},
 			{"dialog-information", tr("Notifications"),
@@ -188,6 +188,9 @@ SettingsDialog::SettingsDialog(
 	connect(
 		touchPage, &settingsdialog::Touch::touchTesterRequested, this,
 		&SettingsDialog::touchTesterRequested);
+	connect(
+		filesPage, &settingsdialog::Files::projectRecordingSettingsRequested,
+		this, &SettingsDialog::projectRecordingSettingsRequested);
 
 	menuLayout->addStretch();
 
@@ -239,6 +242,11 @@ template <typename T> static T *activatePanelByType(QButtonGroup *group)
 void SettingsDialog::activateUserInterfacePanel()
 {
 	activatePanelByType<settingsdialog::UserInterface>(m_group);
+}
+
+void SettingsDialog::activateFilesPanel()
+{
+	activatePanelByType<settingsdialog::Files>(m_group);
 }
 
 void SettingsDialog::activateNetworkPanel()

@@ -3,89 +3,109 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libshared/util/paths.h"
+#include <QAction>
+#include <QCheckBox>
 #include <QDialogButtonBox>
+#include <QGroupBox>
 #include <QIcon>
 #include <QLabel>
+#include <QPushButton>
+#include <QStackedWidget>
 #include <QVBoxLayout>
 #include <cmath>
 
 namespace dialogs {
 
 ProjectRecordingSettingsDialog::ProjectRecordingSettingsDialog(
-	size_t lastReportedSizeInBytes, size_t sizeLimitInBytes, QWidget *parent)
+	QAction *autoRecordAction, bool settingsOpen, QWidget *parent)
 	: QDialog(parent)
+	, m_autoRecordAction(autoRecordAction)
 {
 	utils::makeModal(this);
 	setWindowTitle(tr("Manage Autorecovery"));
-	resize(400, 200);
+	resize(400, 400);
 
 	QVBoxLayout *dlgLayout = new QVBoxLayout;
 	setLayout(dlgLayout);
 
-	double lastReportedSizeInGiB =
-		double(lastReportedSizeInBytes) / 1024.0 / 1024.0 / 1024.0;
-	double minimumInGiB =
-		qMax(0.5, std::floor((lastReportedSizeInGiB * 10.0) + 1.0) / 10.0);
+	if(!settingsOpen) {
+		QFrame *settingsFrame = new QFrame;
+		settingsFrame->setFrameShape(QFrame::StyledPanel);
+		settingsFrame->setFrameShadow(QFrame::Sunken);
+		dlgLayout->addWidget(settingsFrame);
 
-	m_sizeLimitSlider = new KisDoubleSliderSpinBox;
-	initSizeLimitSlider(m_sizeLimitSlider, minimumInGiB);
-	if(sizeLimitInBytes == 0) {
-		m_sizeLimitSlider->setValue(m_sizeLimitSlider->maximum());
-	} else {
-		double sizeLimitInGiB =
-			double(sizeLimitInBytes) / 1024.0 / 1024.0 / 1024.0;
-		m_sizeLimitSlider->setValue(sizeLimitInGiB);
+		QHBoxLayout *settingsLayout = new QHBoxLayout(settingsFrame);
+
+		settingsLayout->addWidget(
+			utils::makeIconLabel(
+				QIcon::fromTheme(QStringLiteral("backup")), settingsFrame));
+
+		QLabel *settingsLabel = new QLabel(
+			utils::toHtmlWithLink(
+				//: The stuff in [] will turn into a link. Don't remove the []
+				//: or replace them with different symbols!
+				tr("These settings affect only the current session. You can "
+				   "change the defaults [in the preferences]."),
+				QStringLiteral("#")));
+		settingsLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+		settingsLabel->setTextFormat(Qt::RichText);
+		settingsLabel->setWordWrap(true);
+		settingsLayout->addWidget(settingsLabel, 1);
+		connect(
+			settingsLabel, &QLabel::linkActivated, this,
+			&ProjectRecordingSettingsDialog::preferencesRequested);
+
+		utils::addFormSpacer(dlgLayout);
 	}
-	dlgLayout->addWidget(m_sizeLimitSlider);
 
-	QLabel *explanationLabel = new QLabel;
-	explanationLabel->setWordWrap(true);
-	explanationLabel->setTextFormat(Qt::RichText);
-	dlgLayout->addWidget(explanationLabel);
-
-	QString currentSizeText =
-		//: %1 is a file size, like "1 GB".
-		tr("The current autorecovery file size is %1.")
-			.arg(utils::paths::formatFileSize(lastReportedSizeInBytes));
-
-	QString limitSizeText;
-	if(sizeLimitInBytes == 0) {
-		limitSizeText = tr(" There is no size limit set.");
-	} else {
-		int percent = qRound(
-			double(lastReportedSizeInGiB) / double(sizeLimitInBytes) * 100.0);
-		//: The %1% becomes a percentage, like "50%". Don't remove the second %!
-		//: %2 is a file size, like "5GB".
-		limitSizeText = tr(" This is %1% of the current %2 limit.")
-							.arg(
-								QString::number(percent),
-								utils::paths::formatFileSize(sizeLimitInBytes));
-	}
-	explanationLabel->setText(QStringLiteral("<p>%1%2</p>")
-								  .arg(
-									  currentSizeText.toHtmlEscaped(),
-									  limitSizeText.toHtmlEscaped()));
-
-	QLabel *disableLabel = new QLabel;
-	disableLabel->setWordWrap(true);
-	disableLabel->setTextFormat(Qt::RichText);
-	dlgLayout->addWidget(disableLabel);
-
-	QString disableText =
-		//: The stuff in [] will turn into a link. Don't remove the [] or
-		//: replace them with different symbols!
-		tr("You can also [disable autorecovery for this session].");
-	disableLabel->setText(
-		utils::toHtmlWithLink(disableText, QStringLiteral("#")));
-
+	m_enableCheckBox =
+		new QCheckBox(tr("Enable autorecovery for the current session"));
+	dlgLayout->addWidget(m_enableCheckBox);
 	connect(
-		disableLabel, &QLabel::linkActivated, this,
-		&ProjectRecordingSettingsDialog::stopRequested);
+		m_enableCheckBox, &QCheckBox::clicked, autoRecordAction,
+		&QAction::trigger);
+	connect(
+		autoRecordAction, &QAction::changed, this,
+		&ProjectRecordingSettingsDialog::updateFromAutoRecordAction);
 
-	dlgLayout->addStretch();
+	utils::addFormSpacer(dlgLayout);
 
-	QDialogButtonBox *buttons =
-		new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	m_stack = new QStackedWidget;
+	dlgLayout->addWidget(m_stack, 1);
+
+	m_disabledPage = new QWidget;
+	m_disabledPage->setContentsMargins(0, 0, 0, 0);
+	m_stack->addWidget(m_disabledPage);
+	// Nothing on the disabled page currently.
+
+	m_enabledPage = new QWidget;
+	m_enabledPage->setContentsMargins(0, 0, 0, 0);
+	m_stack->addWidget(m_enabledPage);
+
+	QVBoxLayout *enabledLayout = new QVBoxLayout(m_enabledPage);
+	enabledLayout->setContentsMargins(0, 0, 0, 0);
+
+	QGroupBox *sizeLimitBox = new QGroupBox;
+	sizeLimitBox->setTitle(tr("Size limit"));
+	enabledLayout->addWidget(sizeLimitBox);
+
+	QVBoxLayout *sizeLimitLayout = new QVBoxLayout;
+	sizeLimitBox->setLayout(sizeLimitLayout);
+
+	m_sizeLimitLabel = new QLabel;
+	m_sizeLimitLabel->setWordWrap(true);
+	m_sizeLimitLabel->setTextFormat(Qt::RichText);
+	sizeLimitLayout->addWidget(m_sizeLimitLabel);
+
+	QPushButton *sizeLimitButton = new QPushButton(tr("Change Size Limit"));
+	sizeLimitLayout->addWidget(sizeLimitButton);
+	connect(
+		sizeLimitButton, &QPushButton::clicked, this,
+		&ProjectRecordingSettingsDialog::showOrRaiseSizeLimitChangeDialog);
+
+	enabledLayout->addStretch();
+
+	QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Close);
 	dlgLayout->addWidget(buttons);
 	connect(
 		buttons, &QDialogButtonBox::accepted, this,
@@ -93,19 +113,20 @@ ProjectRecordingSettingsDialog::ProjectRecordingSettingsDialog(
 	connect(
 		buttons, &QDialogButtonBox::rejected, this,
 		&ProjectRecordingSettingsDialog::reject);
+
+	updateSizeLimitLabelText();
+	updateFromAutoRecordAction();
 }
 
-void ProjectRecordingSettingsDialog::accept()
+void ProjectRecordingSettingsDialog::updateSize(
+	size_t lastReportedSizeInBytes, size_t sizeLimitInBytes)
 {
-	size_t sizeLimitInBytes;
-	double value = m_sizeLimitSlider->value();
-	if(value < m_sizeLimitSlider->maximum()) {
-		sizeLimitInBytes = size_t(value * 1024.0 * 1024.0 * 1024.0);
-	} else {
-		sizeLimitInBytes = 0;
+	if(lastReportedSizeInBytes != m_lastReportedSizeInBytes ||
+	   sizeLimitInBytes != m_sizeLimitInBytes) {
+		m_lastReportedSizeInBytes = lastReportedSizeInBytes;
+		m_sizeLimitInBytes = sizeLimitInBytes;
+		updateSizeLimitLabelText();
 	}
-	Q_EMIT setSizeLimitInBytesRequested(sizeLimitInBytes);
-	QDialog::accept();
 }
 
 void ProjectRecordingSettingsDialog::initSizeLimitSlider(
@@ -133,6 +154,92 @@ QString ProjectRecordingSettingsDialog::getAutorecordNoteText()
 			  "%1% of the size limit. Once it exceeds the limit, autorecovery "
 			  "will terminate.")
 		.arg(75);
+}
+
+void ProjectRecordingSettingsDialog::updateSizeLimitLabelText()
+{
+	QString currentSizeText =
+		//: %1 is a file size, like "1 GB".
+		tr("The current autorecovery file size is %1.")
+			.arg(utils::paths::formatFileSize(m_lastReportedSizeInBytes));
+
+	QString limitSizeText;
+	if(m_sizeLimitInBytes == 0) {
+		limitSizeText = tr(" There is no size limit set.");
+	} else {
+		int percent = qRound(
+			lastReportedSizeInGiB() / double(m_sizeLimitInBytes) * 100.0);
+		//: The %1% becomes a percentage, like "50%". Don't remove the second %!
+		//: %2 is a file size, like "5GB".
+		limitSizeText =
+			tr(" This is %1% of the current %2 limit.")
+				.arg(
+					QString::number(percent),
+					utils::paths::formatFileSize(m_sizeLimitInBytes));
+	}
+	m_sizeLimitLabel->setText(QStringLiteral("<p>%1%2</p>")
+								  .arg(
+									  currentSizeText.toHtmlEscaped(),
+									  limitSizeText.toHtmlEscaped()));
+}
+
+void ProjectRecordingSettingsDialog::updateFromAutoRecordAction()
+{
+	bool checked = m_autoRecordAction->isChecked();
+	m_enableCheckBox->setEnabled(m_autoRecordAction->isEnabled());
+	m_enableCheckBox->setChecked(checked);
+	m_stack->setCurrentWidget(checked ? m_enabledPage : m_disabledPage);
+	if(!checked && m_sizeLimitChangeDialog) {
+		m_sizeLimitChangeDialog->close();
+		m_sizeLimitChangeDialog.clear();
+	}
+}
+
+void ProjectRecordingSettingsDialog::showOrRaiseSizeLimitChangeDialog()
+{
+	if(m_sizeLimitChangeDialog) {
+		m_sizeLimitChangeDialog->activateWindow();
+		m_sizeLimitChangeDialog->raise();
+	} else {
+		QDialog *dlg = new QDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setWindowTitle(tr("Change Size Limit"));
+		dlg->resize(300, 0);
+
+		QVBoxLayout *dlgLayout = new QVBoxLayout(dlg);
+
+		double minimumInGiB = qMax(
+			0.5, std::floor((lastReportedSizeInGiB() * 10.0) + 1.0) / 10.0);
+
+		KisDoubleSliderSpinBox *sizeLimitSlider = new KisDoubleSliderSpinBox;
+		initSizeLimitSlider(sizeLimitSlider, minimumInGiB);
+		if(m_sizeLimitInBytes == 0) {
+			sizeLimitSlider->setValue(sizeLimitSlider->maximum());
+		} else {
+			sizeLimitSlider->setValue(sizeLimitInGiB());
+		}
+		dlgLayout->addWidget(sizeLimitSlider);
+
+		QDialogButtonBox *buttons = new QDialogButtonBox(
+			QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+		dlgLayout->addWidget(buttons);
+
+		connect(buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
+		connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
+		connect(dlg, &QDialog::accepted, this, [this, sizeLimitSlider] {
+			size_t sizeLimitInBytes;
+			double value = sizeLimitSlider->value();
+			if(value < sizeLimitSlider->maximum()) {
+				sizeLimitInBytes = size_t(value * 1024.0 * 1024.0 * 1024.0);
+			} else {
+				sizeLimitInBytes = 0;
+			}
+			Q_EMIT setSizeLimitInBytesRequested(sizeLimitInBytes);
+		});
+
+		dlg->show();
+		m_sizeLimitChangeDialog = dlg;
+	}
 }
 
 }

@@ -671,10 +671,6 @@ bool CanvasModel::startProjectRecording(
 	}
 
 	m_projectRecorder = new project::ProjectRecorder(cfg, this);
-	m_projectRecorder->setSizeLimitInBytes(size_t(
-		qMax(0.0, cfg->getAutoRecordSizeLimitGiB()) * 1024.0 * 1024.0 *
-		1024.0));
-	m_projectRecordingLastWarnedSizeLimit = 0;
 	connect(
 		m_projectRecorder, &project::ProjectRecorder::metadataRequested,
 		m_paintengine, &PaintEngine::enqueueProjectMetadataRequest);
@@ -683,10 +679,17 @@ bool CanvasModel::startProjectRecording(
 		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
 	connect(
 		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
+		&CanvasModel::projectRecordingSizeChanged);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
 		&CanvasModel::handleProjectRecordingSizeChanged);
 	connect(
 		m_projectRecorder, &project::ProjectRecorder::errorOccurred, this,
 		&CanvasModel::handleProjectRecordingError, Qt::QueuedConnection);
+	m_projectRecorder->setSizeLimitInBytes(size_t(
+		qMax(0.0, cfg->getAutoRecordSizeLimitGiB()) * 1024.0 * 1024.0 *
+		1024.0));
+	m_projectRecordingLastWarnedSizeLimit = 0;
 
 	QString error;
 	bool started = m_projectRecorder->startProjectRecording(

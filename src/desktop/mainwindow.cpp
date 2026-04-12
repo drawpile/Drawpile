@@ -1740,14 +1740,6 @@ void MainWindow::onProjectRecordingStopped(bool notify)
 	if(notify) {
 		m_canvasView->showPopupNotice(tr("Autorecovery deactivated"));
 	}
-
-	dialogs::ProjectRecordingSettingsDialog *dlg =
-		findChild<dialogs::ProjectRecordingSettingsDialog *>(
-			QStringLiteral("projectrecordingsettingsdialog"),
-			Qt::FindDirectChildrenOnly);
-	if(dlg) {
-		dlg->close();
-	}
 }
 
 void MainWindow::setProjectRecordingSizeLimitInBytes(size_t sizeLimitInBytes)
@@ -1795,8 +1787,6 @@ void MainWindow::showProjectRecordingError(const QString &message)
 void MainWindow::updateProjectActions()
 {
 	bool isProjectRecording = m_doc->isProjectRecording();
-	getAction(QStringLiteral("autorecordsettings"))
-		->setEnabled(isProjectRecording);
 #if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
 	bool enabled = !m_doc->isSaveInProgress() &&
 				   (!m_doc->projectPath().isEmpty() || isProjectRecording);
@@ -3225,10 +3215,13 @@ void MainWindow::showProjectRecordingSettings()
 		dlg->raise();
 	} else {
 		canvas::CanvasModel *canvas = m_doc->canvas();
-		if(canvas && canvas->isProjectRecording()) {
+		if(canvas) {
+			bool settingsOpen =
+				getStartDialogOrThis()->findChild<dialogs::SettingsDialog *>(
+					QStringLiteral("settingsdialog"),
+					Qt::FindDirectChildrenOnly);
 			dlg = new dialogs::ProjectRecordingSettingsDialog(
-				canvas->projectRecordingLastReportedSizeInBytes(),
-				canvas->projectRecordingSizeLimitInBytes(), this);
+				getAction(QStringLiteral("autorecord")), settingsOpen, this);
 			dlg->setAttribute(Qt::WA_DeleteOnClose);
 			dlg->setObjectName(objectName);
 			connect(
@@ -3237,8 +3230,22 @@ void MainWindow::showProjectRecordingSettings()
 					setSizeLimitInBytesRequested,
 				this, &MainWindow::setProjectRecordingSizeLimitInBytes);
 			connect(
-				dlg, &dialogs::ProjectRecordingSettingsDialog::stopRequested,
-				this, &MainWindow::stopProjectRecording);
+				dlg,
+				&dialogs::ProjectRecordingSettingsDialog::preferencesRequested,
+				this, [this, dlg] {
+					dlg->close();
+					showSettings()->activateFilesPanel();
+				});
+			connect(
+				canvas, &canvas::CanvasModel::projectRecordingSizeChanged, dlg,
+				&dialogs::ProjectRecordingSettingsDialog::updateSize);
+
+			if(canvas->isProjectRecording()) {
+				dlg->updateSize(
+					canvas->projectRecordingLastReportedSizeInBytes(),
+					canvas->projectRecordingSizeLimitInBytes());
+			}
+
 			utils::showWindow(dlg);
 		}
 	}
@@ -3714,22 +3721,32 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
  */
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
-		m_singleSession, m_smallScreenMode,
-		searchAction(QStringLiteral("autorecord")), getStartDialogOrThis());
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	QString objectName = QStringLiteral("settingsdialog");
+	QWidget *dlgParent = getStartDialogOrThis();
+	dialogs::SettingsDialog *dlg =
+		dlgParent->findChild<dialogs::SettingsDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+	if(!dlg) {
+		dlg = new dialogs::SettingsDialog(
+			m_singleSession, m_smallScreenMode, dlgParent);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
 #if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
-	connect(
-		dlg, &dialogs::SettingsDialog::scalingChangeRequested, &dpApp(),
-		&DrawpileApp::showAndroidScalingDialog);
+		connect(
+			dlg, &dialogs::SettingsDialog::scalingChangeRequested, &dpApp(),
+			&DrawpileApp::showAndroidScalingDialog);
 #endif
-	connect(
-		dlg, &dialogs::SettingsDialog::tabletTesterRequested, this,
-		std::bind(&MainWindow::showTabletTestDialog, this, dlg));
-	connect(
-		dlg, &dialogs::SettingsDialog::touchTesterRequested, this,
-		std::bind(&MainWindow::showTouchTestDialog, this, dlg));
-	utils::showWindow(dlg, shouldShowDialogMaximized());
+		connect(
+			dlg, &dialogs::SettingsDialog::tabletTesterRequested, this,
+			std::bind(&MainWindow::showTabletTestDialog, this, dlg));
+		connect(
+			dlg, &dialogs::SettingsDialog::touchTesterRequested, this,
+			std::bind(&MainWindow::showTouchTestDialog, this, dlg));
+		connect(
+			dlg, &dialogs::SettingsDialog::projectRecordingSettingsRequested,
+			this, &MainWindow::showProjectRecordingSettings);
+		utils::showWindow(dlg, shouldShowDialogMaximized());
+	}
 	return dlg;
 }
 
