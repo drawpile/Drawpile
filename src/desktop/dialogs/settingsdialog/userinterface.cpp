@@ -52,6 +52,7 @@ void UserInterface::initInterfaceMode(config::Config *cfg, QFormLayout *form)
 	QPushButton *scalingButton = new QPushButton(
 		QIcon::fromTheme(QStringLiteral("monitor")),
 		tr("Change mode and scale…"));
+	scalingButton->setAutoDefault(false);
 	scalingLayout->addWidget(scalingButton);
 	connect(
 		scalingButton, &QPushButton::clicked, this,
