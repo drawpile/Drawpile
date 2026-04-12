@@ -158,9 +158,17 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 	m_drawing = true;
 	m_firstPoint = true;
 
+	// If the user starts a new stroke, they presumably don't mean to wait for
+	// the previous one, so cancel that. Not doing this will lead to deadlocks
+	// in some cases! If the previous stroke was using a thread and the current
+	// one doesn't finishing the stroke will call pollControl with a blocking
+	// queued connection. So don't change this without considering that.
+	m_cancelling = true;
+	cancelStroke();
 	m_owner.setStrokeWorkerBrush(
 		m_strokeWorker, type(), floodLc, floodTolerance, floodExpand,
 		params.right ? m_owner.backgroundColor() : QColor());
+	m_cancelling = false;
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
