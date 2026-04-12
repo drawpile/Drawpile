@@ -457,6 +457,8 @@ target_sources(drawpile PRIVATE
 	widgets/popupmessage.h
 	widgets/presetselector.cpp
 	widgets/presetselector.h
+	widgets/projectrecordingstatusbutton.cpp
+	widgets/projectrecordingstatusbutton.h
 	widgets/recentscroll.cpp
 	widgets/recentscroll.h
 	widgets/referenceview.cpp

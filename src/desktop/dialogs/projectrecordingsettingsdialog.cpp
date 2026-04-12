@@ -156,6 +156,24 @@ QString ProjectRecordingSettingsDialog::getAutorecordNoteText()
 		.arg(75);
 }
 
+QString ProjectRecordingSettingsDialog::getLimitText(
+	size_t lastReportedSizeInBytes, size_t sizeLimitInBytes)
+{
+	if(sizeLimitInBytes == 0) {
+		return tr(" There is no size limit set.");
+	} else {
+		int percent = qRound(
+			bytesInGiB(lastReportedSizeInBytes) / double(sizeLimitInBytes) *
+			100.0);
+		//: The %1% becomes a percentage, like "50%". Don't remove the second %!
+		//: %2 is a file size, like "5GB".
+		return tr(" This is %1% of the current %2 limit.")
+			.arg(
+				QString::number(percent),
+				utils::paths::formatFileSize(sizeLimitInBytes));
+	}
+}
+
 void ProjectRecordingSettingsDialog::updateSizeLimitLabelText()
 {
 	QString currentSizeText =
@@ -163,20 +181,8 @@ void ProjectRecordingSettingsDialog::updateSizeLimitLabelText()
 		tr("The current autorecovery file size is %1.")
 			.arg(utils::paths::formatFileSize(m_lastReportedSizeInBytes));
 
-	QString limitSizeText;
-	if(m_sizeLimitInBytes == 0) {
-		limitSizeText = tr(" There is no size limit set.");
-	} else {
-		int percent = qRound(
-			lastReportedSizeInGiB() / double(m_sizeLimitInBytes) * 100.0);
-		//: The %1% becomes a percentage, like "50%". Don't remove the second %!
-		//: %2 is a file size, like "5GB".
-		limitSizeText =
-			tr(" This is %1% of the current %2 limit.")
-				.arg(
-					QString::number(percent),
-					utils::paths::formatFileSize(m_sizeLimitInBytes));
-	}
+	QString limitSizeText =
+		getLimitText(m_lastReportedSizeInBytes, m_sizeLimitInBytes);
 	m_sizeLimitLabel->setText(QStringLiteral("<p>%1%2</p>")
 								  .arg(
 									  currentSizeText.toHtmlEscaped(),

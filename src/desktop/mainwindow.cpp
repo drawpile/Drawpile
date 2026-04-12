@@ -68,6 +68,7 @@ extern "C" {
 #include "desktop/widgets/dualcolorbutton.h"
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/nonaltstealingmenubar.h"
+#include "desktop/widgets/projectrecordingstatusbutton.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/canvas/blendmodes.h"
@@ -191,7 +192,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_viewLock(nullptr),
 	  m_canvasView(nullptr),
 	  m_viewStatusBar(nullptr),
-	  m_lockstatus(nullptr),
 	  m_netstatus(nullptr),
 	  m_viewstatus(nullptr),
 	  m_statusChatButton(nullptr),
@@ -270,24 +270,24 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Create status indicator widgets
 	m_viewstatus = new widgets::ViewStatus(this);
 	m_viewstatus->setHidden(m_smallScreenMode);
+	m_viewStatusBar->addPermanentWidget(m_viewstatus);
 
 	m_netstatus = new widgets::NetStatus(this);
-	m_lockstatus = new QLabel(this);
-	m_lockstatus->setFixedSize(QSize(16, 16));
-
-	m_viewStatusBar->addPermanentWidget(m_viewstatus);
 	m_viewStatusBar->addPermanentWidget(m_netstatus);
 
 	// Statusbar chat button: this is normally hidden and only shown
 	// when there are unread chat messages.
 	m_statusChatButton = new QToolButton(this);
+	m_statusChatButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	m_statusChatButton->setAutoRaise(true);
-	m_statusChatButton->setIcon(QIcon::fromTheme("drawpile_chat"));
+	m_statusChatButton->setIcon(
+		QIcon::fromTheme(QStringLiteral("drawpile_chat")));
 	utils::setWidgetRetainSizeWhenHidden(m_statusChatButton, true);
 	m_statusChatButton->hide();
 	m_viewStatusBar->addPermanentWidget(m_statusChatButton);
 
-	m_viewStatusBar->addPermanentWidget(m_lockstatus);
+	m_statusAutoRecordButton = new widgets::ProjectRecordingStatusButton(this);
+	m_viewStatusBar->addPermanentWidget(m_statusAutoRecordButton);
 
 	m_viewLock = new view::Lock(this);
 
@@ -381,11 +381,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView->connectToolSettings(m_dockToolSettings);
 	// clang-format off
 
-	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::triggerUpdateLockWidget);
-	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::triggerUpdateLockWidget);
+	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::triggerUpdateLockState);
+	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::triggerUpdateLockState);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
-	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::triggerUpdateLockWidget);
+	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::triggerUpdateLockState);
 	connect(
 		m_dockToolSettings, &docks::ToolSettings::showMessageRequested, this,
 		[this](const QString &message) {
@@ -559,13 +559,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		&widgets::NetStatus::setJoinPassword);
 	connect(
 		m_doc, &Document::sessionOutOfSpaceChanged, this,
-		&MainWindow::triggerUpdateLockWidget);
+		&MainWindow::triggerUpdateLockState);
 	connect(
 		m_doc, &Document::preparingResetChanged, this,
-		&MainWindow::triggerUpdateLockWidget);
+		&MainWindow::triggerUpdateLockState);
 	connect(
-		this, &MainWindow::lockWidgetUpdateRequested, this,
-		&MainWindow::updateLockWidget, Qt::QueuedConnection);
+		this, &MainWindow::lockStateUpdateRequested, this,
+		&MainWindow::updateLockState, Qt::QueuedConnection);
 	// clang-format off
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
@@ -594,7 +594,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	setupHud();
 
 	// Set status indicators
-	updateLockWidget();
+	updateLockState();
 	setRecorderStatus(false);
 
 	// Actually paint the window
@@ -759,10 +759,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		&MainWindow::onOperatorModeChange);
 	connect(
 		aclState, &canvas::AclState::localLockChanged, this,
-		&MainWindow::triggerUpdateLockWidget);
+		&MainWindow::triggerUpdateLockState);
 	connect(
 		aclState, &canvas::AclState::resetLockChanged, this,
-		&MainWindow::triggerUpdateLockWidget);
+		&MainWindow::triggerUpdateLockState);
 	connect(
 		aclState, &canvas::AclState::featureAccessChanged, this,
 		&MainWindow::onFeatureAccessChange);
@@ -817,13 +817,13 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		&tools::FillSettings::updateFillSourceLayerId);
 	connect(
 		canvas->layerlist(), &canvas::LayerListModel::fillSourceSet, this,
-		&MainWindow::triggerUpdateLockWidget);
+		&MainWindow::triggerUpdateLockState);
 	connect(
 		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
 		&MainWindow::updateSelectTransformActions);
 	connect(
 		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
-		&MainWindow::triggerUpdateLockWidgetOnSelectionChange);
+		&MainWindow::triggerUpdateLockStateOnSelectionChange);
 	connect(
 		canvas->transform(), &canvas::TransformModel::transformChanged, this,
 		&MainWindow::updateSelectTransformActions);
@@ -913,6 +913,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	paintEngine->setSelectionEditActive(toolCtrl->isSelectionEditActive());
 	getAction("resetsession")->setEnabled(true);
 	getAction("autorecord")->setChecked(canvas->isProjectRecording());
+	m_statusAutoRecordButton->setCanvas(canvas);
 
 	QAction *retainProjectRecordings = searchAction("retainprojectrecordings");
 	if(retainProjectRecordings) {
@@ -927,6 +928,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	}
 
 	updateSelectTransformActions();
+	onProjectRecordingStopped(false);
 }
 
 bool MainWindow::canReplace() const
@@ -1352,7 +1354,7 @@ void MainWindow::updateLayerViewMode()
 		m_lastLayerViewMode = action;
 
 		m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
-		triggerUpdateLockWidget();
+		triggerUpdateLockState();
 	}
 }
 
@@ -4535,18 +4537,18 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 }
 
 // clang-format on
-void MainWindow::triggerUpdateLockWidget()
+void MainWindow::triggerUpdateLockState()
 {
-	if(!m_lockWidgetUpdatePending) {
-		m_lockWidgetUpdatePending = true;
-		emit lockWidgetUpdateRequested();
+	if(!m_lockStateUpdatePending) {
+		m_lockStateUpdatePending = true;
+		emit lockStateUpdateRequested();
 	}
 }
 
-void MainWindow::triggerUpdateLockWidgetOnSelectionChange()
+void MainWindow::triggerUpdateLockStateOnSelectionChange()
 {
 	if(m_dockToolSettings->currentToolRequiresSelection()) {
-		triggerUpdateLockWidget();
+		triggerUpdateLockState();
 	}
 }
 
@@ -4574,7 +4576,7 @@ struct ReasonSetter {
 };
 }
 
-void MainWindow::updateLockWidget()
+void MainWindow::updateLockState()
 {
 	using Reason = view::Lock::Reason;
 	ReasonSetter reasons;
@@ -4636,18 +4638,9 @@ void MainWindow::updateLockWidget()
 					  : DP_VIEW_MODE_NORMAL),
 		   aclState && aclState->amOperator(),
 		   !parentalcontrols::isLayerUncensoringBlocked())) {
-		QString toolTip;
-		QPixmap pixmap;
-		if(m_viewLock->isLocked()) {
-			toolTip = m_viewLock->description();
-			pixmap = QIcon::fromTheme(QStringLiteral("object-locked"))
-						 .pixmap(16, 16);
-		}
-		m_lockstatus->setToolTip(toolTip);
-		m_lockstatus->setPixmap(pixmap);
 	}
 
-	m_lockWidgetUpdatePending = false;
+	m_lockStateUpdatePending = false;
 }
 // clang-format off
 
@@ -4689,7 +4682,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		break;
 	default: break;
 	}
-	triggerUpdateLockWidget();
+	triggerUpdateLockState();
 }
 
 // clang-format on
@@ -4800,14 +4793,14 @@ void MainWindow::setShowAnnotations(bool show)
 {
 	m_canvasView->setShowAnnotations(show);
 	m_dockToolSettings->annotationSettings()->setAnnotationsShown(show);
-	triggerUpdateLockWidget();
+	triggerUpdateLockState();
 }
 
 void MainWindow::setShowLaserTrails(bool show)
 {
 	m_canvasView->setShowLaserTrails(show);
 	m_dockToolSettings->laserPointerSettings()->setLaserTrailsShown(show);
-	triggerUpdateLockWidget();
+	triggerUpdateLockState();
 }
 // clang-format off
 
@@ -5152,7 +5145,7 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 		m_doc->toolCtrl()->setActiveAnnotation(0);
 
 	m_doc->toolCtrl()->setActiveTool(tool);
-	triggerUpdateLockWidget();
+	triggerUpdateLockState();
 }
 
 // clang-format on
@@ -6252,6 +6245,9 @@ void MainWindow::setupActions()
 	connect(
 		autoRecordSettings, &QAction::triggered, this,
 		&MainWindow::showProjectRecordingSettings);
+	connect(
+		m_statusAutoRecordButton, &QToolButton::clicked, autoRecordSettings,
+		&QAction::trigger);
 
 	connect(
 		exportAnimation, &QAction::triggered, this,
@@ -8537,6 +8533,7 @@ void MainWindow::setupActions()
 		singleGroup->addAction(browse);
 	}
 
+	m_statusAutoRecordButton->setStatusTip(autoRecordSettings->text());
 	updateSmallScreenToolBarVisibility();
 	updateInterfaceModeActions();
 }

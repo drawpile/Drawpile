@@ -28,6 +28,10 @@ public:
 	// This is also used by the Files settings.
 	static QString getAutorecordNoteText();
 
+	// This is also used by the project recording status button.
+	static QString
+	getLimitText(size_t lastReportedSizeInBytes, size_t sizeLimitInBytes);
+
 Q_SIGNALS:
 	void preferencesRequested();
 	void setSizeLimitInBytesRequested(size_t sizeLimitInBytes);

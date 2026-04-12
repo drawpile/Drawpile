@@ -38,9 +38,10 @@ class QToolButton;
 
 namespace widgets {
 class CanvasFrame;
+class ChatBox;
 class DualColorButton;
 class NetStatus;
-class ChatBox;
+class ProjectRecordingStatusButton;
 class ViewStatus;
 class ViewStatusBar;
 }
@@ -146,7 +147,7 @@ signals:
 	void intendedDockStateRestoreRequested();
 	void smallScreenPreviewRequested();
 	void resizeReactionRequested();
-	void lockWidgetUpdateRequested();
+	void lockStateUpdateRequested();
 	void selectionMaskVisibilityChanged(bool visible);
 	void initialCatchupFinished();
 
@@ -247,9 +248,9 @@ private slots:
 	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
-	void triggerUpdateLockWidget();
-	void triggerUpdateLockWidgetOnSelectionChange();
-	void updateLockWidget();
+	void triggerUpdateLockState();
+	void triggerUpdateLockStateOnSelectionChange();
+	void updateLockState();
 	void setRecorderStatus(bool on);
 
 	void loadShortcuts(const QVariantMap &shortcuts);
@@ -554,10 +555,10 @@ private:
 	view::CanvasWrapper *m_canvasView;
 
 	widgets::ViewStatusBar *m_viewStatusBar;
-	QLabel *m_lockstatus;
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *m_viewstatus;
 	QToolButton *m_statusChatButton;
+	widgets::ProjectRecordingStatusButton *m_statusAutoRecordButton = nullptr;
 
 	QPointer<dialogs::PlaybackDialog> m_playbackDialog;
 	QPointer<dialogs::DumpPlaybackDialog> m_dumpPlaybackDialog;
@@ -613,7 +614,7 @@ private:
 	bool m_updatingDockState = false;
 	bool m_resizeReactionPending = false;
 	bool m_restoringDockState = false;
-	bool m_lockWidgetUpdatePending = false;
+	bool m_lockStateUpdatePending = false;
 	bool m_reconnectAfterSave = false;
 	bool m_actionBarEnabled = true;
 
