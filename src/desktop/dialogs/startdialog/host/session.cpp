@@ -41,10 +41,9 @@ Session::Session(QWidget *parent)
 	m_typeCombo = new QComboBox;
 	m_typeCombo->addItem(
 		QIcon::fromTheme("object-locked"),
-		tr("Personal session, only people you invite can join"),
-		int(Type::Passworded));
+		tr("Only people you invite can join"), int(Type::Passworded));
 	m_typeCombo->addItem(
-		QIcon::fromTheme("globe"), tr("Public session, anyone can freely join"),
+		QIcon::fromTheme("globe"), tr("Public, strangers can join"),
 		int(Type::Public));
 	layout->addWidget(m_typeCombo);
 
