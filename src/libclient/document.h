@@ -131,6 +131,7 @@ public:
 
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
+	bool isSessionCloseAvailable() const { return m_sessionCloseAvailable; }
 	bool isSessionAuthOnly() const { return m_sessionAuthOnly; }
 	bool isSessionWebSupported() const { return m_sessionWebSupported; }
 	bool isSessionAllowWeb() const { return m_sessionAllowWeb; }
@@ -222,6 +223,7 @@ signals:
 	void sessionPreserveChatChanged(bool pc);
 	void sessionPersistentChanged(bool p);
 	void sessionClosedChanged(bool closed);
+	void sessionCloseAvailableChanged(bool closeAvailable);
 	void sessionAuthOnlyChanged(bool closed);
 	void sessionWebSupportedChanged(bool sessionWebSupported);
 	void sessionAllowWebChanged(bool allowWeb, bool canAlter);
@@ -353,6 +355,7 @@ private:
 	void setProjectPath(const QString &path);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
+	void setSessionCloseAvailable(bool closeAvailable);
 	void setSessionAuthOnly(bool authOnly);
 	void setSessionWebSupported(bool sessionWebSupported);
 	void setSessionAllowWeb(bool allowWeb);
@@ -441,6 +444,7 @@ private:
 	QJsonObject m_cumulativeConfig;
 	bool m_sessionPersistent = false;
 	bool m_sessionClosed = false;
+	bool m_sessionCloseAvailable = true;
 	bool m_sessionAuthOnly = false;
 	bool m_sessionWebSupported = false;
 	bool m_sessionAllowWeb = false;

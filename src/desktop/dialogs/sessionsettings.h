@@ -86,6 +86,7 @@ private slots:
 
 	void updatePasswordLabel(QLabel *label);
 	void updateAllowWebCheckbox(bool allowWeb, bool canAlter);
+	void updateCloseAvailable(bool closeAvailable);
 	void updateNsfmCheckbox(bool);
 	void updateIdleSettings(int timeLimit, bool overridden, bool canOverride);
 	void updateAuthListCheckboxes();
@@ -141,6 +142,7 @@ private:
 	bool m_canModExportBans = false;
 	bool m_canAutoreset = false;
 	bool m_awaitingImportExportResponse = false;
+	bool m_closeAvailable = true;
 	QString m_importExportTitle;
 };
 

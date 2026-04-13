@@ -418,11 +418,6 @@ void Session::removeUser(Client *user)
 
 	ensureOperatorExists();
 
-	// Reopen the session when the last user leaves
-	if(m_clients.isEmpty()) {
-		setClosed(false);
-	}
-
 	emit sessionAttributeChanged(this);
 }
 
@@ -570,27 +565,31 @@ void Session::setRecordingFile(const QString &filename)
 	}
 }
 
-bool Session::isClosed(bool ignoreFlag) const
+bool Session::isClosed() const
 {
-	return (!ignoreFlag && m_closed) || userCount() >= m_history->maxUsers() ||
+	return userCount() >= m_history->maxUsers() ||
 		   (m_state != State::Initialization && m_state != State::Running);
-}
-
-void Session::setClosed(bool closed)
-{
-	if(m_closed != closed) {
-		m_closed = closed;
-		sendUpdatedSessionProperties();
-	}
 }
 
 void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 {
 	QStringList changes;
 
-	if(conf.contains("closed")) {
-		m_closed = conf["closed"].toBool();
-		changes << (m_closed ? "closed" : "opened");
+	if(changedBy && conf.value(QStringLiteral("closed")).toBool()) {
+		changedBy->sendDirectMessage(
+			net::ServerReply::makeKeyAlert(
+				QStringLiteral(
+					"Blocking new joins is not supported by this server. Set "
+					"or change the session password instead."),
+				net::ServerReply::KEY_CLOSE_UNSUPPORTED));
+		// Old clients are a bit resistant to changing this value in the UI, so
+		// tell them the session closed and then immediately opened again.
+		changedBy->sendDirectMessage(
+			net::ServerReply::makeSessionConf(
+				{{QStringLiteral("closed"), true}}));
+		changedBy->sendDirectMessage(
+			net::ServerReply::makeSessionConf(
+				{{QStringLiteral("closed"), QJsonValue()}}));
 	}
 
 	SessionHistory::Flags flags = m_history->flags();
@@ -1197,8 +1196,9 @@ void Session::changeTrustedStatus(
 void Session::sendUpdatedSessionProperties()
 {
 	QJsonObject config = {
-		// this refers specifically to the closed flag, not the general status
-		{QStringLiteral("closed"), m_closed},
+		// A null value will make older clients show it as open, newer clients
+		// will recognize this as a server that has removed the close option.
+		{QStringLiteral("closed"), QJsonValue()},
 		{QStringLiteral("authOnly"),
 		 m_history->hasFlag(SessionHistory::AuthOnly)},
 		{QStringLiteral("persistent"),
@@ -2120,7 +2120,7 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_history->founderName(),
 		m_history->startTime(),
 		m_history->maxUsers(),
-		m_closed,
+		false,
 		activeDrawingUserCount(ACTIVE_THRESHOLD_MS),
 		m_history->hasFlag(SessionHistory::AllowWeb),
 		m_config->preferWebSockets(),
@@ -2135,7 +2135,7 @@ bool Session::hasUrgentAnnouncementChange(
 		   description.password != !m_history->passwordHash().isEmpty() ||
 		   (description.users >= description.maxUsers) !=
 			   (userCount() >= m_history->maxUsers()) ||
-		   description.closed != m_closed ||
+		   description.closed ||
 		   description.allowWeb != m_history->hasFlag(SessionHistory::AllowWeb);
 }
 
@@ -2335,7 +2335,7 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 		 m_history->hasFlag(SessionHistory::AutoTitle)},
 		{QStringLiteral("hasPassword"),
 		 !invite && !m_history->passwordHash().isEmpty()},
-		{QStringLiteral("closed"), isClosed(invite)},
+		{QStringLiteral("closed"), isClosed()},
 		{QStringLiteral("authOnly"),
 		 !invite && m_history->hasFlag(SessionHistory::AuthOnly)},
 		{QStringLiteral("nsfm"), m_history->hasFlag(SessionHistory::Nsfm)},

@@ -457,8 +457,16 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("persistent"))
 		setSessionPersistent(config["persistent"].toBool());
 
-	if(config.contains("closed"))
-		setSessionClosed(config["closed"].toBool());
+	if(config.contains(QStringLiteral("closed"))) {
+		QJsonValue closedValue = config.value(QStringLiteral("closed"));
+		if(closedValue.isNull()) {
+			setSessionClosed(false);
+			setSessionCloseAvailable(false);
+		} else {
+			setSessionClosed(closedValue.toBool());
+			setSessionCloseAvailable(true);
+		}
+	}
 
 	if(config.contains("authOnly"))
 		setSessionAuthOnly(config["authOnly"].toBool());
@@ -753,6 +761,14 @@ void Document::setSessionClosed(bool closed)
 	if(m_sessionClosed != closed) {
 		m_sessionClosed = closed;
 		emit sessionClosedChanged(closed);
+	}
+}
+
+void Document::setSessionCloseAvailable(bool closeAvailable)
+{
+	if(m_sessionCloseAvailable != closeAvailable) {
+		m_sessionCloseAvailable = closeAvailable;
+		Q_EMIT sessionCloseAvailableChanged(closeAvailable);
 	}
 }
 
@@ -1059,6 +1075,7 @@ void Document::clearConfig()
 	setSessionAllowWeb(false);
 	setSessionAuthOnly(false);
 	setSessionClosed(false);
+	setSessionCloseAvailable(true);
 	setSessionDeputies(false);
 	setSessionForceNsfm(false);
 	setSessionIdleOverride(false);

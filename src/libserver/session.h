@@ -96,17 +96,13 @@ public:
 	/**
 	 * @brief Is the session closed to new users?
 	 *
-	 * A session can be closed in two ways:
-	 * - by setting the Closed flag
-	 * - when user count reaches maxUsers()
+	 * A session is closed if the user count reached the maximum.
 	 *
 	 * The session is also temporarily closed during the Reset state.
 	 *
-	 * @param ignoreFlag Whether to ignore the closed flag
 	 * @return true if new users will not be admitted
 	 */
-	bool isClosed(bool ignoreFlag = false) const;
-	void setClosed(bool closed);
+	bool isClosed() const;
 
 	/**
 	 *  Does this session support autoresetting?
@@ -581,8 +577,6 @@ private:
 	uint m_resetstreamsize = 0;
 
 	QElapsedTimer m_lastEventTime;
-
-	bool m_closed = false;
 };
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210

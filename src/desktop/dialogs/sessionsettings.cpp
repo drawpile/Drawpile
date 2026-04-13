@@ -135,6 +135,9 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_doc, &Document::sessionClosedChanged, m_ui->denyJoins,
 		&QCheckBox::setChecked);
 	connect(
+		m_doc, &Document::sessionCloseAvailableChanged, this,
+		&SessionSettingsDialog::updateCloseAvailable);
+	connect(
 		m_doc, &Document::sessionAuthOnlyChanged, this, [this](bool authOnly) {
 			m_ui->authOnly->setEnabled(m_op && (authOnly || m_isAuth));
 			m_ui->authOnly->setChecked(authOnly);
@@ -436,11 +439,11 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	m_op = op;
 
 	QWidget *widgets[] = {
-		m_ui->title,		   m_ui->maxUsers,		  m_ui->denyJoins,
-		m_ui->preserveChat,	   m_ui->deputies,		  m_ui->sessionPassword,
-		m_ui->opword,		   m_ui->addAnnouncement, m_ui->removeAnnouncement,
-		m_ui->removeBan,	   m_ui->authListView,	  m_ui->authImportButton,
-		m_ui->authExportButton};
+		m_ui->title,		   m_ui->maxUsers,			 m_ui->preserveChat,
+		m_ui->deputies,		   m_ui->sessionPassword,	 m_ui->opword,
+		m_ui->addAnnouncement, m_ui->removeAnnouncement, m_ui->removeBan,
+		m_ui->authListView,	   m_ui->authImportButton,	 m_ui->authExportButton,
+	};
 	for(QWidget *widget : widgets) {
 		widget->setEnabled(op);
 	}
@@ -455,6 +458,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 		}
 	}
 
+	m_ui->denyJoins->setEnabled(m_closeAvailable && op);
 	m_ui->persistent->setEnabled(m_canPersist && op);
 	m_ui->autoresetThreshold->setEnabled(m_canAutoreset && op);
 	m_ui->nsfm->setEnabled(!m_doc->isSessionForceNsfm() && op);
@@ -749,6 +753,13 @@ void SessionSettingsDialog::updateAllowWebCheckbox(bool allowWeb, bool canAlter)
 	m_canAlterAllowWeb = canAlter;
 	m_ui->allowWeb->setChecked(allowWeb);
 	m_ui->allowWeb->setEnabled(m_op && canAlter);
+}
+
+void SessionSettingsDialog::updateCloseAvailable(bool closeAvailable)
+{
+	m_closeAvailable = closeAvailable;
+	m_ui->denyJoins->setEnabled(closeAvailable && m_op);
+	m_ui->denyJoins->setVisible(closeAvailable);
 }
 
 void SessionSettingsDialog::updateNsfmCheckbox(bool)

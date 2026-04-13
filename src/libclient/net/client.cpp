@@ -736,6 +736,10 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 				.arg(
 					params[QStringLiteral("target")].toString(),
 					params[QStringLiteral("by")].toString());
+		} else if(key == net::ServerReply::KEY_CLOSE_UNSUPPORTED) {
+			return tr(
+				"Blocking new joins is not supported by this server. Set or "
+				"change the session password instead.");
 		} else if(key == net::ServerReply::KEY_KICK) {
 			return tr("%1 kicked by %2.")
 				.arg(
