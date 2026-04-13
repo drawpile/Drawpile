@@ -3950,11 +3950,16 @@ void MainWindow::hostSession(const HostParams &params, int connectStrategy)
 
 void MainWindow::invite()
 {
-	canvas::CanvasModel *canvas = m_doc->canvas();
-	if(canvas) {
+	QString objectName = QStringLiteral("invitedialog");
+	dialogs::InviteDialog *dlg = findChild<dialogs::InviteDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else if(canvas::CanvasModel *canvas = m_doc->canvas(); canvas) {
 		net::Client *client = m_doc->client();
 		canvas::AclState *acls = canvas->aclState();
-		dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
+		dlg = new dialogs::InviteDialog(
 			m_netstatus, m_doc->inviteList(), m_doc->isSessionWebSupported(),
 			m_doc->isSessionAllowWeb(), m_doc->isSessionPreferWebSockets(),
 			m_doc->isSessionNsfm(), acls->amOperator(), client->isModerator(),
@@ -3962,6 +3967,7 @@ void MainWindow::invite()
 			m_doc->isSessionInviteCodesEnabled(), m_doc->isCompatibilityMode(),
 			this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
 		connect(
 			m_doc, &Document::sessionWebSupportedChanged, dlg,
 			&dialogs::InviteDialog::setSessionWebSupported);
@@ -3995,6 +4001,9 @@ void MainWindow::invite()
 		connect(
 			dlg, &dialogs::InviteDialog::setInviteCodesEnabled, m_doc,
 			&Document::sendInviteCodesEnabled);
+		connect(
+			dlg, &dialogs::InviteDialog::sessionSettingsRequested,
+			getAction("sessionsettings"), &QAction::trigger);
 		dlg->show();
 	}
 }

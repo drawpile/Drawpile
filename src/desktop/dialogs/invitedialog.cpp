@@ -135,6 +135,10 @@ InviteDialog::InviteDialog(
 		d->ui.enableCodesBox, &QCheckBox::clicked, this,
 		&InviteDialog::setInviteCodesEnabled);
 
+	connect(
+		d->ui.sessionSettingsButton, &QPushButton::clicked, this,
+		&InviteDialog::sessionSettingsRequested);
+
 	updatePage();
 	updateCodes();
 }

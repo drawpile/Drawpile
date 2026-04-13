@@ -42,6 +42,7 @@ signals:
 	void createInviteCode(int maxUses, bool op, bool trust);
 	void removeInviteCode(const QString &secret);
 	void setInviteCodesEnabled(bool enabled);
+	void sessionSettingsRequested();
 
 private:
 	static constexpr int URL_PAGE_INDEX = 0;

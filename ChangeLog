@@ -88,6 +88,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Move operator password settings to roles page, to avoid users mistaking it for the session password setting. Thanks Bluestrings for suggesting.
  * Feature: Show a warning that removing the password from a session will make it public. Thanks Bluestrings for suggesting.
  * Removed Server Feature: Closing sessions, called "block new joins" in the client. It's just a worse variant of setting/changing the password on the session to make it invite-only. That has none of the downsides of locking yourself out, letting strangers join if they time it right and the session becoming public on its own after everyone has left.
+ * Feature: Add a button to the invite dialog that takes you to the session settings.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
