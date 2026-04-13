@@ -909,16 +909,35 @@ void SessionSettingsDialog::idleOverrideChanged(bool idleOverride)
 void SessionSettingsDialog::changePassword()
 {
 	QString prompt;
-	if(m_doc->isSessionPasswordProtected())
+	if(m_doc->isSessionPasswordProtected()) {
 		prompt = tr("Set a new password or leave blank to remove.");
-	else
+	} else {
 		prompt = tr("Set a password for the session.");
+	}
 
 	utils::getInputPassword(
 		this, tr("Session Password"), prompt, QString(),
 		[this](const QString &newpass) {
-			emit joinPasswordChanged(newpass);
-			changeSessionConf("password", newpass, true);
+			QString effectivePassword = newpass.trimmed();
+			auto updatePassword = [this, effectivePassword] {
+				emit joinPasswordChanged(effectivePassword);
+				changeSessionConf("password", effectivePassword, true);
+			};
+			if(effectivePassword.isEmpty() &&
+			   m_doc->isSessionPasswordProtected()) {
+				QMessageBox *box = utils::makeWarning(
+					this, tr("Make Session Public"),
+					tr("Removing the password from the session will make it "
+					   "publicly visible and allow strangers to join! Are you "
+					   "sure?"));
+				box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+				box->button(QMessageBox::Yes)->setText(tr("Yes, make public"));
+				box->button(QMessageBox::No)->setText(tr("No, keep password"));
+				box->show();
+				connect(box, &QMessageBox::accepted, this, updatePassword);
+			} else {
+				updatePassword();
+			}
 		});
 }
 

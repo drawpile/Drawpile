@@ -86,6 +86,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Generate a session password if none is set, rather than spewing an error telling the user they need to go fix it themselves.
  * Feature: When attempting to host a public session without a title, offer to host it invite-only instead of just showing an error. Thanks hyper for suggesting.
  * Feature: Move operator password settings to roles page, to avoid users mistaking it for the session password setting. Thanks Bluestrings for suggesting.
+ * Feature: Show a warning that removing the password from a session will make it public. Thanks Bluestrings for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
