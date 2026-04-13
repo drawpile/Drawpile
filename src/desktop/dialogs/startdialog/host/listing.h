@@ -32,7 +32,8 @@ public:
 
 	void host(
 		bool nsfmAllowed, QStringList &outErrors, QString &outTitle,
-		QString &outAlias, QStringList &outAnnouncementUrls);
+		QString &outAlias, QStringList &outAnnouncementUrls,
+		bool &outMissingTitle);
 
 signals:
 	void requestNsfmBasedOnListing();

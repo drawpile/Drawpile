@@ -88,12 +88,13 @@ void Host::accept()
 {
 	QStringList errors;
 	HostParams params;
+	bool missingTitle = false;
 	m_sessionPage->host(
 		errors, params.password, params.nsfm, params.keepChat, params.address,
 		params.rememberAddress);
 	m_listingPage->host(
 		m_sessionPage->isNsfmAllowed(), errors, params.title, params.alias,
-		params.announcementUrls);
+		params.announcementUrls, missingTitle);
 	m_permissionsPage->host(
 		params.undoLimit, params.featurePermissions, params.deputies,
 		params.featureLimits);
@@ -102,6 +103,18 @@ void Host::accept()
 	int errorCount = errors.size();
 	if(errorCount == 0) {
 		emit host(params);
+	} else if(errorCount == 1 && missingTitle) {
+		QMessageBox *box = utils::showQuestion(
+			this, tr("HostError"),
+			tr("Public sessions require a title. Do you want to host an "
+			   "invite-only session instead?"));
+		connect(
+			box, &QMessageBox::accepted, this,
+			[this] {
+				m_sessionPage->makePersonal();
+				accept();
+			},
+			Qt::QueuedConnection);
 	} else {
 		QString joinedErrors;
 		for(const QString &error : errors) {

@@ -50,6 +50,8 @@ public:
 	bool isNsfmAllowed() const;
 	void setNsfmBasedOnListing();
 
+	void makePersonal();
+
 signals:
 	void personalChanged(bool personal);
 	void builtinChanged(bool builtin);

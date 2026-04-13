@@ -312,6 +312,11 @@ void Session::setNsfmBasedOnListing()
 	}
 }
 
+void Session::makePersonal()
+{
+	m_typeCombo->setCurrentIndex(0);
+}
+
 void Session::updateType(int type)
 {
 	utils::ScopedUpdateDisabler disabler(this);

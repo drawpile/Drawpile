@@ -212,8 +212,9 @@ void Listing::startEditingTitle()
 
 void Listing::host(
 	bool nsfmAllowed, QStringList &outErrors, QString &outTitle,
-	QString &outAlias, QStringList &outAnnouncementUrls)
+	QString &outAlias, QStringList &outAnnouncementUrls, bool &outMissingTitle)
 {
+	bool missingTitle = false;
 	if(m_personal) {
 		if(m_automaticBox->isChecked()) {
 			outTitle.clear();
@@ -228,10 +229,12 @@ void Listing::host(
 	} else {
 		outTitle = m_titleEdit->text().trimmed();
 		if(outTitle.isEmpty()) {
+			missingTitle = true;
 			outErrors.append(
 				tr("Listing: a title is required for public sessions"));
 		}
 	}
+	outMissingTitle = missingTitle;
 	outAlias = m_idAliasEdit->text().trimmed();
 	outAnnouncementUrls = m_announcementModel->announcements();
 	if(!nsfmAllowed) {
