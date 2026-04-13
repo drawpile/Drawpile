@@ -31,27 +31,13 @@
          </property>
          <layout class="QFormLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="opwordLabel">
-            <property name="text">
-             <string>Operator password:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="opword">
-            <property name="text">
-             <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;not set&lt;/span&gt; (&lt;a href=&quot;#change&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;assign&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
            <widget class="QLabel" name="autoresetLabel">
             <property name="text">
              <string>Autoreset threshold:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="0" column="1">
            <layout class="QHBoxLayout" name="autoresetLayout">
             <item>
              <widget class="KisDoubleSliderSpinBox" name="autoresetThreshold">
@@ -84,14 +70,14 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="sessionOptionsLabel">
             <property name="text">
              <string>Options:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="1">
            <widget class="QCheckBox" name="preserveChat">
             <property name="toolTip">
              <string>Include chat in session history so new users can see it as well</string>
@@ -101,7 +87,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
            <widget class="QCheckBox" name="persistent">
             <property name="toolTip">
              <string>Don't terminate session when the last user leaves</string>
@@ -111,7 +97,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="nsfm">
             <property name="toolTip">
              <string>This session contains age-restricted content</string>
@@ -121,21 +107,21 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="idleTimeoutLabel">
             <property name="text">
              <string>Idle timeout:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="4" column="1">
            <widget class="QLabel" name="idleTimeoutAmount">
             <property name="text">
              <string>X seconds</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="5" column="1">
            <widget class="QCheckBox" name="idleTimeoutOverride">
             <property name="text">
              <string>Disable idle timeout</string>
@@ -649,37 +635,15 @@
       <attribute name="title">
        <string>Roles</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLabel" name="authLabel">
+      <layout class="QFormLayout" name="authListLayout">
+       <item row="0" column="1">
+        <widget class="QLabel" name="opword">
          <property name="text">
-          <string notr="true"/>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
+          <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;not set&lt;/span&gt; (&lt;a href=&quot;#change&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;assign&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QTableView" name="authListView">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <attribute name="horizontalHeaderHighlightSections">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-        </widget>
-       </item>
-       <item>
+       <item row="3" column="0" colspan="2">
         <layout class="QHBoxLayout" name="authButtonLayout">
          <item>
           <widget class="QPushButton" name="authImportButton">
@@ -731,6 +695,42 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="opwordLabel">
+         <property name="text">
+          <string>Operator password:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QTableView" name="authListView">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderHighlightSections">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="authLabel">
+         <property name="text">
+          <string notr="true"/>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
