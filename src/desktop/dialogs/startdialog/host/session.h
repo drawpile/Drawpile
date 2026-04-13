@@ -71,8 +71,8 @@ private:
 
 	void followServerInfoLink(const QUrl &url);
 
-	static void generatePassword();
-	static void generatePasswordWith(config::Config *cfg);
+	static QString generatePassword();
+	static QString generatePasswordWith(config::Config *cfg);
 	static void fixUpLastHostServer(config::Config *cfg);
 	static bool looksLikePub(const QString &address);
 

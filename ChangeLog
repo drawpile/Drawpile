@@ -83,6 +83,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Properly load frame ranges from ORA files that don't have any timeline defined.
  * Fix: Default session host type to passworded instead of remembering that you had it set to public. This is a safer option than accidentally hosting something in public you didn't mean to and ending up in a panic trying to get the strangers out. Thanks Bluestrings and watt for reporting.
  * Fix: Change the wording on public and passworded session options to make it clearer what they do. Thanks Bluestrings, hyper and tiar for suggesting.
+ * Feature: Generate a session password if none is set, rather than spewing an error telling the user they need to go fix it themselves.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

@@ -259,7 +259,14 @@ void Session::host(
 	if(isPersonal()) {
 		outPassword = m_passwordEdit->text().trimmed();
 		if(outPassword.isEmpty()) {
-			outErrors.append(tr("Session: a password is required"));
+			// Just generate a password if the user didn't set one. This really
+			// shouldn't end up with an empty password, but just in case, we do
+			// another check and bail if it does occur, rather than unexpectedly
+			// hosting a public session.
+			outPassword = generatePassword();
+			if(outPassword.isEmpty()) {
+				outErrors.append(tr("Session: a password is required"));
+			}
 		}
 	} else {
 		outPassword.clear();
@@ -440,12 +447,12 @@ void Session::followServerInfoLink(const QUrl &url)
 	utils::openOrQuestionUrl(this, url);
 }
 
-void Session::generatePassword()
+QString Session::generatePassword()
 {
-	generatePasswordWith(dpAppConfig());
+	return generatePasswordWith(dpAppConfig());
 }
 
-void Session::generatePasswordWith(config::Config *cfg)
+QString Session::generatePasswordWith(config::Config *cfg)
 {
 	// Passwords are just a mechanism to facilitate invite-only sessions.
 	// They're not secret and are meant to be shared with anyone who wants to
@@ -459,6 +466,7 @@ void Session::generatePasswordWith(config::Config *cfg)
 				0, characters.length())]);
 	}
 	cfg->setLastSessionPassword(password);
+	return password;
 }
 
 void Session::fixUpLastHostServer(config::Config *cfg)
