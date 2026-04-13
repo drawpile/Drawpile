@@ -1031,8 +1031,6 @@ static void ora_fill_timeline(DP_ReadOraContext *c)
         DP_TransientTrack *tt = ora_fill_track(rot);
         DP_transient_timeline_set_transient_track_noinc(ttl, tt, i);
     }
-    DP_transient_canvas_state_post_load_fixup(c->tcs);
-    DP_transient_canvas_state_timeline_cleanup(c->tcs);
 }
 
 static bool ora_xml_start_element(void *user, DP_XmlElement *element)
@@ -1299,6 +1297,8 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c,
         if (!c->want_timeline) {
             ora_fill_timeline(c);
         }
+        DP_transient_canvas_state_post_load_fixup(c->tcs);
+        DP_transient_canvas_state_timeline_cleanup(c->tcs);
         return DP_transient_canvas_state_persist(c->tcs);
     }
     else {
