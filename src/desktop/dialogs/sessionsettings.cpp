@@ -933,7 +933,7 @@ void SessionSettingsDialog::changeOpword()
 	utils::getInputPassword(
 		this, tr("Operator Password"), prompt, QString(),
 		[this](const QString &newpass) {
-			changeSessionConf("opword", newpass, true);
+			changeSessionConf("opword", newpass.trimmed(), true);
 		});
 }
 
