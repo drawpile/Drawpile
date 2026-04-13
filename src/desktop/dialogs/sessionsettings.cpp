@@ -930,7 +930,7 @@ void SessionSettingsDialog::changeSessionPassword()
 		prompt = tr("Set a password for the session.");
 	}
 
-	utils::getInputPassword(
+	utils::getInputText(
 		this, tr("Session Password"), prompt, QString(),
 		[this](const QString &newpass) {
 			QString effectivePassword = newpass.trimmed();
@@ -964,7 +964,7 @@ void SessionSettingsDialog::changeOpword()
 	else
 		prompt = tr("Set a password for gaining operator status.");
 
-	utils::getInputPassword(
+	utils::getInputText(
 		this, tr("Operator Password"), prompt, QString(),
 		[this](const QString &newpass) {
 			changeSessionConf("opword", newpass.trimmed(), true);
