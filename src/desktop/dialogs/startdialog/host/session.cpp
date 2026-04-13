@@ -122,6 +122,10 @@ Session::Session(QWidget *parent)
 		&Session::followServerInfoLink);
 
 	config::Config *cfg = dpAppConfig();
+	// Always revert the last host type to passworded. It happens too easily
+	// that someone forgets they had this set to public and then ends up in a
+	// panic when strangers join their session.
+	cfg->setLastHostType(int(Type::Passworded));
 #ifdef __EMSCRIPTEN__
 	QString hostpass = browser::getHostpassParam();
 	if(!hostpass.isEmpty()) {
@@ -132,6 +136,9 @@ Session::Session(QWidget *parent)
 		generatePasswordWith(cfg);
 	}
 	fixUpLastHostServer(cfg);
+	// Don't remember the session type, users forget about it and then
+	// accidentally host public sessions, which annoys ops. We always default to
+	// a passworded session, no matter what was previously selected.
 	CFG_BIND_COMBOBOX_USER_INT(cfg, LastHostType, m_typeCombo);
 	CFG_BIND_SET(cfg, LastHostType, this, Session::updateType);
 	CFG_BIND_LINEEDIT(cfg, LastSessionPassword, m_passwordEdit);
@@ -162,6 +169,7 @@ void Session::load(const QJsonObject &json)
 	config::Config *cfg = dpAppConfig();
 	if(json[QStringLiteral("hosttype")] != QStringLiteral("public")) {
 		cfg->setLastHostType(int(Type::Passworded));
+		m_typeCombo->setCurrentIndex(0);
 		QString password =
 			json[QStringLiteral("password")].toString().trimmed();
 		if(!password.isEmpty()) {

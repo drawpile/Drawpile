@@ -81,6 +81,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't enable synchronized smudging on MyPaint brushes that don't have it explicitly set and only have infinitesimal smudge factor. There's several brushes where all it does is slow down the stroke with no perceptible difference.
  * Fix: Set frame ranges properly when only changing one side of the frame range in a session that doesn't have both sides set yet. Thanks dAVePAGE for reporting.
  * Fix: Properly load frame ranges from ORA files that don't have any timeline defined.
+ * Fix: Default session host type to passworded instead of remembering that you had it set to public. This is a safer option than accidentally hosting something in public you didn't mean to and ending up in a panic trying to get the strangers out. Thanks Bluestrings and watt for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
