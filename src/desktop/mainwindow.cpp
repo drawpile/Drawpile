@@ -3758,6 +3758,19 @@ void MainWindow::showNetworkSettings()
 	dlg->activateNetworkPanel();
 }
 
+void MainWindow::showSessionSettings()
+{
+	utils::showWindow(m_sessionSettings, shouldShowDialogMaximized());
+}
+
+void MainWindow::setSessionPassword()
+{
+	if(m_doc->client()->isConnected()) {
+		showSessionSettings();
+		m_sessionSettings->changeSessionPassword();
+	}
+}
+
 dialogs::TabletTestDialog *MainWindow::showTabletTestDialog(QWidget *parent)
 {
 	QString name = QStringLiteral("tablettestdialog");
@@ -4010,6 +4023,9 @@ void MainWindow::invite()
 			connect(
 				dlg, &dialogs::InviteDialog::sessionSettingsRequested,
 				getAction("sessionsettings"), &QAction::trigger);
+			connect(
+				dlg, &dialogs::InviteDialog::setSessionPasswordRequested, this,
+				&MainWindow::setSessionPassword);
 			dlg->show();
 		}
 	}
@@ -7840,6 +7856,7 @@ void MainWindow::setupActions()
 
 	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the canvas")).shortcut("F12").checkable();
 
+	// clang-format on
 	m_admintools->addAction(locksession);
 	terminatesession->setEnabled(false);
 	m_admintools->setEnabled(false);
@@ -7850,9 +7867,10 @@ void MainWindow::setupActions()
 	connect(join, &QAction::triggered, this, &MainWindow::join);
 	connect(browse, &QAction::triggered, this, &MainWindow::browse);
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
-	connect(sessionSettings, &QAction::triggered, m_sessionSettings, [this](){
-		utils::showWindow(m_sessionSettings, shouldShowDialogMaximized());
-	});
+	connect(
+		sessionSettings, &QAction::triggered, this,
+		&MainWindow::showSessionSettings);
+	// clang-format off
 	connect(sessionUndoDepthLimit, &QAction::triggered, this, &MainWindow::changeUndoDepthLimit);
 	connect(serverlog, &QAction::triggered, m_serverLogDialog, [this](){
 		utils::showWindow(m_serverLogDialog, shouldShowDialogMaximized());

@@ -177,6 +177,8 @@ public slots:
 
 	dialogs::SettingsDialog *showSettings();
 	void showNetworkSettings();
+	void showSessionSettings();
+	void setSessionPassword();
 	dialogs::TabletTestDialog *showTabletTestDialog(QWidget *parent);
 	dialogs::TouchTestDialog *showTouchTestDialog(QWidget *parent);
 	void reportAbuse();

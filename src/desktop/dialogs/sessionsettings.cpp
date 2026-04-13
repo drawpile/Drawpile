@@ -97,8 +97,8 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->allowWeb, &QCheckBox::clicked, this,
 		&SessionSettingsDialog::allowWebChanged);
 	connect(
-		m_ui->autoresetThreshold, &KisDoubleSliderSpinBox::editingFinished, this,
-		&SessionSettingsDialog::autoresetThresholdChanged);
+		m_ui->autoresetThreshold, &KisDoubleSliderSpinBox::editingFinished,
+		this, &SessionSettingsDialog::autoresetThresholdChanged);
 	connect(
 		m_ui->preserveChat, &QCheckBox::clicked, this,
 		&SessionSettingsDialog::keepChatChanged);
@@ -117,7 +117,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 
 	connect(
 		m_ui->sessionPassword, &QLabel::linkActivated, this,
-		&SessionSettingsDialog::changePassword);
+		&SessionSettingsDialog::changeSessionPassword);
 	connect(
 		m_ui->opword, &QLabel::linkActivated, this,
 		&SessionSettingsDialog::changeOpword);
@@ -917,8 +917,12 @@ void SessionSettingsDialog::idleOverrideChanged(bool idleOverride)
 	changeSessionConf("idleOverride", idleOverride);
 }
 
-void SessionSettingsDialog::changePassword()
+void SessionSettingsDialog::changeSessionPassword()
 {
+	if(!m_op) {
+		return;
+	}
+
 	QString prompt;
 	if(m_doc->isSessionPasswordProtected()) {
 		prompt = tr("Set a new password or leave blank to remove.");

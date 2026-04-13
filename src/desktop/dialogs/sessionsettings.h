@@ -39,6 +39,8 @@ public:
 	//! Is the local user authenticated/not a guest?
 	void setAuthenticated(bool);
 
+	void changeSessionPassword();
+
 public slots:
 	void bansImported(int total, int imported);
 	void bansExported(const QByteArray &bans);
@@ -77,7 +79,6 @@ private slots:
 	void deputiesChanged(int);
 	void idleOverrideChanged(bool idleTimeoutOverride);
 
-	void changePassword();
 	void changeOpword();
 
 	void changeSessionConf(

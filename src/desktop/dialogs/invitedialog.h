@@ -43,6 +43,7 @@ signals:
 	void removeInviteCode(const QString &secret);
 	void setInviteCodesEnabled(bool enabled);
 	void sessionSettingsRequested();
+	void setSessionPasswordRequested();
 
 private:
 	static constexpr int URL_PAGE_INDEX = 0;
@@ -58,6 +59,8 @@ private:
 	void updatePage();
 	void updateInviteLink();
 	void updateCodes();
+	void updatePublicFrame();
+	void dismissPublicFrame();
 	void showCreateCodeDialog();
 	void promptRemoveSelectedCodes();
 	void removeSelectedCodes();

@@ -16,8 +16,10 @@
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QGuiApplication>
+#include <QIcon>
 #include <QMenu>
 #include <QRadioButton>
+#include <QToolButton>
 
 namespace dialogs {
 
@@ -25,6 +27,7 @@ struct InviteDialog::Private {
 	widgets::NetStatus *netStatus;
 	net::InviteListModel *inviteListModel;
 	Ui::InviteDialog ui;
+	QLabel *publicLabel = nullptr;
 	QMenu *inviteCodeMenu = nullptr;
 	QAction *inviteCodeCreate = nullptr;
 	QAction *inviteCodeRemove = nullptr;
@@ -40,6 +43,7 @@ struct InviteDialog::Private {
 	bool codesEnabled;
 	bool compatibilityMode;
 	bool expectSelectInviteCode = false;
+	bool publicLabelDismissed = false;
 };
 
 InviteDialog::InviteDialog(
@@ -65,6 +69,33 @@ InviteDialog::InviteDialog(
 	d->ui.setupUi(this);
 	d->ui.urlEdit->setWordWrapMode(QTextOption::WrapAnywhere);
 	d->ui.ipProgressBar->setVisible(false);
+
+	QHBoxLayout *publicLayout = new QHBoxLayout(d->ui.publicFrame);
+
+	publicLayout->addWidget(
+		utils::makeIconLabel(
+			QIcon::fromTheme(QStringLiteral("globe")), d->ui.publicFrame));
+
+	d->publicLabel = new QLabel;
+	d->publicLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+	d->publicLabel->setTextFormat(Qt::RichText);
+	d->publicLabel->setWordWrap(true);
+	publicLayout->addWidget(d->publicLabel, 1);
+	connect(
+		d->publicLabel, &QLabel::linkActivated, this,
+		&InviteDialog::setSessionPasswordRequested);
+
+	QToolButton *publicCloseButton = new QToolButton;
+	publicCloseButton->setAutoRaise(true);
+	publicCloseButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	publicCloseButton->setToolTip(tr("Dismiss"));
+	publicCloseButton->setIcon(
+		QIcon::fromTheme(QStringLiteral("drawpile_close")));
+	publicLayout->addWidget(
+		publicCloseButton, 0, Qt::AlignRight | Qt::AlignTop);
+	connect(
+		publicCloseButton, &QToolButton::clicked, this,
+		&InviteDialog::dismissPublicFrame);
 
 	config::Config *cfg = dpAppConfig();
 	CFG_BIND_CHECKBOX(cfg, InviteIncludePassword, d->ui.includePasswordBox);
@@ -317,6 +348,7 @@ void InviteDialog::updatePage()
 {
 	d->joinPassword = d->netStatus->joinPassword();
 	d->ui.includePasswordBox->setEnabled(!d->joinPassword.isEmpty());
+	updatePublicFrame();
 	updateInviteLink();
 	d->ui.pages->setCurrentIndex(
 		d->netStatus->haveRemoteAddress() ? URL_PAGE_INDEX : IP_PAGE_INDEX);
@@ -350,6 +382,39 @@ void InviteDialog::updateCodes()
 	d->ui.enableCodesBox->setChecked(d->codesEnabled);
 
 	d->ui.codeLinkButton->setEnabled(!selectedSecrets.isEmpty());
+}
+
+void InviteDialog::updatePublicFrame()
+{
+	if(d->publicLabelDismissed) {
+		d->ui.publicFrame->hide();
+	} else {
+		QString promptText;
+		if(d->op) {
+			promptText = utils::toHtmlWithLink(
+				//: The stuff in [] will turn into a link. Don't remove the []
+				//: or replace them with different symbols!
+				tr("To make it invite-only, [set a session password]."),
+				QStringLiteral("#"));
+		} else {
+			promptText = tr("To make it invite-only, a session operator can "
+							"set a password.")
+							 .toHtmlEscaped();
+		}
+		d->publicLabel->setText(
+			QStringLiteral("<p>%1</p><p>%2</p>")
+				.arg(
+					tr("This session is <strong>public</strong>, strangers can "
+					   "join it!"),
+					promptText));
+		d->ui.publicFrame->setVisible(d->joinPassword.isEmpty());
+	}
+}
+
+void InviteDialog::dismissPublicFrame()
+{
+	d->publicLabelDismissed = true;
+	updatePublicFrame();
 }
 
 void InviteDialog::showCreateCodeDialog()

@@ -18,6 +18,16 @@
   </property>
   <layout class="QVBoxLayout" name="inviteDialogLayout">
    <item>
+    <widget class="QFrame" name="publicFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QStackedWidget" name="pages">
      <widget class="QTabWidget" name="tabs">
       <property name="currentIndex">
@@ -211,6 +221,19 @@
         <number>0</number>
        </property>
        <item>
+        <spacer name="ipTopSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="QLabel" name="ipExplanationLabel">
          <property name="text">
           <string>You're hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</string>
@@ -227,7 +250,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="ipTopSpacer">
+        <spacer name="ipMiddleSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -236,7 +259,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
+           <width>0</width>
            <height>24</height>
           </size>
          </property>
@@ -269,7 +292,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
+           <width>0</width>
            <height>0</height>
           </size>
          </property>
