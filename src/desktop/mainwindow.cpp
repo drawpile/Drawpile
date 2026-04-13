@@ -3956,55 +3956,62 @@ void MainWindow::invite()
 	if(dlg) {
 		dlg->activateWindow();
 		dlg->raise();
-	} else if(canvas::CanvasModel *canvas = m_doc->canvas(); canvas) {
+	} else {
+		canvas::CanvasModel *canvas = m_doc->canvas();
 		net::Client *client = m_doc->client();
-		canvas::AclState *acls = canvas->aclState();
-		dlg = new dialogs::InviteDialog(
-			m_netstatus, m_doc->inviteList(), m_doc->isSessionWebSupported(),
-			m_doc->isSessionAllowWeb(), m_doc->isSessionPreferWebSockets(),
-			m_doc->isSessionNsfm(), acls->amOperator(), client->isModerator(),
-			m_doc->serverSupportsInviteCodes(),
-			m_doc->isSessionInviteCodesEnabled(), m_doc->isCompatibilityMode(),
-			this);
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setObjectName(objectName);
-		connect(
-			m_doc, &Document::sessionWebSupportedChanged, dlg,
-			&dialogs::InviteDialog::setSessionWebSupported);
-		connect(
-			m_doc, &Document::sessionAllowWebChanged, dlg,
-			&dialogs::InviteDialog::setSessionAllowWeb);
-		connect(
-			m_doc, &Document::sessionPreferWebSocketsChanged, dlg,
-			&dialogs::InviteDialog::setSessionPreferWebSockets);
-		connect(
-			m_doc, &Document::sessionNsfmChanged, dlg,
-			&dialogs::InviteDialog::setSessionNsfm);
-		connect(
-			acls, &canvas::AclState::localOpChanged, dlg,
-			&dialogs::InviteDialog::setOp);
-		connect(
-			m_doc, &Document::sessionInviteCodesEnabledChanged, dlg,
-			&dialogs::InviteDialog::setSessionCodesEnabled);
-		connect(
-			m_doc, &Document::serverSupportsInviteCodesChanged, dlg,
-			&dialogs::InviteDialog::setServerSupportsInviteCodes);
-		connect(
-			client, &net::Client::inviteCodeCreated, dlg,
-			&dialogs::InviteDialog::selectInviteCode);
-		connect(
-			dlg, &dialogs::InviteDialog::createInviteCode, m_doc,
-			&Document::sendCreateInviteCode);
-		connect(
-			dlg, &dialogs::InviteDialog::removeInviteCode, m_doc,
-			&Document::sendRemoveInviteCode);
-		connect(
-			dlg, &dialogs::InviteDialog::setInviteCodesEnabled, m_doc,
-			&Document::sendInviteCodesEnabled);
-		connect(
-			dlg, &dialogs::InviteDialog::sessionSettingsRequested,
-			getAction("sessionsettings"), &QAction::trigger);
-		dlg->show();
+		if(canvas && client->isConnected()) {
+			canvas::AclState *acls = canvas->aclState();
+			dlg = new dialogs::InviteDialog(
+				m_netstatus, m_doc->inviteList(),
+				m_doc->isSessionWebSupported(), m_doc->isSessionAllowWeb(),
+				m_doc->isSessionPreferWebSockets(), m_doc->isSessionNsfm(),
+				acls->amOperator(), client->isModerator(),
+				m_doc->serverSupportsInviteCodes(),
+				m_doc->isSessionInviteCodesEnabled(),
+				m_doc->isCompatibilityMode(), this);
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			dlg->setObjectName(objectName);
+			connect(
+				m_doc, &Document::serverDisconnected, dlg,
+				&dialogs::InviteDialog::close);
+			connect(
+				m_doc, &Document::sessionWebSupportedChanged, dlg,
+				&dialogs::InviteDialog::setSessionWebSupported);
+			connect(
+				m_doc, &Document::sessionAllowWebChanged, dlg,
+				&dialogs::InviteDialog::setSessionAllowWeb);
+			connect(
+				m_doc, &Document::sessionPreferWebSocketsChanged, dlg,
+				&dialogs::InviteDialog::setSessionPreferWebSockets);
+			connect(
+				m_doc, &Document::sessionNsfmChanged, dlg,
+				&dialogs::InviteDialog::setSessionNsfm);
+			connect(
+				acls, &canvas::AclState::localOpChanged, dlg,
+				&dialogs::InviteDialog::setOp);
+			connect(
+				m_doc, &Document::sessionInviteCodesEnabledChanged, dlg,
+				&dialogs::InviteDialog::setSessionCodesEnabled);
+			connect(
+				m_doc, &Document::serverSupportsInviteCodesChanged, dlg,
+				&dialogs::InviteDialog::setServerSupportsInviteCodes);
+			connect(
+				client, &net::Client::inviteCodeCreated, dlg,
+				&dialogs::InviteDialog::selectInviteCode);
+			connect(
+				dlg, &dialogs::InviteDialog::createInviteCode, m_doc,
+				&Document::sendCreateInviteCode);
+			connect(
+				dlg, &dialogs::InviteDialog::removeInviteCode, m_doc,
+				&Document::sendRemoveInviteCode);
+			connect(
+				dlg, &dialogs::InviteDialog::setInviteCodesEnabled, m_doc,
+				&Document::sendInviteCodesEnabled);
+			connect(
+				dlg, &dialogs::InviteDialog::sessionSettingsRequested,
+				getAction("sessionsettings"), &QAction::trigger);
+			dlg->show();
+		}
 	}
 }
 
