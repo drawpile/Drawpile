@@ -115,24 +115,33 @@ typedef enum DP_CpuSupport {
 
 void DP_cpu_support_init(void);
 
+// Sets the CPU support value to the given value if that's supported. This is
+// only supposed to be used in tests. Returns whether that was successful.
+bool DP_cpu_support_set(DP_CpuSupport cpu_support);
+
 // If AVX2, AVX or SSE 4.2 are requested at compile-time, we switch to those at
 // compile-time instead of doing a dynamic check. If your processor supports
 // AVX2 but you ask for SSE 4.2 at compile-time then you only get the latter.
 #ifdef NDEBUG
 #    if defined(DP_CPU_X64) && defined(__AVX2__)
-#        define DP_cpu_support DP_CPU_SUPPORT_AVX2
+#        define DP_cpu_support            DP_CPU_SUPPORT_AVX2
+#        define DP_CPU_SUPPORT_HARD_WIRED 1
 #    elif defined(DP_CPU_X64) && defined(__AVX__)
-#        define DP_cpu_support DP_CPU_SUPPORT_AVX
+#        define DP_cpu_support            DP_CPU_SUPPORT_AVX
+#        define DP_CPU_SUPPORT_HARD_WIRED 1
 #    elif defined(DP_CPU_X64) && defined(__SSE4_2__)
-#        define DP_cpu_support DP_CPU_SUPPORT_SSE42
+#        define DP_cpu_support            DP_CPU_SUPPORT_SSE42
+#        define DP_CPU_SUPPORT_HARD_WIRED 1
 #    else
 extern DP_CpuSupport DP_cpu_support_value;
 #        define DP_cpu_support DP_cpu_support_value
+#        undef DP_CPU_SUPPORT_HARD_WIRED
 #    endif
 #else
 DP_CpuSupport DP_cpu_support_debug_get(const char *file, int line);
 #    define DP_cpu_support \
         DP_cpu_support_debug_get(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__)
+#    undef DP_CPU_SUPPORT_HARD_WIRED
 #endif
 
 

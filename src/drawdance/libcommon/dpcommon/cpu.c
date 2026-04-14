@@ -150,3 +150,47 @@ void DP_cpu_support_init(void)
                 (int)actual_cpu_support, (int)DP_cpu_support_value);
     }
 }
+
+bool DP_cpu_support_set(DP_CpuSupport cpu_support)
+{
+    if (DP_cpu_support == cpu_support) {
+        return true;
+    }
+
+#ifdef DP_CPU_SUPPORT_HARD_WIRED
+    // If a CPU support has been provided at compile-time, there's no dynamic
+    // value we can set here.
+    DP_error_set("CPU support %d compiled in", (int)DP_cpu_support);
+    return false;
+#else
+    bool supported = false;
+    switch (cpu_support) {
+    case DP_CPU_SUPPORT_DEFAULT:
+        supported = true;
+        break;
+#    ifdef DP_CPU_X64
+    case DP_CPU_SUPPORT_SSE42:
+        supported = supports_sse42();
+        break;
+    case DP_CPU_SUPPORT_AVX:
+        supported = supports_avx();
+        break;
+    case DP_CPU_SUPPORT_AVX2:
+        supported = supports_avx2();
+        break;
+#    endif
+    case DP_CPU_SUPPORT_COUNT:
+        break;
+    }
+
+    if (supported) {
+        DP_cpu_support_value = cpu_support;
+        DP_ASSERT(DP_cpu_support == cpu_support);
+        return true;
+    }
+    else {
+        DP_error_set("CPU support %d not available", (int)cpu_support);
+        return false;
+    }
+#endif
+}
