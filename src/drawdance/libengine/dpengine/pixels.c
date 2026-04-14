@@ -1799,7 +1799,7 @@ static __m128 channel_unpremultiply_to_linear_sse42(__m128 ch, __m128 alpha)
     return linear;
 }
 
-static __m128 channel_linear_premultiply_to_srgb_sse42(__m128 ch, __m128 alpha)
+static __m128i channel_linear_premultiply_to_srgb_sse42(__m128 ch, __m128 alpha)
 {
     const __m128 one = _mm_set_ps1(1.0f);
     const __m128 threshold = _mm_set_ps1(0.0031308f);
@@ -1818,9 +1818,17 @@ static __m128 channel_linear_premultiply_to_srgb_sse42(__m128 ch, __m128 alpha)
 
     __m128 branch = _mm_cmple_ps(ch, threshold);
 
-    __m128 srgb = _mm_blendv_ps(powed, small, branch);
-    __m128 srgb_prem = _mm_min_ps(_mm_mul_ps(srgb, alpha), one);
-    return srgb_prem;
+    const __m128 zero = _mm_set1_ps(0.0f);
+    __m128 srgb =
+        _mm_max_ps(_mm_min_ps(_mm_blendv_ps(powed, small, branch), one), zero);
+
+    __m128 to_fix15 = _mm_set_ps1(BIT15_FLOAT);
+    __m128i c_int = _mm_cvtps_epi32(_mm_mul_ps(srgb, to_fix15));
+    __m128i a_int = _mm_cvtps_epi32(_mm_mul_ps(alpha, to_fix15));
+
+    __m128i srgb_prem_fix15 =
+        _mm_srli_epi32(_mm_mullo_epi32(c_int, a_int), FIX_15);
+    return srgb_prem_fix15;
 }
 
 static void pixels_to_oklaba_sse42(__m128i src_b, __m128i src_g, __m128i src_r,
@@ -1925,12 +1933,9 @@ static void blend_mask_pixels_oklab_normal_sse42(DP_Pixel15 *dst,
                         src_okb, src_af, o, &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
         __m128i mix_b, mix_g, mix_r, mix_a;
-        mix_b = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_bf, mix_af), bit15));
-        mix_g = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_gf, mix_af), bit15));
-        mix_r = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_rf, mix_af), bit15));
+        mix_b = channel_linear_premultiply_to_srgb_sse42(mix_bf, mix_af);
+        mix_g = channel_linear_premultiply_to_srgb_sse42(mix_gf, mix_af);
+        mix_r = channel_linear_premultiply_to_srgb_sse42(mix_rf, mix_af);
         mix_a = _mm_cvtps_epi32(_mm_mul_ps(mix_af, bit15));
 
         store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
@@ -1976,12 +1981,9 @@ static void blend_mask_pixels_oklab_recolor_sse42(DP_Pixel15 *dst,
                         src_okb, src_af, o, &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
         __m128i mix_b, mix_g, mix_r, mix_a;
-        mix_b = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_bf, dst_af), bit15));
-        mix_g = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_gf, dst_af), bit15));
-        mix_r = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_rf, dst_af), bit15));
+        mix_b = channel_linear_premultiply_to_srgb_sse42(mix_bf, dst_af);
+        mix_g = channel_linear_premultiply_to_srgb_sse42(mix_gf, dst_af);
+        mix_r = channel_linear_premultiply_to_srgb_sse42(mix_rf, dst_af);
         mix_a = dst_a;
 
         store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
@@ -2031,15 +2033,12 @@ static void blend_mask_pixels_oklab_normal_and_eraser_sse42(
         mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_af, src_okl, src_oka,
                         src_okb, src_af, o, &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
-        __m128i mix_b = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_bf, opa_out_f),
-            bit15f));
-        __m128i mix_g = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_gf, opa_out_f),
-            bit15f));
-        __m128i mix_r = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_rf, opa_out_f),
-            bit15f));
+        __m128i mix_b =
+            channel_linear_premultiply_to_srgb_sse42(mix_bf, opa_out_f);
+        __m128i mix_g =
+            channel_linear_premultiply_to_srgb_sse42(mix_gf, opa_out_f);
+        __m128i mix_r =
+            channel_linear_premultiply_to_srgb_sse42(mix_rf, opa_out_f);
 
         store_unaligned_sse42(mix_b, mix_g, mix_r, opa_out, dst);
     }
@@ -2065,23 +2064,17 @@ static void blend_oklab_pixel_sse42(__m128i dst_b, __m128i dst_g, __m128i dst_r,
         __m128 mix_a;
         mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_af, src_okl, src_oka,
                         src_okb, src_af, op, &mix_b, &mix_g, &mix_r, &mix_a);
-        *out_r = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_r, mix_a), bit15_to));
-        *out_g = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_g, mix_a), bit15_to));
-        *out_b = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_b, mix_a), bit15_to));
+        *out_r = channel_linear_premultiply_to_srgb_sse42(mix_r, mix_a);
+        *out_g = channel_linear_premultiply_to_srgb_sse42(mix_g, mix_a);
+        *out_b = channel_linear_premultiply_to_srgb_sse42(mix_b, mix_a);
         *out_a_or_null = _mm_cvtps_epi32(_mm_mul_ps(mix_a, bit15_to));
     }
     else {
         mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_af, src_okl, src_oka,
                         src_okb, src_af, op, &mix_b, &mix_g, &mix_r, NULL);
-        *out_r = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_r, dst_af), bit15_to));
-        *out_g = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_g, dst_af), bit15_to));
-        *out_b = _mm_cvtps_epi32(_mm_mul_ps(
-            channel_linear_premultiply_to_srgb_sse42(mix_b, dst_af), bit15_to));
+        *out_r = channel_linear_premultiply_to_srgb_sse42(mix_r, dst_af);
+        *out_g = channel_linear_premultiply_to_srgb_sse42(mix_g, dst_af);
+        *out_b = channel_linear_premultiply_to_srgb_sse42(mix_b, dst_af);
     }
 }
 
@@ -2682,7 +2675,7 @@ static __m256 channel_unpremultiply_to_linear_avx2(__m256 ch, __m256 alpha)
     return linear;
 }
 
-static __m256 channel_linear_premultiply_to_srgb_avx2(__m256 ch, __m256 alpha)
+static __m256i channel_linear_premultiply_to_srgb_avx2(__m256 ch, __m256 alpha)
 {
     const __m256 one = _mm256_set1_ps(1.0f);
     const __m256 threshold = _mm256_set1_ps(0.0031308f);
@@ -2699,9 +2692,17 @@ static __m256 channel_linear_premultiply_to_srgb_avx2(__m256 ch, __m256 alpha)
 
     __m256 branch = _mm256_cmp_ps(ch, threshold, _CMP_LE_OS);
 
-    __m256 srgb = _mm256_blendv_ps(powed, small, branch);
-    __m256 srgb_prem = _mm256_min_ps(_mm256_mul_ps(srgb, alpha), one);
-    return srgb_prem;
+    const __m256 zero = _mm256_set1_ps(0.0f);
+    __m256 srgb = _mm256_max_ps(
+        _mm256_min_ps(_mm256_blendv_ps(powed, small, branch), one), zero);
+
+    __m256 to_fix15 = _mm256_set1_ps(BIT15_FLOAT);
+    __m256i c_int = _mm256_cvtps_epi32(_mm256_mul_ps(srgb, to_fix15));
+    __m256i a_int = _mm256_cvtps_epi32(_mm256_mul_ps(alpha, to_fix15));
+
+    __m256i srgb_prem_fix15 =
+        _mm256_srli_epi32(_mm256_mullo_epi32(c_int, a_int), FIX_15);
+    return srgb_prem_fix15;
 }
 
 static void pixels_to_oklaba_avx2(__m256i src_b, __m256i src_g, __m256i src_r,
@@ -2786,23 +2787,17 @@ static void blend_oklab_pixel_avx2(__m256i dst_b, __m256i dst_g, __m256i dst_r,
         __m256 mix_a;
         mix_oklab_avx2(dst_okl, dst_oka, dst_okb, dst_af, src_okl, src_oka,
                        src_okb, src_af, op, &mix_b, &mix_g, &mix_r, &mix_a);
-        *out_b = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_b, mix_a), bit15_to));
-        *out_g = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_g, mix_a), bit15_to));
-        *out_r = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_r, mix_a), bit15_to));
+        *out_b = channel_linear_premultiply_to_srgb_avx2(mix_b, mix_a);
+        *out_g = channel_linear_premultiply_to_srgb_avx2(mix_g, mix_a);
+        *out_r = channel_linear_premultiply_to_srgb_avx2(mix_r, mix_a);
         *out_a_or_null = _mm256_cvtps_epi32(_mm256_mul_ps(mix_a, bit15_to));
     }
     else {
         mix_oklab_avx2(dst_okl, dst_oka, dst_okb, dst_af, src_okl, src_oka,
                        src_okb, src_af, op, &mix_b, &mix_g, &mix_r, NULL);
-        *out_b = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_b, dst_af), bit15_to));
-        *out_g = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_g, dst_af), bit15_to));
-        *out_r = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_r, dst_af), bit15_to));
+        *out_b = channel_linear_premultiply_to_srgb_avx2(mix_b, dst_af);
+        *out_g = channel_linear_premultiply_to_srgb_avx2(mix_g, dst_af);
+        *out_r = channel_linear_premultiply_to_srgb_avx2(mix_r, dst_af);
     }
 }
 
@@ -2849,12 +2844,9 @@ static void blend_mask_pixels_oklab_normal_avx2(DP_Pixel15 *dst,
                        src_okb, src_af, o, &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
         __m256i mix_r, mix_g, mix_b, mix_a;
-        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_bf, mix_af), bit15));
-        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_gf, mix_af), bit15));
-        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_rf, mix_af), bit15));
+        mix_b = channel_linear_premultiply_to_srgb_avx2(mix_bf, mix_af);
+        mix_g = channel_linear_premultiply_to_srgb_avx2(mix_gf, mix_af);
+        mix_r = channel_linear_premultiply_to_srgb_avx2(mix_rf, mix_af);
         mix_a = _mm256_cvtps_epi32(_mm256_mul_ps(mix_af, bit15));
 
         store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
@@ -2905,12 +2897,9 @@ static void blend_mask_pixels_oklab_recolor_avx2(DP_Pixel15 *dst,
 
         __m256i mix_b, mix_g, mix_r, mix_a;
         mix_a = dst_a;
-        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_rf, dst_af), bit15));
-        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_gf, dst_af), bit15));
-        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_bf, dst_af), bit15));
+        mix_r = channel_linear_premultiply_to_srgb_avx2(mix_rf, dst_af);
+        mix_g = channel_linear_premultiply_to_srgb_avx2(mix_gf, dst_af);
+        mix_b = channel_linear_premultiply_to_srgb_avx2(mix_bf, dst_af);
 
         store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
     }
@@ -2965,15 +2954,12 @@ blend_mask_pixels_oklab_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
                        src_okb, src_af, o, &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
 
-        __m256i mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_rf, opa_out_f),
-            bit15f));
-        __m256i mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_gf, opa_out_f),
-            bit15f));
-        __m256i mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(
-            channel_linear_premultiply_to_srgb_avx2(mix_bf, opa_out_f),
-            bit15f));
+        __m256i mix_r =
+            channel_linear_premultiply_to_srgb_avx2(mix_rf, opa_out_f);
+        __m256i mix_g =
+            channel_linear_premultiply_to_srgb_avx2(mix_gf, opa_out_f);
+        __m256i mix_b =
+            channel_linear_premultiply_to_srgb_avx2(mix_bf, opa_out_f);
 
         store_unaligned_avx2(mix_b, mix_g, mix_r, opa_out, dst);
     }

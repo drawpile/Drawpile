@@ -121,6 +121,7 @@ if(TESTS)
         test/handle_layers.c
         test/handle_metadata.c
         test/handle_timeline.c
+        test/pixel_blending.c
         test/pixel_conversion.c
         test/project.c
     )
