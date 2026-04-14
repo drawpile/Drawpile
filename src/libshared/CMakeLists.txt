@@ -83,7 +83,7 @@ if(TARGET ${QT_PACKAGE_NAME}::WebSockets)
 	target_link_libraries(dpshared PUBLIC ${QT_PACKAGE_NAME}::WebSockets)
 endif()
 
-if(TESTS)
+if(TESTS AND ALLOW_QTEST_TESTS)
 	add_subdirectory(tests)
 endif()
 

@@ -374,7 +374,7 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	add_subdirectory(i18n)
 endif()
 
-if(TESTS)
+if(TESTS AND ALLOW_QTEST_TESTS)
 	add_subdirectory(tests)
 endif()
 

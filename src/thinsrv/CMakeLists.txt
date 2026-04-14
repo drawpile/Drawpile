@@ -204,7 +204,7 @@ if(INSTALL_DOC AND UNIX)
 	)
 endif()
 
-if(TESTS)
+if(TESTS AND ALLOW_QTEST_TESTS)
 	add_subdirectory(tests)
 endif()
 

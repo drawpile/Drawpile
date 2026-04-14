@@ -46,6 +46,9 @@ if(NOT ANDROID AND NOT EMSCRIPTEN)
 	option(TESTS "Build unit tests" OFF)
 	add_feature_info("Unit tests (TESTS)" TESTS "")
 
+	option(ALLOW_QTEST_TESTS "Allow building QTest-based tests (some gcc versions segfault on these)" ON)
+	add_feature_info("Allow QTest-based tests (ALLOW_QTEST_TESTS)" ALLOW_QTEST_TESTS "")
+
 	option(BENCHMARKS "Build benchmarks" OFF)
 	add_feature_info("Benchmarks (BENCHMARKS)" BENCHMARKS "")
 else()
