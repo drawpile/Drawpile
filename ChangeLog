@@ -91,6 +91,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add a prompt to the invite dialog to make sessions passworded if they're public and a button to open the session settings, to make those a bit easier to find. Thanks Bluestrings for suggesting.
  * Fix: Close invite dialog when disconnecting.
  * Feature: Load brush preset data and thumbnails on demand instead of preloading them. This makes startup, switching tags and other operations that reload brushes much faster, especially if you have a lot of brushes.
+ * Feature: Add sections to the brush editor settings list and group the settings accordingly. Thanks Blozzom for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

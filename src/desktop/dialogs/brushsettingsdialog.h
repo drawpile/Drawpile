@@ -13,7 +13,7 @@ class QComboBox;
 class QGraphicsView;
 class QKeySequence;
 class QLineEdit;
-class QListWidgetItem;
+class QTreeWidgetItem;
 class QPlainTextEdit;
 class QPushButton;
 class QVBoxLayout;
@@ -104,7 +104,7 @@ public slots:
 	void updateUiFromActiveBrush(const brushes::ActiveBrush &brush);
 
 private slots:
-	void categoryChanged(QListWidgetItem *current, QListWidgetItem *);
+	void categoryChanged(QTreeWidgetItem *current, QTreeWidgetItem *);
 
 private:
 	struct Dynamics {
@@ -150,8 +150,10 @@ private:
 
 	void applyCurveToAllClassicSettings(const KisCubicCurve &curve);
 
-	void
-	addCategory(const QString &text, const QString &toolTip, int pageIndex);
+	QTreeWidgetItem *addSection(const QString &text);
+	QTreeWidgetItem *addCategory(
+		const QString &text, const QString &toolTip, int pageIndex,
+		QTreeWidgetItem *parent = nullptr);
 	void addClassicCategories(bool withHardness);
 	void addMyPaintCategories();
 

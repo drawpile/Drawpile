@@ -22,7 +22,6 @@
 #include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
-#include <QListWidget>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScopedValueRollback>
@@ -31,6 +30,7 @@
 #include <QSpacerItem>
 #include <QStackedWidget>
 #include <QStandardItemModel>
+#include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -286,7 +286,7 @@ struct BrushSettingsDialog::Private {
 
 	QPushButton *newBrushButton;
 	QPushButton *overwriteBrushButton;
-	QListWidget *categoryWidget;
+	QTreeWidget *categoryWidget;
 	QStackedWidget *stackedWidget;
 	BrushPresetForm *brushPresetForm;
 	QComboBox *brushTypeCombo;
@@ -336,6 +336,9 @@ struct BrushSettingsDialog::Private {
 	widgets::CurveWidget *classicJitterCurve;
 	MyPaintPage myPaintPages[MYPAINT_BRUSH_SETTINGS_COUNT];
 	BlendModeManager *blendModeManager;
+	QTreeWidgetItem *presetCategoryItem;
+	QTreeWidgetItem *generalCategoryItem;
+	QTreeWidgetItem *antiOverflowCategoryItem;
 	int presetPageIndex;
 	int generalPageIndex;
 	int antiOverflowPageIndex;
@@ -375,13 +378,13 @@ BrushSettingsDialog::~BrushSettingsDialog()
 
 void BrushSettingsDialog::showPresetPage()
 {
-	d->categoryWidget->setCurrentRow(0);
+	d->categoryWidget->setCurrentItem(d->presetCategoryItem);
 	d->stackedWidget->setCurrentIndex(d->presetPageIndex);
 }
 
 void BrushSettingsDialog::showGeneralPage()
 {
-	d->categoryWidget->setCurrentRow(1);
+	d->categoryWidget->setCurrentItem(d->generalCategoryItem);
 	d->stackedWidget->setCurrentIndex(d->generalPageIndex);
 }
 
@@ -481,13 +484,16 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 	if(shapeChanged) {
 		d->lastShape = shape;
 		d->categoryWidget->clear();
-		addCategory(
-			tr("Brush"), tr("Brush metadata settings."), d->presetPageIndex);
-		addCategory(
-			tr("General"), tr("Core brush settings."), d->generalPageIndex);
-		addCategory(
+		QTreeWidgetItem *section = addSection(tr("Common"));
+		d->presetCategoryItem = addCategory(
+			tr("Brush"), tr("Brush metadata settings."), d->presetPageIndex,
+			section);
+		d->generalCategoryItem = addCategory(
+			tr("General"), tr("Core brush settings."), d->generalPageIndex,
+			section);
+		d->antiOverflowCategoryItem = addCategory(
 			tr("Anti-overflow"), tr("Anti-overflow fill settings."),
-			d->antiOverflowPageIndex);
+			d->antiOverflowPageIndex, section);
 		setComboBoxIndexByData(d->brushTypeCombo, int(shape));
 	}
 
@@ -511,10 +517,11 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 	}
 
 	if(shapeChanged) {
+		d->categoryWidget->expandAll();
 		if(prevStackIndex == d->presetPageIndex) {
 			showPresetPage();
 		} else if(prevStackIndex == d->antiOverflowPageIndex) {
-			d->categoryWidget->setCurrentRow(2);
+			d->categoryWidget->setCurrentItem(d->antiOverflowCategoryItem);
 			d->stackedWidget->setCurrentIndex(d->antiOverflowPageIndex);
 		} else {
 			showGeneralPage();
@@ -544,10 +551,13 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 
 
 void BrushSettingsDialog::categoryChanged(
-	QListWidgetItem *current, QListWidgetItem *)
+	QTreeWidgetItem *current, QTreeWidgetItem *)
 {
 	if(current) {
-		d->stackedWidget->setCurrentIndex(current->data(Qt::UserRole).toInt());
+		int pageIndex = current->data(0, Qt::UserRole).toInt();
+		if(pageIndex >= 0 && pageIndex < d->stackedWidget->count()) {
+			d->stackedWidget->setCurrentIndex(pageIndex);
+		}
 	}
 }
 
@@ -583,14 +593,17 @@ void BrushSettingsDialog::buildDialogUi()
 	connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-	d->categoryWidget = new QListWidget{this};
-	splitLayout->addWidget(d->categoryWidget);
+	d->categoryWidget = new QTreeWidget;
+	d->categoryWidget->setHeaderHidden(true);
+	d->categoryWidget->setColumnCount(1);
+	d->categoryWidget->setIndentation(8);
 	d->categoryWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	d->categoryWidget->setSizePolicy(
 		QSizePolicy::Preferred, QSizePolicy::Expanding);
 	utils::bindKineticScrolling(d->categoryWidget);
+	splitLayout->addWidget(d->categoryWidget);
 	connect(
-		d->categoryWidget, &QListWidget::currentItemChanged, this,
+		d->categoryWidget, &QTreeWidget::currentItemChanged, this,
 		&BrushSettingsDialog::categoryChanged);
 
 	d->stackedWidget = new QStackedWidget{this};
@@ -612,6 +625,7 @@ void BrushSettingsDialog::buildDialogUi()
 		d->stackedWidget->addWidget(buildClassicSmudgingPageUi());
 	d->classicJitterPageIndex =
 		d->stackedWidget->addWidget(buildClassicJitterPageUi());
+
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
 		d->mypaintPageIndexes[setting] =
 			shouldIncludeMyPaintSetting(setting)
@@ -1580,45 +1594,197 @@ void BrushSettingsDialog::applyCurveToAllClassicSettings(
 }
 
 
-void BrushSettingsDialog::addCategory(
-	const QString &text, const QString &toolTip, int pageIndex)
+QTreeWidgetItem *BrushSettingsDialog::addSection(const QString &text)
 {
-	QListWidgetItem *item = new QListWidgetItem{d->categoryWidget};
-	item->setText(text);
-	item->setData(Qt::UserRole, pageIndex);
-	item->setToolTip(toolTip);
-	d->categoryWidget->addItem(item);
+	QTreeWidgetItem *item = new QTreeWidgetItem;
+	Qt::ItemFlags flags = item->flags();
+	flags.setFlag(Qt::ItemIsSelectable, false);
+	flags.setFlag(Qt::ItemIsEditable, false);
+	item->setFlags(flags);
+	item->setText(0, text);
+	item->setData(0, Qt::UserRole, -1);
+	d->categoryWidget->addTopLevelItem(item);
+	return item;
+}
+
+QTreeWidgetItem *BrushSettingsDialog::addCategory(
+	const QString &text, const QString &toolTip, int pageIndex,
+	QTreeWidgetItem *parent)
+{
+	QTreeWidgetItem *item = new QTreeWidgetItem;
+	Qt::ItemFlags flags = item->flags();
+	flags.setFlag(Qt::ItemIsSelectable, true);
+	flags.setFlag(Qt::ItemIsEditable, false);
+	flags.setFlag(Qt::ItemNeverHasChildren, true);
+	item->setFlags(flags);
+	item->setText(0, text);
+	item->setData(0, Qt::UserRole, pageIndex);
+	item->setToolTip(0, toolTip);
+	if(parent) {
+		parent->addChild(item);
+	} else {
+		d->categoryWidget->addTopLevelItem(item);
+	}
+	return item;
 }
 
 void BrushSettingsDialog::addClassicCategories(bool withHardness)
 {
+	QTreeWidgetItem *section = addSection(tr("Options"));
 	addCategory(
-		tr("Size"), tr("The radius of the brush."), d->classicSizePageIndex);
+		tr("Size"), tr("The radius of the brush."), d->classicSizePageIndex,
+		section);
 	addCategory(
 		tr("Opacity"),
 		tr("Opaqueness of the brush, 0% is transparent, 100% fully opaque."),
-		d->classicOpacityPageIndex);
+		d->classicOpacityPageIndex, section);
 	if(withHardness) {
 		addCategory(
 			tr("Hardness"), tr("Edge hardness, 0% is blurry, 100% is sharp."),
-			d->classicHardnessPageIndex);
+			d->classicHardnessPageIndex, section);
 	}
 	addCategory(
 		tr("Smudging"), tr("Blending of colors on the layer being drawn on."),
-		d->classicSmudgePageIndex);
+		d->classicSmudgePageIndex, section);
 	addCategory(
 		tr("Jitter"), tr("Randomized offsets in the stroke center."),
-		d->classicJitterPageIndex);
+		d->classicJitterPageIndex, section);
 }
 
 void BrushSettingsDialog::addMyPaintCategories()
 {
-	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
-		if(shouldIncludeMyPaintSetting(setting)) {
-			addCategory(
-				getMyPaintSettingTitle(setting),
-				getMyPaintSettingDescription(setting),
-				d->mypaintPageIndexes[setting]);
+	// Same arrangement as in MyPaint's brush editor.
+	QVector<QPair<QString, QVector<int>>> display = {
+		{
+			tr("Basic"),
+			{
+				MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+				MYPAINT_BRUSH_SETTING_RADIUS_BY_RANDOM,
+				MYPAINT_BRUSH_SETTING_HARDNESS,
+				MYPAINT_BRUSH_SETTING_SNAP_TO_PIXEL,
+				MYPAINT_BRUSH_SETTING_ANTI_ALIASING,
+				MYPAINT_BRUSH_SETTING_ERASER,
+				MYPAINT_BRUSH_SETTING_OFFSET_BY_RANDOM,
+				MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+				MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+				MYPAINT_BRUSH_SETTING_DIRECTION_FILTER,
+				MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG,
+			},
+		},
+		{
+			tr("Opacity"),
+			{
+				MYPAINT_BRUSH_SETTING_OPAQUE,
+				MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY,
+				MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE,
+				MYPAINT_BRUSH_SETTING_LOCK_ALPHA,
+			},
+		},
+		{
+			tr("Dabs"),
+			{
+				MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS,
+				MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS,
+				MYPAINT_BRUSH_SETTING_DABS_PER_SECOND,
+			},
+		},
+		{
+			tr("Smudge"),
+			{
+				MYPAINT_BRUSH_SETTING_SMUDGE,
+				MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH,
+				MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG,
+				MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG,
+				MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY,
+				MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET,
+			},
+		},
+		{
+			tr("Speed"),
+			{
+				MYPAINT_BRUSH_SETTING_SPEED1_SLOWNESS,
+				MYPAINT_BRUSH_SETTING_SPEED2_SLOWNESS,
+				MYPAINT_BRUSH_SETTING_SPEED1_GAMMA,
+				MYPAINT_BRUSH_SETTING_SPEED2_GAMMA,
+				MYPAINT_BRUSH_SETTING_OFFSET_BY_SPEED,
+				MYPAINT_BRUSH_SETTING_OFFSET_BY_SPEED_SLOWNESS,
+			},
+		},
+		{
+			tr("Directional Offsets"),
+			{
+				MYPAINT_BRUSH_SETTING_OFFSET_MULTIPLIER,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ADJ,
+				MYPAINT_BRUSH_SETTING_OFFSET_X,
+				MYPAINT_BRUSH_SETTING_OFFSET_Y,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ASC,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_ASC,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_VIEW,
+				MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_VIEW,
+			},
+		},
+		{
+			tr("Tracking"),
+			{
+				MYPAINT_BRUSH_SETTING_SLOW_TRACKING,
+				MYPAINT_BRUSH_SETTING_SLOW_TRACKING_PER_DAB,
+				MYPAINT_BRUSH_SETTING_TRACKING_NOISE,
+			},
+		},
+		{
+			tr("Stroke"),
+			{
+				MYPAINT_BRUSH_SETTING_STROKE_THRESHOLD,
+				MYPAINT_BRUSH_SETTING_STROKE_DURATION_LOGARITHMIC,
+				MYPAINT_BRUSH_SETTING_STROKE_HOLDTIME,
+			},
+		},
+		{
+			tr("Color"),
+			{
+				MYPAINT_BRUSH_SETTING_COLOR_H,
+				MYPAINT_BRUSH_SETTING_COLOR_S,
+				MYPAINT_BRUSH_SETTING_COLOR_V,
+				MYPAINT_BRUSH_SETTING_PAINT_MODE,
+				MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H,
+				MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L,
+				MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSL_S,
+				MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V,
+				MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S,
+				MYPAINT_BRUSH_SETTING_RESTORE_COLOR,
+				MYPAINT_BRUSH_SETTING_COLORIZE,
+				MYPAINT_BRUSH_SETTING_POSTERIZE,
+				MYPAINT_BRUSH_SETTING_POSTERIZE_NUM,
+			},
+		},
+		{
+			tr("Grid Map"),
+			{
+				MYPAINT_BRUSH_SETTING_GRIDMAP_SCALE,
+				MYPAINT_BRUSH_SETTING_GRIDMAP_SCALE_X,
+				MYPAINT_BRUSH_SETTING_GRIDMAP_SCALE_Y,
+			},
+		},
+		{
+			tr("Custom"),
+			{
+				MYPAINT_BRUSH_SETTING_CUSTOM_INPUT,
+				MYPAINT_BRUSH_SETTING_CUSTOM_INPUT_SLOWNESS,
+			},
+		},
+	};
+
+	for(const QPair<QString, QVector<int>> &p : display) {
+		QTreeWidgetItem *section = addSection(p.first);
+		for(int setting : p.second) {
+			if(shouldIncludeMyPaintSetting(setting)) {
+				addCategory(
+					getMyPaintSettingTitle(setting),
+					getMyPaintSettingDescription(setting),
+					d->mypaintPageIndexes[setting], section);
+			}
 		}
 	}
 }
