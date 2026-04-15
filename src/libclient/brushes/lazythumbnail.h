@@ -30,7 +30,7 @@ private:
 	static constexpr int HAVE_PIXMAP = 1 << 1;
 	static constexpr int HAVE_BOTH = HAVE_BYTES | HAVE_PIXMAP;
 
-	mutable int m_flags;
+	mutable int m_flags = 0;
 	mutable QByteArray m_bytes;
 	mutable QPixmap m_pixmap;
 };
