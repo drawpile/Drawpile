@@ -264,8 +264,7 @@ QPixmap BrushPresetForm::applyPresetThumbnailLabel(const QString &label)
 	QRectF rect(0, y, thumbnail.width(), h - y);
 	painter.fillRect(rect, palette().window());
 	painter.setPen(palette().windowText().color());
-	painter.drawText(
-		rect, label, QTextOption(Qt::AlignHCenter | Qt::AlignBaseline));
+	painter.drawText(rect, label, QTextOption(Qt::AlignCenter));
 	return thumbnail;
 }
 
