@@ -6,19 +6,19 @@
 
 namespace brushes {
 
-class LazyBrush {
+class LazyBrush final {
 public:
+	using LoaderFn = QByteArray (*)(void *, int);
+
 	LazyBrush() = default;
 
-	static LazyBrush fromBytes(const QByteArray &bytes);
-	static LazyBrush fromBytes(QByteArray &&bytes);
+	static LazyBrush fromLoader(LoaderFn fn, void *user);
 	static LazyBrush fromBrush(const ActiveBrush &brush);
 	static LazyBrush fromBrush(ActiveBrush &&brush);
 
 	void clear();
 
-	void setBytes(const QByteArray &bytes);
-	void setBytes(QByteArray &&bytes);
+	void setLoader(LoaderFn fn, void *user);
 	void setBrush(const ActiveBrush &brush);
 	void setBrush(ActiveBrush &&brush);
 
@@ -35,14 +35,10 @@ public:
 	}
 
 private:
-	static constexpr int STATE_BLANK = 0;
-	static constexpr int STATE_BYTES = 1;
-	static constexpr int STATE_BRUSH = 2;
-
 	void loadBrush(int presetId) const;
 
-	mutable int m_state = STATE_BLANK;
-	mutable QByteArray m_bytes;
+	mutable LoaderFn m_loaderFn = nullptr;
+	void *m_loaderUser = nullptr;
 	mutable ActiveBrush m_brush;
 };
 

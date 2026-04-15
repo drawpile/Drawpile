@@ -162,6 +162,11 @@ bool Query::next()
     }
 }
 
+void Query::reset()
+{
+    resetStatement();
+}
+
 qlonglong Query::lastInsertId() const
 {
     return m_db.lastInsertId();
@@ -308,6 +313,10 @@ bool Database::close()
 {
     if (m_db) {
         DatabaseLocker locker(*this);
+        if (m_onCloseFn) {
+            m_onCloseFn(m_onCloseUser);
+            m_onCloseFn = nullptr;
+        }
         int result = sqlite3_close_v2(m_db);
         m_db = nullptr;
         if (result != SQLITE_OK) {

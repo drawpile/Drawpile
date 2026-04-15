@@ -282,17 +282,21 @@ public:
 	std::optional<Preset> searchPresetBrushData(int presetId);
 	QPixmap searchPresetThumbnail(int presetId);
 
+	// It is intentional that many of the parameters in the following functions
+	// aren't references! They will refresh the preset cache, so anything still
+	// referencing that will get invalidated.
+
 	std::optional<Preset> newPreset(
-		const QString &name, const QString description,
-		const QPixmap &thumbnail, const ActiveBrush &brush, int tagId);
+		QString name, QString description, QPixmap thumbnail, ActiveBrush brush,
+		int tagId);
 
 	bool updatePreset(
-		int presetId, const QString &name, const QString &description,
-		const QPixmap &thumbnail, const ActiveBrush &brush);
+		int presetId, QString name, QString description, QPixmap thumbnail,
+		ActiveBrush brush);
 
-	bool updatePresetBrush(int presetId, const ActiveBrush &brush);
+	bool updatePresetBrush(int presetId, ActiveBrush brush);
 
-	bool updatePresetShortcut(int presetId, const QKeySequence &shortcut);
+	bool updatePresetShortcut(int presetId, QKeySequence shortcut);
 
 	bool deletePreset(int presetId);
 

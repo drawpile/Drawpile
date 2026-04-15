@@ -90,6 +90,7 @@ Unreleased Version 2.3.1-pre
  * Removed Server Feature: Closing sessions, called "block new joins" in the client. It's just a worse variant of setting/changing the password on the session to make it invite-only. That has none of the downsides of locking yourself out, letting strangers join if they time it right and the session becoming public on its own after everyone has left.
  * Feature: Add a prompt to the invite dialog to make sessions passworded if they're public and a button to open the session settings, to make those a bit easier to find. Thanks Bluestrings for suggesting.
  * Fix: Close invite dialog when disconnecting.
+ * Feature: Load brush preset data and thumbnails on demand instead of preloading them. This makes startup, switching tags and other operations that reload brushes much faster, especially if you have a lot of brushes.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

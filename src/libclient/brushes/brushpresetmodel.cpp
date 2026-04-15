@@ -6,15 +6,12 @@
 #include "libshared/util/database.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
-#include <QBuffer>
-#include <QDirIterator>
+#include <QDir>
 #include <QIcon>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLocale>
-#include <QMutexLocker>
-#include <QRecursiveMutex>
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QTimer>
@@ -297,9 +294,35 @@ public:
 			{id});
 	}
 
+	static QByteArray readPreparedBlobById(drawdance::Query &qry, int id)
+	{
+		drawdance::DatabaseLocker locker(db);
+		QByteArray result;
+		if(qry.bind(0, id) && qry.execPrepared() && qry.next()) {
+			result = qry.columnBlob(0);
+		}
+		qry.reset();
+		return result;
+	}
+
+	QByteArray readPresetThumbnailById(int id)
+	{
+		return readPreparedBlobById(queries->readThumbnailByIdQuery, id);
+	}
+
 	QByteArray readPresetDataById(int id)
 	{
-		return db.readBlob("select data from preset where id = ?", {id});
+		return readPreparedBlobById(queries->readDataByIdQuery, id);
+	}
+
+	QByteArray readPresetChangedThumbnailById(int id)
+	{
+		return readPreparedBlobById(queries->readChangedThumbnailByIdQuery, id);
+	}
+
+	QByteArray readPresetChangedDataById(int id)
+	{
+		return readPreparedBlobById(queries->readChangedDataByIdQuery, id);
 	}
 
 	bool readPresetHasChangesById(int id)
@@ -315,9 +338,9 @@ public:
 	{
 		drawdance::Query query = db.query();
 		const char *sql =
-			"select id, name, description, thumbnail, data, changed_name, "
-			"changed_description, changed_thumbnail, changed_data from preset "
-			"where id = ?";
+			"select id, name, description, changed_name, changed_description, "
+			"changed_thumbnail is not null, changed_data is not null "
+			"from preset where id = ?";
 		if(query.exec(sql, {id}) && query.next()) {
 			Preset preset;
 			readPreset(preset, query);
@@ -679,6 +702,13 @@ public:
 	}
 
 private:
+	struct Queries {
+		drawdance::Query readThumbnailByIdQuery = db.queryWithoutLock();
+		drawdance::Query readDataByIdQuery = db.queryWithoutLock();
+		drawdance::Query readChangedThumbnailByIdQuery = db.queryWithoutLock();
+		drawdance::Query readChangedDataByIdQuery = db.queryWithoutLock();
+	};
+
 	static void parseGroupedTagIds(const QString &input, QSet<int> &tagIds)
 	{
 		QStringList tagIdStrings =
@@ -753,10 +783,10 @@ private:
 		m_presetCache.clear();
 
 		QString sql = QStringLiteral(
-			"select p.id, p.name, p.description, p.thumbnail, p.data, "
-			"p.changed_name, p.changed_description, p.changed_thumbnail, "
-			"p.changed_data, group_concat(t.tag_id) tags from preset p left "
-			"join preset_tag t on t.preset_id = p.id");
+			"select p.id, p.name, p.description, p.changed_name, "
+			"p.changed_description, p.changed_thumbnail is not null, "
+			"p.changed_data is not null, group_concat(t.tag_id) tags "
+			"from preset p left join preset_tag t on t.preset_id = p.id");
 		QVector<drawdance::Query::Param> params;
 		switch(m_tagIdToFilter) {
 		case ALL_ID:
@@ -771,17 +801,39 @@ private:
 			params.append(m_tagIdToFilter);
 			break;
 		}
-		sql += QStringLiteral(" group by p.id, p.name, p.description, "
-							  "p.thumbnail, p.data order by lower(p.name)");
+		sql += QStringLiteral(" group by p.id order by lower(p.name)");
 
 		if(query.exec(sql, params)) {
 			while(query.next()) {
 				CachedPreset cp;
 				readPreset(cp, query);
-				parseGroupedTagIds(query.columnText16(9), cp.tagIds);
+				parseGroupedTagIds(query.columnText16(7), cp.tagIds);
 				m_presetCache.append(cp);
 			}
 		}
+	}
+
+	static QByteArray loadPresetThumbnailCallback(void *user, int presetId)
+	{
+		return static_cast<Private *>(user)->readPresetThumbnailById(presetId);
+	}
+
+	static QByteArray loadPresetDataCallback(void *user, int presetId)
+	{
+		return static_cast<Private *>(user)->readPresetDataById(presetId);
+	}
+
+	static QByteArray
+	loadPresetChangedThumbnailCallback(void *user, int presetId)
+	{
+		return static_cast<Private *>(user)->readPresetChangedThumbnailById(
+			presetId);
+	}
+
+	static QByteArray loadPresetChangedDataCallback(void *user, int presetId)
+	{
+		return static_cast<Private *>(user)->readPresetChangedDataById(
+			presetId);
 	}
 
 	void readPreset(Preset &preset, drawdance::Query &query)
@@ -790,26 +842,26 @@ private:
 		preset.originalName = query.columnText16(1);
 		preset.originalDescription = query.columnText16(2);
 
+		preset.originalThumbnail.setLoader(
+			&Private::loadPresetThumbnailCallback, this);
+		preset.originalBrush.setLoader(&Private::loadPresetDataCallback, this);
+
 		if(!query.columnNull(3)) {
-			preset.originalThumbnail.setBytes(query.columnBlob(3));
+			preset.changedName = query.columnText16(3);
 		}
 
-		preset.originalBrush.setBytes(query.columnBlob(4));
-
-		if(!query.columnNull(5)) {
-			preset.changedName = query.columnText16(5);
+		if(!query.columnNull(4)) {
+			preset.changedDescription = query.columnText16(4);
 		}
 
-		if(!query.columnNull(6)) {
-			preset.changedDescription = query.columnText16(6);
+		if(query.columnBool(5)) {
+			preset.changedThumbnail = LazyThumbnail::fromLoader(
+				&Private::loadPresetChangedThumbnailCallback, this);
 		}
 
-		if(!query.columnNull(7)) {
-			preset.originalThumbnail.setBytes(query.columnBlob(3));
-		}
-
-		if(!query.columnNull(8)) {
-			preset.changedBrush = LazyBrush::fromBytes(query.columnBlob(8));
+		if(query.columnBool(6)) {
+			preset.changedBrush = LazyBrush::fromLoader(
+				&Private::loadPresetChangedDataCallback, this);
 		}
 	}
 
@@ -867,6 +919,11 @@ private:
 		m_presetShortcuts.swap(newPresetShortcuts);
 	}
 
+	static void onCloseDbCallback(void *user)
+	{
+		delete static_cast<Queries *>(user);
+	}
+
 	void initDb()
 	{
 		drawdance::DatabaseLocker locker(db);
@@ -885,6 +942,20 @@ private:
 				cleanupDb(query);
 				query.setForeignKeysEnabled(true);
 			}
+			queries = new Queries;
+			queries->readThumbnailByIdQuery.prepare(
+				"select thumbnail from preset where id = ?",
+				drawdance::Database::PREPARE_PERSISTENT);
+			queries->readDataByIdQuery.prepare(
+				"select data from preset where id = ?",
+				drawdance::Database::PREPARE_PERSISTENT);
+			queries->readChangedThumbnailByIdQuery.prepare(
+				"select changed_thumbnail from preset where id = ?",
+				drawdance::Database::PREPARE_PERSISTENT);
+			queries->readChangedDataByIdQuery.prepare(
+				"select changed_data from preset where id = ?",
+				drawdance::Database::PREPARE_PERSISTENT);
+			db.setOnClose(onCloseDbCallback, queries);
 		}
 		drawdance::Query query = db.queryWithoutLock();
 		refreshTagCacheInternal(query);
@@ -1113,6 +1184,7 @@ private:
 	}
 
 	static drawdance::Database db;
+	static Queries *queries;
 	QTimer m_presetChangeTimer;
 	QHash<int, PresetChange> m_presetChanges;
 	QVector<CachedTag> m_tagCache;
@@ -1124,6 +1196,7 @@ private:
 };
 
 drawdance::Database BrushPresetTagModel::Private::db;
+BrushPresetTagModel::Private::Queries *BrushPresetTagModel::Private::queries;
 
 bool Tag::accepts(const QSet<int> &tagIds) const
 {
@@ -2238,8 +2311,8 @@ bool BrushPresetModel::changeTagAssignment(
 }
 
 std::optional<Preset> BrushPresetModel::newPreset(
-	const QString &name, const QString description, const QPixmap &thumbnail,
-	const ActiveBrush &brush, int tagId)
+	QString name, QString description, QPixmap thumbnail, ActiveBrush brush,
+	int tagId)
 {
 	beginResetModel();
 	LazyThumbnail lt = LazyThumbnail::fromPixmap(thumbnail);
@@ -2262,8 +2335,8 @@ std::optional<Preset> BrushPresetModel::newPreset(
 }
 
 bool BrushPresetModel::updatePreset(
-	int presetId, const QString &name, const QString &description,
-	const QPixmap &thumbnail, const ActiveBrush &brush)
+	int presetId, QString name, QString description, QPixmap thumbnail,
+	ActiveBrush brush)
 {
 	beginResetModel();
 	d->removePresetChange(presetId);
@@ -2277,7 +2350,7 @@ bool BrushPresetModel::updatePreset(
 	return ok;
 }
 
-bool BrushPresetModel::updatePresetBrush(int presetId, const ActiveBrush &brush)
+bool BrushPresetModel::updatePresetBrush(int presetId, ActiveBrush brush)
 {
 	beginResetModel();
 	d->removePresetChange(presetId);
@@ -2288,8 +2361,7 @@ bool BrushPresetModel::updatePresetBrush(int presetId, const ActiveBrush &brush)
 	return ok;
 }
 
-bool BrushPresetModel::updatePresetShortcut(
-	int presetId, const QKeySequence &shortcut)
+bool BrushPresetModel::updatePresetShortcut(int presetId, QKeySequence shortcut)
 {
 	bool ok = d->updatePresetShortcut(
 		presetId, shortcut.toString(QKeySequence::PortableText));

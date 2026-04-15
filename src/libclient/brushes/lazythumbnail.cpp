@@ -8,6 +8,20 @@ Q_LOGGING_CATEGORY(
 
 namespace brushes {
 
+LazyThumbnail LazyThumbnail::fromLoader(LoaderFn fn, void *user)
+{
+	LazyThumbnail lt;
+	lt.setLoader(fn, user);
+	return lt;
+}
+
+LazyThumbnail LazyThumbnail::fromBytes(const QByteArray &bytes)
+{
+	LazyThumbnail lt;
+	lt.setBytes(bytes);
+	return lt;
+}
+
 LazyThumbnail LazyThumbnail::fromPixmap(const QPixmap &pixmap)
 {
 	LazyThumbnail lt;
@@ -18,6 +32,16 @@ LazyThumbnail LazyThumbnail::fromPixmap(const QPixmap &pixmap)
 void LazyThumbnail::clear()
 {
 	m_flags = 0;
+	m_loaderFn = nullptr;
+	m_bytes.clear();
+	m_pixmap = QPixmap();
+}
+
+void LazyThumbnail::setLoader(LoaderFn fn, void *user)
+{
+	m_flags = 0;
+	m_loaderFn = fn;
+	m_loaderUser = user;
 	m_bytes.clear();
 	m_pixmap = QPixmap();
 }
@@ -28,6 +52,7 @@ void LazyThumbnail::setBytes(const QByteArray &bytes)
 		clear();
 	} else {
 		m_flags = HAVE_BYTES;
+		m_loaderFn = nullptr;
 		m_bytes = bytes;
 		m_pixmap = QPixmap();
 	}
@@ -39,6 +64,7 @@ void LazyThumbnail::setPixmap(const QPixmap &pixmap)
 		clear();
 	} else {
 		m_flags = HAVE_PIXMAP;
+		m_loaderFn = nullptr;
 		m_bytes.clear();
 		m_pixmap = pixmap;
 	}
@@ -48,6 +74,7 @@ const QByteArray &LazyThumbnail::bytes() const
 {
 	if(m_flags == HAVE_PIXMAP) {
 		m_flags |= HAVE_BYTES;
+		m_loaderFn = nullptr;
 		m_bytes = toPng(m_pixmap);
 	}
 	return m_bytes;
@@ -55,6 +82,13 @@ const QByteArray &LazyThumbnail::bytes() const
 
 const QPixmap &LazyThumbnail::pixmap(int presetId) const
 {
+	if(LoaderFn loaderFn = m_loaderFn; loaderFn) {
+		Q_ASSERT(m_flags == 0);
+		m_loaderFn = nullptr;
+		m_bytes = loaderFn(m_loaderUser, presetId);
+		m_flags = HAVE_BYTES;
+	}
+
 	if(m_flags == HAVE_BYTES) {
 		m_flags |= HAVE_PIXMAP;
 		if(!m_bytes.isEmpty()) {

@@ -4,17 +4,10 @@
 
 namespace brushes {
 
-LazyBrush LazyBrush::fromBytes(const QByteArray &bytes)
+LazyBrush LazyBrush::fromLoader(LoaderFn fn, void *user)
 {
 	LazyBrush lb;
-	lb.setBytes(bytes);
-	return lb;
-}
-
-LazyBrush LazyBrush::fromBytes(QByteArray &&bytes)
-{
-	LazyBrush lb;
-	lb.setBytes(std::move(bytes));
+	lb.setLoader(fn, user);
 	return lb;
 }
 
@@ -34,43 +27,34 @@ LazyBrush LazyBrush::fromBrush(ActiveBrush &&brush)
 
 void LazyBrush::clear()
 {
-	m_state = STATE_BLANK;
-	m_bytes.clear();
+	m_loaderFn = nullptr;
 }
 
-void LazyBrush::setBytes(const QByteArray &bytes)
+void LazyBrush::setLoader(LoaderFn fn, void *user)
 {
-	m_state = STATE_BYTES;
-	m_bytes = bytes;
-}
-
-void LazyBrush::setBytes(QByteArray &&bytes)
-{
-	m_state = STATE_BYTES;
-	m_bytes = std::move(bytes);
+	m_loaderFn = fn;
+	m_loaderUser = user;
 }
 
 void LazyBrush::setBrush(const ActiveBrush &brush)
 {
-	m_state = STATE_BRUSH;
-	m_bytes.clear();
+	m_loaderFn = nullptr;
 	m_brush = brush;
 }
 
 void LazyBrush::setBrush(ActiveBrush &&brush)
 {
-	m_state = STATE_BRUSH;
-	m_bytes.clear();
+	m_loaderFn = nullptr;
 	m_brush = std::move(brush);
 }
 
 void LazyBrush::loadBrush(int presetId) const
 {
-	if(m_state == STATE_BYTES) {
-		m_state = STATE_BRUSH;
+	if(LoaderFn loaderFn = m_loaderFn; loaderFn) {
+		m_loaderFn = nullptr;
 		QJsonParseError err;
-		QJsonDocument doc = QJsonDocument::fromJson(m_bytes, &err);
-		m_bytes.clear();
+		QJsonDocument doc =
+			QJsonDocument::fromJson(loaderFn(m_loaderUser, presetId), &err);
 		if(err.error != QJsonParseError::NoError) {
 			qWarning(
 				"Error parsing preset %d: %s", presetId,

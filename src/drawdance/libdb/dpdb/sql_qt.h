@@ -129,6 +129,7 @@ class Query final {
     bool bindAll(const QVector<Param> &params);
     bool execPrepared();
     bool next();
+    void reset();
 
     qlonglong lastInsertId() const;
     qlonglong numRowsAffected() const;
@@ -160,6 +161,8 @@ class Query final {
 
 class Database final {
   public:
+    using OnCloseFn = void (*)(void *);
+
     static constexpr unsigned int PREPARE_PERSISTENT = 0x1;
 
     Database();
@@ -172,6 +175,12 @@ class Database final {
 
     bool open(const QString &path, const QString &humaneName);
     bool close();
+
+    void setOnClose(OnCloseFn fn, void *user)
+    {
+        m_onCloseFn = fn;
+        m_onCloseUser = user;
+    }
 
     bool isOpen() const
     {
@@ -241,6 +250,8 @@ class Database final {
     DP_Mutex *m_mutex = nullptr;
     QString m_path;
     QString m_humaneName;
+    OnCloseFn m_onCloseFn = nullptr;
+    void *m_onCloseUser = nullptr;
 };
 
 class DatabaseLocker final {
