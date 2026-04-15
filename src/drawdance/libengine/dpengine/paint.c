@@ -61,7 +61,6 @@
 
 static uint16_t *generate_classic_lut(int index)
 {
-    DP_debug("Generating classic dab lookup table for index %d", index);
     uint16_t *cl = DP_malloc(sizeof(*cl) * CLASSIC_LUT_SIZE);
     double h = 1.0 - (index / 100.0);
     double exponent = h < 0.0000004 ? 1000000.0 : 0.4 / h;
