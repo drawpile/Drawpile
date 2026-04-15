@@ -42,7 +42,7 @@ struct Preset : brushes::Preset {
 	{
 		Preset preset = {{}, true, false, reattach, false};
 		preset.id = id;
-		preset.originalBrush = originalBrush;
+		preset.originalBrush.setBrush(originalBrush);
 		return preset;
 	}
 
@@ -117,10 +117,10 @@ struct Preset : brushes::Preset {
 
 	void changeBrush(const brushes::ActiveBrush &brush, bool inEraserSlot)
 	{
-		if(originalBrush.equalPreset(brush, inEraserSlot)) {
+		if(originalConstBrushLoad().equalPreset(brush, inEraserSlot)) {
 			changedBrush = {};
 		} else {
-			changedBrush = brush;
+			changedBrush = brushes::LazyBrush::fromBrush(brush);
 		}
 	}
 };
@@ -335,7 +335,7 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 				preset.changedThumbnail = opt->changedThumbnail;
 			}
 			if(preset.overwrite) {
-				changeBrushInSlot(preset.originalBrush, i);
+				changeBrushInSlot(preset.originalConstBrushLoad(), i);
 				preset.overwrite = false;
 			}
 			if(preset.attached) {
@@ -908,7 +908,7 @@ void BrushSettings::setBrushDetachedInSlot(
 	const brushes::ActiveBrush &brush, int i)
 {
 	brushes::Preset p;
-	p.originalBrush = brush;
+	p.originalBrush.setBrush(brush);
 	setBrushPresetInSlot(p, i);
 }
 
@@ -920,7 +920,7 @@ void BrushSettings::changeCurrentBrush(const brushes::ActiveBrush &brush)
 
 void BrushSettings::setBrushPresetInSlot(const brushes::Preset &p, int i)
 {
-	brushes::ActiveBrush brush = changeBrushInSlot(p.effectiveBrush(), i);
+	brushes::ActiveBrush brush = changeBrushInSlot(p.effectiveBrushLoad(), i);
 	Preset &preset = d->presetAt(i);
 	bool isCurrent = i == d->current;
 	if(p.id <= 0) {
@@ -1113,7 +1113,7 @@ void BrushSettings::resetBrushInSlot(int i)
 			preset.changedBrush = {};
 			setBrushPresetInSlot(preset, i);
 		} else {
-			setBrushDetachedInSlot(preset.originalBrush, i);
+			setBrushDetachedInSlot(preset.originalConstBrushLoad(), i);
 		}
 	}
 }
@@ -1905,7 +1905,8 @@ ToolProperties BrushSettings::saveToolSettings()
 		cfg.setValue(
 			ToolProperties::Value<QByteArray>{
 				QStringLiteral("last%1").arg(cfgIndex), QByteArray()},
-			preset.valid ? preset.originalBrush.toJson() : QByteArray());
+			preset.valid ? preset.originalConstBrushLoad().toJson()
+						 : QByteArray());
 		cfg.setValue(
 			ToolProperties::Value<int>{
 				QStringLiteral("preset%1").arg(cfgIndex), 0},
@@ -2160,7 +2161,7 @@ void BrushSettings::handlePresetChanged(
 			preset.originalName = name;
 			preset.originalDescription = description;
 			preset.originalThumbnail.setPixmap(thumbnail);
-			preset.originalBrush = brush;
+			preset.originalBrush.setBrush(brush);
 			if(preset.changedName.has_value()) {
 				preset.changeName(preset.changedName.value());
 			}

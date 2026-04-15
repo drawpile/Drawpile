@@ -45,7 +45,7 @@ struct PresetChange {
 	std::optional<QString> name;
 	std::optional<QString> description;
 	std::optional<LazyThumbnail> thumbnail;
-	std::optional<ActiveBrush> brush;
+	std::optional<LazyBrush> brush;
 };
 
 struct PresetShortcutEntry {
@@ -519,23 +519,6 @@ public:
 		return -1;
 	}
 
-	static ActiveBrush loadBrush(int presetId, const QByteArray &data)
-	{
-		QJsonParseError err;
-		QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-		if(err.error != QJsonParseError::NoError) {
-			qWarning(
-				"Error reading data for preset %d: %s", presetId,
-				qUtf8Printable(err.errorString()));
-			return ActiveBrush();
-		} else if(!doc.isObject()) {
-			qWarning("Data for preset %d is not a JSON object", presetId);
-			return ActiveBrush();
-		} else {
-			return ActiveBrush::fromJson(doc.object());
-		}
-	}
-
 	void enqueuePresetChange(int presetId, const PresetChange &presetChange)
 	{
 		m_presetChanges.insert(presetId, presetChange);
@@ -562,6 +545,7 @@ public:
 						end = m_presetChanges.constEnd();
 					it != end; ++it) {
 					params.clear();
+					int presetId = it.key();
 					params.append(
 						drawdance::Query::Param::fromOptional(it->name));
 					params.append(
@@ -572,14 +556,15 @@ public:
 						params.append(std::nullopt);
 					}
 					if(it->brush.has_value()) {
-						const ActiveBrush &brush = it->brush.value();
+						const ActiveBrush &brush =
+							it->brush.value().constBrush(presetId);
 						params.append(brush.presetType());
 						params.append(brush.presetData());
 					} else {
 						params.append(std::nullopt);
 						params.append(std::nullopt);
 					}
-					params.append(it.key());
+					params.append(presetId);
 					if(query.bindAll(params)) {
 						query.execPrepared();
 					}
@@ -809,7 +794,7 @@ private:
 			preset.originalThumbnail.setBytes(query.columnBlob(3));
 		}
 
-		preset.originalBrush = loadBrush(preset.id, query.columnBlob(4));
+		preset.originalBrush.setBytes(query.columnBlob(4));
 
 		if(!query.columnNull(5)) {
 			preset.changedName = query.columnText16(5);
@@ -824,7 +809,7 @@ private:
 		}
 
 		if(!query.columnNull(8)) {
-			preset.changedBrush = loadBrush(preset.id, query.columnBlob(8));
+			preset.changedBrush = LazyBrush::fromBytes(query.columnBlob(8));
 		}
 	}
 
@@ -1917,8 +1902,8 @@ void BrushPresetTagModel::exportPreset(
 	}
 
 	const Preset &preset = opt.value();
-	QByteArray exportData =
-		preset.originalBrush.toExportJson(preset.originalDescription);
+	QByteArray exportData = preset.originalConstBrushLoad().toExportJson(
+		preset.originalDescription);
 
 	QString presetName = makeExportNameUnique(
 		presetNames, getExportName(presetId, preset.originalName));
@@ -2268,7 +2253,8 @@ std::optional<Preset> BrushPresetModel::newPreset(
 	d->refreshShortcuts();
 	if(presetId > 0) {
 		return Preset{
-			presetId, name, description, lt, brush, {}, {}, {}, {},
+			presetId, name, description, lt, LazyBrush::fromBrush(brush),
+			{},		  {},	{},			 {},
 		};
 	} else {
 		return {};
@@ -2330,7 +2316,7 @@ void BrushPresetModel::changePreset(
 	int presetId, const std::optional<QString> &name,
 	const std::optional<QString> &description,
 	const std::optional<LazyThumbnail> &thumbnail,
-	const std::optional<ActiveBrush> &brush, bool inEraserSlot)
+	const std::optional<LazyBrush> &brush, bool inEraserSlot)
 {
 	int i = d->getCachedPresetIndexById(presetId);
 	if(i != -1) {
@@ -2340,7 +2326,8 @@ void BrushPresetModel::changePreset(
 		cp.changedThumbnail = thumbnail;
 		cp.changedBrush = brush;
 		if(brush.has_value() && inEraserSlot) {
-			cp.changedBrush->setEraser(cp.originalBrush.isEraser());
+			cp.changedBrush->brush(cp.id).setEraser(
+				cp.originalConstBrushLoad().isEraser());
 		}
 		QModelIndex idx = index(i);
 		emit dataChanged(idx, idx);

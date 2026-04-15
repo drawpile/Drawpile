@@ -2,6 +2,7 @@
 #ifndef LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #define LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #include "libclient/brushes/brush.h"
+#include "libclient/brushes/lazybrush.h"
 #include "libclient/brushes/lazythumbnail.h"
 #include <QAbstractItemModel>
 #include <QJsonValue>
@@ -44,15 +45,20 @@ struct Preset {
 	QString originalName;
 	QString originalDescription;
 	LazyThumbnail originalThumbnail;
-	ActiveBrush originalBrush;
+	LazyBrush originalBrush;
 	std::optional<QString> changedName;
 	std::optional<QString> changedDescription;
 	std::optional<LazyThumbnail> changedThumbnail;
-	std::optional<ActiveBrush> changedBrush;
+	std::optional<LazyBrush> changedBrush;
 
 	const QPixmap &originalThumbnailPixmap() const
 	{
 		return originalThumbnail.pixmap(id);
+	}
+
+	const ActiveBrush &originalConstBrushLoad() const
+	{
+		return originalBrush.constBrush(id);
 	}
 
 	const QString &effectiveName() const
@@ -73,9 +79,10 @@ struct Preset {
 				   : originalThumbnail.pixmap(id);
 	}
 
-	const ActiveBrush &effectiveBrush() const
+	const ActiveBrush &effectiveBrushLoad() const
 	{
-		return changedBrush.has_value() ? changedBrush.value() : originalBrush;
+		return changedBrush.has_value() ? changedBrush.value().constBrush(id)
+										: originalConstBrushLoad();
 	}
 
 	QString effectivePreviewTitle() const;
@@ -293,8 +300,7 @@ public:
 		int presetId, const std::optional<QString> &name = {},
 		const std::optional<QString> &description = {},
 		const std::optional<LazyThumbnail> &thumbnail = {},
-		const std::optional<ActiveBrush> &brush = {},
-		bool inEraserSlot = false);
+		const std::optional<LazyBrush> &brush = {}, bool inEraserSlot = false);
 	void resetAllPresetChanges();
 	void writePresetChanges();
 

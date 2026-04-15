@@ -270,7 +270,7 @@ BrushPaletteDelegate::Preview BrushPaletteDelegate::renderPreview(
 		m_brushPreview.setPalette(
 			pal.color(QPalette::Text), pal.color(QPalette::Base),
 			pal.color(QPalette::Highlight));
-		preset.effectiveBrush().renderPreview(
+		preset.effectiveBrushLoad().renderPreview(
 			m_brushPreview, DP_BRUSH_PREVIEW_STYLE_PLAIN,
 			DP_BRUSH_PREVIEW_STROKE);
 		m_brushPreview.paint(m_strokeBackground.getPixmapPlain(pal, dpr));
