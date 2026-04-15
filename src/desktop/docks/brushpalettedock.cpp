@@ -108,6 +108,7 @@ struct BrushPalette::Private {
 	int selectedPresetId = 0;
 	int lastSelectedPresetId = 0;
 	bool navigationInProgress = false;
+	bool filterUpdateInProgress = false;
 
 	DebounceTimer sizeDebounce = DebounceTimer(250);
 };
@@ -300,8 +301,8 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->tagComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &BrushPalette::tagIndexChanged);
 	connect(
-		d->searchLineEdit, &QLineEdit::textChanged, d->presetProxyModel,
-		&QSortFilterProxyModel::setFilterFixedString);
+		d->searchLineEdit, &QLineEdit::textChanged, this,
+		&BrushPalette::setSearchText);
 	connect(
 		d->presetListView->selectionModel(),
 		&QItemSelectionModel::currentChanged, this,
@@ -683,6 +684,14 @@ void BrushPalette::tagIndexChanged(int row)
 	d->tagModel->setStateInt(SELECTED_TAG_ID_KEY, d->currentTag.id);
 }
 
+void BrushPalette::setSearchText(const QString &text)
+{
+	d->filterUpdateInProgress = true;
+	d->presetProxyModel->setFilterFixedString(text);
+	d->filterUpdateInProgress = false;
+	updateSelectedPreset();
+}
+
 void BrushPalette::setSelectedPresetIdFromBrushSettings(
 	int presetId, bool attached)
 {
@@ -753,6 +762,10 @@ void BrushPalette::presetCurrentIndexChanged(
 	const QModelIndex &current, const QModelIndex &previous)
 {
 	Q_UNUSED(previous);
+	if(d->filterUpdateInProgress) {
+		return;
+	}
+
 	int presetId = presetProxyIndexToId(current);
 	bool selected = presetId > 0;
 	if(selected) {
