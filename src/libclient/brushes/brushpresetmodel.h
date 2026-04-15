@@ -87,6 +87,8 @@ struct Preset {
 
 	QString effectivePreviewTitle() const;
 
+	static QString makeEffectivePreviewTitle(const QString &originalTitle);
+
 	bool hasChanges() const
 	{
 		return changedName.has_value() || changedDescription.has_value() ||

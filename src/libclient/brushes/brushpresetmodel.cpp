@@ -1212,7 +1212,11 @@ bool Tag::accepts(const QSet<int> &tagIds) const
 
 QString Preset::effectivePreviewTitle() const
 {
-	const QString &originalTitle = effectiveName();
+	return makeEffectivePreviewTitle(effectiveName());
+}
+
+QString Preset::makeEffectivePreviewTitle(const QString &originalTitle)
+{
 	QString title = originalTitle.trimmed();
 
 	// Strip any category and number prefix.
@@ -2144,12 +2148,22 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 		}
 	case Qt::ToolTipRole:
 	case FilterRole:
-	case EffectiveTitleRole:
+	case EffectiveTitleRole: {
+		QString s;
 		if(cached) {
-			return d->getCachedPreset(index.row()).effectiveName();
+			s = d->getCachedPreset(index.row()).effectiveName();
 		} else {
-			return d->readPresetEffectiveNameById(index.internalId());
+			s = d->readPresetEffectiveNameById(index.internalId());
 		}
+		if(role == FilterRole) {
+			QString previewTitle = Preset::makeEffectivePreviewTitle(s);
+			if(previewTitle != s) {
+				s.append(QStringLiteral(" "));
+				s.append(previewTitle);
+			}
+		}
+		return s;
+	}
 	case EffectiveDescriptionRole:
 		if(cached) {
 			return d->getCachedPreset(index.row()).effectiveDescription();
