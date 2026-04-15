@@ -67,7 +67,6 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
         return NULL;
     }
 
-    DP_debug("Resize: width %d, height %d", width, height);
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_transient_canvas_state_width_set(tcs, width);
     DP_transient_canvas_state_height_set(tcs, height);
