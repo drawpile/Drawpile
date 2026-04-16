@@ -16,7 +16,7 @@ PlaceholderText=#6d6f87
 Shadow=#222122
 Text=#C2b7d2
 ToolTipBase=#24385D
-ToolTipText=#4E4967
+ToolTipText=#C2b7d2
 Window=#3A3F65
 WindowText=#F5d0d6
 
@@ -38,7 +38,7 @@ PlaceholderText=#6b6d83
 Shadow=##201F20
 Text=#E4C4C9
 ToolTipBase=#13154
-ToolTipText=#4c435e
+ToolTipText=#E4C4C9
 Window=#36395e
 WindowText=#F5ccb6
 
@@ -60,6 +60,6 @@ PlaceholderText=#6d6f87
 Shadow=#222122
 Text=#C2b7d2
 ToolTipBase=#24385D
-ToolTipText=#4E4967
+ToolTipText=#C2b7d2
 Window=#3A3F65
 WindowText=#F5d0d6
