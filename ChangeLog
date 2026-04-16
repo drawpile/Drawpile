@@ -93,6 +93,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Load brush preset data and thumbnails on demand instead of preloading them. This makes startup, switching tags and other operations that reload brushes much faster, especially if you have a lot of brushes.
  * Feature: Add sections to the brush editor settings list and group the settings accordingly. Thanks Blozzom for suggesting.
  * Fix: Don't change current brush when using the brushes dock's search bar.
+ * Feature: A notice in the invite dialog if the server or session doesn't support or restricts joining via web browser, with a prompt to use invite codes instead if appropriate. Thanks Bluestrings for suggesting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

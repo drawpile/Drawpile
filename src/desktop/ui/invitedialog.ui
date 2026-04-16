@@ -42,6 +42,9 @@
        </attribute>
        <layout class="QVBoxLayout" name="urlPageLayout">
         <item>
+         <widget class="QWidget" name="linkNoticeWrapper" native="true"/>
+        </item>
+        <item>
          <widget class="QPushButton" name="copyButton">
           <property name="text">
            <string>Copy Invite Link</string>
@@ -73,7 +76,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="urlTopSpacer">
+         <spacer name="urlSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -103,19 +106,6 @@
            <bool>true</bool>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer name="urlBottomSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>

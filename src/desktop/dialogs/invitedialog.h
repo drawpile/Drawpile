@@ -57,6 +57,7 @@ private:
 	void copyInviteCodeLinksWithMessage();
 	void discoverAddress();
 	void updatePage();
+	void updateLinkNotice();
 	void updateInviteLink();
 	void updateCodes();
 	void updatePublicFrame();
@@ -65,6 +66,7 @@ private:
 	void promptRemoveSelectedCodes();
 	void removeSelectedCodes();
 	QSet<QString> gatherSelectedSecrets();
+	void showInviteCodePage();
 	void showCodeExplanation();
 	void emitCreateInviteCode(int maxUses, bool op, bool trust);
 	void showInviteCodeContextMenu(const QPoint &pos);

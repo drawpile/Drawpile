@@ -28,6 +28,7 @@ struct InviteDialog::Private {
 	net::InviteListModel *inviteListModel;
 	Ui::InviteDialog ui;
 	QLabel *publicLabel = nullptr;
+	QLabel *linkNoticeLabel = nullptr;
 	QMenu *inviteCodeMenu = nullptr;
 	QAction *inviteCodeCreate = nullptr;
 	QAction *inviteCodeRemove = nullptr;
@@ -96,6 +97,28 @@ InviteDialog::InviteDialog(
 	connect(
 		publicCloseButton, &QToolButton::clicked, this,
 		&InviteDialog::dismissPublicFrame);
+
+	QVBoxLayout *linkNoticeWrapperLayout =
+		new QVBoxLayout(d->ui.linkNoticeWrapper);
+	linkNoticeWrapperLayout->setContentsMargins(0, 0, 0, 0);
+	linkNoticeWrapperLayout->setSpacing(0);
+
+	QFrame *linkNoticeFrame = new QFrame;
+	linkNoticeFrame->setFrameShape(QFrame::StyledPanel);
+	linkNoticeFrame->setFrameShadow(QFrame::Sunken);
+	linkNoticeWrapperLayout->addWidget(linkNoticeFrame);
+
+	QHBoxLayout *linkNoticeLayout = new QHBoxLayout(linkNoticeFrame);
+	d->linkNoticeLabel = new QLabel;
+	d->linkNoticeLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+	d->linkNoticeLabel->setTextFormat(Qt::RichText);
+	d->linkNoticeLabel->setWordWrap(true);
+	linkNoticeLayout->addWidget(d->linkNoticeLabel, 1);
+	connect(
+		d->linkNoticeLabel, &QLabel::linkActivated, this,
+		&InviteDialog::showInviteCodePage);
+
+	utils::addFormSpacer(linkNoticeWrapperLayout);
 
 	config::Config *cfg = dpAppConfig();
 	CFG_BIND_CHECKBOX(cfg, InviteIncludePassword, d->ui.includePasswordBox);
@@ -181,13 +204,17 @@ InviteDialog::~InviteDialog()
 
 void InviteDialog::setSessionWebSupported(bool webSupported)
 {
-	d->webSupported = webSupported;
+	if(webSupported != d->webSupported) {
+		d->webSupported = webSupported;
+		updateLinkNotice();
+	}
 }
 
 void InviteDialog::setSessionAllowWeb(bool allowWeb)
 {
 	if(allowWeb != d->allowWeb) {
 		d->allowWeb = allowWeb;
+		updateLinkNotice();
 		updateInviteLink();
 	}
 }
@@ -212,6 +239,7 @@ void InviteDialog::setOp(bool op)
 {
 	if(op != d->op) {
 		d->op = op;
+		updateLinkNotice();
 		updateCodes();
 	}
 }
@@ -220,6 +248,7 @@ void InviteDialog::setSessionCodesEnabled(bool codesEnabled)
 {
 	if(codesEnabled != d->codesEnabled) {
 		d->codesEnabled = codesEnabled;
+		updateLinkNotice();
 		updateCodes();
 	}
 }
@@ -228,6 +257,7 @@ void InviteDialog::setServerSupportsInviteCodes(bool supportsCodes)
 {
 	if(supportsCodes != d->supportsCodes) {
 		d->supportsCodes = supportsCodes;
+		updateLinkNotice();
 		updateCodes();
 	}
 }
@@ -349,9 +379,50 @@ void InviteDialog::updatePage()
 	d->joinPassword = d->netStatus->joinPassword();
 	d->ui.includePasswordBox->setEnabled(!d->joinPassword.isEmpty());
 	updatePublicFrame();
+	updateLinkNotice();
 	updateInviteLink();
 	d->ui.pages->setCurrentIndex(
 		d->netStatus->haveRemoteAddress() ? URL_PAGE_INDEX : IP_PAGE_INDEX);
+}
+
+void InviteDialog::updateLinkNotice()
+{
+	QString text;
+	if(!d->webSupported) {
+		text.append(tr(
+			"This session is hosted on a server that <strong>does not support "
+			"the web browser version of Drawpile</strong>."));
+		text.append(tr(" Only the desktop or mobile application will work."));
+	} else if(!d->allowWeb) {
+		if(d->supportsCodes) {
+			text.append(
+				tr("This session <strong>restricts joining with the web "
+				   "browser version of Drawpile.</strong>"));
+			if((d->codesEnabled && d->op) || d->moderator) {
+				text.append(
+					tr(" Use <a href=\"#\">invite codes</a> to let people join "
+					   "via web browser."));
+			} else if(d->codesEnabled) {
+				text.append(
+					tr(" Operators and server administrators can use <a "
+					   "href=\"#\">invite codes</a> to let people join via web "
+					   "browser."));
+			} else {
+				text.append(
+					tr(" Server administrators can use <a href=\"#\">invite "
+					   "codes</a> to let people join via web browser."));
+			}
+			tr(" The desktop or mobile application will work normally.");
+		} else {
+			text.append(
+				tr("This session <strong>does not allow joining with the web "
+				   "browser version of Drawpile.</strong>"));
+			text.append(
+				tr(" Only the desktop or mobile application will work."));
+		}
+	}
+	d->linkNoticeLabel->setText(text);
+	d->ui.linkNoticeWrapper->setVisible(!text.isEmpty());
 }
 
 void InviteDialog::updateInviteLink()
@@ -462,6 +533,11 @@ QSet<QString> InviteDialog::gatherSelectedSecrets()
 		}
 	}
 	return secrets;
+}
+
+void InviteDialog::showInviteCodePage()
+{
+	d->ui.tabs->setCurrentIndex(1);
 }
 
 void InviteDialog::showCodeExplanation()
