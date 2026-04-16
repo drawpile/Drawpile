@@ -22,9 +22,31 @@ BrushPreview::~BrushPreview()
 	DP_brush_preview_free(m_data);
 }
 
-void BrushPreview::setPalette(
-	const QColor &foreground, const QColor &background, const QColor &smudge)
+void BrushPreview::setPalette(const QPalette &pal)
 {
+	QColor foreground = pal.color(QPalette::Active, QPalette::Text);
+	QColor background = pal.color(QPalette::Active, QPalette::Base);
+	QColor smudge = pal.color(QPalette::Active, QPalette::Highlight);
+
+	// Some themes make these the same or very similar.
+	int smudgeR = smudge.red();
+	int smudgeG = smudge.green();
+	int smudgeB = smudge.blue();
+	int diff = DP_square_int(foreground.red() - smudgeR) +
+			   DP_square_int(foreground.green() - smudgeG) +
+			   DP_square_int(foreground.blue() - smudgeB);
+	if(diff < 14000) {
+		if(smudgeR == smudgeG && smudgeG == smudgeB) {
+			smudge = QColor::fromHsv(
+				(background.hue() + 128) % 255, (smudge.saturation() + 255) / 2,
+				(smudge.value() + 255) / 2);
+		} else {
+			smudge = QColor::fromHsv(
+				background.hue(), (smudge.saturation() + 255) / 2,
+				(smudge.value() + 255) / 2);
+		}
+	}
+
 	DP_brush_preview_palette_set(
 		m_data, foreground.rgb(), background.rgb(), smudge.rgb());
 }

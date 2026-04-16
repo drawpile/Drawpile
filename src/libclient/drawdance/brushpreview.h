@@ -7,6 +7,8 @@ extern "C" {
 #include <QPixmap>
 #include <QSize>
 
+class QPalette;
+
 namespace drawdance {
 
 class BrushPreview final {
@@ -19,9 +21,7 @@ public:
 	BrushPreview &operator=(const BrushPreview &) = delete;
 	BrushPreview &operator=(BrushPreview &&) = delete;
 
-	void setPalette(
-		const QColor &foreground, const QColor &background,
-		const QColor &smudge);
+	void setPalette(const QPalette &pal);
 
 	const QPixmap &pixmap() const { return m_pixmap; }
 

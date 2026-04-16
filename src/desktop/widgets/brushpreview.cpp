@@ -182,9 +182,7 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 {
 	QPalette pal = palette();
 	if(m_needPalette) {
-		m_brushPreview.setPalette(
-			pal.color(QPalette::Text), pal.color(QPalette::Base),
-			pal.color(QPalette::Highlight));
+		m_brushPreview.setPalette(pal);
 	}
 
 	qreal dpr = devicePixelRatioF();

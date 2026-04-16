@@ -267,9 +267,7 @@ BrushPaletteDelegate::Preview BrushPaletteDelegate::renderPreview(
 
 		QRect strokeRect(0, 0, strokeWidth, h);
 		m_brushPreview.reset(strokeRect.size());
-		m_brushPreview.setPalette(
-			pal.color(QPalette::Text), pal.color(QPalette::Base),
-			pal.color(QPalette::Highlight));
+		m_brushPreview.setPalette(pal);
 		preset.effectiveBrushLoad().renderPreview(
 			m_brushPreview, DP_BRUSH_PREVIEW_STYLE_PLAIN,
 			DP_BRUSH_PREVIEW_STROKE);
