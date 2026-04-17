@@ -48,6 +48,9 @@ public:
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
+Q_SIGNALS:
+	void stabilizerSettingsRequested();
+
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
@@ -67,6 +70,8 @@ private:
 	QActionGroup *m_stabilizationModeGroup = nullptr;
 	QAction *m_stabilizerAction = nullptr;
 	QAction *m_smoothingAction = nullptr;
+	QAction *m_stabilizerVelocityEnabledAction = nullptr;
+	QAction *m_stabilizerSettingsAction = nullptr;
 	widgets::GroupedToolButton *m_alphaPreserveButton = nullptr;
 	QComboBox *m_blendModeCombo = nullptr;
 	QCheckBox *m_antiAliasCheckBox;

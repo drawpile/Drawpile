@@ -46,6 +46,11 @@ public:
 		const QString &xMin, const QString &xMax, const QString &yMin,
 		const QString &yMax);
 
+	void setAxisValueLabelXMin(const QString &xMin);
+	void setAxisValueLabelXMax(const QString &xMax);
+	void setAxisValueLabelYMin(const QString &yMin);
+	void setAxisValueLabelYMax(const QString &yMax);
+
 	void setSpinnerRanges(double xMin, double xMax, double yMin, double yMax);
 
 	void setPressure(bool pressure) { m_pressure = pressure; }

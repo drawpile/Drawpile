@@ -2753,6 +2753,59 @@ void MemoryConfig::setSoundVolume(int value)
 	}
 }
 
+int MemoryConfig::getStabilizerVelocityAdjustment() const
+{
+	return m_stabilizerVelocityAdjustment;
+}
+
+void MemoryConfig::setStabilizerVelocityAdjustment(int value)
+{
+	if(value != m_stabilizerVelocityAdjustment) {
+		m_stabilizerVelocityAdjustment = value;
+		Q_EMIT changeStabilizerVelocityAdjustment(
+			m_stabilizerVelocityAdjustment);
+	}
+}
+
+QString MemoryConfig::getStabilizerVelocityCurve() const
+{
+	return m_stabilizerVelocityCurve;
+}
+
+void MemoryConfig::setStabilizerVelocityCurve(const QString &value)
+{
+	if(value != m_stabilizerVelocityCurve) {
+		m_stabilizerVelocityCurve = value;
+		Q_EMIT changeStabilizerVelocityCurve(m_stabilizerVelocityCurve);
+	}
+}
+
+bool MemoryConfig::getStabilizerVelocityEnabled() const
+{
+	return m_stabilizerVelocityEnabled;
+}
+
+void MemoryConfig::setStabilizerVelocityEnabled(bool value)
+{
+	if(value != m_stabilizerVelocityEnabled) {
+		m_stabilizerVelocityEnabled = value;
+		Q_EMIT changeStabilizerVelocityEnabled(m_stabilizerVelocityEnabled);
+	}
+}
+
+int MemoryConfig::getStabilizerVelocityMax() const
+{
+	return m_stabilizerVelocityMax;
+}
+
+void MemoryConfig::setStabilizerVelocityMax(int value)
+{
+	if(value != m_stabilizerVelocityMax) {
+		m_stabilizerVelocityMax = value;
+		Q_EMIT changeStabilizerVelocityMax(m_stabilizerVelocityMax);
+	}
+}
+
 int MemoryConfig::getTabletDriver() const
 {
 	return m_tabletDriver;

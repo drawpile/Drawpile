@@ -47,6 +47,7 @@ protected:
 	bool quickDrag() const;
 	int defaultOp() const { return m_owner.selectionParams().defaultOp; }
 	const QPointF &startPoint() const { return m_startPoint; }
+	qreal zoom() const { return m_zoom; }
 
 	void updateSelectionPreview(const QPainterPath &path) const;
 	void removeSelectionPreview() const;

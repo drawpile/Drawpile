@@ -371,7 +371,7 @@ static DP_BrushEngineStrokeParams
 preview_stroke_params(bool allow_pixel_perfect)
 {
     return (DP_BrushEngineStrokeParams){
-        {0, 0, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
+        {NULL, NULL, 0, 0, 0.0f, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
         allow_pixel_perfect};
 }
 

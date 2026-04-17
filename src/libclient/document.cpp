@@ -72,6 +72,18 @@ Document::Document(
 	CFG_BIND_SET(
 		m_cfg, SelectionColor, m_toolctrl,
 		tools::ToolController::setSelectionMaskColor);
+	CFG_BIND_SET(
+		m_cfg, StabilizerVelocityEnabled, m_toolctrl,
+		tools::ToolController::setStabilizerVelocityEnabled);
+	CFG_BIND_SET(
+		m_cfg, StabilizerVelocityCurve, m_toolctrl,
+		tools::ToolController::setStabilizerVelocityCurveFromString);
+	CFG_BIND_SET(
+		m_cfg, StabilizerVelocityAdjustment, m_toolctrl,
+		tools::ToolController::setStabilizerVelocityAdjustment);
+	CFG_BIND_SET(
+		m_cfg, StabilizerVelocityMax, m_toolctrl,
+		tools::ToolController::setStabilizerVelocityMax);
 
 	m_banlist = new net::BanlistModel(this);
 	m_authList = new net::AuthListModel(this);

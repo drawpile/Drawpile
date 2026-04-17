@@ -251,6 +251,30 @@ settings:
     qsettings: 'settings/input/smooth'
     legacy_package: 'libclient'
 
+  - id: stabilizerVelocityAdjustment
+    type: 'int'
+    default: '100'
+    qsettings: 'settings/input/stabilizervelocityadjustment'
+    legacy_package: 'libclient'
+
+  - id: stabilizerVelocityCurve
+    type: 'QString'
+    default: 'QStringLiteral("0,0;0.5,0.2;1,1;")'
+    qsettings: 'settings/input/stabilizervelocitycurve'
+    legacy_package: 'libclient'
+
+  - id: stabilizerVelocityEnabled
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/input/stabilizervelocity'
+    legacy_package: 'libclient'
+
+  - id: stabilizerVelocityMax
+    type: 'int'
+    default: '1000'
+    qsettings: 'settings/input/stabilizervelocitymax'
+    legacy_package: 'libclient'
+
   # desktop
 
   - id: actionBar

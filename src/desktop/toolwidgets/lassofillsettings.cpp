@@ -219,14 +219,27 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 			"Simply averages inputs to get a smoother result. Faster than the "
 			"time-based stabilizer, but not as smooth.",
 			nullptr));
-	m_stabilizerAction->setCheckable(true);
-	m_smoothingAction->setCheckable(true);
-	m_stabilizationModeGroup->addAction(m_stabilizerAction);
-	m_stabilizationModeGroup->addAction(m_smoothingAction);
-	m_stabilizerAction->setChecked(true);
-	connect(
-		m_stabilizationModeGroup, &QActionGroup::triggered, this,
-		&LassoFillSettings::updateStabilizationMode);
+
+	stabilizerMenu->addSeparator();
+
+	m_stabilizerVelocityEnabledAction = stabilizerMenu->addAction(
+		QCoreApplication::translate(
+			"tools::BrushSettings", "Adjust With Velocity"));
+	m_stabilizerVelocityEnabledAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Alters stabilization depending on how fast the stroke is."));
+	m_stabilizerVelocityEnabledAction->setCheckable(true);
+
+	stabilizerMenu->addSeparator();
+
+	m_stabilizerSettingsAction = stabilizerMenu->addAction(
+		QIcon::fromTheme(QStringLiteral("pathshape")),
+		QCoreApplication::translate("tools::BrushSettings", "Input Settings…"));
+	m_stabilizerSettingsAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Show the input settings dialog for more stabilizer settings."));
 
 	QHBoxLayout *stabilizerLayout = new QHBoxLayout;
 	stabilizerLayout->addWidget(m_stabilizerSpinner, 1);
@@ -296,6 +309,8 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 		&LassoFillSettings::setButtonState);
 	setButtonState(false);
 
+	config::Config *cfg = dpAppConfig();
+
 	m_blendModeManager = BlendModeManager::initFill(
 		m_blendModeCombo, m_alphaPreserveButton, this);
 	CFG_BIND_SET(
@@ -304,6 +319,12 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 	connect(
 		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
 		&LassoFillSettings::pushSettings);
+
+	CFG_BIND_ACTION(
+		cfg, StabilizerVelocityEnabled, m_stabilizerVelocityEnabledAction);
+	connect(
+		m_stabilizerSettingsAction, &QAction::triggered, this,
+		&LassoFillSettings::stabilizerSettingsRequested);
 
 	connect(
 		&dpApp(), &DrawpileApp::iconThemeChanged, this,
@@ -323,9 +344,11 @@ void LassoFillSettings::updateStabilizationMode(QAction *action)
 	if(action == m_smoothingAction) {
 		m_stabilizerSpinner->hide();
 		m_smoothingSpinner->show();
+		m_stabilizerVelocityEnabledAction->setEnabled(false);
 	} else {
 		m_smoothingSpinner->hide();
 		m_stabilizerSpinner->show();
+		m_stabilizerVelocityEnabledAction->setEnabled(true);
 	}
 	pushSettings();
 }

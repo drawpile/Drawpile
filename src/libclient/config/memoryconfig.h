@@ -663,6 +663,18 @@ public:
 	int getSoundVolume() const override;
 	void setSoundVolume(int value) override;
 
+	int getStabilizerVelocityAdjustment() const override;
+	void setStabilizerVelocityAdjustment(int value) override;
+
+	QString getStabilizerVelocityCurve() const override;
+	void setStabilizerVelocityCurve(const QString &value) override;
+
+	bool getStabilizerVelocityEnabled() const override;
+	void setStabilizerVelocityEnabled(bool value) override;
+
+	int getStabilizerVelocityMax() const override;
+	void setStabilizerVelocityMax(int value) override;
+
 	int getTabletDriver() const override;
 	void setTabletDriver(int value) override;
 
@@ -1052,6 +1064,10 @@ private:
 	bool m_showViewModeNotices = defaultShowViewModeNotices();
 	int m_smoothing = defaultSmoothing();
 	int m_soundVolume = defaultSoundVolume();
+	int m_stabilizerVelocityAdjustment = defaultStabilizerVelocityAdjustment();
+	QString m_stabilizerVelocityCurve = defaultStabilizerVelocityCurve();
+	bool m_stabilizerVelocityEnabled = defaultStabilizerVelocityEnabled();
+	int m_stabilizerVelocityMax = defaultStabilizerVelocityMax();
 	int m_tabletDriver = defaultTabletDriver();
 	int m_tabletEraserAction = defaultTabletEraserAction();
 	bool m_tabletEvents = defaultTabletEvents();

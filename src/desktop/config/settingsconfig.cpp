@@ -745,6 +745,23 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::soundVolumeChanged, this,
 		&SettingsConfig::changeSoundVolume, Qt::DirectConnection);
 	connect(
+		m_settings,
+		&desktop::settings::Settings::stabilizerVelocityAdjustmentChanged, this,
+		&SettingsConfig::changeStabilizerVelocityAdjustment,
+		Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::stabilizerVelocityCurveChanged, this,
+		&SettingsConfig::changeStabilizerVelocityCurve, Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::stabilizerVelocityEnabledChanged, this,
+		&SettingsConfig::changeStabilizerVelocityEnabled, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::stabilizerVelocityMaxChanged,
+		this, &SettingsConfig::changeStabilizerVelocityMax,
+		Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::tabletDriverChanged, this,
 		&SettingsConfig::changeTabletDriver, Qt::DirectConnection);
 	connect(
@@ -3044,6 +3061,46 @@ int SettingsConfig::getSoundVolume() const
 void SettingsConfig::setSoundVolume(int value)
 {
 	m_settings->setSoundVolume(value);
+}
+
+int SettingsConfig::getStabilizerVelocityAdjustment() const
+{
+	return m_settings->stabilizerVelocityAdjustment();
+}
+
+void SettingsConfig::setStabilizerVelocityAdjustment(int value)
+{
+	m_settings->setStabilizerVelocityAdjustment(value);
+}
+
+QString SettingsConfig::getStabilizerVelocityCurve() const
+{
+	return m_settings->stabilizerVelocityCurve();
+}
+
+void SettingsConfig::setStabilizerVelocityCurve(const QString &value)
+{
+	m_settings->setStabilizerVelocityCurve(value);
+}
+
+bool SettingsConfig::getStabilizerVelocityEnabled() const
+{
+	return m_settings->stabilizerVelocityEnabled();
+}
+
+void SettingsConfig::setStabilizerVelocityEnabled(bool value)
+{
+	m_settings->setStabilizerVelocityEnabled(value);
+}
+
+int SettingsConfig::getStabilizerVelocityMax() const
+{
+	return m_settings->stabilizerVelocityMax();
+}
+
+void SettingsConfig::setStabilizerVelocityMax(int value)
+{
+	m_settings->setStabilizerVelocityMax(value);
 }
 
 int SettingsConfig::getTabletDriver() const

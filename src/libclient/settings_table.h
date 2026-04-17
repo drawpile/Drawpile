@@ -134,5 +134,21 @@ SETTING(
 SETTING(
 	smoothing, Smoothing, "settings/input/smooth",
 	config::Config::defaultSmoothing())
+SETTING(
+	stabilizerVelocityAdjustment, StabilizerVelocityAdjustment,
+	"settings/input/stabilizervelocityadjustment",
+	config::Config::defaultStabilizerVelocityAdjustment())
+SETTING(
+	stabilizerVelocityCurve, StabilizerVelocityCurve,
+	"settings/input/stabilizervelocitycurve",
+	config::Config::defaultStabilizerVelocityCurve())
+SETTING(
+	stabilizerVelocityEnabled, StabilizerVelocityEnabled,
+	"settings/input/stabilizervelocity",
+	config::Config::defaultStabilizerVelocityEnabled())
+SETTING(
+	stabilizerVelocityMax, StabilizerVelocityMax,
+	"settings/input/stabilizervelocitymax",
+	config::Config::defaultStabilizerVelocityMax())
 
 #include "libclient/settings_table_macros.h"

@@ -1123,6 +1123,26 @@ int Config::defaultSoundVolume()
 	return 60;
 }
 
+int Config::defaultStabilizerVelocityAdjustment()
+{
+	return 100;
+}
+
+QString Config::defaultStabilizerVelocityCurve()
+{
+	return QStringLiteral("0,0;0.5,0.2;1,1;");
+}
+
+bool Config::defaultStabilizerVelocityEnabled()
+{
+	return true;
+}
+
+int Config::defaultStabilizerVelocityMax()
+{
+	return 1000;
+}
+
 int Config::defaultTabletDriver()
 {
 	return int(tools::TabletInputMode::KisTabletWinink);

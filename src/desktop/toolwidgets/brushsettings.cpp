@@ -180,7 +180,9 @@ struct BrushSettings::Private {
 	QAction *stabilizerAction;
 	QAction *smoothingAction;
 	QAction *finishStrokesAction;
+	QAction *stabilizerVelocityEnabledAction;
 	QAction *useBrushSampleCountAction;
+	QAction *stabilizerSettingsAction;
 
 	QMenu *menu;
 
@@ -580,12 +582,23 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->finishStrokesAction->setStatusTip(tr(
 		"Draws stabilized strokes to the end, rather than cutting them off."));
 	d->finishStrokesAction->setCheckable(true);
+	d->stabilizerVelocityEnabledAction =
+		stabilizerMenu->addAction(tr("Adjust With Velocity"));
+	d->stabilizerVelocityEnabledAction->setStatusTip(
+		tr("Alters stabilization depending on how fast the stroke is."));
+	d->stabilizerVelocityEnabledAction->setCheckable(true);
 	d->useBrushSampleCountAction =
 		stabilizerMenu->addAction(tr("Synchronize With Brush"));
 	d->useBrushSampleCountAction->setStatusTip(tr(
 		"Makes the stabilizer a brush setting, like in MyPaint, rather than an "
 		"independent setting, like in Krita."));
 	d->useBrushSampleCountAction->setCheckable(true);
+	stabilizerMenu->addSeparator();
+	d->stabilizerSettingsAction = stabilizerMenu->addAction(
+		QIcon::fromTheme(QStringLiteral("pathshape")),
+		tr("Input Settings…"));
+	d->stabilizerSettingsAction->setStatusTip(
+		tr("Show the input settings dialog for more stabilizer settings."));
 	d->ui.stabilizerButton->setMenu(stabilizerMenu);
 	utils::setWidgetRetainSizeWhenHidden(d->ui.stabilizerButton, true);
 	d->ui.stabilizationLabel->setText(
@@ -701,6 +714,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(
 		d->useBrushSampleCountAction, &QAction::triggered, this,
 		&BrushSettings::updateFromUi);
+	connect(
+		d->stabilizerSettingsAction, &QAction::triggered, this,
+		&BrushSettings::stabilizerSettingsRequested);
 
 	d->blendModeManager = BlendModeManager::initBrush(
 		d->ui.blendmode, d->ui.erasemode, d->ui.alphaPreserve, d->ui.modeEraser,
@@ -721,6 +737,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	CFG_BIND_SET(
 		cfg, BrushPreviewThumbnail, d->ui.preview,
 		widgets::BrushPreview::setShowThumbnail);
+
+	CFG_BIND_ACTION(
+		cfg, StabilizerVelocityEnabled, d->stabilizerVelocityEnabledAction);
 
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
@@ -1597,7 +1616,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	if(d->updateInProgress)
 		return;
 
-	d->finishStrokes = d->finishStrokesAction->isChecked();
+	setStabilizerFinishStrokes(d->finishStrokesAction->isChecked());
 	d->useBrushSampleCount = d->useBrushSampleCountAction->isChecked();
 
 	bool mypaintmode = d->brushType == BrushType::MyPaint;
@@ -1757,9 +1776,11 @@ void BrushSettings::updateStabilizationSettingVisibility()
 		switch(stabilizationMode) {
 		case brushes::Stabilizer:
 			d->ui.stabilizerBox->show();
+			d->stabilizerVelocityEnabledAction->setEnabled(true);
 			break;
 		case brushes::Smoothing:
 			d->ui.smoothingBox->show();
+			d->stabilizerVelocityEnabledAction->setEnabled(false);
 			break;
 		}
 		d->ui.stabilizerButton->show();
@@ -1975,7 +1996,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
 	d->previousNonEraser = isCurrentEraserSlot() ? 0 : d->current;
-	d->finishStrokes = cfg.value(toolprop::finishStrokes);
+	setStabilizerFinishStrokes(cfg.value(toolprop::finishStrokes));
 	d->useBrushSampleCount = cfg.value(toolprop::useBrushSampleCount);
 	if(!d->useBrushSampleCount) {
 		if(cfg.value(toolprop::stabilizationMode) == brushes::Smoothing) {
@@ -2266,6 +2287,20 @@ void BrushSettings::resetBrushMode()
 	brush.setBlendMode(DP_BLEND_MODE_NORMAL, false);
 	changePresetBrush(brush);
 	updateUi();
+}
+
+bool BrushSettings::isStabilizerFinishStrokes() const
+{
+	return d->finishStrokes;
+}
+
+void BrushSettings::setStabilizerFinishStrokes(bool stabilizerFinishStrokes)
+{
+	if(stabilizerFinishStrokes != d->finishStrokes) {
+		d->finishStrokes = stabilizerFinishStrokes;
+		controller()->setFinishStrokes(stabilizerFinishStrokes);
+		Q_EMIT stabilizerFinishStrokesChanged(stabilizerFinishStrokes);
+	}
 }
 
 void BrushSettings::triggerUpdate()
