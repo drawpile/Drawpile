@@ -40,7 +40,7 @@ public:
 
 	void setParams(const DP_StrokeEngineStrokeParams &sesp);
 
-	void beginStroke();
+	void beginStroke(float zoom);
 
 	void strokeTo(const canvas::Point &point, const drawdance::CanvasState &cs);
 

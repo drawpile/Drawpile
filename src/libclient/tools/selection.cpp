@@ -443,7 +443,7 @@ void PolygonSelection::beginSelection(const canvas::Point &point)
 	m_owner.setStrokeEngineParams(
 		m_strokeEngine, getEffectiveStabilizerSampleCount(),
 		getEffectiveSmoothing());
-	m_strokeEngine.beginStroke();
+	m_strokeEngine.beginStroke(zoom());
 	m_strokeEngine.strokeTo(point, drawdance::CanvasState::null());
 }
 

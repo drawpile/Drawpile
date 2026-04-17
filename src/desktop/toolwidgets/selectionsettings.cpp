@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/expandshrinkspinner.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/brushes/brush.h"
+#include "libclient/config/config.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
 #include <QActionGroup>
@@ -348,6 +350,33 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		m_stabilizationModeGroup, &QActionGroup::triggered, this,
 		&SelectionSettings::updateStabilizationMode);
 
+	stabilizerMenu->addSeparator();
+
+	m_stabilizerVelocityEnabledAction = stabilizerMenu->addAction(
+		QCoreApplication::translate(
+			"tools::BrushSettings", "Adjust With Velocity"));
+	m_stabilizerVelocityEnabledAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Alters stabilization depending on how fast the stroke is."));
+	m_stabilizerVelocityEnabledAction->setCheckable(true);
+	CFG_BIND_ACTION(
+		dpAppConfig(), StabilizerVelocityEnabled,
+		m_stabilizerVelocityEnabledAction);
+
+	stabilizerMenu->addSeparator();
+
+	m_stabilizerSettingsAction = stabilizerMenu->addAction(
+		QIcon::fromTheme(QStringLiteral("pathshape")),
+		QCoreApplication::translate("tools::BrushSettings", "Input Settings…"));
+	m_stabilizerSettingsAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Show the input settings dialog for more stabilizer settings."));
+	connect(
+		m_stabilizerSettingsAction, &QAction::triggered, this,
+		&SelectionSettings::stabilizerSettingsRequested);
+
 	m_antiAliasCheckBox = new QCheckBox(tr("Anti-aliasing"));
 	m_antiAliasCheckBox->setStatusTip(tr("Smoothe out selection edges"));
 	m_antiAliasCheckBox->setToolTip(m_antiAliasCheckBox->statusTip());
@@ -607,9 +636,11 @@ void SelectionSettings::updateStabilizationMode(QAction *action)
 	if(action == m_smoothingAction) {
 		m_stabilizerSpinner->hide();
 		m_smoothingSpinner->show();
+		m_stabilizerVelocityEnabledAction->setEnabled(false);
 	} else {
 		m_smoothingSpinner->hide();
 		m_stabilizerSpinner->show();
+		m_stabilizerVelocityEnabledAction->setEnabled(true);
 	}
 	pushSettings();
 }

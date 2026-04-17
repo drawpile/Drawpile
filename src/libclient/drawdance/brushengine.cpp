@@ -40,9 +40,9 @@ void StrokeEngine::setParams(const DP_StrokeEngineStrokeParams &sesp)
 	DP_stroke_engine_params_set(m_data, &sesp);
 }
 
-void StrokeEngine::beginStroke()
+void StrokeEngine::beginStroke(float zoom)
 {
-	DP_stroke_engine_stroke_begin(m_data);
+	DP_stroke_engine_stroke_begin(m_data, zoom);
 }
 
 void StrokeEngine::strokeTo(

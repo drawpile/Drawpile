@@ -117,6 +117,8 @@ target_sources(drawpile PRIVATE
 	dialogs/filetypedialog.h
 	dialogs/flipbook.cpp
 	dialogs/flipbook.h
+	dialogs/inputsettingsdialog.cpp
+	dialogs/inputsettingsdialog.h
 	dialogs/invitedialog.cpp
 	dialogs/invitedialog.h
 	dialogs/keyframepropertiesdialog.cpp

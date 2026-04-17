@@ -10,6 +10,7 @@ extern "C" {
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/dumpplaybackdialog.h"
+#include "desktop/dialogs/inputsettingsdialog.h"
 #include "desktop/dialogs/invitedialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
@@ -515,6 +516,18 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_dockToolSettings->brushSettings(),
 		&tools::BrushSettings::editBrushRequested, this,
 		&MainWindow::showBrushSettingsDialogBrush);
+	connect(
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::stabilizerSettingsRequested, this,
+		&MainWindow::showInputSettingsDialogStabilizerPage);
+	connect(
+		m_dockToolSettings->selectionSettings(),
+		&tools::SelectionSettings::stabilizerSettingsRequested, this,
+		&MainWindow::showInputSettingsDialogStabilizerPage);
+	connect(
+		m_dockToolSettings->lassoFillSettings(),
+		&tools::LassoFillSettings::stabilizerSettingsRequested, this,
+		&MainWindow::showInputSettingsDialogStabilizerPage);
 	connect(
 		m_dockBrushPalette, &docks::BrushPalette::editBrushRequested, this,
 		&MainWindow::showBrushSettingsDialogPreset);
@@ -2017,6 +2030,36 @@ void MainWindow::showSelectionMaskColorPicker()
 			});
 		utils::showWindow(dlg, shouldShowDialogMaximized());
 	}
+}
+
+void MainWindow::showInputSettingsDialogStabilizerPage()
+{
+	showInputSettingsDialog()->showStabilizerPage();
+}
+
+dialogs::InputSettingsDialog *MainWindow::showInputSettingsDialog()
+{
+	QString objectName = QStringLiteral("inputsettingsdialog");
+	dialogs::InputSettingsDialog *dlg =
+		findChild<dialogs::InputSettingsDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::InputSettingsDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
+		dlg->setStabilizerFinishStrokes(bs->isStabilizerFinishStrokes());
+		connect(
+			dlg, &dialogs::InputSettingsDialog::stabilizerFinishStrokesChanged,
+			bs, &tools::BrushSettings::setStabilizerFinishStrokes);
+		connect(
+			bs, &tools::BrushSettings::stabilizerFinishStrokesChanged, dlg,
+			&dialogs::InputSettingsDialog::setStabilizerFinishStrokes);
+		utils::showWindow(dlg, shouldShowDialogMaximized());
+	}
+	return dlg;
 }
 
 void MainWindow::saveSplitterState()
@@ -6511,6 +6554,9 @@ void MainWindow::setupActions()
 	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings"))
 								 .icon("draw-brush")
 								 .shortcut("F7");
+	QAction *inputSettings = makeAction("inputsettings", tr("Input Settings"))
+								 .icon("pathshape")
+								 .noDefaultShortcut();
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces"))
 							   .icon("configure")
 							   .noDefaultShortcut();
@@ -6650,6 +6696,7 @@ void MainWindow::setupActions()
 	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
 	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
 	connect(brushSettings, &QAction::triggered, this, &MainWindow::showBrushSettingsDialogBrush);
+	connect(inputSettings, &QAction::triggered, this, &MainWindow::showInputSettingsDialog);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 #ifdef Q_OS_MACOS
 	connect(macPreferences, SIGNAL(triggered()), this, SLOT(showSettings()));
@@ -6720,6 +6767,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(cleararea);
 	editmenu->addSeparator();
 	editmenu->addAction(brushSettings);
+	editmenu->addAction(inputSettings);
 #ifdef Q_OS_WIN32
 	QMenu *driverMenu = editmenu->addMenu(QIcon::fromTheme("input-tablet"), tr("Tablet Driver"));
 	for(QAction *driver : drivers) {

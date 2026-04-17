@@ -53,6 +53,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
 	, m_stabilizerSampleCount(0)
+	, m_stabilizerVelocityMax(config::Config::defaultStabilizerVelocityMax())
 	, m_smoothing(0)
 	, m_effectiveSmoothing(0)
 	, m_finishStrokes(true)
@@ -64,6 +65,12 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_taskCount{0}
 {
 	Q_ASSERT(client);
+
+#if !defined(QT_NO_DEBUG) || defined(QT_FORCE_ASSERTS)
+	for(int i = 0; i < Tool::_LASTTOOL; ++i) {
+		m_toolbox[i] = nullptr;
+	}
+#endif
 
 	DP_MaskSync *ms = DP_mask_sync_new();
 	Freehand *freehand = new Freehand(*this, ms);
@@ -88,6 +95,12 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new Inspector(*this));
 	registerTool(new TransformTool(*this));
 	DP_mask_sync_decref(ms);
+
+#if !defined(QT_NO_DEBUG) || defined(QT_FORCE_ASSERTS)
+	for(int i = 0; i < Tool::_LASTTOOL; ++i) {
+		Q_ASSERT(m_toolbox[i]);
+	}
+#endif
 
 	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;
@@ -313,6 +326,29 @@ void ToolController::setStabilizationMode(
 void ToolController::setStabilizerSampleCount(int stabilizerSampleCount)
 {
 	m_stabilizerSampleCount = stabilizerSampleCount;
+}
+
+void ToolController::setStabilizerVelocityEnabled(
+	bool stabilizerVelocityEnabled)
+{
+	m_stabilizerVelocityEnabled = stabilizerVelocityEnabled;
+}
+
+void ToolController::setStabilizerVelocityCurveFromString(const QString &s)
+{
+	m_stabilizerVelocityCurve.fromString(s);
+}
+
+void ToolController::setStabilizerVelocityAdjustment(
+	int stabilizerVelocityAdjustment)
+{
+	m_stabilizerVelocityAdjustment =
+		qBound(0.0, qreal(stabilizerVelocityAdjustment) / 100.0, 1.0);
+}
+
+void ToolController::setStabilizerVelocityMax(int stabilizerVelocityMax)
+{
+	m_stabilizerVelocityMax = stabilizerVelocityMax;
 }
 
 void ToolController::setSmoothing(int smoothing)
@@ -688,12 +724,16 @@ void ToolController::setStrokeEngineParams(
 	drawdance::StrokeEngine &se, int stabilizerSampleCount, int smoothing)
 {
 	DP_StrokeEngineStrokeParams sesp = {
+		nullptr,
+		nullptr,
 		qBound(0, m_globalSmoothing + smoothing, MAX_SMOOTHING),
 		stabilizerSampleCount,
+		0.0f,
 		m_interpolateInputs,
 		true,
 		true,
 	};
+	fillStabilizerVelocityParams(sesp);
 	se.setParams(sesp);
 }
 
@@ -799,8 +839,11 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 	bool freehand = source == Tool::Type::FREEHAND;
 	DP_BrushEngineStrokeParams stroke = {
 		{
+			nullptr,
+			nullptr,
 			0,
 			0,
+			0.0f,
 			false,
 			!pixelArtInput &&
 				(m_stabilizationMode != brushes::Smoothing || m_finishStrokes),
@@ -834,8 +877,38 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 		}
 	}
 
+	fillStabilizerVelocityParams(stroke.se);
+
 	outStroke = stroke;
 	return brush;
+}
+
+void ToolController::fillStabilizerVelocityParams(
+	DP_StrokeEngineStrokeParams &inOutParams) const
+{
+	if(m_stabilizerVelocityEnabled && inOutParams.stabilizer_sample_count) {
+		inOutParams.stabilizer_max_velocity =
+			float(m_stabilizerVelocityMax) / 100.0f;
+		inOutParams.stabilizer_get_velocity_curve_fn =
+			&ToolController::getStabilizerVelocityCurveCallback;
+		inOutParams.stabilizer_get_velocity_curve_user =
+			const_cast<ToolController *>(this);
+	}
+}
+
+DP_Curve *ToolController::getStabilizerVelocityCurve() const
+{
+	QList<QPointF> points = m_stabilizerVelocityCurve.points();
+	for(QPointF &point : points) {
+		point.setY(point.y() * m_stabilizerVelocityAdjustment);
+	}
+	return KisCubicCurve::makeCurve(points);
+}
+
+DP_Curve *ToolController::getStabilizerVelocityCurveCallback(void *user)
+{
+	return static_cast<const ToolController *>(user)
+		->getStabilizerVelocityCurve();
 }
 
 }

@@ -14,6 +14,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/curve.h>
 #include <dpcommon/event_log.h>
 #include <dpcommon/geom.h>
 #include <dpcommon/perf.h>
@@ -47,10 +48,10 @@
 #define MAX_XY_DELTA        127
 
 // Based on MyPaint's velocity calculations for fine speed.
-#define CLASSIC_VELOCITY_GAMMA    54.598148f
-#define CLASSIC_VELOCITY_M        1.493972f
-#define CLASSIC_VELOCITY_Q        -6.373980f
-#define CLASSIC_VELOCITY_SLOWNESS 0.04f
+#define VELOCITY_GAMMA    54.598148f
+#define VELOCITY_M        1.493972f
+#define VELOCITY_Q        -6.373980f
+#define VELOCITY_SLOWNESS 0.04f
 
 #define SMUDGE_AREA_COUNT 32
 
@@ -96,6 +97,11 @@ typedef struct DP_SplinePoint {
     float length;
     bool drawn;
 } DP_SplinePoint;
+
+typedef struct DP_StabilizerPoint {
+    DP_BrushPoint p;
+    float velocity;
+} DP_StabilizerPoint;
 
 typedef struct DP_PixelDabParams {
     uint8_t flags;
@@ -157,11 +163,15 @@ struct DP_StrokeEngine {
         int sample_count;
         bool finish_strokes;
         bool active;
+        float max_velocity;
+        float last_velocity;
         long long last_time_msec;
+        DP_Curve *velocity_curve;
         DP_Queue queue;
         DP_Vector points;
-        DP_BrushPoint last_point;
+        DP_StabilizerPoint last_point;
     } stabilizer;
+    float zoom;
     DP_StrokeEnginePushPointFn push_point;
     DP_StrokeEnginePollControlFn poll_control;
     void *user;
@@ -183,7 +193,6 @@ struct DP_BrushEngine {
     MyPaintSurface2 mypaint_surface2;
     struct {
         unsigned int context_id;
-        float zoom;
         float angle_rad;
         bool active;
         bool mirror;
@@ -472,32 +481,62 @@ static DP_LayerContent *update_sample_layer_content(DP_BrushEngine *be,
 }
 
 
+// From libmypaint. Not in a header file, but declared extern.
+float exp_decay(float T_const, float t);
+
+static float velocity_calculate(float last_velocity)
+{
+    // From libmypaint's speed calculation.
+    float velocity =
+        logf(VELOCITY_GAMMA + last_velocity) * VELOCITY_M + VELOCITY_Q;
+    return DP_max_float(velocity, 0.0f);
+}
+
+static float velocity_update(float norm_dist, float dt,
+                             float *in_out_last_velocity)
+{
+    float last_velocity = *in_out_last_velocity;
+    float velocity = velocity_calculate(last_velocity);
+    // From libmypaint's speed calculation.
+    *in_out_last_velocity = last_velocity
+                          + (norm_dist - last_velocity)
+                                * (1.0f - exp_decay(VELOCITY_SLOWNESS, dt));
+    return velocity;
+}
+
+
+static void stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
+                               DP_CanvasState *cs_or_null, bool flush);
+
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SDPX—SnippetName: stabilizer implementation from Krita
 
-static void stabilizer_queue_push(DP_StrokeEngine *se, DP_BrushPoint bp)
+static void stabilizer_queue_push(DP_StrokeEngine *se, DP_StabilizerPoint sp)
 {
-    *((DP_BrushPoint *)DP_queue_push(&se->stabilizer.queue,
-                                     sizeof(DP_BrushPoint))) = bp;
+    *((DP_StabilizerPoint *)DP_queue_push(&se->stabilizer.queue,
+                                          sizeof(DP_StabilizerPoint))) = sp;
 }
 
-static DP_BrushPoint stabilizer_queue_at(DP_StrokeEngine *se, size_t i)
+static DP_StabilizerPoint stabilizer_queue_at(DP_StrokeEngine *se, size_t i)
 {
-    return *(DP_BrushPoint *)DP_queue_at(&se->stabilizer.queue,
-                                         sizeof(DP_BrushPoint), i);
+    return *(DP_StabilizerPoint *)DP_queue_at(&se->stabilizer.queue,
+                                              sizeof(DP_StabilizerPoint), i);
 }
 
-static void stabilizer_queue_replace(DP_StrokeEngine *se, DP_BrushPoint bp)
+static void stabilizer_queue_replace(DP_StrokeEngine *se, DP_StabilizerPoint sp,
+                                     size_t count)
 {
-    DP_queue_shift(&se->stabilizer.queue);
-    stabilizer_queue_push(se, bp);
+    for (size_t i = 0; i < count; ++i) {
+        DP_queue_shift(&se->stabilizer.queue);
+        stabilizer_queue_push(se, sp);
+    }
 }
 
 static void stabilizer_points_clear(DP_StrokeEngine *se, long long time_msec)
 {
-    DP_BrushPoint *last_point_or_null =
-        DP_vector_last(&se->stabilizer.points, sizeof(DP_BrushPoint));
+    DP_StabilizerPoint *last_point_or_null =
+        DP_vector_last(&se->stabilizer.points, sizeof(DP_StabilizerPoint));
     if (last_point_or_null) {
         se->stabilizer.last_point = *last_point_or_null;
     }
@@ -505,59 +544,80 @@ static void stabilizer_points_clear(DP_StrokeEngine *se, long long time_msec)
     se->stabilizer.last_time_msec = time_msec;
 }
 
-static void stabilizer_points_push(DP_StrokeEngine *se, DP_BrushPoint bp)
+static void stabilizer_points_push(DP_StrokeEngine *se, DP_StabilizerPoint sp)
 {
-    *((DP_BrushPoint *)DP_vector_push(&se->stabilizer.points,
-                                      sizeof(DP_BrushPoint))) = bp;
+    *((DP_StabilizerPoint *)DP_vector_push(&se->stabilizer.points,
+                                           sizeof(DP_StabilizerPoint))) = sp;
 }
 
-static DP_BrushPoint stabilizer_points_get(DP_StrokeEngine *se, long long i,
-                                           double alpha)
+static DP_StabilizerPoint stabilizer_points_get(DP_StrokeEngine *se,
+                                                long long i, double alpha)
 {
     size_t k = DP_double_to_size(alpha * DP_llong_to_double(i));
     if (k < se->stabilizer.points.used) {
-        return *(DP_BrushPoint *)DP_vector_at(&se->stabilizer.points,
-                                              sizeof(DP_BrushPoint), k);
+        return *(DP_StabilizerPoint *)DP_vector_at(
+            &se->stabilizer.points, sizeof(DP_StabilizerPoint), k);
     }
     else {
         return se->stabilizer.last_point;
     }
 }
 
-static void stabilizer_init(DP_StrokeEngine *se, DP_BrushPoint bp)
+static void stabilizer_init(DP_StrokeEngine *se, DP_StabilizerPoint sp)
 {
     se->stabilizer.active = true;
+    se->stabilizer.last_velocity = 0.0f;
 
     int queue_size =
         DP_max_int(STABILIZER_MIN_QUEUE_SIZE, se->stabilizer.sample_count);
     se->stabilizer.queue.used = 0;
     for (int i = 0; i < queue_size; ++i) {
-        stabilizer_queue_push(se, bp);
+        stabilizer_queue_push(se, sp);
     }
 
-    stabilizer_points_clear(se, bp.time_msec);
-    stabilizer_points_push(se, bp);
+    stabilizer_points_clear(se, sp.p.time_msec);
+    stabilizer_points_push(se, sp);
+}
+
+static float stabilizer_update_velocity(DP_StrokeEngine *se, DP_BrushPoint bp)
+{
+    DP_StabilizerPoint *last_sp =
+        DP_queue_peek_last(&se->stabilizer.queue, sizeof(DP_StabilizerPoint));
+
+    float diff_x = bp.x - last_sp->p.x;
+    float diff_y = bp.y - last_sp->p.y;
+    float delta_sec = DP_max_float(
+        DP_llong_to_float(bp.time_msec - last_sp->p.time_msec) / 1000.0f,
+        0.0001f);
+
+    float zoom = se->zoom;
+    float norm_dist =
+        hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
+
+    return velocity_update(norm_dist, delta_sec, &se->stabilizer.last_velocity);
 }
 
 static void stabilizer_stroke_to(DP_StrokeEngine *se, DP_BrushPoint bp)
 {
     if (se->stabilizer.active) {
-        stabilizer_points_push(se, bp);
+        float velocity = stabilizer_update_velocity(se, bp);
+        stabilizer_points_push(se, (DP_StabilizerPoint){bp, velocity});
     }
     else {
-        stabilizer_init(se, bp);
+        stabilizer_init(se, (DP_StabilizerPoint){bp, 0.0f});
     }
 }
 
-static DP_BrushPoint stabilizer_stabilize(DP_StrokeEngine *se, DP_BrushPoint bp)
+static DP_BrushPoint stabilizer_stabilize(DP_StrokeEngine *se,
+                                          DP_StabilizerPoint sp, size_t count)
 {
-    size_t used = se->stabilizer.queue.used;
+    DP_BrushPoint bp = sp.p;
     // First queue entry is stale, since bp is the one that's replacing it.
-    for (size_t i = 1; i < used; ++i) {
+    for (size_t i = 1; i < count; ++i) {
         // Uniform averaging.
         float k = DP_size_to_float(i) / DP_size_to_float(i + 1);
         float k1 = 1.0f - k;
-        DP_BrushPoint sample = stabilizer_queue_at(se, i);
+        DP_BrushPoint sample = stabilizer_queue_at(se, i).p;
         bp.x = k1 * sample.x + k * bp.x;
         bp.y = k1 * sample.y + k * bp.y;
         bp.pressure = k1 * sample.pressure + k * bp.pressure;
@@ -583,13 +643,14 @@ static void stabilizer_finish(DP_StrokeEngine *se, long long time_msec,
 {
     if (se->stabilizer.finish_strokes) {
         // Flush existing events.
-        DP_stroke_engine_poll(se, time_msec, cs_or_null);
+        stroke_engine_poll(se, time_msec, cs_or_null, true);
         // Drain the queue with a delay matching its size.
         stabilizer_points_push(se, se->stabilizer.last_point);
         long long queue_size_samples = DP_size_to_llong(
             se->stabilizer.queue.used * STABILIZER_SAMPLE_TIME);
-        DP_stroke_engine_poll(
-            se, se->stabilizer.last_time_msec + queue_size_samples, cs_or_null);
+        stroke_engine_poll(se,
+                           se->stabilizer.last_time_msec + queue_size_samples,
+                           cs_or_null, true);
     }
     se->stabilizer.active = false;
 }
@@ -612,16 +673,20 @@ stroke_engine_init(DP_StrokeEnginePushPointFn push_point,
         {0,
          true,
          false,
-         0,
+         0.0f,
+         0.0f,
+         0LL,
+         NULL,
          DP_QUEUE_NULL,
          DP_VECTOR_NULL,
-         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}},
+         {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}, 0.0f}},
+        1.0f,
         push_point,
         poll_control_or_null,
         user,
     };
-    DP_queue_init(&se.stabilizer.queue, 128, sizeof(DP_BrushPoint));
-    DP_vector_init(&se.stabilizer.points, 128, sizeof(DP_BrushPoint));
+    DP_queue_init(&se.stabilizer.queue, 128, sizeof(DP_StabilizerPoint));
+    DP_vector_init(&se.stabilizer.points, 128, sizeof(DP_StabilizerPoint));
     return se;
 }
 
@@ -641,6 +706,7 @@ static void stroke_engine_dispose(DP_StrokeEngine *se)
     DP_free(se->smoother.points);
     DP_vector_dispose(&se->stabilizer.points);
     DP_queue_dispose(&se->stabilizer.queue);
+    DP_curve_decref_nullable(se->stabilizer.velocity_curve);
 }
 
 void DP_stroke_engine_free(DP_StrokeEngine *se)
@@ -658,7 +724,17 @@ void DP_stroke_engine_params_set(DP_StrokeEngine *se,
     DP_ASSERT(sesp);
     se->spline.enabled = sesp->interpolate;
     se->stabilizer.sample_count = sesp->stabilizer_sample_count;
+    se->stabilizer.max_velocity = sesp->stabilizer_max_velocity;
     se->stabilizer.finish_strokes = sesp->stabilizer_finish_strokes;
+
+    DP_curve_decref_nullable(se->stabilizer.velocity_curve);
+    if (sesp->stabilizer_get_velocity_curve_fn) {
+        se->stabilizer.velocity_curve = sesp->stabilizer_get_velocity_curve_fn(
+            sesp->stabilizer_get_velocity_curve_user);
+    }
+    else {
+        se->stabilizer.velocity_curve = NULL;
+    }
 
     int smoothing = DP_max_int(0, sesp->smoothing);
     se->smoother.size = smoothing;
@@ -679,13 +755,14 @@ static void stroke_engine_poll_control(DP_StrokeEngine *se, bool enable)
     }
 }
 
-void DP_stroke_engine_stroke_begin(DP_StrokeEngine *se)
+void DP_stroke_engine_stroke_begin(DP_StrokeEngine *se, float zoom)
 {
     DP_ASSERT(se);
     se->spline.fill = 0;
     se->spline.offset = 0;
     se->smoother.fill = 0;
     se->smoother.offset = 0;
+    se->zoom = zoom;
     stroke_engine_poll_control(se, true);
 }
 
@@ -948,10 +1025,9 @@ void DP_stroke_engine_stroke_to(DP_StrokeEngine *se, DP_BrushPoint bp,
     }
 }
 
-void DP_stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
-                           DP_CanvasState *cs_or_null)
+static void stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
+                               DP_CanvasState *cs_or_null, bool flush)
 {
-    DP_ASSERT(se);
     if (se->spline.fill == 3) {
         DP_SplinePoint *sp = spline_at(se, 2);
         if (!sp->drawn && time_msec - sp->p.time_msec > SPLINE_DRAIN_DELAY) {
@@ -966,14 +1042,51 @@ void DP_stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
         double alpha = DP_size_to_double(se->stabilizer.points.used)
                      / DP_llong_to_double(elapsed);
 
+        // Depending on the brush speed, we may want to reduce the stabilization
+        // level from the maximum by discarding some fraction of samples.
+        size_t queue_size = se->stabilizer.queue.used;
+        double discard_divisor = DP_float_to_double(se->stabilizer.max_velocity)
+                               * DP_llong_to_double(elapsed);
+        double discard_multiplier =
+            DP_size_to_double(se->stabilizer.queue.used - (size_t)1);
+        bool should_discard =
+            !flush && discard_divisor > 0.0 && se->stabilizer.velocity_curve;
+
         for (long long i = 0; i < elapsed; ++i) {
-            DP_BrushPoint bp = stabilizer_points_get(se, i, alpha);
-            stroke_engine_push(se, stabilizer_stabilize(se, bp), cs_or_null);
-            stabilizer_queue_replace(se, bp);
+            DP_StabilizerPoint sp = stabilizer_points_get(se, i, alpha);
+
+            size_t discard_count;
+            if (should_discard) {
+                double discard_ratio = DP_curve_value_at(
+                    se->stabilizer.velocity_curve,
+                    DP_clamp_double(DP_float_to_double(sp.velocity)
+                                        / discard_divisor,
+                                    0.0, 1.0));
+                discard_count =
+                    DP_double_to_size(discard_ratio * discard_multiplier + 0.5);
+            }
+            else {
+                discard_count = 0;
+            }
+
+            DP_ASSERT(queue_size == se->stabilizer.queue.used);
+            DP_ASSERT(discard_count < queue_size);
+            stroke_engine_push(
+                se, stabilizer_stabilize(se, sp, queue_size - discard_count),
+                cs_or_null);
+
+            stabilizer_queue_replace(se, sp, discard_count + (size_t)1);
         }
 
         stabilizer_points_clear(se, time_msec);
     }
+}
+
+void DP_stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
+                           DP_CanvasState *cs_or_null)
+{
+    DP_ASSERT(se);
+    stroke_engine_poll(se, time_msec, cs_or_null, false);
 }
 
 void DP_stroke_engine_stroke_end(DP_StrokeEngine *se, long long time_msec,
@@ -2390,7 +2503,7 @@ DP_brush_engine_new(DP_MaskSync *ms_or_null,
          add_dab_mypaint_pigment,
          get_color_mypaint_pigment,
          NULL},
-        {0, 1.0f, 0.0f, false, false, false, false, false, false, 0},
+        {0u, 0.0f, false, false, false, false, false, false, 0},
         {{
              DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
              DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT, DP_RECT_ZERO_INIT,
@@ -2957,7 +3070,6 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
 
     be->stroke.active = true;
     be->stroke.context_id = context_id;
-    be->stroke.zoom = zoom;
     // We currently only use the view angle for MyPaint brushes, which take it
     // as radians (and then convert it back to degrees again internally.)
     be->stroke.angle_rad = DP_double_to_float(angle * M_PI / 180.0);
@@ -2968,7 +3080,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
-    DP_stroke_engine_stroke_begin(&be->se);
+    DP_stroke_engine_stroke_begin(&be->se, zoom);
 
     be->pixel.have_last = false;
     be->pixel.have_tentative = false;
@@ -3097,29 +3209,10 @@ static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,
     }
 }
 
-// From libmypaint. Not in a header file, but declared extern.
-float exp_decay(float T_const, float t);
-
-static float classic_velocity(float last_velocity)
-{
-    // From libmypaint's speed calculation.
-    float velocity =
-        logf(CLASSIC_VELOCITY_GAMMA + last_velocity) * CLASSIC_VELOCITY_M
-        + CLASSIC_VELOCITY_Q;
-    return DP_max_float(velocity, 0.0f);
-}
-
 static float classic_update_velocity(DP_BrushEngine *be, float norm_dist,
                                      float dt)
 {
-    float last_velocity = be->classic.last_velocity;
-    float velocity = classic_velocity(last_velocity);
-    // From libmypaint's speed calculation.
-    be->classic.last_velocity =
-        last_velocity
-        + (norm_dist - last_velocity)
-              * (1.0f - exp_decay(CLASSIC_VELOCITY_SLOWNESS, dt));
-    return velocity;
+    return velocity_update(norm_dist, dt, &be->classic.last_velocity);
 }
 
 static void first_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
@@ -3175,7 +3268,7 @@ static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
 
     int length = be->classic.pixel_length;
     float dab_p = last_pressure;
-    float zoom = be->stroke.zoom;
+    float zoom = be->se.zoom;
     float norm_dist =
         hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
     float dab_v = classic_update_velocity(be, norm_dist, delta_sec);
@@ -3248,8 +3341,8 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         float dab_d = be->classic.last_distance;
         float spacing0 = DP_max_float(
             DP_classic_brush_spacing_at(
-                cb, last_pressure, classic_velocity(be->classic.last_velocity),
-                dab_d),
+                cb, last_pressure,
+                velocity_calculate(be->classic.last_velocity), dab_d),
             1.0f);
 
         float length = be->classic.soft_length;
@@ -3258,7 +3351,7 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         float dab_x = last_x + dx * i;
         float dab_y = last_y + dy * i;
         float dab_p = CLAMP(last_pressure + dp * i, 0.0f, 1.0f);
-        float zoom = be->stroke.zoom;
+        float zoom = be->se.zoom;
         float norm_dist =
             hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
         float dab_v = classic_update_velocity(be, norm_dist, delta_sec);
@@ -3379,7 +3472,7 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
 {
     MyPaintBrush *mb = be->mypaint_brush;
     MyPaintSurface2 *surface = &be->mypaint_surface2;
-    float zoom = be->stroke.zoom;
+    float zoom = be->se.zoom;
     float angle = be->stroke.angle_rad;
     float rotation = bp.rotation / 360.0f;
     float xtilt, ytilt;
@@ -3472,7 +3565,7 @@ void DP_brush_engine_poll(DP_BrushEngine *be, long long time_msec,
 {
     DP_ASSERT(be);
     if (be->stroke.active) {
-        DP_stroke_engine_poll(&be->se, time_msec, cs_or_null);
+        stroke_engine_poll(&be->se, time_msec, cs_or_null, false);
     }
 }
 

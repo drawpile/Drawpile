@@ -4,6 +4,7 @@
 #include "libclient/brushes/brush.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/tools/tool.h"
+#include "libclient/utils/kis_cubic_curve.h"
 #include <QColor>
 #include <QObject>
 #include <QPainterPath>
@@ -12,6 +13,7 @@
 
 class QCursor;
 struct DP_BrushEngineStrokeParams;
+struct DP_StrokeEngineStrokeParams;
 struct DP_LayerContent;
 
 namespace canvas {
@@ -150,6 +152,11 @@ public:
 
 	void setStabilizerSampleCount(int stabilizerSampleCount);
 	int stabilizerSampleCount() { return m_stabilizerSampleCount; }
+
+	void setStabilizerVelocityEnabled(bool stabilizerVelocityEnabled);
+	void setStabilizerVelocityCurveFromString(const QString &s);
+	void setStabilizerVelocityAdjustment(int stabilizerVelocityAdjustment);
+	void setStabilizerVelocityMax(int stabilizerVelocityMax);
 
 	void setSmoothing(int smoothing);
 	int smoothing() { return m_smoothing; }
@@ -340,6 +347,12 @@ private:
 		double floodTolerance, int floodExpand,
 		DP_BrushEngineStrokeParams &outStroke) const;
 
+	void fillStabilizerVelocityParams(
+		DP_StrokeEngineStrokeParams &inOutParams) const;
+
+	DP_Curve *getStabilizerVelocityCurve() const;
+	static DP_Curve *getStabilizerVelocityCurveCallback(void *user);
+
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;
 
@@ -353,6 +366,8 @@ private:
 	QColor m_foregroundColor = Qt::black;
 	QColor m_backgroundColor = Qt::white;
 	QColor m_selectionMaskColor = QColor(0, 170, 255);
+	KisCubicCurve m_stabilizerVelocityCurve;
+	qreal m_stabilizerVelocityAdjustment = 1.0;
 	bool m_selectionEditActive = false;
 	bool m_selectionMaskingEnabled = true;
 	bool m_cancelDeselects = true;
@@ -364,10 +379,12 @@ private:
 	bool m_interpolateInputs;
 	brushes::StabilizationMode m_stabilizationMode;
 	int m_stabilizerSampleCount;
+	int m_stabilizerVelocityMax;
 	int m_smoothing;
 	int m_effectiveSmoothing;
 	bool m_finishStrokes;
 	bool m_stabilizerUseBrushSampleCount;
+	bool m_stabilizerVelocityEnabled = false;
 
 	bool m_transformPreviewAccurate;
 	int m_transformInterpolation;

@@ -142,6 +142,21 @@
 #define CFG_BIND_COMBOBOX_USER_STRING(CFG, SETTING, SUBJECT) \
 	CFG_BIND_COMBOBOX_VALUE_ROLE(CFG, SETTING, SUBJECT, const QString &, toString, Qt::UserRole)
 
+#define CFG_BIND_CURVE_WIDGET(CFG, SETTING, SUBJECT)                           \
+	do {                                                                       \
+		::config::Config *_cfg = (CFG);                                        \
+		::widgets::CurveWidget *_subject = (SUBJECT);                          \
+		_subject->setCurveFromString(_cfg->get##SETTING());                    \
+		::QObject::connect(                                                    \
+			_cfg, &::config::Config::change##SETTING, _subject,                \
+			&::widgets::CurveWidget::setCurveFromString);                      \
+		::QObject::connect(                                                    \
+			_subject, &::widgets::CurveWidget::curveChanged, _cfg,             \
+			[_cfg](const ::KisCubicCurve &_newCurve) {                         \
+				_cfg->set##SETTING(_newCurve.toString());                      \
+			});                                                                \
+	} while(0)
+
 #define CFG_BIND_DOUBLESPINBOX(CFG, SETTING, SUBJECT) \
 	CFG_BIND_OBJECT(CFG, SETTING, SUBJECT, &::QDoubleSpinBox::setValue, ::QOverload<double>::of(&::QDoubleSpinBox::valueChanged))
 

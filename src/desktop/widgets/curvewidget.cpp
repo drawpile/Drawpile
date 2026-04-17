@@ -228,9 +228,29 @@ void CurveWidget::setAxisValueLabels(
 	const QString &xMin, const QString &xMax, const QString &yMin,
 	const QString &yMax)
 {
+	setAxisValueLabelXMin(xMin);
+	setAxisValueLabelXMax(xMax);
+	setAxisValueLabelYMin(yMin);
+	setAxisValueLabelYMax(yMax);
+}
+
+void CurveWidget::setAxisValueLabelXMin(const QString &xMin)
+{
 	m_xMinLabel->setText(xMin);
+}
+
+void CurveWidget::setAxisValueLabelXMax(const QString &xMax)
+{
 	m_xMaxLabel->setText(xMax);
+}
+
+void CurveWidget::setAxisValueLabelYMin(const QString &yMin)
+{
 	m_yMinLabel->setText(yMin);
+}
+
+void CurveWidget::setAxisValueLabelYMax(const QString &yMax)
+{
 	m_yMaxLabel->setText(yMax);
 }
 

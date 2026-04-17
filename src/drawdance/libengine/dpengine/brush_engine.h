@@ -26,6 +26,7 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_ClassicBrush DP_ClassicBrush;
+typedef struct DP_Curve DP_Curve;
 typedef struct DP_LayerContent DP_LayerContent;
 typedef struct DP_Message DP_Message;
 typedef struct DP_MyPaintBrush DP_MyPaintBrush;
@@ -40,8 +41,11 @@ typedef struct DP_BrushPoint {
 } DP_BrushPoint;
 
 typedef struct DP_StrokeEngineStrokeParams {
+    DP_Curve *(*stabilizer_get_velocity_curve_fn)(void *user);
+    void *stabilizer_get_velocity_curve_user;
     int smoothing;
     int stabilizer_sample_count;
+    float stabilizer_max_velocity;
     bool interpolate;
     bool smoothing_finish_strokes;
     bool stabilizer_finish_strokes;
@@ -89,7 +93,7 @@ void DP_stroke_engine_free(DP_StrokeEngine *se);
 void DP_stroke_engine_params_set(DP_StrokeEngine *se,
                                  const DP_StrokeEngineStrokeParams *sesp);
 
-void DP_stroke_engine_stroke_begin(DP_StrokeEngine *se);
+void DP_stroke_engine_stroke_begin(DP_StrokeEngine *se, float zoom);
 
 void DP_stroke_engine_stroke_to(DP_StrokeEngine *se, DP_BrushPoint bp,
                                 DP_CanvasState *cs_or_null);

@@ -59,6 +59,9 @@ public:
 	BrushMode getBrushMode() const;
 	void resetBrushMode();
 
+	bool isStabilizerFinishStrokes() const;
+	void setStabilizerFinishStrokes(bool stabilizerFinishStrokes);
+
 	void triggerUpdate();
 
 	void pushSettings() override;
@@ -123,12 +126,14 @@ signals:
 	void subpixelModeChanged(bool subpixel, bool square);
 	void blendModeChanged(int blendMode);
 	void brushModeChanged(int brushMode); // See enum BrushMode above.
+	void stabilizerFinishStrokesChanged(bool stabilizerFinishStrokes);
 	void pixelSizeChanged(int size);
 	void offsetChanged(const QPointF &offset);
 	void newBrushRequested();
 	void editBrushRequested();
 	void overwriteBrushRequested();
 	void deleteBrushRequested();
+	void stabilizerSettingsRequested();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;

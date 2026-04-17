@@ -63,14 +63,7 @@ void Tablet::initPressureCurve(config::Config *cfg, QFormLayout *form)
 	curve->setAxisTitleLabels(tr("Stylus"), tr("Output"));
 	curve->setCurveSize(200, 200);
 	curve->setPressure(true);
-	CFG_BIND_SET(
-		cfg, GlobalPressureCurve, curve,
-		widgets::CurveWidget::setCurveFromString);
-	connect(
-		curve, &widgets::CurveWidget::curveChanged, cfg,
-		[cfg](const KisCubicCurve &newCurve) {
-			cfg->setGlobalPressureCurve(newCurve.toString());
-		});
+	CFG_BIND_CURVE_WIDGET(cfg, GlobalPressureCurve, curve);
 	form->addRow(tr("Global pressure curve:"), curve);
 	disableKineticScrollingOnWidget(curve->curveWidget());
 
@@ -85,17 +78,10 @@ void Tablet::initPressureCurve(config::Config *cfg, QFormLayout *form)
 	eraserCurve->setAxisTitleLabels(tr("Eraser"), tr("Output"));
 	eraserCurve->setCurveSize(200, 200);
 	eraserCurve->setPressure(true);
-	CFG_BIND_SET(
-		cfg, GlobalPressureCurveEraser, eraserCurve,
-		widgets::CurveWidget::setCurveFromString);
+	CFG_BIND_CURVE_WIDGET(cfg, GlobalPressureCurveEraser, eraserCurve);
 	CFG_BIND_SET(
 		cfg, GlobalPressureCurveMode, eraserCurve,
 		widgets::CurveWidget::setVisible);
-	connect(
-		eraserCurve, &widgets::CurveWidget::curveChanged, cfg,
-		[cfg](const KisCubicCurve &newCurve) {
-			cfg->setGlobalPressureCurveEraser(newCurve.toString());
-		});
 	form->addRow(nullptr, eraserCurve);
 	disableKineticScrollingOnWidget(eraserCurve->curveWidget());
 }

@@ -173,6 +173,21 @@
 	CFG_BIND_COMBOBOX_VALUE_ROLE(                                              \
 		CFG, SETTING, SUBJECT, const QString &, toString, Qt::UserRole)
 
+#define CFG_BIND_CURVE_WIDGET(CFG, SETTING, SUBJECT)                           \
+	do {                                                                       \
+		::config::Config *_cfg = (CFG);                                        \
+		::widgets::CurveWidget *_subject = (SUBJECT);                          \
+		_subject->setCurveFromString(_cfg->get##SETTING());                    \
+		::QObject::connect(                                                    \
+			_cfg, &::config::Config::change##SETTING, _subject,                \
+			&::widgets::CurveWidget::setCurveFromString);                      \
+		::QObject::connect(                                                    \
+			_subject, &::widgets::CurveWidget::curveChanged, _cfg,             \
+			[_cfg](const ::KisCubicCurve &_newCurve) {                         \
+				_cfg->set##SETTING(_newCurve.toString());                      \
+			});                                                                \
+	} while(0)
+
 #define CFG_BIND_DOUBLESPINBOX(CFG, SETTING, SUBJECT)                          \
 	CFG_BIND_OBJECT(                                                           \
 		CFG, SETTING, SUBJECT, &::QDoubleSpinBox::setValue,                    \
@@ -1089,6 +1104,22 @@ public:
 	virtual void setSoundVolume(int value) = 0;
 	static int defaultSoundVolume();
 
+	virtual int getStabilizerVelocityAdjustment() const = 0;
+	virtual void setStabilizerVelocityAdjustment(int value) = 0;
+	static int defaultStabilizerVelocityAdjustment();
+
+	virtual QString getStabilizerVelocityCurve() const = 0;
+	virtual void setStabilizerVelocityCurve(const QString &value) = 0;
+	static QString defaultStabilizerVelocityCurve();
+
+	virtual bool getStabilizerVelocityEnabled() const = 0;
+	virtual void setStabilizerVelocityEnabled(bool value) = 0;
+	static bool defaultStabilizerVelocityEnabled();
+
+	virtual int getStabilizerVelocityMax() const = 0;
+	virtual void setStabilizerVelocityMax(int value) = 0;
+	static int defaultStabilizerVelocityMax();
+
 	virtual int getTabletDriver() const = 0;
 	virtual void setTabletDriver(int value) = 0;
 	static int defaultTabletDriver();
@@ -1524,6 +1555,10 @@ Q_SIGNALS:
 	void changeShowViewModeNotices(bool value);
 	void changeSmoothing(int value);
 	void changeSoundVolume(int value);
+	void changeStabilizerVelocityAdjustment(int value);
+	void changeStabilizerVelocityCurve(const QString &value);
+	void changeStabilizerVelocityEnabled(bool value);
+	void changeStabilizerVelocityMax(int value);
 	void changeTabletDriver(int value);
 	void changeTabletEraserAction(int value);
 	void changeTabletEvents(bool value);

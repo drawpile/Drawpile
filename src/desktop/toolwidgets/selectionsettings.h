@@ -55,6 +55,7 @@ public slots:
 
 signals:
 	void pixelSizeChanged(int size);
+	void stabilizerSettingsRequested();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
@@ -82,6 +83,8 @@ private:
 	QActionGroup *m_stabilizationModeGroup = nullptr;
 	QAction *m_stabilizerAction = nullptr;
 	QAction *m_smoothingAction = nullptr;
+	QAction *m_stabilizerVelocityEnabledAction = nullptr;
+	QAction *m_stabilizerSettingsAction = nullptr;
 	QCheckBox *m_antiAliasCheckBox = nullptr;
 	QCheckBox *m_dragModeCheckBox = nullptr;
 	QWidget *m_magicWandContainer = nullptr;

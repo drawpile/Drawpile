@@ -65,6 +65,7 @@ class Timeline;
 namespace dialogs {
 class DumpPlaybackDialog;
 class HostDialog;
+class InputSettingsDialog;
 class PlaybackDialog;
 class ProjectRecordingSettingsDialog;
 class ServerLogDialog;
@@ -432,6 +433,9 @@ private:
 #endif
 
 	void showSelectionMaskColorPicker();
+
+	void showInputSettingsDialogStabilizerPage();
+	dialogs::InputSettingsDialog *showInputSettingsDialog();
 
 	void readSettings(bool windowpos = true);
 	void restoreSettings(config::Config *cfg);

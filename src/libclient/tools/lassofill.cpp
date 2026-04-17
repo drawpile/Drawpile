@@ -69,7 +69,7 @@ void LassoFillTool::begin(const BeginParams &params)
 		m_owner.setStrokeEngineParams(
 			m_strokeEngine, getEffectiveStabilizerSampleCount(),
 			getEffectiveSmoothing());
-		m_strokeEngine.beginStroke();
+		m_strokeEngine.beginStroke(params.zoom);
 		m_strokeEngine.strokeTo(params.point, drawdance::CanvasState::null());
 	}
 }
