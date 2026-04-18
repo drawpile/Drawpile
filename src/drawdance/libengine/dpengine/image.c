@@ -629,7 +629,6 @@ get_sws_flags_from_interpolation(DP_ImageScaleInterpolation interpolation,
         return SWS_BILINEAR;
     }
 }
-#endif
 
 void DP_image_swscale_pixels_into(SwsContext *sws_context,
                                   const void *src_pixels, int src_width,
@@ -662,6 +661,7 @@ void DP_image_swscale_pixels_into(SwsContext *sws_context,
         ((DP_Pixel8 *)dst_pixels)[i] = pixel;
     }
 }
+#endif
 
 DP_Image *DP_image_scale_pixels(int src_width, int src_height,
                                 const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
