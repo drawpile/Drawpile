@@ -134,7 +134,7 @@
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir Origem de Preenchimento</translation>
     </message>
     <message>
         <location line="-326"/>
@@ -1569,7 +1569,7 @@ Para evitar este passo extra no futuro, use a página Procurar ou uma ligação 
     <message>
         <location line="+6"/>
         <source>Outdated Version</source>
-        <translation type="unfinished">Versão Desatualizada</translation>
+        <translation>Versão Desactualizada</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1685,7 +1685,7 @@ Para evitar este passo extra no futuro, use a página Procurar ou uma ligação 
     <message>
         <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation>Tem alterações não gravadas, gostaria de gravá-las antes de reconectar?</translation>
+        <translation>Tem alterações não gravadas, gostaria de gravar-las antes de restabelecer ligação?</translation>
     </message>
     <message>
         <location line="-2211"/>
@@ -1701,33 +1701,33 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tem alterações não gravadas, gostaria de transferir-las antes de restabelecer ligação?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tem alterações não gravadas, deseja gravar-las antes de restabelecer ligação ou gostaria de estabelecer ligação numa nova janela?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>Não, tentar novamente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Sim, restabelecer ligação</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Transferir</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nova Janela</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -2037,12 +2037,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar como DPCS…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar como ORA…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2672,7 +2672,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Inverter</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2689,25 +2689,25 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Inverter na horizontal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Inverter na vertical</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rodar -90°</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rodar +90°</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -3000,7 +3000,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+8"/>
         <source>Show Censored Layers</source>
-        <translation>Mostrar camadas censuradas</translation>
+        <translation>Mostrar Camadas Censuradas</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3989,7 +3989,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5403,12 +5403,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../dialogs/animationpropertiesdialog.cpp" line="+19"/>
         <source>Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriedades de Animação</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9727,7 +9727,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+13"/>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Notificação</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10725,7 +10725,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>macOS:</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12619,7 +12619,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+77"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 FPS</translation>
     </message>
 </context>
 <context>
@@ -13303,7 +13303,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+7"/>
         <source>Binary</source>
-        <translation type="unfinished"></translation>
+        <translation>Binário</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13490,7 +13490,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Layer is censored and blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada está censurada e bloqueada</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13500,7 +13500,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Layer is blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada está bloqueada</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13545,7 +13545,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar tudo</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13570,7 +13570,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar camadas censuradas</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -13799,7 +13799,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+4"/>
         <source> (on an older version of Drawpile)</source>
         <extracomment>This is appended to the message &quot;%1 joined the session&quot; if the person joining is using a slightly incompatible version of Drawpile.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> (numa versão de Drawpile antiga)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -14412,13 +14412,13 @@ ou em Animação ▸ Nova Trilha.</translation>
     <message>
         <location line="+4"/>
         <source>Outdated</source>
-        <translation type="unfinished"></translation>
+        <translation>Desatualizado</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> | </source>
         <extracomment>Separator for user state, shows up like &quot;Operator | Registered&quot;. Only change this if the vertical line is troublesome in your language, otherwise just leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> | </translation>
     </message>
     <message>
         <location line="-19"/>
