@@ -238,7 +238,7 @@ QString FileWrangler::saveImageAs(
 		if(exported) {
 			extension = preferredExportExtension();
 		} else {
-			extension = preferredSaveExtension();
+			extension = preferredSaveExtension(doc->isProjectRecording());
 		}
 	} else if(exported) {
 		extension = preferredExportExtensionFor(requestedType);
@@ -295,7 +295,7 @@ QString FileWrangler::savePreResetImageAs(
 {
 	QString selectedFilter;
 	QString intendedName;
-	QString extension = preferredSaveExtension();
+	QString extension = preferredSaveExtension(false);
 	QString path = showSaveFileDialog(
 		tr("Save Pre-Reset Image"), LastPath::IMAGE, extension,
 		utils::FileFormatOption::SaveImages, &selectedFilter,
@@ -456,11 +456,11 @@ void FileWrangler::downloadImage(Document *doc) const
 	withFileTypeDialog(
 		getDownloadNameOrUntitled(doc),
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
-		preferredSaveExtension(), doc,
+		preferredSaveExtension(doc->isProjectRecording()), doc,
 		[doc](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
-			QString selectedExt =
-				guessExtension(type, preferredSaveExtension());
+			QString selectedExt = guessExtension(
+				type, preferredSaveExtension(doc->isProjectRecording()));
 			QString filename = name;
 			replaceExtension(filename, selectedExt);
 
@@ -475,11 +475,11 @@ bool FileWrangler::downloadPreResetImage(
 	withFileTypeDialog(
 		getDownloadNameOrUntitled(doc),
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
-		preferredSaveExtension(), doc,
+		preferredSaveExtension(false), doc,
 		[doc, canvasState](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
 			QString selectedExt =
-				guessExtension(type, preferredSaveExtension());
+				guessExtension(type, preferredSaveExtension(false));
 			QString filename = name;
 			replaceExtension(filename, selectedExt);
 
@@ -651,7 +651,8 @@ bool FileWrangler::confirmFlatten(
 						 : tr("Save as %1").arg(format),
 		QMessageBox::AcceptRole);
 
-	DP_SaveImageType replacementType = preferredSaveType();
+	DP_SaveImageType replacementType =
+		preferredSaveType(doc->isProjectRecording());
 	QString replacementExtension = preferredSaveExtensionFor(replacementType);
 	QPushButton *saveReplacementButton = box.addButton(
 		tr("Save as %1").arg(replacementExtension.mid(1).toUpper()),
@@ -826,10 +827,16 @@ DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
 	return type;
 }
 
-DP_SaveImageType FileWrangler::preferredSaveType()
+DP_SaveImageType FileWrangler::preferredSaveType(bool isProjectRecording)
 {
 	QString format = dpAppConfig()->getPreferredSaveFormat();
-	if(format.isEmpty() || format == QStringLiteral("ora")) {
+	if(format.isEmpty()) {
+		if(isProjectRecording) {
+			return DP_SAVE_IMAGE_PROJECT;
+		} else {
+			return DP_SAVE_IMAGE_PROJECT_CANVAS;
+		}
+	} else if(format == QStringLiteral("ora")) {
 		return DP_SAVE_IMAGE_ORA;
 	} else if(format == QStringLiteral("dpcs")) {
 		return DP_SAVE_IMAGE_PROJECT_CANVAS;
@@ -866,9 +873,9 @@ DP_SaveImageType FileWrangler::preferredExportType()
 	}
 }
 
-QString FileWrangler::preferredSaveExtension()
+QString FileWrangler::preferredSaveExtension(bool isProjectRecording)
 {
-	return preferredSaveExtensionFor(preferredSaveType());
+	return preferredSaveExtensionFor(preferredSaveType(isProjectRecording));
 }
 
 QString FileWrangler::preferredSaveExtensionFor(DP_SaveImageType type)

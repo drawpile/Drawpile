@@ -170,9 +170,9 @@ private:
 		const QString &extension);
 
 	static DP_SaveImageType guessType(const QString &intendedName);
-	static DP_SaveImageType preferredSaveType();
+	static DP_SaveImageType preferredSaveType(bool isProjectRecording);
 	static DP_SaveImageType preferredExportType();
-	static QString preferredSaveExtension();
+	static QString preferredSaveExtension(bool isProjectRecording);
 	static QString preferredSaveExtensionFor(DP_SaveImageType type);
 	static QString preferredExportExtension();
 	static QString preferredExportExtensionFor(DP_SaveImageType type);
