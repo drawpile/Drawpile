@@ -1391,7 +1391,7 @@ static bool read_index_offsets(DP_BufferedInput *input, int count,
 static bool read_index_canvas_state(DP_ReadSnapshotContext *c,
                                     unsigned int width, unsigned int height)
 {
-    if (DP_canvas_state_dimensions_in_bounds(width, height)) {
+    if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_error_set("Canvas dimensions %ux%u out of bounds", width, height);
         return false;
     }
