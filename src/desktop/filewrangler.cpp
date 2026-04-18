@@ -295,10 +295,11 @@ QString FileWrangler::savePreResetImageAs(
 {
 	QString selectedFilter;
 	QString intendedName;
+	QString extension = preferredSaveExtension();
 	QString path = showSaveFileDialog(
-		tr("Save Pre-Reset Image"), LastPath::IMAGE, ".ora",
+		tr("Save Pre-Reset Image"), LastPath::IMAGE, extension,
 		utils::FileFormatOption::SaveImages, &selectedFilter,
-		getCurrentPathOrUntitled(doc, QStringLiteral(".ora")), &intendedName);
+		getCurrentPathOrUntitled(doc, extension), &intendedName);
 	DP_SaveImageType type = guessType(intendedName);
 
 	if(!path.isEmpty() && confirmFlatten(doc, path, type)) {
