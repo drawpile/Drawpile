@@ -2,6 +2,29 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>AndroidScalingDialog</name>
+    <message>
+        <location filename="../utils/androidutils.cpp" line="+187"/>
+        <source>Interface scale: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Interface scale: %1 (default)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Show this dialog when Drawpile starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AvatarListModel</name>
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
@@ -240,7 +263,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+67"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
@@ -252,7 +275,7 @@
         <translation>%1 (冲突)</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+87"/>
         <source>Brush</source>
         <translation>笔刷预设</translation>
     </message>
@@ -265,7 +288,7 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+89"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+100"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>
@@ -290,7 +313,7 @@
         <translation>保存操作失败, 但文件可能被部分写入.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Internal error during saving.</source>
         <translation>保存时出现内部错误.</translation>
     </message>
@@ -309,7 +332,7 @@
 <context>
     <name>CanvasShortcutsModel</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="+80"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
@@ -461,13 +484,15 @@
         <translation>未知约束0x%1</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Ratchet Rotate Canvas</source>
+        <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
         <translation>15度增量旋转画布</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Free Rotate Canvas</source>
+        <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
         <translation>自由旋转画布</translation>
     </message>
     <message>
@@ -484,6 +509,41 @@
         <location line="+2"/>
         <source>Change Color Value</source>
         <translation>更改明度</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle Eraser Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle Eraser Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle Alpha Preserve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Hide Docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Trigger Action</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -557,7 +617,7 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
@@ -569,7 +629,7 @@
         <translation>%1 (冲突)</translation>
     </message>
     <message>
-        <location line="+126"/>
+        <location line="+129"/>
         <source>Action</source>
         <translation>动作</translation>
     </message>
@@ -592,7 +652,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1139"/>
+        <location filename="../document.cpp" line="+1224"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -617,7 +677,7 @@
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="+544"/>
+        <location line="+553"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
         <translation>像素转为选区: 当前图层是空的.</translation>
@@ -629,7 +689,12 @@
         <translation>选择像素区域: 当前图层是空的.</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+168"/>
+        <source>Download cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <source>Error saving image</source>
         <translation>保存图片时出现错误</translation>
     </message>
@@ -712,6 +777,14 @@ Select a regular layer instead.</source>
         <location filename="../tools/magicwand.cpp" line="+292"/>
         <source>Selecting…</source>
         <translation>选择…</translation>
+    </message>
+</context>
+<context>
+    <name>ProjectSaver</name>
+    <message>
+        <location filename="../export/projectsaver.cpp" line="+42"/>
+        <source>Autosave cancelled during save</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -800,7 +873,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+121"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+125"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -808,7 +881,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-166"/>
         <source>Shift</source>
         <translation>Shift键</translation>
     </message>
@@ -965,6 +1038,111 @@ Select a regular layer instead.</source>
         <location line="+3"/>
         <source>NSFM</source>
         <translation>不适于未成年人的</translation>
+    </message>
+</context>
+<context>
+    <name>TimelapseSaverRunnable</name>
+    <message>
+        <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
+        <source>Loading project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Calculating…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Finishing up…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Rendering preview…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>Rendering timelapse…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Rendering result…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+392"/>
+        <source>No input path given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>No output path given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Invalid output format %1 given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Invalid framerate %1 given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Invalid animation parameters given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Invalid time given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Invalid frame queue size %1 given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+10"/>
+        <source>Invalid parameter(s):</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Failed to open %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Failed to open temporary file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Error %d opening project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Nothing to play back. You may not have recorded anything to this project file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Error reading playback timing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Failed to start playback.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1171,17 +1349,9 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
-    <name>brushes::BrushPresetModel</name>
-    <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
-        <source>Default</source>
-        <translation>Default</translation>
-    </message>
-</context>
-<context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-128"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1338"/>
         <source>All</source>
         <translation>全部</translation>
     </message>
@@ -1201,22 +1371,7 @@ Select a regular layer instead.</source>
         <translation>显示未添加标签的笔刷.</translation>
     </message>
     <message>
-        <location line="+198"/>
-        <source>Default</source>
-        <translation>Default</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Classic Brush %1</source>
-        <translation>Classic Brush %1</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Converted from %1.</source>
-        <translation>Converted from %1.</translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location line="+108"/>
         <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>无法打开 &apos;%1&apos;.</translation>
@@ -1302,12 +1457,12 @@ Select a regular layer instead.</source>
         <translation>无法导出预设 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
         <translation>无法导出预设图标 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="-433"/>
+        <location line="-432"/>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>无法创建标签&apos;%1&apos;.</translation>
     </message>
@@ -1325,6 +1480,19 @@ Select a regular layer instead.</source>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>无法从笔刷文件&apos;%1&apos;中加载笔刷</translation>
+    </message>
+</context>
+<context>
+    <name>canvas::CanvasModel</name>
+    <message>
+        <location filename="../canvas/canvasmodel.cpp" line="+671"/>
+        <source>Project recording is already active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Playback is active</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1551,72 @@ Select a regular layer instead.</source>
         <location line="+7"/>
         <source>User #%1</source>
         <translation>用户 #%1</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::AnimationExportDialog</name>
+    <message>
+        <location filename="../export/videoformat.cpp" line="+86"/>
+        <source>Frames as PNGs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Frames as PNGs in ZIP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Animated GIF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Animated WEBP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Animated PNG (APNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>MP4 Video (H.264)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>MP4 Video (AV1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>MP4 Video (VP9)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>WEBM Video (VP8)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::settingsdialog::UserInterface</name>
+    <message>
+        <location filename="../utils/androidutils.cpp" line="-12"/>
+        <source>Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Desktop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Mobile</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1462,12 +1696,12 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+724"/>
+        <location filename="../net/client.cpp" line="+735"/>
         <source>%1 banned by %2.</source>
         <translation>%1 已被 %2 禁止IP.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+9"/>
         <source>%1 kicked by %2.</source>
         <translation>%1 已被 %2 踢除.</translation>
     </message>
@@ -1497,7 +1731,7 @@ Select a regular layer instead.</source>
         <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-644"/>
+        <location line="-659"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1537,7 +1771,7 @@ Select a regular layer instead.</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+563"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
@@ -1583,7 +1817,12 @@ Select a regular layer instead.</source>
         <translation>该服务器不支持导入加密的被禁的用户.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation>房间密码已被服务器管理员移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
     </message>
@@ -1756,7 +1995,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+126"/>
+        <location filename="../net/login.cpp" line="+129"/>
         <location line="+752"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
@@ -1779,12 +2018,12 @@ Select a regular layer instead.</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+1254"/>
+        <location line="+1255"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-860"/>
+        <location line="-861"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
@@ -1825,7 +2064,7 @@ Select a regular layer instead.</source>
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+337"/>
+        <location line="+338"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -1886,7 +2125,7 @@ Select a regular layer instead.</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-1169"/>
+        <location line="-1170"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation>已重新定向到一个不接受重新定向的服务器: %1</translation>
     </message>
@@ -1966,7 +2205,7 @@ Select a regular layer instead.</source>
         <translation>未知版本 %1</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+207"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>此类socket不支持 TLS</translation>
@@ -2182,7 +2421,7 @@ Select a regular layer instead.</source>
         <translation>接收数据无效</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+62"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation>Socket 错误 %1: %2</translation>
@@ -2195,9 +2434,123 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
+    <name>project::ProjectRecorder</name>
+    <message>
+        <location filename="../project/projectrecorder.cpp" line="+50"/>
+        <source>Autosave recording already active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Could not find any available autosave path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Could not start autosave recording: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Error removing project file &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+172"/>
+        <source>Error %1 opening project: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 closing project: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 writing to project: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 opening session: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 closing session: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 recording command: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 creating snapshot: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+95"/>
+        <source>Size limit of %1 exceeded</source>
+        <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>project::ProjectWrangler</name>
+    <message>
+        <location filename="../project/projectwrangler.cpp" line="+45"/>
+        <source>Initialization failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Not initialized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <source>Error %d opening project file: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error %d generating project overview: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Unhandled error %d of type %d: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Failed to open &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Failed to open temporary &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>tools::FreehandSettings</name>
     <message>
-        <location filename="../tools/freehand.cpp" line="+146"/>
+        <location filename="../tools/freehand.cpp" line="+145"/>
         <source>Anti-overflow requires a fill source layer.</source>
         <translation>防溢出需要一个填充源图层.</translation>
     </message>
@@ -2321,6 +2674,49 @@ Select a regular layer instead.</source>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
         <translation>服务器可能不支持通过网页浏览器加入.</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::CanvasView</name>
+    <message>
+        <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
+        <source>Vertical flip: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Vertical flip: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Horizontal mirror: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Horizontal mirror: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2220"/>
+        <source>Zoom: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Rotation: %1°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Downloading…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Saving…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
