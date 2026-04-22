@@ -231,12 +231,12 @@
     <message>
         <location line="-58"/>
         <source>Choose an action</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie eine Aktion</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Change…</source>
-        <translation type="unfinished">Ändern…</translation>
+        <translation>Ändern…</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -264,117 +264,117 @@
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+38"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished">Leinwand bewegen</translation>
+        <translation>Leinwand bewegen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished">Leinwand rotieren</translation>
+        <translation>Leinwand rotieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished">Leinwand frei rotieren</translation>
+        <translation>Leinwand frei rotieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished">Leinwand in Schritten rotieren</translation>
+        <translation>Leinwand in Schritten rotieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished">Leinwand zoomen</translation>
+        <translation>Leinwand zoomen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pick Color</source>
-        <translation type="unfinished">Farbpipette</translation>
+        <translation>Farbpipette</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pick Layer</source>
-        <translation type="unfinished">Ebene wählen</translation>
+        <translation>Ebene wählen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished">Pinselgröße ändern</translation>
+        <translation>Pinselgröße ändern</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished">Pinseldeckkraft ändern</translation>
+        <translation>Pinseldeckkraft ändern</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished">Pinselhärte ändern</translation>
+        <translation>Pinselhärte ändern</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished">Farbton ändern</translation>
+        <translation>Farbton ändern</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished">Sättigung ändern</translation>
+        <translation>Sättigung ändern</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Color Value</source>
-        <translation type="unfinished">Helligkeit ändern</translation>
+        <translation>Helligkeit ändern</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Radierwerkzeug umschalten</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished">Radierermodus umschalten</translation>
+        <translation>Radierermodus umschalten</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished">Alphaerhaltung umschalten</translation>
+        <translation>Alphaerhaltung umschalten</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Undo</source>
-        <translation type="unfinished">Rückgängig</translation>
+        <translation>Rückgängig</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Redo</source>
-        <translation type="unfinished">Wiederherstellen</translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hide Docks</source>
-        <translation type="unfinished">Docks ausblenden</translation>
+        <translation>Docks ausblenden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktion ausführen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished">Werkzeug beschränken</translation>
+        <translation>Werkzeug beschränken</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Center Tool</source>
-        <translation type="unfinished">Werkzeug zentrieren</translation>
+        <translation>Werkzeug zentrieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished">Werkzeug beschränken und zentrieren</translation>
+        <translation>Werkzeug beschränken und zentrieren</translation>
     </message>
 </context>
 <context>
@@ -692,12 +692,12 @@
     <message>
         <location line="+9"/>
         <source>Project Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektinformationen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile-Projektdateien</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -732,7 +732,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation type="unfinished"></translation>
+        <translation>Animiertes PNG exportieren</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -742,12 +742,12 @@
     <message>
         <location line="+92"/>
         <source>Export Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsdatei exportieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile-Projekt</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -793,47 +793,47 @@
     <message>
         <location line="+33"/>
         <source>Replace Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt ersetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The project file %1 already exists. Do you want to append to it or replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Projektdatei %1 existiert bereits. Möchten Sie diese erweitern oder ersetzen?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>If you replace the file, any data it contains from past sessions will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Sie die Datei ersetzen, gehen darin Daten von vorherigen Sitzungen verloren.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweitern</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersetzen</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild ersetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Datei %1 existiert bereits, möchten Sie diese ersetzen?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation type="unfinished">Ja, ersetzen</translation>
+        <translation>Ja, ersetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished">Nein, behalten</translation>
+        <translation>Nein, behalten</translation>
     </message>
     <message>
         <location line="+217"/>
@@ -998,7 +998,7 @@
     <message>
         <location line="+17"/>
         <source>More…</source>
-        <translation type="unfinished">Mehr…</translation>
+        <translation>Mehr…</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -1127,7 +1127,7 @@
     <message>
         <location line="+24"/>
         <source>Session Settings</source>
-        <translation type="unfinished">Sitzungseinstellungen</translation>
+        <translation>Sitzungseinstellungen</translation>
     </message>
 </context>
 <context>
@@ -2043,7 +2043,7 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+298"/>
         <source>Selection</source>
-        <translation type="unfinished">Selektion</translation>
+        <translation>Selektion</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -2416,12 +2416,12 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+646"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline tool: select</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstrahlwerkzeug: Auswahl</translation>
     </message>
     <message>
         <location line="+4"/>
