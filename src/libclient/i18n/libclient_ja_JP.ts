@@ -6,22 +6,22 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+187"/>
         <source>Interface scale: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>インターフェーススケール: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>インターフェーススケール: %1(デフォルト)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileの起動時にこのダイアログを表示</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -127,12 +127,12 @@
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation>&lt;strong&gt;アプリ内ブラウザ：&lt;/strong&gt;アプリ内ブラウザーでDrawpileを開いたようです。</translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザ:&lt;/strong&gt;アプリ内ブラウザーでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;%1のアプリ内ブラウザでDrawpileを開いたようです。</translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザー:&lt;/strong&gt;%1のアプリ内ブラウザでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -157,7 +157,7 @@
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt;%1のChromeはDrawpileの実行に問題があります。このブラウザは、実質的にシステムの標準ブラウザ（Safari）と同じ仕組みで動作するため、操作パネル等が画面の外にはみ出してしまう等の表示上の問題が起きることがあります。代わりにシステム標準のブラウザ（Safari）を直接使用することを検討してください。</translation>
+        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt;%1のChromeはDrawpileの実行に問題があります。このブラウザは、実質的にシステムの標準ブラウザ(Safari)と同じ仕組みで動作するため、操作パネル等が画面の外にはみ出してしまう等の表示上の問題が起きることがあります。代わりにシステム標準のブラウザ（Safari）を直接使用することを検討してください。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -426,42 +426,42 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation>キャンバス移動</translation>
+        <translation>キャンバスの移動</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation>キャンバス回転</translation>
+        <translation>キャンバスの回転</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation>キャンバス拡大</translation>
+        <translation>キャンバスの拡大</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation>色抽出</translation>
+        <translation>色の抽出</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation>レイヤー取得</translation>
+        <translation>レイヤーの取得</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation>ブラシサイズ変更</translation>
+        <translation>ブラシサイズの変更</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation>ブラシ透明度を変更</translation>
+        <translation>ブラシの不透明度の変更</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation>ブラシの硬さを変更</translation>
+        <translation>ブラシの硬さの変更</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -476,7 +476,7 @@
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation>制限ツールと中心ツール</translation>
+        <translation>制限と中心ツール</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -498,52 +498,52 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>色相を変更</translation>
+        <translation>色相を変更する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>彩度を変更</translation>
+        <translation>色の彩度(Saturation)を変更する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>色の明るさを変更</translation>
+        <translation>明るさを変更する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>消しゴムツールに切り替え</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>消しゴムモードに切り替え</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値保持の切り替え</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>取り消し</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>やり直し</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>ドックを隠す</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>トリガーアクション</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -691,7 +691,7 @@
     <message>
         <location line="+168"/>
         <source>Download cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロードがキャンセルされました</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -784,7 +784,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/projectsaver.cpp" line="+42"/>
         <source>Autosave cancelled during save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存中に自動保存がキャンセルされました</translation>
     </message>
 </context>
 <context>
@@ -852,7 +852,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation>セッションBAN (%1)</translation>
+        <translation>セッションBan (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1045,104 +1045,104 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
         <source>Loading project…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを読込中…</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>計算中…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Finishing up…</source>
-        <translation type="unfinished"></translation>
+        <translation>最終処理中…</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Rendering preview…</source>
-        <translation type="unfinished"></translation>
+        <translation>プレビューをレンダリング中…</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Rendering timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>タイムラプスをレンダリング中…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rendering result…</source>
-        <translation type="unfinished"></translation>
+        <translation>結果をレンダリング中…</translation>
     </message>
     <message>
         <location line="+392"/>
         <source>No input path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>入力パスが指定されていません.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>出力パスが指定されていません。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な出力形式 %1 が指定されました。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なフレームレート %1 が指定されました。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なアニメーションパラメーターが指定されました。</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な時間が指定されました。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なフレームキューサイズ %1 が指定されました。</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>無効なパラメーター:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to open %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>開くことに失敗 %1: %2</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>一時ファイルを開くことに失敗: %1</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Error %d opening project.</source>
-        <translation type="unfinished"></translation>
+        <translation>ロジェクトを開く際にエラー %d が発生しました。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation type="unfinished"></translation>
+        <translation>再生するものがありません。このプロジェクトファイルには何も記録されていない可能性があります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation type="unfinished"></translation>
+        <translation>再生タイミングの読み取りエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to start playback.</source>
-        <translation type="unfinished"></translation>
+        <translation>再生開始に失敗しました。</translation>
     </message>
 </context>
 <context>
@@ -1487,12 +1487,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+671"/>
         <source>Project recording is already active</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの記録はすでに有効</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中</translation>
     </message>
 </context>
 <context>
@@ -1558,47 +1558,47 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/videoformat.cpp" line="+86"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームをPNGで書き出し</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームをPNGで書き出しZIP圧縮</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションGIF</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションWEBP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated PNG (APNG)</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションPNG(APNG)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (H.264)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 動画 (H.264)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (AV1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 動画 (AV1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (VP9)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 動画 (VP9)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>WEBM Video (VP8)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM 動画 (VP8)</translation>
     </message>
 </context>
 <context>
@@ -1606,17 +1606,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>大きい画面</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>モバイル</translation>
     </message>
 </context>
 <context>
@@ -1690,7 +1690,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation>BAN実行ユーザー</translation>
+        <translation>Ban実行ユーザー</translation>
     </message>
 </context>
 <context>
@@ -1698,7 +1698,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+735"/>
         <source>%1 banned by %2.</source>
-        <translation>%1 は %2 によりBANされた。</translation>
+        <translation>%1 は %2 によりBanされた。</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1774,7 +1774,7 @@ Select a regular layer instead.</source>
         <location line="+563"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
+        <translation>モデレーターのみが通常のBanをエクスポートできます。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1784,12 +1784,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation>暗号化されたBANのエクスポートはこのサーバーで設定されていません。</translation>
+        <translation>暗号化されたBanのエクスポートはこのサーバーで設定されていません。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation>暗号化されたBANのエクスポートはこのサーバーではサポートされていません。</translation>
+        <translation>暗号化されたBanのエクスポートはこのサーバーではサポートされていません。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1809,17 +1809,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation>このサーバーで設定されていない暗号化されたBANをインポートしています。</translation>
+        <translation>このサーバーで設定されていない暗号化されたBanをインポートしています。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation>このサーバーでサポートされていない暗号化されたBANをインポートしています。</translation>
+        <translation>このサーバーでサポートされていない暗号化されたBanをインポートしています。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーでは新規参加のブロックはサポートされていません。代わりにセッションパスワードを設定または変更してください。</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2203,7 +2203,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation>あなたはこのセッションから BAN されました！</translation>
+        <translation>あなたはこのセッションから Ban されました！</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2281,7 +2281,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation>クローズド（ウェブブラウザからの参加不可）</translation>
+        <translation>クローズド (ウェブブラウザからの参加不可)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2438,70 +2438,70 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../project/projectrecorder.cpp" line="+50"/>
         <source>Autosave recording already active</source>
-        <translation type="unfinished"></translation>
+        <translation>自動保存の記録は既に有効</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not find any available autosave path</source>
-        <translation type="unfinished"></translation>
+        <translation>利用可能な自動保存パスが見つかりませんでした</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>自動保存の記録を開始できませんでした: %1</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイル &apos;%1&apos; の削除中にエラー: %2</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを開く際にエラーコード %1 が発生しました: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを閉じる際にエラーが発生 %1: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの書き込み中にエラー %1: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>セッションを開く際にエラー %1 : %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>セッションを閉じる際にエラー %1 : %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>記録コマンドでエラー %1 : %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>スナップショットの作成中にエラー %1 : %2</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>サイズ制限の %1 を超えました</translation>
     </message>
 </context>
 <context>
@@ -2509,42 +2509,42 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../project/projectwrangler.cpp" line="+45"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"></translation>
+        <translation>初期化に失敗</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>初期化されていない</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error %d opening project file: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイル : %s を開く際にエラー %d</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %d generating project overview: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト概要: %s の生成中にエラー %d</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unhandled error %d of type %d: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>未処理のエラー %d タイプ %d: %s</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>開くことに失敗 &apos;%1&apos;:%2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>一時ファイルを開くことに失敗 &apos; %1&apos;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos;から一時ファイル &apos;%2&apos; へのコピーに失敗</translation>
     </message>
 </context>
 <context>
@@ -2681,42 +2681,42 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>上下反転:オン</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>上下反転:オフ</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>水平ミラー:オン</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>水平ミラー:オフ</translation>
     </message>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>拡大率: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>回転: %1°</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロード中…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存中…</translation>
     </message>
 </context>
 </TS>
