@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+187"/>
         <source>Interface scale: %1</source>
-        <translation>インターフェーススケール: %1</translation>
+        <translation>インターフェースの拡大率: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation>インターフェーススケール: %1(デフォルト)</translation>
+        <translation>インターフェースの拡大率: %1(デフォルト)</translation>
     </message>
     <message>
         <location line="+12"/>
