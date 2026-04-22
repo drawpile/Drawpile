@@ -2858,7 +2858,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+47"/>
         <source>Interface scale…</source>
-        <translation>インターフェーススケール…</translation>
+        <translation>インターフェースの拡大率…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3345,7 +3345,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation>ログ ファイルが存在しません。環境設定でログを有効にする必要がありますか?</translation>
+        <translation>ログファイルが存在しません。環境設定でログの保存を有効にしていますか?</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3665,7 +3665,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+306"/>
         <source>Start...</source>
-        <translation>開始...</translation>
+        <translation>スタート...</translation>
     </message>
     <message>
         <location line="+244"/>
@@ -3927,7 +3927,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Dra&amp;w on Selection</source>
-        <translation>選択範囲に描画(&amp;w)</translation>
+        <translation>描画を選択範囲にする(&amp;w)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4308,7 +4308,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation>すべてのブラシ スロットをリセット(&amp;S)</translation>
+        <translation>すべてのブラシスロットをリセット(&amp;S)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7035,7 +7035,7 @@ The brush size should be considerably smaller than the grid scale for best resul
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>256 ピクセル グリッド上の X 座標。 カーソルが X 軸上に移動すると、これは 0 ～ 256 の周りをラップします。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
-ベストな結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
+ベストな結果を得るには、ブラシ のサイズはグリッドスケールよりもかなり小さい必要があります。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7044,7 +7044,7 @@ The brush size should be considerably smaller than the grid scale for best resul
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>256 ピクセル グリッド上の Y 座標。 カーソルがY軸上を移動すると、0-256で折り返します。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
-最良の結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
+最良の結果を得るには、ブラシ のサイズはグリッドスケールよりもかなり小さい必要があります。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9865,7 +9865,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+78"/>
         <source>Start</source>
-        <translation>開始</translation>
+        <translation>スタート</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -10300,7 +10300,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Preview result:</source>
-        <translation>プレビュー結果:</translation>
+        <translation>開始時の結果表示:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10313,12 +10313,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-47"/>
         <source>Flash:</source>
-        <translation>フラッシュ:</translation>
+        <translation>結果表示前のフラッシュ:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Linger result:</source>
-        <translation>残存結果:</translation>
+        <translation>結果を表示する時間:</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -11768,7 +11768,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation>有効にすると、ブラシ スロットの変更がブラシ自体に自動的に保存されます。無効にすると、保存操作をした場合にのみ変更をブラシ自体に保存します。</translation>
+        <translation>有効にすると、ブラシスロットの変更がブラシ自体に自動的に保存されます。無効にすると、保存操作をした場合にのみ変更をブラシ自体に保存します。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11778,7 +11778,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Share one color across all brush slots</source>
-        <translation>すべてのブラシ スロットで 選択している色を共有する</translation>
+        <translation>すべてのブラシスロットで 選択している色を共有する</translation>
     </message>
     <message>
         <location line="-132"/>
@@ -11839,7 +11839,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+26"/>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+122"/>
         <source>Show sampling ring</source>
-        <translation>サンプリングリングを表示</translation>
+        <translation>取得する色をリングで表示</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11866,7 +11866,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+26"/>
         <source>Show %1 brush slot(s)</source>
         <translation>
-            <numerusform>%1 ブラシ スロットを表示</numerusform>
+            <numerusform>%1 ブラシスロットを表示</numerusform>
         </translation>
     </message>
     <message>
@@ -12712,7 +12712,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Download Started</source>
-        <translation>ダウンロードの開始</translation>
+        <translation>ダウンロードを開始</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -14323,7 +14323,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/reference.cpp" line="+27"/>
         <source>Reference</source>
-        <translation>参考</translation>
+        <translation>参考画像</translation>
     </message>
     <message>
         <location line="+15"/>
