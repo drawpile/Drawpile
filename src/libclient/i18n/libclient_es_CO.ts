@@ -6,22 +6,22 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+187"/>
         <source>Interface scale: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala de interfaz: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala de interfaz: %1 (por defecto)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Muestre este cuadro de diálogo cuando Drawpile inicie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -513,37 +513,37 @@
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar la herramienta de borrador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar Modo de Borrador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar Preservar Alfa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshacer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rehacer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Esconder Paneles</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desencadenar Acción</translation>
     </message>
     <message>
         <location line="+2"/>
