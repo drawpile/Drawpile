@@ -12144,7 +12144,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>Mobil</translation>
     </message>
     <message>
         <location line="+11"/>
