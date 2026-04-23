@@ -16,12 +16,12 @@
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Diesen Dialog beim Start von Drawpile anzeigen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -691,7 +691,7 @@
     <message>
         <location line="+168"/>
         <source>Download cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Download abgebrochen</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -784,7 +784,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../export/projectsaver.cpp" line="+42"/>
         <source>Autosave cancelled during save</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung während dem Speichern abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -1048,105 +1048,105 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
         <source>Loading project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Projekt…</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Berechne…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Finishing up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abschließen…</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Rendering preview…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau wird berechnet…</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Rendering timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeiraffer wird berechnet…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rendering result…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ergebnis wird berechnet…</translation>
     </message>
     <message>
         <location line="+392"/>
         <source>No input path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Pfad zur Eingabe gegeben.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Pfad zur Ausgabe gegeben.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiges Ausabeformat %1 gegeben.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Bildrate %1 gegeben.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Animationsparameter gegeben.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Zeit gegeben.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Bildwarteschlangengröße %1 gegeben.</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ungültiger Parameter:</numerusform>
+            <numerusform>Ungültige Parameter:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to open %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnen von %1 fehlgeschlagen: %2</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnen von temporärer Datei fehlgeschlagen: %1</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Error %d opening project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %d beim Öffnen des Projekts.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts zum Abspielen. Sie haben ggf. nichts in dieser Projektdatei aufgenommen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Lesen des Abspiel-Timings.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to start playback.</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen konnte nicht gestartet werden.</translation>
     </message>
 </context>
 <context>
@@ -1491,12 +1491,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+671"/>
         <source>Project recording is already active</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektaufnahme ist bereits aktiv</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen ist aktiv</translation>
     </message>
 </context>
 <context>
@@ -1562,47 +1562,47 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../export/videoformat.cpp" line="+86"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder als PNGs</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder als PNGs in ZIP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Animiertes GIF</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Animiertes WEBP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated PNG (APNG)</source>
-        <translation type="unfinished"></translation>
+        <translation>Animiertes PNG (APNG)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (H.264)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4-Video (H.264)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (AV1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4-Video (AV1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (VP9)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4-Video (VP9)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>WEBM Video (VP8)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM-Video (VP8)</translation>
     </message>
 </context>
 <context>
@@ -1610,17 +1610,17 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamisch</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Desktop</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>Mobil</translation>
     </message>
 </context>
 <context>
