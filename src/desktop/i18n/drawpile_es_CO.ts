@@ -231,7 +231,7 @@
     <message>
         <location line="-58"/>
         <source>Choose an action</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige una acción</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -329,37 +329,37 @@
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar la herramienta de borrador</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished">Alternar Modo de Borrador</translation>
+        <translation>Activar Modo de Borrador</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished">Alternar Preservar Alfa</translation>
+        <translation>Activar Preservar Alfa</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Undo</source>
-        <translation type="unfinished">Deshacer</translation>
+        <translation>Deshacer</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Redo</source>
-        <translation type="unfinished">Rehacer</translation>
+        <translation>Rehacer</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hide Docks</source>
-        <translation type="unfinished">Esconder Herramientas</translation>
+        <translation>Esconder Paneles</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desencadenar Acción</translation>
     </message>
     <message>
         <location line="+5"/>
