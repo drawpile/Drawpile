@@ -692,7 +692,7 @@
     <message>
         <location line="+9"/>
         <source>Project Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información del Proyecto</translation>
     </message>
     <message>
         <location line="+1"/>
