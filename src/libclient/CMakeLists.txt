@@ -76,6 +76,8 @@ target_sources(dpclient PRIVATE
 	drawdance/documentmetadata.h
 	drawdance/eventlog.cpp
 	drawdance/eventlog.h
+	drawdance/filterprops.cpp
+	drawdance/filterprops.h
 	drawdance/geom.cpp
 	drawdance/geom.h
 	drawdance/global.cpp

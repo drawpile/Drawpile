@@ -33,6 +33,7 @@ public:
     QString title() const;
     uint16_t opacity() const;
     int blendMode() const;
+    int filterType() const;
     bool hidden() const;
     bool censoredRemote() const;
     bool censoredLocal() const;

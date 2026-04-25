@@ -22,6 +22,7 @@
 #include "layer_content.h"
 #include "canvas_diff.h"
 #include "draw_context.h"
+#include "filter_props.h"
 #include "image.h"
 #include "layer_list.h"
 #include "layer_props.h"
@@ -1329,14 +1330,12 @@ DP_Tile *DP_layer_content_flatten_tile(DP_LayerContent *lc, int tile_index,
                                    include_sublayers);
 }
 
-DP_TransientTile *
-DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                 DP_TransientTile *tt_or_null, uint16_t opacity,
-                                 int blend_mode, DP_UPixel8 tint, bool censored,
-                                 bool include_sublayers)
+static DP_TransientTile *flatten_tile_to(DP_LayerContent *lc, int tile_index,
+                                         DP_TransientTile *tt_or_null,
+                                         uint16_t opacity, int blend_mode,
+                                         DP_UPixel8 tint, bool censored,
+                                         bool include_sublayers)
 {
-    DP_ASSERT(lc);
-    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_Tile *t = censored
                    ? flatten_censored_tile(lc, tile_index, include_sublayers)
                    : flatten_tile(lc, tile_index, tint, include_sublayers);
@@ -1348,6 +1347,59 @@ DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
     }
     else {
         return tt_or_null;
+    }
+}
+
+static DP_TransientTile *
+flatten_tile_to_filter(DP_LayerContent *lc, DP_FilterProps *fp, int tile_index,
+                       DP_TransientTile *tt_or_null, uint16_t opacity,
+                       int blend_mode, bool censored, bool include_sublayers)
+{
+    if (tt_or_null && !censored) {
+        int filter_blend_mode = DP_blend_mode_filter(blend_mode);
+        bool effective = DP_filter_props_effective(fp);
+        // "Ineffective" filters are filters that don't do anything to the
+        // image. It is only worth bothering with compositing them if they
+        // actually do some interesting blending if the source and destination
+        // are identical. Recolor-esque modes would have no effect.
+        if (effective
+            || DP_blend_mode_has_effect_with_identical_parameters(
+                filter_blend_mode)) {
+            DP_Tile *t = flatten_tile(lc, tile_index, (DP_UPixel8){0},
+                                      include_sublayers);
+            if (t) {
+                DP_TransientTile *filter_tt =
+                    DP_transient_tile_new_transient(tt_or_null, 0u);
+                if (effective) {
+                    DP_filter_props_apply_tile(fp, filter_tt, t);
+                }
+                DP_tile_decref(t);
+
+                DP_Tile *filter_t = DP_transient_tile_persist(filter_tt);
+                DP_TransientTile *tt = DP_transient_tile_merge_nullable(
+                    tt_or_null, filter_t, opacity, filter_blend_mode);
+                DP_tile_decref(filter_t);
+                return tt;
+            }
+        }
+    }
+    return tt_or_null;
+}
+
+DP_TransientTile *DP_layer_content_flatten_tile_to(
+    DP_LayerContent *lc, DP_FilterProps *fp, int tile_index,
+    DP_TransientTile *tt_or_null, uint16_t opacity, int blend_mode,
+    DP_UPixel8 tint, bool censored, bool include_sublayers)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    if (fp) {
+        return flatten_tile_to_filter(lc, fp, tile_index, tt_or_null, opacity,
+                                      blend_mode, censored, include_sublayers);
+    }
+    else {
+        return flatten_tile_to(lc, tile_index, tt_or_null, opacity, blend_mode,
+                               tint, censored, include_sublayers);
     }
 }
 

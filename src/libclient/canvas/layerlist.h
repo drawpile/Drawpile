@@ -40,6 +40,9 @@ struct LayerListItem {
 	//! Blending mode
 	DP_BlendMode blend;
 
+	//! Filter or 0 for none.
+	int filterType;
+
 	//! Sketch mode opacity
 	float sketchOpacity;
 

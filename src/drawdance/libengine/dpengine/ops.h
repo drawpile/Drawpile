@@ -189,5 +189,8 @@ DP_CanvasState *DP_ops_sync_selection_tile(DP_CanvasState *cs,
                                            int selection_id, int index,
                                            DP_Tile *tile_or_null);
 
+DP_CanvasState *DP_ops_filter_attributes(DP_CanvasState *cs, int layer_id,
+                                         const unsigned char *data,
+                                         size_t size);
 
 #endif

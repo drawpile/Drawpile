@@ -25,6 +25,7 @@
 #include "canvas_state.h"
 #include "document_metadata.h"
 #include "draw_context.h"
+#include "filter_props.h"
 #include "image.h"
 #include "key_frame.h"
 #include "layer_content.h"
@@ -2152,5 +2153,29 @@ DP_CanvasState *DP_ops_sync_selection_tile(DP_CanvasState *cs,
     DP_TransientLayerContent *tlc =
         DP_layer_routes_sel_entry_transient_content(&lrse, tcs);
     DP_transient_layer_content_tile_set_noinc(tlc, tile_or_null, index);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_filter_attributes(DP_CanvasState *cs, int layer_id,
+                                         const unsigned char *data, size_t size)
+{
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    if (!lre) {
+        DP_error_set("Filter attributes: layer id %d not found", layer_id);
+        return NULL;
+    }
+    else if (DP_layer_routes_entry_is_group(lre)) {
+        DP_error_set("Filter attributes: layer %d is a group", layer_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientLayerProps *tlp = get_layer_props(tcs, lre, 0);
+
+    // May deserialize to NULL, in which case this will clear the filter.
+    DP_FilterProps *fp = DP_filter_props_deserialize(data, size);
+    DP_transient_layer_props_filter_props_set_noinc(tlp, fp);
+
     return DP_transient_canvas_state_persist(tcs);
 }

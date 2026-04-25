@@ -492,6 +492,7 @@ static LayerListItem makeItem(
 		QColor(),
 		float(lp.opacity()) / float(DP_BIT15),
 		DP_BlendMode(lp.blendMode()),
+		lp.filterType(),
 		float(lp.sketchOpacity()) / float(DP_BIT15),
 		QColor::fromRgba(lp.sketchTint()),
 		lp.hidden(),
@@ -1316,9 +1317,9 @@ LayerListItem LayerListItem::null()
 {
 	return LayerListItem{
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
-		0.0f,  QColor(),  false,	false, false,
+		0,	   0.0f,	  QColor(), false, false,
 		false, false,	  false,	false, false,
-		0,	   0,		  0,		0,
+		false, 0,		  0,		0,	   0,
 	};
 }
 

@@ -127,6 +127,7 @@ typedef enum DP_MessageType {
     DP_MSG_CANVAS_BACKGROUND_ZSTD = 180,
     DP_MSG_MOVE_RECT_ZSTD = 181,
     DP_MSG_TRANSFORM_REGION_ZSTD = 182,
+    DP_MSG_FILTER_ATTRIBUTES = 183,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -3383,6 +3384,44 @@ DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
                                                DP_TextReader *reader);
 
 DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg);
+
+
+/*
+ * DP_MSG_FILTER_ATTRIBUTES
+ *
+ * Sets a filter on the given layer. The actual details of the filter are
+ * serialized into the data field. If a client doesn't understand the
+ * filter, it will still store the serialized data for the sake of resets.
+ */
+
+#define DP_MSG_FILTER_ATTRIBUTES_STATIC_LENGTH 3
+
+#define DP_MSG_FILTER_ATTRIBUTES_DATA_MIN_SIZE 0
+#define DP_MSG_FILTER_ATTRIBUTES_DATA_MAX_SIZE 65532
+
+typedef struct DP_MsgFilterAttributes DP_MsgFilterAttributes;
+
+DP_Message *
+DP_msg_filter_attributes_new(unsigned int context_id, uint32_t id,
+                             void (*set_data)(size_t, unsigned char *, void *),
+                             size_t data_size, void *data_user);
+
+DP_Message *DP_msg_filter_attributes_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
+
+DP_Message *DP_msg_filter_attributes_parse(unsigned int context_id,
+                                           DP_TextReader *reader);
+
+DP_MsgFilterAttributes *DP_msg_filter_attributes_cast(DP_Message *msg);
+
+uint32_t DP_msg_filter_attributes_id(const DP_MsgFilterAttributes *mfa);
+
+const unsigned char *
+DP_msg_filter_attributes_data(const DP_MsgFilterAttributes *mfa,
+                              size_t *out_size);
+
+size_t DP_msg_filter_attributes_data_size(const DP_MsgFilterAttributes *mfa);
 
 
 /*

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
+#include <dpengine/filter_props.h>
 #include <dpengine/layer_props.h>
 }
-
 #include "libclient/drawdance/layerprops.h"
 #include "libclient/drawdance/layerpropslist.h"
 #include "libshared/util/qtcompat.h"
@@ -86,6 +85,12 @@ uint16_t LayerProps::opacity() const
 int LayerProps::blendMode() const
 {
     return DP_layer_props_blend_mode(m_data);
+}
+
+int LayerProps::filterType() const
+{
+	DP_FilterProps *fp = DP_layer_props_filter_props_noinc(m_data);
+    return fp ? DP_filter_props_type(fp) : 0;
 }
 
 bool LayerProps::hidden() const

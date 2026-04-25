@@ -91,6 +91,14 @@ Message makeFillRectMessage(
 		DP_msg_fill_rect_new(contextId, layer, mode, x, y, w, h, color.rgba()));
 }
 
+Message makeFilterAttributesMessage(
+	uint8_t contextId, uint32_t id, const QByteArray &data)
+{
+	return Message::noinc(DP_msg_filter_attributes_new(
+		contextId, id, Message::setUchars, data.size(),
+		const_cast<char *>(data.data())));
+}
+
 Message makeInternalCatchupMessage(uint8_t contextId, int progress)
 {
 	return Message::noinc(DP_msg_internal_catchup_new(contextId, progress));

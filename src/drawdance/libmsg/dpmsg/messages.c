@@ -137,6 +137,7 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_CANVAS_BACKGROUND_ZSTD:
     case DP_MSG_MOVE_RECT_ZSTD:
     case DP_MSG_TRANSFORM_REGION_ZSTD:
+    case DP_MSG_FILTER_ATTRIBUTES:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -375,6 +376,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "moverectzstd";
     case DP_MSG_TRANSFORM_REGION_ZSTD:
         return "transformregionzstd";
+    case DP_MSG_FILTER_ATTRIBUTES:
+        return "filterattributes";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -537,6 +540,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_MOVE_RECT_ZSTD";
     case DP_MSG_TRANSFORM_REGION_ZSTD:
         return "DP_MSG_TRANSFORM_REGION_ZSTD";
+    case DP_MSG_FILTER_ATTRIBUTES:
+        return "DP_MSG_FILTER_ATTRIBUTES";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -747,6 +752,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "transformregionzstd")) {
         return DP_MSG_TRANSFORM_REGION_ZSTD;
     }
+    else if (DP_str_equal(type_name, "filterattributes")) {
+        return DP_MSG_FILTER_ATTRIBUTES;
+    }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
     }
@@ -805,6 +813,7 @@ bool DP_message_dirties_canvas(DP_Message *msg)
     case DP_MSG_CANVAS_BACKGROUND_ZSTD:
     case DP_MSG_MOVE_RECT_ZSTD:
     case DP_MSG_TRANSFORM_REGION_ZSTD:
+    case DP_MSG_FILTER_ATTRIBUTES:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -1008,6 +1017,9 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         case DP_MSG_TRANSFORM_REGION_ZSTD:
             return DP_msg_transform_region_zstd_deserialize(context_id, buf,
                                                             length);
+        case DP_MSG_FILTER_ATTRIBUTES:
+            return DP_msg_filter_attributes_deserialize(context_id, buf,
+                                                        length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
         default:
@@ -1264,6 +1276,10 @@ DP_Message *DP_message_deserialize_body_compat(int type,
             DP_error_set("Can't deserialize incompatible message type 182 "
                          "DP_MSG_TRANSFORM_REGION_ZSTD");
             return NULL;
+        case DP_MSG_FILTER_ATTRIBUTES:
+            DP_error_set("Can't deserialize incompatible message type 183 "
+                         "DP_MSG_FILTER_ATTRIBUTES");
+            return NULL;
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize_compat(context_id, buf, length);
         default:
@@ -1453,6 +1469,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_move_rect_zstd_parse(context_id, reader);
     case DP_MSG_TRANSFORM_REGION_ZSTD:
         return DP_msg_transform_region_zstd_parse(context_id, reader);
+    case DP_MSG_FILTER_ATTRIBUTES:
+        return DP_msg_filter_attributes_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -12957,6 +12975,134 @@ DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
 DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_TRANSFORM_REGION_ZSTD);
+}
+
+
+/* DP_MSG_FILTER_ATTRIBUTES */
+
+struct DP_MsgFilterAttributes {
+    uint32_t id;
+    uint16_t data_size;
+    unsigned char data[];
+};
+
+static size_t msg_filter_attributes_payload_length(DP_Message *msg)
+{
+    DP_MsgFilterAttributes *mfa = DP_message_internal(msg);
+    return ((size_t)3) + mfa->data_size;
+}
+
+static size_t msg_filter_attributes_serialize_payload(DP_Message *msg,
+                                                      unsigned char *data)
+{
+    DP_MsgFilterAttributes *mfa = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint24(mfa->id, data + written);
+    written += write_bytes(mfa->data, mfa->data_size, data + written);
+    DP_ASSERT(written == msg_filter_attributes_payload_length(msg));
+    return written;
+}
+
+static bool msg_filter_attributes_write_payload_text(DP_Message *msg,
+                                                     DP_TextWriter *writer)
+{
+    DP_MsgFilterAttributes *mfa = DP_message_internal(msg);
+    return DP_text_writer_write_base64(writer, "data", mfa->data,
+                                       mfa->data_size)
+        && DP_text_writer_write_uint(writer, "id", mfa->id);
+}
+
+static bool msg_filter_attributes_equals(DP_Message *DP_RESTRICT msg,
+                                         DP_Message *DP_RESTRICT other)
+{
+    DP_MsgFilterAttributes *a = DP_message_internal(msg);
+    DP_MsgFilterAttributes *b = DP_message_internal(other);
+    return a->id == b->id && a->data_size == b->data_size
+        && memcmp(a->data, b->data, DP_uint16_to_size(a->data_size)) == 0;
+}
+
+static const DP_MessageMethods msg_filter_attributes_methods = {
+    msg_filter_attributes_payload_length,
+    msg_filter_attributes_serialize_payload,
+    msg_filter_attributes_payload_length,
+    msg_filter_attributes_serialize_payload,
+    msg_filter_attributes_write_payload_text,
+    msg_filter_attributes_equals,
+};
+
+DP_Message *
+DP_msg_filter_attributes_new(unsigned int context_id, uint32_t id,
+                             void (*set_data)(size_t, unsigned char *, void *),
+                             size_t data_size, void *data_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_FILTER_ATTRIBUTES, context_id, &msg_filter_attributes_methods,
+        DP_FLEX_SIZEOF(DP_MsgFilterAttributes, data, data_size));
+    DP_MsgFilterAttributes *mfa = DP_message_internal(msg);
+    mfa->id = id;
+    mfa->data_size = DP_size_to_uint16(data_size);
+    if (set_data) {
+        set_data(mfa->data_size, mfa->data, data_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_filter_attributes_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    if (length < 3 || length > 65535) {
+        DP_error_set("Wrong length for filterattributes message; "
+                     "expected between 3 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint32_t id = read_uint24(buffer + read, &read);
+    size_t data_bytes = length - read;
+    uint16_t data_size = DP_size_to_uint16(data_bytes);
+    void *data_user = (void *)(buffer + read);
+    return DP_msg_filter_attributes_new(context_id, id, read_bytes, data_size,
+                                        data_user);
+}
+
+DP_Message *DP_msg_filter_attributes_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint32_t id =
+        (uint32_t)DP_text_reader_get_ulong(reader, "id", DP_UINT24_MAX);
+    size_t data_size;
+    DP_TextReaderParseParams data_params =
+        DP_text_reader_get_base64_string(reader, "data", &data_size);
+    return DP_msg_filter_attributes_new(
+        context_id, id, DP_text_reader_parse_base64, data_size, &data_params);
+}
+
+DP_MsgFilterAttributes *DP_msg_filter_attributes_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_FILTER_ATTRIBUTES);
+}
+
+uint32_t DP_msg_filter_attributes_id(const DP_MsgFilterAttributes *mfa)
+{
+    DP_ASSERT(mfa);
+    return mfa->id;
+}
+
+const unsigned char *
+DP_msg_filter_attributes_data(const DP_MsgFilterAttributes *mfa,
+                              size_t *out_size)
+{
+    DP_ASSERT(mfa);
+    if (out_size) {
+        *out_size = mfa->data_size;
+    }
+    return mfa->data;
+}
+
+size_t DP_msg_filter_attributes_data_size(const DP_MsgFilterAttributes *mfa)
+{
+    return mfa->data_size;
 }
 
 

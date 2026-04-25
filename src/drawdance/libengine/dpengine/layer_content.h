@@ -27,6 +27,7 @@
 typedef struct DP_BrushStamp DP_BrushStamp;
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_CanvasState DP_CanvasState;
+typedef struct DP_FilterProps DP_FilterProps;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
@@ -162,11 +163,10 @@ DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc);
 DP_Tile *DP_layer_content_flatten_tile(DP_LayerContent *lc, int tile_index,
                                        bool censored, bool include_sublayers);
 
-DP_TransientTile *
-DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                 DP_TransientTile *tt_or_null, uint16_t opacity,
-                                 int blend_mode, DP_UPixel8 tint, bool censored,
-                                 bool include_sublayers);
+DP_TransientTile *DP_layer_content_flatten_tile_to(
+    DP_LayerContent *lc, DP_FilterProps *fp, int tile_index,
+    DP_TransientTile *tt_or_null, uint16_t opacity, int blend_mode,
+    DP_UPixel8 tint, bool censored, bool include_sublayers);
 
 void DP_layer_content_flatten_pixel(DP_LayerContent *lc, int x, int y,
                                     DP_Pixel15 *pixel, uint16_t opacity,

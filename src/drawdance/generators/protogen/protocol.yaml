@@ -1517,6 +1517,19 @@ TransformRegionZstd:
     alias: TransformRegion
     incompatible: true
 
+FilterAttributes:
+    id: 183
+    dirties_canvas: true
+    comment: |
+        Sets a filter on the given layer. The actual details of the filter are
+        serialized into the data field. If a client doesn't understand the
+        filter, it will still store the serialized data for the sake of resets.
+        If the data is empty, the filter will be cleared from the layer.
+    incompatible: true
+    fields:
+        - id u24
+        - data bytes
+
 Undo:
     id: 255
     dirties_canvas: true

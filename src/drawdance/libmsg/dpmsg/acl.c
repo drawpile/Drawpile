@@ -1341,6 +1341,12 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             || DP_msg_sync_selection_tile_user(DP_message_internal(msg))
                    == user_id
             || DP_acl_state_is_op(acls, user_id);
+    case DP_MSG_FILTER_ATTRIBUTES:
+        return override
+            || can_edit_layer_props(
+                   acls, user_id,
+                   DP_protocol_to_layer_id(
+                       DP_msg_filter_attributes_id(DP_message_internal(msg))));
     case DP_MSG_UNDO:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_UNDO, user_id);

@@ -16,6 +16,8 @@ dp_target_sources(dpengine
     dpengine/document_metadata.c
     dpengine/draw_context.c
     dpengine/dump_reader.c
+    dpengine/filter_hsx_adjust.c
+    dpengine/filter_props.c
     dpengine/flood_fill.c
     dpengine/image.c
     dpengine/image_transform.c
@@ -62,6 +64,8 @@ dp_target_sources(dpengine
     dpengine/document_metadata.h
     dpengine/draw_context.h
     dpengine/dump_reader.h
+    dpengine/filter_hsx_adjust.h
+    dpengine/filter_props.h
     dpengine/flood_fill.h
     dpengine/image.h
     dpengine/image_transform.h

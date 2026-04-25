@@ -5,6 +5,7 @@
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/config/config.h"
+#include "libclient/drawdance/filterprops.h"
 #include "libclient/net/message.h"
 #include "ui_layerproperties.h"
 #include <QButtonGroup>
@@ -114,9 +115,9 @@ void LayerProperties::setNewLayerItem(
 	QScopedValueRollback<bool> rollback(m_updating, true);
 	m_item = {
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
-		0.0f,  QColor(),  false,	false, false,
-		false, group,	  false,	false, group,
-		0,	   0,		  0,		0,
+		0,	   0.0f,	  QColor(), false, false,
+		false, false,	  group,	false, false,
+		group, 0,		  0,		0,	   0,
 	};
 	m_selectedId = selectedId;
 	m_wasDefault = false;
@@ -491,6 +492,13 @@ void LayerProperties::emitChanges()
 	if(m_ui->defaultLayer->isEnabled() && makeDefault != m_wasDefault) {
 		messages.append(
 			net::makeDefaultLayerMessage(m_user, makeDefault ? m_item.id : 0));
+	}
+
+	if(!m_item.group) {
+		messages.append(net::makeFilterAttributesMessage(
+			m_user, m_item.id,
+			drawdance::FilterProps::makeHsvAdjust(0.0f, 1.0f, 1.0f)
+				.serialize()));
 	}
 
 	if(!messages.isEmpty()) {

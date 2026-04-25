@@ -51,6 +51,9 @@ Message makeFillRectMessage(
 	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QColor &color);
 
+Message makeFilterAttributesMessage(
+	uint8_t contextId, uint32_t id, const QByteArray &data);
+
 Message makeInternalCatchupMessage(uint8_t contextId, int progress);
 
 Message makeInternalCleanupMessage(uint8_t contextId);
