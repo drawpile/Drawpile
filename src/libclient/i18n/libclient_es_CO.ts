@@ -680,7 +680,7 @@
         <location line="+553"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Capa a selección: la capa actual está vacía.</translation>
     </message>
     <message>
         <location line="+4"/>
