@@ -545,6 +545,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         return make_selections(
             DP_uint_to_uint8(DP_message_context_id(msg)),
             DP_msg_sync_selection_tile_selection_id(DP_message_internal(msg)));
+    case DP_MSG_FILTER_ATTRIBUTES:
+        return make_layer_attrs(DP_protocol_to_layer_id(
+            DP_msg_filter_attributes_id(DP_message_internal(msg))));
     case DP_MSG_UNDO:
         return make_user_attrs();
     default:

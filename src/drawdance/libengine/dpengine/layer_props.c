@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "layer_props.h"
+#include "filter_props.h"
 #include "layer_props_list.h"
 #include "pixels.h"
 #include "text.h"
@@ -45,6 +46,7 @@ struct DP_LayerProps {
     const int id;
     const int blend_mode;
     DP_Text *const title;
+    DP_FilterProps *const filter_props;
     struct {
         DP_LayerPropsList *const children;
     };
@@ -65,6 +67,7 @@ struct DP_TransientLayerProps {
     int id;
     int blend_mode;
     DP_Text *title;
+    DP_FilterProps *filter_props;
     union {
         DP_LayerPropsList *children;
         DP_TransientLayerPropsList *transient_children;
@@ -88,6 +91,7 @@ struct DP_LayerProps {
     int id;
     int blend_mode;
     DP_Text *title;
+    DP_FilterProps *filter_props;
     union {
         DP_LayerPropsList *children;
         DP_TransientLayerPropsList *transient_children;
@@ -116,6 +120,7 @@ void DP_layer_props_decref(DP_LayerProps *lp)
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
     if (DP_atomic_dec(&lp->refcount)) {
         DP_layer_props_list_decref_nullable(lp->children);
+        DP_filter_props_decref_nullable(lp->filter_props);
         DP_text_decref_nullable(lp->title);
         DP_free(lp);
     }
@@ -255,6 +260,13 @@ const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length)
     return DP_text_string(lp->title, out_length);
 }
 
+DP_FilterProps *DP_layer_props_filter_props_noinc(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->filter_props;
+}
+
 DP_LayerPropsList *DP_layer_props_children_noinc(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
@@ -272,7 +284,9 @@ bool DP_layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp)
                    != DP_layer_props_censored_any(prev_lp)
             || lp->isolated != prev_lp->isolated || lp->clip != prev_lp->clip
             || lp->sketch_opacity != prev_lp->sketch_opacity
-            || lp->sketch_tint != prev_lp->sketch_tint);
+            || lp->sketch_tint != prev_lp->sketch_tint
+            || DP_filter_props_differ_nullable(lp->filter_props,
+                                               prev_lp->filter_props));
 }
 
 
@@ -294,6 +308,7 @@ static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
         lp->id,
         lp->blend_mode,
         DP_text_incref_nullable(lp->title),
+        DP_filter_props_incref_nullable(lp->filter_props),
         {NULL},
     };
     return tlp;
@@ -359,6 +374,7 @@ DP_transient_layer_props_new_init_with_transient_children_noinc(
         0,
         layer_id,
         DP_BLEND_MODE_NORMAL,
+        NULL,
         NULL,
         {.transient_children = tlpl_or_null},
     };
@@ -509,6 +525,15 @@ const char *DP_transient_layer_props_title(DP_TransientLayerProps *tlp,
     return DP_layer_props_title((DP_LayerProps *)tlp, out_length);
 }
 
+DP_FilterProps *
+DP_transient_layer_props_filter_props_noinc(DP_TransientLayerProps *tlp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    return DP_layer_props_filter_props_noinc((DP_LayerProps *)tlp);
+}
+
 DP_LayerPropsList *
 DP_transient_layer_props_children_noinc(DP_TransientLayerProps *tlp)
 {
@@ -644,4 +669,14 @@ void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
     DP_ASSERT(tlp->transient);
     DP_text_decref_nullable(tlp->title);
     tlp->title = DP_text_new(title, length);
+}
+
+void DP_transient_layer_props_filter_props_set_noinc(
+    DP_TransientLayerProps *tlp, DP_FilterProps *fp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    DP_filter_props_decref_nullable(tlp->filter_props);
+    tlp->filter_props = fp;
 }

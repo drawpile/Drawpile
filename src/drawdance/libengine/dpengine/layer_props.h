@@ -23,6 +23,7 @@
 #define DPENGINE_LAYER_PROPS_H
 #include <dpcommon/common.h>
 
+typedef struct DP_FilterProps DP_FilterProps;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_LayerProps DP_LayerProps;
@@ -81,6 +82,8 @@ bool DP_layer_props_censored_any(DP_LayerProps *lp);
 
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length);
 
+DP_FilterProps *DP_layer_props_filter_props_noinc(DP_LayerProps *lp);
+
 // Will return NULL if this is not a group.
 DP_LayerPropsList *DP_layer_props_children_noinc(DP_LayerProps *lp);
 
@@ -137,6 +140,9 @@ bool DP_transient_layer_props_visible(DP_TransientLayerProps *tlp);
 const char *DP_transient_layer_props_title(DP_TransientLayerProps *tlp,
                                            size_t *out_length);
 
+DP_FilterProps *
+DP_transient_layer_props_filter_props_noinc(DP_TransientLayerProps *tlp);
+
 // Will return NULL if this is not a group.
 DP_LayerPropsList *
 DP_transient_layer_props_children_noinc(DP_TransientLayerProps *tlp);
@@ -179,5 +185,7 @@ void DP_transient_layer_props_alpha_lock_set(DP_TransientLayerProps *tlp,
 void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
                                         const char *title, size_t length);
 
+void DP_transient_layer_props_filter_props_set_noinc(
+    DP_TransientLayerProps *tlp, DP_FilterProps *fp);
 
 #endif

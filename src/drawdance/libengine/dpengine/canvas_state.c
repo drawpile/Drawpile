@@ -1530,6 +1530,20 @@ static DP_CanvasState *handle_sync_selection_tile(DP_CanvasState *cs,
     return DP_ops_sync_selection_tile(cs, context_id, selection_id, index, t);
 }
 
+static DP_CanvasState *handle_filter_attributes(DP_CanvasState *cs,
+                                                DP_MsgFilterAttributes *mfa)
+{
+    int layer_id = DP_protocol_to_layer_id(DP_msg_filter_attributes_id(mfa));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Filter attributes: layer id %d is invalid", layer_id);
+        return NULL;
+    }
+
+    size_t size;
+    const unsigned char *data = DP_msg_filter_attributes_data(mfa, &size);
+    return DP_ops_filter_attributes(cs, layer_id, data, size);
+}
+
 static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
                               DP_UserCursors *ucs_or_null, DP_Message *msg,
                               DP_MessageType type)
@@ -1640,6 +1654,8 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
             cs, dc, ucs_or_null, DP_message_context_id(msg),
             DP_message_internal(msg),
             DP_image_new_from_alpha_mask_delta_zstd8le);
+    case DP_MSG_FILTER_ATTRIBUTES:
+        return handle_filter_attributes(cs, DP_message_internal(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;

@@ -174,6 +174,13 @@ bool DP_blend_mode_compares_alpha(int blend_mode);
 
 bool DP_blend_mode_direct_only(int blend_mode);
 
+// Whether the blend mode causes a different result if given an identical source
+// and destination. For example, Recolor and friends make no difference because
+// it just interpolates between identical color channels. The Hue, Saturation,
+// Luminosity and Color modes also don't have an effect. This used to skip
+// blending ineffective filter layers.
+bool DP_blend_mode_has_effect_with_identical_parameters(int blend_mode);
+
 DP_BlendMode DP_blend_mode_by_ora_name(const char *svg_name,
                                        DP_BlendMode not_found_value);
 
@@ -196,6 +203,8 @@ DP_INLINE int DP_blend_mode_clip(int blend_mode, bool clip)
 {
     return clip ? DP_blend_mode_to_alpha_preserving(blend_mode) : blend_mode;
 }
+
+int DP_blend_mode_filter(int blend_mode);
 
 bool DP_blend_mode_compatible(int blend_mode, bool mypaint);
 

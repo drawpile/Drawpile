@@ -554,8 +554,8 @@ DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
             bool censored =
                 pass_through_censored || DP_layer_props_censored_any(lp);
             return DP_layer_content_flatten_tile_to(
-                lle->content, tile_index, tt, vmr.opacity,
-                DP_blend_mode_clip(vmr.blend_mode, clip),
+                lle->content, DP_layer_props_filter_props_noinc(lp), tile_index,
+                tt, vmr.opacity, DP_blend_mode_clip(vmr.blend_mode, clip),
                 vmr.tint.a == 0 ? parent_tint : vmr.tint, censored,
                 include_sublayers);
         }

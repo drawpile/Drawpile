@@ -897,6 +897,30 @@ bool DP_blend_mode_direct_only(int blend_mode)
     }
 }
 
+bool DP_blend_mode_has_effect_with_identical_parameters(int blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_RECOLOR:
+    case DP_BLEND_MODE_DARKEN:
+    case DP_BLEND_MODE_LIGHTEN:
+    case DP_BLEND_MODE_HUE:
+    case DP_BLEND_MODE_SATURATION:
+    case DP_BLEND_MODE_LUMINOSITY:
+    case DP_BLEND_MODE_COLOR:
+    case DP_BLEND_MODE_DARKER_COLOR:
+    case DP_BLEND_MODE_LIGHTER_COLOR:
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_WASH:
+    case DP_BLEND_MODE_GREATER:
+    case DP_BLEND_MODE_GREATER_WASH:
+    case DP_BLEND_MODE_PIGMENT:
+    case DP_BLEND_MODE_OKLAB_RECOLOR:
+        return false;
+    default:
+        return true;
+    }
+}
+
 static DP_BlendMode blend_mode_by_fallback_name(const char *name,
                                                 DP_BlendMode not_found_value)
 {
@@ -1363,6 +1387,20 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_OKLAB_RECOLOR;
     default:
         return blend_mode;
+    }
+}
+
+int DP_blend_mode_filter(int blend_mode)
+{
+    int filter_blend_mode = DP_blend_mode_to_alpha_preserving(blend_mode);
+    // The result might not actually preserve alpha, e.g. Erase. Filters really
+    // need a preserving blend mode though, so we punt them to Recolor if they
+    // use an invalid mode. The user should never be able to set those anyway.
+    if (DP_blend_mode_preserves_alpha(filter_blend_mode)) {
+        return filter_blend_mode;
+    }
+    else {
+        return DP_BLEND_MODE_RECOLOR;
     }
 }
 

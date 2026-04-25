@@ -123,7 +123,12 @@ void LayerListDelegate::paint(
 	if(!opt.state.testFlag(QStyle::State_Selected)) {
 		drawBackgroundFor(painter, opt, index, textRect, 0, 0);
 	}
-	drawDisplay(painter, opt, textRect, layer.title);
+
+	QString title = layer.title;
+	if(layer.filterType != 0) {
+		title.prepend(QStringLiteral("%1: ").arg(layer.filterType));
+	}
+	drawDisplay(painter, opt, textRect, title);
 }
 
 bool LayerListDelegate::editorEvent(
