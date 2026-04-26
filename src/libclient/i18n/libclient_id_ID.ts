@@ -446,7 +446,7 @@
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation>Ambil Lapisan</translation>
+        <translation>Pilih Lapisan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -471,12 +471,12 @@
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation>Pusatkan Alat</translation>
+        <translation>Tengahkan Alat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation>Batasi dan Pusatkan Alat</translation>
+        <translation>Batasi dan Tengahkan Alat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -513,37 +513,37 @@
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktifkan/Nonaktifkan Alat Penghapus</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktifkan/Nonaktifkan Mode Penghapus</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktifkan/Nonaktifkan Pertahankan Alfa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Batalkan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Ulangi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sembunyikan Dok</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Picu Tindakan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1616,7 +1616,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>Mobile</translation>
     </message>
 </context>
 <context>
