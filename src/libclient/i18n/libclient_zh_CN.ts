@@ -6,22 +6,22 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+187"/>
         <source>Interface scale: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>界面缩放：%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>界面缩放：%1（默认）</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 启动时显示此对话框</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
@@ -451,17 +451,17 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation>改变笔刷大小</translation>
+        <translation>更改画笔大小</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation>改变笔刷不透明度</translation>
+        <translation>更改画笔不透明度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation>改变笔刷硬度</translation>
+        <translation>更改画笔硬度</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -487,7 +487,7 @@
         <location line="+4"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation>15度增量旋转画布</translation>
+        <translation>棘轮式旋转画布</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -508,42 +508,42 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>更改明度</translation>
+        <translation>更改透明度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>切换橡皮擦工具</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>切换橡皮擦模式</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>切换 Alpha 保护</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>重做</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏面板</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>触发动作</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -691,7 +691,7 @@
     <message>
         <location line="+168"/>
         <source>Download cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>下载已取消</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -784,7 +784,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/projectsaver.cpp" line="+42"/>
         <source>Autosave cancelled during save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存过程中自动保存功能已取消</translation>
     </message>
 </context>
 <context>
@@ -1606,17 +1606,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>动态</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>桌面</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>移动</translation>
     </message>
 </context>
 <context>
@@ -2681,22 +2681,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转：开启</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转：关闭</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转：开启</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转：关闭</translation>
     </message>
     <message>
         <location line="+2220"/>
@@ -2706,7 +2706,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转：%1°</translation>
     </message>
     <message>
         <location line="+35"/>
