@@ -697,7 +697,7 @@
     <message>
         <location line="+1"/>
         <source>Drawpile Project Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos de Proyectos de Drawpile</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -732,7 +732,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar PNG Animado</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -742,12 +742,12 @@
     <message>
         <location line="+92"/>
         <source>Export Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar archivo de recuperación automática</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyecto de Drawpile</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -793,37 +793,37 @@
     <message>
         <location line="+33"/>
         <source>Replace Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar Proyecto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The project file %1 already exists. Do you want to append to it or replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo del proyecto %1 ya existe. ¿Quieres agregarlo o reemplazarlo?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>If you replace the file, any data it contains from past sessions will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si reemplaza el archivo, se perderán todos los datos que contenga de las sesiones anteriores.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adjuntar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar Imagen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 ya existe, ¿quieres reemplazarlo?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1035,7 +1035,7 @@
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1809,17 +1809,18 @@ Para evitar este paso adicional en el futuro, utilice la página Explorar o un e
         <location line="-2794"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiado al modo de vista de cuadro.
+Puedes salir de él a través del menú Visualizar o la línea de tiempo.</translation>
     </message>
     <message>
         <location line="+2786"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Se completó la descarga con éxito?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tienes cambios no guardados, ¿quieres descargarlos antes de reconectarte?</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1829,17 +1830,17 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>No, intenta de nuevo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Si, reconectar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1931,12 +1932,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+460"/>
         <source>Cr&amp;op canvas to transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>Reco&amp;rtar el lienzo para transformarlo…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Reco&amp;rtar el lienzo para selección…</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -12129,7 +12130,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+13"/>
         <source>Dynamic</source>
-        <translation>Dinámica</translation>
+        <translation>Dinámico</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12139,7 +12140,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>Móvil o Celular</translation>
     </message>
     <message>
         <location line="+11"/>
