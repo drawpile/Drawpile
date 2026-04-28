@@ -1045,104 +1045,104 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
         <source>Loading project…</source>
-        <translation type="unfinished"></translation>
+        <translation>加载项目中…</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>计算中…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Finishing up…</source>
-        <translation type="unfinished"></translation>
+        <translation>准备完成…</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Rendering preview…</source>
-        <translation type="unfinished"></translation>
+        <translation>渲染预览中…</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Rendering timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>渲染缩时视频中…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rendering result…</source>
-        <translation type="unfinished"></translation>
+        <translation>渲染结果中…</translation>
     </message>
     <message>
         <location line="+392"/>
         <source>No input path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定输入路径.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定输出路径.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的输出格式 %1 无效.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的帧率 %1 无效.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的动画参数无效.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的时长无效.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的帧队列大小 %1 无效.</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>无效参数:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to open %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开 %1: %2</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开临时文件: %1</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Error %d opening project.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目时出现错误 %d .</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation type="unfinished"></translation>
+        <translation>无可播放的内容. 你可能还没在此项目文件中录制任何内容.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取播放时间出现错误.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to start playback.</source>
-        <translation type="unfinished"></translation>
+        <translation>开始播放失败.</translation>
     </message>
 </context>
 <context>
@@ -1487,12 +1487,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+671"/>
         <source>Project recording is already active</source>
-        <translation type="unfinished"></translation>
+        <translation>项目录制功能已启用</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>播放中</translation>
     </message>
 </context>
 <context>
@@ -1558,47 +1558,47 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/videoformat.cpp" line="+86"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG 文件帧</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>ZIP 文件帧</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>动态 GIF</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>动态 WEBP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated PNG (APNG)</source>
-        <translation type="unfinished"></translation>
+        <translation>动态 PNG (APNG)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (H.264)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 视频 (H.264)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (AV1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 视频 (AV1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (VP9)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 视频 (VP9)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>WEBM Video (VP8)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM 视频 (VP8)</translation>
     </message>
 </context>
 <context>
@@ -1819,7 +1819,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>该服务器不支持禁止新用户加入. 请设置或更改房间密码.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2438,70 +2438,70 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../project/projectrecorder.cpp" line="+50"/>
         <source>Autosave recording already active</source>
-        <translation type="unfinished"></translation>
+        <translation>自动保存录制功能已启用</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not find any available autosave path</source>
-        <translation type="unfinished"></translation>
+        <translation>无法找到任何可用的自动保存路径</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法开始自动保存录制功能: %1</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>移除项目出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>打开项目出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>关闭项目出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>写入项目出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>打开房间出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>关闭房间出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>录制指令出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>创建快照出现错误 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>已超出 %1 的大小限制</translation>
     </message>
 </context>
 <context>
@@ -2509,42 +2509,42 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../project/projectwrangler.cpp" line="+45"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"></translation>
+        <translation>初始化失败</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>未初始化</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error %d opening project file: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目文件时出现错误 %d : %s</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %d generating project overview: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>生成项目文件概况时出现错误 %d : %s</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unhandled error %d of type %d: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>未处理的错误 %d , 类型为 %d: %s</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开临时文件 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法将 &apos;%1&apos; 复制到临时文件 &apos;%2&apos;</translation>
     </message>
 </context>
 <context>
@@ -2701,7 +2701,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2711,12 +2711,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>下载中…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存中…</translation>
     </message>
 </context>
 </TS>
