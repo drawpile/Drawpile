@@ -15595,12 +15595,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+2059"/>
         <source>Zoom: %1%</source>
-        <translation>Zoom: %1%</translation>
+        <translation>Pembesaran: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation>Rotasi: %1°</translation>
+        <translation>Putaran: %1°</translation>
     </message>
     <message>
         <location line="+30"/>
