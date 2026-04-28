@@ -6,22 +6,22 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+187"/>
         <source>Interface scale: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran antarmuka: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran antarmuka: %1 (bawaan)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampilkan dialog ini setiap Drawpile dijalankan</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -691,7 +691,7 @@
     <message>
         <location line="+168"/>
         <source>Download cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Unduhan dibatalkan</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -784,7 +784,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../export/projectsaver.cpp" line="+42"/>
         <source>Autosave cancelled during save</source>
-        <translation type="unfinished"></translation>
+        <translation>Autosimpan dibatalkan saat menyimpan</translation>
     </message>
 </context>
 <context>
@@ -977,7 +977,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation>Ketidakcocokan kecil</translation>
+        <translation>Inkompatibilitas kecil</translation>
     </message>
     <message>
         <location line="+121"/>
@@ -1017,7 +1017,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation>tidak kompatibel</translation>
+        <translation>Inkompatible</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1045,104 +1045,104 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
         <source>Loading project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memuat proyek…</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menghitung…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Finishing up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyelesaikan…</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Rendering preview…</source>
-        <translation type="unfinished"></translation>
+        <translation>Merender pratinjau…</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Rendering timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Merender timelapse…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rendering result…</source>
-        <translation type="unfinished"></translation>
+        <translation>Merender hasil…</translation>
     </message>
     <message>
         <location line="+392"/>
         <source>No input path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokasi masukan tidak diberikan.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokasi keluaran tidak diberikan.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format keluaran %1 tidak sah.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Framerate %1 tidak sah.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameter animasi tidak sah.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Waktu tidak sah.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran antrian frame %1 tidak sah.</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Parameter tidak sah:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to open %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka %1: %2</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka file sementara: %1</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Error %d opening project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %d saat membuka proyek.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak ada yang dapat dimainkan. mungkin kamu tidak merekam apapun di berkas proyek ini.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membaca pe-waktu pemutaran.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to start playback.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal memulai pemutaran.</translation>
     </message>
 </context>
 <context>
@@ -1265,12 +1265,12 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation>Dodge (SAI)</translation>
+        <translation>Menghindar (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation>Bakar/Dodge (SAI)</translation>
+        <translation>Bakar/Menghindar (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1285,12 +1285,12 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="-108"/>
         <source>Darken</source>
-        <translation>Gelap</translation>
+        <translation>Gelapkan</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighten</source>
-        <translation>Terang</translation>
+        <translation>Terangkan</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1409,7 +1409,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation>Tidak dapat membaca file kuas &apos;%1&apos;</translation>
+        <translation>Tidak dapat membaca berkas kuas &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1419,32 +1419,32 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation>File kuas &apos;%1&apos; tidak mengandung JSON yang valid: %1</translation>
+        <translation>Berkas kuas &apos;%1&apos; tidak mengandung JSON yang valid: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation>Tidak dapat memuat kuas dari file kuas &apos;%1&apos;</translation>
+        <translation>Tidak dapat memuat kuas dari berkas kuas &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation>File kuas &apos;%1&apos; tidak mengandung objek JSON</translation>
+        <translation>Berkas kuas &apos;%1&apos; tidak mengandung objek JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation>File kuas &apos;%1&apos; memiliki versi tidak valid %d</translation>
+        <translation>Berkas kuas &apos;%1&apos; memiliki versi yang tidak valid %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation>File kuas &apos;%1&apos; mengandung pengaturan &apos;color&apos; yang tidak valid</translation>
+        <translation>Berkas kuas &apos;%1&apos; mengandung pengaturan &apos;color&apos; yang tidak valid</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation>File kuas &apos;%1&apos; mengandung pengaturan &apos;%2&apos; yang sudah usang</translation>
+        <translation>Berkas kuas &apos;%1&apos; mengandung pengaturan &apos;%2&apos; yang sudah usang</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -1487,12 +1487,12 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+671"/>
         <source>Project recording is already active</source>
-        <translation type="unfinished"></translation>
+        <translation>Perekaman proyek sudah aktif</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>Pemutaran aktif</translation>
     </message>
 </context>
 <context>
@@ -1558,47 +1558,47 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../export/videoformat.cpp" line="+86"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame sebagai PNG</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame sebagai PNG didalam ZIP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasi GIF</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasi WEBP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated PNG (APNG)</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasi PNG (APNG)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (H.264)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video MP4 (H.264)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (AV1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video MP4 (AV1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (VP9)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video MP4 (VP9)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>WEBM Video (VP8)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video WEBM (VP8)</translation>
     </message>
 </context>
 <context>
@@ -1606,12 +1606,12 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamis</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Desktop</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1819,7 +1819,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Memblokir yang baru bergabung tidak didukung di server ini. Atur atau ganti kata sandi sesi saja.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2438,70 +2438,70 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../project/projectrecorder.cpp" line="+50"/>
         <source>Autosave recording already active</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekaman autosimpan sudah aktif</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not find any available autosave path</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak dapat menemukan lokasi autosimpan yang bisa digunakan</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak dapat memulai rekaman autosimpan: %1</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan menghapus berkas proyek &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat membuka proyek: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat menutup proyek: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat menulis proyek: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat membuka sesi: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat menutup sesi: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat merekam perintah: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %1 saat membuat snapshot: %2</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Batas ukuran %1 telah terlewati</translation>
     </message>
 </context>
 <context>
@@ -2509,42 +2509,42 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../project/projectwrangler.cpp" line="+45"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Inisialisasi gagal</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak di-inisialisasi</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error %d opening project file: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %d saat membuka berkas proyek: %s</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %d generating project overview: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan %d saat membuat gambaran umum proyek: %s</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unhandled error %d of type %d: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan tidak tertangani %d dengan tipe %d: %s</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka sementara &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal menyalin &apos;%1&apos; ke berkas sementara &apos;%2&apos;</translation>
     </message>
 </context>
 <context>
@@ -2681,42 +2681,42 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Balik vertikal: AKTIF</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Balik vertikal: NONAKTIF</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Cermin horizontal: AKTIF</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Cermin horizontal: NONAKTIF</translation>
     </message>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Pembesaran: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Putaran: %1°</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengunduh…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyimpan…</translation>
     </message>
 </context>
 </TS>
