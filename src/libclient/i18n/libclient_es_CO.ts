@@ -686,12 +686,12 @@
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione límites de capa: la capa actual está vacía.</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Download cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga cancelada</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -784,7 +784,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../export/projectsaver.cpp" line="+42"/>
         <source>Autosave cancelled during save</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardado Automático cancelado durante el guardado</translation>
     </message>
 </context>
 <context>
@@ -1048,105 +1048,105 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
         <source>Loading project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando proyecto…</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Calculating…</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculando…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Finishing up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminando…</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Rendering preview…</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizado la vista previa…</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Rendering timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizando el lapso de tiempo…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rendering result…</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizando resultado…</translation>
     </message>
     <message>
         <location line="+392"/>
         <source>No input path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se a proporcionado una ruta de entrada.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se a proporcionado una ruta de salida.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de salida %1 inválido.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad de fotogramas %1 inválido.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Parámetros de animación inválidos.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo inválido.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de cola de trama inválido: %1.</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Parámetros inválido:</numerusform>
+            <numerusform>Parámetros inválidos:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to open %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir %1: %2</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No se pudo abrir el archivo temporal: %1, ni modo</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Error %d opening project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %d al abrir el proyecto.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay nada que repetir. Es posible que no hayas grabado nada en este archivo de proyecto.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al leer el tiempo de reproducción.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Failed to start playback.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo iniciar la reproducción.</translation>
     </message>
 </context>
 <context>
@@ -1491,12 +1491,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+671"/>
         <source>Project recording is already active</source>
-        <translation type="unfinished"></translation>
+        <translation>La grabación del proyecto ya está activa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Playback is active</source>
-        <translation type="unfinished"></translation>
+        <translation>La reproducción está activa</translation>
     </message>
 </context>
 <context>
@@ -1562,47 +1562,47 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../export/videoformat.cpp" line="+86"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuadros como PNGs</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuadros como PNGs en un ZIP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF Animado</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP Animado</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated PNG (APNG)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG Animado (APNG)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (H.264)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo MP4 (H.264)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (AV1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo MP4 (AV1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (VP9)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo MP4 (VP9)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>WEBM Video (VP8)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo WEBM (VP8)</translation>
     </message>
 </context>
 <context>
@@ -1610,17 +1610,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinámico</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Escritorio</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation type="unfinished"></translation>
+        <translation>Móvil o Celular</translation>
     </message>
 </context>
 <context>
@@ -1823,7 +1823,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor no admite el bloqueo de nuevos usuarios. Establezca o cambie la contraseña de sesión.</translation>
     </message>
     <message>
         <location line="+11"/>
