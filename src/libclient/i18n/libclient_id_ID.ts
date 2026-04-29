@@ -47,7 +47,7 @@
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation>Memori yang dialokasikan bukan SharedArrayBuffer, meskipun browser Anda mendukungnya. Anda mungkin perlu mengubah suatu pengaturan.</translation>
+        <translation>Memori yang dialokasikan bukan sebuah SharedArrayBuffer, meskipun browser Anda mendukungnya. Anda mungkin perlu mengubah suatu pengaturan.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -72,7 +72,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation>Memulai, ini seharusnya hanya membutuhkan beberapa saat…</translation>
+        <translation>Memulai, ini seharusnya hanya sebentar…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -82,7 +82,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation>Memuat, ini mungkin membutuhkan beberapa saat…</translation>
+        <translation>Memuat, ini mungkin sedikit lama…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -92,7 +92,7 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation>Menginisialisasi, ini mungkin membutuhkan beberapa saat…</translation>
+        <translation>Menginisialisasi, ini mungkin sedikit lama…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -112,7 +112,7 @@
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation>Ini biasanya terjadi karena browser Anda sudah usang atau Anda melihat halaman melalui semacam browser tertanam, seperti milik aplikasi obrolan, dan perlu membukanya dengan benar. Untuk informasi lebih lanjut, lihat &lt;a href=&quot;#&quot;&gt;halaman bantuan ini&lt;/a&gt;.</translation>
+        <translation>Ini biasanya karena browser anda sudah usang atau anda melihat halaman ini melalui semacam browser tertanam, seperti milik aplikasi obrolan, dan perlu membukanya dengan benar. Informasi lebih lanjut, lihat &lt;a href=&quot;#&quot;&gt;halaman bantuan ini&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -122,7 +122,7 @@
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation>Cara Anda sampai di sini bukan melalui tautan yang valid ke sesi Drawpile.</translation>
+        <translation>Cara Anda sampai di sini bukan melalui tautan sesi Drawpile yang valid.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -137,7 +137,7 @@
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation>Itu biasanya tidak berfungsi dengan benar, harap buka halaman ini di browser web yang sesungguhnya.</translation>
+        <translation>Itu biasanya tidak akan berfungsi dengan benar, harap buka halaman ini di browser web yang sesungguhnya.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -147,17 +147,17 @@
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;Browser yang mungkin tidak kompatibel:&lt;/strong&gt; Firefox di Linux tidak mendukung pena sensitif tekanan di semua sistem. Jika Anda tidak mendapatkan tekanan, pertimbangkan untuk menggunakan browser lain atau &lt;a href=&quot;#&quot;&gt;aplikasi Linux native&lt;/a&gt;.</translation>
+        <translation>&lt;strong&gt;Browser yang mungkin tidak kompatibel:&lt;/strong&gt; Firefox di Linux tidak mendukung pena sensitif tekanan di semua sistem. Jika Anda tidak mendapatkan tekanan, pertimbangkan untuk menggunakan browser lain atau &lt;a href=&quot;#&quot;&gt;aplikasi Linux asli&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;Browser tidak kompatibel:&lt;/strong&gt; Firefox di Windows mengalami beberapa masalah saat menjalankan Drawpile. Memasukkan teks dan/atau menekan Ctrl+Z untuk membatalkan mungkin tidak berfungsi dengan benar. Pertimbangkan untuk menggunakan browser lain atau &lt;a href=&quot;#&quot;&gt;aplikasi Windows native&lt;/a&gt;.</translation>
+        <translation>&lt;strong&gt;Browser tidak kompatibel:&lt;/strong&gt; Firefox di Windows mengalami beberapa masalah saat menjalankan Drawpile. Memasukkan teks dan/atau menekan Ctrl+Z untuk membatalkan mungkin tidak berfungsi dengan benar. Pertimbangkan untuk menggunakan browser lain atau &lt;a href=&quot;#&quot;&gt;aplikasi Windows asli&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation>&lt;strong&gt;Browser tidak kompatibel:&lt;/strong&gt; Chrome di %1 mengalami beberapa masalah saat menjalankan Drawpile. Ini sebenarnya hanya browser sistem (Safari) dalam cangkang yang berbeda, yang menyebabkan masalah dengan kontrol yang keluar dari layar. Pertimbangkan untuk menggunakan browser sistem (Safari) secara langsung.</translation>
+        <translation>&lt;strong&gt;Browser tidak kompatibel:&lt;/strong&gt; Chrome di %1 mengalami beberapa masalah saat menjalankan Drawpile. Ini sebenarnya hanya browser sistem (Safari) dalam cangkang yang berbeda, yang mana menyebabkan masalah kontrol berakhir di luar layar. Pertimbangkan untuk menggunakan browser sistem (Safari) saja.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -172,17 +172,17 @@
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation>Mendeteksi masukan mouse, bukan pena</translation>
+        <translation>Masukan mouse terdeteksi, bukan pena</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation>Mendeteksi masukan sentuh, bukan pena</translation>
+        <translation>Masukan sentuh terdeteksi, bukan pena</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation>Mendeteksi masukan, tetapi bukan pena</translation>
+        <translation>Masukan terdeteksi, tetapi bukan pena</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -503,12 +503,12 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>Kepekatan Warna</translation>
+        <translation>Ubah Kepekatan Warna</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>Ubah Nilai Warna</translation>
+        <translation>Ubah Kecerahan Warna</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -528,7 +528,7 @@
     <message>
         <location line="+2"/>
         <source>Undo</source>
-        <translation>Batalkan</translation>
+        <translation>Urungkan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -596,7 +596,7 @@
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation>Tidak dapat membuka &apos;%1&apos; untuk penulisan: %2.</translation>
+        <translation>Tidak dapat membuka &apos;%1&apos; untuk menulis: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -606,7 +606,7 @@
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation>Tidak dapat memindahkan &apos;%1&apos; ke &apos;%2&apos;: %3.</translation>
+        <translation>Tidak dapat memindah &apos;%1&apos; ke &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1616,7 +1616,7 @@ Pilih lapisan biasa sebagai gantinya.</translation>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation>Mobile</translation>
+        <translation>Ponsel</translation>
     </message>
 </context>
 <context>
