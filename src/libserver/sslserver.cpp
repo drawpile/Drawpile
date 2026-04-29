@@ -162,6 +162,10 @@ SslServer::getSslKeyAlgorithmName(QSsl::KeyAlgorithm algorithm) const
 		return "EC";
 	case QSsl::KeyAlgorithm::Dh:
 		return "DH";
+#if QT_VERSION >= QT_VERSION_CHECK(6, 11, 0)
+	case QSsl::KeyAlgorithm::MlDsa:
+		return "MLDSA";
+#endif
 	}
 	return "UNKNOWN";
 }
