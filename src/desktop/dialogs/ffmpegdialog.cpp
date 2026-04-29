@@ -55,6 +55,7 @@ FfmpegDialog::FfmpegDialog(QWidget *parent)
 	explanationLabel->setWordWrap(true);
 	explanationLabel->setTextFormat(Qt::RichText);
 	explanationLabel->setText(getExplanationLabelText());
+	explanationLabel->setOpenExternalLinks(true);
 	settingsLayout->addWidget(explanationLabel);
 
 	settingsLayout->addStretch();
