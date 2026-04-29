@@ -163,7 +163,7 @@
     <message>
         <location line="-16"/>
         <source>Color Pickup: 1/</source>
-        <translation>色延伸: 1/</translation>
+        <translation>颜色拾取：1/</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1477,7 +1477,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+86"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>请输入&lt;b&gt;会话密码&lt;/b&gt;，而&lt;i&gt;不是&lt;/i&gt;您的帐户密码。</translation>
+        <translation>请输入 &lt;b&gt;会话密码&lt;/b&gt;，而 &lt;i&gt;非&lt;/i&gt; 您的账户密码。</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1975,7 +1975,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation>不，再试一次。</translation>
+        <translation>否，再试一次</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2542,12 +2542,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+29"/>
         <source>Automatically inherit alpha</source>
-        <translation>根据混合模式自动继承和保持透明度</translation>
+        <translation>自动继承透明度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation>根据混合模式自动继承和保持透明度</translation>
+        <translation>根据混合模式继承并保留 Alpha 值</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6654,7 +6654,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-837"/>
         <source>Color Pickup: 1/</source>
-        <translation>色延伸: 1/</translation>
+        <translation>颜色拾取：1/</translation>
     </message>
     <message>
         <location line="+662"/>
@@ -7602,7 +7602,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>在指针移动一个笔刷半径的距离时，需要绘制多少次笔触？</translation>
+        <translation>在指针移动一个笔刷半径 (更精确地说：半径的基准值) 的距离时，需要绘制多少次笔触</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7627,7 +7627,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>每次涂抹时随机改变半径值。您也可以通过在“半径设置”中使用“by_random”输入来实现这一操作。如果在此处进行操作，会有两个不同之处：
 1）不透明度值将得到修正，使得大半径的涂抹区域更加透明。
-2）它不会改变实际半径 (即 dabs_per_actual_radius 视图中所显示的半径) 所对应的实际半径值。</translation>
+2）它不会改变实际半径 (即 dabs_per_actual_radius 视图中所显示的半径) 所对应的实际半径值</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9870,7 +9870,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+68"/>
         <source>Welcome</source>
-        <translation>欢迎</translation>
+        <translation>欢迎使用</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11748,7 +11748,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation>键盘快捷键:</translation>
+        <translation>键盘快捷键：</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11783,7 +11783,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-132"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>像素</translation>
     </message>
     <message>
         <location line="+77"/>
@@ -12223,7 +12223,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation>根据混合模式自动继承和保持透明度</translation>
+        <translation>根据混合模式自动继承并保留透明度</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -15595,7 +15595,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2059"/>
         <source>Zoom: %1%</source>
-        <translation>缩放: %1%</translation>
+        <translation>缩放：%1%</translation>
     </message>
     <message>
         <location line="+5"/>
