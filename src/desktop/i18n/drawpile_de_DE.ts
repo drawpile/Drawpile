@@ -2426,82 +2426,82 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+4"/>
         <source>Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Länge</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline tool: exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstrahlwerkzeug: Länge</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Hineinzoomen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstrahl: Hineinzoomen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Herauszoomen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstrahl: Herauszoomen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset zoom</source>
-        <translation type="unfinished">Zoom zurücksetzen</translation>
+        <translation>Zoom zurücksetzen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline: reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstrahl: Zoom zurücksetzen</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unassign Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Zuordnung von Schlüsselbild entfernen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Increase Exposure on All Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf allen Spuren verlängern</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Decrease Exposure on All Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf allen Spuren verkürzen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Track Visible for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Spur sichtbar für Sie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwiebelhaut auf Spur für Sie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Frame Move Locked for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Spur Frame-Bewegungen gesperrt für Sie</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Next Frame Within Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächstes Främe in Reichweite</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame Within Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorheriges Frame in Reichweite</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2521,7 +2521,7 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+22"/>
         <source>Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2805,70 +2805,70 @@ Sie können sie über das Ansichtsmenü oder den Zeitstrahl verlassen.</translat
     <message>
         <location line="+396"/>
         <source>Disable Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung deaktivieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to disable autorecovery for this session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie wirklich die Autowiederherstellung für diese Sitzung deaktivieren?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsaved data will be discarded and can&apos;t be recovered. You will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungespeicherte Daten werden verworfen und können nicht wiederhergestellt werden. Sie werden keinen Zeitraffer erstellen können.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, disable</source>
         <extracomment>&quot;Yes&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ja, deaktivieren</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, keep enabled</source>
         <extracomment>&quot;No&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nein, aktiv lassen</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Autorecovery deactivated</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung deaktiviert</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>The autorecovery file has exceeded %1% of the %2 size limit. Autorecovery will be disabled if the limit is reached.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Autowiederherstellungsdatei hat %1% der %2 Größenbegrenzung überschritten. Die Autowiederherstellung wird deaktiviert wenn die Grenze erreicht ist.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Autowiederherstellung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Autowiederherstellung: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery will be disabled for the current session. The file will be left available for recovery. If you continue, you will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Autowiederherstellung wird für die aktuelle Sitzung deaktiviert. Die Datei bleibt zur Wiederherstellung verfügbar. Wenn Sie weitermachen werden Sie keinen Zeitraffer erstellen können.</translation>
     </message>
     <message>
         <location line="+36"/>
         <location line="+10"/>
         <source>Project Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektübersicht</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>To view statistics, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Um Statistiken anzusehen müssen Sie erst eine Projektdatei (.dppr) speichern. Möchten Sie dies jetzt tun?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the statistics?</source>
-        <translation type="unfinished"></translation>
+        <translation>Es gibt Änderungen die noch nicht in einer Projektdatei (.dppr) gespeichert sind. Möchten Sie diese jetzt speichern damit sie in den Statistiken auftauchen?</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -2876,37 +2876,37 @@ Sie können sie über das Ansichtsmenü oder den Zeitstrahl verlassen.</translat
         <location line="+10"/>
         <location line="+30"/>
         <source>Timelapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitraffer</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>Unexpected save format. To view statistics, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
+        <translation>Unerwartetes Speicherformat. Um Statistiken anzusehen, müssen Sie eine Projektdatei (.dppr) speichern.</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>To make a timelapse, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Um einen Zeitraffer zu erstellen, müssen Sie erst eine Projektdatei (.dppr) speichern. Möchten Sie dies jetzt tun?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the timelapse?</source>
-        <translation type="unfinished"></translation>
+        <translation>Es gibt Änderungen die noch nicht einer Projektdatei (.dppr) gespeichert sind. Möchten Sie diese jetzt speichern damit sie im Zeitraffer auftauchen?</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Unexpected save format. To make a timelapse, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
+        <translation>Unerwartetes Speicherformat. Um einen Zeitraffer zu erstellen, müssen Sie eine Projektdatei (.dppr) speichern.</translation>
     </message>
     <message>
         <location line="+792"/>
         <source>Open Recovered File</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederhergestellte Datei öffnen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recovered file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie sind dabei eine wiederhergestellte Datei zu öffnen und dieses Fenster zu schließen.</translation>
     </message>
     <message>
         <location line="+1365"/>
@@ -3148,12 +3148,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+21"/>
         <source>Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage autorecovery…</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung bearbeiten…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3193,12 +3193,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+15"/>
         <source>Project statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektstatistiken…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Make timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitraffer erstellen…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3208,12 +3208,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Recover…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen…</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location line="+157"/>
@@ -3238,7 +3238,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+5"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabeeinstellungen</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -3268,7 +3268,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+88"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3283,7 +3283,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+33"/>
         <source>Interface scale…</source>
-        <translation type="unfinished"></translation>
+        <translation>Interface-Skalierung…</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3448,7 +3448,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+131"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -3578,7 +3578,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+6"/>
         <source>Layer</source>
-        <translation type="unfinished">Ebene</translation>
+        <translation>Ebene</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3899,7 +3899,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+32"/>
         <source>Session</source>
-        <translation type="unfinished">Sitzung</translation>
+        <translation>Sitzung</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4019,7 +4019,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Rotate the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandansicht rotieren</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4045,7 +4045,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+10"/>
         <source>Tools</source>
-        <translation type="unfinished">Werkzeuge</translation>
+        <translation>Werkzeuge</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4055,12 +4055,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+13"/>
         <source>Project Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektinformation…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Text Input Debug Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Debug-Ansicht für Texteingabe</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4176,52 +4176,52 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+8"/>
         <source>Help</source>
-        <translation type="unfinished">Hilfe</translation>
+        <translation>Hilfe</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>File menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Edit menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabe-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>View menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansicht-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektion-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeuge-Menü</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Help menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Hilfe-Menü</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -4873,7 +4873,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+5"/>
         <source>Rotation</source>
-        <translation type="unfinished">Drehung</translation>
+        <translation>Rotation</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5331,15 +5331,15 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message numerus="yes">
         <location filename="../utils/widgetutils.cpp" line="+16"/>
         <source>%n days(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Tag</numerusform>
+            <numerusform>%n Tage</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n hour(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n Stunde</numerusform>
             <numerusform>%n Stunden</numerusform>
         </translation>
@@ -5347,7 +5347,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n minute(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n Minute</numerusform>
             <numerusform>%n Minuten</numerusform>
         </translation>
@@ -5355,7 +5355,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n Sekunde</numerusform>
             <numerusform>%n Sekunden</numerusform>
         </translation>
@@ -5364,7 +5364,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
         <location line="+5"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished">, </translation>
+        <translation>, </translation>
     </message>
 </context>
 <context>
@@ -5372,7 +5372,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location filename="../dialogs/inputsettingsdialog.cpp" line="+54"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -5516,7 +5516,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message numerus="yes">
         <location filename="../utils/widgetutils.cpp" line="+7"/>
         <source>%n minute(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n Minute</numerusform>
             <numerusform>%n Minuten</numerusform>
         </translation>
@@ -5524,7 +5524,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n Stunde</numerusform>
             <numerusform>%n Stunden</numerusform>
         </translation>
@@ -5532,13 +5532,13 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+4"/>
         <source>%1 and %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 und %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>unknown</source>
         <extracomment>An unknown work time. Will be shown to the user like &quot;Your work time: unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>unbekannt</translation>
     </message>
 </context>
 <context>
@@ -5705,7 +5705,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location filename="../dialogs/actionpickerdialog.cpp" line="+21"/>
         <source>Select Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktion auswählen</translation>
     </message>
 </context>
 <context>
@@ -5831,7 +5831,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+116"/>
         <source>FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -6419,7 +6419,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="-502"/>
         <source>Common</source>
-        <translation type="unfinished"></translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6591,7 +6591,7 @@ Falls schnelle Striche Artefakte beim Schmieren verursachen, kann das Aktivieren
     <message>
         <location line="+52"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6601,52 +6601,52 @@ Falls schnelle Striche Artefakte beim Schmieren verursachen, kann das Aktivieren
     <message>
         <location line="+9"/>
         <source>Basic</source>
-        <translation type="unfinished"></translation>
+        <translation>Grundlagen</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Dabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Kleckse</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Smudge</source>
-        <translation type="unfinished">Schmieren</translation>
+        <translation>Schmieren</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Directional Offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>Richtungsversatz</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Tracking</source>
-        <translation type="unfinished"></translation>
+        <translation>Verfolgung</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Stroke</source>
-        <translation type="unfinished">Strich</translation>
+        <translation>Strich</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Grid Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Gitter</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Custom</source>
-        <translation type="unfinished">Benutzerdefiniert</translation>
+        <translation>Benutzerdefiniert</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -8219,7 +8219,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Choose an action to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie eine Aktion um fortzufahren.</translation>
     </message>
 </context>
 <context>
@@ -8336,19 +8336,19 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+6"/>
         <source>Xiaomi Stylus</source>
         <extracomment>Xiaomi is a brand of Android devices.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Xiaomi-Stift</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Apple Pencil</source>
         <extracomment>Apple is referring to the brand, not the fruit.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Apple-Stift</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Anti-Strain</source>
         <extracomment>This refers to a stylus pressure curve that is steeper than the default so that you don&apos;t have to strain to press the stylus down.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Strapaze</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8366,88 +8366,88 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/ffmpegdialog.cpp" line="+22"/>
         <source>FFmpeg Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg-Einstellungen</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>FFmpeg path or command:</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg-Pfad oder -Kommando:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Choose</source>
-        <translation type="unfinished">Wählen</translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Checking…</source>
-        <translation type="unfinished">Prüfe…</translation>
+        <translation>Prüfe…</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Back</source>
-        <translation type="unfinished">Zurück</translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished">Ausführbare Dateien</translation>
+        <translation>Ausführbare Dateien</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished">ffmpeg-Pfad auswählen</translation>
+        <translation>ffmpeg-Pfad auswählen</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>Successfully detected ffmpeg version %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Version %1 von FFmpeg erfolgreich erkannt.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Error: the given program could not be started.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler: das gegebene Programm konnte nicht gestartet werden.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program did not finish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler: das gegebene Programm schloss nicht ab.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program exited with an error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler: das gegebene Programm beendete mit einem Fehler.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program does not appear to be ffmpeg.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler: das gegebene Programm scheint nicht ffmpeg zu sein.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>You can download a Windows version of ffmpeg from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können eine Windows-Version von FFmpeg unter %1 herunterladen.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>After downloading and unpacking everything, click on Choose and locate the %1 file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach dem Herunterladen und Entpacken, wählen Sie die %1-Datei aus.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können FFmpeg über Homebrew installieren.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können FFmpeg wahrscheinlich über ihre Paketverwaltung installieren.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Once it is installed, just using %1 in the field above should work. Otherwise, click on Choose and locate the executable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachdem es installiert ist, einfach %1 im obigen Feld einzugeben sollte funktionieren. Andernfalls wählen Sie die Programmdatei aus.</translation>
     </message>
 </context>
 <context>
@@ -8455,7 +8455,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+74"/>
         <source>Set speed from FPS…</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit über FPS setzen…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8465,12 +8465,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Reset range</source>
-        <translation type="unfinished"></translation>
+        <translation>Reichweite zurücksetzen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit zurücksetzen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8490,7 +8490,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+61"/>
         <source>FPS:</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS:</translation>
     </message>
 </context>
 <context>
@@ -8498,47 +8498,47 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/inputsettingsdialog.cpp" line="-35"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabeeinstellungen</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Stabilization</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisierung</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished">Stabilisator: </translation>
+        <translation>Stabilisator: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Finish strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Striche fertigstellen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Adjust with velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Geschwindigkeit anpassen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Maximum adjustment: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Anpassung: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Maximum velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Geschwindigkeit: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Adjustment</source>
-        <translation type="unfinished"></translation>
+        <translation>Anpassung</translation>
     </message>
 </context>
 <context>
@@ -8546,7 +8546,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="-559"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -8570,43 +8570,43 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+27"/>
         <source>This session is hosted on a server that &lt;strong&gt;does not support the web browser version of Drawpile&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung ist auf einem Server gehostet der &lt;strong&gt;die Web-Browser-Version von Drawpile nicht unterstützt&lt;/strong&gt;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+26"/>
         <source> Only the desktop or mobile application will work.</source>
-        <translation type="unfinished"></translation>
+        <translation> Nur die Applikation für Desktop oder Mobilgeräte wird funktionieren.</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>This session &lt;strong&gt;restricts joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung &lt;strong&gt;schränkt Beitritt mit der Web-Browser-Version von Drawpile ein.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Verwenden Sie &lt;a href=&quot;#&quot;&gt;Einladungscodes&lt;/a&gt; um Leute per Web-Browser beitreten zu lassen.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Operators and server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Operatoren und Serveradministratoren können &lt;a href=&quot;#&quot;&gt;Einladungscodes&lt;/a&gt; verwenden, um Leute per Web-Browser beitreten zu lassen.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> Server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Serveradministratoren können &lt;a href=&quot;#&quot;&gt;Einladungscodes&lt;/a&gt; verwenden, um Leute per Web-Browser beitreten zu lassen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> The desktop or mobile application will work normally.</source>
-        <translation type="unfinished"></translation>
+        <translation> Die Applikation für Desktop oder Mobilgeräte wird normal funktionieren.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session &lt;strong&gt;does not allow joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung &lt;strong&gt;erlaubt keinen Beitritt mit der Web-Browser-Version von Drawpile.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8627,17 +8627,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+23"/>
         <source>To make it invite-only, [set a session password].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[Setzen Sie ein Sitzungspasswort] um Beitritte nur mit Einladung zu ermöglichen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>To make it invite-only, a session operator can set a password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatoren können [ein Sitzungspasswort setzen] um Beitritte nur mit Einladung zu ermöglichen.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session is &lt;strong&gt;public&lt;/strong&gt;, strangers can join it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung ist &lt;strong&gt;öffentlich&lt;/strong&gt;, Fremde können beitreten!</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -8837,19 +8837,19 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+9"/>
         <source>Floofderg</source>
         <extracomment>The name of a layout, the person who made the layout has a character whose species is a furred dragon.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Flaumdrache</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kerfluff</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kerfluff</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lambda</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lambda</translation>
     </message>
 </context>
 <context>
@@ -8966,7 +8966,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+11"/>
         <source>This username doesn&apos;t belong to an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername gehört nicht zu einem Account auf %1.</translation>
     </message>
     <message>
         <location line="+628"/>
@@ -9075,12 +9075,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/projectdialog.cpp" line="+30"/>
         <source>Project Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektstatistiken</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>The canvas has changes not saved in the project!</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Leinwand hat Änderungen die nicht im Projekt gespeichert sind!</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -15608,7 +15608,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+416"/>
         <source>Vertical flip: ON</source>
-        <translation>Vertikale Spiegelung: EIN</translation>
+        <translation>Vertikale Spiegelung: AN</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -15618,7 +15618,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation>Horizontale Spiegelung: EIN</translation>
+        <translation>Horizontale Spiegelung: AN</translation>
     </message>
     <message>
         <location line="+1"/>
