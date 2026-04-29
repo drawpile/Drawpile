@@ -1823,7 +1823,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Beitritte zu blockieren wird durch diesen Server nicht unterstützt. Setzen oder ändern Sie stattdessen das Sitzungspasswort.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2443,70 +2443,70 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../project/projectrecorder.cpp" line="+50"/>
         <source>Autosave recording already active</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahme für automatisches Speichern ist bereits aktiv</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not find any available autosave path</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein verfügbarer Pfad für automatisches Speichern gefunden</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahme für automatischesn Speichern konnte nocht gestartet werden: %1</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Entfernen der Projektdatei &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen des Projekts: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Schließen des Projekts: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Schreiben des Projekts: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen der Sitzung: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Schließen der Sitzung: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 bei Aufnahme von Kommando: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Erstellen von Schnappschuss: %2</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Größenbegrenzung von %1 überschritten</translation>
     </message>
 </context>
 <context>
@@ -2514,42 +2514,42 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../project/projectwrangler.cpp" line="+45"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Initialisierung fehlgeschlagen</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht initialisiert</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error %d opening project file: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %d beim Öffnen von Projektdatei: %s</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %d generating project overview: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %d bei der Generierung der Projektübersicht: %s</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unhandled error %d of type %d: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbehandelter Fehler %d von Typ %d: %s</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht öffnen: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte temporäre Datei &apos;%1&apos; nicht öffnen: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht zu temporärer Datei &apos;%2&apos; kopieren</translation>
     </message>
 </context>
 <context>
@@ -2686,42 +2686,42 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikale Spiegelung: AN</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikale Spiegelung: AUS</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontale Spiegelung: AN</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontale Spiegelung: AUS</translation>
     </message>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation: %1°</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Herunterladen…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern…</translation>
     </message>
 </context>
 </TS>
