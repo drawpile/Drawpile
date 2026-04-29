@@ -6,22 +6,22 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+187"/>
         <source>Interface scale: %1</source>
-        <translation>界面缩放：%1</translation>
+        <translation>界面缩放比例: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation>界面缩放：%1（默认）</translation>
+        <translation>界面缩放比例: %1 (默认)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation>Drawpile 启动时显示此对话框</translation>
+        <translation>在 Drawpile 启动时显示此窗口</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -42,12 +42,12 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation>内存分配失败。如果在某些浏览器中进行刷新操作，可能会出现这种情况。请关闭此页面以及整个浏览器，然后再试一次。</translation>
+        <translation>内存分配失败. 某些浏览器在刷新时会出现这种情况. 请完全关闭此页面和浏览器, 然后再试一次.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation>分配的内存并非共享数组缓冲区，尽管您的浏览器支持该功能。您可能需要更改一些设置。</translation>
+        <translation>内存分配不是共享数据缓冲区, 尽管你的浏览器支持它. 你可能需要更改设置.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -72,7 +72,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation>启动中，这应该只需要片刻时间…</translation>
+        <translation>启动中, 这应该只需要一会儿…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -82,7 +82,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation>加载中，这可能需要一些时间…</translation>
+        <translation>加载中, 这可能需要一些时间…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -92,7 +92,7 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation>初始化中，这可能需要一些时间…</translation>
+        <translation>初始化中, 这可能需要一些时间…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -107,62 +107,62 @@
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation>严重错误：</translation>
+        <translation>严重错误:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation>这通常是因为您的浏览器已过时，或者您是通过某种嵌入式浏览器（比如聊天应用程序的浏览器）来查看该页面的，因此需要正确打开它。如需更多信息，请访问 &lt;a href=&quot;#&quot;&gt;此帮助页面&lt;/a&gt; 。</translation>
+        <translation>这通常是因为你的浏览器并不是最新版本或者你是通过某种嵌入式的浏览器来查看页面的, 比如聊天程序的浏览器, 因此你需要正确的打开它. 如需了解更多信息, 请查看 &lt;a href=&quot;#&quot;&gt;此帮助页面&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation>无效房间链接。</translation>
+        <translation>无效房间链接.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation>无论如何你都不是通过有效链接来到房间的。</translation>
+        <translation>无论如何你都不是通过有效链接来到房间的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation>&lt;strong&gt;应用内浏览器：&lt;/strong&gt; 看起来您是通过应用内的浏览器打开了 Drawpile 。</translation>
+        <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在一个内置浏览器中打开Drawpile的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation>&lt;strong&gt;应用内浏览器：&lt;/strong&gt; 看起来您是在 %1 的应用内浏览器中打开了 Drawpile。</translation>
+        <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在 %1 的内置浏览器中打开Drawpile的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation>通常这种方式无法正常运行，请使用真正的网络浏览器打开此页面。</translation>
+        <translation>这通常无法正常运作, 请在一个真正的浏览器中打开此页面.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation>可能不兼容的浏览器：</translation>
+        <translation>可能不兼容的浏览器:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;可能不兼容的浏览器：&lt;/strong&gt; 在 Linux 系统上运行的 Firefox 浏览器并非在所有系统中都支持压力感应笔。如果您的电脑没有受到压力影响，那么您可以考虑更换其他浏览器或者使用&lt;a href=&quot;#&quot;&gt;内置的 Linux 应用程序&lt;/a&gt;。</translation>
+        <translation>&lt;strong&gt;可能不兼容的浏览器:&lt;/strong&gt; Linux上的Firefox并非在所有系统上都支持笔压. 如果你没有笔压, 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Linux 程序&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;不兼容的浏览器：&lt;/strong&gt; 在 Windows 系统上运行 Drawpile 时，火狐浏览器可能会出现一些问题。输入文本或按下 Ctrl+Z 以撤销操作可能无法正常进行。建议使用其他浏览器或 &lt;a href=&quot;#&quot;&gt;原生的 Windows 应用程序&lt;/a&gt; 。</translation>
+        <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; Windows上的Firefox在运行Drawpile时会遇到一些问题. 比如输入文本/或者按 Ctrl+Z 撤销时可能无法正常工作. 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Windows 程序&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation>&lt;strong&gt;不兼容的浏览器：&lt;/strong&gt; 在 %1 上运行 Drawpile 时，Chrome 浏览器会出现一些问题。实际上，这只不过是在不同界面下运行的系统浏览器（Safari），这导致控制元素无法完全显示在屏幕上。建议直接使用系统浏览器（Safari）来浏览。</translation>
+        <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; %1 上的Chrome在运行Drawpile时会遇到一些问题. 这实际上只是另一个shell中的 (Safari) 系统浏览器, 这会导致控件最终出现在屏幕外的问题. 请考虑直接使用 (Safari) 系统浏览器.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation>语言：</translation>
+        <translation>语言:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -172,12 +172,12 @@
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation>检测到鼠标输入，而不是笔</translation>
+        <translation>检测到鼠标输入, 而不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation>检测到触控输入，而不是笔</translation>
+        <translation>检测到触控输入, 而不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -192,7 +192,7 @@
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation>检测到笔，但没有压力变化</translation>
+        <translation>检测到笔, 但没有压力变化</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -207,27 +207,27 @@
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation>&lt;strong&gt;警告：&lt;/strong&gt; 此安装版本为 &lt;strong&gt;已过时&lt;/strong&gt; ，当前版本为 &lt;code&gt;%1&lt;/code&gt; ，并非最新版本 &lt;code&gt;%2&lt;/code&gt; 。</translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt; 此安装是 &lt;strong&gt;过时的&lt;/strong&gt; 版本 &lt;code&gt;%1&lt;/code&gt;, 而不是最新版本 &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation>尝试刷新页面。如果这样做仍无效果，请通知服务器管理员进行更新。</translation>
+        <translation>请尝试刷新页面. 如果没有任何变化, 请通知服务器主人进行更新.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation>&lt;strong&gt;警告：&lt;/strong&gt; 无法确定安装是否是最新的。它可能已经是旧版本了，版本号为 &lt;code&gt;%1&lt;/code&gt; 。</translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt; 无法确定安装是否为最新版本. 可能 &lt;code&gt;%1&lt;/code&gt; 版本已经过时.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation>尝试刷新页面。如果这样做仍无效果，请联系服务器管理员或查看 &lt;a href=&quot;#&quot;&gt;drawpile.net 上的帮助页面&lt;/a&gt; 中关于如何与能够查明情况的人取得联系的说明。</translation>
+        <translation>请尝试刷新页面. 如果没有任何变化, 请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt; drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation>你可以继续进行，但可能会出现一些问题，操作效果可能不会太好。</translation>
+        <translation>无论如何你都可以继续, 但可能无法正常运作.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -242,7 +242,7 @@
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation>版本：</translation>
+        <translation>版本:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -257,7 +257,7 @@
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation>您试图加入的会议需要使用 Drawpile 的测试版程序。</translation>
+        <translation>你尝试要加入的房间需要使用测试版本的Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -290,43 +290,43 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+100"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation>糟糕的参数设置，这很可能就是 Drawpile 软件中的一个故障。</translation>
+        <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unsupported format.</source>
-        <translation>不支持的格式。</translation>
+        <translation>不支持的格式.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation>无法将画布合并成一个平面图像。</translation>
+        <translation>无法将画布合并成一个平面图像.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation>无法打开文件进行写入。</translation>
+        <translation>无法打开文件进行写入.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation>保存操作失败，但文件可能被部分写入。</translation>
+        <translation>保存操作失败, 但文件可能被部分写入.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Internal error during saving.</source>
-        <translation>保存时出现内部错误。</translation>
+        <translation>保存时出现内部错误.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation>未知错误。</translation>
+        <translation>未知错误.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation>画布尺寸超出范围，宽度和高度必须在 1 到 %1 之间，适用于 %2 情况。</translation>
+        <translation>画布尺寸超出范围, %2 格式下的宽度和高度必须介于 1 和 %1 之间.</translation>
     </message>
 </context>
 <context>
@@ -380,7 +380,7 @@
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation>%1：%2 (%3)</translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -451,17 +451,17 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation>更改画笔大小</translation>
+        <translation>改变笔刷大小</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation>更改画笔不透明度</translation>
+        <translation>改变笔刷不透明度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation>更改画笔硬度</translation>
+        <translation>改变笔刷硬度</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -487,7 +487,7 @@
         <location line="+4"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation>棘轮式旋转画布</translation>
+        <translation>15度增量旋转画布</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -508,22 +508,22 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>更改透明度</translation>
+        <translation>更改明度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation>切换橡皮擦工具</translation>
+        <translation>切换橡皮工具</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Mode</source>
-        <translation>切换橡皮擦模式</translation>
+        <translation>切换橡皮模式</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation>切换 Alpha 保护</translation>
+        <translation>切换保持透明度</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -596,22 +596,22 @@
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation>无法打开 &apos;%1&apos; 进行写入： %2。</translation>
+        <translation>无法打开 &apos;%1&apos; 进行写入: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation>无法写入 &apos;%1&apos;： %2。</translation>
+        <translation>无法写入 &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation>无法将 &apos;%1&apos; 移动到 &apos;%2&apos;： %3。</translation>
+        <translation>无法将 &apos;%1&apos; 移动到 &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation>无法删除 &apos;%1&apos;：%2。</translation>
+        <translation>无法删除 &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -680,13 +680,13 @@
         <location line="+553"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation>像素转为选区：当前图层是空的。</translation>
+        <translation>像素转为选区: 当前图层是空的.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation>选择像素区域：当前图层是空的。</translation>
+        <translation>选择像素区域: 当前图层是空的.</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -704,7 +704,7 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation>您可以从 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; 下载 Windows 版的 ffmpeg。在 Drawpile 中，将 ffmpeg 的路径设为 ffmpeg.exe 即可。</translation>
+        <translation>你可以从&lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;中下载Windows版本的ffmpeg. 然后在路径里选择解压出来的 ffmpeg.exe 程序.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -714,23 +714,23 @@
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation>你可以通过 package manager 安装 ffmpeg。</translation>
+        <translation>你可以通过 package manager 安装 ffmpeg.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation>使用“%1”启动 ffmpeg 时失败。错误信息：%2</translation>
+        <translation>使用 &apos;%1&apos; 启动 ffmpeg 失败. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation>ffmpeg 崩溃了！</translation>
+        <translation>ffmpeg崩溃了!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation>ffmpeg 进程错误</translation>
+        <translation>ffmpeg进程错误</translation>
     </message>
 </context>
 <context>
@@ -784,7 +784,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../export/projectsaver.cpp" line="+42"/>
         <source>Autosave cancelled during save</source>
-        <translation>保存过程中自动保存功能已取消</translation>
+        <translation>保存过程中自动保存已取消</translation>
     </message>
 </context>
 <context>
@@ -1363,12 +1363,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation>显示所有画笔，不论其是否被标记。</translation>
+        <translation>显示全部笔刷, 不管是否添加标签.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation>显示未分配任何标签的画笔。</translation>
+        <translation>显示未添加标签的笔刷.</translation>
     </message>
     <message>
         <location line="+108"/>
@@ -1379,7 +1379,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation>无效的画笔包：在“order.conf”文件夹内未找到该文件</translation>
+        <translation>无效笔刷包: 里面未找到order.conf</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1394,12 +1394,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+71"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation>无法创建画笔预设“%1”。</translation>
+        <translation>无法创建笔刷预设&apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation>无法将画笔“%1”分配给标签“%2”。</translation>
+        <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -1611,12 +1611,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation>桌面</translation>
+        <translation>大屏幕</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation>移动</translation>
+        <translation>小屏幕/手机</translation>
     </message>
 </context>
 <context>
@@ -1698,12 +1698,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+735"/>
         <source>%1 banned by %2.</source>
-        <translation>%1 被 %2 拦截了。</translation>
+        <translation>%1 已被 %2 禁止IP.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 kicked by %2.</source>
-        <translation>%1 已被 %2 踢除。</translation>
+        <translation>%1 已被 %2 踢除.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -1850,7 +1850,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation>会话空间已满！若要继续绘图，操作员必须将其重置以缩小其大小。此操作可通过“会话 &gt; 重置”来完成。</translation>
+        <translation>房间缓存空间不足! 要想继续绘制, 房间管理员必须将房间重置到一个较小的大小. 这可以通过菜单中的 房间&gt;重置... 来完成.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2015,7 +2015,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation>服务器与您所使用的 Drawpile 版本不匹配！</translation>
+        <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
         <location line="+1255"/>
@@ -2112,7 +2112,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation>您在此处不得举办公开活动，仅允许个人活动。您可以在“活动”选项卡中切换活动类型，从公开活动转为个人活动。</translation>
+        <translation>你不能在这里创建公共房间, 只有私人房间允许被创建. 你可以在房间栏中切换到私人房间来重新创建.</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -2142,7 +2142,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation>服务器在不支持的套接字上期望进行 STARTTLS 操作。</translation>
+        <translation>服务器期望在不支持的socket上使用 STARTTLS.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2197,7 +2197,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+176"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation>正在进行不同版本 Drawpile 的会话（%1）！</translation>
+        <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2350,37 +2350,37 @@ Select a regular layer instead.</source>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间需要账号加入。</translation>
+        <translation>房间需要账号加入.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间不允许通过网页浏览器加入。</translation>
+        <translation>房间不允许通过网页浏览器加入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间不允许通过 WebSockets 加入。</translation>
+        <translation>房间不允许通过 WebSockets 加入.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>它使用的是较新的 Drawpile 版本，您需要进行更新。如果没有可用的更新，那么它可能是使用了 Drawpile 的开发版本。</translation>
+        <translation>房间是由一个较新的 Drawpile 版本创建的, 因此你必须更新. 如果没有可用的更新, 则可能是由一个开发中的 Drawpile 版本创建的.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>它所使用的是一款老旧且不兼容的版本的“Drawpile”软件。</translation>
+        <translation>房间是由一个旧的不兼容的 Drawpile 版本创建的.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>它使用的是不兼容的协议进行托管。</translation>
+        <translation>房间是由一个不兼容的协议创建的.</translation>
     </message>
 </context>
 <context>
@@ -2388,7 +2388,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation>如果您不打算使用代理服务器，可以在 Drawpile 的“首选项”中，于“网络”选项卡下禁用网络代理功能。</translation>
+        <translation>如果你不打算使用代理, 你可以在首选项的网络页面中禁用网络代理.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2552,7 +2552,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/freehand.cpp" line="+145"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation>防溢出需要一个填充源图层。</translation>
+        <translation>防溢出需要一个填充源图层.</translation>
     </message>
 </context>
 <context>
@@ -2560,7 +2560,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation>你需要拖动来创建一个渐变。</translation>
+        <translation>你需要拖动来创建一个渐变.</translation>
     </message>
 </context>
 <context>
@@ -2568,27 +2568,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+423"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation>你没有权限变换选区。</translation>
+        <translation>你没有权限变换选区.</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation>没有画布。</translation>
+        <translation>无画布.</translation>
     </message>
     <message>
         <location line="-253"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation>你没有权限进行这种变换。</translation>
+        <translation>你没有权限进行这种变换.</translation>
     </message>
     <message>
         <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation>你没有权限进行图章变换。</translation>
+        <translation>你没有权限进行图章变换.</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation>未选中有东西可以被变换。</translation>
+        <translation>未选中有东西可以被变换.</translation>
     </message>
 </context>
 <context>
@@ -2610,47 +2610,47 @@ Select a regular layer instead.</source>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation>自动更新检查已禁用，&lt;a href=&quot;#autoupdate&quot;&gt;点击此处启用它&lt;/a&gt;。</translation>
+        <translation>自动检查更新已禁用, &lt;a href=&quot;#autoupdate&quot;&gt;请点击这里来启用&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation>如果您不想启用自动检查，请点击此处进行手动检查：&lt;a href=&quot;#checkupdates&quot;&gt;点击这里&lt;/a&gt;。</translation>
+        <translation>如果你不想要自动检查更新, &lt;a href=&quot;#checkupdates&quot;&gt;请点击这里来手动检查&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation>网络错误：%1</translation>
+        <translation>网络错误: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation>无法理解获取的数据。</translation>
+        <translation>无法理解获取的数据.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation>无法理解获取的更新。</translation>
+        <translation>无法理解获取的更新.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation>无法保存更新。</translation>
+        <translation>无法保存更新.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation>无法理解获取的新闻。</translation>
+        <translation>无法理解获取的新闻.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation>无法保存新闻。</translation>
+        <translation>无法保存新闻.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation>暂无新闻。</translation>
+        <translation>暂无新闻.</translation>
     </message>
 </context>
 <context>
@@ -2658,22 +2658,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation>您并未使用 web.drawpile.net 上的官方客户端。大多数服务器不允许来自其他地方的连接。</translation>
+        <translation>你使用的不是 web.drawpile.net 上的官方客户端. 大多数服务器不允许从其他地方连接.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation>该会话地址看起来并非有效的 WebSocket 网址。</translation>
+        <translation>房间地址看起来不像一个有效的 WebSocket URL.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation>您尝试连接的是一个 IP 地址，而非正确的域名。这种情况通常无法实现，除非您先在浏览器中进行设置，允许此类连接。</translation>
+        <translation>你正在尝试连接一个IP地址, 而不是一个正确的域名. 这通常是行不通的, 除非你先将浏览器配置为允许这样做.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation>该服务器可能不支持通过网络浏览器进行加入操作。</translation>
+        <translation>服务器可能不支持通过网页浏览器加入.</translation>
     </message>
 </context>
 <context>
@@ -2681,32 +2681,32 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation>垂直翻转：开启</translation>
+        <translation>垂直翻转: 开</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation>垂直翻转：关闭</translation>
+        <translation>垂直翻转: 关</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation>水平翻转：开启</translation>
+        <translation>水平翻转: 开</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>水平翻转：关闭</translation>
+        <translation>水平翻转: 关</translation>
     </message>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation>缩放：%1%</translation>
+        <translation>缩放: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation>旋转：%1°</translation>
+        <translation>旋转: %1°</translation>
     </message>
     <message>
         <location line="+35"/>
