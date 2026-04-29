@@ -319,12 +319,12 @@
     <message>
         <location line="+3"/>
         <source>Change Color Saturation</source>
-        <translation>Kepekatan Warna</translation>
+        <translation>Ubah Kepekatan Warna</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Color Value</source>
-        <translation>Ubah Nilai Warna</translation>
+        <translation>Ubah Kecerahan Warna</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -344,7 +344,7 @@
     <message>
         <location line="+4"/>
         <source>Undo</source>
-        <translation>Batalkan</translation>
+        <translation>Urungkan</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12117,7 +12117,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+1"/>
         <source>Mobile</source>
-        <translation>Mobile</translation>
+        <translation>Ponsel</translation>
     </message>
     <message>
         <location line="+11"/>
