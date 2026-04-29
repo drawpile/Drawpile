@@ -199,9 +199,24 @@
 		::QOverload<double>::of(&::KisDoubleSliderSpinBox::valueChanged))
 
 #define CFG_BIND_LINEEDIT(CFG, SETTING, SUBJECT)                               \
-	CFG_BIND_OBJECT(                                                           \
-		CFG, SETTING, SUBJECT, &::QLineEdit::setText,                          \
-		&::QLineEdit::textChanged)
+	do {                                                                       \
+		::config::Config *_cfg = (CFG);                                        \
+		::QLineEdit *_subject = (SUBJECT);                                     \
+		_subject->setText(_cfg->get##SETTING());                               \
+		::QObject::connect(                                                    \
+			_cfg, &::config::Config::change##SETTING, _subject,                \
+			[_subject](const QString &_text) {                                 \
+				/* Setting the text moves the caret back to the beginning and  \
+				 * purges the edit history, so we only set if necessary. */    \
+				if(_subject->text() != _text) {                                \
+					_subject->setText(_text);                                  \
+				}                                                              \
+			});                                                                \
+		::QObject::connect(                                                    \
+			_subject, &::QLineEdit::textChanged, _cfg, [_cfg, _subject] {      \
+				_cfg->set##SETTING(_subject->text());                          \
+			});                                                                \
+	} while(0)
 
 #define CFG_BIND_PLAINTEXTEDIT(CFG, SETTING, SUBJECT)                          \
 	do {                                                                       \
