@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation>添加新的</translation>
+        <translation>新增</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -34,12 +34,12 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>房间：</translation>
+        <translation>房间:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation>原因：</translation>
+        <translation>原因:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation>目标：</translation>
+        <translation>目标:</translation>
     </message>
 </context>
 <context>
@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>输入一个列表服务器的 URL：</translation>
+        <translation>输入一个列表服务器的 URL:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -107,22 +107,22 @@
         <location line="+32"/>
         <location line="+102"/>
         <source>px</source>
-        <translation>像素</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Anti-Overflow:</source>
-        <translation>防溢出：</translation>
+        <translation>防溢出:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation>容错率： </translation>
+        <translation>容错率: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation>扩展： </translation>
+        <translation>扩展: </translation>
     </message>
     <message>
         <location line="+26"/>
@@ -163,7 +163,7 @@
     <message>
         <location line="-16"/>
         <source>Color Pickup: 1/</source>
-        <translation>颜色拾取：1/</translation>
+        <translation>色延伸: 1/</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -226,12 +226,12 @@
         <location line="+16"/>
         <location line="+91"/>
         <source>Action</source>
-        <translation>操作</translation>
+        <translation>动作</translation>
     </message>
     <message>
         <location line="-58"/>
         <source>Choose an action</source>
-        <translation>选择操作</translation>
+        <translation>选择一个动作</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -241,7 +241,7 @@
     <message>
         <location line="+25"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>反转输入方向。例如，向上滚动缩小而不是放大。</translation>
+        <translation>反转输入方向. 例如, 向上滚动放大, 而不是缩小.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -251,7 +251,7 @@
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>切换水平和垂直方向。例如，上下移动光标来改变画笔大小，而不是左右移动光标。</translation>
+        <translation>切换水平和垂直方向. 例如, 上下移动光标来改变画笔大小而不是左右移动.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -279,7 +279,7 @@
     <message>
         <location line="+4"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation>棘轮式旋转画布</translation>
+        <translation>15度增量旋转画布</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -299,17 +299,17 @@
     <message>
         <location line="+3"/>
         <source>Change Brush Size</source>
-        <translation>更改画笔大小</translation>
+        <translation>改变笔刷大小</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Brush Opacity</source>
-        <translation>更改画笔不透明度</translation>
+        <translation>改变笔刷不透明度</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Brush Hardness</source>
-        <translation>更改画笔硬度</translation>
+        <translation>改变笔刷硬度</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -324,22 +324,22 @@
     <message>
         <location line="+4"/>
         <source>Change Color Value</source>
-        <translation>更改透明度</translation>
+        <translation>更改明度</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Tool</source>
-        <translation>切换橡皮擦工具</translation>
+        <translation>切换橡皮工具</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Mode</source>
-        <translation>切换橡皮擦模式</translation>
+        <translation>切换橡皮模式</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Alpha Preserve</source>
-        <translation>切换 Alpha 保护</translation>
+        <translation>切换保持透明度</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -382,7 +382,7 @@
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation>信息</translation>
+        <translation>关于</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -580,7 +580,7 @@
     <message>
         <location line="+20"/>
         <source>Export Animated GIF</source>
-        <translation>导出 GIF 动画</translation>
+        <translation>导出GIF动画</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -682,7 +682,7 @@
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation>打开 %1 的临时文件时出错。</translation>
+        <translation>打开 %1 的临时文件时出错.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -732,7 +732,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation>导出动画 PNG 图像</translation>
+        <translation>导出 动态 PNG</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -772,12 +772,12 @@
     <message>
         <location line="+40"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation>PSD 格式不支持注释、动画时间轴以及某些混合模式。如果您希望这些功能能完整保留下来，那么您必须另存为其他格式。</translation>
+        <translation>PSD格式缺少对注释, 动画时间轴和某些混合模式的支持. 如果你想正确保留这些内容, 你必须保存为其他格式.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation>所选的格式会保存合并后的图像。如果您希望保留图层、注释以及动画时间轴，那么您必须选择其他格式进行保存。</translation>
+        <translation>所选格式将保存为拼合图像. 如果你想保留图层, 注释和动画时间轴, 你必须保存为其他格式.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -798,12 +798,12 @@
     <message>
         <location line="+1"/>
         <source>The project file %1 already exists. Do you want to append to it or replace it?</source>
-        <translation>项目文件 %1 已经存在。您是要将其追加到现有文件中还是对其进行替换？</translation>
+        <translation>项目文件 %1 已经存在. 你要追加内容还是替换它?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>If you replace the file, any data it contains from past sessions will be lost.</source>
-        <translation>如果您更换该文件，那么它所包含的以往会话中的任何数据都将丢失。</translation>
+        <translation>如果你替换该文件, 里面包含的过往房间数据将会丢失.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -823,17 +823,17 @@
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation>文件 %1 已经存在，请问您是否要将其覆盖？</translation>
+        <translation>文件 %1 已经存在, 你要替换它吗?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation>是的，替换</translation>
+        <translation>是, 替换</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation>否，保留</translation>
+        <translation>否, 保留</translation>
     </message>
     <message>
         <location line="+217"/>
@@ -860,7 +860,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+167"/>
         <source>Size Limit: Unlimited</source>
-        <translation>大小限制：无限制</translation>
+        <translation>大小限制: 无限</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="+297"/>
@@ -945,7 +945,7 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation>应用待处理的填充，使其对所有人可见</translation>
+        <translation>应用待处理的填充, 使其对所有人可见</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1081,7 +1081,7 @@
     <message>
         <location line="+23"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>您正在本地主持一个会话。如果其他人无法加入您的会话，请查看 &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;关于主持会话的帮助页面&lt;/a&gt;。</translation>
+        <translation>你使用本机创建了房间. 如果其他人无法加入你的房间, 请查看 &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -1106,12 +1106,12 @@
     <message>
         <location line="+55"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>您正在本地主持一个会话，因此 Drawpile 需要找到您的外部可见 IP 地址才能向您提供邀请链接。更多信息，请查看 &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;托管帮助页面&lt;/a&gt;。</translation>
+        <translation>你使用本机创建了房间, 因此Drawpile必须找到你的外部可见 IP 地址才能为你提供邀请链接. 更多信息, 请查看 &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation>获取外部可见的 IP 地址</translation>
+        <translation>获取外部可见的IP地址</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -1326,7 +1326,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>Drawpile 的停靠栏可以自由排列。您可以使用“视图”&gt;“停靠栏”&gt;“排列停靠栏”来更轻松地拖动它们。请确保您的排列方式适合您的屏幕分辨率，否则某些控件可能会超出屏幕范围。</translation>
+        <translation>Drawpile的面板可以被自由排列和组合. 你可以通过菜单中的 视图&gt;面板&gt;排列面板 来轻松的拖动排列. 请确保你的排列符合你的分辨率, 否则一些控件可能会被推到屏幕之外.</translation>
     </message>
 </context>
 <context>
@@ -1339,7 +1339,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation>此链接将带您前往“%1”网站，该网站并非由 Drawpile 运营。您确定要访问该网站吗？</translation>
+        <translation>此链接将带你访问网站 &quot;%1&quot;, 该网站并非由Drawpile运营. 你确定要访问吗?</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1363,7 +1363,7 @@ Subrange: [%3, %4]</source>
         <location line="+17"/>
         <location line="+230"/>
         <source>Incorrect password.</source>
-        <translation>密码错误。</translation>
+        <translation>密码错误.</translation>
     </message>
     <message>
         <location line="-187"/>
@@ -1383,12 +1383,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation>18 禁房</translation>
+        <translation>18禁房</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>This session is password-protected.</source>
-        <translation>此会话已设置密码保护。</translation>
+        <translation>此房间有密码保护.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1398,7 +1398,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;本次会话已标明其内容不适合未成年人观看（NSFM）。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;您必须年满18周岁且被允许观看成人内容才能继续。&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;您确定要加入本次会话吗？&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;此房间已表明其内容不适于未成年人.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;你必须年满18周岁以便继续观看成人内容.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;你确定要加入此房间吗?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1418,7 +1418,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation>继续使用此帐户，但更改头像、用户名或密码。</translation>
+        <translation>继续使用此账号, 但更改头像, 用户名或者密码.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1428,7 +1428,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation>请勿使用这些账号。</translation>
+        <translation>不要使用这些账号.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1438,7 +1438,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation>使用所选账号登录。</translation>
+        <translation>使用所选账号登录.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1448,7 +1448,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation>忘记此账号。</translation>
+        <translation>忘记此账号.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1458,16 +1458,16 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation>除非规则改变，否则不要再问了</translation>
+        <translation>不再询问, 除非规则发生更改</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation>本次会话托管在其他服务器上，您将被重定向。
+        <translation>此房间已在另一个服务器上创建, 你将被重新定向.
 
-为避免将来出现此额外步骤，请使用“浏览”页面或会话的直接链接。</translation>
+为了避免将来出现此额外步骤, 请通过房间大厅或者一个直接的链接来加入房间.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -1477,7 +1477,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+86"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>请输入 &lt;b&gt;会话密码&lt;/b&gt;，而 &lt;i&gt;非&lt;/i&gt; 您的账户密码。</translation>
+        <translation>请输入房间密码, 而不是你的账号密码.</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1511,13 +1511,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+173"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>您有 %n 张图片尚未保存更改。是否要在退出前查看这些更改？</numerusform>
+            <numerusform>你有 %n 个图像存在未保存的更改, 你想在退出前检查这些更改吗？</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation>如果您不审核文档，所有更改都将丢失。</translation>
+        <translation>如果你不检查你的文档, 所有更改都将丢失.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1542,12 +1542,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="-1795"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
-        <translation>退出 Drawpile</translation>
+        <translation>退出Drawpile</translation>
     </message>
     <message>
         <location line="-28"/>
         <source>You are still connected to a drawing session.</source>
-        <translation>您还有未退出的房间。</translation>
+        <translation>您还有未退出的房间.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1564,7 +1564,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-972"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>有未保存的更改。要在退出前保存它们吗？</translation>
+        <translation>有未保存的更改. 要在退出前保存它们吗?</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1689,7 +1689,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation>一款协作绘图程序。</translation>
+        <translation>一款协作绘图程序.</translation>
     </message>
     <message>
         <location line="+247"/>
@@ -1756,22 +1756,22 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation>这样做将达到 %1。</translation>
+        <translation>这样做将 %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation>这样做将使 %1 和 %2。</translation>
+        <translation>这样做将 %1 和 %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation>这样做将影响 %1、%2 和 %3。</translation>
+        <translation>这样做将 %1, %2 和 %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation>这样做将影响 %1、%2、%3 和 %4。</translation>
+        <translation>这样做将 %1, %2, %3 和 %4.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1802,7 +1802,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+498"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation>&lt;p&gt;快捷键“%1”含义模糊，它匹配：&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
+        <translation>&lt;p&gt;快捷键 &apos;%1&apos; 有歧义, 它匹配:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1812,38 +1812,38 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation>修复</translation>
+        <translation>更正</translation>
     </message>
     <message>
         <location line="+881"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation>您没有权限进行剪切、粘贴、填充或删除操作。</translation>
+        <translation>你没有权限进行剪切, 粘贴, 填充或者删除.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation>您没有权限调整画布大小。</translation>
+        <translation>你没有权限修改画布大小.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation>您没有权限更改会话背景。</translation>
+        <translation>你没有权限修改画布颜色.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation>您没有创建注释的权限。</translation>
+        <translation>你没有权限进行文字输入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation>您没有撤销或重做的权限。</translation>
+        <translation>你没有权限进行撤销和重做.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation>你没有权限这样做。</translation>
+        <translation>你没有权限这样做.</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -1853,7 +1853,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation>您即将创建一个新画布并关闭此窗口。</translation>
+        <translation>你即将创建一个新画布并关闭此窗口.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1863,7 +1863,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation>您即将打开最近使用的文件并关闭此窗口。</translation>
+        <translation>你即将打开一个最近文件并关闭此窗口.</translation>
     </message>
     <message>
         <location line="-1742"/>
@@ -1873,7 +1873,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation>您即将打开一个新文件并关闭此窗口。</translation>
+        <translation>你即将打开一个新文件并关闭此窗口.</translation>
     </message>
     <message>
         <location line="+2115"/>
@@ -1888,7 +1888,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation>下载完成，点击“保存”按钮保存文件。</translation>
+        <translation>下载完成, 请点击 &quot;保存&quot; 来保存你的文件.</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -1903,7 +1903,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation>本次会话使用的是较新版本的 Drawpile。当其他用户使用您的版本尚不支持的新功能时，您可能无法看到效果，也无法压缩或重置画布。请访问 &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; 获取更新。</translation>
+        <translation>此房间是用一个较新版本的 Drawpile 开的. 当别人使用你当前版本尚未支持的新功能时, 你将无法看到效果且无法压缩或重置画布. 请访问 &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; 查看更新.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1918,27 +1918,27 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+218"/>
         <source>Error downloading profile.</source>
-        <translation>下载配置文件时出错。</translation>
+        <translation>下载简介时出错.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Error downloading tablet event log.</source>
-        <translation>下载数位板事件日志出错。</translation>
+        <translation>下载数位板事件日志出错.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error closing tablet event log.</source>
-        <translation>关闭数位板事件日志出错。</translation>
+        <translation>关闭数位板事件日志出错.</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Error opening tablet event log.</source>
-        <translation>打开数位板事件日志出错。</translation>
+        <translation>打开数位板事件日志出错.</translation>
     </message>
     <message>
         <location line="+222"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation>您已连接到某个会话！要主持一个会话，请先断开连接。</translation>
+        <translation>你已经连接到一个房间! 请先断开连接再创建新的房间.</translation>
     </message>
     <message>
         <location line="+263"/>
@@ -1948,34 +1948,34 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation>您有未保存的更改，是否要在重新连接之前保存它们？</translation>
+        <translation>你有未保存的更改, 你想在重新连接之前保存它们吗?</translation>
     </message>
     <message>
         <location line="-2794"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation>已切换到帧视图模式。
-您可以通过“视图”菜单或时间轴退出此模式。</translation>
+        <translation>已切换到帧视图模式.
+你可以通过视图菜单或者时间轴来退出该模式.</translation>
     </message>
     <message>
         <location line="+2786"/>
         <source>Did the download complete successfully?</source>
-        <translation>下载是否成功完成？</translation>
+        <translation>下载是否成功完成?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation>您有未保存的更改，是否要在重新连接之前下载这些更改？</translation>
+        <translation>你有未保存的更改, 你想在重新连接之前下载它们吗?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation>您有未保存的更改，是想在重新连接前保存，还是想在新窗口中打开重新连接？</translation>
+        <translation>你有未保存的更改, 你想在重新连接之前保存它们还是在新窗口中重新连接?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation>否，再试一次</translation>
+        <translation>不, 再试一次</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1991,7 +1991,7 @@ You can exit it via the View menu or the timeline.</source>
         <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation>新建窗口</translation>
+        <translation>新窗口</translation>
     </message>
     <message>
         <location line="+103"/>
@@ -2022,7 +2022,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation>您即将连接到新会话并关闭此窗口。</translation>
+        <translation>你即将连接到一个新房间并关闭此窗口.</translation>
     </message>
     <message>
         <location line="+158"/>
@@ -2032,7 +2032,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation>你已从服务器中断开连接。</translation>
+        <translation>你已从服务器中断开连接.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2042,7 +2042,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation>无法与服务器建立连接。</translation>
+        <translation>无法与服务器建立连接.</translation>
     </message>
     <message>
         <location line="+231"/>
@@ -2057,7 +2057,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation>更改房间撤销限制, 当前限制是 %1。</translation>
+        <translation>更改房间撤销限制, 当前限制是 %1.</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -2067,12 +2067,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation>您的画布包含的数据过多，服务器限制为 %1 MB。请合并或删除一些图层以简化画布。</translation>
+        <translation>你的画布包含数据过大, 服务器限制为 %1 MB. 请合并或者删除一些图层来简化画布.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation>您尝试重置的画布包含的数据过多，服务器限制为 %1 MB。</translation>
+        <translation>你尝试重置的画布包含数据过大, 服务器限制为 %1 MB.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2093,7 +2093,7 @@ You can exit it via the View menu or the timeline.</source>
         <location line="+109"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>图像无法被加载: %1。</translation>
+        <translation>图像无法被加载: %1.</translation>
     </message>
     <message>
         <location line="+276"/>
@@ -2124,7 +2124,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation>你即将打开一个调试数据并关闭此窗口。</translation>
+        <translation>你即将打开一个调试数据并关闭此窗口.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2174,12 +2174,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+10"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation>另存为 DPCS(&amp;V)…</translation>
+        <translation>另存为DPCS(&amp;V)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation>另存为 ORA(&amp;V)…</translation>
+        <translation>另存为ORA(&amp;V)…</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -2202,7 +2202,7 @@ You can exit it via the View menu or the timeline.</source>
         <location filename="../widgets/macmenu.cpp" line="+14"/>
         <location line="+2"/>
         <source>&amp;Quit</source>
-        <translation>退出(&amp;Q)</translation>
+        <translation>退出软件(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-19"/>
@@ -2542,12 +2542,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+29"/>
         <source>Automatically inherit alpha</source>
-        <translation>自动继承透明度</translation>
+        <translation>根据混合模式自动继承和保持透明度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation>根据混合模式继承并保留 Alpha 值</translation>
+        <translation>根据混合模式自动继承和保持透明度</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2637,7 +2637,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+131"/>
         <source>Selection</source>
-        <translation>选区</translation>
+        <translation>选择</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2652,7 +2652,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Timeline tool: select</source>
-        <translation>时间轴工具：选择</translation>
+        <translation>时间轴工具: 选择</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2662,7 +2662,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Timeline tool: exposure</source>
-        <translation>时间轴工具：曝光</translation>
+        <translation>时间轴工具: 曝光</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2672,7 +2672,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom in</source>
-        <translation>时间轴：放大</translation>
+        <translation>时间轴: 放大</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2682,7 +2682,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom out</source>
-        <translation>时间轴：缩小</translation>
+        <translation>时间轴: 缩小</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2692,12 +2692,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Timeline: reset zoom</source>
-        <translation>时间轴：重置缩放</translation>
+        <translation>时间轴: 重置缩放</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unassign Key Frame</source>
-        <translation>取消关键帧</translation>
+        <translation>取消指定关键帧</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2718,8 +2718,8 @@ You can exit it via the View menu or the timeline.</source>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation>图层视图模式已禁用。
-您可以通过“视图”菜单或“首选项”来重新启用它们。</translation>
+        <translation>图层视图模式提示已禁用.
+你可以通过视图菜单或者首选项来重新启用它.</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -2776,14 +2776,14 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation>选择操作栏已禁用。
-您可以通过“视图”菜单重新启用它。</translation>
+        <translation>选区操作工具栏已禁用.
+你可以通过视图菜单来重新启用它.</translation>
     </message>
     <message>
         <location line="+644"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation>如需报告故障或提出功能建议，请[点击此处查看]。</translation>
+        <translation>如需报告故障或者提出建议, [请查看此处].</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+28"/>
@@ -2938,37 +2938,37 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+353"/>
         <source>Increase Exposure on All Tracks</source>
-        <translation>扩大所有轨道的曝光度</translation>
+        <translation>在所有轨道上增加曝光</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Decrease Exposure on All Tracks</source>
-        <translation>降低所有轨道的曝光度</translation>
+        <translation>在所有轨道上减少曝光</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Track Visible for You</source>
-        <translation>轨道为您可见</translation>
+        <translation>显示轨道</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin for You</source>
-        <translation>为你追踪洋葱皮</translation>
+        <translation>显示洋葱皮</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Frame Move Locked for You</source>
-        <translation>您的轨道帧移动已被锁定</translation>
+        <translation>锁定轨道的帧移动</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Next Frame Within Range</source>
-        <translation>范围内的下一帧</translation>
+        <translation>范围内下一帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame Within Range</source>
-        <translation>范围内的上一帧</translation>
+        <translation>范围内上一帧</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3028,7 +3028,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation>平移</translation>
+        <translation>抓手</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3058,12 +3058,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation>交换当前的前景和背景颜色</translation>
+        <translation>交换当前前景色和背景色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation>前景色设置为黑色，背景设置为白色</translation>
+        <translation>将前景色设置为黑色和背景色设置为白色</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3224,7 +3224,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+65"/>
         <source>Set Artificial Lag...</source>
-        <translation>设置人为延迟...</translation>
+        <translation>设置人工滞后...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3364,34 +3364,34 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to disable autorecovery for this session?</source>
-        <translation>您确定要取消此会话的自动恢复功能吗？</translation>
+        <translation>你确定要禁用当前房间的自动恢复功能吗?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsaved data will be discarded and can&apos;t be recovered. You will not be able to create a timelapse.</source>
-        <translation>未保存的数据将会被删除且无法恢复。您将无法创建时间轴影片。</translation>
+        <translation>未保存的数据将被删除且无法恢复. 同时你将无法创建缩时视频.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, disable</source>
         <extracomment>&quot;Yes&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation>是的，禁用</translation>
+        <translation>是, 禁用</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, keep enabled</source>
         <extracomment>&quot;No&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation>不，保持启用</translation>
+        <translation>否, 保持启用</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Autorecovery deactivated</source>
-        <translation>自动恢复功能已关闭</translation>
+        <translation>自动恢复已停用</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>The autorecovery file has exceeded %1% of the %2 size limit. Autorecovery will be disabled if the limit is reached.</source>
-        <translation>自动恢复文件已超过 %1% 的 %2 大小限制。若达到此限制，自动恢复功能将被关闭。</translation>
+        <translation>自动恢复文件已超过 %2 大小限制的 %1% . 超过此限制自动恢复功能将被禁用.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3401,28 +3401,28 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Autorecovery error: %1</source>
-        <translation>自动恢复错误： %1</translation>
+        <translation>自动恢复错误: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery will be disabled for the current session. The file will be left available for recovery. If you continue, you will not be able to create a timelapse.</source>
-        <translation>当前会话中的自动恢复功能将被禁用。该文件将保持可恢复状态。如果您继续操作，将无法创建时间轴。</translation>
+        <translation>当前房间将禁用自动恢复功能. 该文件将保留以便后续恢复. 如果你继续操作将无法创建缩时视频.</translation>
     </message>
     <message>
         <location line="+36"/>
         <location line="+10"/>
         <source>Project Overview</source>
-        <translation>项目概述</translation>
+        <translation>项目概况</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>To view statistics, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation>要查看统计数据，您首先需要保存一个项目文件（.dppr）。您现在要这样做吗？</translation>
+        <translation>要查看项目统计, 你必须先保存一个项目文件. 你想现在保存吗?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the statistics?</source>
-        <translation>目前这些更改尚未保存至项目文件（.dppr）中。您是否现在就想要保存这些更改，以便它们能在统计信息中显示出来？</translation>
+        <translation>有新的更改尚未保存进项目文件中. 你想现在保存它们以便在项目统计中显示吗?</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3430,32 +3430,32 @@ You can re-enable it via the View menu.</source>
         <location line="+10"/>
         <location line="+30"/>
         <source>Timelapse</source>
-        <translation>延时</translation>
+        <translation>缩时视频</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>Unexpected save format. To view statistics, you have to save to a project file (.dppr).</source>
-        <translation>意外的保存格式。要查看统计数据，您必须将其保存为项目文件（.dppr）。</translation>
+        <translation>保存格式不正确. 要查看项目统计, 你必须先保存一个项目文件.</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>To make a timelapse, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation>要制作延时影片，您首先需要保存一个项目文件（.dppr）。您现在要这样做吗？</translation>
+        <translation>要制作缩时视频, 你必须先保存一个项目文件. 你想现在保存一个吗?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the timelapse?</source>
-        <translation>目前这些更改尚未保存至项目文件（.dppr）中。您是否现在就想要保存这些更改，以便它们能在时间轴中显示出来？</translation>
+        <translation>有新的更改尚未保存进项目文件中. 你想现在保存它们以便在缩时视频中显示吗?</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Unexpected save format. To make a timelapse, you have to save to a project file (.dppr).</source>
-        <translation>意外的保存格式。要制作延时影片，您必须将其保存为项目文件（.dppr）。</translation>
+        <translation>保存格式不正确. 要制作缩时视频, 你必须先保存一个项目文件.</translation>
     </message>
     <message>
         <location line="+250"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation>当前笔刷不允许其他用户使用。</translation>
+        <translation>当前笔刷不允许其他用户使用.</translation>
     </message>
     <message>
         <location line="+542"/>
@@ -3465,7 +3465,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recovered file and close this window.</source>
-        <translation>您即将打开一个已恢复的文件并关闭此窗口。</translation>
+        <translation>你即将打开一个恢复的文件并关闭此窗口.</translation>
     </message>
     <message>
         <location line="+125"/>
@@ -3505,83 +3505,83 @@ You can re-enable it via the View menu.</source>
         <location line="+17"/>
         <location line="+11"/>
         <source>File is empty.</source>
-        <translation>文件是空的。</translation>
+        <translation>文件是空的.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Error setting up download.</source>
-        <translation>下载设置出现错误。</translation>
+        <translation>设置下载时出错.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error performing download.</source>
-        <translation>下载操作出现错误。</translation>
+        <translation>执行下载时出错.</translation>
     </message>
     <message>
         <location line="+122"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation>本次会议使用的是较旧版本的 Drawpile 软件。一些功能，如图层裁剪、某些混合模式以及在选区掩码内进行绘图等，将无法使用。</translation>
+        <translation>这个房间是用Drawpile旧版本开的. 多个新功能 – 像是剪贴图层, 一些混合模式和在选区蒙版内绘制 – 都将无法使用.</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Saving animation...</source>
-        <translation>正在保存动画...</translation>
+        <translation>保存动画...</translation>
     </message>
     <message>
         <location line="+133"/>
         <source>Unsupported format.</source>
-        <translation>不支持的格式。</translation>
+        <translation>不支持的格式.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation>无法开始录制。</translation>
+        <translation>无法开始录制.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation>未知错误。</translation>
+        <translation>未知错误.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Error closing profile.</source>
-        <translation>关闭配置文件出错。</translation>
+        <translation>关闭简介时出错.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error opening profile.</source>
-        <translation>打开配置文件出错。</translation>
+        <translation>打开简介时出错.</translation>
     </message>
     <message>
         <location line="+303"/>
         <source>Canvas size too large to host.</source>
-        <translation>画布尺寸太大无法创建房间。</translation>
+        <translation>画布尺寸太大无法创建房间.</translation>
     </message>
     <message>
         <location line="+1932"/>
         <source>Stop Profile</source>
-        <translation>停止配置文件</translation>
+        <translation>停止概况</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+2232"/>
         <source>Profile...</source>
-        <translation>配置文件...</translation>
+        <translation>概况...</translation>
     </message>
     <message>
         <location line="-2221"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation>设置人为延迟...（当前为 %1 毫秒）</translation>
+        <translation>设置人工滞后... (目前为 %1 ms)</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Set Artificial Lag</source>
-        <translation>设置人为延迟</translation>
+        <translation>设置人工滞后</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation>毫秒级人工延迟（0 表示禁用）：</translation>
+        <translation>以毫秒为单位的人工滞后 (0 到禁用):</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3591,7 +3591,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation>在此之后的若干秒后模拟断开连接：</translation>
+        <translation>模拟在这么多秒后断开连接:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3606,16 +3606,16 @@ You can re-enable it via the View menu.</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation>调试日志会记录本地和远程的绘图指令。它们可用于解决网络问题，但除此之外作用不大。如果您想要进行常规的录制操作，请使用“文件”菜单中的“录制...”选项。相反。
+        <translation>调试数据将记录本地和远程绘图命令. 它们可以用来修复网络问题, 但其他方面就不多了. 如果你想做一个常规的记录, 请使用文件&gt;录制...来代替.
 
-调试日志记录将在下一次画布重置时开始，并且相关文件将保存在 %1 目录中。
+调试数据录制在下一次画布重置时开始, 文件将被保存在%1中.
 
-您确定要开始记录调试日志吗？</translation>
+你确定你要开始录制调试数据吗?</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Settings File:</source>
-        <translation>设置文件：</translation>
+        <translation>设置文件:</translation>
     </message>
     <message>
         <location line="+183"/>
@@ -3640,17 +3640,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+61"/>
         <source>Project statistics…</source>
-        <translation>项目统计数据…</translation>
+        <translation>项目统计…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Make timelapse…</source>
-        <translation>制作延时摄影…</translation>
+        <translation>制作缩时视频…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recover…</source>
-        <translation>恢复…</translation>
+        <translation>恢复文件…</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -3766,7 +3766,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation>仅对所选的蒙版进行处理，之后再切换回其他工具</translation>
+        <translation>只变换选区蒙版本身, 然后切换回工具</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3831,7 +3831,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation>保持笔刷在选择蒙版内</translation>
+        <translation>将笔画保留在选区蒙版内</translation>
     </message>
     <message>
         <location line="+223"/>
@@ -3881,7 +3881,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1024"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation>没有画布可用！请创建一个画布或者打开一个文件。</translation>
+        <translation>没有画布可供创建房间! 新建一个或者打开一个文件.</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -3891,12 +3891,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+269"/>
         <source>Really leave and terminate the session?</source>
-        <translation>真的要离开并结束这个会议吗？</translation>
+        <translation>确定离开并终止房间吗?</translation>
     </message>
     <message>
         <location line="+342"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation>你已从房间中断开连接。</translation>
+        <translation>你已从房间中断开连接.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3906,7 +3906,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1413"/>
         <source>Primary screen:</source>
-        <translation>主屏幕：</translation>
+        <translation>主屏幕:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4293,7 +4293,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Text Input Debug Overlay</source>
-        <translation>文本输入调试覆盖</translation>
+        <translation>文字输入调试叠加</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4348,7 +4348,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation>日志文件不存在，您是否需要在偏好设置中开启日志记录功能？</translation>
+        <translation>日志文件不存在, 你是否需要在首选项中启用记录?</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4394,7 +4394,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Session menu</source>
-        <translation>会话菜单</translation>
+        <translation>房间菜单</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4659,37 +4659,37 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+40"/>
         <source>Latency:</source>
-        <translation>延迟：</translation>
+        <translation>延迟:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation>平铺：</translation>
+        <translation>框架:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation>平铺内存：</translation>
+        <translation>框架内存:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation>上下文：</translation>
+        <translation>上下文:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation>上下文内存：</translation>
+        <translation>上下文内存:</translation>
     </message>
     <message>
         <location line="-86"/>
         <source>Sent:</source>
-        <translation>发送：</translation>
+        <translation>已发送:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Received:</source>
-        <translation>已接收：</translation>
+        <translation>已接收:</translation>
     </message>
 </context>
 <context>
@@ -4727,7 +4727,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation>回放速度： </translation>
+        <translation>回放速度: </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4737,7 +4737,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation>建立索引后，您便能迅速跳转到录音的任何部分。</translation>
+        <translation>建立一个索引可以让你快速跳转到录像的任何部分.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -4865,7 +4865,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation>平移</translation>
+        <translation>抓手</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4936,7 +4936,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation>禁止 IP</translation>
+        <translation>禁止IP</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4969,12 +4969,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+672"/>
         <source>Operator password:</source>
-        <translation>管理员密码：</translation>
+        <translation>管理员密码:</translation>
     </message>
     <message>
         <location line="-666"/>
         <source>Autoreset threshold:</source>
-        <translation>自动重置值：</translation>
+        <translation>自动重置值:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4994,7 +4994,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+25"/>
         <source>Options:</source>
-        <translation>选项：</translation>
+        <translation>选项:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5019,7 +5019,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Idle timeout:</source>
-        <translation>闲置超时：</translation>
+        <translation>闲置超时:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5039,17 +5039,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation>密码：</translation>
+        <translation>房间密码:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation>最大用户数：</translation>
+        <translation>最大用户数:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation>允许多少用户进入。不会影响已登录的用户</translation>
+        <translation>允许加入的用户数量. 已经加入的不影响</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -5062,51 +5062,51 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation>像素</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation>房间管理员： </translation>
+        <translation>房间管理员: </translation>
     </message>
     <message>
         <location line="-224"/>
         <source>Laser Pointer:</source>
-        <translation>记号笔：</translation>
+        <translation>记号笔:</translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation>信任用户： </translation>
+        <translation>信任用户: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation>颜料和 OKLAB 画笔：</translation>
+        <translation>颜料和OKLAB笔刷:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation>注册用户： </translation>
+        <translation>注册用户: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation>画笔大小限制：</translation>
+        <translation>笔刷大小限制:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation>所有人： </translation>
+        <translation>所有人: </translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Layer count limit:</source>
-        <translation>图层数量限制：</translation>
+        <translation>图层数量限制:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -5116,7 +5116,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation>只有房间管理员可以管理被禁的用户。</translation>
+        <translation>只有房间管理员可以管理被禁的用户.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5143,7 +5143,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-641"/>
         <source>Title:</source>
-        <translation>标题：</translation>
+        <translation>房名:</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -5213,7 +5213,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-112"/>
         <source>Kick &amp; Ban:</source>
-        <translation>踢出和封禁：</translation>
+        <translation>踢除和禁IP:</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -5336,7 +5336,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+7"/>
         <source>%n hour(s)</source>
         <translation>
-            <numerusform>%n 个小时</numerusform>
+            <numerusform>%n 小时</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -5529,7 +5529,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+6"/>
         <source>unknown</source>
         <extracomment>An unknown work time. Will be shown to the user like &quot;Your work time: unknown&quot;.</extracomment>
-        <translation>未知</translation>
+        <translation>未知的</translation>
     </message>
 </context>
 <context>
@@ -5618,7 +5618,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation>GIMP 色板 (*.gpl)</translation>
+        <translation>GIMP色板 (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5696,7 +5696,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/actionpickerdialog.cpp" line="+21"/>
         <source>Select Action</source>
-        <translation>选择操作</translation>
+        <translation>选择动作</translation>
     </message>
 </context>
 <context>
@@ -5827,7 +5827,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+34"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation>输出分辨率将为 %1x%2 像素。</translation>
+        <translation>输出分辨率将为 %1x%2 像素.</translation>
     </message>
 </context>
 <context>
@@ -5845,12 +5845,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation>将一系列图像导入为时间轴帧。</translation>
+        <translation>导入一系列图像作为时间轴帧.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation>在 Drawpile 的网页浏览器版本中，不支持导入动画帧。</translation>
+        <translation>网页浏览器版本的Drawpile不支持导入动画帧.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5900,7 +5900,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation>将 ORA 或 PSD 文件的各层导入为时间轴帧。</translation>
+        <translation>将 ORA 或 PSD 文件的图层作为时间轴帧导入.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6139,7 +6139,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>无法读取图像：%1 。</translation>
+        <translation>无法读取图像: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6169,19 +6169,19 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
         <translation>
-            <numerusform>已导出 %n 个笔刷。</numerusform>
+            <numerusform>已导出 %n 个笔刷.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation>笔刷导出失败。</translation>
+        <translation>笔刷导出失败.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation>
-            <numerusform>%n 个错误已被发现。</numerusform>
+            <numerusform>遇到了%n个错误.</numerusform>
         </translation>
     </message>
 </context>
@@ -6205,7 +6205,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation>图片大小将被调整为 64x64 像素。</translation>
+        <translation>图片大小将被调整为 64x64 像素.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6258,7 +6258,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation>核心笔刷设置。</translation>
+        <translation>核心笔刷设置.</translation>
     </message>
     <message>
         <location line="+187"/>
@@ -6287,7 +6287,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint 笔刷</translation>
+        <translation>MyPaint笔刷</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -6335,7 +6335,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation>笔刷原数据设置。</translation>
+        <translation>笔刷原数据设置.</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -6385,7 +6385,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
-        <translation>为即时像素绘制禁用所有平滑和稳定功能。</translation>
+        <translation>为即时像素绘制禁用所有平滑和稳定功能.</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -6407,7 +6407,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-502"/>
         <source>Common</source>
-        <translation>常见</translation>
+        <translation>通用</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6469,8 +6469,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation>启用此选项将使模糊效果考虑 Alpha 通道。
-禁用此选项则会将功能恢复到使用 Drawpile 2.3 版之前的模式。</translation>
+        <translation>启用此选项将会混合透明度通道.
+禁用它将恢复到 Drawpile 2.3之前的行为.</translation>
     </message>
     <message>
         <location line="+101"/>
@@ -6521,60 +6521,60 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>设置尺寸、不透明度、硬度、模糊和抖动的最大速度。</translation>
+        <translation>一次性设置最大速度应用于大小, 不透明度, 硬度, 混合和抖动.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation>此画笔的所有设置所设定的最大速度均为上限值。</translation>
+        <translation>为此画笔的所有设置设定最大速度.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>设置尺寸、不透明度、硬度、模糊和抖动的最大距离。</translation>
+        <translation>一次性设置最大距离应用于大小, 不透明度, 硬度, 混合和抖动.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation>此画笔的所有设置所设定的最大距离值。</translation>
+        <translation>为此画笔的所有设置设定最大距离.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Not available in indirect paint modes.</source>
-        <translation>在间接绘画模式下不可使用。</translation>
+        <translation>在间接绘画模式下不可使用.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation>在间接绘制模式或使用非正常混合模式时不可用。</translation>
+        <translation>在间接绘画模式下或者在使用正常模式以外的混合模式时不可使用.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation>在间接绘制模式或使用标记或更大密度混合模式时不可用。</translation>
+        <translation>在间接绘画模式下或者在使用马克笔模式和比较(浓度)模式时不可使用.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation>同步涂抹（速度较慢，但更精确）</translation>
+        <translation>同步混合 (速度较慢, 但更准确)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation>这将使画笔在完成自身一笔画之后再继续绘制，从而使其能够准确地自行晕染。
-如果快速的笔触在晕染时会产生瑕疵，启用此功能则会有帮助。</translation>
+        <translation>这将使笔刷等待其笔画完成, 以允许它更准确地与自身混合.
+如果快速的笔画在混合时造成伪影, 启用此选项会有所帮助.</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+9"/>
         <source>Pixel-perfect</source>
-        <translation>像素级完美</translation>
+        <translation>像素-完美</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation>可防止出现 L 形曲线，此功能主要用于较小的像素笔刷。</translation>
+        <translation>防止出现L形曲线, 主要对小的像素笔刷有用.</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -6584,17 +6584,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+17"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation>在笔画中心随机偏移。</translation>
+        <translation>笔画中心的随机偏移.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Basic</source>
-        <translation>基本</translation>
+        <translation>基础</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Dabs</source>
-        <translation>斑点</translation>
+        <translation>印迹数</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6609,7 +6609,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+11"/>
         <source>Directional Offsets</source>
-        <translation>方向偏差</translation>
+        <translation>方向偏移</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -6619,7 +6619,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+8"/>
         <source>Stroke</source>
-        <translation>描边</translation>
+        <translation>笔画</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6629,7 +6629,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+18"/>
         <source>Grid Map</source>
-        <translation>网格参考图</translation>
+        <translation>网格</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6644,17 +6644,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+182"/>
         <source>The session you&apos;re in is hosted with an older version of Drawpile, anti-overflow is unavailable.</source>
-        <translation>您当前所处的会话使用的是较旧版本的 Drawpile，因此无法实现溢出保护功能。</translation>
+        <translation>此房间是用一个较旧版本的 Drawpile 开的, 防溢出功能无法使用.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-overflow makes brush strokes stay inside of lines automatically. Set your lines layer as the fill source and then draw on another layer.</source>
-        <translation>防溢出使笔触自动停留在线条内。将您的线条图层设为填充源，然后在另一层上进行绘制即可。</translation>
+        <translation>防溢出功能可自动使笔触保持在线条内部. 先设置你的线条图层为填充源, 然后在其他图层上绘制.</translation>
     </message>
     <message>
         <location line="-837"/>
         <source>Color Pickup: 1/</source>
-        <translation>颜色拾取：1/</translation>
+        <translation>色延伸: 1/</translation>
     </message>
     <message>
         <location line="+662"/>
@@ -6671,12 +6671,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+2"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>设置这个曲线的大小，不透明度，硬度和涂抹一次。</translation>
+        <translation>一次性设置此曲线应用于大小,不透明度,硬度和混合.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation>此画笔的所有设置的曲线均已设定完毕。</translation>
+        <translation>曲线应用于这个笔刷的所有设置.</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -6686,7 +6686,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+12"/>
         <source>No brush dynamics.</source>
-        <translation>没有笔刷动态。</translation>
+        <translation>没有笔刷动态.</translation>
     </message>
     <message>
         <location line="+364"/>
@@ -6706,22 +6706,22 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+141"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation>降低绘图速度，以便让线条随着时间推移而稳定下来。数值越高，线条就会越流畅，但绘制速度会变慢。当您停止移动时，线条会跟随您的光标移动。输入偏好设置中的触控板平滑功能同样适用。</translation>
+        <translation>减慢笔画的速度使其在一段时间内稳定下来. 高值可以得到非常平滑的线条,但笔画会很慢. 当你停止移动时,线条会跟上你的光标. 调节首选项中的数位板平滑度也适用.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation>简单地对多个输入值进行平均计算。其运行速度比基于时间的稳定器更快，但不够流畅，而且当您停止移动时无法跟上您的光标。会覆盖输入偏好设置中的平板电脑平滑功能。</translation>
+        <translation>简单的对输入进行平均. 会感觉比基于时间的防抖更快,但当你停止移动时,线条没有那么平滑且不会跟上你的光标. 优先于首选项中输入页面的数位板平滑度.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation>未知的稳定模式。</translation>
+        <translation>未知的防抖模式.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation>同步调整稳定设置与画笔的操作已禁用。</translation>
+        <translation>与笔刷同步的防抖设置已禁用.</translation>
     </message>
     <message>
         <location line="-1026"/>
@@ -6761,7 +6761,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+337"/>
         <source>The radius of the brush.</source>
-        <translation>笔刷的半径。</translation>
+        <translation>笔刷的半径.</translation>
     </message>
     <message>
         <location line="-569"/>
@@ -6773,7 +6773,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-36"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation>画笔的透明度：0% 表示完全透明，100% 表示完全不透明。</translation>
+        <translation>笔刷的不透明度, 0% 是透明的, 100% 完全不透明的.</translation>
     </message>
     <message>
         <location line="-507"/>
@@ -6784,7 +6784,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+0"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation>边缘硬度：0% 时模糊，100% 时清晰。</translation>
+        <translation>边缘的硬度, 0% 是模糊的, 100% 是锐利的.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6795,7 +6795,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-220"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation>正在绘制的图层上的颜色混合。</translation>
+        <translation>在被绘制的图层上进行颜色混合.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
@@ -6907,7 +6907,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
-        <translation>缩放级别</translation>
+        <translation>缩放程度</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6934,70 +6934,70 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>平板电脑所报告的压力值。通常在 0.0 到 1.0 之间，但当使用压力增益功能时，这个数值可能会更大。如果使用鼠标，当按下按钮时压力值为 0.5，否则为 0.0。</translation>
+        <translation>数位板报告的压力. 通常在0.0和1.0之间, 但当使用压力增益时可能会变大. 如果你使用鼠标, 当按钮被按下时, 它将是 0.5, 否则是0.0.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>您当前的移动速度如何。这个速度可能会迅速变化。尝试从“帮助”菜单中选择“打印输入值”来感受一下其范围；负值较为罕见，但在极低速度的情况下是有可能出现的。</translation>
+        <translation>你当前的移动速度有多快. 这可能变化得非常快. 试着从&apos;帮助&apos;菜单中的&apos;打印输入值&apos;来感受一下这个范围; 负值很少, 但对于非常低的速度来说是可能的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>与精细速度设置相同，但变化速度较慢。另外，请查看“总速度过滤”设置。</translation>
+        <translation>与精细速度相同, 但变化比较慢. 还要看一下 &quot;粗略速度筛选 &quot;的设置.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>快速随机噪声，每次评估时都会变化。其值均匀分布在 0 到 1 之间。</translation>
+        <translation>快速随机噪声, 在每次评估时都会改变. 在0和1之间均匀分布.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>在您绘制线条的过程中，这个输入值会从零逐渐增加到一。此外，您还可以将其设置为在移动过程中定期回跳至零。请查看“线条持续时间”和“线条保持时间”这两个选项。</translation>
+        <translation>在你画一个笔画的时候, 这个输入慢慢地从零变成了一. 它也可以被配置为在你移动时周期性地跳回零. 看一下 &apos;笔画持续时间&apos; 和 &apos;笔画保持时间&apos; 的设置.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>该笔画的角度（以度为单位）。该数值将在 0.0 到 180.0 之间，实际上会忽略 180 度的转弯部分。</translation>
+        <translation>笔画的角度, 单位是度. 该值将保持在0.0和180.0之间, 有效地忽略了180度的旋转.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>触控笔倾斜角度的偏移值。当触控笔与平板平行时为 0，当其与平板垂直时为 90.0。</translation>
+        <translation>触控笔倾斜的偏角. 触控笔与平板电脑平行时为0，与平板电脑垂直时为90.0.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>刻笔倾斜的赤经角度。当刻笔工作端指向您时为 0 度，顺时针旋转 90 度时为 +90 度，逆时针旋转 90 度时为 -90 度。</translation>
+        <translation>触控笔倾斜的右升角. 触控笔工作端指向你时为0, 顺时针旋转90度时为+90, 逆时针旋转90度时为-90.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这是一个用户自定义的输入项。请查看“自定义输入”设置以获取详细信息。</translation>
+        <translation>这是一个用户定义的输入. 详情请看 &apos;自定义输入&apos; 的设置.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>摆动的角度，范围从 0 度到 360 度。</translation>
+        <translation>笔画的角度, 从0到360度.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7008,25 +7008,25 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>笔尖所指角度与笔画移动角度之间的差异（以度为单位）。
-范围为 +/-180.0 度。
-0.0 表示笔画角度与笔尖角度一致。
-90 表示笔画角度与笔尖角度垂直。
-180 表示笔画角度与笔尖角度恰好相反。</translation>
+        <translation>触控笔指向的角度与笔画移动的角度之间的差异, 以度为单位.
+范围是 +/-180.0.
+0.0 表示笔画角度与触控笔的角度一致.
+90 表示笔画角度与触控笔的角度垂直.
+180 表示笔画角度与触控笔的角度正相反.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>笔杆在 X 轴方向的倾斜度变化。当笔杆与平板平行时为 90/ -90 度，而当笔杆与平板垂直时则为 0 度。</translation>
+        <translation>触控笔在X轴上倾斜的偏角. 当触控笔与平板电脑平行时为90/-90. 当它与平板电脑垂直时为0.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>笔杆在 Y 轴方向上的倾斜度变化。当笔杆与平板平行时为 90/ -90 度，而当笔杆与平板垂直时则为 0 度。</translation>
+        <translation>触控笔在Y轴上倾斜的偏角. 当触控笔与平板电脑平行时为90/-90. 当它与平板电脑垂直时为0.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7034,8 +7034,8 @@ The range is +/-180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>在 256 像素的网格中所对应的 X 坐标。当光标沿 X 轴移动时，此坐标会从 0 到 256 进行循环。与“描边”类似。可通过调整不透明度等方式来使用它来添加纸张纹理。
-为了获得最佳效果，画笔大小应明显小于网格的大小。</translation>
+        <translation>256像素网格上的X坐标. 当光标在X轴上移动时, 这将环绕0-256. 类似 &quot;笔画&quot;. 可以通过修改不透明度来添加纸张纹理, 等等.
+笔刷大小应当小于网格比例, 以获得最佳效果.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7043,8 +7043,8 @@ The brush size should be considerably smaller than the grid scale for best resul
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>在 256 像素网格中的 Y 坐标。当光标沿 Y 轴移动时，此坐标会从 0 到 256 进行循环。与“描边”类似。可通过调整不透明度等方式来使用它来添加纸张纹理。
-为了获得最佳效果，画笔大小应明显小于网格大小。</translation>
+        <translation>256像素网格上的Y坐标. 当光标在Y轴上移动时, 这将环绕0-256. 类似 &quot;笔画&quot;. 可以通过修改不透明度来添加纸张纹理, 等等.
+笔刷大小应当小于网格比例, 以获得最佳效果.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7053,9 +7053,9 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>当前画布视图的缩放级别。
-对数型：0.0 表示 100%，0.69 表示 200%，-1.38 表示 25%
-对于半径设置，使用 -4.15 的值会使画笔大小相对于缩放级别保持大致不变。</translation>
+        <translation>画布视图的当前缩放级别.
+对数: 0.0 是 100%, 0.69 是 200%, -1.38 是 25%
+对于半径的设置, 使用-4.15的值可以使笔刷的大小相对于缩放级别大致恒定.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7065,10 +7065,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>笔杆的旋转角度。
-0 表示未旋转
-顺时针旋转 90 度时为 +90
-逆时针旋转 90 度时为 -90</translation>
+        <translation>触控笔的旋转.
+未扭转时为0
+顺时针旋转90度时为+90
+逆时针旋转90度时为-90</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7077,9 +7077,9 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>基础画笔半径允许您根据需要调整画笔的表现效果，即当您将其放大或缩小时。
-您甚至可以取消增加点画大小的操作，并调整其他参数来使画笔变大。
-请注意“基本半径下的点画数量”和“实际半径下的点画数量”，它们的表现方式大不相同。</translation>
+        <translation>基础笔刷的半径允许你在变大或变小笔刷时更改笔刷的行为.
+你甚至可以取消点大小的增加而调整其他东西来使笔刷变大.
+注意 &quot;每个基本半径的点 &quot;和 &quot;每个实际半径的点&quot;, 它们的行为有很大不同.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -7543,8 +7543,8 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>0 表示画笔是透明的，1 则表示完全可见
-（也称为“透明度”或“不透明度”）</translation>
+        <translation>0 表示笔刷是透明的, 1 表示完全可见
+(也被称为透明度或不透明度)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7552,8 +7552,8 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这会与“不透明”功能相乘。您只需更改此设置的压力输入值即可。请使用“不透明”来使透明度取决于速度。
-此设置负责在压力为零时停止绘画。这只是一个约定，其行为与“不透明”相同。</translation>
+        <translation>这个会与不透明度相乘. 你应该只改变这个设置的压力输入. 使用 &apos;不透明度&apos; 来代替, 使不透明度取决于速度.
+这个设置负责在压力为零时停止绘画. 这只是一个惯例, 其行为与 &apos;不透明度&apos; 相同.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7562,9 +7562,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>修正由将多个笔触重叠叠加所引入的非线性。此修正应能使您在将压力映射到“不透明相乘”操作时获得线性的（“自然”）压力响应，正如通常的做法那样。对于标准笔触，0.9 是一个不错的数值，如果您的画笔笔触分布过多，可以将其设置得更小；如果使用的是笔触每秒次数，则可以将其设置得更高。
-0.0 上述不透明值适用于单个笔触
-1.0 上述不透明值适用于最终的画笔笔触，假设在一笔画中，每个像素平均会获得（笔触每圈次数 * 2）个笔触点</translation>
+        <translation>纠正由多个点相互混合引起的非线性. 当压力被映射到不透明度_倍增时, 这个修正应该能让你得到一个线性(&quot;自然&quot;)的压力响应, 因为它通常是这样做的. 0.9对标准笔画来说是很好的, 如果你的笔刷散布很多, 就把它设置得小一点, 如果你使用每秒印迹数, 就把它设置得高一点.
+0.0 以上的不透明度值是针对单个的点
+1.0 以上的不透明度值是针对最后的笔画, 假设每个像素在一个笔画中平均得到(每半径落下的笔触仿真点数*2)个笔刷点</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7573,16 +7573,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>基本画笔半径（对数形式）
-0.7 表示 2 个像素
-3.0 表示 20 个像素</translation>
+        <translation>基本笔刷半径 (对数)
+ 0.7表示2个像素
+ 3.0意味着20像素</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>硬边刷圆角设置（将数值设为零将不会绘制任何图形）。要达到最大的硬度，您需要禁用“像素羽化”选项。</translation>
+        <translation>硬笔刷-圆圈边界 (设置为0将画不出东西). 为了达到最大的硬度, 你需要禁用像素羽化.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7592,31 +7592,31 @@ This setting is responsible to stop painting when there is zero pressure. This i
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>此设置会在必要时降低硬度，以防止出现像素阶梯效应（即“锯齿状”现象），通过使涂抹效果更加模糊来实现这一目的。
-0.0 关闭（适用于非常强大的橡皮擦工具和像素画笔）
-1.0 使一个像素模糊（效果较好）
-5.0 显著模糊，细笔触会消失</translation>
+        <translation>该设置在必要时降低硬度, 以防止像素阶梯效应(混叠), 使点更加模糊.
+ 0.0 禁用 (适用于很强的橡皮和像素笔刷)
+ 1.0 模糊一个像素 (好数值)
+ 5.0 明显的模糊, 细笔画会消失</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>在指针移动一个笔刷半径 (更精确地说：半径的基准值) 的距离时，需要绘制多少次笔触</translation>
+        <translation>指针移动一个笔刷半径的距离时要画多少个点 (更准确地说: 半径的基础值)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>与上述情况相同，但实际绘制的半径将被采用，且该半径可以动态变化</translation>
+        <translation>与上述相同, 但使用的是实际绘制的半径, 它可以动态地改变</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>每秒都会进行绘制操作，无论指针移动的距离有多远</translation>
+        <translation>每秒画一个点, 无论指针移动多远</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7625,9 +7625,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>每次涂抹时随机改变半径值。您也可以通过在“半径设置”中使用“by_random”输入来实现这一操作。如果在此处进行操作，会有两个不同之处：
-1）不透明度值将得到修正，使得大半径的涂抹区域更加透明。
-2）它不会改变实际半径 (即 dabs_per_actual_radius 视图中所显示的半径) 所对应的实际半径值</translation>
+        <translation>每个点随机改变半径. 你也可以用半径设置中的随机输入来做这个. 如果你在这里做, 有两个区别:
+1) 不透明的值将被修正, 这样大半径的点阵就更透明了
+2) 它不会改变每实际半径印迹数所看到的实际半径</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7635,15 +7635,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>输入的精细速度与实际速度之间的差距有多大
-0.0 当你的速度发生变化时，该速度会立即做出相应改变 (不建议这样做，但您可以尝试一下)</translation>
+        <translation>输入的精细速度在实际速度之后有多慢
+0.0 随着你的速度变化而立即改变 (不推荐, 但可以尝试)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>与“精细速度滤波器”相同，但请注意其范围有所不同</translation>
+        <translation>与 &apos;精细速度筛选&apos;相同, 但注意范围不同</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7653,17 +7653,17 @@ This setting is responsible to stop painting when there is zero pressure. This i
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这会将“精细速度”的输入反应转变为极端的物理速度。如果将“精细速度”与半径进行映射，您就能最清晰地看出这种差异。
--8.0 极其快速的速度并不会使“精细速度”有太大的提升
-+8.0 极其快速的速度会使“精细速度”大幅提升
-而对于极慢的速度，情况则相反。</translation>
+        <translation>这改变了&apos;精细速度&apos;输入的反应, 使其成为极限的物理速度. 如果&apos;精细速度&apos;被映射到半径上, 你会看到最好的区别.
+-8.0 非常快的速度不会使 &apos;精细速度&apos; 增加很多
++8.0 非常快的速度会使 &apos;精细速度&apos; 增加很多
+对于非常慢的速度会发生相反的情况.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>与“总速度的精细速度系数”相同</translation>
+        <translation>与粗略速度的&apos;精细速度伽马值&apos; 相同</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7673,10 +7673,10 @@ For very slow speed the opposite happens.</source>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>为每个绘制的点的位置添加一个随机偏移量
-0.0 未启用
-1.0 标准偏差为一个基本半径的距离
-&lt;0.0 负值则不会产生抖动</translation>
+        <translation>在每个点画的位置上增加一个随机偏移量
+ 0.0 禁用
+ 1.0 标准偏差是一个基本半径的距离
+&lt;0.0 负值不会产生抖动</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7687,44 +7687,44 @@ For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>根据指针速度改变位置
-= 0 关闭
-&gt; 0 在指针移动到的位置绘制
-&lt; 0 在指针起始位置绘制</translation>
+= 0 禁用
+&gt; 0 绘制指针移动到的位置
+&lt; 0 绘制指针来自的地方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>当光标停止移动时，偏移量恢复到零的速度有多慢</translation>
+        <translation>当光标停止移动时, 偏移量返回到零的速度有多慢</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>减慢指针跟踪速度。数值为 0 时会关闭此功能，数值越大则能减少鼠标移动时的抖动。此功能适用于绘制流畅的、类似漫画风格的轮廓。</translation>
+        <translation>减慢指针跟踪速度. 0 将其禁用, 较高的值可以减少光标移动中的更多抖动. 对绘制平滑的, 类似漫画的轮廓很有用.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>与上述情况类似，但在“刷达布”级别上 (如果刷达布不依赖于时间，则忽略已过去的时间)</translation>
+        <translation>与上述类似, 但是在笔刷点的层面上 (如果笔刷点不取决于时间, 则忽略已经过去多少时间)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>给鼠标指针添加随机性；这通常会生成许多随机方向的小线条；或许可以将此与“缓慢追踪”功能结合起来使用</translation>
+        <translation>给鼠标指针添加随机性; 这通常会在随机方向上产生许多小线; 也许可以和 &apos;慢速跟踪&apos;一起尝试</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>颜色值（亮度、强度）</translation>
+        <translation>颜色明度 (亮度, 强度)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7734,10 +7734,10 @@ For very slow speed the opposite happens.</source>
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>在选择画笔时，可以将颜色恢复为该画笔保存时的原色。
-0.0 选择此画笔时，不修改当前颜色
-0.5 使当前颜色向画笔颜色靠拢
-1.0 选择此画笔时，将当前颜色设置为画笔颜色</translation>
+        <translation>当选择一个笔刷时, 颜色可以恢复到笔刷保存时的颜色.
+ 0.0 当选择这个笔刷时, 不修改活动颜色
+ 0.5 将活动颜色改为笔刷颜色
+ 1.0 当选择时, 将活动颜色设置为笔刷颜色</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7747,10 +7747,10 @@ For very slow speed the opposite happens.</source>
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>改变颜色色调。
--0.1 顺时针方向小幅度改变颜色色调
-0.0 禁用
-0.5 逆时针方向将色调改变 180 度</translation>
+        <translation>更改色相.
+-0.1 小的顺时针方向色相转移
+ 0.0 禁用
+ 0.5 逆时针色相移位 180 度</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7760,10 +7760,10 @@ For very slow speed the opposite happens.</source>
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>使用 HSL 颜色模型来改变颜色的明度。
--1.0 表示更暗
-0.0 表示关闭
-1.0 表示更亮</translation>
+        <translation>使用HSL颜色模型改变颜色的明度.
+-1.0 变黑
+ 0.0 禁用
+ 1.0 变白</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7773,10 +7773,10 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>使用 HSL 颜色模型来改变颜色的饱和度。
--1.0 更显灰暗
-0.0 关闭
-1.0 更加饱和</translation>
+        <translation>使用HSL颜色模型改变饱和度.
+-1.0 更加灰暗
+ 0.0 禁用
+ 1.0 更加饱和</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7786,10 +7786,10 @@ For very slow speed the opposite happens.</source>
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>使用 HSV 颜色模型来更改颜色值（亮度、强度）。HSV 的更改会先于 HSL 的更改生效。
+        <translation>使用HSV颜色模型改变颜色明度(亮度, 强度). HSV的改变会在HSL之前应用.
 -1.0 变暗
-0.0 关闭
-1.0 变亮</translation>
+ 0.0 禁用
+ 1.0 变亮</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7799,10 +7799,10 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>使用 HSV 颜色模型来改变色彩饱和度。HSV 的更改会先于 HSL 的更改生效。
--1.0 更显灰暗
-0.0 关闭
-1.0 更加饱和</translation>
+        <translation>使用HSV颜色模型改变饱和度.
+-1.0 更加灰暗
+ 0.0 禁用
+ 1.0 更加饱和</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7812,10 +7812,10 @@ For very slow speed the opposite happens.</source>
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>用涂抹颜色而非画笔颜色进行绘画。涂抹颜色会逐渐变为你正在绘制的色彩。
-0.0 不使用涂抹颜色
-0.5 将涂抹颜色与画笔颜色混合
-1.0 仅使用涂抹颜色</translation>
+        <translation>用混合的颜色而不是笔刷的颜色来绘制. 混合的颜色会慢慢变成你正在绘制的颜色.
+ 0.0 不使用混合的颜色
+ 0.5 融合混合的颜色和笔刷的颜色
+ 1.0 只使用混合的颜色</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7825,10 +7825,10 @@ For very slow speed the opposite happens.</source>
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这决定了涂抹颜色变为你正在绘制的颜色的速度。
-0.0：立即更新涂抹颜色（由于频繁的颜色检查，需要更多的 CPU 资源）
-0.5：将涂抹颜色平稳地逐渐变为画布颜色
-1.0：从不改变涂抹颜色</translation>
+        <translation>这是控制混合的颜色多快变成你正在绘制的颜色.
+0.0 立即更新混合的颜色 (由于经常检测颜色, 需要更多的CPU周期)
+0.5 稳定地改变混合的颜色, 使其与画布的颜色一致
+1.0 永不改变混合的颜色</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7839,11 +7839,11 @@ For very slow speed the opposite happens.</source>
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这会改变用于涂抹时选取颜色的圆的半径。
-0.0 使用画笔的半径
--0.7 将画笔半径减半（速度快，但可能不总是直观）
-+0.7 将画笔半径加倍
-+1.6 将画笔半径增加五倍（性能较慢）</translation>
+        <translation>这是修改为混合而拾色的圆的半径.
+ 0.0 使用画笔半径
+-0.7 笔刷半径的一半 (快速, 但不总是直观)
++0.7 笔刷半径的两倍
++1.6 笔刷半径的五倍 (性能缓慢)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7853,24 +7853,24 @@ For very slow speed the opposite happens.</source>
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这个工具在多大程度上表现得像橡皮擦呢？
-0.0 表示正常绘画模式
-1.0 表示标准橡皮擦模式
-0.5 表示像素透明度会降低至 50%</translation>
+        <translation>这个工具在多大程度上表现得像一个橡皮
+ 0.0 正常绘画
+ 1.0 标准橡皮
+ 0.5 像素走向50%的透明度</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>要启动一笔画操作需要多大的压力呢？这仅影响笔画输入部分。MyPaint 不需要设定最小压力值来开始绘图。</translation>
+        <translation>开始一个笔画需要多大的压力. 这只影响到笔画的输入. MyPaint不需要最小的压力来开始绘画.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>要使笔触输入达到 1.0，您需要移动多远的距离。此值是呈对数形式的（负值不会逆转这一过程）。</translation>
+        <translation>你要移动多远直到笔画输入达到1.0. 这个值是对数的 (负值不会反转).</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7879,9 +7879,9 @@ For very slow speed the opposite happens.</source>
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这规定了笔触输入保持在 1.0 的时间长度。之后它会重置为 0.0 并再次开始增长，即便笔触尚未完成。
-2.0 表示从 0.0 增长到 1.0 所需时间的两倍
-9.9 或更高数值则表示无限增长</translation>
+        <translation>这定义了笔画输入保持在1.0的时间. 之后它将重置为0.0并重新开始增长, 即使笔画还没完成.
+2.0意味着从0.0到1.0所需时间的两倍
+9.9或更高代表无限长</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7889,8 +7889,9 @@ For very slow speed the opposite happens.</source>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>将自定义输入设置为该值。如果输入速度变慢，就将其调整至该值附近（详情见下文）。其原理是，您要让此输入取决于压力/速度/其他因素的混合，然后让其他设置依据此“自定义输入”进行设置，而不再在需要的地方重复使用这种组合方式。
-如果您将其设置为“随机变化”，则可以生成缓慢（平滑）的随机输入。</translation>
+        <translation>将自定义输入设置为这个值. 如果它被放慢了, 就把它向这个值移动 (见下文).
+这个想法是你让这个输入取决于压力/速度/任何东西的混合, 然后让其他设置取决于这个 &apos;自定义输入&apos; 而不是在你需要的地方重复这个组合.
+如果你让它 &apos;随机&apos; 变化, 你可以生成一个缓慢 (平滑) 的随机输入.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7898,15 +7899,15 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>实际的自定义输入与期望值（即上述值）的匹配程度是多么缓慢啊！这种情况发生在刷子滴答级别（忽略时间已经过去多久，因为刷子滴答并不依赖于时间）。
-0.0 没有减速（更改立即生效）</translation>
+        <translation>自定义输入的速度快慢是根据期望值的 (上面那个). 这发生在笔刷点层面 (如果笔刷点不依赖于时间, 则忽略已经过去多少时间).
+0.0 不减慢 (变化立即应用)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>弹珠的长宽比例；必须大于或等于 1.0，其中 1.0 表示弹珠是完全圆形的。</translation>
+        <translation>圆点的纵横比; 必须 &gt;= 1.0, 其中 1.0 意味着一个完美的圆点.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7916,17 +7917,17 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>椭圆形标记倾斜的角度
-0.0 水平标记
-45.0 45 度，顺时针旋转
-180.0 又是水平状态</translation>
+        <translation>椭圆点阵的倾斜角度
+ 0.0 水平点
+ 45.0 45 度, 顺时针转动
+ 180.0 再次水平</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>较低的数值会使方向输入的响应速度更快，而较高的数值则会使操作更加流畅</translation>
+        <translation>低值会使方向输入适应得更快, 高值会使它更平稳</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7936,31 +7937,31 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>请勿修改该图层的透明通道（仅在已有颜料的地方进行绘制）
-0.0 正常绘制
-0.5 一半的颜料将以正常方式涂抹
-1.0 透明通道完全锁定</translation>
+        <translation>不修改图层的透明度通道 (只在已经有颜料的地方绘画)
+ 0.0 正常绘画
+ 0.5 一半的颜料被正常绘画
+ 1.0 透明度通道完全锁定</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>对目标图层进行着色处理，通过使用当前画笔的颜色来设定其色调和饱和度，同时保持其亮度和透明度不变。</translation>
+        <translation>给目标层着色, 从活动笔刷的颜色设置其色相和饱和度, 同时保留其色值和透明度.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>将画笔刷的中心位置和半径调整至像素位置。将此值设为 1.0 可得到一个细小的像素画笔。</translation>
+        <translation>把笔刷点的中心和它的半径都固定为像素. 设置为1.0的薄像素笔刷.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>这改变了你需要施加的压力大小。它会将触控板的压力乘以一个固定的系数。</translation>
+        <translation>这会改变你必须按下多大的力度. 它将平板电脑的压力乘以一个恒定系数.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7969,9 +7970,9 @@ Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>更改了网格图画笔输入所依据的整体缩放比例。
-对数型（与画笔半径的缩放比例相同）。
-缩放比例为 0 时，网格将变为 256x256 像素大小。</translation>
+        <translation>改变网格笔刷输入操作的整体比例.
+对数 (与笔刷半径的比例相同).
+比例为0会使网格变成256x256像素.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7980,9 +7981,9 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>更改网格图绘图工具输入所依据的缩放比例——仅影响 X 轴。
-范围为 0 至 5 倍。
-这使您能够拉伸或压缩网格图图案。</translation>
+        <translation>改变网格笔刷输入操作的比例 - 只影响X轴.
+范围是0-5倍.
+这允许你拉伸或压缩网格图案.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7991,9 +7992,9 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>更改网格图绘图工具输入所依据的缩放比例——仅影响 Y 轴。
-范围为 0 至 5 倍。
-这使您能够拉伸或压缩网格图图案。</translation>
+        <translation>改变网格笔刷输入操作的比例 - 只影响Y轴.
+范围是0-5倍.
+这允许你拉伸或压缩网格图案.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8002,9 +8003,9 @@ Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>“涂抹长度”值的对数乘法器。
-有助于修正使用高清/大尺寸画笔并频繁涂抹的情况。
-涂抹长度越长，颜色扩散的效果就越明显，同时也会显著提高性能，因为画布的采样频率会降低</translation>
+        <translation>&quot;混合长度&quot; 值的对数乘法
+这对纠正有很多点的高清晰度/大笔刷很有用.
+混合长度越长, 颜色就会扩散得越多, 也会极大地提高性能, 因为画布的采样频率较低,</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8013,9 +8014,9 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>共有 256 个桶，每个桶均可容纳从画布上采集到的颜色。
-您可以控制使用哪个桶，以提高画笔的多样性和真实感。
-特别是当使用“自定义输入”设置时，它非常有用，可以将桶与诸如偏移量等其他设置相关联。</translation>
+        <translation>有256个桶, 每个桶可以容纳从画布上拾取一种颜色.
+你可以控制使用哪个桶来提高笔刷的可变性和真实性.
+在&quot;自定义输入&quot;设置中特别有用, 可以将桶与其他设置(如偏移量)联系起来.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8026,88 +8027,88 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>控制透明度的显现程度和模糊程度，类似于锁定透明度设置。
-1.0 不会改变任何透明度。
-0.5 仅会改变 50% 及以上的透明度。
-0.0 则没有任何影响。
-负值则起到相反的作用</translation>
+        <translation>控制透明度被拾起和混合的程度, 类似于锁定透明度.
+1.0 将不会移动任何透明度.
+0.5 将只移动50%以上的透明度.
+0.0 不会有任何影响.
+负值会产生相反的效果</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>根据画布坐标将这些斑点向上或向下移动。</translation>
+        <translation>根据画布坐标向上或向下移动点阵.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>根据画布坐标将这些斑点向左或向右移动。</translation>
+        <translation>根据画布坐标将点阵向左或向右移动.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>按照笔画的方向调整涂抹动作，使涂抹动作偏向一侧。</translation>
+        <translation>遵循笔画方向 将点状物偏向一侧.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>按照倾斜方向调整，以使涂抹动作偏向一侧。需要使用倾斜功能。</translation>
+        <translation>遵循倾斜方向 将点状物向一侧偏移. 需要倾斜.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>按照视图方向调整，使这些点向一侧偏移。</translation>
+        <translation>遵循视图方向 将点状物偏移到一侧.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>按照笔画的方向来调整涂抹的力度，但要同时向笔画的两侧进行调整。</translation>
+        <translation>遵循笔画方向来偏移点, 但在笔画的两边.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>按照倾斜方向来抵消涂抹痕迹，但要作用于笔画的两侧。需要使用倾斜功能。</translation>
+        <translation>遵循倾斜方向以抵消点滴, 但要向行程的两侧倾斜. 需要倾斜.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>按照视图方向来调整这些点的位置，使其偏离原点，但要同时向笔画的两侧移动。</translation>
+        <translation>遵循视图的方向来抵消点画, 但要向笔画的两边.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>将角偏移角度从默认值（即 90 度）进行更改。</translation>
+        <translation>改变默认的角度偏移角, 即90度.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>用于 X、Y 和角度偏移设置的对数乘法器。</translation>
+        <translation>X, Y和角度偏移设置的对数乘法.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>增强化色效果，根据“化色级别”设置减少颜色数量，同时保留透明度。</translation>
+        <translation>色调分离的强度, 根据&quot;色调分离程度&quot;的设置减少颜色的数量, 同时保留透明度.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8116,9 +8117,9 @@ Negative values do the reverse</source>
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>色调分离级别数量（以 100 为单位进行划分）。
-0.05 = 5 个级别，0.2 = 20 个级别，依此类推。
-高于 0.5 的数值可能不易察觉。</translation>
+        <translation>色调分离程度的数量 (除以 100).
+0.05 = 5 级, 0.2 = 20 级, 等等.
+高于0.5的值可能不会被注意到.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8127,9 +8128,9 @@ Values above 0.5 may not be noticeable.</source>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation>减色式光谱混合模式。
-0.0 无光谱混合
-1.0 仅进行光谱混合</translation>
+        <translation>减法光谱混色模式.
+0.0 没有光谱混合
+1.0 只有光谱混合</translation>
     </message>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-5"/>
@@ -8162,52 +8163,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+225"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation>在画布上有一个固定的按键组合，无需再进行鼠标或笔的输入操作。例如：按住空格键即可平移画面，而无需再点击鼠标。</translation>
+        <translation>在画布上的常规组合键, 无需进一步的鼠标或笔输入. 例如:按住空格可以平移, 而不需要同时点击.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation>按下鼠标或笔的按钮（可同时按住其他键）。放下笔的动作相当于左键点击。示例：按住空格键并点击左键来平移画面。</translation>
+        <translation>按下鼠标或笔的按钮, 也可以选择同时按住按键. 把笔放下来就像左键. 例如:按住空格并按下左键来平移.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation>通过转动鼠标滚轮或类似的功能性输入设备（可选地，在同时按下其他按键的情况下进行操作）。例如：通过滚动来缩放画布。</translation>
+        <translation>转动鼠标滚轮或一些类似于鼠标滚轮的输入设备, 可以选择同时按住按键. 例如:滚动以缩放画布.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation>按下以下键可使矩形、线条或选择工具产生不同的效果。“约束”意味着例如保持比例，而“居中”则意味着例如使形状围绕原点居中。</translation>
+        <translation>按住的键可以使矩形, 直线或选择工具的行为不同. 约束是指保持长宽比, 居中是指以原点为中心的形状.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation>未知类型 %1 。</translation>
+        <translation>未知类型%1.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation>&lt;b&gt;冲突：&lt;/b&gt; 如果您继续操作，那么针对“%1”现有的快捷方式将会被覆盖。</translation>
+        <translation>&lt;b&gt;冲突:&lt;/b&gt; 如果你继续, &apos;%1&apos;的现有快捷键将被覆盖.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation>如果在左键点击操作中不使用任何键位，是无法为其设置快捷键的，因为那样会干扰绘图操作。</translation>
+        <translation>你不能在没有任何键的情况下为左键指定一个快捷键, 因为那会影响到绘图.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation>您不能仅为该操作指定一个快捷键组合，而是应将类型更改为鼠标按键。</translation>
+        <translation>你不能只为该操作指定一个组合键, 而是应将类型改为鼠标按键.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation>设置一个快捷键以进行下一步操作。</translation>
+        <translation>指定一个快捷键来进行.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Choose an action to proceed.</source>
-        <translation>选择一个操作来继续进行。</translation>
+        <translation>选择一个动作来进行.</translation>
     </message>
 </context>
 <context>
@@ -8215,7 +8216,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation>%1 的 SSL 证书</translation>
+        <translation>%1 的SSL证书</translation>
     </message>
 </context>
 <context>
@@ -8330,13 +8331,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>Apple Pencil</source>
         <extracomment>Apple is referring to the brand, not the fruit.</extracomment>
-        <translation>苹果手写笔</translation>
+        <translation>苹果触控笔</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Anti-Strain</source>
         <extracomment>This refers to a stylus pressure curve that is steeper than the default so that you don&apos;t have to strain to press the stylus down.</extracomment>
-        <translation>防抖动</translation>
+        <translation>消除压力</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8359,7 +8360,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>FFmpeg path or command:</source>
-        <translation>FFmpeg 路径或命令：</translation>
+        <translation>FFmpeg 路径或指令:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8380,7 +8381,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+79"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation>可执行程序</translation>
+        <translation>可执行的程序</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8390,52 +8391,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+109"/>
         <source>Successfully detected ffmpeg version %1.</source>
-        <translation>成功检测到 ffmpeg 版本为 %1 。</translation>
+        <translation>已成功检测到ffmpeg版本 %1.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Error: the given program could not be started.</source>
-        <translation>错误：所给程序无法启动。</translation>
+        <translation>错误: 所给程序无法启动.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program did not finish.</source>
-        <translation>错误：所给程序未完成运行。</translation>
+        <translation>错误: 所给程序未运行完成.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program exited with an error.</source>
-        <translation>错误：所给程序运行时出现错误。</translation>
+        <translation>错误: 所给程序因错误而退出.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program does not appear to be ffmpeg.</source>
-        <translation>错误：所给程序似乎并非为 ffmpeg 所用。</translation>
+        <translation>错误: 所给程序不是ffmpeg.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>You can download a Windows version of ffmpeg from %1.</source>
-        <translation>您可以从 %1 地址下载 Windows 版本的 ffmpeg 。</translation>
+        <translation>你可以从 %1 中下载ffmpeg的Windows版本.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>After downloading and unpacking everything, click on Choose and locate the %1 file.</source>
-        <translation>下载并解压完所有内容后，点击“选择”，然后找到“%1”文件。</translation>
+        <translation>下载并解压所有文件后, 点击选择并选中 %1 文件.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation>您可以通过 Homebrew 安装 ffmpeg 。</translation>
+        <translation>你可以通过Homebrew来安装ffmpeg程序.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation>您或许可以通过您的软件包管理器来安装 ffmpeg 。</translation>
+        <translation>你可以通过程序包管理器安装ffmpeg程序.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Once it is installed, just using %1 in the field above should work. Otherwise, click on Choose and locate the executable.</source>
-        <translation>安装完成后，在上述字段中只需使用“%1”即可生效。若无法实现，请点击“选择”并找到可执行文件。</translation>
+        <translation>安装完成后, 只需在上方字段中输入 %1 即可. 否则, 请点击选择并选中该文件.</translation>
     </message>
 </context>
 <context>
@@ -8443,7 +8444,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+74"/>
         <source>Set speed from FPS…</source>
-        <translation>从 FPS 设置速度…</translation>
+        <translation>通过每秒帧率设置速度…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8478,7 +8479,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>FPS:</source>
-        <translation>FPS：</translation>
+        <translation>每秒帧数:</translation>
     </message>
 </context>
 <context>
@@ -8491,7 +8492,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Stabilization</source>
-        <translation>稳定化</translation>
+        <translation>防抖</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8501,22 +8502,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Finish strokes</source>
-        <translation>完成描边</translation>
+        <translation>完成笔画</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Adjust with velocity</source>
-        <translation>使用速度进行调整</translation>
+        <translation>根据速度调整</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Maximum adjustment: </source>
-        <translation>最大调节幅度： </translation>
+        <translation>调整最大值: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Maximum velocity: </source>
-        <translation>最大速度： </translation>
+        <translation>速度最大值: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8540,119 +8541,119 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+84"/>
         <location line="+370"/>
         <source>What are invite codes?</source>
-        <translation>什么是邀请码？</translation>
+        <translation>什么是邀请代码?</translation>
     </message>
     <message>
         <location line="-203"/>
         <source>Invite link copied to clipboard.</source>
-        <translation>邀请链接已复制至剪贴板。</translation>
+        <translation>邀请链接已复制到剪贴板.</translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
         <translation>
-            <numerusform>邀请码链接已复制至剪贴板。</numerusform>
+            <numerusform>邀请代码链接已复制到剪贴板.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+27"/>
         <source>This session is hosted on a server that &lt;strong&gt;does not support the web browser version of Drawpile&lt;/strong&gt;.</source>
-        <translation>本次会话是在一台 &lt;strong&gt;不支持 Drawpile 网页版&lt;/strong&gt; 的服务器上举行的。</translation>
+        <translation>此房间使用的服务器&lt;strong&gt;不支持网页浏览器版本的Drawpile&lt;/strong&gt;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+26"/>
         <source> Only the desktop or mobile application will work.</source>
-        <translation> 只有桌面版或移动版应用程序才能正常使用。</translation>
+        <translation> 只有桌面版或手机应用程序可以使用.</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>This session &lt;strong&gt;restricts joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation>本次版本 &lt;strong&gt;仅支持通过网络浏览器访问 Drawpile 程序。&lt;/strong&gt;</translation>
+        <translation>此房间&lt;strong&gt;限制只能通过网页浏览器版本的Drawpile加入.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation> 使用 &lt;a href=&quot;#&quot;&gt;邀请码&lt;/a&gt; 可让他人通过网络浏览器加入。</translation>
+        <translation> 使用 &lt;a href=&quot;#&quot;&gt;邀请代码&lt;/a&gt; 让用户通过网页浏览器来加入.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Operators and server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation> 操作人员和服务器管理员可以使用 &lt;a href=&quot;#&quot;&gt;邀请码&lt;/a&gt; 来让他人通过网络浏览器加入系统。</translation>
+        <translation> 房间管理员和服务器管理员可以使用 &lt;a href=&quot;#&quot;&gt;邀请代码&lt;/a&gt; 让用户通过网页浏览器来加入.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> Server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation> 服务器管理员可以使用 &lt;a href=&quot;#&quot;&gt;邀请码&lt;/a&gt; 来让他人通过网络浏览器加入系统。</translation>
+        <translation> 服务器管理员可以使用 &lt;a href=&quot;#&quot;&gt;邀请代码&lt;/a&gt; 让用户通过网页浏览器来加入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> The desktop or mobile application will work normally.</source>
-        <translation> 桌面版或移动版应用程序将正常运行。</translation>
+        <translation> 桌面版或手机应用程序可以正常使用.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session &lt;strong&gt;does not allow joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation>本次会话 &lt;strong&gt;不支持通过 Drawpile 的网页版进行参会。&lt;/strong&gt;</translation>
+        <translation>此房间&lt;strong&gt;不允许通过网页浏览器版本的Drawpile加入.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>This server does not support invite codes.</source>
-        <translation>此服务器不支持邀请码。</translation>
+        <translation>此服务器不支持邀请代码.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation>只有服务器管理员可以管理此房间的邀请码。</translation>
+        <translation>只有服务器管理员可以管理此房间的邀请代码.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation>只有房间管理员和服务器管理员可以管理此房间的邀请码。</translation>
+        <translation>只有房间管理员和服务器管理员可以管理此房间的邀请代码.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>To make it invite-only, [set a session password].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation>要将其设置为仅限受邀用户访问，[需设置会话密码]。</translation>
+        <translation>如果要设置为仅限邀请者加入, [请设置一个房间密码].</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>To make it invite-only, a session operator can set a password.</source>
-        <translation>要将其设置为仅限受邀人员访问，管理员可以设置密码。</translation>
+        <translation>如果要设置为仅限邀请者加入, 房间管理员可以设置一个密码.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session is &lt;strong&gt;public&lt;/strong&gt;, strangers can join it!</source>
-        <translation>本次会议是 &lt;strong&gt;公开&lt;/strong&gt;，任何人都可以参加！</translation>
+        <translation>此房间是&lt;strong&gt;公共房间&lt;/strong&gt;, 任何人都可以加入!</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation>撤销邀请码</translation>
+        <translation>撤销邀请代码</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
         <translation>
-            <numerusform>真的要撤销 %n 个选定的邀请码吗？</numerusform>
+            <numerusform>确定撤销 %n 个选中的邀请代码吗?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation>邀请码能让他人通过有限使用的链接加入会议。之后您还可以撤销该邀请码，从而再次禁止他们参与。</translation>
+        <translation>邀请代码允许用户通过一个有限使用的链接来加入房间. 你可以稍后撤销代码来取消他们的访问权.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation>通过邀请码加入的用户可以绕过常规的会话限制：他们无需会话密码，可以通过网络浏览器加入，无需注册账号，也不会受到新加入用户被阻止的限制。</translation>
+        <translation>通过邀请代码加入的用户可以绕过正常的房间限制: 他们不需要房间密码, 可以通过浏览器加入, 不需要注册一个账号, 以及不受禁止新用户加入的影响.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation>他们不会绕过禁令或服务器层面的限制。</translation>
+        <translation>邀请代码无法绕过禁止IP或者服务器范围内的限制.</translation>
     </message>
 </context>
 <context>
@@ -8726,7 +8727,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation>%1 (新建)</translation>
+        <translation>%1 (新)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8757,7 +8758,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-282"/>
         <source>Default</source>
         <extracomment>The name of the default layout.</extracomment>
-        <translation>默认</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8769,7 +8770,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>FireAlpaca-esque</source>
         <extracomment>The name of a layout that looks similar to FireAlpaca (another drawing program.)</extracomment>
-        <translation>FireAlpaca 风格</translation>
+        <translation>FireAlpaca风格</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8787,13 +8788,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Krita-esque</source>
         <extracomment>The name of a layout that looks similar to Krita (another drawing program.)</extracomment>
-        <translation>Krita 风格</translation>
+        <translation>Krita风格</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>MediBang-esque</source>
         <extracomment>The name of a layout that looks similar to MediBang (another drawing program.)</extracomment>
-        <translation>MediBang 风格</translation>
+        <translation>MediBang风格</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8805,13 +8806,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Paint.NET-esque</source>
         <extracomment>The name of a layout that looks similar to Paint.NET (another drawing program.)</extracomment>
-        <translation>Paint.NET 风格</translation>
+        <translation>Paint.NET风格</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>SAI-esque</source>
         <extracomment>The name of a layout that looks similar to PaintTool SAI (another drawing program.)</extracomment>
-        <translation>SAI 风格</translation>
+        <translation>SAI风格</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8823,19 +8824,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <source>Floofderg</source>
         <extracomment>The name of a layout, the person who made the layout has a character whose species is a furred dragon.</extracomment>
-        <translation>弗卢德格</translation>
+        <translation>Floofderg</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kerfluff</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation>克弗拉夫</translation>
+        <translation>Kerfluff</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lambda</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation>拉姆达</translation>
+        <translation>Lambda</translation>
     </message>
 </context>
 <context>
@@ -8858,17 +8859,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation>输入账户密码。如果您还没有账户，您必须先注册一个。此服务器并未提供有关如何进行注册的任何信息。</translation>
+        <translation>请输入账号密码. 如果你没有账号, 你可以注册一个. 此服务器也没有提供任何关于如何注册账号的信息.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation>输入账户密码。如果您尚未拥有账户，请在 %1 上注册一个新账户。</translation>
+        <translation>请输入账号密码. 如果你没有账号, 你必须在 %1 上注册一个.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation>此用户名属于已注册的账号。如果您不是该账号的主人，请取消当前登录尝试并用其他用户名重新登录。</translation>
+        <translation>该用户名属于一个注册账号. 如果这不是你的账号, 请取消并使用其他用户名重新登录.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -8921,13 +8922,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation>真的要删除这个账户吗？这样做只会将该账户从您的“近期账户列表”中移除，但并不会真的删除该账户。</translation>
+        <translation>确定移除此账号吗? 这只会将其从最近账号列表中删除, 而不会删除该账号.</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+159"/>
         <source>Enter the name you want to use.</source>
-        <translation>请输入您想要使用的名称。</translation>
+        <translation>输入你想使用的用户名.</translation>
     </message>
     <message>
         <location line="-98"/>
@@ -8942,77 +8943,77 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation>请输入您想要使用的名称。有关此服务器的更多信息，请参阅 %1 。</translation>
+        <translation>输入你想使用的用户名. 有关此服务器的更多信息请查阅 %1.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation>这个用户名并非属于本服务器上的任何账户。这不是您的 drawpile.net 账户！</translation>
+        <translation>该用户名不属于此服务器上的账号. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This username doesn&apos;t belong to an account on %1.</source>
-        <translation>此用户名并非属于 %1 上的任何账户。</translation>
+        <translation>该用户名不属于 %1 上的账号.</translation>
     </message>
     <message>
         <location line="+628"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation>请输入您在本服务器上的账户用户名和密码。这并非您的 drawpile.net 账户信息！</translation>
+        <translation>请输入你在此服务器上的账号用户名和密码. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
         <location line="-723"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation>您可以不注册账号继续使用。如果您还是想注册一个账号的话，可以在 %1 上进行操作。</translation>
+        <translation>你可以继续以游客状态(无账号状态)登录. 如果你想注册一个账号, 可以在 %1 上注册.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation>需要提供一个账号。您可以在 %1 上注册一个。</translation>
+        <translation>需要一个注册账号. 你可以在 %1 上注册一个.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation>您无需注册账号即可继续使用。服务器方面也没有提供任何关于如何注册账号的相关信息。</translation>
+        <translation>你可以继续以游客状态(无账号状态)登录. 服务器也没有提供任何关于如何注册账号的信息.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation>需要注册一个账号，但服务器并未提供任何关于如何注册账号的相关信息。</translation>
+        <translation>需要一个注册账号, 但是服务器并没有提供任何关于如何注册账号的信息..</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation>有关此服务器的更多信息，请参阅 %1 。如需注册账户，请访问 %2 。</translation>
+        <translation>有关此服务器的更多信息请查阅 %1. 要注册账号请访问 %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation>请查看 %1 以获取有关此服务器的更多信息。</translation>
+        <translation>有关此服务器的更多信息请查阅 %1.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation>这个用户名已属于某个账户，请选择其他用户名。</translation>
+        <translation>该用户名属于一个账号, 请另选一个.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation>%1 的身份验证无法进行。</translation>
+        <translation>%1 的身份验证无效.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation>此用户名属于服务器账户，您无法通过 %1 在此服务器上进行登录。</translation>
+        <translation>该用户名属于一个服务器账号, 你不能用它通过 %1 登录此服务器.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation>此用户名属于其他登录方式，您无法通过 %1 在此服务器上使用该用户名进行登录。</translation>
+        <translation>该用户名属于其他登录方法, 你不能用它通过 %1 登录此服务器.</translation>
     </message>
     <message>
         <location line="+626"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation>请输入您 %1 账户的用户名和密码。</translation>
+        <translation>请输入你在 %1 上的账号用户名和密码.</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -9066,12 +9067,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>The canvas has changes not saved in the project!</source>
-        <translation>该画布中的更改尚未保存至项目中！</translation>
+        <translation>画布上有更改还未保存进项目中!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
-        <translation>这些统计数据仅反映项目中保存的会话内容。那些您已关闭自动恢复功能、未保存或未完成保存操作以及未保存任何更改的会话将不会被包含在内。</translation>
+        <translation>这些统计数据仅反映项目中保存的画布. 禁用自动恢复功能或者未保存的情况下退出以及其他未保存的更改都不会被统计.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9086,85 +9087,85 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>This is probably a bug in Drawpile.</source>
-        <translation>这很可能是在 Drawpile 中出现的一个故障。</translation>
+        <translation>这可能是 Drawpile 中的一个错误.</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Total session time:</source>
-        <translation>总时长：</translation>
+        <translation>总时长:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Your total work time:</source>
-        <translation>您的总工作时间：</translation>
+        <translation>绘画时长:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Session %1</source>
-        <translation>会话 %1</translation>
+        <translation>画布 %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opened at:</source>
         <extracomment>Refers to the date and time a session was opened (started.)</extracomment>
-        <translation>开放时间：</translation>
+        <translation>打开于:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Closed at:</source>
         <extracomment>Refers to the date and time a session was closed (ended.)</extracomment>
-        <translation>关闭时间：</translation>
+        <translation>关闭于:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>unknown</source>
         <extracomment>Part of &quot;Session time: unknown&quot;.</extracomment>
-        <translation>未知</translation>
+        <translation>未知的</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session time:</source>
-        <translation>会话时间：</translation>
+        <translation>总时长:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your work time:</source>
-        <translation>您的工作时间：</translation>
+        <translation>绘画时长:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Recorded with an older, but compatible version of Drawpile.</source>
-        <translation>使用较旧但兼容的版本的“Drawpile”进行录制。</translation>
+        <translation>使用的是一个较旧的但兼容的Drawpile版本录制的.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recorded with an older, but compatible version (%1) of Drawpile.</source>
-        <translation>使用较旧但兼容的版本（%1）的“Drawpile”软件录制的。</translation>
+        <translation>使用的是一个较旧的但兼容的Drawpile(%1)版本录制的.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with a newer version of Drawpile with minor incompatibilities.</source>
-        <translation>使用较新版本的 Drawpile 录制的，存在一些轻微的不兼容问题。</translation>
+        <translation>使用的是一个较新的有轻微兼容问题的Drawpile版本录制的.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with an old incompatible version of Drawpile.</source>
-        <translation>使用过时且不兼容的版本的“Drawpile”录制的。</translation>
+        <translation>使用的是一个旧的不兼容的Drawpile版本录制的.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recorded with an old, incompatible version (%1) of Drawpile.</source>
-        <translation>使用的是与之不兼容的旧版本（%1）的“Drawpile”软件进行录制的。</translation>
+        <translation>使用的是一个旧的不兼容的Drawpile(%1)版本录制的.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with a new, incompatible version of Drawpile.</source>
-        <translation>使用新版（但不兼容）的“Drawpile”软件进行录制。</translation>
+        <translation>使用的是一个新的不兼容的Drawpile版本录制的.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Recorded with an unknown incompatible version of Drawpile.</source>
-        <translation>使用不兼容的“Drawpile”版本进行录制。</translation>
+        <translation>使用的是一个未知的不兼容的Drawpile版本录制的.</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -9177,18 +9178,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+25"/>
         <source>Manage Autorecovery</source>
-        <translation>管理自动恢复功能</translation>
+        <translation>管理自动恢复</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>These settings affect only the current session. You can change the defaults [in the preferences].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation>这些设置仅对当前会话有效。您可以在“首选项”中更改默认值。</translation>
+        <translation>这些设置只影响当前房间. 你可以在[首选项]中更改默认值.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enable autorecovery for the current session</source>
-        <translation>启用当前会话的自动恢复功能</translation>
+        <translation>为当前房间启用自动恢复功能</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -9204,35 +9205,35 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-74"/>
         <source>Size limit: %1 GB</source>
-        <translation>大小限制：%1 GB</translation>
+        <translation>大小限制: %1 GB</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>No size limit</source>
-        <translation>无大小限制</translation>
+        <translation>无限制</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You will receive a warning when the autorecovery file reaches %1% of the size limit. Once it exceeds the limit, autorecovery will terminate.</source>
         <extracomment>The %1% is a percentage, like 75%. Don&apos;t remove the second %!</extracomment>
-        <translation>当自动恢复文件的大小达到限制值的 %1% 时，您将会收到警告。一旦其超过限制值，自动恢复功能将会终止。</translation>
+        <translation>你会收到警告当自动恢复文件的大小限制达到 %1% 的时候. 一旦超过限制值, 自动恢复功能就会终止.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> There is no size limit set.</source>
-        <translation> 没有设定任何大小限制。</translation>
+        <translation> 未设置大小限制.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source> This is %1% of the current %2 limit.</source>
         <extracomment>The %1% becomes a percentage, like &quot;50%&quot;. Don&apos;t remove the second %! %2 is a file size, like &quot;5GB&quot;.</extracomment>
-        <translation> 这是当前 %2 限制值的 %1% 。</translation>
+        <translation> 这占当前 %2 限制的 %1%.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The current autorecovery file size is %1.</source>
         <extracomment>%1 is a file size, like &quot;1 GB&quot;.</extracomment>
-        <translation>当前的自动恢复文件大小为 %1 。</translation>
+        <translation>当前自动恢复文件的大小是 %1.</translation>
     </message>
 </context>
 <context>
@@ -9255,12 +9256,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>This session was hosted with a newer version of Drawpile. You are not able to reset it.</source>
-        <translation>本次会议使用的是新版的 Drawpile 软件。您无法对其进行重置操作。</translation>
+        <translation>此房间是用一个较新版本的 Drawpile 开的. 你无法重置它.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You must be an operator to reset the session.</source>
-        <translation>您必须是系统管理员才能重置会话。</translation>
+        <translation>你必须是房间管理员才能重置房间.</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -9318,37 +9319,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation>在使用 Drawpile 2.2 进行的会话中，宽度和高度必须在 1 到 %1 像素之间。</translation>
+        <translation>在使用 Drawpile 2.2 开的房间中, 宽度和高度必须介于 1 到 %1 像素之间.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation>在使用 Drawpile 2.2 进行的会话中，宽度必须在 1 到 %1 像素之间。</translation>
+        <translation>在使用 Drawpile 2.2 开的房间中, 宽度必须介于 1 到 %1 像素之间.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation>在使用 Drawpile 2.2 进行的会话中，高度必须在 1 到 %1 像素之间。</translation>
+        <translation>在使用 Drawpile 2.2 开的房间中, 高度必须介于 1 到 %1 像素之间.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation>宽度和高度必须在 1 像素至 %1 像素之间。</translation>
+        <translation>宽度和高度必须介于 1 到 %1 像素之间.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation>宽度必须在 1 像素至 %1 像素之间。</translation>
+        <translation>宽度必须介于 1 到 %1 像素之间.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation>高度必须在 1 像素到 %1 像素之间。</translation>
+        <translation>高度必须介于 1 到 %1 像素之间.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation>总尺寸必须在 1 像素到 %1 像素之间（您当前的尺寸为 %2 像素。）</translation>
+        <translation>总大小必须介于 1 到 %1 像素之间 (你目前位于 %2.)</translation>
     </message>
 </context>
 <context>
@@ -9421,7 +9422,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-359"/>
         <source>Imported %n session ban(s).</source>
         <translation>
-            <numerusform>已导入 %n 条会话禁令。</numerusform>
+            <numerusform>已导入 %n 个被禁的用户(s).</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -9429,7 +9430,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
         <translation>
-            <numerusform>%1 %n 由于该内容无效或存在重复，所以未被导入。</numerusform>
+            <numerusform>%1 %n 未被导入, 因为它/它们无效或重复.</numerusform>
         </translation>
     </message>
     <message>
@@ -9457,7 +9458,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+58"/>
         <source>This list shows only registered users.</source>
-        <translation>此列表只显示注册用户。</translation>
+        <translation>此列表只显示注册用户.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9486,12 +9487,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+134"/>
         <location line="+35"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation>设置新密码或留空以删除密码。</translation>
+        <translation>设置新的密码或留空来移除.</translation>
     </message>
     <message>
         <location line="-33"/>
         <source>Set a password for the session.</source>
-        <translation>设置房间密码。</translation>
+        <translation>设置房间密码.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9501,27 +9502,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Make Session Public</source>
-        <translation>会话设为公开</translation>
+        <translation>公开房间</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Removing the password from the session will make it publicly visible and allow strangers to join! Are you sure?</source>
-        <translation>移除会话密码后，会话将公开可见，陌生人也可以加入！你确定吗？</translation>
+        <translation>移除密码将公开房间且任何人都可以加入! 你确定要移除吗?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Yes, make public</source>
-        <translation>是的，公开</translation>
+        <translation>是, 公开房间</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep password</source>
-        <translation>不，请保留密码</translation>
+        <translation>否, 保留密码</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Set a password for gaining operator status.</source>
-        <translation>设置获取操作员身份的密码。</translation>
+        <translation>设置获取房间管理员权限的密码.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9532,22 +9533,22 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+31"/>
         <location line="+122"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation>打开“%1”时出错：%2</translation>
+        <translation>错误打开 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="-91"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation>此服务器不支持导入加密封禁记录。</translation>
+        <translation>此服务器不支持导入加密的被禁的用户.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation>此服务器不支持导入普通封禁记录。</translation>
+        <translation>此服务器不支持导入普通的被禁的用户.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation>该文件似乎不包含任何封禁数据。</translation>
+        <translation>文件中似乎不包含任何被禁的用户数据.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9557,7 +9558,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation>既然您是管理员，您可以将封禁记录以加密或非加密的形式导出。加密的封禁记录只能在此服务器上导入。您希望以何种格式进行导出？</translation>
+        <translation>由于你是服务器管理员, 你可以导出加密的或普通的被禁的用户. 加密的被禁的用户只能在此服务器上被导入. 你想导出哪种格式呢?</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9579,7 +9580,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation>该文件不包含有效的角色导出。</translation>
+        <translation>文件不包含有效的角色导出.</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -9590,7 +9591,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+61"/>
         <source>%n role(s) imported.</source>
         <translation>
-            <numerusform>已导入 %n 个角色。</numerusform>
+            <numerusform>已导入 %n 个角色.</numerusform>
         </translation>
     </message>
     <message>
@@ -9609,12 +9610,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Undo Limit: </source>
-        <translation>撤销限制： </translation>
+        <translation>撤销限制: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation>请为本次会话选择新的撤销次数限制，当前限制为 %1。撤销操作在所有参与者之间共享。更改限制将重新开始撤销堆栈，您将无法撤销更改限制之前的操作。</translation>
+        <translation>为这个房间选择一个新的撤销限制, 当前的限制是%1. 撤销是在所有用户之间共享的. 更改限制将重新开始撤销堆栈, 你将无法在你更改限制的地方之前进行撤销.</translation>
     </message>
 </context>
 <context>
@@ -9627,7 +9628,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+52"/>
         <source>General</source>
-        <translation>常规</translation>
+        <translation>基本</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9695,13 +9696,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation>色彩和谐色板已禁用。</translation>
+        <translation>过渡色块已禁用.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation>点击此处启用它们。</translation>
+        <translation>点击这里来启用.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -9751,12 +9752,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Chroma</source>
-        <translation>色度</translation>
+        <translation>纯度</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Value</source>
-        <translation>值</translation>
+        <translation>明度</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9787,37 +9788,37 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+124"/>
         <location line="+7"/>
         <source>Range: </source>
-        <translation>范围： </translation>
+        <translation>范围: </translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+19"/>
         <source>Saturation range: </source>
-        <translation>饱和度范围： </translation>
+        <translation>饱和度范围: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Chroma range: </source>
-        <translation>色度范围： </translation>
+        <translation>纯度范围: </translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+19"/>
         <source>Value range: </source>
-        <translation>值范围： </translation>
+        <translation>明度范围: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Lightness range: </source>
-        <translation>亮度范围： </translation>
+        <translation>亮度范围: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Luminance range: </source>
-        <translation>亮度范围： </translation>
+        <translation>亮度范围: </translation>
     </message>
     <message>
         <location line="-14"/>
@@ -9827,32 +9828,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Hue offset: </source>
-        <translation>色调偏移： </translation>
+        <translation>色相偏移: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation offset: </source>
-        <translation>饱和度偏移： </translation>
+        <translation>饱和度偏移: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Chroma offset: </source>
-        <translation>色度偏移： </translation>
+        <translation>纯度偏移: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Value offset: </source>
-        <translation>值偏移： </translation>
+        <translation>明度偏移: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lightness offset: </source>
-        <translation>亮度偏移： </translation>
+        <translation>亮度偏移: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Luminance offset: </source>
-        <translation>亮度偏移： </translation>
+        <translation>亮度偏移: </translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9870,7 +9871,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+68"/>
         <source>Welcome</source>
-        <translation>欢迎使用</translation>
+        <translation>欢迎</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9940,12 +9941,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Recover</source>
-        <translation>恢复</translation>
+        <translation>恢复文件</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Restore autorecovery files</source>
-        <translation>恢复自动恢复文件</translation>
+        <translation>还原自动恢复文件</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10025,19 +10026,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation>上次检查时间：今天。</translation>
+        <translation>最后一次检查: 今天.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
         <translation>
-            <numerusform>上次检查时间：%n 天前。</numerusform>
+            <numerusform>最后一次检查: %n 天之前.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation>上次检查：从未。</translation>
+        <translation>最后一次检查: 从未.</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -10094,19 +10095,19 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/animationexportdialog.cpp" line="-283"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+190"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
-        <translation>此格式需要 FFmpeg，点击此处进行设置。</translation>
+        <translation>此格式需要FFmpeg, 请点击此处来设置.</translation>
     </message>
     <message>
         <location line="+39"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+181"/>
         <source>Prefer FFmpeg over internal encoder</source>
-        <translation>优先选择 FFmpeg 编码器而非内置编码器</translation>
+        <translation>优先使用FFmpeg而不是内置编码</translation>
     </message>
     <message>
         <location line="+211"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+257"/>
         <source>The selected format requires FFmpeg. Do you want to set it up now?</source>
-        <translation>所选格式需要 FFmpeg。您现在要安装吗？</translation>
+        <translation>所选格式需要FFmpeg. 你想现在设置吗?</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -10123,7 +10124,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/timelapsedialog.cpp" line="-1014"/>
         <source>Timelapse</source>
-        <translation>延时摄影</translation>
+        <translation>缩时视频</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10153,22 +10154,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Logo:</source>
-        <translation>标志：</translation>
+        <translation>图标:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Format:</source>
-        <translation>格式：</translation>
+        <translation>格式:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Duration:</source>
-        <translation>时长：</translation>
+        <translation>时长:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Duration presets:</source>
-        <translation>持续时间预设：</translation>
+        <translation>时长预设:</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -10178,7 +10179,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Resolution:</source>
-        <translation>分辨率：</translation>
+        <translation>分辨率:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10188,22 +10189,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Crop to selection area</source>
-        <translation>裁剪选区</translation>
+        <translation>裁剪至选区范围</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Video with dimensions larger than 1920 pixels is not widely supported. Many devices and platforms won&apos;t play them properly, degrade their quality or refuse to recognize them altogether.</source>
-        <translation>尺寸大于 1920 像素的视频目前支持度不高。许多设备和平台无法正常播放，要么降低视频质量，要么完全无法识别。</translation>
+        <translation>尺寸超过1920像素的视频还未得到广泛支持. 许多设备和平台都无法正常播它们, 可能会降低它们的画质或者完全无法识别.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Play animation as result</source>
-        <translation>播放动画结果</translation>
+        <translation>播放动画作为结果</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Use flipbook range and speed</source>
-        <translation>使用翻页书的范围和速度</translation>
+        <translation>使用动画预览的范围和速度</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -10213,21 +10214,21 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Encoder:</source>
-        <translation>编码器：</translation>
+        <translation>编码:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Automatic</source>
         <comment>interpolation</comment>
         <extracomment>Image scaling option that picks an algorithm automatically.</extracomment>
-        <translation>自动</translation>
+        <translation>自动的</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lanczos</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, lanczos scaling.</extracomment>
-        <translation>兰乔斯</translation>
+        <translation>兰佐斯插值</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10260,32 +10261,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Interpolation:</source>
-        <translation>插值：</translation>
+        <translation>插值:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only time own drawing</source>
-        <translation>仅有时间属于自己画画</translation>
+        <translation>只统计自己的绘画时间</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Timing:</source>
-        <translation>定时：</translation>
+        <translation>时间:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Backdrop:</source>
-        <translation>背景：</translation>
+        <translation>背景颜色:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Logo scale:</source>
-        <translation>Logo 缩放：</translation>
+        <translation>图标缩放:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Logo padding:</source>
-        <translation>Logo 边距：</translation>
+        <translation>图标间距:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10295,12 +10296,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Logo opacity:</source>
-        <translation>Logo 透明度：</translation>
+        <translation>图标不透明度:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Preview result:</source>
-        <translation>预览结果：</translation>
+        <translation>预览结果:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10313,38 +10314,38 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-47"/>
         <source>Flash:</source>
-        <translation>闪光灯：</translation>
+        <translation>闪烁结果:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Linger result:</source>
-        <translation>持久结果：</translation>
+        <translation>结果停留时长:</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Interval limit:</source>
-        <translation>区间限制：</translation>
+        <translation>区间限制:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Queue size:</source>
-        <translation>队列大小：</translation>
+        <translation>队列大小:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source> FPS</source>
         <extracomment>Frames per second.</extracomment>
-        <translation> FPS</translation>
+        <translation> 每秒帧数</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation>帧率：</translation>
+        <translation>帧率:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Video with framerates above 30 FPS is not widely supported. Many devices and platforms won&apos;t play them properly, degrade their quality or refuse to recognize them altogether.</source>
-        <translation>帧率高于 30 FPS 的视频支持并不广泛。许多设备和平台无法正常播放，要么降低视频质量，要么完全无法识别。</translation>
+        <translation>帧率超过30每秒帧数的视频还未得到广泛支持. 许多设备和平台都无法正常播它们, 可能会降低它们的画质或者完全无法识别.</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -10354,29 +10355,29 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+99"/>
         <source>Starting export…</source>
-        <translation>开始导出…</translation>
+        <translation>开始导出中…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Cancelling…</source>
-        <translation>正在取消…</translation>
+        <translation>取消中…</translation>
     </message>
     <message numerus="yes">
         <location line="+450"/>
         <source>%1 loop(s)</source>
         <translation>
-            <numerusform>%1 循环</numerusform>
+            <numerusform>%1 个循环</numerusform>
         </translation>
     </message>
     <message>
         <location line="+119"/>
         <source>Choose Backdrop Color</source>
-        <translation>选择背景颜色</translation>
+        <translation>选择透明背景的颜色</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Choose Flash Color</source>
-        <translation>选择闪光灯颜色</translation>
+        <translation>选择闪烁结果的颜色</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -10386,7 +10387,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to reset all timelapse settings to their default values?</source>
-        <translation>您确定要将所有延时摄影设置重置为默认值吗？</translation>
+        <translation>你确定要将所有缩时视频的设置重置为默认值吗?</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -10407,7 +10408,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+29"/>
         <source>Timelapse exported in %1.</source>
         <extracomment>%1 is a time, like &quot;1 minute, 20 seconds&quot;.</extracomment>
-        <translation>延时摄影导出于 %1。</translation>
+        <translation>缩时视频已导出至 %1.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10417,7 +10418,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Failed to export timelapse.</source>
-        <translation>延时摄影导出失败。</translation>
+        <translation>导出缩时视频失败.</translation>
     </message>
 </context>
 <context>
@@ -10430,7 +10431,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation>拖动即可重新排序，取消选中即可隐藏工具。</translation>
+        <translation>拖动来重新排列和取消勾选来隐藏.</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -10471,7 +10472,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-265"/>
         <source>Touch here.</source>
-        <translation>触摸此处。</translation>
+        <translation>触摸此处.</translation>
     </message>
 </context>
 <context>
@@ -10491,7 +10492,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation>未知</translation>
+        <translation>未知的</translation>
     </message>
     <message>
         <location line="-22"/>
@@ -10539,7 +10540,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation>自定义 FFmpeg 命令</translation>
+        <translation>自定义FFmpeg指令</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10570,7 +10571,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation>未找到。%1</translation>
+        <translation>未找到ffmpeg路径. %1</translation>
     </message>
 </context>
 <context>
@@ -10579,28 +10580,28 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+61"/>
         <source>Changing autorecovery preferences will not affect the status or limits of any running sessions. [Click here to manage autorecovery on your current session.]</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation>更改自动恢复设置不会影响任何正在运行的会话的状态或限制。[点击此处管理当前会话的自动恢复设置。]</translation>
+        <translation>更改自动恢复的偏好不会影响任何运行中的房间的状态或限制. [你可以点击此处来管理当前房间的自动恢复设置.]</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>When offline or hosting sessions</source>
-        <translation>离线或主持会话时</translation>
+        <translation>当单机或创建房间的时候</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autorecovery:</source>
-        <translation>自动恢复：</translation>
+        <translation>自动恢复:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When joining sessions</source>
-        <translation>加入会话时</translation>
+        <translation>当加入房间的时候</translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>Snapshot every %1 minute(s)</source>
         <translation>
-            <numerusform>每隔 %1 分钟进行一次快照</numerusform>
+            <numerusform>快照间隔 %1 分钟</numerusform>
         </translation>
     </message>
     <message>
@@ -10635,12 +10636,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-15"/>
         <location line="+17"/>
         <source>Drawpile Project (.dppr)</source>
-        <translation>Drawpile 项目 (.dppr)</translation>
+        <translation>Drawpile Project (.dppr)</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Preferred save format:</source>
-        <translation>首选保存格式：</translation>
+        <translation>首选保存格式:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10665,7 +10666,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Photoshop Document (.psd)</source>
-        <translation>Photoshop 文档 (.psd)</translation>
+        <translation>Photoshop Document (.psd)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10696,20 +10697,20 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-7"/>
         <source>No log files to clear found.</source>
-        <translation>未找到需要清除的日志文件。</translation>
+        <translation>未发现需要清除的日志文件.</translation>
     </message>
     <message numerus="yes">
         <location line="+8"/>
         <source>Do you want to delete %n log file(s)?</source>
         <translation>
-            <numerusform>是否要删除 %n 个日志文件？</numerusform>
+            <numerusform>你确定要删除 %n 个日志文件吗?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>It/They take(s) up %1 of space.</source>
         <translation>
-            <numerusform>它/它们占用 %1 的空间。</numerusform>
+            <numerusform>它占用了 %1 的空间.</numerusform>
         </translation>
     </message>
 </context>
@@ -10808,7 +10809,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+31"/>
         <source>%1 (not found)</source>
         <extracomment>%1 is the name of a theme, whose file was not found.</extracomment>
-        <translation>%1（未找到）</translation>
+        <translation>%1 (未找到)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10826,7 +10827,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+8"/>
         <source>Night Mode</source>
         <extracomment>The name for a color scheme that is dark like the night.</extracomment>
-        <translation>夜间模式</translation>
+        <translation>Night Mode</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10886,12 +10887,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation>启用这些选项可能会对某些系统的性能产生影响。</translation>
+        <translation>启用这些选项可能会影响某些系统的性能.</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation>可以从“会话 ▸ 重置...”菜单中恢复快照。</translation>
+        <translation>画布快照可以从菜单 房间&gt;重置… 中恢复.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -10902,13 +10903,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+36"/>
         <source>Light</source>
         <extracomment>The name for the light system color scheme.</extracomment>
-        <translation>浅色</translation>
+        <translation>Light</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dark</source>
         <extracomment>The name for the dark system color scheme.</extracomment>
-        <translation>深色</translation>
+        <translation>Dark</translation>
     </message>
     <message>
         <location line="-25"/>
@@ -10986,7 +10987,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation>如果启用此功能，Drawpile 可以以未加密的形式保存密码。若将其禁用，则会清除任何未妥善加密保存的密码。</translation>
+        <translation>启用此功能后, Drawpile可能会以未加密格式保存密码. 禁用后, 任何不安全存储的密码都会丢失.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11036,7 +11037,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation>数值越高，其他用户的操作就越流畅。</translation>
+        <translation>数值越大, 其他用户输入的笔画就越流畅.</translation>
     </message>
     <message>
         <location line="-97"/>
@@ -11096,7 +11097,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation>当此事件发生时播放一个音效。</translation>
+        <translation>勾选后, 事件发生时会播放音效.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11106,7 +11107,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation>当此事件发生时，在角落处弹出一个对话框。</translation>
+        <translation>勾选后, 右下角会弹出一个语音气泡.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11116,7 +11117,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation>当此事件发生时，Drawpile 窗口会在任务栏中闪烁。</translation>
+        <translation>勾选后, 任务栏的Drawpile窗口会闪烁.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11126,7 +11127,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation>当该事件发生时， Drawpile 的图标会在面板中跳动。</translation>
+        <translation>当该事件发生时, Drawpile的图标会在面板中跳动.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11136,7 +11137,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation>Drawpile 窗口标记为需要注意。具体的样子会因您的系统而异。</translation>
+        <translation>将Drawpile的窗口标记为需要注意. 具体如何显示取决于您的系统.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11176,12 +11177,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation>其他触发条件请在此处依次列出，每条一条行。</translation>
+        <translation>其他触发词请填在此处, 每行一个.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation>您的用户名始终会被视为一次提及。您还可以添加您希望将其计为提及的其他触发词或短语，比如其他昵称。每行一个词或短语即可，大小写不敏感。</translation>
+        <translation>你的用户名始终算作一次提及. 你也可以添加其他触发词或短语, 如其他昵称. 每行一个单词或短语, 大小写无所谓.</translation>
     </message>
     <message>
         <location line="-150"/>
@@ -11209,7 +11210,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+55"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation>将标题包含这些标签的房间视为不适于未成年人的。</translation>
+        <translation>将标题包含这些标签的房间视为不适于未成年人的.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11244,17 +11245,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation>成人会话将不会出现在服务器列表中，但仍可通过直接链接加入。</translation>
+        <translation>限制级房间将在列表中被隐藏, 但仍然可以通过直接的地址加入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation>成人会话将不会出现在服务器列表中，也无法加入。</translation>
+        <translation>限制级房间将在列表中被隐藏且无法加入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation>成人会话将不会出现在服务器列表中，也无法加入。如果已连接的会话更改其标题或成人标志，将自动断开连接。</translation>
+        <translation>限制级房间将在列表中被隐藏且无法加入. 已连接的房间如果改变其标题或限制级标签将自动断开连接.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11280,7 +11281,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation>限制级设定已被锁定。</translation>
+        <translation>限制级设定已被锁定.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11290,12 +11291,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation>这些是属于限制级房间和图层审查功能的相关设置。</translation>
+        <translation>这些是属于限制级房间和图层审查功能的相关设置.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation>目前限制级设定是由操作系统管理的。</translation>
+        <translation>目前限制级设定是由操作系统管理的.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -11539,22 +11540,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Choose which shortcuts you want to modify:</source>
-        <translation>选择要修改的快捷键：</translation>
+        <translation>选择你要修改的快捷键:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Keyboard shortcuts to trigger actions, like switching tools, creating layers or anything else you can pick from the top menu bar.</source>
-        <translation>键盘快捷键可以触发各种操作，例如切换工具、创建图层或您可以从顶部菜单栏中选择的任何其他操作。</translation>
+        <translation>用于触发各种操作的键盘快捷键, 比如切换工具, 创建图层或者上方菜单栏中可选的任何其他功能.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Keyboard shortcuts to switch brushes. Assigning the same shortcut to multiple brushes will toggle through them.</source>
-        <translation>使用键盘快捷键切换画笔。将同一个快捷键分配给多个画笔，即可在它们之间切换。</translation>
+        <translation>用于切换笔刷的键盘快捷键. 比如将同一个快捷键分配给多个笔刷即可在它们之间切换.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Shortcuts for mouse or stylus buttons, wheels or keyboard keys that apply only in the canvas view. For example, panning, rotating, zooming, color picking, brush resizing and more.</source>
-        <translation>仅在画布视图中生效的鼠标或触控笔按钮、滚轮或键盘快捷键。例如，平移、旋转、缩放、颜色拾取、画笔大小调整等等。</translation>
+        <translation>仅在画布视图中生效的鼠标或触控笔按键, 滚轮或者键盘按键, 比如平移, 旋转, 缩放, 拾色, 调整笔刷大小以及其他更多.</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -11599,7 +11600,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Global pressure curve:</source>
-        <translation>全局气压曲线：</translation>
+        <translation>全局曲线:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11609,7 +11610,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Eraser pressure curve:</source>
-        <translation>橡皮擦压力曲线：</translation>
+        <translation>橡皮压力曲线:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11661,7 +11662,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation>平板电脑驱动程序：</translation>
+        <translation>驱动:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11676,12 +11677,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Global smoothing: </source>
-        <translation>全局平滑： </translation>
+        <translation>全局平滑度: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation>平滑：</translation>
+        <translation>平滑:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11696,25 +11697,25 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Workarounds:</source>
-        <translation>变通方法：</translation>
+        <translation>方法:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Translate F21 key to middle click (OnePlus)</source>
         <extracomment>OnePlus is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation>将 F21 键转换为中键（一加）</translation>
+        <translation>将 F21 键转为中键 (一加)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Translate page keys to clicks (Xiaomi)</source>
         <extracomment>Xiaomi is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation>将页面按键转换为点击次数（小米）</translation>
+        <translation>将页面按键转为点击 (小米)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Disregard position history (Xiaomi)</source>
         <extracomment>Xiaomi is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation>忽略位置历史记录（小米）</translation>
+        <translation>忽略位置记录 (小米)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11735,7 +11736,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation>橡皮擦笔尖行为：</translation>
+        <translation>橡皮笔尖行为:</translation>
     </message>
 </context>
 <context>
@@ -11748,7 +11749,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation>键盘快捷键：</translation>
+        <translation>键盘快捷键:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11768,12 +11769,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation>启用此功能后，笔刷槽中的更改将自动保存到笔刷本身。禁用此功能后，笔刷本身只有在您显式保存时才会发生变化。</translation>
+        <translation>启用时, 笔刷数字预设中的更改将自动保存到笔刷预设. 禁用时, 笔刷预设只有在你明确保存后才会发生更改.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation>画笔插槽：</translation>
+        <translation>数字预设:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11783,7 +11784,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-132"/>
         <source>px</source>
-        <translation>像素</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+77"/>
@@ -12029,7 +12030,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Automatic (%1)</source>
-        <translation>自动（%1）</translation>
+        <translation>自动的 (%1)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12102,7 +12103,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Change mode and scale…</source>
-        <translation>更改模式和缩放比例…</translation>
+        <translation>更改模式和缩放…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -12112,12 +12113,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation>桌面</translation>
+        <translation>大屏幕</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mobile</source>
-        <translation>移动</translation>
+        <translation>小屏幕/手机</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -12223,7 +12224,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation>根据混合模式自动继承并保留透明度</translation>
+        <translation>根据混合模式自动继承和保持透明度</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12263,7 +12264,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>px</source>
-        <translation>像素</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12463,12 +12464,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+51"/>
         <source>HostError</source>
-        <translation>HostError</translation>
+        <translation>创建错误</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Public sessions require a title. Do you want to host an invite-only session instead?</source>
-        <translation>公开会议需要标题。您是否想改为举办仅限受邀者参加的会议？</translation>
+        <translation>公共房间需要填写房名. 你是否想改为创建仅限邀请者加入的私人房间?</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -12490,7 +12491,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation>未收到任何文件或内容。</translation>
+        <translation>未收到文件或内容.</translation>
     </message>
     <message>
         <location line="+92"/>
@@ -12500,7 +12501,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation>无法导入会话设置。</translation>
+        <translation>无法导入房间设置.</translation>
     </message>
 </context>
 <context>
@@ -12508,12 +12509,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation>请输入 &lt;strong&gt;会话 URL&lt;/strong&gt;、&lt;strong&gt;主机名&lt;/strong&gt; 或 &lt;strong&gt;IP 地址&lt;/strong&gt;：</translation>
+        <translation>可通过输入房间地址, 服务器地址或者IP地址来加入房间:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation>最近的：</translation>
+        <translation>最近加入过的服务器:</translation>
     </message>
 </context>
 <context>
@@ -12521,7 +12522,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
         <source>Help</source>
-        <translation>帮助</translation>
+        <translation>Help</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12531,7 +12532,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation>平板电脑设置</translation>
+        <translation>Tablet Setup</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12584,32 +12585,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="+423"/>
         <source>No files to recover.</source>
-        <translation>没有可恢复的文件。</translation>
+        <translation>无文件可恢复.</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Autorecovery Removal Failed</source>
-        <translation>自动恢复移除失败</translation>
+        <translation>自动恢复删除失败</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Could not remove autorecovery file %1.</source>
-        <translation>无法删除自动恢复文件 %1。</translation>
+        <translation>无法删除自动恢复文件 %1.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>File not found.</source>
-        <translation>文件未找到。</translation>
+        <translation>未找到文件.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>File is locked by another process.</source>
-        <translation>文件已被其他进程锁定。</translation>
+        <translation>文件已被另一个进程锁定.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error deleting file: %1.</source>
-        <translation>删除文件时出错：%1。</translation>
+        <translation>错误删除文件: %1.</translation>
     </message>
 </context>
 <context>
@@ -12617,7 +12618,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/recovernotice.cpp" line="+45"/>
         <source>You have unsaved files to recover!</source>
-        <translation>您有未保存的文件需要恢复！</translation>
+        <translation>你有未保存的文件可恢复!</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12646,23 +12647,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Size: %1</source>
-        <translation>大小：%1</translation>
+        <translation>大小: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Work time: %1</source>
         <extracomment>How long you&apos;ve worked on an autorecovery file. %1 is either a time span like &quot;1 hour and 15 minutes&quot; or &quot;unknown&quot;.</extracomment>
-        <translation>工作时间：%1</translation>
+        <translation>绘画时长: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Locked by another process</source>
-        <translation>被另一个进程锁定</translation>
+        <translation>已被另一个进程锁定</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Error: %1</source>
-        <translation>错误：%1</translation>
+        <translation>错误: %1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12692,32 +12693,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to permanently delete this autorecovery file?</source>
-        <translation>您确定要永久删除此自动恢复文件吗？</translation>
+        <translation>你确定要永久删除此自动恢复文件吗?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Any unrecovered data will be lost.</source>
-        <translation>任何无法恢复的数据都将丢失。</translation>
+        <translation>任何未恢复的数据将丢失.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation>是，删除</translation>
+        <translation>是, 删除</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation>否，保留</translation>
+        <translation>否, 保留</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Download Started</source>
-        <translation>下载开始</translation>
+        <translation>下载已开始</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your browser should have prompted you to download the file. Make sure to check it for completeness afterwards.</source>
-        <translation>您的浏览器应该会提示您下载文件。下载后请务必检查文件是否完整。</translation>
+        <translation>你的浏览器应该已提示你下载该文件. 请务必在下载完成后检查文件是否完整.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12727,7 +12728,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Failed to read autorecovery file: %1</source>
-        <translation>读取自动恢复文件失败：%1</translation>
+        <translation>无法读取自动恢复文件的数据: %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -12742,7 +12743,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>The file may not have been saved correctly.</source>
-        <translation>文件可能未正确保存。</translation>
+        <translation>文件可能未正确保存.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12752,7 +12753,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Export successful. Do you want to open the file now?</source>
-        <translation>导出成功。您现在要打开文件吗？</translation>
+        <translation>导出成功. 你要现在打开文件吗?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12762,67 +12763,67 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Failed to open autorecovery file: %1</source>
-        <translation>自动恢复文件打开失败：%1</translation>
+        <translation>无法打开自动恢复文件: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Failed to open target file: %1</source>
-        <translation>无法打开目标文件：%1</translation>
+        <translation>无法打开目标文件: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Failed to read from autorecovery file: %1</source>
-        <translation>无法从自动恢复文件读取数据：%1</translation>
+        <translation>无法从自动恢复文件中读取数据: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to write to target file: %1</source>
-        <translation>写入目标文件失败：%1</translation>
+        <translation>无法写入目标文件: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Failed to write to target file: read/write mismatch</source>
-        <translation>写入目标文件失败：读写操作不匹配</translation>
+        <translation>无法写入目标文件: 读写不匹配</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to commit target file: %1</source>
-        <translation>提交目标文件失败：%1</translation>
+        <translation>无法提交目标文件: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to open autorecovery file for verification: %1</source>
-        <translation>无法打开自动恢复文件进行验证：%1</translation>
+        <translation>无法打开用于验证的自动恢复文件: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open target file for verification: %1</source>
-        <translation>无法打开目标文件进行验证：%1</translation>
+        <translation>无法打开用于验证的目标文件: %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: file sizes do not match</source>
-        <translation>验证失败：文件大小不匹配</translation>
+        <translation>验证失败: 文件大小不匹配</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery file read error during verification: %1</source>
-        <translation>自动恢复文件读取验证时出错：%1</translation>
+        <translation>验证过程中自动恢复文件读取错误: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Target file read error during verification: %1</source>
-        <translation>验证过程中目标文件读取错误：%1</translation>
+        <translation>验证过程中目标文件读取错误: %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: read size mismatch</source>
-        <translation>验证失败：读取大小不匹配</translation>
+        <translation>验证失败: 读取大小不匹配</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: autorecovery and target file data does not match</source>
-        <translation>验证失败：自动恢复和目标文件数据不匹配</translation>
+        <translation>验证失败: 自动恢复数据与目标文件数据不匹配</translation>
     </message>
 </context>
 <context>
@@ -13104,7 +13105,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation>您确定要删除预设 %1 吗?</translation>
+        <translation>你确定要删除预设 %1 吗?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13182,7 +13183,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation>踢出并封禁：</translation>
+        <translation>踢除和禁IP:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -13297,12 +13298,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation>是，替换</translation>
+        <translation>是, 替换</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation>否，保留</translation>
+        <translation>否, 保留</translation>
     </message>
 </context>
 <context>
@@ -13310,12 +13311,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+44"/>
         <source>Only people you invite can join</source>
-        <translation>只有您邀请的人才能加入</translation>
+        <translation>私人房间, 只有你邀请的人可以加入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Public, strangers can join</source>
-        <translation>公开场合，陌生人也可以加入</translation>
+        <translation>公共房间, 任何人都可以加入</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -13365,7 +13366,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation>输入主机或 IP 地址</translation>
+        <translation>输入一个服务器或者IP地址</translation>
     </message>
     <message>
         <location line="+158"/>
@@ -13423,7 +13424,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation>文件中不包含任何要导入的角色。</translation>
+        <translation>文件未包含要导入的角色.</translation>
     </message>
 </context>
 <context>
@@ -13496,17 +13497,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Display:</source>
-        <translation>显示：</translation>
+        <translation>显示:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Thumbnails</source>
-        <translation>缩略图</translation>
+        <translation>图标</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Strokes</source>
-        <translation>描边</translation>
+        <translation>笔画</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13516,17 +13517,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+53"/>
         <source>Size:</source>
-        <translation>大小：</translation>
+        <translation>大小:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Automatic</source>
-        <translation>自动</translation>
+        <translation>自动的</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Columns:</source>
-        <translation>列：</translation>
+        <translation>列数:</translation>
     </message>
     <message>
         <location line="+228"/>
@@ -14215,7 +14216,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
         <translation>
-            <numerusform>无法创建另一个/%n 个图层。</numerusform>
+            <numerusform>你无法新建更多图层.</numerusform>
         </translation>
     </message>
     <message>
@@ -14378,7 +14379,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation>缩放： </translation>
+        <translation>缩放: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -14394,7 +14395,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>无法打开参考图像：%1。</translation>
+        <translation>无法打开参考图像: %1.</translation>
     </message>
 </context>
 <context>
@@ -14417,7 +14418,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Column width:</source>
-        <translation>列宽：</translation>
+        <translation>列宽:</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -14462,14 +14463,14 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-34"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation>[♥ 向 Drawpile 捐款] 以帮助维持公共服务器的运行。</translation>
+        <translation>[♥ 向 Drawpile 捐赠]以帮助维持公共服务器的运行.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+7217"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
-        <translation>捐赠</translation>
+        <translation>Donate</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -14542,7 +14543,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation>左侧</translation>
+        <translation>靠左</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -14558,17 +14559,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation>右侧</translation>
+        <translation>靠右</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation>顶部</translation>
+        <translation>靠上</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation>底部</translation>
+        <translation>靠下</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -14589,7 +14590,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+86"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>注释已隐藏。 </translation>
+        <translation>注释已隐藏. </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -14600,7 +14601,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+385"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation>您没有权限粘贴合并后的注释。</translation>
+        <translation>你没有权限粘贴合并的注释.</translation>
     </message>
 </context>
 <context>
@@ -14618,22 +14619,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Plain</source>
-        <translation>普通</translation>
+        <translation>普通的</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Full</source>
-        <translation>完整</translation>
+        <translation>完整的</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show Title</source>
-        <translation>显示标题</translation>
+        <translation>显示笔刷名</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show Thumbnail</source>
-        <translation>显示缩略图</translation>
+        <translation>显示图标</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -14718,14 +14719,14 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
-        <translation>调整速度</translation>
+        <translation>根据速度调整</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Alters stabilization depending on how fast the stroke is.</source>
-        <translation>根据划水速度改变稳定性。</translation>
+        <translation>根据笔画的速度调整稳定度.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -14749,7 +14750,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+2"/>
         <source>Show the input settings dialog for more stabilizer settings.</source>
-        <translation>显示输入设置对话框，以便进行更多稳定器设置。</translation>
+        <translation>显示输入设置面板来查看更多防抖设置.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -14999,7 +15000,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+38"/>
         <source>The gradient tool requires a selection to operate in.</source>
-        <translation>渐变工具需要选中一个区域才能进行操作。</translation>
+        <translation>渐变工具需要创建选区来进行操作.</translation>
     </message>
 </context>
 <context>
@@ -15007,13 +15008,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation>你没有使用激光笔的权限。</translation>
+        <translation>你没有权限使用记号笔.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>激光轨迹被隐藏了。 </translation>
+        <translation>记号轨迹已隐藏. </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -15081,22 +15082,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Ratchet rotation</source>
-        <translation>棘轮旋转</translation>
+        <translation>增量旋转</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates smoothly, snaps to 0°</source>
-        <translation>旋转平稳，快速回弹至 0°</translation>
+        <translation>平滑的旋转, 可精确定位在 0°</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates smoothly, never snaps</source>
-        <translation>旋转顺畅，绝不卡顿</translation>
+        <translation>平滑的旋转, 不会自动归位</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates in 15° increments</source>
-        <translation>以 15° 为增量旋转</translation>
+        <translation>以15度增量旋转</translation>
     </message>
 </context>
 <context>
@@ -15520,32 +15521,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+31"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation>按下组合键。按 Esc 键取消。</translation>
+        <translation>按下一个组合键. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>单击上方字段中的所需鼠标按钮，也可以按住其他键进行操作。按 Esc 键取消。</translation>
+        <translation>在上面的字段中点击所需的鼠标按钮, 也可以按住键不放. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>滚动鼠标滚轮或点击上方字段，也可以按住某些键进行操作。按 Esc 键取消。</translation>
+        <translation>转动鼠标滚轮或点击进入上面的字段, 也可以按住键不放. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation>按住所需的组合键，然后点击上方的输入框。按 Esc 键取消。</translation>
+        <translation>按住所需的组合键并点击上面的字段. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unknown shortcut type %1. Hit Escape to cancel.</source>
-        <translation>未知快捷键类型 %1。按 Esc 键取消。</translation>
+        <translation>未知的快捷键类型%1. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation>按下“设置”按钮分配快捷键。</translation>
+        <translation>按设置按钮来指定一个快捷键.</translation>
     </message>
 </context>
 <context>
@@ -15575,32 +15576,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+416"/>
         <source>Vertical flip: ON</source>
-        <translation>垂直翻转：开启</translation>
+        <translation>垂直翻转: 开</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation>垂直翻转：关闭</translation>
+        <translation>垂直翻转: 关</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation>水平翻转：开启</translation>
+        <translation>水平翻转: 开</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>水平翻转：关闭</translation>
+        <translation>水平翻转: 关</translation>
     </message>
     <message>
         <location line="+2059"/>
         <source>Zoom: %1%</source>
-        <translation>缩放：%1%</translation>
+        <translation>缩放: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation>旋转：%1°</translation>
+        <translation>旋转: %1°</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -15979,7 +15980,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation>获取外部可见的 IP 地址</translation>
+        <translation>获取外部可见的IP地址</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -16019,7 +16020,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+211"/>
         <source>Logging out...</source>
-        <translation>正在退出登录…</translation>
+        <translation>登出...</translation>
     </message>
     <message>
         <location line="-366"/>
@@ -16044,12 +16045,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation>您的互联网服务提供商正在使用运营商级 NAT。这会导致其他人无法直接连接到您。请参阅 Drawpile 的帮助页面以获取解决方法。</translation>
+        <translation>您的网络服务提供者正在使用运营商级NAT. 这使得其他人无法直接与您连接. 请查看Drawpile的帮助页面以获取解决方法.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation>不要再次显示此内容</translation>
+        <translation>不再次提示</translation>
     </message>
 </context>
 <context>
@@ -16128,17 +16129,17 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/projectrecordingstatusbutton.cpp" line="+45"/>
         <source>Autorecovery is enabled, file size is %1.</source>
-        <translation>自动恢复已启用，文件大小为 %1。</translation>
+        <translation>自动恢复功能已启用, 文件大小是 %1.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Autorecovery is disabled.</source>
-        <translation>自动恢复功能已禁用。</translation>
+        <translation>自动恢复功能已禁用.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source> Click to manage.</source>
-        <translation> 点击管理。</translation>
+        <translation> 点击来管理.</translation>
     </message>
 </context>
 <context>
@@ -16146,12 +16147,12 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation>没有最近文件。</translation>
+        <translation>无最近文件.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>No recent hosts.</source>
-        <translation>没有最近的主机。</translation>
+        <translation>无最近服务器.</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -16204,26 +16205,26 @@ Hex: %4</source>
     <message>
         <location line="+6"/>
         <source>Toggle visibility for you</source>
-        <translation>为您切换可见性</translation>
+        <translation>显示轨道</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin for you</source>
-        <translation>切换洋葱皮模式</translation>
+        <translation>显示洋葱皮</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle frame move lock for you</source>
-        <translation>为您切换帧移动锁定</translation>
+        <translation>锁定轨道的帧移动</translation>
     </message>
     <message>
         <location line="+366"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation>目前还没有轨道。
-请使用上方的“+”按钮添加轨道，
-或通过“动画”▸“新建轨道”添加。</translation>
+        <translation>当前未有轨道.
+请使用上方的 ＋ 按钮来新建一个
+或者通过菜单 动画 ▸ 新建轨道.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-8284"/>
@@ -16302,7 +16303,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation>踢出并封禁(&amp;N)</translation>
+        <translation>禁止IP(&amp;N)</translation>
     </message>
     <message>
         <location line="+4"/>
