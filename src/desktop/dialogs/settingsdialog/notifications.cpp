@@ -155,13 +155,14 @@ void Notifications::initGrid(config::Config *cfg, QVBoxLayout *layout)
 	} while(0)
 
 	int row = 1;
-	ADD_NOTIFICATION_ROW("Chat message", Chat, Chat);
-	ADD_NOTIFICATION_ROW("Private message", PrivateChat, PrivateChat);
-	ADD_NOTIFICATION_ROW("User joined", Login, Login);
-	ADD_NOTIFICATION_ROW("User left", Logout, Logout);
-	ADD_NOTIFICATION_ROW("Canvas locked", Lock, Locked);
-	ADD_NOTIFICATION_ROW("Canvas unlocked", Unlock, Unlocked);
-	ADD_NOTIFICATION_ROW("Disconnected", Disconnect, Disconnect);
+	ADD_NOTIFICATION_ROW(QT_TR_NOOP("Chat message"), Chat, Chat);
+	ADD_NOTIFICATION_ROW(
+		QT_TR_NOOP("Private message"), PrivateChat, PrivateChat);
+	ADD_NOTIFICATION_ROW(QT_TR_NOOP("User joined"), Login, Login);
+	ADD_NOTIFICATION_ROW(QT_TR_NOOP("User left"), Logout, Logout);
+	ADD_NOTIFICATION_ROW(QT_TR_NOOP("Canvas locked"), Lock, Locked);
+	ADD_NOTIFICATION_ROW(QT_TR_NOOP("Canvas unlocked"), Unlock, Unlocked);
+	ADD_NOTIFICATION_ROW(QT_TR_NOOP("Disconnected"), Disconnect, Disconnect);
 
 #undef ADD_NOTIFICATION_ROW
 
