@@ -503,7 +503,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>Ubah Saturasi Warna</translation>
+        <translation>Kepekatan Warna</translation>
     </message>
     <message>
         <location line="+2"/>
