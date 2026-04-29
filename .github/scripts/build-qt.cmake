@@ -243,9 +243,9 @@ if(OPENSSL)
 	else()
 		message(STATUS "No valid OPENSSL_SOURCE_DATE_EPOCH, using current time")
 	endif()
-	string(REGEX REPLACE "[a-z]+$" "" openssl_prefix "${OPENSSL}")
+	string(REPLACE "." "_" openssl_prefix "${OPENSSL}")
 	build_dependency(openssl ${OPENSSL} ${BUILD_TYPE}
-		URL "https://www.openssl.org/source/old/${openssl_prefix}/openssl-@version@.tar.gz"
+		URL "https://github.com/openssl/openssl/releases/download/OpenSSL_${openssl_prefix}/openssl-@version@.tar.gz"
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "openssl-@version@"
 		VERSIONS
