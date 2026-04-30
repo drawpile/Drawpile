@@ -18,6 +18,10 @@ namespace config {
 class Config;
 }
 
+namespace widgets {
+class CommandLinkButton;
+}
+
 namespace dialogs {
 namespace settingsdialog {
 
@@ -64,9 +68,9 @@ private:
 
 	ShortcutFilterInput *m_filter = nullptr;
 	QTabWidget *m_tabs = nullptr;
-	QCommandLinkButton *m_actionButton = nullptr;
-	QCommandLinkButton *m_brushButton = nullptr;
-	QCommandLinkButton *m_canvasButton = nullptr;
+	widgets::CommandLinkButton *m_actionButton = nullptr;
+	widgets::CommandLinkButton *m_brushButton = nullptr;
+	widgets::CommandLinkButton *m_canvasButton = nullptr;
 	CustomShortcutModel *m_actionShortcutsModel = nullptr;
 	CanvasShortcutsModel *m_canvasShortcutsModel = nullptr;
 	BrushShortcutModel *m_brushShortcutsModel = nullptr;

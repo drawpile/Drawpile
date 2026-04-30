@@ -6,6 +6,7 @@
 #include "desktop/dialogs/settingsdialog/shortcutfilterinput.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/commandlinkbutton.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/keysequenceedit.h"
 #include "libclient/brushes/brushpresetmodel.h"
@@ -17,7 +18,6 @@
 #include <QAbstractItemView>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QCommandLinkButton>
 #include <QFormLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -401,36 +401,36 @@ QWidget *Shortcuts::initOverview()
 
 	utils::addFormSpacer(layout);
 
-	m_actionButton = new QCommandLinkButton(
-		actionTabText(), tr("Keyboard shortcuts to trigger actions, like "
-							"switching tools, creating layers or anything else "
-							"you can pick from the top menu bar."));
-	m_actionButton->setIcon(
-		QIcon::fromTheme(QStringLiteral("application-menu")));
+	m_actionButton = new widgets::CommandLinkButton(
+		QIcon::fromTheme(QStringLiteral("application-menu")), actionTabText(),
+		tr("Keyboard shortcuts to trigger actions, like "
+		   "switching tools, creating layers or anything else "
+		   "you can pick from the top menu bar."));
+	m_actionButton->setAutoDefault(false);
 	layout->addWidget(m_actionButton);
 	connect(
-		m_actionButton, &QCommandLinkButton::clicked, this,
+		m_actionButton, &widgets::CommandLinkButton::clicked, this,
 		&Shortcuts::showActionTab);
 
-	m_brushButton = new QCommandLinkButton(
-		brushTabText(),
+	m_brushButton = new widgets::CommandLinkButton(
+		QIcon::fromTheme(QStringLiteral("draw-brush")), brushTabText(),
 		tr("Keyboard shortcuts to switch brushes. Assigning the same shortcut "
 		   "to multiple brushes will toggle through them."));
-	m_brushButton->setIcon(QIcon::fromTheme(QStringLiteral("draw-brush")));
+	m_brushButton->setAutoDefault(false);
 	layout->addWidget(m_brushButton);
 	connect(
-		m_brushButton, &QCommandLinkButton::clicked, this,
+		m_brushButton, &widgets::CommandLinkButton::clicked, this,
 		&Shortcuts::showBrushTab);
 
-	m_canvasButton = new QCommandLinkButton(
-		canvasTabText(),
+	m_canvasButton = new widgets::CommandLinkButton(
+		QIcon::fromTheme(QStringLiteral("edit-image")), canvasTabText(),
 		tr("Shortcuts for mouse or stylus buttons, wheels or keyboard keys "
 		   "that apply only in the canvas view. For example, panning, "
 		   "rotating, zooming, color picking, brush resizing and more."));
-	m_canvasButton->setIcon(QIcon::fromTheme(QStringLiteral("edit-image")));
+	m_canvasButton->setAutoDefault(false);
 	layout->addWidget(m_canvasButton);
 	connect(
-		m_canvasButton, &QCommandLinkButton::clicked, this,
+		m_canvasButton, &widgets::CommandLinkButton::clicked, this,
 		&Shortcuts::showCanvasTab);
 
 	layout->addStretch();

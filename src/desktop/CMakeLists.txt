@@ -414,6 +414,8 @@ target_sources(drawpile PRIVATE
 	widgets/colorbutton.h
 	widgets/colorpopup.cpp
 	widgets/colorpopup.h
+	widgets/commandlinkbutton.cpp
+	widgets/commandlinkbutton.h
 	widgets/curvewidget.cpp
 	widgets/curvewidget.h
 	widgets/dualcolorbutton.cpp
