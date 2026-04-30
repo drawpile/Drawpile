@@ -506,34 +506,106 @@ static const int *preview_dabs_get_layer_ids(DP_Preview *pv, int *out_count)
     return &pvd->layer_id;
 }
 
+static int
+preview_dabs_translate_mypaint_blend_mode(DP_MsgDrawDabsMyPaint *mddmp,
+                                          int blend_mode, int lock_alpha_mode,
+                                          int colorize_mode)
+{
+    if (DP_msg_draw_dabs_mypaint_lock_alpha(mddmp) == UINT8_MAX) {
+        return lock_alpha_mode;
+    }
+    else if (DP_msg_draw_dabs_mypaint_colorize(mddmp) == UINT8_MAX) {
+        return colorize_mode;
+    }
+    else {
+        return blend_mode;
+    }
+}
+
+static int preview_dabs_extract_mypaint_blend_mode(DP_MsgDrawDabsMyPaint *mddmp)
+{
+    int blend_mode;
+    DP_msg_draw_dabs_mypaint_mode_extract(mddmp, &blend_mode, NULL, NULL);
+    switch (blend_mode) {
+    case DP_BLEND_MODE_NORMAL_AND_ERASER:
+        return preview_dabs_translate_mypaint_blend_mode(
+            mddmp, DP_BLEND_MODE_NORMAL_AND_ERASER, DP_BLEND_MODE_RECOLOR,
+            DP_BLEND_MODE_COLOR);
+    case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        return preview_dabs_translate_mypaint_blend_mode(
+            mddmp, DP_BLEND_MODE_PIGMENT_AND_ERASER, DP_BLEND_MODE_PIGMENT,
+            DP_BLEND_MODE_COLOR);
+    case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
+        return preview_dabs_translate_mypaint_blend_mode(
+            mddmp, DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER,
+            DP_BLEND_MODE_OKLAB_RECOLOR, DP_BLEND_MODE_COLOR);
+    default:
+        return blend_mode;
+    }
+}
+
+static int preview_dabs_translate_blend_mode_and_eraser(int blend_mode,
+                                                        uint32_t color)
+{
+    if (color & 0xff000000u) {
+        return blend_mode;
+    }
+    else {
+        return DP_BLEND_MODE_ERASE;
+    }
+}
+
 static int preview_dabs_blend_mode(DP_Message *msg)
 {
+#define TRANSLATE_BLEND_MODE(TYPE, GET_MODE, GET_COLOR)             \
+    do {                                                            \
+        TYPE *_internal = DP_message_internal(msg);                 \
+        int _blend_mode = GET_MODE(_internal);                      \
+        switch (_blend_mode) {                                      \
+        case DP_BLEND_MODE_NORMAL_AND_ERASER:                       \
+            return preview_dabs_translate_blend_mode_and_eraser(    \
+                DP_BLEND_MODE_NORMAL, GET_COLOR(_internal));        \
+        case DP_BLEND_MODE_PIGMENT_AND_ERASER:                      \
+            return preview_dabs_translate_blend_mode_and_eraser(    \
+                DP_BLEND_MODE_PIGMENT_ALPHA, GET_COLOR(_internal)); \
+        case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:                 \
+            return preview_dabs_translate_blend_mode_and_eraser(    \
+                DP_BLEND_MODE_OKLAB_NORMAL, GET_COLOR(_internal));  \
+        default:                                                    \
+            if (DP_blend_mode_valid_for_layer(_blend_mode)) {       \
+                return _blend_mode;                                 \
+            }                                                       \
+            else if (DP_blend_mode_preserves_alpha(_blend_mode)) {  \
+                return DP_BLEND_MODE_RECOLOR;                       \
+            }                                                       \
+            else {                                                  \
+                return DP_BLEND_MODE_NORMAL;                        \
+            }                                                       \
+        }                                                           \
+    } while (0)
+
     switch (DP_message_type(msg)) {
     case DP_MSG_DRAW_DABS_CLASSIC:
-        return DP_msg_draw_dabs_classic_mode(DP_message_internal(msg));
+        TRANSLATE_BLEND_MODE(DP_MsgDrawDabsClassic,
+                             DP_msg_draw_dabs_classic_mode,
+                             DP_msg_draw_dabs_classic_color);
     case DP_MSG_DRAW_DABS_PIXEL:
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        return DP_msg_draw_dabs_pixel_mode(DP_message_internal(msg));
-    case DP_MSG_DRAW_DABS_MYPAINT: {
-        DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-        if (DP_msg_draw_dabs_mypaint_lock_alpha(mddmp) == UINT8_MAX) {
-            return DP_BLEND_MODE_RECOLOR;
-        }
-        else if (DP_msg_draw_dabs_mypaint_colorize(mddmp) == UINT8_MAX) {
-            return DP_BLEND_MODE_COLOR;
-        }
-        else if (DP_msg_draw_dabs_mypaint_color(mddmp) & 0xff000000u) {
-            return DP_BLEND_MODE_NORMAL;
-        }
-        else {
-            return DP_BLEND_MODE_ERASE;
-        }
-    }
+        TRANSLATE_BLEND_MODE(DP_MsgDrawDabsPixel, DP_msg_draw_dabs_pixel_mode,
+                             DP_msg_draw_dabs_pixel_color);
+    case DP_MSG_DRAW_DABS_MYPAINT:
+        TRANSLATE_BLEND_MODE(DP_MsgDrawDabsMyPaint,
+                             preview_dabs_extract_mypaint_blend_mode,
+                             DP_msg_draw_dabs_mypaint_color);
     case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
-        return DP_msg_draw_dabs_mypaint_blend_mode(DP_message_internal(msg));
+        TRANSLATE_BLEND_MODE(DP_MsgDrawDabsMyPaintBlend,
+                             DP_msg_draw_dabs_mypaint_blend_mode,
+                             DP_msg_draw_dabs_mypaint_blend_color);
     default:
         DP_UNREACHABLE();
     }
+
+#undef TRANSLATE_BLEND_MODE
 }
 
 static int preview_dabs_selection_id(int selection_id)
