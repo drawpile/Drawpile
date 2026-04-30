@@ -222,7 +222,7 @@
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation>请尝试刷新页面. 如果没有任何变化, 请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt; drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系.</translation>
+        <translation>请尝试刷新页面. 如果没有任何变化, 请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt;drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -704,7 +704,7 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation>你可以从&lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;中下载Windows版本的ffmpeg. 然后在路径里选择解压出来的 ffmpeg.exe 程序.</translation>
+        <translation>你可以从 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; 中下载Windows版本的ffmpeg. 然后在路径里选择解压出来的 ffmpeg.exe 程序.</translation>
     </message>
     <message>
         <location line="+4"/>
