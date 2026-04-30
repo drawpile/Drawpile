@@ -9085,105 +9085,105 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Statistiken reflektieren nur im Projekt gespeicherte Sitzungen. Sitzungen in denen Sie die Autowiederherstellung deaktiviert oder nicht gespeichert haben und sonstige ungesicherten Änderungen können nicht einfließen.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Unexpected Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unerwarteter Fehler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dies ist wahrscheinlich ein Bug in Drawpile.</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Total session time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamte Sitzungszeit:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Your total work time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihre gesamte Arbeitszeit:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Session %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opened at:</source>
         <extracomment>Refers to the date and time a session was opened (started.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Eröffnet:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Closed at:</source>
         <extracomment>Refers to the date and time a session was closed (ended.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Abgeschlossen:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>unknown</source>
         <extracomment>Part of &quot;Session time: unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>unbekannt</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungszeit:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your work time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihre Arbeitszeit:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Recorded with an older, but compatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer älteren, aber kompatiblien Version von Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recorded with an older, but compatible version (%1) of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer älteren, aber kompatiblen Version (%1) von Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with a newer version of Drawpile with minor incompatibilities.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer neueren Version von Drawpile mit geringfügigen Inkompatibilitäten.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with an old incompatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer alten, inkompatiblen Version von Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recorded with an old, incompatible version (%1) of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer alten, inkompatiblen Version (%1) von Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with a new, incompatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer neueren, inkompatiblen Version von Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Recorded with an unknown incompatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgenommen mit einer unbekannten, inkompatiblen Version von Drawpile.</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Loading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade…</translation>
     </message>
 </context>
 <context>
@@ -9191,62 +9191,62 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+25"/>
         <source>Manage Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen zur Autowiederherstellung</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>These settings affect only the current session. You can change the defaults [in the preferences].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Diese Einstellungen haben nur Einfluss auf die aktuelle Sitzung. Sie können die Standardwerte [in den Einstellungen ändern].</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enable autorecovery for the current session</source>
-        <translation type="unfinished"></translation>
+        <translation>Autwiederherstellung für aktuelle Sitzung aktivieren</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Size limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Größenbegrenzung</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+112"/>
         <source>Change Size Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Größenbegrenzung ändern</translation>
     </message>
     <message>
         <location line="-74"/>
         <source>Size limit: %1 GB</source>
-        <translation type="unfinished"></translation>
+        <translation>Größenbegrenzung: %1 GB</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>No size limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Größenbegrenzung</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You will receive a warning when the autorecovery file reaches %1% of the size limit. Once it exceeds the limit, autorecovery will terminate.</source>
         <extracomment>The %1% is a percentage, like 75%. Don&apos;t remove the second %!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sie werden eine Warnung erhalten, wenn die Autowiederherstellungsdatei %1% der Größenbegrenzung erreicht. Sobald sie diese Begrenzung überschreitet wird die Autowiederherstellung deaktiviert.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> There is no size limit set.</source>
-        <translation type="unfinished"></translation>
+        <translation> Es ist keine Größenbegrenzung festgesetzt.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source> This is %1% of the current %2 limit.</source>
         <extracomment>The %1% becomes a percentage, like &quot;50%&quot;. Don&apos;t remove the second %! %2 is a file size, like &quot;5GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> Dies ist %1% der Begrenzung von %2.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The current autorecovery file size is %1.</source>
         <extracomment>%1 is a file size, like &quot;1 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Die aktuelle Autowiederherstellungsdatei hat eine Größe von %1.</translation>
     </message>
 </context>
 <context>
@@ -9517,22 +9517,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+10"/>
         <source>Make Session Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung öffentlich machen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Removing the password from the session will make it publicly visible and allow strangers to join! Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Passwort der Sitzung zu entfernen wird sie öffentlich machen, wodurch Fremde beitreten können! Sind Sie sicher?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Yes, make public</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja, öffentlich machen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep password</source>
-        <translation type="unfinished"></translation>
+        <translation>Nein, Passwort beibehalten</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9753,88 +9753,88 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+42"/>
         <source>Custom</source>
-        <translation type="unfinished">Benutzerdefiniert</translation>
+        <translation>Benutzerdefiniert</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hue</source>
-        <translation type="unfinished">Farbton</translation>
+        <translation>Farbton</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Saturation</source>
-        <translation type="unfinished">Sättigung</translation>
+        <translation>Sättigung</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Chroma</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Value</source>
-        <translation type="unfinished">Wert</translation>
+        <translation>Helligkeit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchtkraft</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>Schattierungen</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Move Up</source>
-        <translation type="unfinished">Nach Oben</translation>
+        <translation>Nach Oben</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move Down</source>
-        <translation type="unfinished">Nach Unten</translation>
+        <translation>Nach Unten</translation>
     </message>
     <message>
         <location line="+124"/>
         <location line="+7"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Reichweite: </translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+19"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Sättigungsreichweite: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Chroma-Reichweite: </translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+19"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsreichweite: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsreichweite: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchtkraftreichweite: </translation>
     </message>
     <message>
         <location line="-14"/>
@@ -9844,37 +9844,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+18"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Farbtonversatz: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Sättigungsversatz: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Chroma-Versatz: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsversatz: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsversatz: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchtkraftversatz: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -9957,12 +9957,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Recover</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Restore autorecovery files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateien aus Autowiederherstellung holen</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10112,213 +10112,213 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../dialogs/animationexportdialog.cpp" line="-283"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+190"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Format erfordert FFmpeg, klicken Sie hier um es einzurichten.</translation>
     </message>
     <message>
         <location line="+39"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+181"/>
         <source>Prefer FFmpeg over internal encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg dem internen Enkoder vorziehen</translation>
     </message>
     <message>
         <location line="+211"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+257"/>
         <source>The selected format requires FFmpeg. Do you want to set it up now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Das gewählte Format erfordert FFmpeg. Möchten Sie dies jetzt einrichten?</translation>
     </message>
     <message>
         <location line="+54"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+439"/>
         <source>Set up FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg einrichten</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+2"/>
         <source>FFmpeg settings</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg-Einstellungen</translation>
     </message>
     <message>
         <location filename="../dialogs/timelapsedialog.cpp" line="-1014"/>
         <source>Timelapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitraffer</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Top-left</source>
-        <translation type="unfinished">Oben links</translation>
+        <translation>Oben links</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Top-right</source>
-        <translation type="unfinished">Oben rechts</translation>
+        <translation>Oben rechts</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bottom-left</source>
-        <translation type="unfinished">Unten links</translation>
+        <translation>Unten links</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bottom-right</source>
-        <translation type="unfinished">Unten rechts</translation>
+        <translation>Unten rechts</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Logo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Logo:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Format:</source>
-        <translation type="unfinished">Format:</translation>
+        <translation>Format:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Duration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Duration presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer-Voreinstellungen:</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>pixels</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Resolution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Auflösung:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished">Seitenverhältnis beibehalten</translation>
+        <translation>Seitenverhältnis beibehalten</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Crop to selection area</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Selektionsbereich zuschneiden</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Video with dimensions larger than 1920 pixels is not widely supported. Many devices and platforms won&apos;t play them properly, degrade their quality or refuse to recognize them altogether.</source>
-        <translation type="unfinished"></translation>
+        <translation>Video mit Dimensionen größer als 1920 Pixel werden nicht weitreichend unterstützt. Viele Geräte oder Plattformen werden sie nicht korrekt abspielen, die Qualität reduzieren oder überhaupt nicht als Video erkennen.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Play animation as result</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation als Ergebnis abspielen</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Use flipbook range and speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Daumenkino-Reichweite und -Geschwindigkeit verwenden</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Advanced settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweiterte Einstellungen</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Encoder:</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkoder:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Automatic</source>
         <comment>interpolation</comment>
         <extracomment>Image scaling option that picks an algorithm automatically.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lanczos</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, lanczos scaling.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lanczos</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bicubic</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, bicubic scaling.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bikubisch</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bilinear</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, bilinear scaling.</extracomment>
-        <translation type="unfinished">Bilinear</translation>
+        <translation>Bilinear</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Binary</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, for binary artwork.</extracomment>
-        <translation type="unfinished">Binär</translation>
+        <translation>Binär</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Nearest</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, nearest-neighbor.</extracomment>
-        <translation type="unfinished">Nächste</translation>
+        <translation>Nächste</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Interpolation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolation:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only time own drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur eigene Malzeit messen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Timing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitberechnung:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Backdrop:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Logo scale:</source>
-        <translation type="unfinished"></translation>
+        <translation>Logogröße:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Logo padding:</source>
-        <translation type="unfinished"></translation>
+        <translation>Logoränder:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Logo opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Logodeckkraft:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Preview result:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ergebnisvorschau:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10326,117 +10326,117 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+8"/>
         <location line="+24"/>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation> Sekunden</translation>
     </message>
     <message>
         <location line="-47"/>
         <source>Flash:</source>
-        <translation type="unfinished"></translation>
+        <translation>Blitz:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Linger result:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ergebnisverweilen:</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Interval limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervallgrenze:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Queue size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Warteschlangengröße:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source> FPS</source>
         <extracomment>Frames per second.</extracomment>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Bildwiederholrate:</translation>
+        <translation>Bildwiederholrate:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Video with framerates above 30 FPS is not widely supported. Many devices and platforms won&apos;t play them properly, degrade their quality or refuse to recognize them altogether.</source>
-        <translation type="unfinished"></translation>
+        <translation>Video mit Bildwiederholraten über 30 FPS werden nicht weitreichend unterstützt. Viele Geräte oder Plattformen werden sie nicht korrekt abspielen, die Qualität reduzieren oder überhaupt nicht als Video erkennen.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Starting export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Export starten…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Cancelling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbruch…</translation>
     </message>
     <message numerus="yes">
         <location line="+450"/>
         <source>%1 loop(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 Schleife</numerusform>
+            <numerusform>%1 Schleifen</numerusform>
         </translation>
     </message>
     <message>
         <location line="+119"/>
         <source>Choose Backdrop Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe wählen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Choose Flash Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Blitzfarbe wählen</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Reset</source>
-        <translation type="unfinished">Zurücksetzen</translation>
+        <translation>Zurücksetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to reset all timelapse settings to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie wirklich die Zeitraffereinstellungen auf ihre Standardwerte zurücksetzen?</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Back</source>
-        <translation type="unfinished">Zurück</translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Saving…</source>
-        <translation type="unfinished">Speichern…</translation>
+        <translation>Speichern…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Export</source>
-        <translation type="unfinished">Exportieren</translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Timelapse exported in %1.</source>
         <extracomment>%1 is a time, like &quot;1 minute, 20 seconds&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zeitraffer exportiert in %1.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Export Error</source>
-        <translation type="unfinished">Exportfehler</translation>
+        <translation>Exportfehler</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Failed to export timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitraffer konnte nicht exportiert werden.</translation>
     </message>
 </context>
 <context>
@@ -10598,29 +10598,29 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+61"/>
         <source>Changing autorecovery preferences will not affect the status or limits of any running sessions. [Click here to manage autorecovery on your current session.]</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an den Autowiederherstellungseinstellungen ändert den Status oder die Begrenzungen von laufenden Sitzungen nicht. [Klicken Sie hier um die Autowiederherstellung für die aktuelle Sitzung zu verwalten.]</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>When offline or hosting sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn offline oder beim Hosten von Sitzungen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autorecovery:</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When joining sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim Beitreten von Sitzungen</translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>Snapshot every %1 minute(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schnappschuss alle %1 Minute</numerusform>
+            <numerusform>Schnappschuss alle %1 Minuten</numerusform>
         </translation>
     </message>
     <message>
@@ -10655,7 +10655,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="-15"/>
         <location line="+17"/>
         <source>Drawpile Project (.dppr)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile-Projekt (.dppr)</translation>
     </message>
     <message>
         <location line="-14"/>
@@ -10705,33 +10705,33 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Clear log files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Logdateien löschen…</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+7"/>
         <source>Clear Log Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Logdateien löschen</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No log files to clear found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Logdateien zum Löschen gefunden.</translation>
     </message>
     <message numerus="yes">
         <location line="+8"/>
         <source>Do you want to delete %n log file(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Möchten Sie %n Logdatei löschen?</numerusform>
+            <numerusform>Möchten Sie %n Logdateien löschen?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>It/They take(s) up %1 of space.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Sie nimmt %1 Speicherplatz ein.</numerusform>
+            <numerusform>Sie nehmen %1 Speicherplatz ein.</numerusform>
         </translation>
     </message>
 </context>
@@ -10830,7 +10830,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+31"/>
         <source>%1 (not found)</source>
         <extracomment>%1 is the name of a theme, whose file was not found.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (nicht gefunden)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10848,7 +10848,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+8"/>
         <source>Night Mode</source>
         <extracomment>The name for a color scheme that is dark like the night.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nachtmodus</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11491,7 +11491,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-284"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">Kürzel</translation>
+        <translation>Kürzel</translation>
     </message>
     <message>
         <location line="+121"/>
@@ -11565,22 +11565,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+18"/>
         <source>Choose which shortcuts you want to modify:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie, welche Kürzel Sie bearbeiten möchten:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Keyboard shortcuts to trigger actions, like switching tools, creating layers or anything else you can pick from the top menu bar.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastaturkürzel um Aktionen auszuführen, wie das wechseln des Werkzeugs, Ebenen erstellen oder alles andere, was Sie in der oberen Menüleiste auswählen können.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Keyboard shortcuts to switch brushes. Assigning the same shortcut to multiple brushes will toggle through them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkürzel zum Wechseln von Pinseln. Das gleiche Kürzel mehreren Pinseln zuzuweisen schaltet diese durch.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Shortcuts for mouse or stylus buttons, wheels or keyboard keys that apply only in the canvas view. For example, panning, rotating, zooming, color picking, brush resizing and more.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kürzel für Maus- oder Stifttasten, Maus- oder Tableträder oder Tastaturtasten, die nur auf der Leinwand einen effekt haben. Zum Beispiel die Leinwand zu bewegen, zu rotieren, zu zoomen, die Pinselgröße zu ändern und mehr.</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -11722,25 +11722,25 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Workarounds:</source>
-        <translation type="unfinished"></translation>
+        <translation>Workarounds:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Translate F21 key to middle click (OnePlus)</source>
         <extracomment>OnePlus is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>F21-Taste in mittlere Maustaste übersetzen (OnePlus)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Translate page keys to clicks (Xiaomi)</source>
         <extracomment>Xiaomi is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bildtasten in Klicks übersetzen (Xiaomi)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Disregard position history (Xiaomi)</source>
         <extracomment>Xiaomi is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Positionshistorie ignorieren (Xiaomi)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11834,12 +11834,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-9"/>
         <source>No outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Umrandung</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Blank</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12056,7 +12056,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Automatic (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch (%1)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12129,7 +12129,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+10"/>
         <source>Change mode and scale…</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus und Skalierung ändern…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -12290,7 +12290,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12490,12 +12490,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+51"/>
         <source>HostError</source>
-        <translation type="unfinished"></translation>
+        <translation>Host-Fehler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Public sessions require a title. Do you want to host an invite-only session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffentliche Sitzungen benötigen einen Titel. Möchten Sie stattdessen eine Sitzung eröffnen, der nur Leute, die Sie einladen beitreten können?</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -12612,32 +12612,32 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="+423"/>
         <source>No files to recover.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Dateien zum Wiederherstellen.</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Autorecovery Removal Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsentfernung fehlgeschlagen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Could not remove autorecovery file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsdatei %1 konnte nicht entfernt werden.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>File not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei nicht gefunden.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>File is locked by another process.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei ist durch einen anderen Prozess gesperrt.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error deleting file: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Löschen der Datei: %1.</translation>
     </message>
 </context>
 <context>
@@ -12645,17 +12645,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/startdialog/recovernotice.cpp" line="+45"/>
         <source>You have unsaved files to recover!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben ungespeicherte Dateien wiederherzustellen!</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Recover</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -12664,193 +12664,193 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../dialogs/startdialog/recover.cpp" line="-429"/>
         <source>Modified %1</source>
         <extracomment>%1 is a date and time saying when the file was last modified.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Geändert %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown modification time</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Änderungszeitpunkt</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Size: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Größe: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Work time: %1</source>
         <extracomment>How long you&apos;ve worked on an autorecovery file. %1 is either a time span like &quot;1 hour and 15 minutes&quot; or &quot;unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Arbeitszeit: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Locked by another process</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch einen anderen Prozess gesperrt</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown status</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Status</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Download</source>
-        <translation type="unfinished">Download</translation>
+        <translation>Herunterladen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recover</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Delete Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsdatei löschen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to permanently delete this autorecovery file?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie wirklich diese Autowiederherstellungsdatei endgültig löschen?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Any unrecovered data will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht wiederhergestellte Daten gehen verloren.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation type="unfinished">Ja, löschen</translation>
+        <translation>Ja, löschen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished">Nein, behalten</translation>
+        <translation>Nein, behalten</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Download Started</source>
-        <translation type="unfinished"></translation>
+        <translation>Download gestartet</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your browser should have prompted you to download the file. Make sure to check it for completeness afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihr Browser sollte Ihnen den Download zur Verfügung gestellt haben. Prüfen Sie die Vollständigkeit nach dem Speichern.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Herunterladen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to read autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsdatei konnte nicht gelesen werden: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export Error</source>
-        <translation type="unfinished">Exportfehler</translation>
+        <translation>Exportfehler</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifikationsfehler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file may not have been saved correctly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Datei wurde gegebenenfalls nicht korrekt gespeichert.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export successful. Do you want to open the file now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Export erfolgreich. Möchten Sie die Datei jetzt öffnen?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete original autorecovery file</source>
-        <translation type="unfinished"></translation>
+        <translation>Ursprüngliche Autowiederherstellungsdatei löschen</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Failed to open autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsdatei konnte nicht geöffnet werden: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Failed to open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zieldatei konnte nicht geöffnet werden: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Failed to read from autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Lesen von Autowiederherstellungsdatei: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to write to target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben von Zieldatei: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Failed to write to target file: read/write mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben von Zieldatei: Lesen und Schreiben passt nicht zusammen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Abschließen der Zieldatei: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to open autorecovery file for verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellungsdatei konnte nicht zur Verifikation geöffnet werden: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open target file for verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zieldatei konnte nicht zur Verifikation geöffnet werden: %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: file sizes do not match</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifikation fehlgeschlagen: Dateigrößen stimmen nicht überein</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery file read error during verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lesefehler von Autowiederherstellungsdatei bei Verifikation: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Target file read error during verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lesefehler von Zieldatei bei Verifikation: %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: read size mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifikation fehlgeschlagen: gelesene Größe stimmt nicht überein</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: autorecovery and target file data does not match</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifikation fehlgeschlagen: die Daten der Autowiederherstellungs- und Zieldatei stimmen nicht überein</translation>
     </message>
 </context>
 <context>
@@ -13338,12 +13338,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+44"/>
         <source>Only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Beitritt nur mit Einladung</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Public, strangers can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffentlich, Fremde können beitreten</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -13524,37 +13524,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Display:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansicht:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Miniaturbild</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Striche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Both</source>
-        <translation type="unfinished"></translation>
+        <translation>Beides</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Size:</source>
-        <translation type="unfinished">Größe:</translation>
+        <translation>Größe:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Columns:</source>
-        <translation type="unfinished"></translation>
+        <translation>Spalten:</translation>
     </message>
     <message>
         <location line="+228"/>
@@ -14445,12 +14445,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+35"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Column width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Spaltenbreite:</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -14641,32 +14641,32 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-168"/>
         <source>Preview</source>
-        <translation type="unfinished">Vorschau</translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Plain</source>
-        <translation type="unfinished">Klartext</translation>
+        <translation>Schlicht</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Full</source>
-        <translation type="unfinished"></translation>
+        <translation>Voll</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel anzeigen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Miniaturbild anzeigen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -14751,14 +14751,14 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Geschwindigkeit anpassen</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Alters stabilization depending on how fast the stroke is.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verändert die Stabilisierung je nachdem wie schnell der Strich getätigt wird.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -14775,14 +14775,14 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+12"/>
         <source>Input Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabeeinstellungen…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+2"/>
         <source>Show the input settings dialog for more stabilizer settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabeeinstellungsdialog mit mehr Stabilisatoreinstellungen anzeigen.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -15104,32 +15104,32 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/rotationsettings.cpp" line="+79"/>
         <source>Normal rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Normale Rotation</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Free rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Freie Rotation</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ratchet rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrittrotation</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates smoothly, snaps to 0°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotiert durchgehen, rastet bei 0° ein</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates smoothly, never snaps</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotiert durchgehen, rastet nicht ein</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates in 15° increments</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotiert in Schritten von 15°</translation>
     </message>
 </context>
 <context>
@@ -15384,7 +15384,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+21"/>
         <source>Manage…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwalten…</translation>
     </message>
 </context>
 <context>
@@ -15603,7 +15603,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+21"/>
         <source>Manage…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwalten…</translation>
     </message>
     <message>
         <location line="+416"/>
@@ -16161,17 +16161,17 @@ Hex: %4</translation>
     <message>
         <location filename="../widgets/projectrecordingstatusbutton.cpp" line="+45"/>
         <source>Autorecovery is enabled, file size is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung ist aktiviert, Dateigröße ist %1.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Autorecovery is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Autowiederherstellung ist deaktiviert.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source> Click to manage.</source>
-        <translation type="unfinished"></translation>
+        <translation> Klicken zum Verwalten.</translation>
     </message>
 </context>
 <context>
@@ -16237,17 +16237,17 @@ Hex: %4</translation>
     <message>
         <location line="+6"/>
         <source>Toggle visibility for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichtbarkeit für Sie umschalten</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwiebelhaut für Sie umschalten</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle frame move lock for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame-Bewegungssperre für Sie umschalten</translation>
     </message>
     <message>
         <location line="+366"/>
