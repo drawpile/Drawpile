@@ -2242,17 +2242,17 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar la Barra de Acción de Selección</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Parte superior izquierda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de acción de selección en la parte superior izquierda</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2262,27 +2262,27 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>La barra de acción de selección en la parte superior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Parte superior derecha</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de acción de selección en la parte superior derecha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Parte inferior izquierda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de acción de selección en la parte inferior izquierda</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2292,17 +2292,17 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de selección de acción en la parte inferior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Parte inferior derecha</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra de selección de acción en la parte inferior derecha</translation>
     </message>
     <message>
         <location line="+183"/>
@@ -2317,7 +2317,7 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+9"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Notificaciones sobre el modo de visualización en el lienzo</translation>
     </message>
     <message>
         <location line="+39"/>
