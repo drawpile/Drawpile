@@ -88,6 +88,9 @@ check_sdk() {
 }
 
 check_ndk() {
+    local error
+    error=0
+
     if [[ ! -d $ANDROID_NDK_DIR ]]; then
         carp "ANDROID_NDK_DIR is not a directory: '$ANDROID_NDK_DIR'"
         error=1
@@ -96,6 +99,10 @@ check_ndk() {
     if [[ ! -f $ANDROID_TOOLCHAIN_FILE ]]; then
         carp "ANDROID_TOOLCHAIN_FILE is not a file: '$ANDROID_TOOLCHAIN_FILE'"
         error=1
+    fi
+
+    if [[ $error -ne 0 ]]; then
+        exit 1
     fi
 }
 
