@@ -81,6 +81,9 @@ if(ANDROID)
 		list(APPEND BASE_FLAGS
 			-platform android-clang
 			-qt-host-path "${ANDROID_HOST_PATH}"
+			-android-ndk-platform "${ANDROID_PLATFORM}"
+			# This gets detected incorrectly, it's not available on all devices.
+			-no-feature-copy_file_range
 		)
 	else()
 		list(APPEND BASE_FLAGS
