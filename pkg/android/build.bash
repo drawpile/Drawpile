@@ -57,8 +57,9 @@ check_java_version() {
 }
 
 check_sdk() {
-    local error
+    local error max_android_target_version
     error=0
+    max_android_target_version=35
 
     if [[ ! -d $ANDROID_SDK_DIR ]]; then
         carp "ANDROID_SDK_DIR is not a directory: '$ANDROID_SDK_DIR'"
@@ -76,11 +77,33 @@ check_sdk() {
                 error=1
             fi
             ;;
+        '36')
+            if ! check_java_version 17; then
+                error=1
+            fi
+            ;;
         *)
             carp "Unknown ANDROID_PLATFORM_VERSION '$ANDROID_PLATFORM_VERSION'"
             error=1
             ;;
     esac
+
+    # Qt's supported NDK doesn't support building against Android 36.
+    if [[ $ANDROID_TARGET_VERSION -gt $max_android_target_version ]]; then
+        carp "Building with ANDROID_TARGET_VERSION $ANDROID_TARGET_VERSION is not supported."
+        carp "Set it to at most $max_android_target_version (even when using a newer platform)"
+        error=1
+    fi
+
+    # Qt 6.11 requires Android libraries that must be compiled against Android 36.
+    # They can still use earlier runtime versions though, it's only for compilation.
+    if [[ $QT_VERSION_MAJOR -ge 6 && $QT_VERSION_MINOR -ge 11 && $ANDROID_PLATFORM_VERSION -lt 36 ]]; then
+        carp "Qt 6.11 and newer require ANDROID_PLATFORM_VERSION 36 or newer"
+        if [[ $max_android_target_version -lt 36 ]]; then
+            carp "(You have to set ANDROID_TARGET_VERSION to at most $max_android_target_version though)"
+        fi
+        error=1
+    fi
 
     if [[ $error -ne 0 ]]; then
         exit 1
@@ -408,9 +431,10 @@ case $effective_deps_type in
         ;;
 esac
 
-qt_version_regex='^([56])\.'
+qt_version_regex='^([56])\.([0-9][0-9]*)'
 if [[ $QT_VERSION =~ $qt_version_regex ]]; then
     QT_VERSION_MAJOR="${BASH_REMATCH[1]}"
+    QT_VERSION_MINOR="${BASH_REMATCH[2]}"
 else
     croak "Can't parse QT_VERSION '$QT_VERSION'"
 fi
