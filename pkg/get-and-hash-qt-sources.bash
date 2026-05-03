@@ -26,24 +26,32 @@ declare -a modules=(
 if [[ $major = 5 ]]; then
     modules+=(qtandroidextras)
     suffix=-opensource
-    sums=md5sums.txt
 elif [[ $major = 6 ]]; then
     modules+=(qtshadertools)
     suffix=
-    sums=md5sums
 else
     echo "Unhandled Qt major version $major in $version" 1>&2
     exit 1
 fi
 
-mkdir "qt$version"
+base_url="https://download.qt.io/archive/qt/$major.$minor/$version/submodules"
+
+mkdir -p "qt$version"
 cd "qt$version"
 
 for module in "${modules[@]}"; do
-    wget "https://download.qt.io/archive/qt/$major.$minor/$version/submodules/$module-everywhere$suffix-src-$version.tar.xz"
+    module_file="$module-everywhere$suffix-src-$version.tar.xz"
+    if [[ -e $module_file ]]; then
+        echo "$module_file already exists"
+    else
+        wget -O "$module_file" "$base_url/$module_file"
+    fi
 done
 
-wget -O md5sums.txt "https://download.qt.io/archive/qt/$major.$minor/$version/submodules/$sums"
+# The name of this file is not consistent.
+if ! wget -O md5sums.txt "$base_url/md5sums.txt"; then
+    wget -O md5sums.txt "$base_url/md5sums"
+fi
 md5sum -c --ignore-missing md5sums.txt
 
 sha384sum *.tar.xz
