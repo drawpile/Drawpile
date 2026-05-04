@@ -15,7 +15,7 @@ set(LIBSODIUM "1.0.22" CACHE STRING
 	"The version of libsodium to build")
 set(QTKEYCHAIN "0.16.0" CACHE STRING
 	"The Git refspec of QtKeychain to build")
-set(LIBZIP "1.11.3" CACHE STRING
+set(LIBZIP "1.11.4" CACHE STRING
 	"The version of libzip to build")
 set(KARCHIVE5 "v5.116.0" CACHE STRING
 	"The version of KArchive for Qt5 to build")
@@ -206,6 +206,8 @@ if(LIBZIP AND BUILD_WITH_QT6)
 			SHA384=b614bd95cff0c915074f9113b517298e4c10c5e4e0d2dcf25fad82516ae852da54d9330a1d910b08e8d30a733da5f86c
 			1.11.3
 			SHA384=6d13e5c8558735ee5a3c047d6fb5aed1f8ffde425498199524f42a980360ad122b2fe7489e66182d7b3a8408b96fbdff
+			1.11.4
+			SHA384=6a82d027dc027b151847e7cb8aa3569ab40873fd90c35d8e97c9a8c0c3627cbe8f59aa2693eeedc64107ec0c6ce44eda
 		ALL_PLATFORMS
 			CMAKE
 				ALL

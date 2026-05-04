@@ -78,7 +78,7 @@ inputs:
     type: string
   libzip:
     description: Version of libzip to build (Qt6 only)
-    default: 1.11.3
+    default: '1.11.4'
     type: string
   karchive5:
     description: Version of karchive to build (Qt5 only)
