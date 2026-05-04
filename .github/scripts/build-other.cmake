@@ -9,7 +9,7 @@ set(ZLIB "1.3.1" CACHE STRING
 	"The version of zlib to build")
 set(ZSTD "1.5.7" CACHE STRING
 	"The version of zstd to build")
-set(LIBMICROHTTPD "1.0.1" CACHE STRING
+set(LIBMICROHTTPD "1.0.5" CACHE STRING
 	"The version of libmicrohttpd to build")
 set(LIBSODIUM "1.0.20" CACHE STRING
 	"The version of libsodium to build")
@@ -132,6 +132,8 @@ if(NOT ANDROID AND NOT EMSCRIPTEN AND LIBMICROHTTPD)
 		VERSIONS
 			1.0.1
 			SHA384=ac9f27e91d7b05084dfd3d2a68b00297f374af3cecb41700b207c80269147339d3da8511809dbb06fec65e9d5fdfd4be
+			1.0.5
+			SHA384=266f3455fac3e5478ce01a28b48430963d21eccf8848ecac6ec6609d8be7ec5d349a2ea0555c54e48e299a8a9c7926c6
 		WIN32
 			MSBUILD
 				SOLUTION w32/VS-Any-Version/libmicrohttpd.vcxproj

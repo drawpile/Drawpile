@@ -66,7 +66,7 @@ inputs:
     type: string
   libmicrohttpd:
     description: Version of libmicrohttpd to build
-    default: 1.0.1
+    default: '1.0.5'
     type: string
   libsodium:
     description: Version of libsodium to build
