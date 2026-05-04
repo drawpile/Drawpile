@@ -10,7 +10,7 @@ set(LIBVPX "1.15.2" CACHE STRING
 	"The version of libvpx to build")
 set(LIBWEBP "1.5.0" CACHE STRING
 	"The version of libwebp to build")
-set(FFMPEG "7.1.1" CACHE STRING
+set(FFMPEG "7.1.3" CACHE STRING
 	"The version of ffmpeg to build")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
@@ -321,6 +321,8 @@ if(NOT EMSCRIPTEN AND FFMPEG)
 			SHA384=6c9c4971415ab500cd336a349c38231b596614a6bdff3051663954e4a3d7fb6f51547de296686efa3fa1be8f8251f1db
 			7.1.1
 			SHA384=f7307cf7fe789a3def5b9e7dce33c6386d3101b0e904d61525e8b4d906f521c6b2f2f326304e2c22a6b134b6e9500b86
+			7.1.3
+			SHA384=b2ad2f3e56a62820f1687acfbbf8f797d863c003656ac74282642408ef7b4e03ae918460a96ea7a9c210d9e19144c9cc
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX
