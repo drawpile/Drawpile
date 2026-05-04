@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/../../cmake
 )
 
-set(LIBVPX "1.15.2" CACHE STRING
+set(LIBVPX "1.16.0" CACHE STRING
 	"The version of libvpx to build")
 set(LIBWEBP "1.5.0" CACHE STRING
 	"The version of libwebp to build")
@@ -74,6 +74,9 @@ if(WIN32 AND LIBVPX)
 	if(LIBVPX STREQUAL "1.15.2")
 		set(libvpx_vcpkg_commit "696237761650114ff0fb12e1a73b90ed1537b6d8")
 		set(libvpx_vcpkg_version "1.15.2#0")
+	elseif(LIBVPX STREQUAL "1.16.0")
+		set(libvpx_vcpkg_commit "b80e0066576f98276a53fd3a8aed379edaf945d6")
+		set(libvpx_vcpkg_version "1.16.0")
 	else()
 		message(FATAL_ERROR "Unhandled LIBVPX version '${LIBVPX}'")
 	endif()
@@ -206,6 +209,8 @@ elseif(NOT EMSCRIPTEN AND LIBVPX)
 			SHA384=cd8aac7124b17379120e58a38465ea4ce52f2d18950cf5f53c81e57f53b0b392d5bc281499deef6122e9c12983b327b4
 			1.15.2
 			SHA384=12ebfaf8c4c2f2e62ab1bb34bd059d853dd4c48edf8e65a01c3f558ef6f7b9bf13d365b2f32e3d5df730bd4d83eba24f
+			1.16.0
+			SHA384=d924ff88a1b9a562846f2dca0852c71178979a7b889cb928b3718c31885a80b8ea1d3ee79ee2d96c54bd520f98f90830
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX BROKEN_INSTALL
