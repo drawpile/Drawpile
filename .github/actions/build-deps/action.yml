@@ -82,7 +82,7 @@ inputs:
     type: string
   karchive5:
     description: Version of karchive to build (Qt5 only)
-    default: 5.116.0
+    default: '5.116.0'
     type: string
   karchive6:
     description: Version of karchive to build (Qt6 only)
@@ -94,7 +94,7 @@ inputs:
     type: string
   zstd:
     description: Version of zstd to build
-    default: 1.5.7
+    default: '1.5.7'
     type: string
 
 outputs:
