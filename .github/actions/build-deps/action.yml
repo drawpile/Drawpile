@@ -74,7 +74,7 @@ inputs:
     type: string
   qtkeychain:
     description: Version of qtkeychain to build
-    default: 0.14.3
+    default: '0.16.0'
     type: string
   libzip:
     description: Version of libzip to build (Qt6 only)

@@ -13,7 +13,7 @@ set(LIBMICROHTTPD "1.0.5" CACHE STRING
 	"The version of libmicrohttpd to build")
 set(LIBSODIUM "1.0.22" CACHE STRING
 	"The version of libsodium to build")
-set(QTKEYCHAIN "0.14.3" CACHE STRING
+set(QTKEYCHAIN "0.16.0" CACHE STRING
 	"The Git refspec of QtKeychain to build")
 set(LIBZIP "1.11.3" CACHE STRING
 	"The version of libzip to build")
@@ -187,6 +187,8 @@ if(NOT EMSCRIPTEN AND QTKEYCHAIN)
 		VERSIONS
 			0.14.3
 			SHA384=52d84992ce397a123591191afb47490b3ad53e29684a35241af5e25545408f7bd631223797b2b8c7ecf00380997786bc
+			0.16.0
+			SHA384=cd340d0a0f83fea546c7ea2dd1e6dba4d9ee03287137452115c74a8941c5bb1b5e0106d56cc3bd167b01dbe17c1cd22c
 		ALL_PLATFORMS
 			CMAKE
 				ALL
