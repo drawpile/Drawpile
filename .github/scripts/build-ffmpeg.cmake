@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 
 set(LIBVPX "1.16.0" CACHE STRING
 	"The version of libvpx to build")
-set(LIBWEBP "1.5.0" CACHE STRING
+set(LIBWEBP "1.6.0" CACHE STRING
 	"The version of libwebp to build")
 set(FFMPEG "7.1.3" CACHE STRING
 	"The version of ffmpeg to build")
@@ -58,6 +58,8 @@ if(LIBWEBP)
 		VERSIONS
 			1.5.0
 			SHA384=430aeec458a5f376efb19c16b636d45a8a6be8b0eb29331296e5cfd2d52b446849b410411d1dbdeea7de0094942d4c11
+			1.6.0
+			SHA384=b8bf8426c293fbe001041132cbd39daafdf615aac8e7ad017b3ea058b1794b3102576ad822d5abb5d1e6e26d425acbec
 		ALL_PLATFORMS
 			CMAKE
 				ALL

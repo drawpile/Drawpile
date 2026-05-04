@@ -58,7 +58,7 @@ inputs:
     type: string
   libwebp:
     description: Version of libwebp to build
-    default: '1.5.0'
+    default: '1.6.0'
     type: string
   ffmpeg:
     description: Version of ffmpeg to build
