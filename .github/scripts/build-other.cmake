@@ -11,7 +11,7 @@ set(ZSTD "1.5.7" CACHE STRING
 	"The version of zstd to build")
 set(LIBMICROHTTPD "1.0.5" CACHE STRING
 	"The version of libmicrohttpd to build")
-set(LIBSODIUM "1.0.20" CACHE STRING
+set(LIBSODIUM "1.0.22" CACHE STRING
 	"The version of libsodium to build")
 set(QTKEYCHAIN "0.14.3" CACHE STRING
 	"The Git refspec of QtKeychain to build")
@@ -163,6 +163,8 @@ if(NOT EMSCRIPTEN AND LIBSODIUM)
 		VERSIONS
 			1.0.20
 			SHA384=67473eaecf7085446feac68c36859cbdb2cc3ecc2748b0209ca364dd00f0c836f7000790c8dec5e890cd97d6646303f1
+			1.0.22
+			SHA384=848ce824334dfc7a5099945a7a5490ad2e517f74171dca31dffce8ab049ad2c4079ff54a95cfd27841f72bf56e95d8e9
 		WIN32
 			MSBUILD
 				SOLUTION builds/msvc/vs2022/libsodium.sln

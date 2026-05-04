@@ -70,7 +70,7 @@ inputs:
     type: string
   libsodium:
     description: Version of libsodium to build
-    default: 1.0.20
+    default: '1.0.22'
     type: string
   qtkeychain:
     description: Version of qtkeychain to build
