@@ -19,7 +19,7 @@ set(LIBZIP "1.11.4" CACHE STRING
 	"The version of libzip to build")
 set(KARCHIVE5 "v5.116.0" CACHE STRING
 	"The version of KArchive for Qt5 to build")
-set(KARCHIVE6 "v6.3.0" CACHE STRING
+set(KARCHIVE6 "v6.25.0" CACHE STRING
 	"The version of KArchive for Qt6 to build")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
@@ -242,6 +242,8 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 			SHA384=c791c8d6ed0ce8ae80ac6e2479bdfb29dfb03cb36ae40e76118fe8f52058ba07dbe6d8bfca42b48891c4f9ce6f08b5ed
 			v6.3.0
 			SHA384=215c1b649fba07a2a57534cb30cfff9d03fcbe9b4c97d5181d46b367b4014230a5eff35b965682e3c6a6d3b0c744cf0d
+			v6.25.0
+			SHA384=f6a61a11b1f1f1e7c9adbc5596a0ad1670b878523c1ef4d7e724e4e26f35f7a4687d5e3ca9afcba366dc1f0d496e529e
 		ALL_PLATFORMS
 			CMAKE
 				ALL
@@ -256,6 +258,8 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 			SHA384=4a782fed01e559371cb12efe94060b15e31022dca90e7853b5ede0b56d2fba58410f0992ad0363fc5e495954f6d8ae56
 			v6.3.0
 			SHA384=5fad9c2b4196f3b698209202770cd9a8f176c09c6bd6733cc667d7c44c07146f58ef9597e9ebe6506f4f0addf051dd7f
+			v6.25.0
+			SHA384=49f2378775c4e0ddfe2ade665aad526dba543477372a16d6f5f3400fe6c3ed8f9c750caf14b5b0c9271b8134f58b3d87
 		ALL_PLATFORMS
 			CMAKE
 				ALL
