@@ -5,7 +5,7 @@ list(APPEND CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/../../cmake
 )
 
-set(ZLIB "1.3.1" CACHE STRING
+set(ZLIB "1.3.2" CACHE STRING
 	"The version of zlib to build")
 set(ZSTD "1.5.7" CACHE STRING
 	"The version of zstd to build")
@@ -89,6 +89,8 @@ if(WIN32 AND ZLIB)
 		VERSIONS
 			1.3.1
 			SHA384=fc5ef6aa369bb70bbdef1f699cd7f182404ac5305e652f67470bd70320592e8b501d516267c74957cc02beee7e06ad14
+			1.3.2
+			SHA384=9e9b0e1f2477c05e23210a5aaa1afad23f78bf8f2306a0f4cf8ed6680876b0504ddf950b9ca412fc1687b7ccfc44ea4d
 		ALL_PLATFORMS
 			CMAKE
 				ALL -DBUILD_SHARED_LIBS=on ${extra_cmake_flags}
