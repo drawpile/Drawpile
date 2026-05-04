@@ -2443,52 +2443,52 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../project/projectrecorder.cpp" line="+50"/>
         <source>Autosave recording already active</source>
-        <translation type="unfinished"></translation>
+        <translation>La grabación de guardado automático ya está activa</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not find any available autosave path</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo encontrar ninguna ruta de guardado automático disponible</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo iniciar la grabación de guardado automático: %1</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al eliminar el archivo de proyecto &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el proyecto: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al cerrar el proyecto: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al escribir en el proyecto: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir la sesión: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al cerrar la sesión: %2</translation>
     </message>
     <message>
         <location line="+5"/>
