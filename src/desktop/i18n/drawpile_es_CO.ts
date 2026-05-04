@@ -2357,7 +2357,7 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+29"/>
         <source>Selection Action Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicación de la Barra de Acción de Selección</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2452,12 +2452,12 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+33"/>
         <source>Cr&amp;op canvas to selection/transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rec&amp;ortar lienzo para seleccionar/transformar…</translation>
     </message>
     <message>
         <location line="+131"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2467,22 +2467,22 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+4"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline tool: select</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de línea de tiempo: seleccionar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Exposición</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline tool: exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de línea de tiempo: exposición</translation>
     </message>
     <message>
         <location line="+3"/>
