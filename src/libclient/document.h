@@ -82,6 +82,9 @@ public:
 		const drawdance::CanvasState &canvasState, const QString &path,
 		DP_SaveImageType type, bool dirty, bool autoRecord,
 		const QString &continueSourceParam, long long continueSequenceId);
+	void resumeState(
+		const drawdance::CanvasState &canvasState, const QString &path,
+		bool autoRecord, long long resumeSessionId);
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 
@@ -407,6 +410,11 @@ private:
 	void onThumbnailGenerationFinished(const net::Message &msg);
 	void onThumbnailGenerationFailed(
 		const QByteArray &correlator, const QString &error);
+
+	void updateProjectRecordingPathsAndTypes();
+	void updateProjectRecordingCurrentPathAndType();
+	void updateProjectRecordingExportPathAndType();
+	void updateProjectRecordingProjectPath();
 
 	QString m_currentPath;
 	QString m_exportPath;

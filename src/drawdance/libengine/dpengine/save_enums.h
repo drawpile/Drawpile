@@ -12,6 +12,7 @@ typedef enum DP_SaveImageType {
     DP_SAVE_IMAGE_PROJECT_CANVAS,
     DP_SAVE_IMAGE_QOI,
     DP_SAVE_IMAGE_PROJECT,
+    DP_SAVE_IMAGE_LAST = DP_SAVE_IMAGE_PROJECT,
 } DP_SaveImageType;
 
 typedef enum DP_SaveResult {

@@ -65,6 +65,8 @@ public:
 	MainWindow *openDefault(bool restoreWindowPosition);
 	void newDefaultDocument(MainWindow *win);
 	void openStart(const QString &page, bool restoreWindowPosition);
+	void openStartOrResume(
+		const QString &page, bool restoreWindowPosition, bool tryResume);
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 

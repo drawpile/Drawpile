@@ -57,6 +57,7 @@ typedef enum DP_ProjectWorkerCommandType {
     DP_PROJECT_WORKER_COMMAND_OPEN,
     DP_PROJECT_WORKER_COMMAND_CLOSE,
     DP_PROJECT_WORKER_COMMAND_SESSION_OPEN,
+    DP_PROJECT_WORKER_COMMAND_SESSION_RESUME,
     DP_PROJECT_WORKER_COMMAND_SESSION_CLOSE,
     DP_PROJECT_WORKER_COMMAND_MESSAGE_RECORD,
     DP_PROJECT_WORKER_COMMAND_MESSAGE_INTERNAL_RECORD,
@@ -93,6 +94,11 @@ typedef struct DP_ProjectWorkerCommand {
             unsigned int flags;
             unsigned int file_id;
         } session_open;
+        struct {
+            char *protocol;
+            long long session_id;
+            unsigned int file_id;
+        } session_resume;
         struct {
             unsigned int flags_to_set;
             unsigned int file_id;
@@ -275,6 +281,32 @@ static void handle_session_open(DP_ProjectWorker *pw, unsigned int file_id,
     else {
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_SESSION_OPEN_ERROR,
+                           .error = {file_id, result, DP_error()}});
+    }
+}
+
+static void handle_session_resume(DP_ProjectWorker *pw, unsigned int file_id,
+                                  long long session_id, char *protocol)
+{
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_free(protocol);
+        DP_warn("Not resuming session on file id %u, currently open is %u",
+                file_id, open_file_id);
+        return;
+    }
+
+    DP_Project *prj = pw->prj;
+    int result = DP_project_session_resume(prj, session_id, protocol);
+    DP_free(protocol);
+    if (result == 0) {
+        DP_PROJECT_WORKER_DEBUG("resumed session %lld",
+                                DP_project_session_id(prj));
+        pw->pst = DP_project_session_times_null();
+    }
+    else {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_SESSION_RESUME_ERROR,
                            .error = {file_id, result, DP_error()}});
     }
 }
@@ -717,6 +749,16 @@ static void handle_command(DP_ProjectWorker *pw,
                             command->session_open.protocol,
                             command->session_open.flags);
         return;
+    case DP_PROJECT_WORKER_COMMAND_SESSION_RESUME:
+        DP_PROJECT_WORKER_DEBUG(
+            "handle session resume %u protocol '%s' session_id %lld",
+            command->session_resume.file_id,
+            debug_str(command->session_resume.protocol),
+            command->session_resume.session_id);
+        handle_session_resume(pw, command->session_resume.file_id,
+                              command->session_resume.session_id,
+                              command->session_resume.protocol);
+        return;
     case DP_PROJECT_WORKER_COMMAND_SESSION_CLOSE:
         DP_PROJECT_WORKER_DEBUG("handle session close %u flags_to_set %x",
                                 command->session_close.file_id,
@@ -966,6 +1008,18 @@ void DP_project_worker_session_open(DP_ProjectWorker *pw, unsigned int file_id,
                 DP_PROJECT_WORKER_COMMAND_SESSION_OPEN,
                 .session_open = {DP_strdup(source_param), DP_strdup(protocol),
                                  source_type, flags, file_id}});
+}
+
+void DP_project_worker_session_resume(DP_ProjectWorker *pw,
+                                      unsigned int file_id,
+                                      long long session_id,
+                                      const char *protocol)
+{
+    DP_ASSERT(pw);
+    push_command(
+        pw, (DP_ProjectWorkerCommand){
+                DP_PROJECT_WORKER_COMMAND_SESSION_RESUME,
+                .session_resume = {DP_strdup(protocol), session_id, file_id}});
 }
 
 void DP_project_worker_session_close(DP_ProjectWorker *pw, unsigned int file_id,

@@ -2,11 +2,11 @@
 extern "C" {
 #include <dpengine/project.h>
 }
+#include "libclient/project/metadata.h"
 #include "libclient/project/recoverymodel.h"
 #include <QDir>
 #include <QHash>
 #include <algorithm>
-#include <libshared/util/database.h>
 #include <libshared/util/paths.h>
 
 namespace project {
@@ -25,20 +25,7 @@ RecoveryStatus RecoveryEntry::status() const
 {
 	if(!m_statusLoaded) {
 		m_statusLoaded = true;
-		QString path = m_path;
-		DP_ProjectOpenResult result = DP_project_open(
-			path.toUtf8().constData(), DP_PROJECT_OPEN_READ_ONLY);
-		if(result.error == 0) {
-			DP_project_close(result.project);
-			m_status = RecoveryStatus::Available;
-		} else {
-			m_errorMessage = QString::fromUtf8(DP_error());
-			if(result.error == DP_PROJECT_OPEN_ERROR_LOCKED) {
-				m_status = RecoveryStatus::Locked;
-			} else {
-				m_status = RecoveryStatus::Error;
-			}
-		}
+		m_status = RecoveryModel::checkRecoveryStatus(m_path, &m_errorMessage);
 	}
 	return m_status;
 }
@@ -129,36 +116,13 @@ void RecoveryEntry::loadMetadata() const
 {
 	if(!m_metadataLoaded) {
 		m_metadataLoaded = true;
-
-		drawdance::Database db;
-		bool openOk = db.open(
-			m_path + QStringLiteral(".meta"),
-			QStringLiteral("autosave metadata"));
-		if(openOk) {
-			drawdance::Query qry = db.query();
-
-			if(qry.prepare("select value from metadata where name = ?")) {
-				if(qry.bind(0, "last_save") && qry.execPrepared() &&
-				   qry.next()) {
-					m_lastSave = qry.columnText16(0);
-				}
-
-				if(qry.bind(0, "last_export") && qry.execPrepared() &&
-				   qry.next()) {
-					m_lastExport = qry.columnText16(0);
-				}
-
-				if(qry.bind(0, "last_session_title") && qry.execPrepared() &&
-				   qry.next()) {
-					m_lastSessionTitle = qry.columnText16(0);
-				}
-
-				if(qry.bind(0, "own_work_minutes") && qry.execPrepared() &&
-				   qry.next()) {
-					m_ownWorkMinutes = qry.columnInt64(0);
-				}
-			}
-		}
+		retrieveMetadata(m_path, [this](drawdance::Query &qry) {
+			retrieveMetadataString(qry, "last_save", m_lastSave);
+			retrieveMetadataString(qry, "last_export", m_lastSave);
+			retrieveMetadataString(
+				qry, "last_session_title", m_lastSessionTitle);
+			retrieveMetadataLongLong(qry, "own_work_minutes", m_ownWorkMinutes);
+		});
 	}
 }
 
@@ -280,7 +244,8 @@ void RecoveryModel::removeOrphanedFiles()
 	QDir dir(m_baseDir);
 	dir.setFilter(QDir::Files | QDir::NoSymLinks);
 	dir.setNameFilters(
-		{QStringLiteral("*.dppr.meta"), QStringLiteral("*.dppr.thumb")});
+		{QStringLiteral("*.dppr.resume"), QStringLiteral("*.dppr.meta"),
+		 QStringLiteral("*.dppr.thumb")});
 
 	QHash<QString, bool> basePathsExist;
 	for(const QFileInfo &fileInfo : dir.entryInfoList()) {
@@ -319,9 +284,9 @@ void RecoveryModel::removeOpenedAutosavePath(const QString &path)
 	openedAutosavePaths.remove(path);
 }
 
-QFileInfoList RecoveryModel::entryInfoList() const
+QFileInfoList RecoveryModel::entryInfoListForBaseDir(const QString &baseDir)
 {
-	QDir dir(m_baseDir);
+	QDir dir(baseDir);
 	dir.setNameFilters({QStringLiteral("*.dppr")});
 	dir.setFilter(QDir::Files | QDir::NoSymLinks);
 	QFileInfoList entryInfos = dir.entryInfoList();
@@ -332,6 +297,31 @@ QFileInfoList RecoveryModel::entryInfoList() const
 	}
 
 	return entryInfos;
+}
+
+RecoveryStatus RecoveryModel::checkRecoveryStatus(
+	const QString &path, QString *outErrorMessage)
+{
+	DP_ProjectOpenResult result =
+		DP_project_open(path.toUtf8().constData(), DP_PROJECT_OPEN_READ_ONLY);
+	if(result.error == 0) {
+		DP_project_close(result.project);
+		return RecoveryStatus::Available;
+	} else {
+		if(outErrorMessage) {
+			*outErrorMessage = QString::fromUtf8(DP_error());
+		}
+		if(result.error == DP_PROJECT_OPEN_ERROR_LOCKED) {
+			return RecoveryStatus::Locked;
+		} else {
+			return RecoveryStatus::Error;
+		}
+	}
+}
+
+QFileInfoList RecoveryModel::entryInfoList() const
+{
+	return entryInfoListForBaseDir(m_baseDir);
 }
 
 bool RecoveryModel::entryLessThan(

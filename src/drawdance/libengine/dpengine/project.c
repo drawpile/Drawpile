@@ -1444,6 +1444,75 @@ int DP_project_session_open(DP_Project *prj, int source_type,
     return 0;
 }
 
+int DP_project_session_resume(DP_Project *prj, long long session_id,
+                              const char *protocol)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SESSION_RESUME_ERROR_MISUSE;
+    }
+
+    if (prj->session_id != 0LL) {
+        DP_error_set("Session %lld already open", prj->session_id);
+        return DP_PROJECT_SESSION_RESUME_ERROR_ALREADY_OPEN;
+    }
+
+    if (!protocol) {
+        DP_warn("No protocol given, punting to '%s'", DP_PROTOCOL_VERSION);
+        protocol = DP_PROTOCOL_VERSION;
+    }
+
+    DP_debug("Resuming session %lld, protocol %s", session_id, protocol);
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select i.closed_at is not null as was_closed, i.protocol,\n"
+             "       m.sequence_id\n"
+             "from sessions i\n"
+             "left join messages m on i.session_id = m.session_id\n"
+             "where i.session_id = ?\n"
+             "order by m.sequence_id desc\n"
+             "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_SESSION_RESUME_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SESSION_RESUME_ERROR_PREPARE;
+    }
+
+    bool error;
+    int result;
+    if (ps_exec_step(prj, stmt, &error)) {
+        bool was_closed = sqlite3_column_int(stmt, 0) != 0;
+        if (was_closed) {
+            result = DP_PROJECT_SESSION_RESUME_ERROR_CLOSED;
+            DP_error_set("Session %lld to resume was already closed",
+                         session_id);
+        }
+        else if (!DP_str_equal(protocol,
+                               (const char *)sqlite3_column_text(stmt, 1))) {
+            result = DP_PROJECT_SESSION_RESUME_ERROR_PROTOCOL;
+            DP_error_set("Session %lld to resume does not use protocol %s",
+                         session_id, protocol);
+        }
+        else {
+            prj->session_id = session_id;
+            prj->sequence_id = sqlite3_column_int64(stmt, 2);
+            result = 0;
+        }
+    }
+    else if (error) {
+        result = DP_PROJECT_SESSION_RESUME_ERROR_QUERY;
+    }
+    else {
+        result = DP_PROJECT_SESSION_RESUME_ERROR_NOT_FOUND;
+        DP_error_set("Session %lld to resume not found", session_id);
+    }
+
+    sqlite3_finalize(stmt);
+    return result;
+}
+
 int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set)
 {
     if (!prj) {
@@ -6012,6 +6081,11 @@ static bool playback_query_handle_message(
         case DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET:
             DP_canvas_history_reset(c->ch);
             break;
+        case DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESUMED:
+            // The recording was resumed at this point, issue a soft reset to
+            // cut off the undo history, since it's not available anymore.
+            DP_canvas_history_soft_reset(c->ch, c->dc, 0u, NULL, NULL);
+            break;
         default:
             DP_debug("Unhandled internal project message type %d", type);
             break;
@@ -6279,7 +6353,8 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
 DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
     DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
-    char **out_session_source_param, long long *out_session_sequence_id)
+    char **out_session_source_param, long long *out_session_sequence_id,
+    long long *out_resume_session_id)
 {
     DP_ASSERT(prj);
     static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
@@ -6288,7 +6363,8 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
                   "sequence id snapshot metadata matches query");
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
         prj,
-        "select h.snapshot_id, h.session_id, h.flags, m.value, i.protocol,\n"
+        "select h.snapshot_id, h.session_id, h.flags,"
+        "       i.closed_at is not null as was_closed, m.value, i.protocol,\n"
         "       i.source_param\n"
         "from snapshots h\n"
         "left join sessions i on h.session_id = i.session_id\n"
@@ -6304,6 +6380,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
 
     bool error;
     bool load_messages;
+    bool was_closed;
     unsigned int flags;
     long long snapshot_id;
     long long session_id;
@@ -6313,8 +6390,9 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
         snapshot_id = sqlite3_column_int64(stmt, 0);
         session_id = sqlite3_column_int64(stmt, 1);
         flags = DP_int_to_uint(sqlite3_column_int(stmt, 2));
+        was_closed = sqlite3_column_int(stmt, 3) != 0;
 
-        sequence_id = sqlite3_column_int64(stmt, 3);
+        sequence_id = sqlite3_column_int64(stmt, 4);
         if (sequence_id < 1LL) {
             sequence_id = 1LL;
         }
@@ -6324,7 +6402,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
         }
         else {
             DP_ProtocolVersion *protover = DP_protocol_version_parse(
-                (const char *)sqlite3_column_text(stmt, 4));
+                (const char *)sqlite3_column_text(stmt, 5));
             if (DP_protocol_version_is_current(protover)) {
                 load_messages = true;
             }
@@ -6350,7 +6428,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
 
         if (load_messages && out_session_source_param) {
             source_param =
-                DP_strdup((const char *)sqlite3_column_text(stmt, 5));
+                DP_strdup((const char *)sqlite3_column_text(stmt, 6));
         }
     }
     else {
@@ -6364,6 +6442,15 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     if (snapshot_id <= 0LL) {
         DP_free(source_param);
         return NULL;
+    }
+
+    if (out_resume_session_id) {
+        if (!load_messages || was_closed) {
+            *out_resume_session_id = 0LL;
+        }
+        else {
+            *out_resume_session_id = session_id;
+        }
     }
 
     // We can only load snapshots with messages in them if the recording is
@@ -6457,7 +6544,7 @@ DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
     DP_ASSERT(dc);
     DP_ASSERT(path);
 
-    DP_ProjectCanvasLoad pcl = {0, NULL, NULL, 0LL};
+    DP_ProjectCanvasLoad pcl = {0, NULL, NULL, 0LL, 0LL};
     DP_ProjectOpenResult open_result =
         project_open(path, DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY,
                      snapshot_only);
@@ -6469,7 +6556,7 @@ DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
 
     pcl.cs = DP_project_canvas_from_latest_snapshot(
         prj, dc, snapshot_only, NULL, NULL, &pcl.session_source_param,
-        &pcl.session_sequence_id);
+        &pcl.session_sequence_id, &pcl.resume_session_id);
     project_close(prj, true);
 
     if (!pcl.cs) {

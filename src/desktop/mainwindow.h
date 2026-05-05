@@ -108,6 +108,9 @@ public:
 	void openRecent(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void openRecovery(const QString &path);
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
+
+	void resumeAutosave(const QString &path);
+
 	void autoJoin(
 		const QUrl &url, const QString &autoRecordPath, int connectStrategy);
 
@@ -359,6 +362,9 @@ private:
 	void prepareWindowReplacement();
 	void createNewWindow(const std::function<void(MainWindow *)> &block);
 	void loadBlankDocument(const QSize &size, const QColor &background);
+
+	void loadCanvasStateFromFile(
+		const QString &path, QTemporaryFile *tempFile, bool resume);
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);

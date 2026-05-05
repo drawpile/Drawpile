@@ -45,79 +45,27 @@ bool ProjectRecorder::startProjectRecording(
 	canvas::PaintEngine *paintEngine, int sourceType, const QString &protocol,
 	const QString &sourceParam, long long sequenceId, QString *outError)
 {
-	if(m_pw) {
+	return startOrResumeProjectRecording(
+		paintEngine, sourceType, protocol, sourceParam, sequenceId, 0LL,
+		QString(), outError);
+}
+
+bool ProjectRecorder::resumeProjectRecording(
+	canvas::PaintEngine *paintEngine, const QString &protocol,
+	const QString &path, long long resumeSessionId, const QString &sourceParam,
+	long long sequenceId, QString *outError)
+{
+	if(resumeSessionId <= 0LL) {
 		if(outError) {
-			*outError = tr("Autosave recording already active");
+			*outError =
+				tr("Invalid session %1 given to resume").arg(resumeSessionId);
 		}
 		return false;
 	}
 
-	m_path = searchAvailableProjectPath();
-	if(m_path.isEmpty()) {
-		if(outError) {
-			*outError = tr("Could not find any available autosave path");
-		}
-		return false;
-	}
-
-	m_pw = DP_project_worker_new(
-		&ProjectRecorder::handleEventCallback,
-		&ProjectRecorder::writeThumbnailCallback, this);
-	if(!m_pw) {
-		if(outError) {
-			*outError = tr("Could not start autosave recording: %1")
-							.arg(QString::fromUtf8(DP_error()));
-		}
-		return false;
-	}
-
-	RecoveryModel::addOpenedAutosavePath(m_path);
-
-	m_metadataPath = m_path + QStringLiteral(".meta");
-	m_thumbnailPath = m_path + QStringLiteral(".thumb");
-	QFile::remove(m_metadataPath);
-	QFile::remove(m_thumbnailPath);
-
-	if(initMetaDb()) {
-		if(!sourceParam.isEmpty()) {
-			setMetadatum(QStringLiteral("continue_source_param"), sourceParam);
-		}
-		if(sequenceId > 0LL) {
-			setMetadatum(QStringLiteral("continue_sequence_id"), sequenceId);
-		}
-	} else {
-		m_metaDb.close();
-	}
-
-	m_lastReportedSizeInBytes = 0;
-	m_fileId = DP_project_worker_open(
-		m_pw, m_path.toUtf8().constData(), DP_PROJECT_OPEN_TRUNCATE,
-		sourceParam.isEmpty() ? nullptr : sourceParam.toUtf8().constData(),
-		sequenceId);
-	qCDebug(lcDpProjectWorker, "Opened file id %u", m_fileId);
-
-	DP_project_worker_session_open(
-		m_pw, m_fileId, sourceType,
-		QUuid::createUuid().toByteArray(QUuid::Id128).constData(),
-		protocol.toUtf8().constData(), 0u);
-
-	paintEngine->startProjectRecording(m_pw, m_fileId);
-
-	m_metadataTimer = new QTimer(this);
-	m_metadataTimer->setTimerType(Qt::VeryCoarseTimer);
-	m_metadataTimer->setSingleShot(true);
-	connect(
-		m_metadataTimer, &QTimer::timeout, this,
-		&ProjectRecorder::metadataRequested);
-
-	m_snapshotTimer = new QTimer(this);
-	m_snapshotTimer->setTimerType(Qt::VeryCoarseTimer);
-	m_snapshotTimer->setSingleShot(true);
-	connect(
-		m_snapshotTimer, &QTimer::timeout, this,
-		&ProjectRecorder::snapshotRequested);
-
-	return true;
+	return startOrResumeProjectRecording(
+		paintEngine, DP_PROJECT_SOURCE_RESUME, protocol, sourceParam,
+		sequenceId, resumeSessionId, path, outError);
 }
 
 bool ProjectRecorder::stopProjectRecording(
@@ -140,6 +88,12 @@ bool ProjectRecorder::stopProjectRecording(
 	m_metaDb.close();
 
 	RecoveryModel::removeOpenedAutosavePath(m_path);
+
+	if constexpr(isAutoresumeEnabled()) {
+		// Always try to remove the resume marker, since we don't want to be
+		// resuming a stopped recording.
+		QFile::remove(m_autoresumePath);
+	}
 
 	if(remove && !m_path.isEmpty()) {
 		qCDebug(lcDpProjectWorker, "Removing '%s'", qUtf8Printable(m_path));
@@ -226,6 +180,29 @@ bool ProjectRecorder::setMetadatum(
 	}
 }
 
+bool ProjectRecorder::removeMetadata(const QStringList &names)
+{
+	if(names.isEmpty()) {
+		return true;
+	} else {
+		drawdance::DatabaseLocker locker(m_metaDb);
+		if(m_metaDb.isOpen()) {
+			drawdance::Query qry = m_metaDb.queryWithoutLock();
+			if(qry.prepare("delete from metadata where name = ?")) {
+				bool ok = true;
+				for(const QString &name : names) {
+					if(!qry.bind(0, drawdance::Query::Param(name)) ||
+					   !qry.execPrepared()) {
+						ok = false;
+					}
+				}
+				return ok;
+			}
+		}
+		return false;
+	}
+}
+
 bool ProjectRecorder::addMetadataSource(
 	int sourceType, const QString &sourceParam)
 {
@@ -247,6 +224,126 @@ void ProjectRecorder::setSizeLimitInBytes(size_t sizeLimitInBytes)
 	m_sizeLimitInBytes = sizeLimitInBytes;
 	sizeChanged(m_lastReportedSizeInBytes, sizeLimitInBytes);
 	checkSizeLimit();
+}
+
+bool ProjectRecorder::startOrResumeProjectRecording(
+	canvas::PaintEngine *paintEngine, int sourceType, const QString &protocol,
+	const QString &sourceParam, long long sequenceId, long long resumeSessionId,
+	const QString &resumePath, QString *outError)
+{
+	if(m_pw) {
+		if(outError) {
+			*outError = tr("Autosave recording already active");
+		}
+		return false;
+	}
+
+	bool resume = resumeSessionId > 0LL;
+	m_path = resume ? resumePath : searchAvailableProjectPath();
+	if(m_path.isEmpty()) {
+		if(outError) {
+			*outError = resume
+							? tr("No path to resume given")
+							: tr("Could not find any available autosave path");
+		}
+		return false;
+	}
+
+	m_pw = DP_project_worker_new(
+		&ProjectRecorder::handleEventCallback,
+		&ProjectRecorder::writeThumbnailCallback, this);
+	if(!m_pw) {
+		if(outError) {
+			*outError = tr("Could not start autosave recording: %1")
+							.arg(QString::fromUtf8(DP_error()));
+		}
+		return false;
+	}
+
+	RecoveryModel::addOpenedAutosavePath(m_path);
+
+	m_autoresumePath = m_path + QStringLiteral(".resume");
+	m_metadataPath = m_path + QStringLiteral(".meta");
+	m_thumbnailPath = m_path + QStringLiteral(".thumb");
+	if(!resume) {
+		QFile::remove(m_metadataPath);
+		QFile::remove(m_thumbnailPath);
+	}
+
+	if constexpr(isAutoresumeEnabled()) {
+		// If we are currently resuming, we'll create a resume file a bit later
+		// to avoid a potential infinite loop caused by repeatedly resuming a
+		// file that causes an out of memory error or something.
+		if(resume) {
+			QTimer::singleShot(
+				10000, Qt::VeryCoarseTimer, this,
+				&ProjectRecorder::createAutoresumeFile);
+		} else {
+			createAutoresumeFile();
+		}
+	}
+
+	if(initMetaDb()) {
+		if(!sourceParam.isEmpty()) {
+			setMetadatum(QStringLiteral("continue_source_param"), sourceParam);
+		}
+		if(sequenceId > 0LL) {
+			setMetadatum(QStringLiteral("continue_sequence_id"), sequenceId);
+		}
+	} else {
+		m_metaDb.close();
+	}
+
+	m_lastReportedSizeInBytes = 0;
+	m_fileId = DP_project_worker_open(
+		m_pw, m_path.toUtf8().constData(),
+		resume ? DP_PROJECT_OPEN_EXISTING : DP_PROJECT_OPEN_TRUNCATE,
+		sourceParam.isEmpty() ? nullptr : sourceParam.toUtf8().constData(),
+		sequenceId);
+	qCDebug(lcDpProjectWorker, "Opened file id %u", m_fileId);
+
+	if(resume) {
+		DP_project_worker_session_resume(
+			m_pw, m_fileId, resumeSessionId, protocol.toUtf8().constData());
+		paintEngine->resumeProjectRecording(m_pw, m_fileId);
+	} else {
+		DP_project_worker_session_open(
+			m_pw, m_fileId, sourceType,
+			QUuid::createUuid().toByteArray(QUuid::Id128).constData(),
+			protocol.toUtf8().constData(), 0u);
+		paintEngine->startProjectRecording(m_pw, m_fileId);
+	}
+
+	m_metadataTimer = new QTimer(this);
+	m_metadataTimer->setTimerType(Qt::VeryCoarseTimer);
+	m_metadataTimer->setSingleShot(true);
+	connect(
+		m_metadataTimer, &QTimer::timeout, this,
+		&ProjectRecorder::metadataRequested);
+
+	m_snapshotTimer = new QTimer(this);
+	m_snapshotTimer->setTimerType(Qt::VeryCoarseTimer);
+	m_snapshotTimer->setSingleShot(true);
+	connect(
+		m_snapshotTimer, &QTimer::timeout, this,
+		&ProjectRecorder::snapshotRequested);
+
+	return true;
+}
+
+void ProjectRecorder::createAutoresumeFile()
+{
+	if(m_pw && !m_autoresumePath.isEmpty()) {
+		QFile autoresumeFile(m_autoresumePath);
+		if(autoresumeFile.open(QIODevice::NewOnly)) {
+			autoresumeFile.close();
+		} else if(!autoresumeFile.exists()) {
+			qWarning(
+				"Failed to create autosave resume file '%s': %s",
+				qUtf8Printable(m_autoresumePath),
+				qUtf8Printable(autoresumeFile.errorString()));
+		}
+	}
 }
 
 void ProjectRecorder::setMetadataTimerIntervalMinutes(
@@ -333,6 +430,11 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 		emitError(
 			//: %1 is an error code, %2 is a more detailed error message.
 			QT_TR_NOOP("Error %1 writing to project: %2"), event->data.error);
+		return;
+	case DP_PROJECT_WORKER_EVENT_SESSION_RESUME_ERROR:
+		emitError(
+			//: %1 is an error code, %2 is a more detailed error message.
+			QT_TR_NOOP("Error %1 resuming session: %2"), event->data.error);
 		return;
 	case DP_PROJECT_WORKER_EVENT_SESSION_OPEN_ERROR:
 		emitError(
@@ -472,8 +574,7 @@ QString ProjectRecorder::searchAvailableProjectPath()
 	int attempts = 20;
 	for(int i = 0; i < attempts; ++i) {
 		QString fileName = Ulid::make().toString() + QStringLiteral(".dppr");
-		QString path =
-			utils::paths::writablePath(QStringLiteral("autosave"), fileName);
+		QString path = utils::paths::autosaveWritablePath(fileName);
 		if(path.isEmpty()) {
 			qCWarning(
 				lcDpProjectWorker, "Failed to get path for '%s'",

@@ -272,6 +272,12 @@ void PaintEngine::startProjectRecording(
 	DP_paint_engine_project_recording_start(m_data, pw, fileId);
 }
 
+void PaintEngine::resumeProjectRecording(
+	DP_ProjectWorker *pw, unsigned int fileId)
+{
+	DP_paint_engine_project_recording_resume(m_data, pw, fileId);
+}
+
 bool PaintEngine::stopProjectRecording()
 {
 	return DP_paint_engine_project_recording_stop(m_data);

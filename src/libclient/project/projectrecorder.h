@@ -36,6 +36,12 @@ public:
 		const QString &protocol, const QString &sourceParam,
 		long long sequenceId, QString *outError = nullptr);
 
+	bool resumeProjectRecording(
+		canvas::PaintEngine *paintEngine, const QString &protocol,
+		const QString &path, long long resumeSessionId,
+		const QString &sourceParam, long long sequenceId,
+		QString *outError = nullptr);
+
 	bool stopProjectRecording(canvas::PaintEngine *paintEngine, bool remove);
 
 	// To avoid compounding errors, the emitting of error signals is disabled
@@ -53,6 +59,11 @@ public:
 	bool
 	setMetadatum(const QString &name, const drawdance::Query::Param &value);
 
+	bool
+	setMetadata(const QVector<QPair<QString, drawdance::Query::Param>> &params);
+
+	bool removeMetadata(const QStringList &names);
+
 	bool addMetadataSource(int sourceType, const QString &sourceParam);
 
 	size_t lastReportedSizeInBytes() const { return m_lastReportedSizeInBytes; }
@@ -60,6 +71,18 @@ public:
 	// A size limit of 0 means unlimited.
 	size_t sizeLimitInBytes() const { return m_sizeLimitInBytes; }
 	void setSizeLimitInBytes(size_t sizeLimitInBytes);
+
+	// Whether auto-resumption of autorecovery files is enabled. At the time of
+	// writing, this is only the case on Android, but you can edit this function
+	// to test it on other platforms as well.
+	static constexpr bool isAutoresumeEnabled()
+	{
+#ifdef Q_OS_ANDROID
+		return true;
+#else
+		return true; // FIXME
+#endif
+	}
 
 Q_SIGNALS:
 	void metadataRequested();
@@ -73,6 +96,14 @@ Q_SIGNALS:
 private:
 	static constexpr int TIMER_INTERVAL_MINUTES_MIN = 1;
 	static constexpr int TIMER_INTERVAL_MINUTES_MAX = 1440;
+
+	bool startOrResumeProjectRecording(
+		canvas::PaintEngine *paintEngine, int sourceType,
+		const QString &protocol, const QString &sourceParam,
+		long long sequenceId, long long resumeSessionId,
+		const QString &resumePath, QString *outError);
+
+	void createAutoresumeFile();
 
 	void setMetadataTimerIntervalMinutes(int metadataTimerIntervalMinutes);
 	void setSnapshotTimerIntervalMinutes(int snapshotTimerIntervalMinutes);
@@ -112,6 +143,7 @@ private:
 	QString m_path;
 	QString m_metadataPath;
 	QString m_thumbnailPath;
+	QString m_autoresumePath;
 	drawdance::Database m_metaDb;
 	QAtomicInt m_errorsBlocked = 0;
 	unsigned int m_fileId = 0;

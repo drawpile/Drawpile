@@ -118,7 +118,8 @@ private:
 
 CanvasState CanvasState::load(
 	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType,
-	QString *outSessionSourceParam, long long *outSessionSequenceId)
+	QString *outSessionSourceParam, long long *outSessionSequenceId,
+	long long *outResumeSessionId)
 {
 	QByteArray pathBytes = path.toUtf8();
 	QByteArray flatImageLayerTitleBytes =
@@ -152,6 +153,9 @@ CanvasState CanvasState::load(
 	}
 	if(outSessionSequenceId) {
 		*outSessionSequenceId = lc.out.session_sequence_id;
+	}
+	if(outResumeSessionId) {
+		*outResumeSessionId = lc.out.resume_session_id;
 	}
 	return CanvasState::noinc(DP_load_context_dispose_take(&lc));
 }

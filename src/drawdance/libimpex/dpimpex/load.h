@@ -41,6 +41,7 @@ typedef struct DP_LoadContextOut {
     DP_CanvasState *cs;
     char *session_source_param;
     long long session_sequence_id;
+    long long resume_session_id;
     DP_LoadResult result;
     DP_SaveImageType type;
 } DP_LoadContextOut;

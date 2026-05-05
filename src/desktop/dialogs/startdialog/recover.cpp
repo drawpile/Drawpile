@@ -372,7 +372,7 @@ QString RecoveryEntryWidget::getSuggestedExportBaseName() const
 Recover::Recover(QWidget *parent)
 	: Page(parent)
 	, m_recoveryModel(new project::RecoveryModel(
-		  utils::paths::writablePath(QStringLiteral("autosave")), this))
+		  utils::paths::autosaveWritablePath(), this))
 {
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(0, 0, 0, 0);

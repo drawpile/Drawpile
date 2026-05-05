@@ -110,6 +110,7 @@ public:
 	bool recorderIsRecording() const;
 
 	void startProjectRecording(DP_ProjectWorker *pw, unsigned int fileId);
+	void resumeProjectRecording(DP_ProjectWorker *pw, unsigned int fileId);
 	bool stopProjectRecording();
 	bool isProjectRecording() const;
 

@@ -94,6 +94,11 @@ public:
 	static void addOpenedAutosavePath(const QString &path);
 	static void removeOpenedAutosavePath(const QString &path);
 
+	static QFileInfoList entryInfoListForBaseDir(const QString &baseDir);
+
+	static RecoveryStatus checkRecoveryStatus(
+		const QString &path, QString *outErrorMessage = nullptr);
+
 Q_SIGNALS:
 	void loaded();
 
