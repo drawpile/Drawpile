@@ -1438,7 +1438,7 @@ int DP_project_session_open(DP_Project *prj, int source_type,
                  && ps_exec_write(prj, stmt, &prj->session_id);
     sqlite3_finalize(stmt);
     if (!write_ok) {
-        return DP_PROJECT_SESSION_OPEN_ERROR_ALREADY_OPEN;
+        return DP_PROJECT_SESSION_OPEN_ERROR_WRITE;
     }
 
     return 0;
