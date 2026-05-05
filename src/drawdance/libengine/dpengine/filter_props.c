@@ -21,15 +21,15 @@ struct DP_FilterPropsUnknown {
 };
 
 struct DP_FilterPropsHsvAdjust {
-    float h, s, v;
+    int h, s, v;
 };
 
 struct DP_FilterPropsHslAdjust {
-    float h, s, l;
+    int h, s, l;
 };
 
 struct DP_FilterPropsHcyAdjust {
-    float h, c, y;
+    int h, c, y;
 };
 
 
@@ -68,36 +68,36 @@ DP_FilterProps *DP_filter_props_new_unknown(int actual_type,
     return fp;
 }
 
-DP_FilterProps *DP_filter_props_new_hsv_adjust(float h, float s, float v)
+DP_FilterProps *DP_filter_props_new_hsv_adjust(int h, int s, int v)
 {
     DP_FilterProps *fp = alloc_filter_props(DP_FILTER_TYPE_HSV_ADJUST,
                                             sizeof(DP_FilterPropsHsvAdjust));
     DP_FilterPropsHsvAdjust *fpha = DP_filter_props_internal(fp);
-    fpha->h = h;
-    fpha->s = s;
-    fpha->v = v;
+    fpha->h = DP_mod_int(h, 360);
+    fpha->s = DP_clamp_int(s, -100, 100);
+    fpha->v = DP_clamp_int(v, -100, 100);
     return fp;
 }
 
-DP_FilterProps *DP_filter_props_new_hsl_adjust(float h, float s, float l)
+DP_FilterProps *DP_filter_props_new_hsl_adjust(int h, int s, int l)
 {
     DP_FilterProps *fp = alloc_filter_props(DP_FILTER_TYPE_HSL_ADJUST,
                                             sizeof(DP_FilterPropsHslAdjust));
     DP_FilterPropsHslAdjust *fpha = DP_filter_props_internal(fp);
-    fpha->h = h;
-    fpha->s = s;
-    fpha->l = l;
+    fpha->h = DP_mod_int(h, 360);
+    fpha->s = DP_clamp_int(s, -100, 100);
+    fpha->l = DP_clamp_int(l, -100, 100);
     return fp;
 }
 
-DP_FilterProps *DP_filter_props_new_hcy_adjust(float h, float c, float y)
+DP_FilterProps *DP_filter_props_new_hcy_adjust(int h, int c, int y)
 {
     DP_FilterProps *fp = alloc_filter_props(DP_FILTER_TYPE_HCY_ADJUST,
                                             sizeof(DP_FilterPropsHcyAdjust));
     DP_FilterPropsHcyAdjust *fpha = DP_filter_props_internal(fp);
-    fpha->h = h;
-    fpha->c = c;
-    fpha->y = y;
+    fpha->h = DP_mod_int(h, 360);
+    fpha->c = DP_clamp_int(c, -100, 100);
+    fpha->y = DP_clamp_int(y, -100, 100);
     return fp;
 }
 
@@ -226,41 +226,28 @@ bool DP_filter_props_differ_nullable(DP_FilterProps *fp_or_null,
 }
 
 
-static void write_hue_adjust(float x, unsigned char *out)
+static void write_angle_adjust(int x, unsigned char *out)
 {
-    DP_ASSERT(x >= -1.0f);
-    DP_ASSERT(x <= 1.0f);
-    DP_write_littleendian_int16(DP_float_to_int16(x * (float)INT16_MAX), out);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(x < 360);
+    DP_write_littleendian_uint16(DP_int_to_uint16(x), out);
 }
 
-static float read_hue_adjust(const unsigned char *data)
+static int read_angle_adjust(const unsigned char *data)
 {
-    float f =
-        DP_int16_to_float(DP_read_littleendian_int16(data)) / (float)INT16_MAX;
-    return CLAMP(f, DP_FILTER_PROPS_ADJUST_ANGLE_MIN,
-                 DP_FILTER_PROPS_ADJUST_ANGLE_MAX);
+    return DP_mod_int(DP_read_littleendian_uint16(data), 360);
 }
 
-static void write_magnitude_adjust(float x, unsigned char *out)
+static void write_magnitude_adjust(int x, unsigned char *out)
 {
-    DP_ASSERT(x >= 0.0f);
-    DP_ASSERT(x <= 10.0f);
-    DP_write_littleendian_uint16(
-        DP_float_to_uint16(
-            x * ((float)UINT16_MAX / DP_FILTER_PROPS_ADJUST_MAGNITUDE_MAX)),
-        out);
+    DP_ASSERT(x >= -100);
+    DP_ASSERT(x <= 100);
+    DP_write_littleendian_int8(DP_int_to_int8(x), out);
 }
 
-static float read_magnitude_adjust(const unsigned char *data)
+static int read_magnitude_adjust(const unsigned char *data)
 {
-    uint16_t x = DP_read_littleendian_uint16(data);
-    if (x == 6553) {
-        return 1.0f; // Fudge this to be exact.
-    }
-    else {
-        return DP_uint16_to_float(x)
-             / ((float)UINT16_MAX / DP_FILTER_PROPS_ADJUST_MAGNITUDE_MAX);
-    }
+    return DP_clamp_int(DP_read_littleendian_int8(data), -100, 100);
 }
 
 
@@ -289,13 +276,13 @@ static size_t serialize_hsv_adjust(DP_FilterPropsHsvAdjust *fpha,
                                    unsigned char *(*get_buffer)(void *, size_t),
                                    void *user)
 {
-    size_t total_size = HEADER_SIZE + sizeof(int16_t) * (size_t)3;
+    size_t total_size = HEADER_SIZE + (size_t)4;
     unsigned char *buf = get_buffer(user, total_size);
     if (buf) {
         buf[0] = DP_int_to_uchar(DP_FILTER_TYPE_HSV_ADJUST);
-        write_hue_adjust(fpha->h, buf + 1);
+        write_angle_adjust(fpha->h, buf + 1);
         write_magnitude_adjust(fpha->s, buf + 3);
-        write_magnitude_adjust(fpha->v, buf + 5);
+        write_magnitude_adjust(fpha->v, buf + 4);
         return total_size;
     }
     else {
@@ -307,13 +294,13 @@ static size_t serialize_hsl_adjust(DP_FilterPropsHslAdjust *fpha,
                                    unsigned char *(*get_buffer)(void *, size_t),
                                    void *user)
 {
-    size_t total_size = HEADER_SIZE + sizeof(int16_t) * (size_t)3;
+    size_t total_size = HEADER_SIZE + (size_t)4;
     unsigned char *buf = get_buffer(user, total_size);
     if (buf) {
         buf[0] = DP_int_to_uchar(DP_FILTER_TYPE_HSL_ADJUST);
-        write_hue_adjust(fpha->h, buf + 1);
+        write_angle_adjust(fpha->h, buf + 1);
         write_magnitude_adjust(fpha->s, buf + 3);
-        write_magnitude_adjust(fpha->l, buf + 5);
+        write_magnitude_adjust(fpha->l, buf + 4);
         return total_size;
     }
     else {
@@ -325,13 +312,13 @@ static size_t serialize_hcy_adjust(DP_FilterPropsHcyAdjust *fpha,
                                    unsigned char *(*get_buffer)(void *, size_t),
                                    void *user)
 {
-    size_t total_size = HEADER_SIZE + sizeof(int16_t) * (size_t)3;
+    size_t total_size = HEADER_SIZE + (size_t)4;
     unsigned char *buf = get_buffer(user, total_size);
     if (buf) {
         buf[0] = DP_int_to_uchar(DP_FILTER_TYPE_HSL_ADJUST);
-        write_hue_adjust(fpha->h, buf + 1);
+        write_angle_adjust(fpha->h, buf + 1);
         write_magnitude_adjust(fpha->c, buf + 3);
-        write_magnitude_adjust(fpha->y, buf + 5);
+        write_magnitude_adjust(fpha->y, buf + 4);
         return total_size;
     }
     else {
@@ -365,10 +352,10 @@ size_t DP_filter_props_serialize(DP_FilterProps *fp,
 static DP_FilterProps *deserialize_hsv_adjust(const unsigned char *data,
                                               size_t size)
 {
-    if (size == 7) {
-        return DP_filter_props_new_hsv_adjust(read_hue_adjust(data + 1),
+    if (size == 5) {
+        return DP_filter_props_new_hsv_adjust(read_angle_adjust(data + 1),
                                               read_magnitude_adjust(data + 3),
-                                              read_magnitude_adjust(data + 5));
+                                              read_magnitude_adjust(data + 4));
     }
     else {
         DP_warn("Invalid size %zu for HSV_ADJUST filter", size);
@@ -379,10 +366,10 @@ static DP_FilterProps *deserialize_hsv_adjust(const unsigned char *data,
 static DP_FilterProps *deserialize_hsl_adjust(const unsigned char *data,
                                               size_t size)
 {
-    if (size == 7) {
-        return DP_filter_props_new_hsl_adjust(read_hue_adjust(data + 1),
+    if (size == 5) {
+        return DP_filter_props_new_hsl_adjust(read_angle_adjust(data + 1),
                                               read_magnitude_adjust(data + 3),
-                                              read_magnitude_adjust(data + 5));
+                                              read_magnitude_adjust(data + 4));
     }
     else {
         DP_warn("Invalid size %zu for HSL_ADJUST filter", size);
@@ -393,10 +380,10 @@ static DP_FilterProps *deserialize_hsl_adjust(const unsigned char *data,
 static DP_FilterProps *deserialize_hcy_adjust(const unsigned char *data,
                                               size_t size)
 {
-    if (size == 7) {
-        return DP_filter_props_new_hcy_adjust(read_hue_adjust(data + 1),
+    if (size == 5) {
+        return DP_filter_props_new_hcy_adjust(read_angle_adjust(data + 1),
                                               read_magnitude_adjust(data + 3),
-                                              read_magnitude_adjust(data + 5));
+                                              read_magnitude_adjust(data + 4));
     }
     else {
         DP_warn("Invalid size %zu for HCY_ADJUST filter", size);
@@ -457,17 +444,17 @@ void *DP_filter_props_internal(DP_FilterProps *fp)
 
 static bool effective_hsv_adjust(DP_FilterPropsHsvAdjust *fpha)
 {
-    return fpha->h != 0.0f || fpha->s != 1.0f || fpha->v != 1.0f;
+    return fpha->h != 0 || fpha->s != 0 || fpha->v != 0;
 }
 
 static bool effective_hsl_adjust(DP_FilterPropsHslAdjust *fpha)
 {
-    return fpha->h != 0.0f || fpha->s != 1.0f || fpha->l != 1.0f;
+    return fpha->h != 0 || fpha->s != 0 || fpha->l != 0;
 }
 
 static bool effective_hcy_adjust(DP_FilterPropsHcyAdjust *fpha)
 {
-    return fpha->h != 0.0f || fpha->c != 1.0f || fpha->y != 1.0f;
+    return fpha->h != 0 || fpha->c != 0 || fpha->y != 0;
 }
 
 bool DP_filter_props_effective(DP_FilterProps *fp)
@@ -510,57 +497,57 @@ void DP_filter_props_apply_tile(DP_FilterProps *fp, DP_TransientTile *tt,
 }
 
 
-float DP_filter_props_hsv_adjust_h(DP_FilterPropsHsvAdjust *fpha)
+int DP_filter_props_hsv_adjust_h(DP_FilterPropsHsvAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->h;
 }
 
-float DP_filter_props_hsv_adjust_s(DP_FilterPropsHsvAdjust *fpha)
+int DP_filter_props_hsv_adjust_s(DP_FilterPropsHsvAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->s;
 }
 
-float DP_filter_props_hsv_adjust_v(DP_FilterPropsHsvAdjust *fpha)
+int DP_filter_props_hsv_adjust_v(DP_FilterPropsHsvAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->v;
 }
 
 
-float DP_filter_props_hsl_adjust_h(DP_FilterPropsHslAdjust *fpha)
+int DP_filter_props_hsl_adjust_h(DP_FilterPropsHslAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->h;
 }
 
-float DP_filter_props_hsl_adjust_s(DP_FilterPropsHslAdjust *fpha)
+int DP_filter_props_hsl_adjust_s(DP_FilterPropsHslAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->s;
 }
 
-float DP_filter_props_hsl_adjust_l(DP_FilterPropsHslAdjust *fpha)
+int DP_filter_props_hsl_adjust_l(DP_FilterPropsHslAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->l;
 }
 
 
-float DP_filter_props_hcy_adjust_h(DP_FilterPropsHcyAdjust *fpha)
+int DP_filter_props_hcy_adjust_h(DP_FilterPropsHcyAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->h;
 }
 
-float DP_filter_props_hcy_adjust_c(DP_FilterPropsHcyAdjust *fpha)
+int DP_filter_props_hcy_adjust_c(DP_FilterPropsHcyAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->c;
 }
 
-float DP_filter_props_hcy_adjust_y(DP_FilterPropsHcyAdjust *fpha)
+int DP_filter_props_hcy_adjust_y(DP_FilterPropsHcyAdjust *fpha)
 {
     DP_ASSERT(fpha);
     return fpha->y;

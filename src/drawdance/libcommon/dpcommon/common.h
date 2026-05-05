@@ -305,6 +305,12 @@ DP_INLINE uint8_t DP_max_uint8(uint8_t x, uint8_t y)
     return x < y ? y : x;
 }
 
+DP_INLINE int DP_mod_int(int x, int n)
+{
+    int remainder = x % n;
+    return remainder < 0 ? remainder + n : remainder;
+}
+
 DP_INLINE double DP_lerp_double(double a, double b, double t)
 {
     return a + (t * (b - a));

@@ -4,16 +4,19 @@
 #include "pixels.h"
 #include "tile.h"
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 #include <helpers.h>
 
 
-static void filter_pixels_with(float h_adjust, float sc_adjust,
-                               float vly_adjust, int count,
+static void filter_pixels_with(int h, int sc, int vly, int count,
                                DP_Pixel15 *DP_RESTRICT dst,
                                const DP_Pixel15 *DP_RESTRICT src,
                                void (*from_rgb)(float *, float *, float *),
                                void (*to_rgb)(float *, float *, float *))
 {
+    float h_adjust = DP_int_to_float(h) / 360.0f;
+    float sc_adjust = DP_int_to_float(sc);   // FIXME
+    float vly_adjust = DP_int_to_float(vly); // FIXME
     for (int i = 0; i < count; ++i) {
         DP_Pixel15 dp = dst[i];
         if (dp.a != 0) {

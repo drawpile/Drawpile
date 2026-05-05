@@ -6,13 +6,6 @@
 DP_TYPEDEF_PERSISTENT(Tile);
 
 
-// If you think of HSV/HSL/HSY as a vector, hue is the angle; saturation,
-// chroma, lightness and luma is the magnitude. Hence this naming.
-#define DP_FILTER_PROPS_ADJUST_ANGLE_MIN     (-1.0f)
-#define DP_FILTER_PROPS_ADJUST_ANGLE_MAX     1.0f
-#define DP_FILTER_PROPS_ADJUST_MAGNITUDE_MIN 0.0f
-#define DP_FILTER_PROPS_ADJUST_MAGNITUDE_MAX 10.0f
-
 typedef enum DP_FilterType {
     DP_FILTER_TYPE_UNKNOWN = 1,
     DP_FILTER_TYPE_HSV_ADJUST,
@@ -31,9 +24,9 @@ DP_FilterProps *DP_filter_props_new_unknown(int actual_type,
                                             const unsigned char *data,
                                             size_t size);
 
-DP_FilterProps *DP_filter_props_new_hsv_adjust(float h, float s, float v);
-DP_FilterProps *DP_filter_props_new_hsl_adjust(float h, float s, float l);
-DP_FilterProps *DP_filter_props_new_hcy_adjust(float h, float c, float y);
+DP_FilterProps *DP_filter_props_new_hsv_adjust(int h, int s, int v);
+DP_FilterProps *DP_filter_props_new_hsl_adjust(int h, int s, int l);
+DP_FilterProps *DP_filter_props_new_hcy_adjust(int h, int c, int y);
 
 
 DP_FilterProps *DP_filter_props_incref(DP_FilterProps *fp);
@@ -70,17 +63,17 @@ void DP_filter_props_apply_tile(DP_FilterProps *fp, DP_TransientTile *tt,
                                 DP_Tile *t);
 
 
-float DP_filter_props_hsv_adjust_h(DP_FilterPropsHsvAdjust *fpha);
-float DP_filter_props_hsv_adjust_s(DP_FilterPropsHsvAdjust *fpha);
-float DP_filter_props_hsv_adjust_v(DP_FilterPropsHsvAdjust *fpha);
+int DP_filter_props_hsv_adjust_h(DP_FilterPropsHsvAdjust *fpha);
+int DP_filter_props_hsv_adjust_s(DP_FilterPropsHsvAdjust *fpha);
+int DP_filter_props_hsv_adjust_v(DP_FilterPropsHsvAdjust *fpha);
 
-float DP_filter_props_hsl_adjust_h(DP_FilterPropsHslAdjust *fpha);
-float DP_filter_props_hsl_adjust_s(DP_FilterPropsHslAdjust *fpha);
-float DP_filter_props_hsl_adjust_l(DP_FilterPropsHslAdjust *fpha);
+int DP_filter_props_hsl_adjust_h(DP_FilterPropsHslAdjust *fpha);
+int DP_filter_props_hsl_adjust_s(DP_FilterPropsHslAdjust *fpha);
+int DP_filter_props_hsl_adjust_l(DP_FilterPropsHslAdjust *fpha);
 
-float DP_filter_props_hcy_adjust_h(DP_FilterPropsHcyAdjust *fpha);
-float DP_filter_props_hcy_adjust_c(DP_FilterPropsHcyAdjust *fpha);
-float DP_filter_props_hcy_adjust_y(DP_FilterPropsHcyAdjust *fpha);
+int DP_filter_props_hcy_adjust_h(DP_FilterPropsHcyAdjust *fpha);
+int DP_filter_props_hcy_adjust_c(DP_FilterPropsHcyAdjust *fpha);
+int DP_filter_props_hcy_adjust_y(DP_FilterPropsHcyAdjust *fpha);
 
 
 #endif
