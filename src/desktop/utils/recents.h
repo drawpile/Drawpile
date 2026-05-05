@@ -35,6 +35,18 @@ public:
 		static QString toStringFrom(const QString &host, int port);
 	};
 
+	enum class Source {
+		Unknown,
+		Open,
+		Save,
+		SaveAs,
+		SavePreResetImageAs,
+		Export,
+		ExportSelection,
+		Download,
+		DownloadSelection,
+	};
+
 	explicit Recents(StateDatabase &state);
 
 #ifndef __EMSCRIPTEN__

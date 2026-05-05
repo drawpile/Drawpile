@@ -59,8 +59,17 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 
 	nameLabel->setText(
 		QStringLiteral("<span style=\"font-size:large;\">%1</span>")
-			.arg(entry.baseName()));
+			.arg(entry.mostDescriptiveBaseName()));
 	nameLabel->setToolTip(entry.path());
+
+	QString sessionTitle = entry.lastSessionTitle().trimmed();
+	if(!sessionTitle.isEmpty()) {
+		QLabel *sessionTitleLabel = new QLabel;
+		sessionTitleLabel->setWordWrap(true);
+		sessionTitleLabel->setTextFormat(Qt::PlainText);
+		sessionTitleLabel->setText(tr("Session: %1").arg(sessionTitle));
+		infoLayout->addWidget(sessionTitleLabel);
+	}
 
 	QLabel *mtimeLabel = new QLabel;
 	mtimeLabel->setWordWrap(true);

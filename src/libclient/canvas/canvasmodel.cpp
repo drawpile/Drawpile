@@ -149,6 +149,18 @@ void CanvasModel::loadPlayer(DP_Player *player)
 		m_localUserId, drawdance::CanvasState::null(), player);
 }
 
+void CanvasModel::setTitle(const QString &title)
+{
+	if(m_title != title) {
+		m_title = title;
+		if(m_projectRecorder && !title.isEmpty()) {
+			setProjectRecordingMetadataString(
+				QStringLiteral("last_session_title"), title);
+		}
+		emit titleChanged(title);
+	}
+}
+
 QSize CanvasModel::size() const
 {
 	return m_paintengine->viewCanvasState().size();
@@ -710,6 +722,12 @@ bool CanvasModel::startProjectRecording(
 		return false;
 	}
 
+	if(!m_title.isEmpty()) {
+		m_projectRecorder->setMetadatum(
+			QStringLiteral("last_session_title"),
+			drawdance::Query::Param(m_title));
+	}
+
 	if(requestMetadata) {
 		requestProjectRecordingMetadata();
 	}
@@ -789,6 +807,13 @@ void CanvasModel::requestProjectRecordingMetadata()
 		m_projectRecorder->stopMetadataTimer();
 		m_paintengine->enqueueProjectMetadataRequest();
 	}
+}
+
+bool CanvasModel::setProjectRecordingMetadataString(
+	const QString &name, const QString &value)
+{
+	return m_projectRecorder && m_projectRecorder->setMetadatum(
+									name, drawdance::Query::Param(value));
 }
 
 void CanvasModel::addProjectRecordingMetadataSource(

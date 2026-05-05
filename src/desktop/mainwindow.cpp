@@ -1095,21 +1095,42 @@ void MainWindow::loadBlankDocument(const QSize &size, const QColor &background)
 		autoRecord);
 }
 
-/**
- * The file is added to the list of recent files and the menus on all open
- * mainwindows are updated.
- * @param file filename to add
- */
-void MainWindow::addRecentFile(const QString &file)
+void MainWindow::addRecentFile(const QString &file, int source)
 {
-#ifdef __EMSCRIPTEN__
-	Q_UNUSED(file);
-#else
 	if(!file.isEmpty()) {
+#ifndef __EMSCRIPTEN__
 		utils::Recents &recents = dpApp().recents();
 		recents.addFile(file);
-	}
 #endif
+
+		canvas::CanvasModel *canvas = m_doc->canvas();
+		if(canvas && canvas->isProjectRecording()) {
+			using Source = utils::Recents::Source;
+
+			QString metadataName;
+			switch(Source(source)) {
+			case Source::Unknown:
+			case Source::Open:
+				// Not relevant.
+				break;
+			case Source::Save:
+			case Source::SaveAs:
+			case Source::SavePreResetImageAs:
+			case Source::Download:
+				metadataName = QStringLiteral("last_save");
+				break;
+			case Source::Export:
+			case Source::ExportSelection:
+			case Source::DownloadSelection:
+				metadataName = QStringLiteral("last_export");
+				break;
+			}
+
+			if(!metadataName.isEmpty()) {
+				canvas->setProjectRecordingMetadataString(metadataName, file);
+			}
+		}
+	}
 }
 
 /**
@@ -2880,7 +2901,7 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 		QThreadPool::globalInstance()->start(loader);
 	}
 
-	addRecentFile(path);
+	addRecentFile(path, int(utils::Recents::Source::Open));
 }
 
 /**
@@ -2922,7 +2943,7 @@ bool MainWindow::save()
 		}
 		return false;
 	} else {
-		addRecentFile(result);
+		addRecentFile(result, int(utils::Recents::Source::Save));
 		return true;
 	}
 }
@@ -2946,7 +2967,7 @@ void MainWindow::saveSelection()
 {
 	QString result = FileWrangler{this}.saveSelectionAs(m_doc);
 	if(!result.isEmpty()) {
-		addRecentFile(result);
+		addRecentFile(result, int(utils::Recents::Source::ExportSelection));
 	}
 }
 
@@ -2955,7 +2976,7 @@ void MainWindow::exportImage()
 	QString result = FileWrangler(this).saveImageAs(
 		m_doc, true, DP_SAVE_IMAGE_UNKNOWN, false);
 	if(!result.isEmpty()) {
-		addRecentFile(result);
+		addRecentFile(result, int(utils::Recents::Source::Export));
 	}
 }
 
@@ -2964,7 +2985,7 @@ void MainWindow::exportImageAgain()
 {
 	QString result = FileWrangler(this).saveImage(m_doc, true);
 	if(!result.isEmpty()) {
-		addRecentFile(result);
+		addRecentFile(result, int(utils::Recents::Source::Export));
 	}
 }
 #	endif
@@ -3236,7 +3257,7 @@ void MainWindow::savePreResetImageAs()
 		if(!result.isEmpty()) {
 			m_preResetCanvasState = drawdance::CanvasState::null();
 			m_canvasView->hideResetNotice();
-			addRecentFile(result);
+			addRecentFile(result, int(utils::Recents::Source::SavePreResetImageAs));
 		}
 #endif
 	}
@@ -9337,7 +9358,7 @@ bool MainWindow::saveAsType(int saveImageType, bool force)
 	if(result.isEmpty()) {
 		return false;
 	} else {
-		addRecentFile(result);
+		addRecentFile(result, int(utils::Recents::Source::SaveAs));
 		return true;
 	}
 }
