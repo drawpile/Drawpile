@@ -64,7 +64,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 
 	QLabel *mtimeLabel = new QLabel;
 	mtimeLabel->setWordWrap(true);
-	mtimeLabel->setTextFormat(Qt::RichText);
+	mtimeLabel->setTextFormat(Qt::PlainText);
 	infoLayout->addWidget(mtimeLabel);
 
 	QLocale locale;
@@ -80,7 +80,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 
 	QLabel *sizeLabel = new QLabel;
 	sizeLabel->setWordWrap(true);
-	sizeLabel->setTextFormat(Qt::RichText);
+	sizeLabel->setTextFormat(Qt::PlainText);
 	infoLayout->addWidget(sizeLabel);
 
 	sizeLabel->setText(
@@ -89,7 +89,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 
 	QLabel *statusLabel = new QLabel;
 	statusLabel->setWordWrap(true);
-	statusLabel->setTextFormat(Qt::RichText);
+	statusLabel->setTextFormat(Qt::PlainText);
 	infoLayout->addWidget(statusLabel);
 
 	bool canRecover = true;
