@@ -46,6 +46,11 @@ inline QString writablePath(const QString &dirOrFileName, const QString &filenam
 	return writablePath(QStandardPaths::AppDataLocation, dirOrFileName, filename);
 }
 
+inline QString autosaveWritablePath(const QString &fileName = QString())
+{
+	return writablePath(QStringLiteral("autosave"), fileName);
+}
+
 /**
  * @brief Gets the name of the file without any directories.
  *

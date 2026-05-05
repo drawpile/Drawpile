@@ -17,6 +17,7 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_CLOSE_ERROR,
     DP_PROJECT_WORKER_EVENT_WRITE_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_OPEN_ERROR,
+    DP_PROJECT_WORKER_EVENT_SESSION_RESUME_ERROR,
     DP_PROJECT_WORKER_EVENT_SESSION_CLOSE_ERROR,
     DP_PROJECT_WORKER_EVENT_MESSAGE_RECORD_ERROR,
     DP_PROJECT_WORKER_EVENT_SNAPSHOT_ERROR,
@@ -90,6 +91,11 @@ void DP_project_worker_close(DP_ProjectWorker *pw, unsigned int file_id);
 void DP_project_worker_session_open(DP_ProjectWorker *pw, unsigned int file_id,
                                     int source_type, const char *source_param,
                                     const char *protocol, unsigned int flags);
+
+void DP_project_worker_session_resume(DP_ProjectWorker *pw,
+                                      unsigned int file_id,
+                                      long long session_id,
+                                      const char *protocol);
 
 void DP_project_worker_session_close(DP_ProjectWorker *pw, unsigned int file_id,
                                      unsigned int flags_to_set);

@@ -178,6 +178,10 @@ void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
                                              DP_ProjectWorker *pw,
                                              unsigned int file_id);
 
+void DP_paint_engine_project_recording_resume(DP_PaintEngine *pe,
+                                              DP_ProjectWorker *pw,
+                                              unsigned int file_id);
+
 bool DP_paint_engine_project_recording_stop(DP_PaintEngine *pe);
 
 bool DP_paint_engine_is_project_recording(DP_PaintEngine *pe);

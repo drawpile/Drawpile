@@ -678,62 +678,36 @@ bool CanvasModel::startProjectRecording(
 	config::Config *cfg, int sourceType, bool requestMetadata,
 	const QString &continueSourceParam, long long continueSequenceId)
 {
-	if(m_projectRecorder) {
-		Q_EMIT projectRecordingErrorOccurred(
-			tr("Project recording is already active"));
+	return createProjectRecorder(
+		cfg, requestMetadata,
+		[this, sourceType, continueSourceParam,
+		 continueSequenceId](QString *outError) {
+			return m_projectRecorder->startProjectRecording(
+				m_paintengine, sourceType,
+				protocol::ProtocolVersion::current().asString(),
+				continueSourceParam, continueSequenceId, outError);
+		});
+}
+
+bool CanvasModel::resumeProjectRecording(
+	config::Config *cfg, const QString &path, long long resumeSessionId,
+	const QString &continueSourceParam, long long continueSequenceId)
+{
+	if(resumeSessionId > 0LL) {
+		return createProjectRecorder(
+			cfg, true,
+			[this, &path, resumeSessionId, &continueSourceParam,
+			 continueSequenceId](QString *outError) {
+				return m_projectRecorder->resumeProjectRecording(
+					m_paintengine,
+					protocol::ProtocolVersion::current().asString(), path,
+					resumeSessionId, continueSourceParam, continueSequenceId,
+					outError);
+			});
+	} else {
+		Q_EMIT projectRecordingErrorOccurred(tr("No session to resume given"));
 		return false;
 	}
-
-	if(m_paintengine->hasPlayback()) {
-		Q_EMIT projectRecordingErrorOccurred(tr("Playback is active"));
-		return false;
-	}
-
-	m_projectRecorder = new project::ProjectRecorder(cfg, this);
-	connect(
-		m_projectRecorder, &project::ProjectRecorder::metadataRequested,
-		m_paintengine, &PaintEngine::enqueueProjectMetadataRequest);
-	connect(
-		m_projectRecorder, &project::ProjectRecorder::snapshotRequested,
-		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
-	connect(
-		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
-		&CanvasModel::projectRecordingSizeChanged);
-	connect(
-		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
-		&CanvasModel::handleProjectRecordingSizeChanged);
-	connect(
-		m_projectRecorder, &project::ProjectRecorder::errorOccurred, this,
-		&CanvasModel::handleProjectRecordingError, Qt::QueuedConnection);
-	m_projectRecorder->setSizeLimitInBytes(size_t(
-		qMax(0.0, cfg->getAutoRecordSizeLimitGiB()) * 1024.0 * 1024.0 *
-		1024.0));
-	m_projectRecordingLastWarnedSizeLimit = 0;
-
-	QString error;
-	bool started = m_projectRecorder->startProjectRecording(
-		m_paintengine, sourceType,
-		protocol::ProtocolVersion::current().asString(), continueSourceParam,
-		continueSequenceId, &error);
-	if(!started) {
-		delete m_projectRecorder;
-		m_projectRecorder = nullptr;
-		Q_EMIT projectRecordingErrorOccurred(error);
-		return false;
-	}
-
-	if(!m_title.isEmpty()) {
-		m_projectRecorder->setMetadatum(
-			QStringLiteral("last_session_title"),
-			drawdance::Query::Param(m_title));
-	}
-
-	if(requestMetadata) {
-		requestProjectRecordingMetadata();
-	}
-
-	Q_EMIT projectRecordingStarted();
-	return true;
 }
 
 bool CanvasModel::cancelProjectRecording()
@@ -809,11 +783,22 @@ void CanvasModel::requestProjectRecordingMetadata()
 	}
 }
 
+bool CanvasModel::setProjectRecordingMetadataInt(const QString &name, int value)
+{
+	return m_projectRecorder && m_projectRecorder->setMetadatum(
+									name, drawdance::Query::Param(value));
+}
+
 bool CanvasModel::setProjectRecordingMetadataString(
 	const QString &name, const QString &value)
 {
 	return m_projectRecorder && m_projectRecorder->setMetadatum(
 									name, drawdance::Query::Param(value));
+}
+
+bool CanvasModel::removeProjectRecordingMetadata(const QStringList &names)
+{
+	return m_projectRecorder && m_projectRecorder->removeMetadata(names);
 }
 
 void CanvasModel::addProjectRecordingMetadataSource(
@@ -827,6 +812,65 @@ void CanvasModel::addProjectRecordingMetadataSource(
 void CanvasModel::updatePaintEngineTransform()
 {
 	m_paintengine->setTransformActive(m_transform->isActive());
+}
+
+bool CanvasModel::createProjectRecorder(
+	config::Config *cfg, bool requestMetadata,
+	const std::function<bool(QString *)> &fn)
+{
+	if(m_projectRecorder) {
+		Q_EMIT projectRecordingErrorOccurred(
+			tr("Project recording is already active"));
+		return false;
+	}
+
+	if(m_paintengine->hasPlayback()) {
+		Q_EMIT projectRecordingErrorOccurred(tr("Playback is active"));
+		return false;
+	}
+
+	m_projectRecorder = new project::ProjectRecorder(cfg, this);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::metadataRequested,
+		m_paintengine, &PaintEngine::enqueueProjectMetadataRequest);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::snapshotRequested,
+		m_paintengine, &PaintEngine::enqueueProjectSnapshotRequest);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
+		&CanvasModel::projectRecordingSizeChanged);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::sizeChanged, this,
+		&CanvasModel::handleProjectRecordingSizeChanged);
+	connect(
+		m_projectRecorder, &project::ProjectRecorder::errorOccurred, this,
+		&CanvasModel::handleProjectRecordingError, Qt::QueuedConnection);
+	m_projectRecorder->setSizeLimitInBytes(size_t(
+		qMax(0.0, cfg->getAutoRecordSizeLimitGiB()) * 1024.0 * 1024.0 *
+		1024.0));
+	m_projectRecordingLastWarnedSizeLimit = 0;
+
+	QString error;
+	bool started = fn(&error);
+	if(!started) {
+		delete m_projectRecorder;
+		m_projectRecorder = nullptr;
+		Q_EMIT projectRecordingErrorOccurred(error);
+		return false;
+	}
+
+	if(!m_title.isEmpty()) {
+		m_projectRecorder->setMetadatum(
+			QStringLiteral("last_session_title"),
+			drawdance::Query::Param(m_title));
+	}
+
+	if(requestMetadata) {
+		requestProjectRecordingMetadata();
+	}
+
+	Q_EMIT projectRecordingStarted();
+	return true;
 }
 
 bool CanvasModel::stopProjectRecording(bool remove, bool notify)

@@ -15,6 +15,7 @@
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/global.h"
+#include "libclient/project/resume.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/colorscheme.h"
 #include "libclient/utils/logging.h"
@@ -677,7 +678,13 @@ void DrawpileApp::handleAndroidScalingDialogDismissed()
 	scalingJustChanged = false;
 	if(scalingMainWindow) {
 		newDefaultDocument(scalingMainWindow);
-		scalingMainWindow->start();
+		QString autoResumePath =
+			project::getAutoResumePath(utils::paths::autosaveWritablePath());
+		if(autoResumePath.isEmpty()) {
+			scalingMainWindow->start();
+		} else {
+			scalingMainWindow->resumeAutosave(autoResumePath);
+		}
 		scalingMainWindow.clear();
 	}
 }
@@ -764,6 +771,12 @@ void DrawpileApp::newDefaultDocument(MainWindow *win)
 
 void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 {
+	openStartOrResume(page, restoreWindowPosition, false);
+}
+
+void DrawpileApp::openStartOrResume(
+	const QString &page, bool restoreWindowPosition, bool tryResume)
+{
 	MainWindow *win = openDefault(restoreWindowPosition);
 	// Importing an animation is not actually a start dialog page, it's just
 	// here as an internal option to let us start a new process if the user
@@ -777,8 +790,19 @@ void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 			QStringLiteral("import-animation-layers"), Qt::CaseInsensitive) ==
 		0) {
 		win->importAnimationLayers();
-	} else if(page.compare(QStringLiteral("none"), Qt::CaseInsensitive) != 0) {
-		win->showStartDialogOnPage(int(getStartDialogEntry(page)));
+	} else {
+		QString autoResumePath;
+		if(tryResume) {
+			autoResumePath = project::getAutoResumePath(
+				utils::paths::autosaveWritablePath());
+		}
+
+		if(!autoResumePath.isEmpty()) {
+			win->resumeAutosave(autoResumePath);
+		} else if(
+			page.compare(QStringLiteral("none"), Qt::CaseInsensitive) != 0) {
+			win->showStartDialogOnPage(int(getStartDialogEntry(page)));
+		}
 	}
 }
 

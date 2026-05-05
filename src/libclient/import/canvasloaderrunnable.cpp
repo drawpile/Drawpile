@@ -15,7 +15,7 @@ void CanvasLoaderRunnable::run()
 	timer.start();
 	m_canvasState = drawdance::CanvasState::load(
 		m_path, &m_result, &m_type, &m_sessionSourceParam,
-		&m_sessionSequenceId);
+		&m_sessionSequenceId, &m_resumeSessionId);
 	QString error, detail;
 	if(m_result != DP_LOAD_RESULT_SUCCESS) {
 		error = impex::getLoadResultMessage(m_result);

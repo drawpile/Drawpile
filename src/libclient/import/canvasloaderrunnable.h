@@ -23,6 +23,7 @@ public:
 	const drawdance::CanvasState &canvasState() const { return m_canvasState; }
 	const QString &sessionSourceParam() const { return m_sessionSourceParam; }
 	long long sessionSequenceId() const { return m_sessionSequenceId; }
+	long long resumeSessionId() const { return m_resumeSessionId; }
 
 signals:
 	void loadComplete(
@@ -35,6 +36,7 @@ private:
 	drawdance::CanvasState m_canvasState;
 	QString m_sessionSourceParam;
 	long long m_sessionSequenceId = -1LL;
+	long long m_resumeSessionId = 0LL;
 };
 
 #endif

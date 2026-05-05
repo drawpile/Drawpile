@@ -1287,6 +1287,29 @@ void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
     pe->record.file_id = file_id;
 }
 
+void DP_paint_engine_project_recording_resume(DP_PaintEngine *pe,
+                                              DP_ProjectWorker *pw,
+                                              unsigned int file_id)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(pw);
+
+    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+    DP_message_queue_push_noinc(&pe->remote_queue,
+                                DP_msg_internal_recorder_start_new(0));
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+    // Wait for the paint engine to post to this semaphore.
+    DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
+    DP_ASSERT(pe->remote_queue.used == 0);
+
+    pe->record.pw = pw;
+    pe->record.file_id = file_id;
+    DP_project_worker_message_internal_record(
+        pw, file_id, DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESUMED, 0u, NULL,
+        (size_t)0, 0u);
+}
+
 bool DP_paint_engine_project_recording_stop(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);

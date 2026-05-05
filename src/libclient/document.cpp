@@ -19,6 +19,7 @@ extern "C" {
 #include "libclient/export/thumbnailerrunnable.h"
 #include "libclient/net/invitelistmodel.h"
 #include "libclient/net/login.h"
+#include "libclient/project/resume.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/transform.h"
@@ -219,6 +220,10 @@ void Document::initCanvas()
 		m_canvas->aclState(), &canvas::AclState::localOpChanged, m_authList,
 		&net::AuthListModel::setIsOperator);
 
+	connect(
+		m_canvas, &canvas::CanvasModel::projectRecordingStarted, this,
+		&Document::updateProjectRecordingPathsAndTypes);
+
 	emit canvasChanged(m_canvas);
 	m_canvas->paintEngine()->resetAcl(m_client->myId());
 
@@ -316,6 +321,57 @@ void Document::loadState(
 		if(!path.isEmpty()) {
 			m_canvas->addProjectRecordingMetadataSource(
 				DP_PROJECT_SOURCE_FILE, path);
+		}
+	}
+}
+
+void Document::resumeState(
+	const drawdance::CanvasState &canvasState, const QString &path,
+	bool autoRecord, long long resumeSessionId)
+{
+	m_client->resetMyId();
+	initCanvas();
+
+	project::ResumeMetadata rm = project::getResumeMetadata(path);
+
+	if(rm.savePath.isEmpty() || rm.saveType <= int(DP_SAVE_IMAGE_UNKNOWN) ||
+	   rm.saveType > int(DP_SAVE_IMAGE_LAST)) {
+		setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+	} else {
+		setCurrentPath(rm.savePath, DP_SaveImageType(rm.saveType));
+	}
+
+	if(rm.exportPath.isEmpty() || rm.exportType <= int(DP_SAVE_IMAGE_UNKNOWN) ||
+	   rm.exportType > int(DP_SAVE_IMAGE_LAST)) {
+		setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+	} else {
+		setExportPath(rm.exportPath, DP_SaveImageType(rm.exportType));
+	}
+
+	if(rm.projectPath.isEmpty()) {
+		m_projectDirty = false;
+		setProjectPath(QString());
+	} else {
+		m_projectDirty = true;
+		setProjectPath(rm.projectPath);
+	}
+
+	markDirty();
+	m_canvas->loadCanvasState(m_cfg->getEngineUndoDepth(), canvasState);
+	if(m_canvas->resumeProjectRecording(
+		   m_cfg, path, resumeSessionId, rm.continueSourceParam,
+		   rm.continueSequenceId)) {
+		Q_EMIT m_toolctrl->showMessageRequested(tr("Resumed."));
+	} else {
+		// Fallback: if we can't resume a project recording, start a new one if
+		// the user has that enabled.
+		if(autoRecord) {
+			m_canvas->startProjectRecording(
+				m_cfg, DP_PROJECT_SOURCE_FILE, true);
+			if(!path.isEmpty()) {
+				m_canvas->addProjectRecordingMetadataSource(
+					DP_PROJECT_SOURCE_FILE, path);
+			}
 		}
 	}
 }
@@ -936,6 +992,7 @@ void Document::setCurrentPath(const QString &path, DP_SaveImageType type)
 	if(m_currentPath != path || m_currentType != type) {
 		m_currentPath = path;
 		m_currentType = path.isEmpty() ? DP_SAVE_IMAGE_UNKNOWN : type;
+		updateProjectRecordingCurrentPathAndType();
 		emit currentPathChanged(path);
 	}
 }
@@ -945,6 +1002,7 @@ void Document::setExportPath(const QString &path, DP_SaveImageType type)
 	if(m_exportPath != path || m_exportType != type) {
 		m_exportPath = path;
 		m_exportType = path.isEmpty() ? DP_SAVE_IMAGE_UNKNOWN : type;
+		updateProjectRecordingExportPathAndType();
 		emit exportPathChanged(path);
 	}
 }
@@ -953,6 +1011,7 @@ void Document::setProjectPath(const QString &path)
 {
 	if(m_projectPath != path) {
 		m_projectPath = path;
+		updateProjectRecordingProjectPath();
 		Q_EMIT projectPathChanged(path);
 	}
 }
@@ -2236,6 +2295,56 @@ void Document::onThumbnailGenerationFailed(
 		net::ServerCommand::make(
 			QStringLiteral("thumbnail-error"),
 			{QString::fromUtf8(correlator), error}));
+}
+
+void Document::updateProjectRecordingPathsAndTypes()
+{
+	updateProjectRecordingCurrentPathAndType();
+	updateProjectRecordingExportPathAndType();
+	updateProjectRecordingProjectPath();
+}
+
+void Document::updateProjectRecordingCurrentPathAndType()
+{
+	if(m_canvas && m_canvas->isProjectRecording()) {
+		if(m_currentPath.isEmpty() || m_currentType == DP_SAVE_IMAGE_UNKNOWN) {
+			m_canvas->removeProjectRecordingMetadata(
+				{QStringLiteral("save_path"), QStringLiteral("save_type")});
+		} else {
+			m_canvas->setProjectRecordingMetadataString(
+				QStringLiteral("save_path"), m_currentPath);
+			m_canvas->setProjectRecordingMetadataInt(
+				QStringLiteral("save_type"), int(m_currentType));
+		}
+	}
+}
+
+void Document::updateProjectRecordingExportPathAndType()
+{
+	if(m_canvas && m_canvas->isProjectRecording()) {
+		if(m_exportPath.isEmpty() || m_exportType == DP_SAVE_IMAGE_UNKNOWN) {
+			m_canvas->removeProjectRecordingMetadata(
+				{QStringLiteral("export_path"), QStringLiteral("export_type")});
+		} else {
+			m_canvas->setProjectRecordingMetadataString(
+				QStringLiteral("export_path"), m_exportPath);
+			m_canvas->setProjectRecordingMetadataInt(
+				QStringLiteral("export_type"), int(m_exportType));
+		}
+	}
+}
+
+void Document::updateProjectRecordingProjectPath()
+{
+	if(m_canvas && m_canvas->isProjectRecording()) {
+		if(m_projectPath.isEmpty()) {
+			m_canvas->removeProjectRecordingMetadata(
+				{QStringLiteral("project_path")});
+		} else {
+			m_canvas->setProjectRecordingMetadataString(
+				QStringLiteral("project_path"), m_projectPath);
+		}
+	}
 }
 
 #ifdef HAVE_CLIPBOARD_EMULATION

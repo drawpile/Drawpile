@@ -149,6 +149,15 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SIZE_ERROR_QUERY   (-1803)
 #define DP_PROJECT_SIZE_ERROR_EMPTY   (-1804)
 
+#define DP_PROJECT_SESSION_RESUME_ERROR_UNKNOWN      (-1900)
+#define DP_PROJECT_SESSION_RESUME_ERROR_MISUSE       (-1901)
+#define DP_PROJECT_SESSION_RESUME_ERROR_ALREADY_OPEN (-1902)
+#define DP_PROJECT_SESSION_RESUME_ERROR_PREPARE      (-1903)
+#define DP_PROJECT_SESSION_RESUME_ERROR_QUERY        (-1904)
+#define DP_PROJECT_SESSION_RESUME_ERROR_CLOSED       (-1905)
+#define DP_PROJECT_SESSION_RESUME_ERROR_PROTOCOL     (-1906)
+#define DP_PROJECT_SESSION_RESUME_ERROR_NOT_FOUND    (-1907)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -159,6 +168,7 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SOURCE_BLANK   1
 #define DP_PROJECT_SOURCE_FILE    2
 #define DP_PROJECT_SOURCE_SESSION 3
+#define DP_PROJECT_SOURCE_RESUME  4
 
 #define DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED (1u << 0u)
 
@@ -168,6 +178,7 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET      (-1)
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI      (-2)
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD (-3)
+#define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESUMED    (-4)
 
 #define DP_PROJECT_SNAPSHOT_FLAG_COMPLETE       (1u << 0u)
 #define DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT     (1u << 1u)
@@ -224,6 +235,7 @@ typedef struct DP_ProjectCanvasLoad {
     DP_CanvasState *cs;
     char *session_source_param;
     long long session_sequence_id;
+    long long resume_session_id;
 } DP_ProjectCanvasLoad;
 
 typedef enum DP_ProjectVerifyStatus {
@@ -367,6 +379,9 @@ int DP_project_session_open(DP_Project *prj, int source_type,
                             const char *source_param, const char *protocol,
                             unsigned int flags);
 
+int DP_project_session_resume(DP_Project *prj, long long session_id,
+                              const char *protocol);
+
 // Closes the currently open session, ORing in the given flags to set. Returns 0
 // on success, a negative DP_PROJECT_SESSION_CLOSE_ERROR_* value on failure and
 // DP_PROJECT_SESSION_CLOSE_NOT_OPEN if there's not session to close.
@@ -460,7 +475,8 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
 DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
     DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
-    char **out_session_source_param, long long *out_session_sequence_id);
+    char **out_session_source_param, long long *out_session_sequence_id,
+    long long *out_resume_session_id);
 
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_*,

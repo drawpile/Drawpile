@@ -43,7 +43,8 @@ public:
 		const QString &path, DP_LoadResult *outResult = nullptr,
 		DP_SaveImageType *outType = nullptr,
 		QString *outSessionSourceParam = nullptr,
-		long long *outSessionSequenceId = nullptr);
+		long long *outSessionSequenceId = nullptr,
+		long long *outResumeSessionId = nullptr);
 
 	CanvasState();
 	CanvasState(const CanvasState &other);

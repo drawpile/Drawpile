@@ -8,6 +8,7 @@
 #include <QMetaType>
 #include <QObject>
 #include <QPointer>
+#include <functional>
 
 class QJsonObject;
 struct DP_LocalStateAction;
@@ -135,6 +136,10 @@ public:
 		config::Config *cfg, int sourceType, bool requestMetadata = true,
 		const QString &continueSourceParam = QString(),
 		long long continueSequenceId = 0LL);
+	bool resumeProjectRecording(
+		config::Config *cfg, const QString &path, long long resumeSessionId,
+		const QString &continueSourceParam = QString(),
+		long long continueSequenceId = 0LL);
 	bool cancelProjectRecording();
 	bool discardProjectRecording();
 	bool discardProjectRecordingReinit();
@@ -152,8 +157,11 @@ public:
 
 	void requestProjectRecordingMetadata();
 
+	bool setProjectRecordingMetadataInt(const QString &name, int value);
 	bool setProjectRecordingMetadataString(
 		const QString &name, const QString &value);
+
+	bool removeProjectRecordingMetadata(const QStringList &names);
 
 	void addProjectRecordingMetadataSource(
 		int sourceType, const QString &sourceParam);
@@ -260,6 +268,9 @@ private:
 
 	void updatePaintEngineTransform();
 
+	bool createProjectRecorder(
+		config::Config *cfg, bool requestMetadata,
+		const std::function<bool(QString *)> &fn);
 	bool stopProjectRecording(bool remove, bool notify);
 	void handleProjectRecordingSizeChanged(
 		size_t sizeInBytes, size_t sizeLimitInBytes);

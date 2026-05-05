@@ -2608,6 +2608,63 @@ void MainWindow::showPermissionDeniedMessage(int feature)
 	}
 	m_canvasView->showPopupNotice(message);
 }
+
+void MainWindow::loadCanvasStateFromFile(
+	const QString &path, QTemporaryFile *tempFile, bool resume)
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	QProgressDialog *progressDialog = new QProgressDialog(this);
+	progressDialog->setRange(0, 0);
+	progressDialog->setCancelButton(nullptr);
+	if(resume) {
+		progressDialog->setMinimumDuration(0);
+		progressDialog->setLabelText(tr("Resuming…"));
+	} else {
+		progressDialog->setLabelText(tr("Opening file…"));
+		progressDialog->setMinimumDuration(500);
+	}
+
+	setEnabled(false);
+
+	CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(path, this);
+	loader->setAutoDelete(false);
+	connect(
+		loader, &CanvasLoaderRunnable::loadComplete, this,
+		[this, tempFile, resume, loader, progressDialog](
+			const QString &error, const QString &detail, qint64 elapsedMsec) {
+			delete tempFile;
+			setEnabled(true);
+			delete progressDialog;
+			QApplication::restoreOverrideCursor();
+
+			const drawdance::CanvasState &canvasState = loader->canvasState();
+			if(canvasState.isNull()) {
+				showErrorMessageWithDetails(error, detail);
+			} else {
+				showElapsedStatusMessage(
+					//: %1 is minutes, %2 is seconds, %3 is milliseconds.
+					tr("Canvas loaded in %1:%2.%3"), elapsedMsec);
+				bool autoRecord = dpAppConfig()->getAutoRecordHost();
+				if(resume) {
+					long long resumeSessionId = loader->resumeSessionId();
+					m_doc->resumeState(
+						canvasState, loader->path(), autoRecord,
+						resumeSessionId);
+				} else {
+					m_doc->loadState(
+						canvasState, loader->path(), loader->type(), false,
+						autoRecord, loader->sessionSourceParam(),
+						loader->sessionSequenceId());
+				}
+			}
+
+			loader->deleteLater();
+		},
+		Qt::QueuedConnection);
+
+	QThreadPool::globalInstance()->start(loader);
+}
+
 // clang-format off
 
 void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
@@ -2860,48 +2917,15 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 		}
 
 	} else {
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-		QProgressDialog *progressDialog = new QProgressDialog(this);
-		progressDialog->setRange(0, 0);
-		progressDialog->setMinimumDuration(500);
-		progressDialog->setCancelButton(nullptr);
-		progressDialog->setLabelText(tr("Opening file…"));
-		setEnabled(false);
-
-		CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(loadPath, this);
-		loader->setAutoDelete(false);
-		connect(
-			loader, &CanvasLoaderRunnable::loadComplete, this,
-			[=](const QString &error, const QString &detail,
-				qint64 elapsedMsec) {
-				delete tempFile;
-				setEnabled(true);
-				delete progressDialog;
-				QApplication::restoreOverrideCursor();
-
-				const drawdance::CanvasState &canvasState =
-					loader->canvasState();
-				if(canvasState.isNull()) {
-					showErrorMessageWithDetails(error, detail);
-				} else {
-					showElapsedStatusMessage(
-						//: %1 is minutes, %2 is seconds, %3 is milliseconds.
-						tr("Canvas loaded in %1:%2.%3"), elapsedMsec);
-					bool autoRecord = dpAppConfig()->getAutoRecordHost();
-					m_doc->loadState(
-						canvasState, loader->path(), loader->type(), false,
-						autoRecord, loader->sessionSourceParam(),
-						loader->sessionSequenceId());
-				}
-
-				loader->deleteLater();
-			},
-			Qt::QueuedConnection);
-
-		QThreadPool::globalInstance()->start(loader);
+		loadCanvasStateFromFile(loadPath, tempFile, false);
 	}
 
 	addRecentFile(path, int(utils::Recents::Source::Open));
+}
+
+void MainWindow::resumeAutosave(const QString &path)
+{
+	loadCanvasStateFromFile(path, nullptr, true);
 }
 
 /**

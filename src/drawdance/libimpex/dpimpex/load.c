@@ -1372,7 +1372,8 @@ DP_LoadContext DP_load_context_make(const char *path, DP_DrawContext *dc)
     DP_ASSERT(dc);
     return (DP_LoadContext){
         {path, "Layer 1", dc, 0u, DP_SAVE_IMAGE_UNKNOWN, NULL, NULL, NULL},
-        {NULL, NULL, 0LL, DP_LOAD_RESULT_BAD_ARGUMENTS, DP_SAVE_IMAGE_UNKNOWN},
+        {NULL, NULL, 0LL, 0LL, DP_LOAD_RESULT_BAD_ARGUMENTS,
+         DP_SAVE_IMAGE_UNKNOWN},
     };
 }
 
@@ -1502,6 +1503,7 @@ static bool load_project(DP_LoadContext *lc, bool snapshot_only)
         lc->out.cs = clean_up_canvas(pcl.cs, dc);
         lc->out.session_source_param = pcl.session_source_param;
         lc->out.session_sequence_id = pcl.session_sequence_id;
+        lc->out.resume_session_id = pcl.resume_session_id;
         return true;
     case DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH:
         lc->out.result = DP_LOAD_RESULT_BAD_MIMETYPE;
