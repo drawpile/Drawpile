@@ -211,30 +211,34 @@ void ProjectRecorder::unblockErrors()
 	m_errorsBlocked.storeRelaxed(0);
 }
 
-void ProjectRecorder::setMetadatum(
+bool ProjectRecorder::setMetadatum(
 	const QString &name, const drawdance::Query::Param &value)
 {
 	drawdance::DatabaseLocker locker(m_metaDb);
 	if(m_metaDb.isOpen()) {
 		drawdance::Query qry = m_metaDb.queryWithoutLock();
-		qry.exec(
+		return qry.exec(
 			"insert into metadata (name, value) values (?, ?)\n"
 			"    on conflict do update set value = excluded.value",
 			{name, value});
+	} else {
+		return false;
 	}
 }
 
-void ProjectRecorder::addMetadataSource(
+bool ProjectRecorder::addMetadataSource(
 	int sourceType, const QString &sourceParam)
 {
 	drawdance::DatabaseLocker locker(m_metaDb);
 	if(m_metaDb.isOpen()) {
 		drawdance::Query qry = m_metaDb.queryWithoutLock();
-		qry.exec(
+		return qry.exec(
 			"insert into sources (updated_at, source_type, source_param)\n"
 			"    values (unixepoch(), ?, ?)\n"
 			"    on conflict do update set updated_at = excluded.updated_at",
 			{sourceType, sourceParam});
+	} else {
+		return false;
 	}
 }
 

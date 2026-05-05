@@ -7,6 +7,7 @@ extern "C" {
 #include <QHash>
 #include <algorithm>
 #include <libshared/util/database.h>
+#include <libshared/util/paths.h>
 
 namespace project {
 
@@ -74,10 +75,54 @@ const QPixmap &RecoveryEntry::thumbnail() const
 	return m_thumbnail;
 }
 
+const QString &RecoveryEntry::lastSave() const
+{
+	loadMetadata();
+	return m_lastSave;
+}
+
+const QString &RecoveryEntry::lastExport() const
+{
+	loadMetadata();
+	return m_lastExport;
+}
+
+const QString &RecoveryEntry::lastSessionTitle() const
+{
+	loadMetadata();
+	return m_lastSessionTitle;
+}
+
 long long RecoveryEntry::ownWorkMinutes() const
 {
 	loadMetadata();
 	return m_ownWorkMinutes;
+}
+
+QString RecoveryEntry::mostDescriptiveBaseName() const
+{
+	loadMetadata();
+
+	if(!m_lastSave.isEmpty()) {
+		QString lastSaveBaseName = utils::paths::extractBasename(m_lastSave);
+		stripExtension(lastSaveBaseName);
+		if(!lastSaveBaseName.isEmpty()) {
+			return lastSaveBaseName;
+		}
+	}
+
+	if(!m_lastExport.isEmpty()) {
+		QString lastExportBaseName =
+			utils::paths::extractBasename(m_lastExport);
+		stripExtension(lastExportBaseName);
+		if(!lastExportBaseName.isEmpty()) {
+			return lastExportBaseName;
+		}
+	}
+
+	QString autoRecoveryBaseName = m_baseName;
+	stripExtension(autoRecoveryBaseName);
+	return autoRecoveryBaseName;
 }
 
 void RecoveryEntry::loadMetadata() const
@@ -93,12 +138,35 @@ void RecoveryEntry::loadMetadata() const
 			drawdance::Query qry = db.query();
 
 			if(qry.prepare("select value from metadata where name = ?")) {
+				if(qry.bind(0, "last_save") && qry.execPrepared() &&
+				   qry.next()) {
+					m_lastSave = qry.columnText16(0);
+				}
+
+				if(qry.bind(0, "last_export") && qry.execPrepared() &&
+				   qry.next()) {
+					m_lastExport = qry.columnText16(0);
+				}
+
+				if(qry.bind(0, "last_session_title") && qry.execPrepared() &&
+				   qry.next()) {
+					m_lastSessionTitle = qry.columnText16(0);
+				}
+
 				if(qry.bind(0, "own_work_minutes") && qry.execPrepared() &&
 				   qry.next()) {
 					m_ownWorkMinutes = qry.columnInt64(0);
 				}
 			}
 		}
+	}
+}
+
+void RecoveryEntry::stripExtension(QString &s)
+{
+	int i = s.lastIndexOf('.');
+	if(i > 0) {
+		s.chop(s.length() - i + 1);
 	}
 }
 

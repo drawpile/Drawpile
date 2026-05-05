@@ -77,13 +77,7 @@ public:
 	void loadPlayer(DP_Player *player);
 
 	QString title() const { return m_title; }
-	void setTitle(const QString &title)
-	{
-		if(m_title != title) {
-			m_title = title;
-			emit titleChanged(title);
-		}
-	}
+	void setTitle(const QString &title);
 
 	bool isDirty() const { return m_dirty; }
 	void setDirty(bool dirty) { m_dirty = dirty; }
@@ -157,6 +151,9 @@ public:
 	void unblockProjectRecordingErrors();
 
 	void requestProjectRecordingMetadata();
+
+	bool setProjectRecordingMetadataString(
+		const QString &name, const QString &value);
 
 	void addProjectRecordingMetadataSource(
 		int sourceType, const QString &sourceParam);

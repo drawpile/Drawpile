@@ -391,8 +391,8 @@ private:
 	void removeBrushShortcut(const QString &name);
 	void triggerBrushShortcut(QAction *action);
 
-	//! Add a new entry to recent files list
-	void addRecentFile(const QString &file);
+	//! Add a new entry to recent files list, source references Recents::Source.
+	void addRecentFile(const QString &file, int source);
 
 	//! Enable or disable drawing tools
 	void setDrawingToolsEnabled(bool enable);

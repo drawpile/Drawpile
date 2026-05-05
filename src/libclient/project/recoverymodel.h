@@ -29,11 +29,20 @@ public:
 	qint64 fileSize() const;
 	const QDateTime &mtime() const;
 	const QPixmap &thumbnail() const;
+	const QString &lastSave() const;
+	const QString &lastExport() const;
+	const QString &lastSessionTitle() const;
 	long long ownWorkMinutes() const;
 	const QString &errorMessage() const { return m_errorMessage; }
 
+	// Returns the first non-empty last save base name, last export base name or
+	// the base name of the recovery file itself.
+	QString mostDescriptiveBaseName() const;
+
 private:
 	void loadMetadata() const;
+
+	static void stripExtension(QString &s);
 
 	QFileInfo m_fileInfo;
 	QString m_path;
@@ -43,6 +52,9 @@ private:
 	mutable QDateTime m_mtime;
 	mutable QString m_errorMessage;
 	mutable QPixmap m_thumbnail;
+	mutable QString m_lastSave;
+	mutable QString m_lastExport;
+	mutable QString m_lastSessionTitle;
 	mutable long long m_ownWorkMinutes = -1LL;
 	mutable bool m_statusLoaded = false;
 	mutable bool m_thumbnailLoaded = false;

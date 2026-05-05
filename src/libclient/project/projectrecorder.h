@@ -50,10 +50,10 @@ public:
 	void stopSnapshotTimer();
 	bool isSnapshotTimerReady() const;
 
-	void
+	bool
 	setMetadatum(const QString &name, const drawdance::Query::Param &value);
 
-	void addMetadataSource(int sourceType, const QString &sourceParam);
+	bool addMetadataSource(int sourceType, const QString &sourceParam);
 
 	size_t lastReportedSizeInBytes() const { return m_lastReportedSizeInBytes; }
 
