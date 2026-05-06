@@ -188,6 +188,7 @@ void Document::initCanvas(bool shouldClearPaths)
 		this);
 
 	m_toolctrl->setModel(m_canvas);
+	m_lastSessionTitle.clear();
 
 	connect(
 		m_canvas, &canvas::CanvasModel::canvasModified, this,
@@ -199,6 +200,9 @@ void Document::initCanvas(bool shouldClearPaths)
 	connect(
 		m_canvas, &canvas::CanvasModel::titleChanged, this,
 		&Document::sessionTitleChanged);
+	connect(
+		m_canvas, &canvas::CanvasModel::titleChanged, this,
+		&Document::setLastSessionTitle);
 	connect(
 		m_canvas, &canvas::CanvasModel::recorderStateChanged, this,
 		&Document::recorderStateChanged);
@@ -1018,6 +1022,13 @@ void Document::setProjectPath(const QString &path)
 	}
 }
 
+void Document::setLastSessionTitle(const QString &lastSessionTitle)
+{
+	if(!lastSessionTitle.isEmpty()) {
+		m_lastSessionTitle = lastSessionTitle;
+	}
+}
+
 void Document::markDirty()
 {
 	m_projectDirty = true;
@@ -1066,8 +1077,7 @@ void Document::clearPaths()
 
 QString Document::downloadName() const
 {
-	return (m_downloadName.isEmpty() ? sessionTitle() : m_downloadName)
-		.trimmed();
+	return m_downloadName.trimmed();
 }
 
 void Document::setDownloadName(const QString &downloadName)

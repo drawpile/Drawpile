@@ -178,7 +178,7 @@ private:
 	static QString preferredExportExtensionFor(DP_SaveImageType type);
 
 	static QString
-	getCurrentPathOrUntitled(Document *doc, const QString &defaultExtension);
+	getCurrentPathOrAutoTitle(Document *doc, const QString &defaultExtension);
 
 	static QString getLastPath(LastPath type, const QString &ext = QString{});
 	static void setLastPath(LastPath type, const QString &path);
@@ -239,13 +239,15 @@ private:
 	static QString getEffectiveFilter(const QStringList &filters);
 
 #ifdef __EMSCRIPTEN__
-	static QString getDownloadNameOrUntitled(Document *doc);
+	static QString getDownloadNameOrAutoTitle(Document *doc);
 
 	void withFileTypeDialog(
 		const QString &name, const QStringList &formats,
 		const QString &extension, QObject *context,
 		const std::function<void(const QString &, const QString &)> fn) const;
 #endif
+
+	static QString getAutoTitle(Document *doc);
 
 	QWidget *parentWidget() const;
 
