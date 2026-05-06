@@ -19,7 +19,8 @@ class ProjectSaver final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
 	explicit ProjectSaver(
-		bool append, const QString &path, QObject *parent = nullptr);
+		bool append, bool saveToTemporaryFile, const QString &path,
+		QObject *parent = nullptr);
 
 	net::Message getProjectSaveRequestMessage();
 
@@ -31,7 +32,7 @@ public:
 	void run() override;
 
 Q_SIGNALS:
-	void saveSucceeded(qint64 elapsedMsec);
+	void saveSucceeded(qint64 elapsedMsec, const QString &tempPath);
 	void saveCancelled();
 	void saveFailed(const QString &errorMessage);
 
@@ -52,8 +53,9 @@ private:
 	static int handleSaveFinishCallback(void *user, int saveResult);
 
 	bool writeBackFromTemporaryFile();
+	void removeAndClearTemporaryFile();
 
-	bool shouldAppend(QFile &saveFile) const ;
+	bool shouldAppend(QFile &saveFile) const;
 
 	const QString m_path;
 	drawdance::CanvasState m_canvasState;
@@ -61,6 +63,7 @@ private:
 	QString m_tempPath;
 	QByteArray m_tempPathBytes;
 	const bool m_append;
+	const bool m_saveToTemporaryFile;
 };
 
 #endif

@@ -17,10 +17,12 @@ extern "C" {
 Q_LOGGING_CATEGORY(
 	lcDpProjectSaver, "net.drawpile.export.projectsaver", QtWarningMsg)
 
-ProjectSaver::ProjectSaver(bool append, const QString &path, QObject *parent)
+ProjectSaver::ProjectSaver(
+	bool append, bool saveToTemporaryFile, const QString &path, QObject *parent)
 	: QObject(parent)
 	, m_path(path)
 	, m_append(append)
+	, m_saveToTemporaryFile(saveToTemporaryFile)
 {
 }
 
@@ -46,10 +48,10 @@ void ProjectSaver::handleSaveRequest(
 
 void ProjectSaver::run()
 {
-	Q_ASSERT(!m_canvasState.isNull());
+	Q_ASSERT(!m_canvasState.isNull() || m_saveToTemporaryFile);
 
 	int saveResult = handleSaveStart();
-	if(saveResult == DP_SAVE_RESULT_SUCCESS) {
+	if(saveResult == DP_SAVE_RESULT_SUCCESS && !m_saveToTemporaryFile) {
 		int result = DP_project_save_state(
 			m_canvasState.get(), m_tempPathBytes.constData(),
 			DP_image_write_project_thumbnail, nullptr);
@@ -69,10 +71,11 @@ int ProjectSaver::handleSaveStart()
 {
 	m_saveTimer.start();
 
-#ifdef Q_OS_ANDROID
 	QTemporaryFile tempFile;
-#else
-	QTemporaryFile tempFile(m_path + QStringLiteral(".XXXXXX"));
+#ifndef Q_OS_ANDROID
+	if(!m_saveToTemporaryFile) {
+		tempFile.setFileTemplate(m_path + QStringLiteral(".XXXXXX"));
+	}
 #endif
 
 	if(tempFile.open()) {
@@ -131,17 +134,18 @@ int ProjectSaver::handleSaveStartCallback(void *user, const char **outPath)
 
 int ProjectSaver::handleSaveFinish(int saveResult)
 {
-	if(saveResult == int(DP_SAVE_RESULT_SUCCESS)) {
+	if(saveResult != int(DP_SAVE_RESULT_SUCCESS)) {
+		removeAndClearTemporaryFile();
+	} else if(!m_saveToTemporaryFile) {
 		bool writeBackOk = writeBackFromTemporaryFile();
 		if(!writeBackOk) {
 			saveResult = int(DP_SAVE_RESULT_WRITE_ERROR);
 		}
 	}
-	m_tempPathBytes.clear();
 
 	switch(saveResult) {
 	case int(DP_SAVE_RESULT_SUCCESS):
-		Q_EMIT saveSucceeded(m_saveTimer.elapsed());
+		Q_EMIT saveSucceeded(m_saveTimer.elapsed(), m_tempPath);
 		break;
 	case int(DP_SAVE_RESULT_CANCEL):
 		Q_EMIT saveCancelled();
@@ -176,7 +180,7 @@ bool ProjectSaver::writeBackFromTemporaryFile()
 			"Failed to open temporary '%s': %s",
 			qUtf8Printable(sourceFile.fileName()),
 			qUtf8Printable(sourceFile.errorString()));
-		sourceFile.remove();
+		removeAndClearTemporaryFile();
 		return false;
 	}
 
@@ -192,15 +196,24 @@ bool ProjectSaver::writeBackFromTemporaryFile()
 	bool copyOk = CanvasSaverRunnable::copyFileContents(sourceFile, targetFile);
 	targetFile.close();
 	sourceFile.close();
-	return copyOk;
 #elif defined(Q_OS_WIN)
-	return DP_file_move_win32(
+	bool copyOk = DP_file_move_win32(
 		reinterpret_cast<const wchar_t *>(m_tempPath.utf16()),
 		reinterpret_cast<const wchar_t *>(m_path.utf16()));
 #else
-	return DP_file_move_unix(
+	bool copyOk = DP_file_move_unix(
 		m_tempPathBytes.constData(), m_path.toUtf8().constData());
 #endif
+	removeAndClearTemporaryFile();
+	return copyOk;
+}
+
+void ProjectSaver::removeAndClearTemporaryFile()
+{
+	if(!m_tempPath.isEmpty()) {
+		QFile::remove(m_tempPath);
+		m_tempPath.clear();
+	}
 }
 
 bool ProjectSaver::shouldAppend(QFile &saveFile) const

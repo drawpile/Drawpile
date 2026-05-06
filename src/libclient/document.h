@@ -17,10 +17,12 @@ extern "C" {
 #include <QObject>
 #include <QQueue>
 #include <QStringListModel>
+#include <functional>
 #ifdef Q_OS_ANDROID
 #	include <QMimeData>
 #endif
 
+class ProjectSaver;
 class QMimeData;
 class QString;
 class QTemporaryDir;
@@ -107,6 +109,14 @@ public:
 		const drawdance::CanvasState &canvasState);
 	void downloadSelection(const QString &fileName);
 #endif
+
+	// Saves the current state appended to the last project file, if any, to a
+	// temporary dppr file. This is used e.g. for creating timelapses. The
+	// onFinish callback receives a temporary file path and an error message.
+	// The file path will be empty on failure, the error message may also be
+	// empty if an unknown error occurred or the save got cancelled somehow.
+	void saveToTemporaryProjectFile(
+		const std::function<void(const QString &, const QString &)> &onFinish);
 
 	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 	bool wantCanvasHistoryDump() const { return m_wantCanvasHistoryDump; }

@@ -1922,72 +1922,13 @@ bool MainWindow::showProjectOverview(bool checkExisting, bool openNew)
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 void MainWindow::requestTimelapseDialog()
 {
-	if(showTimelapseDialog(true, false)) {
-		// Timelapse dialog is already open, don't do anything.
-
-	} else if(m_doc->projectPath().isEmpty()) {
-		QMessageBox *box = utils::makeQuestion(
-			this, tr("Timelapse"),
-			tr("To make a timelapse, you have to save a project file (.dppr) "
-			   "first. Do you want to do so now?"));
-		connect(
-			box, &QMessageBox::accepted, this,
-			&MainWindow::saveAsProjectBeforeTimelapseDialog);
-		box->show();
-
-	} else if(m_doc->isProjectDirty()) {
-		QMessageBox *box = utils::makeQuestion(
-			this, tr("Timelapse"),
-			tr("There are changes not saved to a project file (.dppr) yet. Do "
-			   "you want to save them now so they show up in the timelapse?"));
-		connect(box, &QMessageBox::accepted, this, [this] {
-			if(m_doc->currentType() == DP_SAVE_IMAGE_PROJECT &&
-			   m_doc->currentPath() == m_doc->projectPath()) {
-				save();
-				showTimelapseDialog(true, true);
-			} else {
-				saveAsProjectBeforeTimelapseDialog();
-			}
-		});
-		connect(
-			box, &QMessageBox::rejected, this,
-			std::bind(&MainWindow::showTimelapseDialog, this, true, true));
-		box->show();
-
-	} else {
-		showTimelapseDialog(false, true);
-	}
-}
-
-void MainWindow::saveAsProjectBeforeTimelapseDialog()
-{
-	if(saveAsType(int(DP_SAVE_IMAGE_PROJECT), true)) {
-		if(m_doc->currentType() == DP_SAVE_IMAGE_PROJECT &&
-		   m_doc->currentPath() == m_doc->projectPath()) {
-			showTimelapseDialog(true, true);
-		} else {
-			utils::showWarning(
-				this, tr("Timelapse"),
-				tr("Unexpected save format. To make a timelapse, you have to "
-				   "save to a project file (.dppr)."));
-		}
-	}
-}
-
-bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
-{
 	QString objectName = QStringLiteral("timelapsedialog");
-	if(checkExisting) {
-		dialogs::TimelapseDialog *dlg = findChild<dialogs::TimelapseDialog *>(
-			objectName, Qt::FindDirectChildrenOnly);
-		if(dlg) {
-			dlg->activateWindow();
-			dlg->raise();
-			return true;
-		}
-	}
-
-	if(openNew) {
+	dialogs::TimelapseDialog *dlg = findChild<dialogs::TimelapseDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
 		canvas::CanvasModel *canvas = m_doc->canvas();
 		if(canvas) {
 			canvas::PaintEngine *paintEngine = canvas->paintEngine();
@@ -2002,21 +1943,36 @@ bool MainWindow::showTimelapseDialog(bool checkExisting, bool openNew)
 				crop = sel->bounds();
 			}
 
-			dialogs::TimelapseDialog *dlg = new dialogs::TimelapseDialog(
+			dlg = new dialogs::TimelapseDialog(
 				paintEngine, crop, m_layerViewCurrentFrame->isChecked(),
 				m_flipbookState.speedPercent, m_flipbookState.loopStart - 1,
 				m_flipbookState.loopEnd - 1, this);
 			dlg->setAttribute(Qt::WA_DeleteOnClose);
 			dlg->setObjectName(objectName);
-			if(!m_doc->isSaveInProgress()) {
-				dlg->setInputPath(m_doc->projectPath());
-			}
+
+			m_doc->saveToTemporaryProjectFile(
+				[this, dlgPtr = QPointer<dialogs::TimelapseDialog>(dlg)](
+					const QString &tempPath, const QString &errorMessage) {
+					bool haveTempPath = !tempPath.isEmpty();
+					if(dlgPtr) {
+						if(haveTempPath) {
+							dlgPtr->setTempPath(tempPath);
+						} else {
+							dlgPtr->close();
+							utils::showWarning(
+								this, tr("Save Failed"),
+								tr("Error preparing timelapse file."),
+								errorMessage.isEmpty() ? tr("Unknown error.")
+													   : errorMessage);
+						}
+					} else if(haveTempPath) {
+						QFile::remove(tempPath);
+					}
+				});
+
 			utils::showWindow(dlg);
-			return true;
 		}
 	}
-
-	return false;
 }
 #endif
 
@@ -3130,17 +3086,6 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 			projectDlg->close();
 		} else {
 			projectDlg->openProject(m_doc->projectPath());
-		}
-	}
-
-	dialogs::TimelapseDialog *timelapseDlg =
-		findChild<dialogs::TimelapseDialog *>(
-			QStringLiteral("timelapsedialog"), Qt::FindDirectChildrenOnly);
-	if(timelapseDlg && !timelapseDlg->haveInputPath()) {
-		if(haveError) {
-			timelapseDlg->close();
-		} else {
-			timelapseDlg->setInputPath(m_doc->projectPath());
 		}
 	}
 
