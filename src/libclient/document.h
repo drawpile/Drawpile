@@ -123,6 +123,9 @@ public:
 
 	QString sessionTitle() const;
 
+	// Last non-empty session title. Doesn't get cleared on disconnect.
+	const QString lastSessionTitle() { return m_lastSessionTitle; }
+
 	bool haveCurrentPath() const { return !m_currentPath.isEmpty(); }
 	bool haveExportPath() const { return !m_exportPath.isEmpty(); }
 	QString currentPath() const { return m_currentPath; }
@@ -366,6 +369,7 @@ private:
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setExportPath(const QString &path, DP_SaveImageType type);
 	void setProjectPath(const QString &path);
+	void setLastSessionTitle(const QString &lastSessionTitle);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionCloseAvailable(bool closeAvailable);
@@ -450,6 +454,7 @@ private:
 	QStringListModel *m_serverLog;
 	config::Config *m_cfg;
 
+	QString m_lastSessionTitle;
 	QString m_originalRecordingFilename;
 	QString m_recordOnConnect;
 	QString m_autoResetCorrelator;

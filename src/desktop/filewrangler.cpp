@@ -12,6 +12,7 @@
 #include "libshared/util/paths.h"
 #include <QBuffer>
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -251,7 +252,7 @@ QString FileWrangler::saveImageAs(
 		filters = QStringList({selectedFilter});
 	}
 
-	QString lastPath = getCurrentPathOrUntitled(doc, extension);
+	QString lastPath = getCurrentPathOrAutoTitle(doc, extension);
 	if(exported && !lastPath.isEmpty()) {
 		replaceExtension(lastPath, extension);
 	}
@@ -299,7 +300,7 @@ QString FileWrangler::savePreResetImageAs(
 	QString path = showSaveFileDialog(
 		tr("Save Pre-Reset Image"), LastPath::IMAGE, extension,
 		utils::FileFormatOption::SaveImages, &selectedFilter,
-		getCurrentPathOrUntitled(doc, extension), &intendedName);
+		getCurrentPathOrAutoTitle(doc, extension), &intendedName);
 	DP_SaveImageType type = guessType(intendedName);
 
 	if(!path.isEmpty() && confirmFlatten(doc, path, type)) {
@@ -454,7 +455,7 @@ QString FileWrangler::getSaveImageSeriesPath() const
 void FileWrangler::downloadImage(Document *doc) const
 {
 	withFileTypeDialog(
-		getDownloadNameOrUntitled(doc),
+		getDownloadNameOrAutoTitle(doc),
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
 		preferredSaveExtension(doc->isProjectRecording()), doc,
 		[doc](const QString &name, const QString &type) {
@@ -473,7 +474,7 @@ bool FileWrangler::downloadPreResetImage(
 	Document *doc, const drawdance::CanvasState &canvasState) const
 {
 	withFileTypeDialog(
-		getDownloadNameOrUntitled(doc),
+		getDownloadNameOrAutoTitle(doc),
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
 		preferredSaveExtension(false), doc,
 		[doc, canvasState](const QString &name, const QString &type) {
@@ -493,7 +494,7 @@ bool FileWrangler::downloadPreResetImage(
 void FileWrangler::downloadSelection(Document *doc)
 {
 	withFileTypeDialog(
-		getDownloadNameOrUntitled(doc),
+		getDownloadNameOrAutoTitle(doc),
 		utils::fileFormatFilterList(
 			utils::FileFormatOption::SaveImages |
 			utils::FileFormatOption::QtImagesOnly),
@@ -923,22 +924,22 @@ QString FileWrangler::preferredExportExtensionFor(DP_SaveImageType type)
 	}
 }
 
-QString FileWrangler::getCurrentPathOrUntitled(
+QString FileWrangler::getCurrentPathOrAutoTitle(
 	Document *doc, const QString &defaultExtension)
 {
 	qCDebug(
-		lcDpFileWrangler, "getCurrentPathOrUntitled defaultExtension='%s'",
+		lcDpFileWrangler, "getCurrentPathOrAutoTitle defaultExtension='%s'",
 		qUtf8Printable(defaultExtension));
 	QString path = doc->currentPath();
 	if(path.isEmpty()) {
 		qCDebug(lcDpFileWrangler, "Current path is empty");
 #ifdef Q_OS_ANDROID
-		return tr("Untitled") + defaultExtension;
+		return getAutoTitle(doc) + defaultExtension;
 #else
 		path = getLastPath(LastPath::IMAGE);
 		if(!path.isEmpty()) {
 			return QFileInfo(path).absoluteDir().filePath(
-				tr("Untitled") + defaultExtension);
+				getAutoTitle(doc) + defaultExtension);
 		}
 #endif
 	}
@@ -1441,11 +1442,11 @@ QString FileWrangler::getEffectiveFilter(const QStringList &filters)
 }
 
 #ifdef __EMSCRIPTEN__
-QString FileWrangler::getDownloadNameOrUntitled(Document *doc)
+QString FileWrangler::getDownloadNameOrAutoTitle(Document *doc)
 {
 	QString name = doc->downloadName();
 	if(name.isEmpty()) {
-		return tr("Untitled");
+		return getAutoTitle(doc);
 	} else {
 		return name;
 	}
@@ -1475,6 +1476,44 @@ void FileWrangler::withFileTypeDialog(
 	nameAndTypeDialog->show();
 }
 #endif
+
+QString FileWrangler::getAutoTitle(Document *doc)
+{
+	QString autoTitle =
+		QDateTime::currentDateTime().toString(QStringLiteral("yyyymmdd"));
+	autoTitle.append(QStringLiteral("_"));
+
+	QString sessionTitle;
+	if(doc) {
+		sessionTitle = doc->lastSessionTitle();
+		if(!sessionTitle.isEmpty()) {
+			// Turn all whitespace and dashes into underscores.
+			sessionTitle.replace(
+				QRegularExpression(QStringLiteral("[\\s\\-]+")),
+				QStringLiteral("_"));
+			// Remove all non-letter, non-digit, non-underscores according to
+			// Unicode rules, i.e. not just ASCII letters/digits.
+			sessionTitle.remove(QRegularExpression(
+				QStringLiteral("\\W"),
+				QRegularExpression::UseUnicodePropertiesOption));
+			// Strip underscores from the start and end.
+			sessionTitle.remove(
+				QRegularExpression(QStringLiteral("\\A_+|_+\\z")));
+			// Collapse multiple underscores into a single one.
+			sessionTitle.replace(
+				QRegularExpression(QStringLiteral("_{2,}")),
+				QStringLiteral("_"));
+		}
+	}
+
+	if(sessionTitle.isEmpty()) {
+		autoTitle.append(tr("Untitled"));
+	} else {
+		autoTitle.append(sessionTitle);
+	}
+
+	return autoTitle;
+}
 
 QWidget *FileWrangler::parentWidget() const
 {
