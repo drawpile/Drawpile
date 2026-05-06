@@ -6385,7 +6385,6 @@ void MainWindow::setupActions()
 	m_toolBarFile->addAction(download);
 #else
 	m_toolBarFile->addAction(save);
-	m_toolBarFile->addAction(record);
 #endif
 
 #ifndef __EMSCRIPTEN__
