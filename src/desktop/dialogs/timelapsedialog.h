@@ -18,7 +18,6 @@ class QLabel;
 class QProgressBar;
 class QPushButton;
 class QScrollArea;
-class QTimeEdit;
 class TimelapseSaverRunnable;
 
 namespace canvas {
@@ -81,6 +80,8 @@ private:
 	bool selectExportFormat(int format);
 	bool checkLogoLocation(int location);
 	bool selectInterpolation(int interpolation);
+	void updateMinutesText(int minutes);
+	void updateSecondsText(int seconds);
 	int getDurationSeconds() const;
 	void setDurationSeconds(int seconds);
 	void updateFfmpeg();
@@ -136,7 +137,8 @@ private:
 	QWidget *m_finishPage;
 	QComboBox *m_formatCombo;
 	utils::FormNote *m_ffmpegNote = nullptr;
-	QTimeEdit *m_durationEdit;
+	KisSliderSpinBox *m_minutesSpinner;
+	KisSliderSpinBox *m_secondsSpinner;
 	KisSliderSpinBox *m_widthSpinner;
 	KisSliderSpinBox *m_heightSpinner;
 	QCheckBox *m_keepAspectCheckBox;

@@ -353,6 +353,10 @@ struct MarkerColor {
 const QVector<MarkerColor> &markerColors();
 
 QString formatTime(long long seconds);
+QString formatSeconds(long long seconds);
+QString formatMinutes(long long minutes);
+QString formatHours(long long hours);
+QString formatDays(long long days);
 
 QString formatWorkMinutes(long long workMinutes);
 

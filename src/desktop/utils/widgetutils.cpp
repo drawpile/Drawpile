@@ -1650,33 +1650,49 @@ QString formatTime(long long seconds)
 	long long days = seconds / 86400LL;
 	if(days != 0LL) {
 		seconds -= days * 86400LL;
-		pieces.append(
-			QCoreApplication::translate("Time", "%n days(s)", nullptr, days));
+		pieces.append(formatDays(days));
 	}
 
 	long long hours = seconds / 3600LL;
 	if(hours != 0LL) {
 		seconds -= hours * 3600LL;
-		pieces.append(
-			QCoreApplication::translate("Time", "%n hour(s)", nullptr, hours));
+		pieces.append(formatHours(hours));
 	}
 
 	long long minutes = seconds / 60LL;
 	if(minutes != 0LL) {
 		seconds -= minutes * 60LL;
-		pieces.append(
-			QCoreApplication::translate(
-				"Time", "%n minute(s)", nullptr, minutes));
+		pieces.append(formatMinutes(minutes));
 	}
 
 	if(seconds != 0LL || pieces.isEmpty()) {
-		pieces.append(
-			QCoreApplication::translate(
-				"Time", "%n second(s)", nullptr, seconds));
+		pieces.append(formatSeconds(seconds));
 	}
 
 	//: This string joins the hours, minutes and seconds for the idle time.
 	return pieces.join(QCoreApplication::translate("Time", ", "));
+}
+
+QString formatSeconds(long long seconds)
+{
+	return QCoreApplication::translate(
+		"Time", "%n second(s)", nullptr, seconds);
+}
+
+QString formatMinutes(long long minutes)
+{
+	return QCoreApplication::translate(
+		"Time", "%n minute(s)", nullptr, minutes);
+}
+
+QString formatHours(long long hours)
+{
+	return QCoreApplication::translate("Time", "%n hour(s)", nullptr, hours);
+}
+
+QString formatDays(long long days)
+{
+	return QCoreApplication::translate("Time", "%n days(s)", nullptr, days);
 }
 
 QString formatWorkMinutes(long long ownWorkMinutes)
