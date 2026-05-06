@@ -26,6 +26,7 @@ extern "C" {
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
+#include <QFile>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -624,10 +625,26 @@ TimelapseDialog::TimelapseDialog(
 	updateFfmpegFormatIcons();
 }
 
-void TimelapseDialog::setInputPath(const QString &inputPath)
+TimelapseDialog::~TimelapseDialog()
 {
-	m_inputPath = inputPath;
-	updateExportButton();
+	if(!m_tempPath.isEmpty()) {
+		QFile::remove(m_tempPath);
+	}
+}
+
+void TimelapseDialog::setTempPath(const QString &tempPath)
+{
+	if(m_tempPath.isEmpty()) {
+		m_tempPath = tempPath;
+		updateExportButton();
+	} else {
+		qWarning(
+			"Timelapse path is already set to '%s', not setting it to '%s'",
+			qUtf8Printable(m_tempPath), qUtf8Printable(tempPath));
+		if(!tempPath.isEmpty()) {
+			QFile::remove(tempPath);
+		}
+	}
 }
 
 void TimelapseDialog::accept()
@@ -708,7 +725,7 @@ void TimelapseDialog::accept()
 			const config::Config *cfg = dpAppConfig();
 			m_saver = new TimelapseSaverRunnable(
 				m_canvasState, &m_vmf, useFfmpeg ? m_ffmpegPath : QString(),
-				outputPath, m_inputPath, format, m_widthSpinner->value(),
+				outputPath, m_tempPath, format, m_widthSpinner->value(),
 				m_heightSpinner->value(),
 				m_interpolationCombo->currentData().toInt(),
 				m_cropCheckBox->isChecked() ? m_crop : QRect(),
@@ -1462,7 +1479,7 @@ void TimelapseDialog::updateExportButton()
 {
 	QPushButton *okButton = m_buttons->button(QDialogButtonBox::Ok);
 	if(okButton) {
-		bool saveInProgress = m_inputPath.isEmpty();
+		bool saveInProgress = m_tempPath.isEmpty();
 		okButton->setText(saveInProgress ? tr("Saving…") : tr("Export"));
 		okButton->setDisabled(saveInProgress);
 	}

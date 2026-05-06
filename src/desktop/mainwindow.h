@@ -434,8 +434,6 @@ private:
 #endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	void requestTimelapseDialog();
-	void saveAsProjectBeforeTimelapseDialog();
-	bool showTimelapseDialog(bool checkExisting, bool openNew);
 #endif
 
 	void showSelectionMaskColorPicker();

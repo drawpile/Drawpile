@@ -1222,7 +1222,7 @@ void Document::saveCanvasState(
 	Q_EMIT canvasSaveStarted();
 
 	if(type == DP_SAVE_IMAGE_PROJECT) {
-		ProjectSaver *projectSaver = new ProjectSaver(append, path);
+		ProjectSaver *projectSaver = new ProjectSaver(append, false, path);
 		connect(
 			projectSaver, &ProjectSaver::saveSucceeded, this,
 			&Document::onSaveSucceeded);
@@ -2049,6 +2049,41 @@ void Document::downloadSelection(const QString &fileName)
 	}
 }
 #endif
+
+void Document::saveToTemporaryProjectFile(
+	const std::function<void(const QString &, const QString &)> &onFinish)
+{
+	bool haveProjectPath = !m_projectPath.isEmpty();
+	ProjectSaver *projectSaver =
+		new ProjectSaver(haveProjectPath, true, m_projectPath);
+
+	connect(
+		projectSaver, &ProjectSaver::saveSucceeded, this,
+		[onFinish](qint64 elapsedMsec, const QString &tempPath) {
+			Q_UNUSED(elapsedMsec);
+			onFinish(tempPath, QString());
+		},
+		Qt::QueuedConnection);
+	connect(
+		projectSaver, &ProjectSaver::saveCancelled, this,
+		[onFinish]() {
+			onFinish(QString(), QString());
+		},
+		Qt::QueuedConnection);
+	connect(
+		projectSaver, &ProjectSaver::saveFailed, this,
+		[onFinish](const QString &errorMessage) {
+			onFinish(QString(), errorMessage);
+		},
+		Qt::QueuedConnection);
+
+	if(m_canvas && m_canvas->isProjectRecording()) {
+		net::Message msg = projectSaver->getProjectSaveRequestMessage();
+		m_canvas->paintEngine()->receiveMessages(false, 1, &msg);
+	} else {
+		QThreadPool::globalInstance()->start(projectSaver);
+	}
+}
 
 QImage Document::selectionToImage()
 {

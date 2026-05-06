@@ -46,8 +46,9 @@ public:
 		double flipbookSpeedPercent, int flipbookFrameRangeFirst,
 		int flipbookFrameRangeLast, QWidget *parent = nullptr);
 
-	void setInputPath(const QString &inputPath);
-	bool haveInputPath() const { return !m_inputPath.isEmpty(); }
+	~TimelapseDialog() override;
+
+	void setTempPath(const QString &tempPath);
 
 public slots:
 	void accept() override;
@@ -129,7 +130,7 @@ private:
 	drawdance::CanvasState m_canvasState;
 	DP_ViewModeFilter m_vmf;
 	QRect m_crop;
-	QString m_inputPath;
+	QString m_tempPath;
 	QScrollArea *m_scroll;
 	widgets::TimelapsePreview *m_timelapsePreview;
 	QWidget *m_settingsPage;

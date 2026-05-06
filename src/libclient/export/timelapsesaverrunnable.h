@@ -126,11 +126,7 @@ private:
 
 	bool checkParameters(QString &outErrorMessage) const;
 
-	bool
-	copyToTempFile(QTemporaryFile &tempFile, QString &outErrorMessage) const;
-
-	DP_Project *
-	openProject(const QTemporaryFile &tempFile, QString &outErrorMessage) const;
+	DP_Project *openProject(QString &outErrorMessage) const;
 
 	DP_ProjectPlayback *
 	openProjectPlayback(DP_Project *prj, QString &outErrorMessage) const;

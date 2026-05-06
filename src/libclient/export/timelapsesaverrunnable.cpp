@@ -100,18 +100,12 @@ void TimelapseSaverRunnable::run()
 
 	Q_EMIT stepChanged(tr("Loading project…"));
 
-	QTemporaryFile tempFile;
-	if(!copyToTempFile(tempFile, errorMessage)) {
-		Q_EMIT saveFailed(errorMessage);
-		return;
-	}
-
 	if(isCancelled()) {
 		Q_EMIT saveCancelled();
 		return;
 	}
 
-	DP_Project *prj = openProject(tempFile, errorMessage);
+	DP_Project *prj = openProject(errorMessage);
 	if(!prj) {
 		Q_EMIT saveFailed(errorMessage);
 		return;
@@ -717,50 +711,20 @@ bool TimelapseSaverRunnable::checkParameters(QString &outErrorMessage) const
 	}
 }
 
-bool TimelapseSaverRunnable::copyToTempFile(
-	QTemporaryFile &tempFile, QString &outErrorMessage) const
-{
-	QFile inputFile(m_inputPath);
-	if(!inputFile.open(QIODevice::ReadOnly)) {
-		outErrorMessage =
-			tr("Failed to open %1: %2")
-				.arg(inputFile.fileName(), inputFile.errorString());
-		return false;
-	}
-
-	if(!tempFile.open()) {
-		outErrorMessage =
-			tr("Failed to open temporary file: %1").arg(tempFile.errorString());
-		return false;
-	}
-
-	qCDebug(
-		lcDpTimelapseSaverRunnable, "Copying input file '%s' to temporary '%s'",
-		qUtf8Printable(inputFile.fileName()),
-		qUtf8Printable(tempFile.fileName()));
-
-	bool ok =
-		utils::paths::copyFileContents(inputFile, tempFile, outErrorMessage);
-	tempFile.close();
-	inputFile.close();
-	return ok;
-}
-
-DP_Project *TimelapseSaverRunnable::openProject(
-	const QTemporaryFile &tempFile, QString &outErrorMessage) const
+DP_Project *TimelapseSaverRunnable::openProject(QString &outErrorMessage) const
 {
 	qCDebug(
 		lcDpTimelapseSaverRunnable, "Opening project '%s'",
-		qUtf8Printable(tempFile.fileName()));
+		qUtf8Printable(m_inputPath));
 	DP_ProjectOpenResult result = DP_project_open(
-		tempFile.fileName().toUtf8().constData(), DP_PROJECT_OPEN_READ_ONLY);
+		m_inputPath.toUtf8().constData(), DP_PROJECT_OPEN_READ_ONLY);
 	if(result.project) {
 		return result.project;
 	} else {
 		qCWarning(
 			lcDpTimelapseSaverRunnable,
 			"Error %d (%d) opening project '%s': %s", result.error,
-			result.sql_result, qUtf8Printable(tempFile.fileName()), DP_error());
+			result.sql_result, qUtf8Printable(m_inputPath), DP_error());
 		outErrorMessage =
 			tr("Error %d opening project.").arg(QString::number(result.error));
 		return nullptr;
