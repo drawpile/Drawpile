@@ -11,6 +11,7 @@ extern "C" {
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/noscroll.h"
 #include "desktop/widgets/timelapsepreview.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/config/config.h"
@@ -161,7 +162,7 @@ TimelapseDialog::TimelapseDialog(
 	bool anyFormatFfmpegSupported;
 	QVector<VideoFormatOption> formatOptions = getVideoFormatOptions(
 		VideoFormatApplication::Timelapse, &anyFormatFfmpegSupported);
-	m_formatCombo = new QComboBox;
+	m_formatCombo = new widgets::NoScrollComboBox;
 	settingsForm->addRow(tr("Format:"), m_formatCombo);
 
 	for(const VideoFormatOption &vfo : formatOptions) {
@@ -230,8 +231,8 @@ TimelapseDialog::TimelapseDialog(
 			std::bind(&TimelapseDialog::setDurationSeconds, this, seconds));
 	}
 
-	m_widthSpinner = new KisSliderSpinBox;
-	m_heightSpinner = new KisSliderSpinBox;
+	m_widthSpinner = new widgets::NoScrollKisSliderSpinBox;
+	m_heightSpinner = new widgets::NoScrollKisSliderSpinBox;
 	m_widthSpinner->setIndeterminate(true);
 	m_heightSpinner->setIndeterminate(true);
 	m_widthSpinner->setRange(1, 9999);
@@ -399,7 +400,7 @@ TimelapseDialog::TimelapseDialog(
 		 int(DP_IMAGE_SCALE_INTERPOLATION_NEAREST)},
 	};
 
-	m_interpolationCombo = new QComboBox;
+	m_interpolationCombo = new widgets::NoScrollComboBox;
 	for(const QPair<QString, int> &p : interpolationPairs) {
 		int interpolation = p.second;
 		if(DP_image_scale_interpolation_supported(interpolation)) {
@@ -421,7 +422,7 @@ TimelapseDialog::TimelapseDialog(
 		m_backdropPreview, &color_widgets::ColorPreview::clicked, this,
 		&TimelapseDialog::pickBackdropColor);
 
-	m_logoScaleSlider = new KisDoubleSliderSpinBox;
+	m_logoScaleSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_logoScaleSlider->setRange(0.01, 0.5, 3);
 	m_logoScaleSlider->setSingleStep(0.01);
 	advancedForm->addRow(tr("Logo scale:"), m_logoScaleSlider);
@@ -431,8 +432,8 @@ TimelapseDialog::TimelapseDialog(
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		&TimelapseDialog::updateLogoRect);
 
-	m_logoOffsetXSlider = new KisDoubleSliderSpinBox;
-	m_logoOffsetYSlider = new KisDoubleSliderSpinBox;
+	m_logoOffsetXSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
+	m_logoOffsetYSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_logoOffsetXSlider->setRange(0.0, 0.5, 3);
 	m_logoOffsetYSlider->setRange(0.0, 0.5, 3);
 	m_logoOffsetXSlider->setSingleStep(0.01);
@@ -456,7 +457,7 @@ TimelapseDialog::TimelapseDialog(
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		&TimelapseDialog::updateLogoRect);
 
-	m_logoOpacitySlider = new KisSliderSpinBox;
+	m_logoOpacitySlider = new widgets::NoScrollKisSliderSpinBox;
 	m_logoOpacitySlider->setRange(1, 100);
 	m_logoOpacitySlider->setSuffix(tr("%"));
 	advancedForm->addRow(tr("Logo opacity:"), m_logoOpacitySlider);
@@ -467,13 +468,13 @@ TimelapseDialog::TimelapseDialog(
 		&TimelapseDialog::updateLogoOpacity);
 
 	QString lingerBeforeTitle = tr("Preview result:");
-	m_lingerBeforeSlider = new KisDoubleSliderSpinBox;
+	m_lingerBeforeSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_lingerBeforeSlider->setRange(0.0, 60.0, 2);
 	m_lingerBeforeSlider->setSingleStep(0.1);
 	m_lingerBeforeSlider->setSuffix(tr(" seconds"));
 
 	if(m_animationResultCheckBox) {
-		m_lingerAnimationBeforeSlider = new KisSliderSpinBox;
+		m_lingerAnimationBeforeSlider = new widgets::NoScrollKisSliderSpinBox;
 		m_lingerAnimationBeforeSlider->setRange(0, 99);
 		m_lingerAnimationBeforeSlider->hide();
 		bindAnimationLoopSlider(m_lingerAnimationBeforeSlider);
@@ -506,7 +507,7 @@ TimelapseDialog::TimelapseDialog(
 		m_flashPreview, &color_widgets::ColorPreview::clicked, this,
 		&TimelapseDialog::pickFlashColor);
 
-	m_flashSlider = new KisDoubleSliderSpinBox;
+	m_flashSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_flashSlider->setRange(0.0, 60.0, 2);
 	m_flashSlider->setSingleStep(0.1);
 	m_flashSlider->setSuffix(tr(" seconds"));
@@ -514,14 +515,14 @@ TimelapseDialog::TimelapseDialog(
 	kineticScroller->disableKineticScrollingOnWidget(m_flashSlider);
 
 	QString lingerAfterTitle = tr("Linger result:");
-	m_lingerAfterSlider = new KisDoubleSliderSpinBox;
+	m_lingerAfterSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_lingerAfterSlider->setRange(0.0, 60.0, 2);
 	m_lingerAfterSlider->setSingleStep(0.1);
 	m_lingerAfterSlider->setSuffix(tr(" seconds"));
 	kineticScroller->disableKineticScrollingOnWidget(m_lingerAfterSlider);
 
 	if(m_animationResultCheckBox) {
-		m_lingerAnimationAfterSlider = new KisSliderSpinBox;
+		m_lingerAnimationAfterSlider = new widgets::NoScrollKisSliderSpinBox;
 		m_lingerAnimationAfterSlider->setRange(0, 99);
 		m_lingerAnimationAfterSlider->hide();
 		bindAnimationLoopSlider(m_lingerAnimationAfterSlider);
@@ -538,7 +539,7 @@ TimelapseDialog::TimelapseDialog(
 		advancedForm->addRow(lingerAfterTitle, m_lingerAfterSlider);
 	}
 
-	m_maxDeltaSlider = new KisDoubleSliderSpinBox;
+	m_maxDeltaSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_maxDeltaSlider->setRange(0.01, 10.0, 2);
 	m_maxDeltaSlider->setSingleStep(0.1);
 	m_maxDeltaSlider->setSuffix(tr(" seconds"));
@@ -546,12 +547,12 @@ TimelapseDialog::TimelapseDialog(
 	advancedForm->addRow(tr("Interval limit:"), m_maxDeltaSlider);
 	kineticScroller->disableKineticScrollingOnWidget(m_maxDeltaSlider);
 
-	m_maxQueueEntriesSlider = new KisSliderSpinBox;
+	m_maxQueueEntriesSlider = new widgets::NoScrollKisSliderSpinBox;
 	m_maxQueueEntriesSlider->setRange(1, 100);
 	advancedForm->addRow(tr("Queue size:"), m_maxQueueEntriesSlider);
 	kineticScroller->disableKineticScrollingOnWidget(m_maxQueueEntriesSlider);
 
-	m_framerateSlider = new KisDoubleSliderSpinBox;
+	m_framerateSlider = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_framerateSlider->setRange(1.0, 300.0, 2);
 	m_framerateSlider->setExponentRatio(3.0);
 	//: Frames per second.

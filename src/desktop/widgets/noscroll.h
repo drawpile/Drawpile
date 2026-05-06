@@ -45,6 +45,17 @@ protected:
 	void wheelEvent(QWheelEvent *event) override { event->ignore(); }
 };
 
+class NoScrollKisDoubleSliderSpinBox : public KisDoubleSliderSpinBox {
+public:
+	explicit NoScrollKisDoubleSliderSpinBox(QWidget *parent = nullptr)
+		: KisDoubleSliderSpinBox(parent)
+	{
+	}
+
+protected:
+	void wheelEvent(QWheelEvent *event) override { event->ignore(); }
+};
+
 }
 
 #endif
