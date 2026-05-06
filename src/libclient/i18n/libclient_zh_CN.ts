@@ -62,7 +62,7 @@
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation>加载程序</translation>
+        <translation>正在加载应用程序</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -77,7 +77,7 @@
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation>加载设备</translation>
+        <translation>正在加载资产</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -97,17 +97,17 @@
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation>启动 Drawpile 失败: %1</translation>
+        <translation>Drawpile 启动失败：%1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation>设置中…</translation>
+        <translation>正在设置…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation>严重错误:</translation>
+        <translation>致命错误：</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -162,7 +162,7 @@
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation>语言:</translation>
+        <translation>语言：</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -242,7 +242,7 @@
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation>版本:</translation>
+        <translation>版本：</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -277,7 +277,7 @@
     <message>
         <location line="+87"/>
         <source>Brush</source>
-        <translation>笔刷预设</translation>
+        <translation>画笔</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -586,7 +586,7 @@
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation>&apos;%1&apos; 包含一个有多个服务器名的证书, 目前不支持.</translation>
+        <translation>&apos;%1&apos; 包含具有多个主机名的证书，目前不支持此功能。</translation>
     </message>
     <message>
         <location line="+140"/>
