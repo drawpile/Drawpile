@@ -5213,7 +5213,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-112"/>
         <source>Kick &amp; Ban:</source>
-        <translation>踢除和禁IP:</translation>
+        <translation>踢除和禁 IP：</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -7889,9 +7889,8 @@ For very slow speed the opposite happens.</source>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>将自定义输入设置为这个值. 如果它被放慢了, 就把它向这个值移动 (见下文).
-这个想法是你让这个输入取决于压力/速度/任何东西的混合, 然后让其他设置取决于这个 &apos;自定义输入&apos; 而不是在你需要的地方重复这个组合.
-如果你让它 &apos;随机&apos; 变化, 你可以生成一个缓慢 (平滑) 的随机输入.</translation>
+        <translation>将自定义输入设置为此值。如果速度变慢，请将其调整到此值附近（见下文）。这样做的目的是让此输入取决于压力/速度/其他因素的组合，然后让其他设置依赖于此“自定义输入”，而不是在所有需要的地方重复此组合。
+如果将其设置为“随机”变化，则可以生成一个缓慢（平滑）的随机输入。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8558,7 +8557,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+27"/>
         <source>This session is hosted on a server that &lt;strong&gt;does not support the web browser version of Drawpile&lt;/strong&gt;.</source>
-        <translation>此房间使用的服务器&lt;strong&gt;不支持网页浏览器版本的Drawpile&lt;/strong&gt;.</translation>
+        <translation>本次会话托管在 &lt;strong&gt;不支持 Drawpile 网页浏览器版本的服务器上&lt;/strong&gt;。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8569,7 +8568,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-22"/>
         <source>This session &lt;strong&gt;restricts joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation>此房间&lt;strong&gt;限制只能通过网页浏览器版本的Drawpile加入.&lt;/strong&gt;</translation>
+        <translation>此会话 &lt;strong&gt;限制使用网页版 Drawpile 加入。&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8594,7 +8593,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>This session &lt;strong&gt;does not allow joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation>此房间&lt;strong&gt;不允许通过网页浏览器版本的Drawpile加入.&lt;/strong&gt;</translation>
+        <translation>此会话 &lt;strong&gt;不允许使用网页版 Drawpile 加入。&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8625,7 +8624,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>This session is &lt;strong&gt;public&lt;/strong&gt;, strangers can join it!</source>
-        <translation>此房间是&lt;strong&gt;公共房间&lt;/strong&gt;, 任何人都可以加入!</translation>
+        <translation>本会议是 &lt;strong&gt;公开&lt;/strong&gt;的，陌生人也可以加入！</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -8653,7 +8652,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation>邀请代码无法绕过禁止IP或者服务器范围内的限制.</translation>
+        <translation>它们无法绕过封禁或服务器范围内的限制。</translation>
     </message>
 </context>
 <context>
@@ -8830,7 +8829,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Kerfluff</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation>Kerfluff</translation>
+        <translation>绒毛</translation>
     </message>
     <message>
         <location line="+3"/>
