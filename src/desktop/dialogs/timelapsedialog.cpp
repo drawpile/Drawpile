@@ -246,6 +246,9 @@ TimelapseDialog::TimelapseDialog(
 	resolutionLayout->addWidget(new QLabel(tr("pixels")));
 	settingsForm->addRow(tr("Resolution:"), resolutionLayout);
 
+	kineticScroller->disableKineticScrollingOnWidget(m_widthSpinner);
+	kineticScroller->disableKineticScrollingOnWidget(m_heightSpinner);
+
 	m_keepAspectCheckBox = new QCheckBox(tr("Keep aspect ratio"));
 	m_keepAspectCheckBox->setChecked(true);
 	settingsForm->addRow(nullptr, m_keepAspectCheckBox);
@@ -422,6 +425,7 @@ TimelapseDialog::TimelapseDialog(
 	m_logoScaleSlider->setRange(0.01, 0.5, 3);
 	m_logoScaleSlider->setSingleStep(0.01);
 	advancedForm->addRow(tr("Logo scale:"), m_logoScaleSlider);
+	kineticScroller->disableKineticScrollingOnWidget(m_logoScaleSlider);
 	connect(
 		m_logoScaleSlider,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
@@ -439,6 +443,8 @@ TimelapseDialog::TimelapseDialog(
 	logoOffsetLayout->addWidget(m_logoOffsetXSlider, 1);
 	logoOffsetLayout->addWidget(new QLabel(QStringLiteral("x")));
 	logoOffsetLayout->addWidget(m_logoOffsetYSlider, 1);
+	kineticScroller->disableKineticScrollingOnWidget(m_logoOffsetXSlider);
+	kineticScroller->disableKineticScrollingOnWidget(m_logoOffsetYSlider);
 
 	advancedForm->addRow(tr("Logo padding:"), logoOffsetLayout);
 	connect(
@@ -454,6 +460,7 @@ TimelapseDialog::TimelapseDialog(
 	m_logoOpacitySlider->setRange(1, 100);
 	m_logoOpacitySlider->setSuffix(tr("%"));
 	advancedForm->addRow(tr("Logo opacity:"), m_logoOpacitySlider);
+	kineticScroller->disableKineticScrollingOnWidget(m_logoOpacitySlider);
 	connect(
 		m_logoOpacitySlider,
 		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
@@ -464,7 +471,6 @@ TimelapseDialog::TimelapseDialog(
 	m_lingerBeforeSlider->setRange(0.0, 60.0, 2);
 	m_lingerBeforeSlider->setSingleStep(0.1);
 	m_lingerBeforeSlider->setSuffix(tr(" seconds"));
-	kineticScroller->disableKineticScrollingOnWidget(m_lingerBeforeSlider);
 
 	if(m_animationResultCheckBox) {
 		m_lingerAnimationBeforeSlider = new KisSliderSpinBox;
@@ -483,6 +489,8 @@ TimelapseDialog::TimelapseDialog(
 	} else {
 		advancedForm->addRow(lingerBeforeTitle, m_lingerBeforeSlider);
 	}
+
+	kineticScroller->disableKineticScrollingOnWidget(m_lingerBeforeSlider);
 
 	QHBoxLayout *flashLayout = new QHBoxLayout;
 	flashLayout->setContentsMargins(0, 0, 0, 0);
