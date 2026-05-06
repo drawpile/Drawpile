@@ -174,7 +174,7 @@ Document::Document(
 		&tools::ToolController::flushPreviewedActions, Qt::DirectConnection);
 }
 
-void Document::initCanvas()
+void Document::initCanvas(bool shouldClearPaths)
 {
 	if(m_canvas) {
 		m_canvas->discardProjectRecordingReinit();
@@ -227,7 +227,9 @@ void Document::initCanvas()
 	emit canvasChanged(m_canvas);
 	m_canvas->paintEngine()->resetAcl(m_client->myId());
 
-	clearPaths();
+	if(shouldClearPaths) {
+		clearPaths();
+	}
 }
 
 void Document::onSessionResetted()
@@ -425,7 +427,7 @@ void Document::onServerLogin(const net::LoggedInParams &params)
 	{
 		canvas::ReconnectState *reconnectState = nullptr;
 		if(params.join) {
-			initCanvas();
+			initCanvas(m_reconnectState != nullptr);
 			if(params.skipCatchup) {
 				reconnectState = m_reconnectState;
 				m_reconnectState = nullptr;
