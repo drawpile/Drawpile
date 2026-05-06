@@ -6,6 +6,7 @@
 #include "libclient/project/projectwrangler.h"
 #include "libshared/net/protover.h"
 #include <QDialogButtonBox>
+#include <QFile>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -24,7 +25,7 @@ Q_LOGGING_CATEGORY(
 
 namespace dialogs {
 
-ProjectDialog::ProjectDialog(bool dirty, QWidget *parent)
+ProjectDialog::ProjectDialog(QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Project Statistics"));
@@ -42,18 +43,10 @@ ProjectDialog::ProjectDialog(bool dirty, QWidget *parent)
 
 	dirtyLayout->addWidget(
 		utils::makeIconLabel(
-			QIcon::fromTheme(
-				dirty ? QStringLiteral("dialog-warning")
-					  : QStringLiteral("dialog-information")),
+			QIcon::fromTheme(QStringLiteral("dialog-information")),
 			dirtyFrame));
 
 	QString dirtyLabelText;
-	if(dirty) {
-		dirtyLabelText.append(
-			QStringLiteral("<strong>%1</strong> ")
-				.arg(tr("The canvas has changes not saved in the project!")
-						 .toHtmlEscaped()));
-	}
 	dirtyLabelText.append(
 		tr("These statistics only reflect sessions saved in the project. "
 		   "Sessions where you disabled autorecovery or quit without saving "
@@ -104,37 +97,65 @@ ProjectDialog::ProjectDialog(bool dirty, QWidget *parent)
 	m_stack->setCurrentWidget(m_loadPage);
 }
 
-void ProjectDialog::openProject(const QString &path)
+ProjectDialog::~ProjectDialog()
 {
-	utils::ScopedUpdateDisabler disabler(this);
-	m_stack->setCurrentWidget(m_loadPage);
-	m_buttons->setStandardButtons(QDialogButtonBox::Cancel);
-
-	if(!m_projectWrangler) {
-		m_projectWrangler = new project::ProjectWrangler(this);
-		connect(
-			m_projectWrangler, &project::ProjectWrangler::openErrorOccurred,
-			this, &ProjectDialog::showErrorPage, Qt::QueuedConnection);
-		connect(
-			m_projectWrangler, &project::ProjectWrangler::overviewErrorOccurred,
-			this, &ProjectDialog::showErrorPage, Qt::QueuedConnection);
-		connect(
-			m_projectWrangler,
-			&project::ProjectWrangler::unhandledErrorOccurred, this,
-			&ProjectDialog::showUnhandledErrorMessageBox, Qt::QueuedConnection);
-		connect(
-			m_projectWrangler, &project::ProjectWrangler::syncReceived, this,
-			&ProjectDialog::handleSync, Qt::QueuedConnection);
-		connect(
-			m_projectWrangler, &project::ProjectWrangler::openSucceeded, this,
-			&ProjectDialog::handleOpenSucceeded, Qt::QueuedConnection);
-		connect(
-			m_projectWrangler, &project::ProjectWrangler::overviewGenerated,
-			this, &ProjectDialog::handleOverviewGenerated,
-			Qt::QueuedConnection);
+	if(!m_tempPath.isEmpty()) {
+		QFile::remove(m_tempPath);
 	}
+}
 
-	m_projectWrangler->openProject(path);
+void ProjectDialog::setTempPath(const QString &tempPath)
+{
+	if(m_tempPath.isEmpty()) {
+		m_tempPath = tempPath;
+		openProject();
+	} else {
+		qCWarning(
+			lcDpProjectDialog,
+			"Project path is already set to '%s', not setting it to '%s'",
+			qUtf8Printable(m_tempPath), qUtf8Printable(tempPath));
+		if(!tempPath.isEmpty()) {
+			QFile::remove(tempPath);
+		}
+	}
+}
+
+void ProjectDialog::openProject()
+{
+	if(!m_tempPath.isEmpty()) {
+		utils::ScopedUpdateDisabler disabler(this);
+		m_stack->setCurrentWidget(m_loadPage);
+		m_buttons->setStandardButtons(QDialogButtonBox::Cancel);
+
+		if(!m_projectWrangler) {
+			m_projectWrangler = new project::ProjectWrangler(this);
+			connect(
+				m_projectWrangler, &project::ProjectWrangler::openErrorOccurred,
+				this, &ProjectDialog::showErrorPage, Qt::QueuedConnection);
+			connect(
+				m_projectWrangler,
+				&project::ProjectWrangler::overviewErrorOccurred, this,
+				&ProjectDialog::showErrorPage, Qt::QueuedConnection);
+			connect(
+				m_projectWrangler,
+				&project::ProjectWrangler::unhandledErrorOccurred, this,
+				&ProjectDialog::showUnhandledErrorMessageBox,
+				Qt::QueuedConnection);
+			connect(
+				m_projectWrangler, &project::ProjectWrangler::syncReceived,
+				this, &ProjectDialog::handleSync, Qt::QueuedConnection);
+			connect(
+				m_projectWrangler, &project::ProjectWrangler::openSucceeded,
+				this, &ProjectDialog::handleOpenSucceeded,
+				Qt::QueuedConnection);
+			connect(
+				m_projectWrangler, &project::ProjectWrangler::overviewGenerated,
+				this, &ProjectDialog::handleOverviewGenerated,
+				Qt::QueuedConnection);
+		}
+
+		m_projectWrangler->openProject(m_tempPath);
+	}
 }
 
 void ProjectDialog::requestCancel()
