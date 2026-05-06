@@ -74,7 +74,7 @@ public:
 	 *
 	 * This deletes the old canvas (if it exists) and creates a fresh one.
 	 */
-	void initCanvas();
+	void initCanvas(bool shouldClearPaths = true);
 
 	bool loadBlank(
 		const QSize &size, const QColor &background,
