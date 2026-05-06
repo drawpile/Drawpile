@@ -16,13 +16,13 @@ namespace dialogs {
 class ProjectDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit ProjectDialog(bool dirty, QWidget *parent = nullptr);
+	explicit ProjectDialog(QWidget *parent = nullptr);
+	~ProjectDialog() override;
 
-	void openProject(const QString &path);
-
-	bool wasProjectOpened() const { return m_projectWrangler != nullptr; }
+	void setTempPath(const QString &tempPath);
 
 private:
+	void openProject();
 	void requestCancel();
 
 	void showErrorPage(const QString &errorMessage);
@@ -36,6 +36,7 @@ private:
 	static QWidget *makeLoadPage(QLabel *&label);
 	static QWidget *makeErrorPage(QLabel *&label);
 
+	QString m_tempPath;
 	project::ProjectWrangler *m_projectWrangler = nullptr;
 	QStackedWidget *m_stack;
 	QWidget *m_loadPage;
