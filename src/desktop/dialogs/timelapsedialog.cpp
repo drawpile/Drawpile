@@ -35,7 +35,6 @@ extern "C" {
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QThreadPool>
-#include <QTimeEdit>
 #include <QVBoxLayout>
 #include <QtColorWidgets/ColorPreview>
 #include <cmath>
@@ -205,12 +204,25 @@ TimelapseDialog::TimelapseDialog(
 	durationLayout->setContentsMargins(0, 0, 0, 0);
 	settingsForm->addRow(tr("Duration:"), durationLayout);
 
-	m_durationEdit = new QTimeEdit;
-	m_durationEdit->setMinimumTime(QTime(0, 0, 1));
-	m_durationEdit->setMaximumTime(QTime(12, 0, 0));
-	m_durationEdit->setDisplayFormat(QStringLiteral("HH:mm:ss"));
-	m_durationEdit->setSelectedSection(QDateTimeEdit::SecondSection);
-	durationLayout->addWidget(m_durationEdit, 1);
+	m_minutesSpinner = new widgets::NoScrollKisSliderSpinBox;
+	m_minutesSpinner->setIndeterminate(true);
+	m_minutesSpinner->setRange(0, 600);
+	durationLayout->addWidget(m_minutesSpinner, 1);
+	kineticScroller->disableKineticScrollingOnWidget(m_minutesSpinner);
+	connect(
+		m_minutesSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &TimelapseDialog::updateMinutesText);
+	updateMinutesText(m_minutesSpinner->value());
+
+	m_secondsSpinner = new widgets::NoScrollKisSliderSpinBox;
+	m_secondsSpinner->setIndeterminate(true);
+	m_secondsSpinner->setRange(0, 59);
+	durationLayout->addWidget(m_secondsSpinner, 1);
+	kineticScroller->disableKineticScrollingOnWidget(m_secondsSpinner);
+	connect(
+		m_secondsSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &TimelapseDialog::updateSecondsText);
+	updateSecondsText(m_secondsSpinner->value());
 
 	widgets::GroupedToolButton *durationButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
@@ -1048,14 +1060,26 @@ bool TimelapseDialog::selectInterpolation(int interpolation)
 	return false;
 }
 
+void TimelapseDialog::updateMinutesText(int minutes)
+{
+	m_minutesSpinner->setOverrideText(utils::formatMinutes(minutes));
+}
+
+void TimelapseDialog::updateSecondsText(int seconds)
+{
+	m_secondsSpinner->setOverrideText(utils::formatSeconds(seconds));
+}
+
 int TimelapseDialog::getDurationSeconds() const
 {
-	return QTime(0, 0).secsTo(m_durationEdit->time());
+	return qMax(
+		1, (m_minutesSpinner->value() * 60) + m_secondsSpinner->value());
 }
 
 void TimelapseDialog::setDurationSeconds(int seconds)
 {
-	m_durationEdit->setTime(QTime(0, 0).addSecs(seconds));
+	m_minutesSpinner->setValue(seconds / 60);
+	m_secondsSpinner->setValue(seconds % 60);
 }
 
 void TimelapseDialog::updateFfmpeg()
