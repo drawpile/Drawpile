@@ -4,6 +4,7 @@ extern "C" {
 }
 #include "libclient/project/metadata.h"
 #include "libclient/project/recoverymodel.h"
+#include "libclient/utils/wasmpersistence.h"
 #include <QDir>
 #include <QHash>
 #include <algorithm>
@@ -272,6 +273,8 @@ void RecoveryModel::removeOrphanedFiles()
 			}
 		}
 	}
+
+	DRAWPILE_FS_PERSIST();
 }
 
 void RecoveryModel::addOpenedAutosavePath(const QString &path)

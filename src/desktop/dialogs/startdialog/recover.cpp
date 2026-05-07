@@ -488,6 +488,7 @@ void Recover::removePath(const QString &path)
 			error);
 	}
 
+	// On Emscripten, calling this persists the file system.
 	m_recoveryModel->removeOrphanedFiles();
 	m_recoveryModel->reload();
 }
