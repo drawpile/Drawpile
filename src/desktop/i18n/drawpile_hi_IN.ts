@@ -274,7 +274,7 @@
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>CN</translation>
     </message>
     <message>
         <location line="-43"/>
