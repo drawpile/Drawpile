@@ -119,7 +119,7 @@
     <message>
         <location line="-76"/>
         <source>Hardness: </source>
-        <translation>हार्डनेस </translation>
+        <translation>कठोरता: </translation>
     </message>
     <message>
         <location line="-157"/>
