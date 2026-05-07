@@ -704,6 +704,18 @@ void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 		widget->show();
 	}
 #endif
+
+#ifdef __EMSCRIPTEN__
+	widget->raise(); // Depending on the parent, this doesn't happen by default.
+#endif
+}
+
+void showMessageBox(QMessageBox *msgbox)
+{
+	msgbox->show();
+#ifdef __EMSCRIPTEN__
+	msgbox->raise(); // As in showWindow above.
+#endif
 }
 
 void maximizeExistingWindow(QWidget *widget)
@@ -1229,7 +1241,7 @@ QMessageBox *showQuestion(
 	const QString &informativeText)
 {
 	QMessageBox *msgbox = makeQuestion(parent, title, text, informativeText);
-	msgbox->show();
+	showMessageBox(msgbox);
 	return msgbox;
 }
 
@@ -1238,7 +1250,7 @@ QMessageBox *showInformation(
 	const QString &informativeText)
 {
 	QMessageBox *msgbox = makeInformation(parent, title, text, informativeText);
-	msgbox->show();
+	showMessageBox(msgbox);
 	return msgbox;
 }
 
@@ -1247,7 +1259,7 @@ QMessageBox *showWarning(
 	const QString &informativeText)
 {
 	QMessageBox *msgbox = makeWarning(parent, title, text, informativeText);
-	msgbox->show();
+	showMessageBox(msgbox);
 	return msgbox;
 }
 
@@ -1256,7 +1268,7 @@ QMessageBox *showCritical(
 	const QString &informativeText)
 {
 	QMessageBox *msgbox = makeCritical(parent, title, text, informativeText);
-	msgbox->show();
+	showMessageBox(msgbox);
 	return msgbox;
 }
 

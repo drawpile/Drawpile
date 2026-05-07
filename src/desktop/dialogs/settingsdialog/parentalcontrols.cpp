@@ -203,7 +203,7 @@ void ParentalControls::toggleLock()
 						connect(box, &QMessageBox::accepted, this, [this] {
 							toggleLock();
 						});
-						box->show();
+						utils::showMessageBox(box);
 					}
 				} else {
 					m_cfg->setParentalControlsLocked(

@@ -948,8 +948,8 @@ void SessionSettingsDialog::changeSessionPassword()
 				box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 				box->button(QMessageBox::Yes)->setText(tr("Yes, make public"));
 				box->button(QMessageBox::No)->setText(tr("No, keep password"));
-				box->show();
 				connect(box, &QMessageBox::accepted, this, updatePassword);
+				utils::showMessageBox(box);
 			} else {
 				updatePassword();
 			}
@@ -1075,7 +1075,7 @@ void SessionSettingsDialog::exportBans()
 						startBanExport(true);
 					}
 				});
-			messageBox->show();
+			utils::showMessageBox(messageBox);
 		} else {
 			startBanExport(true);
 		}

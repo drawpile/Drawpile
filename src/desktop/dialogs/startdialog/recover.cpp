@@ -166,7 +166,7 @@ void RecoveryEntryWidget::promptRemoval()
 	connect(
 		box, &QMessageBox::accepted, this,
 		&RecoveryEntryWidget::requestRemoval);
-	box->show();
+	utils::showMessageBox(box);
 }
 
 void RecoveryEntryWidget::requestRemoval()
@@ -238,7 +238,7 @@ void RecoveryEntryWidget::save()
 		});
 	connect(box, &QMessageBox::rejected, this, triggerRemoval);
 
-	box->show();
+	utils::showMessageBox(box);
 }
 
 bool RecoveryEntryWidget::saveTo(const QString &savePath, QString &outError)

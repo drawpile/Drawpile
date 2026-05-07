@@ -253,7 +253,7 @@ void LoadDialog::renameCurrentPreset()
 						[this, id, newTitle] {
 							m_presetModel->renamePresetById(id, newTitle);
 						});
-					box->show();
+					utils::showMessageBox(box);
 				}
 			}
 		});
@@ -274,7 +274,7 @@ void LoadDialog::deleteCurrentPreset()
 		m_presetModel->deletePresetById(
 			m_presetCombo->currentData(utils::HostPresetModel::IdRole).toInt());
 	});
-	box->show();
+	utils::showMessageBox(box);
 }
 
 void LoadDialog::emitLoadRequests()

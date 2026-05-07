@@ -173,6 +173,10 @@ private:
 void showWindow(
 	QWidget *widget, bool maximized = false, bool isMainWindow = false);
 
+// Shows the message box, also raises it on Emscripten because depending on who
+// the parent is, the dialog may open in the back, behind other stuff.
+void showMessageBox(QMessageBox *msgbox);
+
 void maximizeExistingWindow(QWidget *widget);
 
 bool isWidgetOnSmallScreen(const QWidget *widget);

@@ -1048,7 +1048,7 @@ void MainWindow::questionWindowReplacement(
 		box->button(QMessageBox::No)->setText(tr("No, cancel"));
 		connect(box, &QMessageBox::accepted, parent, std::bind(block, true));
 		connect(box, &QMessageBox::rejected, parent, std::bind(block, false));
-		box->show();
+		utils::showMessageBox(box);
 	} else {
 		block(true);
 	}
@@ -1711,7 +1711,7 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 			showSettings()->initiateFixShortcutConflicts();
 		}
 	});
-	box->show();
+	utils::showMessageBox(box);
 }
 
 void MainWindow::stopProjectRecording()
@@ -1756,7 +1756,7 @@ void MainWindow::toggleProjectRecording(bool enabled)
 					currentCanvas && currentCanvas->isProjectRecording();
 				getAction("autorecord")->setChecked(isProjectRecording);
 			});
-			box->show();
+			utils::showMessageBox(box);
 		}
 	}
 }
@@ -3123,7 +3123,7 @@ void MainWindow::offerDownload(
 					}
 				}
 			});
-		msgbox->show();
+		utils::showMessageBox(msgbox);
 	}
 }
 #endif
@@ -3255,7 +3255,7 @@ void MainWindow::showCompatibilityModeWarning()
 			QMessageBox::Warning, title, message, QMessageBox::Ok, this);
 		box->setAttribute(Qt::WA_DeleteOnClose);
 		box->setModal(false);
-		box->show();
+		utils::showMessageBox(box);
 	}
 }
 
@@ -4111,7 +4111,7 @@ void MainWindow::reconnectWith(bool downloaded)
 				}
 			});
 
-		box->show();
+		utils::showMessageBox(box);
 	} else {
 		reconnectToSession(true);
 	}
@@ -4148,7 +4148,7 @@ void MainWindow::leave()
 		leavebox->setInformativeText(tr("There is still unsent data! Please wait until transmission completes!"));
 	}
 
-	leavebox->show();
+	utils::showMessageBox(leavebox);
 }
 
 // clang-format on
@@ -5856,7 +5856,7 @@ void MainWindow::causeCrash()
 			nonexistent->deleteLater();
 		}
 	});
-	box->show();
+	utils::showMessageBox(box);
 }
 // clang-format off
 

@@ -501,7 +501,7 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 			}
 		}
 	});
-	box->show();
+	utils::showMessageBox(box);
 }
 
 void BrushPalette::setSelectedPresetIdsFromShortcut(
@@ -837,7 +837,7 @@ void BrushPalette::deleteCurrentTag()
 					d->tagModel->deleteTag(tagId);
 				}
 			});
-		box->show();
+		utils::showMessageBox(box);
 	}
 }
 
@@ -879,7 +879,7 @@ void BrushPalette::deleteCurrentPreset()
 			d->presetModel->deletePreset(presetId);
 		}
 	});
-	box->show();
+	utils::showMessageBox(box);
 }
 
 void BrushPalette::exportCurrentTag()
