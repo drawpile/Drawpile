@@ -1530,6 +1530,20 @@ bool openOrQuestionUrl(QWidget *parent, const QUrl &url)
 	return true;
 }
 
+QMessageBox *showFfmpegUnsupportedError(QWidget *parent)
+{
+	return showWarning(
+		parent,
+		QCoreApplication::translate(
+			"dialogs::FfmpegDialog", "Programming Error"),
+		QCoreApplication::translate(
+			"dialogs::FfmpegDialog",
+			"FFmpeg is not supported on this platform."),
+		QCoreApplication::translate(
+			"dialogs::FfmpegDialog",
+			"If you see this message, you found a bug in Drawpile."));
+}
+
 QIcon makeColorIcon(int size, const QColor &color)
 {
 	int half = size / 2;

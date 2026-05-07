@@ -329,6 +329,8 @@ QDialog *getOrRaiseInputDouble(
 
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
+QMessageBox *showFfmpegUnsupportedError(QWidget *parent);
+
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 QString scrubAccelerators(const QString &text);
 QString toHtmlWithLink(

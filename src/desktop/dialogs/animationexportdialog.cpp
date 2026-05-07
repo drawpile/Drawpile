@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/animationexportdialog.h"
-#include "desktop/dialogs/ffmpegdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
@@ -22,6 +21,9 @@
 #include <QSignalBlocker>
 #include <QTabWidget>
 #include <QVBoxLayout>
+#ifdef DRAWPILE_FFMPEG_DIALOG
+#	include "desktop/dialogs/ffmpegdialog.h"
+#endif
 
 namespace dialogs {
 
@@ -396,6 +398,7 @@ void AnimationExportDialog::updateFfmpegUi()
 
 void AnimationExportDialog::showFfmpegSettings()
 {
+#ifdef DRAWPILE_FFMPEG_DIALOG
 	QString objectName = QStringLiteral("ffmpegdialog");
 	FfmpegDialog *dlg =
 		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
@@ -411,6 +414,9 @@ void AnimationExportDialog::showFfmpegSettings()
 			&AnimationExportDialog::setFfmpegPath);
 		dlg->show();
 	}
+#else
+	utils::showFfmpegUnsupportedError(this);
+#endif
 }
 
 void AnimationExportDialog::setFfmpegPath(const QString &ffmpegPath)

@@ -769,8 +769,6 @@ if(NOT EMSCRIPTEN)
 		DRAWPILE_TIMELAPSE_DIALOG=1
 	)
 	target_sources(drawpile PRIVATE
-		dialogs/ffmpegdialog.cpp
-		dialogs/ffmpegdialog.h
 		dialogs/projectdialog.cpp
 		dialogs/projectdialog.h
 		dialogs/startdialog/recent.cpp
@@ -786,8 +784,13 @@ if(NOT EMSCRIPTEN)
 endif()
 
 if(NOT EMSCRIPTEN AND NOT ANDROID)
-	target_compile_definitions(drawpile PRIVATE DRAWPILE_PROJECT_INFO_DIALOG=1)
+	target_compile_definitions(drawpile PRIVATE
+		DRAWPILE_PROJECT_INFO_DIALOG=1
+		DRAWPILE_FFMPEG_DIALOG=1
+	)
 	target_sources(drawpile PRIVATE
+		dialogs/ffmpegdialog.cpp
+		dialogs/ffmpegdialog.h
 		dialogs/projectinfodialog.cpp
 		dialogs/projectinfodialog.h
 	)

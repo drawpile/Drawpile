@@ -4,7 +4,6 @@ extern "C" {
 #include <dpmsg/messages.h>
 }
 #include "desktop/dialogs/colordialog.h"
-#include "desktop/dialogs/ffmpegdialog.h"
 #include "desktop/dialogs/timelapsedialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
@@ -40,6 +39,9 @@ extern "C" {
 #include <QtColorWidgets/ColorPreview>
 #include <cmath>
 #include <functional>
+#ifdef DRAWPILE_FFMPEG_DIALOG
+#	include "desktop/dialogs/ffmpegdialog.h"
+#endif
 
 namespace dialogs {
 
@@ -1312,6 +1314,7 @@ const QImage &TimelapseDialog::getLogoImage()
 
 void TimelapseDialog::showFfmpegSettings()
 {
+#ifdef DRAWPILE_FFMPEG_DIALOG
 	QString objectName = QStringLiteral("ffmpegdialog");
 	FfmpegDialog *dlg =
 		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
@@ -1327,6 +1330,9 @@ void TimelapseDialog::showFfmpegSettings()
 			&TimelapseDialog::setFfmpegPath);
 		dlg->show();
 	}
+#else
+	utils::showFfmpegUnsupportedError(this);
+#endif
 }
 
 void TimelapseDialog::setFfmpegPath(const QString &ffmpegPath)
