@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation>नया जोड़े</translation>
+        <translation>नया जोड़ो</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -21,7 +21,7 @@
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation>हटाएं</translation>
+        <translation>हटाएँ</translation>
     </message>
 </context>
 <context>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>दुरुपयोग होने की सूचना दें</translation>
+        <translation>दुर्व्यवहार की शिकायत करें</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -88,7 +88,7 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation>इरेज़र मोड</translation>
+        <translation>मिटाएं मोड</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -108,18 +108,18 @@
     <message>
         <location line="-13"/>
         <source>Radius: </source>
-        <translation>त्रिज्या: </translation>
+        <translation>त्रिज्या </translation>
     </message>
     <message>
         <location line="-13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>अपारदर्शिता: </translation>
     </message>
     <message>
         <location line="-76"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>हार्डनेस </translation>
     </message>
     <message>
         <location line="-157"/>
@@ -157,12 +157,12 @@
     <message>
         <location line="-30"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>रिक्ति: </translation>
     </message>
     <message>
         <location line="-49"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>गेन : </translation>
     </message>
     <message>
         <location line="+213"/>
@@ -174,7 +174,7 @@
         <location line="+13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+12"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>सपाट करना </translation>
     </message>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
@@ -197,7 +197,7 @@
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>शॉर्टकट</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -252,12 +252,12 @@
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>समय समाप्ति:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>फिंगरप्रिंट:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -284,7 +284,7 @@
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>को जारी किया गया</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -299,7 +299,7 @@
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>विवरण</translation>
     </message>
 </context>
 <context>
@@ -307,7 +307,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Select color</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -317,7 +317,7 @@
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -337,12 +337,12 @@
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>हरा</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -360,7 +360,7 @@
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रकार:</translation>
     </message>
 </context>
 <context>
@@ -398,7 +398,7 @@
     <message>
         <location line="+7"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>सेटिंग्स आयात करें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -429,7 +429,7 @@
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>छवि खोलें</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -455,7 +455,7 @@
     <message>
         <location line="-302"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>छवि के रूप में निर्यात</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -510,12 +510,12 @@
     <message>
         <location line="+136"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>निर्यात सेटिंग्स</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>लॉग फाइल</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -551,7 +551,7 @@
     <message>
         <location line="-262"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>अवतार</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -624,7 +624,7 @@
         <location line="+99"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>शीर्षकहीन %1</translation>
     </message>
 </context>
 <context>
@@ -643,7 +643,7 @@
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -655,7 +655,7 @@
         <location line="+42"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+41"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>मोड:</translation>
     </message>
     <message>
         <location line="-310"/>
@@ -667,7 +667,7 @@
         <location line="-19"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-26"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>शरीर के आकार की सीमा </translation>
     </message>
     <message>
         <location line="+37"/>
@@ -697,7 +697,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>अपारदर्शिता: </translation>
     </message>
     <message>
         <location line="+24"/>
@@ -785,7 +785,7 @@
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>चलाएं</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -795,7 +795,7 @@
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>गति: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1031,7 +1031,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>चुनें…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1054,17 +1054,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>लेआउट</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>सेव</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>नाम बदलें</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1082,7 +1082,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1270"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>लिंक खोलें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1092,12 +1092,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>बेवसाइट देखे</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>रद्द करें</translation>
     </message>
 </context>
 <context>
@@ -1111,17 +1111,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-187"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Password</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation>पासवर्ड याद रखें</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>यूज़रनेम</translation>
     </message>
     <message>
         <location line="+158"/>
@@ -1201,7 +1201,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>खाता भूलें</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1251,7 +1251,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>मिनिमाइज़ करें</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
@@ -1274,7 +1274,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>परिवर्तन छोड़ें</translation>
     </message>
 </context>
 <context>
@@ -1321,7 +1321,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>रिकॉर्डिंग बंद करें</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1358,18 +1358,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>जारी रखें</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>रद्द करें</translation>
     </message>
     <message>
         <location line="+62"/>
         <location line="+2323"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>शीर्षकहीन</translation>
     </message>
     <message>
         <location line="-2271"/>
@@ -1395,7 +1395,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>समाधान</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -1433,7 +1433,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>सहेजें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1464,7 +1464,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>आपके पास ऐसा करने की अनुमति नहीं है।</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1484,7 +1484,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>खुला हाल</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1505,7 +1505,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+168"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>सहेजा जा रहा है..।</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1520,12 +1520,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
+        <translation>छवि सहेजी गई</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>अनुकूलता</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1550,12 +1550,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>चलाएं</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>रिकॉर्डिंग रोकें</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1656,7 +1656,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Stay</source>
-        <translation type="unfinished"></translation>
+        <translation>ठहरें</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1692,7 +1692,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>शामिल हों</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -1856,7 +1856,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>जैसा सुरक्षित करें..।</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1878,7 +1878,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+82"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़ाइल (&amp;F)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1894,7 +1894,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>निर्यात (&amp;E)</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -1934,7 +1934,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>चिपकाएं(&amp;P)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1954,7 +1954,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>एनोटेशन हटाएँ</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1985,7 +1985,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
+        <translation>वरीयताएं</translation>
     </message>
     <message>
         <location line="+276"/>
@@ -1995,7 +1995,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>जूम रीसेट करें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2025,7 +2025,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>वामावर्त स्थिति में घुमाएं</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2065,7 +2065,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>रूलर दिखाएं</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2090,12 +2090,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>स्क्रीन के अनुरूपित</translation>
     </message>
     <message>
         <location line="+134"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>ग्रुप व्यू</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2111,19 +2111,19 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 सेकंड</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 सेकंड</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 मिनट</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2190,12 +2190,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>सभी की जांच करो</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>सब को अचयनित करें</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2205,7 +2205,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>ताले</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2230,12 +2230,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>फोरग्राउंड रंग चुनें</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>बैकग्राउंड रंग चुनें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2310,7 +2310,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>पिछला स्लॉट</translation>
     </message>
     <message>
         <location line="+179"/>
@@ -2336,7 +2336,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+645"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़ाइल चयन</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2351,7 +2351,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-566"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>संपादन(&amp;E)</translation>
     </message>
     <message>
         <location line="-3151"/>
@@ -2385,7 +2385,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+17"/>
         <location line="+11"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़ाइल %s खाली है।</translation>
     </message>
     <message>
         <location line="-11"/>
@@ -2395,7 +2395,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>डाउनलोड पूरा हुआ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2435,7 +2435,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>कनेक्शन विफल</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2546,7 +2546,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>टैबलेट ड्राइवर</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2561,7 +2561,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>औजार-पट्टी</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2571,7 +2571,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>डौक्स</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2591,7 +2591,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>चैट</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2616,7 +2616,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>बड़ा करें(&amp;I)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2626,27 +2626,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>छोटा करें(&amp;O)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>दक्षिणावर्त घुमाएं</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>टिप्पणी</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>सूचक दिखाएं</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Names</source>
-        <translation type="unfinished"></translation>
+        <translation>नाम दिखाएँ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2671,7 +2671,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+27"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>पूर्ण स्क्रीन</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -2681,7 +2681,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>बड़ा करें(&amp;Z)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2765,7 +2765,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>परत दृश्यता टॉगल करें</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2781,12 +2781,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+60"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation>ऊपर के सब चुनें</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation>नीचे के सब चुनें</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2796,7 +2796,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+56"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>चयन विलोम</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2827,7 +2827,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>परिवर्तन</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2862,7 +2862,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>परिवर्तन</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3002,7 +3002,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename track</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3129,7 +3129,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+119"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>कारण:</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -3230,7 +3230,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>ब्राउज़ करें (&amp;B)..।</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3240,7 +3240,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>छोड़ें</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3321,7 +3321,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Line</source>
-        <translation type="unfinished"></translation>
+        <translation>लाइन</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3331,7 +3331,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>आयत</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3341,7 +3341,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>दीर्घवृत्त</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3381,7 +3381,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>ग्रेडिएंट</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3401,7 +3401,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग चयनकर्ता</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3431,7 +3431,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>निरीक्षक</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3451,7 +3451,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>डेवलपर टूल्स</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3496,7 +3496,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+200"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>चुनें(&amp;S)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3506,7 +3506,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>लासो उपकरण</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3526,7 +3526,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>परिवर्तन</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3536,7 +3536,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>दाँए-बाँए</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3603,7 +3603,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+34"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>मुखपृष्ठ (_H)</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3640,7 +3640,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+28"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़ाइल नहीं है</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3651,13 +3651,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+14"/>
         <location line="+5"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>टैग फ़ाइल संचयन में त्रुटि</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>सहायता(&amp;H)</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3692,7 +3692,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>विंडो</translation>
     </message>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-169"/>
@@ -3844,7 +3844,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>आंकड़े</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -3874,7 +3874,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-86"/>
         <source>Sent:</source>
-        <translation type="unfinished"></translation>
+        <translation>तारीख:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3887,7 +3887,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/playback.ui" line="+14"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>प्लेबैक</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -3902,7 +3902,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>चलाएं</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3912,17 +3912,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>आगे का छोड़ें (&amp;F)</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>बजाने की गति </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3937,7 +3937,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+82"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़्रेम :</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3957,7 +3957,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>रोकें</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -3980,7 +3980,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>इरेज़र</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4005,7 +4005,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>बाढ़ भरण</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4015,7 +4015,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>ग्रेडिएंट</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4025,17 +4025,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग चयनकर्ता</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>लेसर सूचक</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>चयन आयत</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4050,12 +4050,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>परिवर्तन</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>दाँए-बाँए</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4065,7 +4065,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>निरीक्षक</translation>
     </message>
 </context>
 <context>
@@ -4091,7 +4091,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+35"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>पहलू अनुपात रखना</translation>
     </message>
 </context>
 <context>
@@ -4106,12 +4106,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+6"/>
         <location line="+29"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़िल्टर</translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>उपयोगकर्ताओं</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -4126,7 +4126,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation>बैंड</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4149,12 +4149,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>सेटिंग्स</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>सत्र</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4224,22 +4224,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>5 सेकंड</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disable the timeout</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>शीर्षक:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>लॉग इन करें</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4259,12 +4259,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+569"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रविष्टि</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>चयनित हटाएं</translation>
     </message>
     <message>
         <location line="-534"/>
@@ -4274,7 +4274,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>अनुमति</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -4289,7 +4289,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+262"/>
         <source>permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>अनुमतियाँ</translation>
     </message>
     <message>
         <location line="-64"/>
@@ -4329,13 +4329,13 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+67"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ऑपरेटर्स</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+254"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>विश्वस्त</translation>
     </message>
     <message>
         <location line="-378"/>
@@ -4368,19 +4368,19 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>ऑपरेटर: </translation>
     </message>
     <message>
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>विश्वस्त </translation>
     </message>
     <message>
         <location line="-178"/>
@@ -4391,7 +4391,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>पंजीकृत </translation>
     </message>
     <message>
         <location line="-7"/>
@@ -4402,7 +4402,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>हर कोई </translation>
     </message>
     <message>
         <location line="+62"/>
@@ -4429,7 +4429,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>‍एक्सपोर्ट</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -4480,12 +4480,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished"></translation>
+        <translation>पाठ का रंग</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>मोटा</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -4505,7 +4505,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>रेंडरिंग</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4518,7 +4518,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>संवाद</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4543,12 +4543,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Pen Pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>दबाव:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Id:</source>
-        <translation type="unfinished"></translation>
+        <translation>आइडी :</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4568,7 +4568,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>नाम:</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -4591,7 +4591,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Video Options</source>
-        <translation type="unfinished"></translation>
+        <translation>वीडियो कोडेक विकल्प</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4616,7 +4616,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>निर्यात विकल्प</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -4662,7 +4662,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+422"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>बेनाम</translation>
     </message>
 </context>
 <context>
@@ -4724,18 +4724,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>पैलेट</translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIMP पैलेट</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4745,7 +4745,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>सभी फ़ाइल (*)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4765,12 +4765,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+321"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग जोड़ें</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग हटाए</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4804,7 +4804,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished"></translation>
+        <translation>रिपोर्ट करें</translation>
     </message>
 </context>
 <context>
@@ -4822,12 +4822,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>चेक</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>जोड़े</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4845,7 +4845,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>आउटपुट</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4860,7 +4860,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>ऐनिमेटेड GIF</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4870,17 +4870,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 वीडियो</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM वीडियो</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>फॉर्मेट:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4895,7 +4895,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>चिकना</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4905,7 +4905,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>इनपुट</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4915,7 +4915,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> अधिकतम FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4973,7 +4973,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>फ्रेम्स</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5054,7 +5054,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> अधिकतम FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5064,7 +5064,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>आयात करें</translation>
     </message>
     <message numerus="yes">
         <location line="+88"/>
@@ -5090,7 +5090,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>निरंतर</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5137,7 +5137,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>संतृप्ति </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5200,7 +5200,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>पूरक</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5224,13 +5224,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>विभाजित पूरक</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>टेट्राडिक</translation>
     </message>
 </context>
 <context>
@@ -5303,7 +5303,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>शॉर्टकट:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5333,7 +5333,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>विवरण:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5371,7 +5371,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>जनरल</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5475,7 +5475,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>रिक्ति: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5513,12 +5513,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>सपाट करना </translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>साइज़ </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5529,7 +5529,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>न्यूनतम विभाजन आकार </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5549,23 +5549,23 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-259"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>अपारदर्शिता: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>मिनिमैप अपारदर्शिता </translation>
     </message>
     <message>
         <location line="+13"/>
         <location line="+542"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>अस्पष्टता</translation>
     </message>
     <message>
         <location line="-508"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>हार्डनेस </translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5576,7 +5576,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+13"/>
         <location line="+482"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>हार्डनेस</translation>
     </message>
     <message>
         <location line="-451"/>
@@ -5593,7 +5593,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>घबराना </translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5604,7 +5604,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
         <location line="+12"/>
         <location line="+326"/>
         <source>Jitter</source>
-        <translation type="unfinished"></translation>
+        <translation>घबराना</translation>
     </message>
     <message>
         <location line="-302"/>
@@ -5634,7 +5634,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>अधिकतम दूरी </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5744,7 +5744,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+44"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>मूल्य : </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5811,7 +5811,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>दबाव</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5839,7 +5839,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>स्ट्रोक</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5902,14 +5902,14 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ग्रिडमैप ग्रिड</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ग्रिडमैप ग्रिड</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6082,7 +6082,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>अस्पष्टता</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6110,7 +6110,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>हार्डनेस</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6138,7 +6138,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>प्रति सेकंड</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6343,7 +6343,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>इच्छा अनुसार फिल्टर</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6385,7 +6385,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>पिक्सेल ग्रिड से चिपकाएँ</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6441,14 +6441,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ऑफसेट Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ऑफसेट X</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6511,7 +6511,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>पोस्टरैज</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7063,12 +7063,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>बायाँ माउस बटन</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>माउस व्हील को ऊपर घुमाएँ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7105,7 +7105,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग चुनें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7130,7 +7130,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग बदलना</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7140,7 +7140,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग बदलना</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7208,7 +7208,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1$s पे सर्टिफिकेट गड़बड़</translation>
     </message>
 </context>
 <context>
@@ -7226,17 +7226,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>कुछ नहीं(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>विश्वस्त</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>ऑपरेटर</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7254,23 +7254,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>रद्द करें</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>नाम बदलें</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>डिलीट</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>सेव</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -7306,17 +7306,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>चिकना</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>चिकना</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>रैखिक</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7339,7 +7339,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+100"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7386,7 +7386,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>आमंत्रण निरस्त करें</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
@@ -7423,7 +7423,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+27"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>शीर्षक:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7529,12 +7529,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>क्षैतिज</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation>लकड़बग्धा</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7564,7 +7564,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>क्रॉलर</translation>
     </message>
 </context>
 <context>
@@ -7577,7 +7577,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+167"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>स्वीकार करें</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -7602,7 +7602,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>बंद करे</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -7620,12 +7620,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-16"/>
         <location line="+22"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>पीछे</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1$s से पुनर्निर्देशित</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -7645,7 +7645,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+66"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>खाता हटाएं</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7759,7 +7759,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>जुड़ा नहीं है</translation>
     </message>
 </context>
 <context>
@@ -7767,7 +7767,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>प्लेबैक</translation>
     </message>
     <message>
         <location line="+144"/>
@@ -7800,7 +7800,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>खोलें (&amp;O)..।</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -7815,7 +7815,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>रीसेट</translation>
     </message>
 </context>
 <context>
@@ -7823,7 +7823,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+33"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>विस्तृत करें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7843,17 +7843,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>आकार बदलें</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>मध्यविंदु</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>त्रुटि</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -7902,7 +7902,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -7956,7 +7956,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>सत्र त्रुटि</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -7971,12 +7971,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+130"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ऑपरेटर्स</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>विश्वस्त</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7986,7 +7986,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>सब</translation>
     </message>
     <message>
         <location line="+135"/>
@@ -8004,19 +8004,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>परिवर्तन</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>सौंपना</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>कभी नहीं</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8071,7 +8071,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>सेशन पासवर्ड डालें</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8117,12 +8117,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>एन्क्रिप्टेड</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>प्लेन</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -8178,12 +8178,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+35"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>प्राथमिकताएँ</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>जनरल</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8198,7 +8198,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>स्पर्श इनपुट</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8223,17 +8223,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>सर्वर्स</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>शॉर्टकट</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>पैरेंटल कंट्रोल्स</translation>
     </message>
 </context>
 <context>
@@ -8241,7 +8241,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग सामंजस्य</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8262,7 +8262,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Rows: </source>
-        <translation type="unfinished"></translation>
+        <translation>पंक्तियाँ: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8272,7 +8272,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8282,7 +8282,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>बॉर्डर </translation>
     </message>
     <message>
         <location line="+43"/>
@@ -8297,17 +8297,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>रंगत</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>संतृप्ति</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>क्रोमा</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8317,33 +8317,33 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>हल्कापन</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>चमक</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>छाया</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>ऊपर ले जाएं</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>नीचे ले जाएं</translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>सीमा </translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8383,7 +8383,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>H स्थानांतरण </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8421,12 +8421,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+76"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रारंभ</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>स्वागत है</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8486,7 +8486,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>हाल की फ़ाइलें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8521,7 +8521,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>सर्वर जोड़े</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8556,7 +8556,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>अपडेट के लिए जांचें</translation>
     </message>
     <message>
         <location line="+338"/>
@@ -8584,17 +8584,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>शामिल हों</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>होस्ट</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>बनाएं</translation>
     </message>
 </context>
 <context>
@@ -8602,7 +8602,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+29"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>सिस्टम जानकारी</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8643,7 +8643,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>आर्टवर्क जेस्चर सक्षम करें</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -8706,7 +8706,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>अक्षम</translation>
     </message>
 </context>
 <context>
@@ -8724,7 +8724,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM वीडियो</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8745,7 +8745,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>एक्सेक्यूटेबल</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8755,7 +8755,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>जाँच हो रही है…</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8846,7 +8846,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>फाइल में डिबग लॉग लिखें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8861,12 +8861,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>सिस्टम</translation>
     </message>
     <message>
         <location line="-149"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>भाषा :</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8893,13 +8893,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <source>Hardware</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>हार्डवेयर</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Software</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8977,12 +8977,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>हल्की</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>चालू करे</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9002,7 +9002,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़्यूज़न</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9017,7 +9017,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Indigo</source>
-        <translation type="unfinished"></translation>
+        <translation>इंडिगो</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9042,7 +9042,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>तरबूज</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9075,7 +9075,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>अपडेट के लिए स्वचालित रूप से जांचें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9110,7 +9110,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>ख़राब</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9191,7 +9191,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>आयोजन</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9201,7 +9201,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>ध्वनि चलायें</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9211,7 +9211,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>पॉपअप</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9261,12 +9261,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>खाली चैट संदेश</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>व्यक्तिगत संदेश भेजें</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9286,7 +9286,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9339,7 +9339,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>कीवर्ड:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9349,7 +9349,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>अप्रतिबंधित</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9425,17 +9425,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>पैरेंटल कंट्रोल्स</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>पैरेंटल कंट्रोल्स</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>सांकेतिक शब्द प्रविष्टित कीजिये:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9516,12 +9516,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>ऊपर ले जाएँ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>नीचे ले जाएँ</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -9550,7 +9550,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-35"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>जारी रहना</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9581,7 +9581,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+194"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>डिफ़ाल्ट पर लाएं</translation>
     </message>
     <message>
         <location line="-4"/>
@@ -9671,7 +9671,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>कैनवास</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9696,7 +9696,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <location line="+20"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>आउटपुट</translation>
     </message>
     <message>
         <location line="-11"/>
@@ -9752,7 +9752,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9768,12 +9768,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>दाब संवेदनशीलता</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>दबाव:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9803,7 +9803,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;रबड़&apos; पर जाएं</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9838,7 +9838,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+8"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9878,7 +9878,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-145"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9904,7 +9904,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished"></translation>
+        <translation>बिंदु</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9914,7 +9914,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished"></translation>
+        <translation>तीर</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10005,7 +10005,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>इशारे</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10014,7 +10014,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>कोई कार्रवाई नहीं</translation>
     </message>
     <message>
         <location line="-82"/>
@@ -10044,7 +10044,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>मोड टॉगल कीजिये</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10054,7 +10054,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>एक उंगली से टैप:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10074,7 +10074,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग चुनें</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10084,7 +10084,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>आरेखित करना</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10152,7 +10152,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>फॉन्ट का आकार: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10172,7 +10172,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>डेस्कटॉप</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10213,7 +10213,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>पठार: </translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10293,17 +10293,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+34"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>मापन कारक </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>फॉन्ट का आकार:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10346,7 +10346,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़िल्टर</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10361,7 +10361,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Password</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10381,7 +10381,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>निष्क्रिय</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10391,7 +10391,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>डुप्लिकेट</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10406,7 +10406,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-95"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>शामिल हों</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10416,7 +10416,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished"></translation>
+        <translation>शीर्षक कॉपी करें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10445,12 +10445,12 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/create.cpp" line="+29"/>
         <location line="+6"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>चौड़ाई:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10460,12 +10460,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+51"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation>कैनवास पृष्ठभूमि</translation>
     </message>
     <message>
         <location line="-39"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>परिदृश्य (&amp;B) :</translation>
     </message>
 </context>
 <context>
@@ -10521,7 +10521,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>इंपोर्ट विफल</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10539,7 +10539,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>हाल ही में किया:</translation>
     </message>
 </context>
 <context>
@@ -10547,7 +10547,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>मदद</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10567,7 +10567,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>सबरैडिट</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10610,17 +10610,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>अद्यतन करें</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>ख़ारिज करें</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>सूचनाएं छिपाएं</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10648,7 +10648,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+51"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>स्टैंड-अलोन</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10742,7 +10742,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+501"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>सेटिंग्स निर्यात करें</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10752,7 +10752,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>निर्यात गड़बड़</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10765,7 +10765,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>सेटिंग्स आयात करें</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10813,7 +10813,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>चयनित हटाएं</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -10836,7 +10836,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-353"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>अपलोड सेटिंग्स</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -10873,7 +10873,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>बदलें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10884,12 +10884,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>क्या आप वाकई पन्ने %1$s को मिटाना चाहते हैं?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation type="unfinished"></translation>
+        <translation>हाँ, हटाएं</translation>
     </message>
 </context>
 <context>
@@ -10983,7 +10983,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+290"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ऑपरेटर्स</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10993,7 +10993,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>पंजीकृत</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11003,7 +11003,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -11052,7 +11052,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>अपलोड सेटिंग्स</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11077,7 +11077,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>बदलें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11125,7 +11125,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>चैट इतिहास</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11140,7 +11140,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>सर्वर:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11150,7 +11150,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+136"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>पासवर्ड आवश्यक है</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -11198,7 +11198,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>अमान्य फाइल प्रारूप।</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -11266,7 +11266,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>आइकन आकार</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11281,7 +11281,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>मिटाएं(&amp;l)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11380,7 +11380,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>टैग संपादन</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -11442,7 +11442,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग पटल</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11512,13 +11512,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+65"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>पैलेट</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+47"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>नाम</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11538,7 +11538,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>सभी फ़ाइल (*)</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -11553,7 +11553,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>त्रुटि</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11576,33 +11576,33 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>स्लाइडर्स</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग स्थान मॉडल</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-383"/>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-348"/>
         <location line="+360"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-347"/>
@@ -11612,7 +11612,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>इनपुट दिखाएँ</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -11624,7 +11624,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11635,14 +11635,14 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11656,21 +11656,21 @@ Values above 0.5 may not be noticeable.</source>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>बाएं</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>सा</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11707,25 +11707,25 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+161"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग स्थान मॉडल</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11786,7 +11786,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>संतुलन</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11801,7 +11801,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>Show color harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग सामंजस्य</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11847,17 +11847,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ऑपरेटर्स</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>विश्वस्त</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>पंजीकृत</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11901,12 +11901,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+1875"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>अपारदर्शिता: </translation>
     </message>
     <message>
         <location line="-1874"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11931,12 +11931,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>समूह हटाएं</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>समूह दृश्यता टॉगल करें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11993,17 +11993,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+463"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>रेखाचित्र </translation>
     </message>
     <message>
         <location line="+265"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>परत</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>समुह</translation>
     </message>
     <message>
         <location line="-895"/>
@@ -12021,12 +12021,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/navigator.cpp" line="+476"/>
         <source>Navigator</source>
-        <translation type="unfinished"></translation>
+        <translation>दिनांक नेविगेटर</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Show Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>कर्सर दिखाएं</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12049,12 +12049,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation>फ्रेम्स </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>लपेटें</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12117,7 +12117,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग चुनें</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12132,12 +12132,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>फिट करने योग्य ज़ूम करें</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>ज़ूम: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12161,12 +12161,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+20"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>समयरेखा</translation>
     </message>
     <message>
         <location line="+176"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> अधिकतम FPS</translation>
     </message>
 </context>
 <context>
@@ -12184,7 +12184,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>बंद करे</translation>
     </message>
 </context>
 <context>
@@ -12192,12 +12192,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+12"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>औजार</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor सेटिंग्स</translation>
     </message>
 </context>
 <context>
@@ -12212,7 +12212,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+1408"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>दान करें</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12278,22 +12278,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>रक्षित करें</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>संविलीन</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>नष्ट</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>बाएं</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12304,7 +12304,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-17"/>
         <source>Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>जस्टिफ़ाई</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12314,7 +12314,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>ऊपर</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12324,17 +12324,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>वेक्टर</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>चिकना</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>पिक्सल</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -12453,7 +12453,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12549,12 +12549,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>समक्ष (&amp;F) : </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>अपारदर्शिता: </translation>
     </message>
     <message>
         <location line="+111"/>
@@ -12586,12 +12586,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>परिदृश्य (&amp;B) : </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>रैखिक</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12601,7 +12601,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>रेडियल</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12616,12 +12616,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Focus: </source>
-        <translation type="unfinished"></translation>
+        <translation>फ़ोकस </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pad</source>
-        <translation type="unfinished"></translation>
+        <translation>Padel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12646,7 +12646,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+31"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>मोड:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12699,17 +12699,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
         <source>Stabilization mode</source>
-        <translation type="unfinished"></translation>
+        <translation>छवि स्टेबिलाइज़ेशन</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>मोड:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>एंटी-अलियासिंग</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12747,7 +12747,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>फाइल जोड़ें</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12762,7 +12762,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>एंटी-अलियासिंग</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12805,7 +12805,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>सटीक</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12820,12 +12820,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>पूर्व दर्शन:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>निकटतम</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12871,7 +12871,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>विकृतियाँ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12887,12 +12887,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>मोड:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Constrain</source>
-        <translation type="unfinished"></translation>
+        <translation>बाध्यताएं</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12902,7 +12902,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>अपारदर्शिता: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12935,7 +12935,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>सामान्य आकार</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12948,7 +12948,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/recents.cpp" line="+424"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>और अधिक…</translation>
     </message>
 </context>
 <context>
@@ -12961,7 +12961,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>संपीड़न…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12987,7 +12987,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रगति में</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13045,7 +13045,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>संपादन के लिए क्लिक करें</translation>
     </message>
 </context>
 <context>
@@ -13053,7 +13053,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>रद्द करें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13097,7 +13097,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../scene/canvasview.cpp" line="+343"/>
         <location filename="../view/canvasview.cpp" line="-23"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>पुनः कनेक्ट</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -13169,7 +13169,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>सत्र</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -13187,12 +13187,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+165"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>सार्वजनिक</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>कोई सूचनाएं नहीं</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13301,7 +13301,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-711"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>साफ़</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13311,7 +13311,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>अलग करें</translation>
     </message>
     <message>
         <location line="-2"/>
@@ -13324,7 +13324,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>चैट</translation>
     </message>
 </context>
 <context>
@@ -13332,7 +13332,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished"></translation>
+        <translation>एक रंग चुनें</translation>
     </message>
 </context>
 <context>
@@ -13340,7 +13340,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+108"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>कॉपी</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13350,7 +13350,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>पेस्ट करें</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13411,17 +13411,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>विस्तृत करें</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>सिकोड़ें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13436,12 +13436,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>सिकोड़ें </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished"></translation>
+        <translation>विस्तृत करें </translation>
     </message>
 </context>
 <context>
@@ -13467,7 +13467,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+59"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>क्लिपबोर्ड पे पता कॉपी करें</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -13497,22 +13497,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+89"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>स्व-हस्ताक्षरित प्रमाणपत्र</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>स्व-हस्ताक्षरित प्रमाणपत्र</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>स्व-हस्ताक्षरित प्रमाणपत्र</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रमाण पत्र</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -13527,7 +13527,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>सर्वर से संपर्क हो रहा हैं ..।</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13562,7 +13562,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>इसे फिर से ना दिखाएँ</translation>
     </message>
 </context>
 <context>
@@ -13583,7 +13583,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+42"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>जोड़े</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13593,7 +13593,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>हटाएँ</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -13614,22 +13614,22 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रीसेट</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>लोड कीजिये</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>सहेजें</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>डिलीट</translation>
     </message>
 </context>
 <context>
@@ -13712,17 +13712,17 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+614"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>ट्रैक</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename track</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Track name</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -13742,7 +13742,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>फ़्रेम दर</translation>
     </message>
     <message>
         <location line="+331"/>
@@ -13760,17 +13760,17 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+162"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>संक्रियक</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>विश्वस्त</translation>
     </message>
     <message>
         <location line="-133"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>संक्रियक</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13790,7 +13790,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>पूर्ववत(&amp;U)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13810,7 +13810,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>व्यक्तिगत संदेश भेजें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13848,7 +13848,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ज़ूम</translation>
     </message>
 </context>
 </TS>
