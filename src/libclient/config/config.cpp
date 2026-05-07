@@ -954,7 +954,7 @@ QColor Config::defaultOnionSkinsTintBelow()
 
 bool Config::defaultOnionSkinsWrap()
 {
-	return true;
+	return false;
 }
 
 bool Config::defaultOverrideFontSize()
