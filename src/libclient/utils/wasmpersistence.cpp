@@ -29,4 +29,16 @@ void scheduleSyncPersistentFileSystem()
 	}
 }
 
+void syncPersistentFileSystemNow()
+{
+	if(syncPersistentFileSystemTimer) {
+		syncPersistentFileSystemTimer->stop();
+		if(!browser::syncPersistentFileSystem()) {
+			browser::scheduleSyncPersistentFileSystem();
+		}
+	} else {
+		browser::syncPersistentFileSystem();
+	}
+}
+
 }

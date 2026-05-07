@@ -20,6 +20,7 @@
 #include "libclient/utils/colorscheme.h"
 #include "libclient/utils/logging.h"
 #include "libclient/utils/statedatabase.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libclient/view/zoom.h"
 #include "libshared/net/netutils.h"
 #include "libshared/util/paths.h"
@@ -1152,6 +1153,7 @@ extern "C" int drawpileShouldPreventUnload()
 	QApplication *app = qApp;
 	if(app) {
 		static_cast<DrawpileApp *>(app)->config()->trySubmit();
+		DRAWPILE_FS_PERSIST_NOW();
 		for(QWidget *widget : app->topLevelWidgets()) {
 			MainWindow *mw = qobject_cast<MainWindow *>(widget);
 			if(mw && mw->shouldPreventUnload()) {

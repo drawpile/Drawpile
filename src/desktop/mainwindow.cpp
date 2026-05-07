@@ -98,6 +98,7 @@ extern "C" {
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libclient/view/enums.h"
 #include "libshared/net/netutils.h"
 #include "libshared/util/networkaccess.h"
@@ -706,6 +707,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	} else if(!m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
 	}
+
+	DRAWPILE_FS_PERSIST();
 }
 
 MainWindow::~MainWindow()
@@ -725,6 +728,7 @@ MainWindow::~MainWindow()
 	}
 
 	dpAppConfig()->trySubmit();
+	DRAWPILE_FS_PERSIST();
 }
 
 // clang-format on
@@ -958,6 +962,7 @@ void MainWindow::handleMouseLeave()
 {
 	m_canvasView->clearKeys();
 	dpAppConfig()->trySubmit();
+	DRAWPILE_FS_PERSIST();
 }
 #endif
 
@@ -1069,6 +1074,7 @@ void MainWindow::prepareWindowReplacement()
 	saveWindowState();
 	saveSplitterState();
 	dpAppConfig()->trySubmit();
+	DRAWPILE_FS_PERSIST();
 }
 
 void MainWindow::createNewWindow(const std::function<void(MainWindow *)> &block)
@@ -2463,6 +2469,7 @@ bool MainWindow::event(QEvent *event)
 		}
 		m_canvasView->clearKeys();
 		dpAppConfig()->trySubmit();
+		DRAWPILE_FS_PERSIST();
 		break;
 	default:
 		break;

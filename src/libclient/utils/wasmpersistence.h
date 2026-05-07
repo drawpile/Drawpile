@@ -9,15 +9,19 @@
 // operation, while DRAWPILE_FS_PERSIST_SCOPE declares an object that schedules
 // the sync upon its destruction. These sync operations are on a debounce timer,
 // so it's okay to call them repeatedly. Outside of Emscripten, they are noops.
+// Calling DRAWPILE_FS_PERSIST_NOW will persist immediately and stop the timer.
+// If the sync fails, it will punt to starting the timer again instead.
 
 #ifdef __EMSCRIPTEN__
 #	define DRAWPILE_FS_PERSIST() browser::scheduleSyncPersistentFileSystem()
+#	define DRAWPILE_FS_PERSIST_NOW() browser::syncPersistentFileSystemNow()
 #	define DRAWPILE_FS_PERSIST_SCOPE(X)                                       \
 		browser::ScopedPersistentFileSystemSync X
 
 namespace browser {
 
 void scheduleSyncPersistentFileSystem();
+void syncPersistentFileSystemNow();
 
 struct ScopedPersistentFileSystemSync {
 	~ScopedPersistentFileSystemSync() { scheduleSyncPersistentFileSystem(); }
@@ -26,7 +30,8 @@ struct ScopedPersistentFileSystemSync {
 }
 
 #else
-#	define DRAWPILE_FS_PERSIST() /* nothing */
+#	define DRAWPILE_FS_PERSIST()	  /* nothing */
+#	define DRAWPILE_FS_PERSIST_NOW() /* nothing */
 #	define DRAWPILE_FS_PERSIST_SCOPE(X)                                       \
 		do {                                                                   \
 			/* nothing */                                                      \
