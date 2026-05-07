@@ -100,6 +100,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Automatically resume drawings on Android, since the system will terminate Drawpile when it's in the background without giving you a chance to save. To avoid this, cleanly exit the application via File → Quit or by pressing the back button. Thanks tiar for suggesting.
  * Fix: Don't clear save paths when reconnecting to a session. This was particularly annoying on Android, since you can't save over existing files there. Thanks tiar for reporting.
  * Feature: Provide a better default name by default instead of just punting to "Untitled". The suggested name is now automatically prefixed with a date and tries to use a cleaned-up version of the session title if drawing online. Thanks tiar for suggesting.
+ * Fix: Make automatic switching to frame view mode work properly even when the timeline isn't a floating or tabbed widget. The lack of a tab bar caused it to get misdetected as hidden.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

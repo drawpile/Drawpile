@@ -63,7 +63,7 @@ bool DockBase::isActuallyVisible()
 		} else {
 			int i;
 			QTabBar *tabBar = searchTab(i);
-			if(tabBar && tabBar->currentIndex() == i) {
+			if(!tabBar || tabBar->currentIndex() == i) {
 				return true;
 			}
 		}
