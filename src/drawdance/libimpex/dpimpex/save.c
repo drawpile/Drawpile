@@ -1299,11 +1299,14 @@ static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
     DP_Output *output = DP_file_output_new_from_path(path);
     if (!output) {
         DP_free(path);
+        DP_image_free(img);
         set_error_result(c, DP_SAVE_RESULT_OPEN_ERROR);
         return NULL;
     }
 
-    if (!DP_image_write_png(img, output)) {
+    bool write_ok = DP_image_write_png(img, output);
+    DP_image_free(img);
+    if (!write_ok) {
         DP_output_free_discard(output);
         DP_free(path);
         set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
