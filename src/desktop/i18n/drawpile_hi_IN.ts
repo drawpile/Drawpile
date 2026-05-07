@@ -67,7 +67,7 @@
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation>आप कुछ लिस्ट सर्वर &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt; पर पा सकते हैं।</translation>
+        <translation>आप कुछ लिस्ट सर्वर &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt; पर पा सकते हैं</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location line="-13"/>
         <source>Radius: </source>
-        <translation>त्रिज्या </translation>
+        <translation>त्रिज्या: </translation>
     </message>
     <message>
         <location line="-13"/>
@@ -119,12 +119,12 @@
     <message>
         <location line="-76"/>
         <source>Hardness: </source>
-        <translation>हार्डनेस </translation>
+        <translation>कठोरता: </translation>
     </message>
     <message>
         <location line="-157"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>ब्रश का प्रकार</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -134,7 +134,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>अल्फ़ा को सुरक्षित रखें</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -147,12 +147,12 @@
     <message>
         <location line="-41"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>लीपापोती करना </translation>
     </message>
     <message>
         <location line="-61"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>रंग चयन: 1/</translation>
     </message>
     <message>
         <location line="-30"/>
@@ -162,24 +162,24 @@
     <message>
         <location line="-49"/>
         <source>Gain: </source>
-        <translation>गेन : </translation>
+        <translation>अभिलाभ: </translation>
     </message>
     <message>
         <location line="+213"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-71"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>स्थायीकारक: </translation>
     </message>
     <message>
         <location line="+13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+12"/>
         <source>Smoothing: </source>
-        <translation>सपाट करना </translation>
+        <translation>चिकना करना: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -187,17 +187,17 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>कैनवास शॉर्टकट</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation>प्रकार/किस्म</translation>
+        <translation>प्रकार</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation>शॉर्टकट</translation>
+        <translation>क्षुद्र रूप से</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -208,7 +208,7 @@
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>इनपुट दिशाओं को उलट देता है। उदाहरण के लिए, ज़ूम इन करने के बजाय ज़ूम आउट करने के लिए ऊपर स्क्रॉल करना।</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -218,12 +218,12 @@
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>यह क्षैतिज और ऊर्ध्वाधर दिशाओं को बदलता है। उदाहरण के लिए, ब्रश का आकार बदलने के लिए कर्सर को बाएँ और दाएँ ले जाने के बजाय ऊपर और नीचे ले जाना।</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>अक्षों को बदलें</translation>
     </message>
 </context>
 <context>
@@ -231,23 +231,23 @@
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation>इन्फो</translation>
+        <translation>जानकारी</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>संगठन:</translation>
     </message>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation>फिंगरप्रिंट:</translation>
+        <translation>SHA1 फिंगरप्रिंट:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>जारीकर्ता</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -257,29 +257,29 @@
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation>फिंगरप्रिंट:</translation>
+        <translation>एमडी5 फ़िंगरप्रिंट:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>संगठन इकाई:</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation>जारी किया गया</translation>
+        <translation>पर जारी किए:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation>CN</translation>
+        <translation>साधारण नाम:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>क्रम संख्या:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -289,7 +289,7 @@
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>वैधता अवधि</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -307,17 +307,17 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation>Select color</translation>
+        <translation>रंग चुनें</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Saturation</source>
-        <translation>परिपूर्णता</translation>
+        <translation>संतृप्ति</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>रंग</translation>
+        <translation>वर्ण</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -332,7 +332,7 @@
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>निधि</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -342,12 +342,12 @@
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation>Alpha</translation>
+        <translation>अल्फा</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation>Red</translation>
+        <translation>लाल</translation>
     </message>
 </context>
 <context>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>नाम:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -368,7 +368,7 @@
     <message>
         <location filename="../filewrangler.cpp" line="+170"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रमाणपत्र (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -378,22 +378,22 @@
     <message>
         <location line="-135"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>खोले</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>डिबग डंप खोलें</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>आयात सत्र प्रतिबंध</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>भूमिकाएँ आयात करें</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -403,7 +403,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>सभी समर्थित फ़ाइलें (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
