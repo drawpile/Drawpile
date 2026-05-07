@@ -30,6 +30,7 @@ public:
 	void activateUserInterfacePanel();
 	void activateFilesPanel();
 	void activateNetworkPanel();
+	void activateServerPanel();
 
 signals:
 	void scalingChangeRequested();

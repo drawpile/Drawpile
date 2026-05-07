@@ -2595,6 +2595,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::networkPreferences, this, &MainWindow::showNetworkSettings));
+	connections->add(connect(dlg, &dialogs::StartDialog::serverPreferences, this, &MainWindow::showServerSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::host, this, &MainWindow::hostSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
@@ -3734,6 +3735,12 @@ void MainWindow::showNetworkSettings()
 {
 	dialogs::SettingsDialog *dlg = showSettings();
 	dlg->activateNetworkPanel();
+}
+
+void MainWindow::showServerSettings()
+{
+	dialogs::SettingsDialog *dlg = showSettings();
+	dlg->activateServerPanel();
 }
 
 void MainWindow::showSessionSettings()

@@ -159,6 +159,7 @@ SettingsDialog::SettingsDialog(
 
 		if(!visible) {
 			button->hide();
+			button->setEnabled(false);
 		}
 
 		button->setProperty("panel", QVariant::fromValue(panel));
@@ -228,11 +229,13 @@ namespace {
 template <typename T> static T *activatePanelByType(QButtonGroup *group)
 {
 	for(QAbstractButton *button : group->buttons()) {
-		T *panel =
-			qobject_cast<T *>(button->property("panel").value<QWidget *>());
-		if(panel) {
-			button->click();
-			return panel;
+		if(button->isEnabled()) {
+			T *panel =
+				qobject_cast<T *>(button->property("panel").value<QWidget *>());
+			if(panel) {
+				button->click();
+				return panel;
+			}
 		}
 	}
 	return nullptr;
@@ -252,6 +255,11 @@ void SettingsDialog::activateFilesPanel()
 void SettingsDialog::activateNetworkPanel()
 {
 	activatePanelByType<settingsdialog::Network>(m_group);
+}
+
+void SettingsDialog::activateServerPanel()
+{
+	activatePanelByType<settingsdialog::Servers>(m_group);
 }
 
 settingsdialog::Shortcuts *SettingsDialog::activateShortcutsPanel()

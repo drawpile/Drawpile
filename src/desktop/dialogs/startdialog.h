@@ -75,6 +75,7 @@ signals:
 	void layouts();
 	void preferences();
 	void networkPreferences();
+	void serverPreferences();
 	void
 	join(const QUrl &url, const QString recordingFilename, int connectStrategy);
 	void host(const HostParams &params, int connectStrategy);
@@ -148,6 +149,7 @@ private:
 	QMenu *m_advancedMenu;
 	QAction *m_connectTcpAction;
 	QAction *m_connectWebSocketAction;
+	QAction *m_listServersAction;
 	startdialog::Page *m_currentPage = nullptr;
 	QAbstractButton *m_buttons[Entry::Count];
 	QVector<QShortcut *> m_shortcuts;

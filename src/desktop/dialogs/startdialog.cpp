@@ -280,6 +280,13 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		connectSettingAction, &QAction::triggered, this,
 		&StartDialog::networkPreferences);
 
+	m_listServersAction = m_advancedMenu->addAction(
+		QIcon::fromTheme(QStringLiteral("network-server-database")),
+		tr("Manage servers"));
+	connect(
+		m_listServersAction, &QAction::triggered, this,
+		&StartDialog::serverPreferences);
+
 	QButtonGroup *group = new QButtonGroup{this};
 	int iconSize = style()->pixelMetric(QStyle::PM_ToolBarIconSize);
 	for(int i = 0; i < Entry::Count; ++i) {
@@ -701,6 +708,7 @@ void StartDialog::showJoinButtons()
 	m_connectWebSocketAction->setText(tr("Join via WebSocket"));
 	m_connectTcpAction->setText(tr("Join via TCP"));
 #endif
+	m_listServersAction->setVisible(false);
 }
 
 void StartDialog::showBrowseButtons()
@@ -708,6 +716,7 @@ void StartDialog::showBrowseButtons()
 	showJoinButtons();
 	m_addServerButton->show();
 	m_addServerButton->setEnabled(true);
+	m_listServersAction->setVisible(true);
 }
 
 void StartDialog::showHostButtons()
