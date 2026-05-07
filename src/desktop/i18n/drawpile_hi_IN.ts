@@ -103,7 +103,7 @@
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>साइज़ </translation>
     </message>
     <message>
         <location line="-13"/>
