@@ -859,24 +859,17 @@ import { UAParser } from "ua-parser-js";
   }
 
   function makeVersionSelector(params) {
-    const oldOption = tag("option", { value: "old" }, "Drawpile 2.2.2");
     const currentOption = tag(
       "option",
-      { value: "current" },
+      { value: "current", selected: "" },
       "Drawpile 2.3.0"
     );
+    const betaOption = tag("option", { value: "beta" }, "Drawpile 2.3.1-beta.1");
 
-    if (params.has("v1")) {
-      oldOption.setAttribute("disabled", "");
-      currentOption.setAttribute("selected", "");
-    } else {
-      currentOption.setAttribute("selected", "");
-    }
-
-    const select = tag("select", [currentOption, oldOption]);
+    const select = tag("select", [currentOption, betaOption]);
     const updateVersion = () => {
       const version = select.options[select.selectedIndex].value;
-      if (version === "old") {
+      if (version !== "beta") {
         pathMappingPrefix = "stable/";
       } else {
         pathMappingPrefix = null;
