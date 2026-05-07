@@ -16,6 +16,7 @@ extern "C" {
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/net/message.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libclient/view/enums.h"
 #include "libshared/util/qtcompat.h"
 #include <QPainter>
@@ -650,6 +651,7 @@ void PaintEngine::resumeProjectRecording(
 
 bool PaintEngine::stopProjectRecording()
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	return m_paintEngine.stopProjectRecording();
 }
 
@@ -660,12 +662,14 @@ bool PaintEngine::isProjectRecording() const
 
 void PaintEngine::enqueueProjectMetadataRequest()
 {
+	DRAWPILE_FS_PERSIST();
 	net::Message msg = net::makeInternalProjectMetadataRequestMessage(0);
 	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::enqueueProjectSnapshotRequest()
 {
+	DRAWPILE_FS_PERSIST();
 	net::Message msg = net::makeInternalProjectSnapshotRequestMessage(0);
 	receiveMessages(false, 1, &msg);
 }
