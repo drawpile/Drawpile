@@ -268,7 +268,7 @@
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>जारी किया गया</translation>
     </message>
     <message>
         <location line="+14"/>
