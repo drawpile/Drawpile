@@ -62,6 +62,7 @@ extern "C" {
 #include "desktop/utils/actionbuilder.h"
 #include "desktop/utils/connections.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/view/lock.h"
@@ -153,8 +154,6 @@ extern "C" {
 #endif
 #ifdef __EMSCRIPTEN__
 #	include "libclient/wasmsupport.h"
-#else
-#	include "desktop/utils/recents.h"
 #endif
 #ifdef DP_HAVE_BUILTIN_SERVER
 #	include "libclient/server/builtinserver.h"
