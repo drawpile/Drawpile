@@ -1821,8 +1821,8 @@ void MainWindow::showProjectRecordingError(const QString &message)
 
 void MainWindow::updateProjectActions()
 {
-	bool isProjectRecording = m_doc->isProjectRecording();
 #if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
+	bool isProjectRecording = m_doc->isProjectRecording();
 	bool enabled = !m_doc->isSaveInProgress() &&
 				   (!m_doc->projectPath().isEmpty() || isProjectRecording);
 #endif
