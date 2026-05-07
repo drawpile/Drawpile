@@ -106,12 +106,20 @@ bool Config::defaultAnimationExportPreferFfmpeg()
 
 bool Config::defaultAutoRecordHost()
 {
+#if defined(__EMSCRIPTEN__)
+	return false;
+#else
 	return true;
+#endif
 }
 
 bool Config::defaultAutoRecordJoin()
 {
+#if defined(__EMSCRIPTEN__)
+	return false;
+#else
 	return true;
+#endif
 }
 
 int Config::defaultAutoRecordMetadataIntervalMinutes()

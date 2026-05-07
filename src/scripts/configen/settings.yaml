@@ -63,7 +63,10 @@ settings:
 
   - id: autoRecordHost
     type: 'bool'
-    default: 'true'
+    default:
+      - value: 'false'
+        condition: 'defined(__EMSCRIPTEN__)'
+      - value: 'true'
     qsettings: 'settings/autorecord/host'
     legacy_package: 'libclient'
     comment: |
@@ -72,7 +75,10 @@ settings:
 
   - id: autoRecordJoin
     type: 'bool'
-    default: 'true'
+    default:
+      - value: 'false'
+        condition: 'defined(__EMSCRIPTEN__)'
+      - value: 'true'
     qsettings: 'settings/autorecord/join'
     legacy_package: 'libclient'
     comment: |
