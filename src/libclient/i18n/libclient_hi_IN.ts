@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>अवतार नहीं है</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>अवतार जोड़ें…</translation>
     </message>
 </context>
 <context>
@@ -19,77 +19,77 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>मेमोरी आवंटन विफल हो गया। कुछ ब्राउज़रों में पेज रीफ़्रेश करने पर ऐसा हो सकता है। इस पेज और अपने ब्राउज़र को पूरी तरह बंद करें और फिर से प्रयास करें।</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>आवंटित मेमोरी SharedArrayBuffer नहीं है, भले ही आपका ब्राउज़र इसे सपोर्ट करता हो। आपको कोई सेटिंग बदलनी पड़ सकती है।</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>ड्रापाइल लोगो</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>ड्रापाइल.नेट लाॅगइन</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>एप्लिकेशन लोड हो रहा है</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>शुरू हो रहा है…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>शुरू करने में बस कुछ ही देर लगेगी…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Assets लोड हो रही है</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>लोड हो रहा है, इसमें थोड़ा समय लग सकता है…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>तैयार हो रहा है</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>आरंभ हो रहा है, इसमें थोड़ा समय लग सकता है…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ड्रॉपाइल शुरू करने में विफल: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>समन्वायोजित हो रहा है…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>घातक त्रुटि:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>ऐसा आमतौर पर इसलिए होता है क्योंकि आपका ब्राउज़र पुराना है या आप किसी चैट एप्लिकेशन जैसे एम्बेडेड ब्राउज़र के माध्यम से पेज देख रहे हैं और आपको इसे ठीक से खोलने की आवश्यकता है। अधिक जानकारी के लिए, कृपया &lt;a href=&quot;#&quot;&gt;यह सहायता पृष्ठ&lt;/a&gt; देखें।</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -99,17 +99,17 @@
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>आप यहाँ तक किसी वैध लिंक के माध्यम से नहीं पहुँचे हैं जो आपको ड्रॉपील सेशन तक ले जाए।</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;इन-ऐप ब्राउज़र:&lt;/strong&gt; ऐसा लगता है कि आपने Drawpile को इन-ऐप ब्राउज़र में खोला है।</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;इन-ऐप ब्राउज़र:&lt;/strong&gt; ऐसा लगता है कि आपने Drawpile को इन-ऐप ब्राउज़र में खोला है।</translation>
     </message>
     <message>
         <location line="+3"/>
