@@ -94,7 +94,7 @@
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>अमान्य आमंत्रण लिंक</translation>
     </message>
     <message>
         <location line="+1"/>
