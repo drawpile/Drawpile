@@ -44,19 +44,16 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
 
 typedef bool (*DP_SaveProgressFn)(void *user, double progress);
 
-// To use the default values from the canvas state for the below functions, crop
-// can be NULL, start, end_inclusive and framerate can be -1.
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc,
-                                       const char *path, DP_Rect *crop,
-                                       int width, int height, int interpolation,
-                                       int start, int end_inclusive,
-                                       DP_SaveProgressFn progress_fn,
-                                       void *user);
+DP_SaveResult DP_save_animation_frames(
+    DP_CanvasState *cs, DP_DrawContext *dc, const char *path, DP_Rect *crop,
+    int width, int height, int interpolation, const int *frame_indexes,
+    int frame_index_count, DP_SaveProgressFn progress_fn, void *user);
 
 DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
                                     const char *path, DP_Rect *crop, int width,
-                                    int height, int interpolation, int start,
-                                    int end_inclusive,
+                                    int height, int interpolation,
+                                    const int *frame_indexes,
+                                    int frame_index_count,
                                     DP_SaveProgressFn progress_fn, void *user);
 
 

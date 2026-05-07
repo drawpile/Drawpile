@@ -1331,11 +1331,6 @@ static void copy_frame(struct DP_SaveFrameContext *c, char *source_path,
     DP_free(target_path);
 }
 
-static int count_frames(int start, int end_inclusive)
-{
-    return end_inclusive - start + 1;
-}
-
 static void report_progress(struct DP_SaveFrameContext *c)
 {
     DP_SaveProgressFn progress_fn = c->progress_fn;
@@ -1407,13 +1402,9 @@ static void save_frame_job(void *element, int thread_index)
 static DP_SaveResult
 save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
                       DP_SaveProgressFn progress_fn, void *user, DP_Rect *crop,
-                      int width, int height, int interpolation, int start,
-                      int end_inclusive, bool zip)
+                      int width, int height, int interpolation,
+                      const int *frame_indexes, int frame_index_count, bool zip)
 {
-    if (end_inclusive < start) {
-        return DP_SAVE_RESULT_SUCCESS;
-    }
-
     DP_ZipWriter *zw;
     if (zip) {
         zw = DP_zip_writer_new(path);
@@ -1431,8 +1422,7 @@ save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
         return DP_SAVE_RESULT_INTERNAL_ERROR;
     }
 
-    int frame_count = count_frames(start, end_inclusive);
-    DP_Worker *worker = DP_worker_new(DP_int_to_size(frame_count),
+    DP_Worker *worker = DP_worker_new(DP_int_to_size(frame_index_count),
                                       sizeof(struct DP_SaveFrameJobParams *),
                                       DP_worker_cpu_count(128), save_frame_job);
     if (!worker) {
@@ -1450,7 +1440,7 @@ save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
         width,
         height,
         interpolation,
-        frame_count,
+        frame_index_count,
         path,
         get_path_separator(path),
         progress_fn,
@@ -1465,12 +1455,11 @@ save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
         DP_view_mode_buffer_init(&c.vmbs[i]);
     }
 
-    int *frames = DP_malloc(sizeof(*frames) * DP_int_to_size(frame_count));
-    for (int i = 0; i < frame_count; ++i) {
-        frames[i] = start + i;
-    }
+    int *frames =
+        DP_memdup(frame_indexes,
+                  sizeof(*frame_indexes) * DP_int_to_size(frame_index_count));
 
-    int frames_left = frame_count;
+    int frames_left = frame_index_count;
     while (frames_left != 0) {
         // Collect same frames into a single job by swapping them to the front.
         int first_frame = frames[0];
@@ -1521,27 +1510,19 @@ save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
     return result;
 }
 
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc,
-                                       const char *path, DP_Rect *crop,
-                                       int width, int height, int interpolation,
-                                       int start, int end_inclusive,
-                                       DP_SaveProgressFn progress_fn,
-                                       void *user)
+DP_SaveResult DP_save_animation_frames(
+    DP_CanvasState *cs, DP_DrawContext *dc, const char *path, DP_Rect *crop,
+    int width, int height, int interpolation, const int *frame_indexes,
+    int frame_index_count, DP_SaveProgressFn progress_fn, void *user)
 {
-    if (cs && path && width > 0 && height > 0) {
-        int frame_count = DP_canvas_state_frame_count(cs);
-        if (start < 0) {
-            start = 0;
-        }
-        if (end_inclusive < 0) {
-            end_inclusive = frame_count - 1;
-        }
-
-        DP_PERF_BEGIN_DETAIL(fn, "animation_frames", "frame_count=%d,path=%s",
-                             count_frames(start, end_inclusive), path);
+    if (cs && path && width > 0 && height > 0 && frame_indexes
+        && frame_index_count > 0) {
+        DP_PERF_BEGIN_DETAIL(fn, "animation_frames",
+                             "frame_index_count=%d,path=%s", frame_index_count,
+                             path);
         DP_SaveResult result = save_animation_frames(
             cs, dc, path, progress_fn, user, crop, width, height, interpolation,
-            start, end_inclusive, false);
+            frame_indexes, frame_index_count, false);
         DP_PERF_END(fn);
         return result;
     }
@@ -1552,24 +1533,19 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc,
 
 DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
                                     const char *path, DP_Rect *crop, int width,
-                                    int height, int interpolation, int start,
-                                    int end_inclusive,
+                                    int height, int interpolation,
+                                    const int *frame_indexes,
+                                    int frame_index_count,
                                     DP_SaveProgressFn progress_fn, void *user)
 {
-    if (cs && path && width > 0 && height > 0) {
-        int frame_count = DP_canvas_state_frame_count(cs);
-        if (start < 0) {
-            start = 0;
-        }
-        if (end_inclusive < 0) {
-            end_inclusive = frame_count - 1;
-        }
-
-        DP_PERF_BEGIN_DETAIL(fn, "animation_zip", "frame_count=%d,path=%s",
-                             count_frames(start, end_inclusive), path);
+    if (cs && path && width > 0 && height > 0 && frame_indexes
+        && frame_index_count > 0) {
+        DP_PERF_BEGIN_DETAIL(fn, "animation_zip",
+                             "frame_index_count=%d,path=%s", frame_index_count,
+                             path);
         DP_SaveResult result = save_animation_frames(
             cs, dc, path, progress_fn, user, crop, width, height, interpolation,
-            start, end_inclusive, true);
+            frame_indexes, frame_index_count, true);
         DP_PERF_END(fn);
         return result;
     }

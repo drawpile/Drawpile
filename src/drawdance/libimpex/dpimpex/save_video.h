@@ -77,8 +77,8 @@ typedef struct DP_SaveAnimationVideoParams {
     int format;
     int width;
     int height;
-    int start;
-    int end_inclusive;
+    const int *frame_indexes;
+    int frame_index_count;
     double framerate;
     int loops;
     DP_SaveProgressFn progress_fn;
@@ -93,8 +93,8 @@ typedef struct DP_SaveAnimationGifParams {
     unsigned int flags;
     int width;
     int height;
-    int start;
-    int end_inclusive;
+    const int *frame_indexes;
+    int frame_index_count;
     double framerate;
     DP_SaveProgressFn progress_fn;
     void *user;

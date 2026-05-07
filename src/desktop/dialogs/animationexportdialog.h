@@ -2,7 +2,7 @@
 #ifndef DESKTOP_DIALOGS_ANIMATIONEXPORTDIALOG
 #define DESKTOP_DIALOGS_ANIMATIONEXPORTDIALOG
 #include <QDialog>
-#include <QHash>
+#include <QVector>
 
 class KisDoubleSliderSpinBox;
 class KisSliderSpinBox;
@@ -48,9 +48,9 @@ signals:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		const QString &ffmpegPath, int format, int loops, int start, int end,
-		double framerate, const QRect &crop, int scalePercent,
-		bool scaleSmooth);
+		const QString &ffmpegPath, int format, int loops,
+		const QVector<int> &frameIndexes, double framerate, const QRect &crop,
+		int scalePercent, bool scaleSmooth);
 
 private:
 	void updateOutputUi();
@@ -63,8 +63,6 @@ private:
 	QString choosePath();
 #endif
 
-	void updateStartRange(int end);
-	void updateEndRange(int start);
 	void updateX1Range(int x2);
 	void updateX2Range(int x1);
 	void updateY1Range(int y2);
@@ -80,6 +78,8 @@ private:
 	void requestExport();
 
 	QRect getCropRect() const;
+
+	QVector<int> buildFrameIndexes() const;
 
 #ifndef __EMSCRIPTEN__
 	QString m_path;

@@ -7,6 +7,7 @@ extern "C" {
 #include "libclient/drawdance/canvasstate.h"
 #include <QObject>
 #include <QRunnable>
+#include <QVector>
 
 /**
  * @brief A runnable for saving the canvas content as an animation in a
@@ -19,10 +20,10 @@ public:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		int format, int width, int height, int loops, int start, int end,
-		double framerate, const QRect &crop, bool scaleSmooth,
-		const drawdance::CanvasState &canvasState, const QString &ffmpegPath,
-		QObject *parent = nullptr);
+		int format, int width, int height, int loops,
+		const QVector<int> &frameIndexes, double framerate, const QRect &crop,
+		bool scaleSmooth, const drawdance::CanvasState &canvasState,
+		const QString &ffmpegPath, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -56,10 +57,9 @@ private:
 	const int m_width;
 	const int m_height;
 	const int m_loops;
-	const int m_start;
-	const int m_end;
 	const double m_framerate;
 	const QRect m_crop;
+	const QVector<int> m_frameIndexes;
 	const drawdance::CanvasState m_canvasState;
 	const QString m_ffmpegPath;
 	const bool m_scaleSmooth;

@@ -1358,14 +1358,14 @@ struct DP_SaveAnimationVideoContext {
     void *progress_user;
     DP_ViewModeBuffer vmb;
     DP_Rect crop;
-    int start;
-    int end_inclusive;
+    const int *frame_indexes;
+    int frame_index_count;
     int loops;
     int frames_to_do;
     int frames_done;
     unsigned int flat_image_flags;
     int loop_index;
-    int frame_index;
+    int i;
 };
 
 static bool save_animation_video_next_frame(void *user,
@@ -1373,9 +1373,9 @@ static bool save_animation_video_next_frame(void *user,
 {
     struct DP_SaveAnimationVideoContext *c = user;
 
-    if (c->frame_index > c->end_inclusive) {
+    if (c->i >= c->frame_index_count) {
         ++c->loop_index;
-        c->frame_index = c->start;
+        c->i = 0;
     }
 
     if (c->loop_index >= c->loops) {
@@ -1384,22 +1384,22 @@ static bool save_animation_video_next_frame(void *user,
     }
 
     f->instances = 1;
-    while (c->frame_index < c->end_inclusive
-           && DP_canvas_state_same_frame(c->cs, c->frame_index,
-                                         c->frame_index + 1)) {
-        ++c->frame_index;
+    while (c->i < c->frame_index_count - 1
+           && DP_canvas_state_same_frame(c->cs, c->frame_indexes[c->i],
+                                         c->frame_indexes[c->i + 1])) {
+        ++c->i;
         ++f->instances;
     }
 
     DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame_render(
-        &c->vmb, c->cs, c->frame_index - f->instances + 1);
+        &c->vmb, c->cs, c->frame_indexes[c->i - f->instances + 1]);
     if (!DP_canvas_state_into_flat_image(c->cs, c->flat_image_flags, &c->crop,
                                          &vmf, &c->img)) {
         f->result = DP_SAVE_RESULT_INTERNAL_ERROR;
         return false;
     }
 
-    ++c->frame_index;
+    ++c->i;
     c->frames_done += f->instances;
     f->progress =
         DP_int_to_double(c->frames_done) / DP_int_to_double(c->frames_to_do);
@@ -1420,21 +1420,11 @@ static bool save_animation_progress(void *user, double progress)
 DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params)
 {
     DP_Rect crop;
-    bool params_ok =
-        params.cs && DP_rect_valid(crop = get_crop(params.cs, params.area));
+    bool params_ok = params.cs && params.frame_indexes
+                  && params.frame_index_count > 0
+                  && DP_rect_valid(crop = get_crop(params.cs, params.area));
     if (!params_ok) {
         DP_error_set("Invalid arguments");
-        return DP_SAVE_RESULT_BAD_ARGUMENTS;
-    }
-
-    int start = params.start < 0 ? 0 : params.start;
-    int frame_count = DP_canvas_state_frame_count(params.cs);
-    int end_inclusive =
-        params.end_inclusive < 0 || params.end_inclusive > frame_count - 1
-            ? frame_count - 1
-            : params.end_inclusive;
-    if (start > end_inclusive) {
-        DP_error_set("Frame range is empty");
         return DP_SAVE_RESULT_BAD_ARGUMENTS;
     }
 
@@ -1445,14 +1435,14 @@ DP_SaveResult DP_save_animation_video(DP_SaveAnimationVideoParams params)
     c.progress_user = params.user;
     DP_view_mode_buffer_init(&c.vmb);
     c.crop = crop;
-    c.start = start;
-    c.end_inclusive = end_inclusive;
+    c.frame_indexes = params.frame_indexes;
+    c.frame_index_count = params.frame_index_count;
     c.loops = get_format_loops(params.format, params.loops);
-    c.frames_to_do = (end_inclusive - start + 1) * c.loops;
+    c.frames_to_do = params.frame_index_count * c.loops;
     c.frames_done = 0;
     c.flat_image_flags = get_format_flat_image_flags(params.format);
     c.loop_index = -1;
-    c.frame_index = end_inclusive + 1;
+    c.i = params.frame_index_count;
 
     double framerate = params.framerate <= 0.0 || !isfinite(params.framerate)
                          ? DP_canvas_state_effective_framerate(params.cs)
@@ -1493,7 +1483,8 @@ static bool on_gif_progress_gif(void *user, double progress)
 DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params)
 {
     DP_Rect crop = get_crop(params.cs, params.area);
-    if (!DP_rect_valid(crop)) {
+    if (!DP_rect_valid(crop) || !params.frame_indexes
+        || params.frame_index_count <= 0) {
         DP_error_set("Invalid arguments");
         return DP_SAVE_RESULT_BAD_ARGUMENTS;
     }
@@ -1524,16 +1515,18 @@ DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params)
         DP_save_animation_video((DP_SaveAnimationVideoParams){
             params.cs, params.area, DP_SAVE_VIDEO_DESTINATION_OUTPUT,
             palette_output, NULL, 0, params.flags, DP_SAVE_VIDEO_FORMAT_PALETTE,
-            params.width, params.height, params.start, params.end_inclusive,
-            params.framerate, 1, on_gif_progress_palette, &params});
+            params.width, params.height, params.frame_indexes,
+            params.frame_index_count, params.framerate, 1,
+            on_gif_progress_palette, &params});
 
     if (result == DP_SAVE_RESULT_SUCCESS) {
         // Render out the actual GIF based on the generated palette.
         result = DP_save_animation_video((DP_SaveAnimationVideoParams){
             params.cs, params.area, params.destination, params.path_or_output,
             *buffer_ptr, *size_ptr, params.flags, DP_SAVE_VIDEO_FORMAT_GIF,
-            params.width, params.height, params.start, params.end_inclusive,
-            params.framerate, 1, on_gif_progress_gif, &params});
+            params.width, params.height, params.frame_indexes,
+            params.frame_index_count, params.framerate, 1, on_gif_progress_gif,
+            &params});
     }
 
     DP_output_free(palette_output);

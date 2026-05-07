@@ -221,12 +221,6 @@ AnimationExportDialog::AnimationExportDialog(
 		m_scaleSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &AnimationExportDialog::updateScalingUi);
 	connect(
-		m_startSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		this, &AnimationExportDialog::updateEndRange);
-	connect(
-		m_endSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
-		&AnimationExportDialog::updateStartRange);
-	connect(
 		m_x1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX2Range);
 	connect(
@@ -471,16 +465,6 @@ QString AnimationExportDialog::choosePath()
 }
 #endif
 
-void AnimationExportDialog::updateStartRange(int end)
-{
-	m_startSpinner->setRange(1, end);
-}
-
-void AnimationExportDialog::updateEndRange(int start)
-{
-	m_endSpinner->setRange(start, m_canvasFrameCount);
-}
-
 void AnimationExportDialog::updateX1Range(int x2)
 {
 	m_x1Spinner->setRange(0, x2);
@@ -585,17 +569,11 @@ void AnimationExportDialog::setCanvasFrameRange(
 
 void AnimationExportDialog::setCanvasFrameCount(int frameCount)
 {
-	QSignalBlocker startBlocker(m_startSpinner);
-	QSignalBlocker endBlocker(m_endSpinner);
+	m_startSpinner->setRange(1, frameCount);
+	m_endSpinner->setRange(1, frameCount);
 	if(m_canvasFrameCount < 0) {
-		m_startSpinner->setRange(1, frameCount);
 		m_startSpinner->setValue(1);
-		m_endSpinner->setRange(1, frameCount);
 		m_endSpinner->setValue(frameCount);
-	} else {
-		int end = qBound(1, m_endSpinner->value(), frameCount);
-		m_startSpinner->setRange(1, end);
-		m_endSpinner->setRange(m_startSpinner->value(), frameCount);
 	}
 	m_canvasFrameCount = frameCount;
 }
@@ -626,8 +604,7 @@ void AnimationExportDialog::requestExport()
 #ifndef __EMSCRIPTEN__
 		m_path,
 #endif
-		ffmpegPath, format, m_loopsSpinner->value(),
-		m_startSpinner->value() - 1, m_endSpinner->value() - 1,
+		ffmpegPath, format, m_loopsSpinner->value(), buildFrameIndexes(),
 		m_framerateSpinner->value(), getCropRect(), m_scaleSpinner->value(),
 		m_scaleSmoothBox->isChecked());
 }
@@ -637,6 +614,41 @@ QRect AnimationExportDialog::getCropRect() const
 	return QRect(
 		QPoint(m_x1Spinner->value(), m_y1Spinner->value()),
 		QPoint(m_x2Spinner->value(), m_y2Spinner->value()));
+}
+
+QVector<int> AnimationExportDialog::buildFrameIndexes() const
+{
+	QVector<int> frameIndexes;
+	int startIndex = m_startSpinner->value() - 1;
+	int endIndex = m_endSpinner->value() - 1;
+	// If the start is before the end, the user wants the frames in that range.
+	// If they are inverted, we go from the start to the end of the canvas frame
+	// range and then start again at the beginning. This allows skipping frames
+	// in the middle of the animation. This is something the flipbook can do for
+	// the purpose of working on looping animations and it's a bit silly to do
+	// it for export, but for the sake of consistency we support that as well.
+	if(startIndex <= endIndex) {
+		frameIndexes.reserve(endIndex - startIndex + 1);
+		for(int i = startIndex; i <= endIndex; ++i) {
+			frameIndexes.append(i);
+		}
+	} else {
+		int frameRangeFirst =
+			m_canvasFrameRangeFirst < 0 ? 0 : m_canvasFrameRangeFirst;
+		int frameRangeLast = m_canvasFrameRangeLast < 0
+								 ? m_canvasFrameCount - 1
+								 : m_canvasFrameRangeLast;
+		frameIndexes.reserve(
+			qMax(0, frameRangeLast - startIndex + 1) +
+			qMax(0, endIndex - frameRangeFirst + 1));
+		for(int i = startIndex; i <= frameRangeLast; ++i) {
+			frameIndexes.append(i);
+		}
+		for(int i = frameRangeFirst; i <= endIndex; ++i) {
+			frameIndexes.append(i);
+		}
+	}
+	return frameIndexes;
 }
 
 }

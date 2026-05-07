@@ -20,10 +20,10 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 #ifndef __EMSCRIPTEN__
 	const QString &path,
 #endif
-	int format, int width, int height, int loops, int start, int end,
-	double framerate, const QRect &crop, bool scaleSmooth,
-	const drawdance::CanvasState &canvasState, const QString &ffmpegPath,
-	QObject *parent)
+	int format, int width, int height, int loops,
+	const QVector<int> &frameIndexes, double framerate, const QRect &crop,
+	bool scaleSmooth, const drawdance::CanvasState &canvasState,
+	const QString &ffmpegPath, QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
@@ -32,10 +32,9 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_width(width)
 	, m_height(height)
 	, m_loops(loops)
-	, m_start(start)
-	, m_end(end)
 	, m_framerate(framerate)
 	, m_crop(crop)
+	, m_frameIndexes(frameIndexes)
 	, m_canvasState(canvasState)
 	, m_ffmpegPath(ffmpegPath)
 	, m_scaleSmooth(scaleSmooth)
@@ -77,7 +76,8 @@ void AnimationSaverRunnable::run()
 			m_height,
 			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
 						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
-			m_start, m_end, &onProgress, this);
+			m_frameIndexes.constData(), int(m_frameIndexes.size()), &onProgress,
+			this);
 		break;
 	}
 #endif
@@ -88,7 +88,8 @@ void AnimationSaverRunnable::run()
 			m_height,
 			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
 						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
-			m_start, m_end, &onProgress, this);
+			m_frameIndexes.constData(), int(m_frameIndexes.size()), &onProgress,
+			this);
 		break;
 	}
 #ifdef DP_LIBAV
@@ -102,8 +103,8 @@ void AnimationSaverRunnable::run()
 						  : DP_SAVE_VIDEO_FLAGS_NONE,
 			m_width,
 			m_height,
-			m_start,
-			m_end,
+			m_frameIndexes.constData(),
+			int(m_frameIndexes.size()),
 			m_framerate,
 			&onProgress,
 			this,
@@ -148,8 +149,8 @@ void AnimationSaverRunnable::run()
 			formatToSaveVideoFormat(),
 			m_width,
 			m_height,
-			m_start,
-			m_end,
+			m_frameIndexes.constData(),
+			int(m_frameIndexes.size()),
 			m_framerate,
 			m_loops,
 			&onProgress,
