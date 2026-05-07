@@ -184,6 +184,7 @@ configure() {
         -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH \
         -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
         -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DBUILTINSERVER=OFF \
         -DCLANG_TIDY=OFF \
         -DSERVER=OFF \
@@ -200,6 +201,9 @@ configure() {
     echo
     echo "To build Drawpile now, run:"
     echo "    cmake --build $build_dir"
+    echo
+    echo "If you want to use the generated compile_commands.json, you may have"
+    echo "to edit .clangd to add -D__EMSCRIPTEN__=1 to the compile commands."
     echo
 }
 

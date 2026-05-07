@@ -1,3 +1,7 @@
 CompileFlags:
+  # Uncomment this if you're building with Emscripten, the
+  # compile_commands.json doesn't define this correctly.
+  # Add:
+  #   - '-D__EMSCRIPTEN__=1'
   Remove:
     - '-mno-direct-extern-access'
