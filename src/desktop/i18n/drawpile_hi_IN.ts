@@ -6,22 +6,22 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>नया जोड़े</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>ऊपर ले जाएँ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>नीचे ले जाएँ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>हटाएं</translation>
     </message>
 </context>
 <context>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished"></translation>
+        <translation>दुरुपयोग होने की सूचना दें</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation type="unfinished"></translation>
+        <translation>सत्र:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>कारण:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation type="unfinished"></translation>
+        <translation>संपूर्ण सत्र</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>अपराधी:</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>सर्वर जोड़ें</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>लिस्ट सर्वर यूआरएल दर्ज करें:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>आप कुछ लिस्ट सर्वर &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt; पर पा सकते हैं।</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>अवतार को काटे</translation>
     </message>
 </context>
 <context>
@@ -83,32 +83,32 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+151"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>लेयर से प्रारंभिक रंग चुनें</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation type="unfinished"></translation>
+        <translation>इरेज़र मोड</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>प्रत्यक्ष ड्राइंग मोड</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>पिक्सल</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation>साइज़ </translation>
+        <translation>आकार: </translation>
     </message>
     <message>
         <location line="-13"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>त्रिज्या: </translation>
     </message>
     <message>
         <location line="-13"/>
