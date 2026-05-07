@@ -11,7 +11,6 @@ extern "C" {
 #include <QElapsedTimer>
 #include <QPainter>
 #include <QRandomGenerator>
-#include <QTemporaryDir>
 #ifdef Q_OS_ANDROID
 #	include <QDateTime>
 #	include <QDir>
@@ -21,12 +20,11 @@ extern "C" {
 CanvasSaverRunnable::CanvasSaverRunnable(
 	const drawdance::CanvasState &canvasState, DP_SaveImageType type,
 	const QString &path, const canvas::PaintEngine *paintEngine,
-	QTemporaryDir *tempDir, QObject *parent)
+	QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_type(type)
 	, m_path(path)
-	, m_tempDir(tempDir)
 {
 	if(paintEngine && DP_save_image_type_is_flat_image(type)) {
 		m_vmb = new drawdance::ViewModeBuffer;
@@ -37,7 +35,6 @@ CanvasSaverRunnable::CanvasSaverRunnable(
 CanvasSaverRunnable::~CanvasSaverRunnable()
 {
 	delete m_vmb;
-	delete m_tempDir;
 }
 
 void CanvasSaverRunnable::run()

@@ -12,7 +12,6 @@ extern "C" {
 
 class QFile;
 class QFileDevice;
-class QTemporaryDir;
 
 namespace canvas {
 class PaintEngine;
@@ -27,7 +26,7 @@ public:
 	CanvasSaverRunnable(
 		const drawdance::CanvasState &canvasState, DP_SaveImageType type,
 		const QString &path, const canvas::PaintEngine *paintEngine = nullptr,
-		QTemporaryDir *tempDir = nullptr, QObject *parent = nullptr);
+		QObject *parent = nullptr);
 
 	~CanvasSaverRunnable() override;
 
@@ -60,7 +59,6 @@ private:
 	QString m_path;
 	drawdance::ViewModeBuffer *m_vmb = nullptr;
 	DP_ViewModeFilter m_vmf;
-	QTemporaryDir *m_tempDir;
 };
 
 #endif

@@ -2001,47 +2001,88 @@ void Document::downloadCanvas(
 	const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir)
 {
 	downloadCanvasState(
-		fileName, type, tempDir, m_canvas->paintEngine()->viewCanvasState());
+		fileName, type, true, tempDir,
+		m_canvas->paintEngine()->viewCanvasState());
 }
 
 void Document::downloadCanvasState(
-	const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir,
-	const drawdance::CanvasState &canvasState)
+	const QString &fileName, DP_SaveImageType type, bool isCurrentState,
+	QTemporaryDir *tempDir, const drawdance::CanvasState &canvasState)
 {
 	QString path = tempDir->filePath(fileName);
-	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
-		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr,
-		tempDir);
-	saver->setAutoDelete(false);
-	connect(
-		saver, &CanvasSaverRunnable::saveSucceeded, this,
-		[this, saver, fileName, path](qint64 elapsedMsec) {
-			QByteArray bytes;
-			{
-				QFile file(path);
-				file.open(QIODevice::ReadOnly);
-				bytes = file.readAll();
-			}
-			emit canvasDownloadReady(fileName, bytes, elapsedMsec);
-			saver->deleteLater();
-		},
-		Qt::QueuedConnection);
-	connect(
-		saver, &CanvasSaverRunnable::saveCancelled, this,
-		[this, saver]() {
-			emit canvasDownloadError(tr("Download cancelled"));
-			saver->deleteLater();
-		},
-		Qt::QueuedConnection);
-	connect(
-		saver, &CanvasSaverRunnable::saveFailed, this,
-		[this, saver](const QString &errorMessage) {
-			emit canvasDownloadError(errorMessage);
-			saver->deleteLater();
-		},
-		Qt::QueuedConnection);
-	emit canvasDownloadStarted();
-	QThreadPool::globalInstance()->start(saver);
+
+	if(type == DP_SAVE_IMAGE_PROJECT) {
+		ProjectSaver *projectSaver = new ProjectSaver(false, false, path);
+		projectSaver->setAutoDelete(false);
+		connect(
+			projectSaver, &ProjectSaver::saveSucceeded, this,
+			&Document::onSaveSucceeded);
+		connect(
+			projectSaver, &ProjectSaver::saveCancelled, this,
+			&Document::onSaveCancelled);
+		connect(
+			projectSaver, &ProjectSaver::saveFailed, this,
+			&Document::onSaveFailed);
+		connect(
+			projectSaver, &ProjectSaver::saveSucceeded, this,
+			[this, projectSaver, tempDir, fileName, path](qint64 elapsedMsec) {
+				onDownloadSucceeded(
+					projectSaver, tempDir, fileName, path, elapsedMsec);
+			},
+			Qt::QueuedConnection);
+		connect(
+			projectSaver, &ProjectSaver::saveCancelled, this,
+			[this, projectSaver, tempDir] {
+				onDownloadCancelled(projectSaver, tempDir);
+			},
+			Qt::QueuedConnection);
+		connect(
+			projectSaver, &ProjectSaver::saveFailed, this,
+			[this, projectSaver, tempDir](const QString &errorMessage) {
+				onDownloadFailed(projectSaver, tempDir, errorMessage);
+			},
+			Qt::QueuedConnection);
+
+		// Saving to project files integrates with project recording, since it
+		// also stores the recorded messages. So if auto-recording is running,
+		// we take a different path here if possible.
+		bool shouldSaveThroughPaintEngine =
+			isCurrentState && m_canvas && m_canvas->isProjectRecording();
+		if(shouldSaveThroughPaintEngine) {
+			net::Message msg = projectSaver->getProjectSaveRequestMessage();
+			m_canvas->paintEngine()->receiveMessages(false, 1, &msg);
+		} else {
+			projectSaver->setCanvasState(canvasState);
+			QThreadPool::globalInstance()->start(projectSaver);
+		}
+
+	} else {
+		CanvasSaverRunnable *saver = new CanvasSaverRunnable(
+			canvasState, type, path,
+			m_canvas ? m_canvas->paintEngine() : nullptr);
+		saver->setAutoDelete(false);
+		connect(
+			saver, &CanvasSaverRunnable::saveSucceeded, this,
+			[this, saver, tempDir, fileName, path](qint64 elapsedMsec) {
+				onDownloadSucceeded(
+					saver, tempDir, fileName, path, elapsedMsec);
+			},
+			Qt::QueuedConnection);
+		connect(
+			saver, &CanvasSaverRunnable::saveCancelled, this,
+			[this, saver, tempDir] {
+				onDownloadCancelled(saver, tempDir);
+			},
+			Qt::QueuedConnection);
+		connect(
+			saver, &CanvasSaverRunnable::saveFailed, this,
+			[this, saver, tempDir](const QString &errorMessage) {
+				onDownloadFailed(saver, tempDir, errorMessage);
+			},
+			Qt::QueuedConnection);
+		emit canvasDownloadStarted();
+		QThreadPool::globalInstance()->start(saver);
+	}
 }
 
 void Document::downloadSelection(const QString &fileName)
@@ -2059,6 +2100,41 @@ void Document::downloadSelection(const QString &fileName)
 	} else {
 		emit canvasDownloadError(tr("Error saving image"));
 	}
+}
+
+void Document::onDownloadSucceeded(
+	QObject *saver, QTemporaryDir *tempDir, const QString &fileName,
+	const QString &path, qint64 elapsedMsec)
+{
+	QByteArray bytes;
+	{
+		QFile file(path);
+		file.open(QIODevice::ReadOnly);
+		bytes = file.readAll();
+	}
+	emit canvasDownloadReady(fileName, bytes, elapsedMsec);
+	cleanUpDownload(saver, tempDir);
+}
+
+void Document::onDownloadCancelled(QObject *saver, QTemporaryDir *tempDir)
+{
+	emit canvasDownloadError(tr("Download cancelled"));
+	cleanUpDownload(saver, tempDir);
+}
+
+void Document::onDownloadFailed(
+	QObject *saver, QTemporaryDir *tempDir, const QString &errorMessage)
+{
+	emit canvasDownloadError(errorMessage);
+	cleanUpDownload(saver, tempDir);
+}
+
+void Document::cleanUpDownload(QObject *saver, QTemporaryDir *tempDir)
+{
+	if(saver) {
+		saver->deleteLater();
+	}
+	delete tempDir;
 }
 #endif
 

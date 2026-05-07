@@ -105,8 +105,8 @@ public:
 	void downloadCanvas(
 		const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir);
 	void downloadCanvasState(
-		const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir,
-		const drawdance::CanvasState &canvasState);
+		const QString &fileName, DP_SaveImageType type, bool isCurrentState,
+		QTemporaryDir *tempDir, const drawdance::CanvasState &canvasState);
 	void downloadSelection(const QString &fileName);
 #endif
 
@@ -365,6 +365,15 @@ private:
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
 		bool exported, bool append, const QString &path, DP_SaveImageType type);
+#ifdef __EMSCRIPTEN__
+	void onDownloadSucceeded(
+		QObject *saver, QTemporaryDir *tempDir, const QString &fileName,
+		const QString &path, qint64 elapsedMsec);
+	void onDownloadCancelled(QObject *saver, QTemporaryDir *tempDir);
+	void onDownloadFailed(
+		QObject *saver, QTemporaryDir *tempDir, const QString &errorMessage);
+	void cleanUpDownload(QObject *saver, QTemporaryDir *tempDir);
+#endif
 	QImage selectionToImage();
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setExportPath(const QString &path, DP_SaveImageType type);

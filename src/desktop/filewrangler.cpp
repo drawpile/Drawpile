@@ -486,7 +486,7 @@ bool FileWrangler::downloadPreResetImage(
 
 			QTemporaryDir *tempDir = new QTemporaryDir;
 			doc->downloadCanvasState(
-				filename, guessType(filename), tempDir, canvasState);
+				filename, guessType(filename), false, tempDir, canvasState);
 		});
 	return true;
 }
