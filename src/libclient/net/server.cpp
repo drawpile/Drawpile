@@ -303,9 +303,6 @@ void Server::handleBadData(int len, int type, int contextId)
 
 void Server::loginSuccess()
 {
-	qDebug() << "logged in to session" << m_loginstate->url() << ". Got user id"
-			 << m_loginstate->userId();
-
 	m_supportsPersistence = m_loginstate->supportsPersistence();
 	m_supportsCryptBanImpEx = m_loginstate->supportsCryptBanImEx();
 	m_supportsModBanImpEx = m_loginstate->supportsModBanImEx();
