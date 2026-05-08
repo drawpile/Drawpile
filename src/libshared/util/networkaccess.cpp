@@ -13,6 +13,9 @@
 #include <QThread>
 #include <dpcommon/platform_qt.h>
 
+Q_LOGGING_CATEGORY(
+	lcDpNetworkAccess, "net.drawpile.networkaccess", QtWarningMsg)
+
 namespace networkaccess {
 
 struct Managers {
@@ -30,13 +33,14 @@ QNetworkAccessManager *getInstance()
 
 	QNetworkAccessManager *nam = MANAGERS.perThreadManagers[t];
 	if(!nam) {
-		qDebug() << "Creating new NetworkAccessManager for thread" << t;
+		qCDebug(lcDpNetworkAccess)
+			<< "Creating new NetworkAccessManager for thread" << t;
 		nam = new QNetworkAccessManager;
 		nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 		QMetaObject::Connection conn =
 			t->connect(t, &QThread::finished, [nam, t]() {
-				qDebug() << "thread" << t
-						 << "ended. Removing NetworkAccessManager";
+				qCDebug(lcDpNetworkAccess)
+					<< "thread" << t << "ended. Removing NetworkAccessManager";
 				nam->deleteLater();
 				QMutexLocker guard(&MANAGERS.mutex);
 				MANAGERS.perThreadManagers.remove(t);
@@ -78,8 +82,8 @@ void FileDownload::setExpectedHash(
 #ifdef HAVE_QT_COMPAT_HASH_LENGTH
 	if(hash.length() > 0 &&
 	   QCryptographicHash::hashLength(algorithm) != hash.length()) {
-		qWarning() << "Expected hash length" << hash.length() << "not valid for"
-				   << algorithm;
+		qCWarning(lcDpNetworkAccess) << "Expected hash length" << hash.length()
+									 << "not valid for" << algorithm;
 		m_expectedHash = QByteArray();
 		m_hash.reset();
 	}
@@ -141,12 +145,14 @@ void FileDownload::onReadyRead()
 		}
 
 		if(expectedSize > 0 && expectedSize < 1024 * 1024) {
-			qDebug() << m_reply->url() << "opening temporary buffer. Expecting"
-					 << expectedSize << "bytes.";
+			qCDebug(lcDpNetworkAccess)
+				<< m_reply->url() << "opening temporary buffer. Expecting"
+				<< expectedSize << "bytes.";
 			m_file = new QBuffer(this);
 		} else {
-			qDebug() << m_reply->url() << "opening temporary file. Expecting"
-					 << (expectedSize / (1024.0 * 1024.0)) << "megabytes.";
+			qCDebug(lcDpNetworkAccess)
+				<< m_reply->url() << "opening temporary file. Expecting"
+				<< (expectedSize / (1024.0 * 1024.0)) << "megabytes.";
 			m_file = new QTemporaryFile(this);
 		}
 	}
@@ -180,7 +186,8 @@ void FileDownload::onReadyRead()
 void FileDownload::onFinished()
 {
 	if(m_reply->error()) {
-		qWarning() << m_reply->url() << "error:" << m_reply->errorString();
+		qCWarning(lcDpNetworkAccess)
+			<< m_reply->url() << "error:" << m_reply->errorString();
 		emit finished(
 			m_errorMessage.isEmpty() ? m_reply->errorString() : m_errorMessage);
 		return;
