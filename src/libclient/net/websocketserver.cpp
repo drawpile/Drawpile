@@ -36,8 +36,10 @@ WebSocketServer::WebSocketServer(int timeoutSecs, int proxyMode, Client *client)
 	m_msgqueue->setIdleTimeout(timeoutSecs * 1000);
 	m_msgqueue->setPingInterval(15 * 1000);
 
-#ifdef __EMSCRIPTEN__
-	// AutoConnection doesn't work here in Emscripten.
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
+	// AutoConnection doesn't work here in Emscripten. On Android, we get error
+	// 1002 "Received Continuation frame, while there is nothing to continue."
+	// without this.
 	Qt::ConnectionType connectionType = Qt::QueuedConnection;
 #else
 	Qt::ConnectionType connectionType = Qt::AutoConnection;
