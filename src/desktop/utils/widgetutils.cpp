@@ -1520,7 +1520,6 @@ bool openOrQuestionUrl(QWidget *parent, const QUrl &url)
 	   host.endsWith(QStringLiteral(".drawpile.net"), Qt::CaseInsensitive)) {
 		QDesktopServices::openUrl(url);
 	} else {
-		qDebug("unsafe");
 		QMessageBox *box = makeQuestion(
 			parent, QCoreApplication::translate("LinkCheck", "Open Link"),
 			QCoreApplication::translate(
