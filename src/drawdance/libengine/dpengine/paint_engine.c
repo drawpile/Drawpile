@@ -2130,8 +2130,8 @@ void DP_paint_engine_tick(
 
     bool reset_locked = just_reset || catching_up;
     if (reset_locked != pe->reset_locked) {
-        DP_info("Reset lock changed to %d (reset %d, catchup %d)", reset_locked,
-                just_reset, catching_up);
+        DP_debug("Reset lock changed to %d (reset %d, catchup %d)",
+                 reset_locked, just_reset, catching_up);
         pe->reset_locked = reset_locked;
         reset_lock_changed(user, reset_locked);
     }
