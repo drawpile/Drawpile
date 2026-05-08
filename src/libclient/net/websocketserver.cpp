@@ -108,7 +108,30 @@ QAbstractSocket::SocketError WebSocketServer::socketError() const
 
 QString WebSocketServer::socketErrorString() const
 {
-	return m_socket->errorString();
+	QString socketMessage = m_socket->errorString();
+	QWebSocketProtocol::CloseCode closeCode = m_socket->closeCode();
+	QString closeReason = m_socket->closeReason();
+
+	bool haveSocketMessage = !socketMessage.isEmpty();
+	bool haveCloseReason = !closeReason.isEmpty();
+	if(haveSocketMessage) {
+		if(haveCloseReason) {
+			return QStringLiteral("%1 (%2: %3)")
+				.arg(socketMessage)
+				.arg(int(closeCode))
+				.arg(closeReason);
+		} else {
+			return QStringLiteral("%1 (%2)")
+				.arg(socketMessage)
+				.arg(int(closeCode));
+		}
+	} else if(haveCloseReason) {
+		return QStringLiteral("(%1: %2)")
+			.arg(socketMessage)
+			.arg(int(closeCode));
+	} else {
+		return QStringLiteral("(%1)").arg(int(closeCode));
+	}
 }
 
 bool WebSocketServer::loginStartTls(LoginHandler *loginstate)
