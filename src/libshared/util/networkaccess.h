@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef NETWORKACCESS_H
-#define NETWORKACCESS_H
-
-#include <QObject>
+#ifndef LIBSHARED_UTIL_NETWORKACCESS_H
+#define LIBSHARED_UTIL_NETWORKACCESS_H
 #include <QCryptographicHash>
+#include <QObject>
 #include <QScopedPointer>
 
 class QNetworkAccessManager;
@@ -28,7 +26,7 @@ QNetworkAccessManager *getInstance();
 class FileDownload final : public QObject {
 	Q_OBJECT
 public:
-	explicit FileDownload(QObject *parent=nullptr);
+	explicit FileDownload(QObject *parent = nullptr);
 
 	/**
 	 * Set target file path
@@ -64,7 +62,8 @@ public:
 	 * @param hash the hash (in binary form)
 	 * @param algorithm hashing algorithm used
 	 */
-	void setExpectedHash(const QByteArray &hash, QCryptographicHash::Algorithm algorithm);
+	void setExpectedHash(
+		const QByteArray &hash, QCryptographicHash::Algorithm algorithm);
 
 	//! Start downloading
 	void start(const QUrl &url);
@@ -74,7 +73,8 @@ public:
 	/**
 	 * Get access to the file device
 	 *
-	 * This is either a temporary file, a buffer or---if a target filename was given, a regular QFile.
+	 * This is either a temporary file, a buffer or---if a target filename was
+	 * given, a regular QFile.
 	 *
 	 * Do not call until finished() is emitted with no error.
 	 */
@@ -84,7 +84,8 @@ signals:
 	//! Download progress report
 	void progress(qint64 received, qint64 total);
 
-	//! Download finished. Error message will be non-empty if the download failed
+	//! Download finished. Error message will be non-empty if the download
+	//! failed
 	void finished(const QString &errorMessage);
 
 private slots:
