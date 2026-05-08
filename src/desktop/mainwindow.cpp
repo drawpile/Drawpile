@@ -2641,25 +2641,31 @@ void MainWindow::setStartDialogActions(dialogs::StartDialog *dlg)
 	dlg->setActions(actions);
 }
 
+// clang-format on
 void MainWindow::closeStartDialog(dialogs::StartDialog *dlg, bool reparent)
 {
-	// Linux on Qt6 crashes when reparenting children of a dialog that's about
-	// to close after hosting, so we don't reparent in that case and just close
-	// the dialog. On the other hand, macOS on Qt6 crashes when closing the
-	// dialog instead, so we always reparent there.
+	if(!dlg->isClosing()) {
+		dlg->setClosing(true);
+		// Linux on Qt6 crashes when reparenting children of a dialog that's
+		// about to close after hosting, so we don't reparent in that case and
+		// just close the dialog. On the other hand, macOS on Qt6 crashes when
+		// closing the dialog instead, so we always reparent there.
 #ifdef Q_OS_MACOS
-	reparent = true;
+		reparent = true;
 #endif
-	if(reparent) {
-		for(QDialog *child : dlg->findChildren<QDialog *>(
-				QString(), Qt::FindDirectChildrenOnly)) {
-			child->setParent(this, child->windowFlags());
-			child->show();
+		if(reparent) {
+			for(QDialog *child : dlg->findChildren<QDialog *>(
+					QString(), Qt::FindDirectChildrenOnly)) {
+				child->setParent(this, child->windowFlags());
+				child->show();
+			}
 		}
+		// Delay closing for a moment to work around Qt bugs. Sometimes it ends
+		// up losing window handles or chasing null pointers here otherwise.
+		QTimer::singleShot(100, dlg, [dlg] {
+			dlg->close();
+		});
 	}
-	// Delay closing for a moment to work around Qt bugs. Sometimes it ends up
-	// losing window handles or chasing null pointers here otherwise.
-	QTimer::singleShot(100, dlg, &dialogs::StartDialog::close);
 }
 
 QWidget *MainWindow::getStartDialogOrThis()
@@ -2686,7 +2692,6 @@ void MainWindow::showNew()
 	showStartDialogOnPage(int(dialogs::StartDialog::Entry::Create));
 }
 
-// clang-format on
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
 	questionWindowReplacement(

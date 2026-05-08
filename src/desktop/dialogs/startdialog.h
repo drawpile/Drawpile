@@ -68,6 +68,9 @@ public slots:
 #endif
 	void setSmallScreenMode(bool smallScreenMode);
 
+	bool isClosing() const { return m_closing; }
+	void setClosing(bool closing) { m_closing = closing; }
+
 signals:
 	void openFile();
 	void openRecent(const QString &path);
@@ -160,6 +163,7 @@ private:
 	utils::News::Update m_update = utils::News::Update::invalid();
 #endif
 	int m_connectStrategy;
+	bool m_closing = false;
 };
 
 }
