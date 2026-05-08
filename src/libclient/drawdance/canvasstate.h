@@ -16,6 +16,7 @@ extern "C" {
 #include "libclient/drawdance/tile.h"
 #include "libclient/drawdance/timeline.h"
 #include "libclient/net/message.h"
+#include <QColor>
 #include <QImage>
 #include <QMetaType>
 #include <QPoint>
@@ -87,8 +88,8 @@ public:
 
 	QImage toFlatImage(
 		bool includeBackground = true, bool includeSublayers = true,
-		const QRect *rect = nullptr,
-		const DP_ViewModeFilter *vmf = nullptr) const;
+		const QRect *rect = nullptr, const DP_ViewModeFilter *vmf = nullptr,
+		const QColor &overrideBackgroundColor = QColor()) const;
 
 	QImage layerToFlatImage(int layerId, const QRect &rect) const;
 

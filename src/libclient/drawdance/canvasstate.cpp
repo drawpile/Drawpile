@@ -323,7 +323,7 @@ CanvasState::getLayersVisibleInTrackFrame(int trackId, int frameIndex) const
 
 QImage CanvasState::toFlatImage(
 	bool includeBackground, bool includeSublayers, const QRect *rect,
-	const DP_ViewModeFilter *vmf) const
+	const DP_ViewModeFilter *vmf, const QColor &overrideBackgroundColor) const
 {
 	unsigned int flags =
 		(includeBackground ? DP_FLAT_IMAGE_INCLUDE_BACKGROUND : 0) |
@@ -333,8 +333,19 @@ QImage CanvasState::toFlatImage(
 		area =
 			DP_rect_make(rect->x(), rect->y(), rect->width(), rect->height());
 	}
-	DP_Image *img = DP_canvas_state_to_flat_image(
-		m_data, flags, rect ? &area : nullptr, vmf);
+
+	DP_Image *img;
+	if(overrideBackgroundColor.isValid()) {
+		drawdance::Tile overrideBackgroundTile =
+			drawdance::Tile::fromColor(overrideBackgroundColor);
+		img = DP_canvas_state_to_flat_image_with_background(
+			m_data, flags, rect ? &area : nullptr, vmf,
+			overrideBackgroundTile.get());
+	} else {
+		img = DP_canvas_state_to_flat_image(
+			m_data, flags, rect ? &area : nullptr, vmf);
+	}
+
 	return wrapImage(img);
 }
 

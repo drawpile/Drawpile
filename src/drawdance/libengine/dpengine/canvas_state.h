@@ -165,11 +165,20 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
                                         const DP_Rect *area_or_null,
                                         const DP_ViewModeFilter *vmf_or_null);
 
+DP_Image *DP_canvas_state_to_flat_image_with_background(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, DP_Tile *background_or_null);
+
 DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
                                           unsigned int flags,
                                           const DP_Rect *area_or_null,
                                           const DP_ViewModeFilter *vmf_or_null,
                                           DP_Image **inout_img_or_null);
+
+DP_Image *DP_canvas_state_into_flat_image_with_background(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, DP_Tile *background_or_null,
+    DP_Image **inout_img_or_null);
 
 DP_Pixel15 DP_canvas_state_to_flat_pixel(DP_CanvasState *cs, int x, int y);
 

@@ -75,7 +75,6 @@ TimelapseDialog::TimelapseDialog(
 	QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
 
 	m_timelapsePreview = new widgets::TimelapsePreview;
-	m_timelapsePreview->setCanvas(m_canvasState, &m_vmf);
 	m_timelapsePreview->setFixedHeight(320);
 	scrollLayout->addWidget(m_timelapsePreview);
 
@@ -427,6 +426,23 @@ TimelapseDialog::TimelapseDialog(
 	m_ownCheckBox = new QCheckBox(tr("Only time own drawing"));
 	advancedForm->addRow(tr("Timing:"), m_ownCheckBox);
 
+	m_backgroundPreview = new color_widgets::ColorPreview;
+	m_backgroundPreview->setDisplayMode(
+		color_widgets::ColorPreview::DisplayMode::AllAlpha);
+	m_backgroundPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	m_backgroundPreview->setCursor(Qt::PointingHandCursor);
+	m_backgroundPreview->setColor(Qt::transparent);
+	advancedForm->addRow(
+		QCoreApplication::translate(
+			"dialogs::startdialog::Create", "Background:"),
+		m_backgroundPreview);
+	connect(
+		m_backgroundPreview, &color_widgets::ColorPreview::clicked, this,
+		&TimelapseDialog::pickBackgroundColor);
+	connect(
+		m_backgroundPreview, &color_widgets::ColorPreview::colorChanged, this,
+		&TimelapseDialog::updatePreviewCanvas);
+
 	m_backdropPreview = new color_widgets::ColorPreview;
 	m_backdropPreview->setDisplayMode(
 		color_widgets::ColorPreview::DisplayMode::AllAlpha);
@@ -618,6 +634,7 @@ TimelapseDialog::TimelapseDialog(
 	m_buttons = new QDialogButtonBox();
 	layout->addWidget(m_buttons);
 
+	updatePreviewCanvas();
 	showSettingsPage();
 	setDefaultResolutions();
 	updateCurrentResolution();
@@ -731,8 +748,9 @@ void TimelapseDialog::accept()
 				m_heightSpinner->value(),
 				m_interpolationCombo->currentData().toInt(),
 				m_cropCheckBox->isChecked() ? m_crop : QRect(),
-				m_backdropPreview->color(), cfg->getCheckerColor1(),
-				cfg->getCheckerColor2(), m_flashPreview->color(), getLogoRect(),
+				getOverrideBackgroundColor(), m_backdropPreview->color(),
+				cfg->getCheckerColor1(), cfg->getCheckerColor2(),
+				m_flashPreview->color(), getLogoRect(),
 				double(m_logoOpacitySlider->value()) / 100.0, getLogoImage(),
 				m_framerateSlider->value(), lingerBeforeSeconds,
 				playbackSeconds, flashSeconds, lingerAfterSeconds,
@@ -894,6 +912,7 @@ void TimelapseDialog::resetToDefaultSettings()
 		m_interpolationCombo->setCurrentIndex(0);
 	}
 	m_ownCheckBox->setChecked(config::Config::defaultTimelapseTimeOwnOnly());
+	m_backgroundPreview->setColor(Qt::transparent);
 	m_backdropPreview->setColor(
 		config::Config::defaultTimelapseBackdropColor());
 	QSignalBlocker logoScaleBlocker(m_logoScaleSlider);
@@ -1192,6 +1211,12 @@ void TimelapseDialog::updatePreviewCrop()
 		m_cropCheckBox->isChecked() ? m_crop : QRect());
 }
 
+void TimelapseDialog::updatePreviewCanvas()
+{
+	m_timelapsePreview->setCanvas(
+		m_canvasState, &m_vmf, getOverrideBackgroundColor());
+}
+
 void TimelapseDialog::updateDimensionsNote()
 {
 	m_dimensionsNote->setVisible(
@@ -1312,6 +1337,16 @@ const QImage &TimelapseDialog::getLogoImage()
 	return m_logoImage;
 }
 
+QColor TimelapseDialog::getOverrideBackgroundColor() const
+{
+	QColor color = m_backgroundPreview->color();
+	if(color.isValid() && color.alpha() != 0) {
+		return color;
+	} else {
+		return QColor();
+	}
+}
+
 void TimelapseDialog::showFfmpegSettings()
 {
 #ifdef DRAWPILE_FFMPEG_DIALOG
@@ -1360,6 +1395,18 @@ void TimelapseDialog::updateFfmpegFormatIcons()
 	}
 }
 
+void TimelapseDialog::pickBackgroundColor()
+{
+	QColor currentColor;
+	QColor previewColor = m_backgroundPreview->color();
+	if(!previewColor.isValid() || previewColor.alpha() == 0) {
+		currentColor = m_canvasState.backgroundTile().singleColor(QColor());
+	}
+	pickColor(
+		QStringLiteral("backgroundcolordialog"), tr("Choose Background Color"),
+		m_backgroundPreview, Qt::transparent, currentColor);
+}
+
 void TimelapseDialog::pickBackdropColor()
 {
 	pickColor(
@@ -1376,7 +1423,8 @@ void TimelapseDialog::pickFlashColor()
 
 void TimelapseDialog::pickColor(
 	const QString &objectName, const QString &title,
-	color_widgets::ColorPreview *preview, const QColor &resetColor)
+	color_widgets::ColorPreview *preview, const QColor &resetColor,
+	const QColor &currentColor)
 {
 	color_widgets::ColorDialog *dlg = findChild<color_widgets::ColorDialog *>(
 		objectName, Qt::FindDirectChildrenOnly);
@@ -1384,7 +1432,8 @@ void TimelapseDialog::pickColor(
 		dlg->activateWindow();
 		dlg->raise();
 	} else {
-		dlg = dialogs::newDeleteOnCloseColorDialog(preview->color(), this);
+		dlg = dialogs::newDeleteOnCloseColorDialog(
+			currentColor.isValid() ? currentColor : preview->color(), this);
 		dlg->setObjectName(objectName);
 		dlg->setWindowTitle(title);
 		utils::makeModal(dlg);

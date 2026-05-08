@@ -1900,7 +1900,8 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
 
 static void *flatten_canvas(
     DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
-    const DP_ViewModeFilter *vmf_or_null, void *(*get_buffer)(void *, int, int),
+    const DP_ViewModeFilter *vmf_or_null, DP_Tile *background_or_null,
+    void *(*get_buffer)(void *, int, int),
     void (*to_buffer)(void *, DP_TransientTile *, DP_TileIterator *),
     void *user)
 {
@@ -1911,7 +1912,14 @@ static void *flatten_canvas(
         return NULL;
     }
 
-    DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
+    DP_Tile *background_tile;
+    if (background_or_null) {
+        background_tile = background_or_null;
+    }
+    else {
+        background_tile = get_flat_background_tile_or_null(cs, flags);
+    }
+
     int wt = DP_tile_count_round(cs->width);
     bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
     DP_ViewModeFilter vmf =
@@ -1939,6 +1947,16 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return DP_canvas_state_into_flat_image(cs, flags, area_or_null, vmf_or_null,
                                            NULL);
+}
+
+DP_Image *DP_canvas_state_to_flat_image_with_background(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, DP_Tile *background_or_null)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_canvas_state_into_flat_image_with_background(
+        cs, flags, area_or_null, vmf_or_null, background_or_null, NULL);
 }
 
 static void *into_flat_image_get_buffer(void *user, int width, int height)
@@ -2026,8 +2044,19 @@ DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_canvas_state_into_flat_image_with_background(
+        cs, flags, area_or_null, vmf_or_null, NULL, inout_img_or_null);
+}
+
+DP_Image *DP_canvas_state_into_flat_image_with_background(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, DP_Tile *background_or_null,
+    DP_Image **inout_img_or_null)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return flatten_canvas(cs, flags, area_or_null, vmf_or_null,
-                          into_flat_image_get_buffer,
+                          background_or_null, into_flat_image_get_buffer,
                           flags & DP_FLAT_IMAGE_ONE_BIT_ALPHA
                               ? into_flat_image_to_buffer_one_bit_alpha
                           : flags & DP_FLAT_IMAGE_UNPREMULTIPLY
@@ -2115,7 +2144,7 @@ bool DP_canvas_state_to_flat_separated_urgba8(
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    return flatten_canvas(cs, flags, area_or_null, vmf_or_null,
+    return flatten_canvas(cs, flags, area_or_null, vmf_or_null, NULL,
                           to_flat_separated_urgba8_get_buffer,
                           to_flat_separated_urgba8_to_buffer, buffer);
 }

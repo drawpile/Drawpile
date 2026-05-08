@@ -24,8 +24,8 @@ public:
 	TimelapsePreview(QWidget *parent = nullptr);
 
 	void setCanvas(
-		const drawdance::CanvasState &canvasState,
-		DP_ViewModeFilter *vmfOrNull);
+		const drawdance::CanvasState &canvasState, DP_ViewModeFilter *vmfOrNull,
+		const QColor &overrideBackgroundColor);
 	void setCropRect(const QRect &cropRect);
 	void setOutputSize(const QSize &outputSize);
 	void setLogoImage(const QImage &logoImage);

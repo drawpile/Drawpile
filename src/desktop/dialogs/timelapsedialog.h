@@ -93,6 +93,7 @@ private:
 	void updateLogoOpacity(int opacity);
 	void updatePreviewCrop();
 	void updatePreviewSize();
+	void updatePreviewCanvas();
 	void updateDimensionsNote();
 	void toggleAdvanced();
 	void updateAdvanced(bool enabled);
@@ -103,15 +104,18 @@ private:
 	QSize getOutputSize() const;
 	QRect getLogoRect();
 	const QImage &getLogoImage();
+	QColor getOverrideBackgroundColor() const;
 
 	void showFfmpegSettings();
 	void setFfmpegPath(const QString &ffmpegPath);
 	void updateFfmpegFormatIcons();
+	void pickBackgroundColor();
 	void pickBackdropColor();
 	void pickFlashColor();
 	void pickColor(
 		const QString &objectName, const QString &title,
-		color_widgets::ColorPreview *preview, const QColor &resetColor);
+		color_widgets::ColorPreview *preview, const QColor &resetColor,
+		const QColor &currentColor = QColor());
 	void confirmReset();
 	QString choosePath(int format);
 
@@ -154,6 +158,7 @@ private:
 	QCheckBox *m_ffmpegCheckBox = nullptr;
 	QComboBox *m_interpolationCombo;
 	QCheckBox *m_ownCheckBox;
+	color_widgets::ColorPreview *m_backgroundPreview;
 	color_widgets::ColorPreview *m_backdropPreview;
 	KisDoubleSliderSpinBox *m_logoScaleSlider;
 	KisDoubleSliderSpinBox *m_logoOffsetXSlider;

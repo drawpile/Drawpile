@@ -22,14 +22,20 @@ TimelapsePreview::TimelapsePreview(QWidget *parent)
 }
 
 void TimelapsePreview::setCanvas(
-	const drawdance::CanvasState &canvasState, DP_ViewModeFilter *vmfOrNull)
+	const drawdance::CanvasState &canvasState, DP_ViewModeFilter *vmfOrNull,
+	const QColor &overrideBackgroundColor)
 {
 	m_canvasImage = QPixmap();
 	m_canvasSize = canvasState.isNull() ? QSize() : canvasState.size();
-	m_backgroundColor =
-		canvasState.isNull()
-			? QColor()
-			: canvasState.backgroundTile().singleColor(QColor());
+
+	if(overrideBackgroundColor.isValid()) {
+		m_backgroundColor = overrideBackgroundColor;
+	} else if(canvasState.isNull()) {
+		m_backgroundColor = QColor();
+	} else {
+		m_backgroundColor = canvasState.backgroundTile().singleColor(QColor());
+	}
+
 	++m_canvasStateCorrelationId;
 
 	if(m_canvasSize.isEmpty()) {
@@ -50,7 +56,8 @@ void TimelapsePreview::setCanvas(
 
 		CanvasToImageRunnable *canvasToImageRunnable =
 			new CanvasToImageRunnable(
-				canvasState, vmfOrNull, m_canvasStateCorrelationId);
+				canvasState, vmfOrNull, overrideBackgroundColor,
+				m_canvasStateCorrelationId);
 		connect(
 			canvasToImageRunnable, &CanvasToImageRunnable::finished, this,
 			&TimelapsePreview::onCanvasToImageFinished, Qt::QueuedConnection);

@@ -34,14 +34,15 @@ public:
 		const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
 		const QString &outputPath, const QString &inputPath, int format,
 		int width, int height, int interpolation, const QRect &crop,
-		const QColor &backdropColor, const QColor &checkerColor1,
-		const QColor &checkerColor2, const QColor &flashColor,
-		const QRect &logoRect, double logoOpacity, const QImage &logoImage,
-		double framerate, double lingerBeforeSeconds, double playbackSeconds,
-		double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
-		int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
-		int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
-		double animationFramerate, QObject *parent = nullptr);
+		const QColor &overrideBackgroundColor, const QColor &backdropColor,
+		const QColor &checkerColor1, const QColor &checkerColor2,
+		const QColor &flashColor, const QRect &logoRect, double logoOpacity,
+		const QImage &logoImage, double framerate, double lingerBeforeSeconds,
+		double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
+		double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
+		int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
+		int frameRangeLast, double animationFramerate,
+		QObject *parent = nullptr);
 
 	void run() override;
 
@@ -74,6 +75,9 @@ private:
 		void requestStop() { m_stopRequested.storeRelaxed(1); }
 
 	private:
+		static drawdance::Tile
+		getOverrideBackgroundTileOrNull(const QColor &overrideBackgroundColor);
+
 		int runPlayback();
 
 		bool shouldStop() const
@@ -116,6 +120,7 @@ private:
 		QImage m_lastImage;
 		QImage m_scaledLogoImage;
 		QBrush m_lastBackgroundBrush;
+		drawdance::Tile m_overrideBackgroundTile;
 		drawdance::Tile m_lastBackgroundTile = drawdance::Tile::null();
 		QAtomicInt m_stopRequested;
 	};
@@ -164,6 +169,7 @@ private:
 	const int m_height;
 	const int m_interpolation;
 	const QRect m_crop;
+	const QColor m_overrideBackgroundColor;
 	const QColor m_backdropColor;
 	const QColor m_checkerColor1;
 	const QColor m_checkerColor2;

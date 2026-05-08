@@ -3,6 +3,7 @@
 #define LIBCLIENT_UTILS_CANVASTOIMAGERUNNABLE
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/drawdance/viewmode.h"
+#include <QColor>
 #include <QImage>
 #include <QObject>
 #include <QRunnable>
@@ -12,7 +13,8 @@ class CanvasToImageRunnable final : public QObject, public QRunnable {
 public:
 	CanvasToImageRunnable(
 		const drawdance::CanvasState &canvasState,
-		const DP_ViewModeFilter *vmfOrNulOrNull, unsigned int correlationId,
+		const DP_ViewModeFilter *vmfOrNulOrNull,
+		const QColor &overrideBackgroundColor, unsigned int correlationId,
 		QObject *parent = nullptr);
 
 	void run() override;
@@ -22,6 +24,7 @@ Q_SIGNALS:
 
 private:
 	const drawdance::CanvasState m_canvasState;
+	const QColor m_overrideBackgroundColor;
 	drawdance::ViewModeBuffer m_vmb;
 	DP_ViewModeFilter m_vmf;
 	const unsigned int m_correlationId;

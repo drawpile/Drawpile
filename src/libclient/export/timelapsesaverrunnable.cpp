@@ -34,14 +34,14 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
 	const QString &outputPath, const QString &inputPath, int format, int width,
 	int height, int interpolation, const QRect &crop,
-	const QColor &backdropColor, const QColor &checkerColor1,
-	const QColor &checkerColor2, const QColor &flashColor,
-	const QRect &logoRect, double logoOpacity, const QImage &logoImage,
-	double framerate, double lingerBeforeSeconds, double playbackSeconds,
-	double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
-	int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
-	int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
-	double animationFramerate, QObject *parent)
+	const QColor &overrideBackgroundColor, const QColor &backdropColor,
+	const QColor &checkerColor1, const QColor &checkerColor2,
+	const QColor &flashColor, const QRect &logoRect, double logoOpacity,
+	const QImage &logoImage, double framerate, double lingerBeforeSeconds,
+	double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
+	double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
+	int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
+	int frameRangeLast, double animationFramerate, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_ffmpegPath(ffmpegPath)
@@ -52,6 +52,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	, m_height(height)
 	, m_interpolation(interpolation)
 	, m_crop(crop)
+	, m_overrideBackgroundColor(overrideBackgroundColor)
 	, m_backdropColor(backdropColor)
 	, m_checkerColor1(checkerColor1)
 	, m_checkerColor2(checkerColor2)
@@ -167,6 +168,8 @@ void TimelapseSaverRunnable::cancelExport()
 TimelapseSaverRunnable::PlaybackRunnable::PlaybackRunnable(
 	TimelapseSaverRunnable *parent)
 	: m_parent(parent)
+	, m_overrideBackgroundTile(
+		  getOverrideBackgroundTileOrNull(m_parent->m_overrideBackgroundColor))
 {
 }
 
@@ -174,6 +177,18 @@ void TimelapseSaverRunnable::PlaybackRunnable::run()
 {
 	int result = runPlayback();
 	enqueue({result, -1, QImage()});
+}
+
+drawdance::Tile
+TimelapseSaverRunnable::PlaybackRunnable::getOverrideBackgroundTileOrNull(
+	const QColor &overrideBackgroundColor)
+{
+	if(overrideBackgroundColor.isValid() &&
+	   overrideBackgroundColor.alpha() != 0) {
+		return drawdance::Tile::fromColor(overrideBackgroundColor);
+	} else {
+		return drawdance::Tile::null();
+	}
 }
 
 int TimelapseSaverRunnable::PlaybackRunnable::runPlayback()
@@ -384,8 +399,9 @@ QImage TimelapseSaverRunnable::PlaybackRunnable::toOutputImage(
 		return QImage();
 	}
 
-	DP_Image *img = DP_canvas_state_to_flat_image(
-		canvasState.get(), DP_FLAT_IMAGE_RENDER_FLAGS, cropOrNull, vmfOrNull);
+	DP_Image *img = DP_canvas_state_to_flat_image_with_background(
+		canvasState.get(), DP_FLAT_IMAGE_RENDER_FLAGS, cropOrNull, vmfOrNull,
+		m_overrideBackgroundTile.get());
 	if(!img) {
 		return QImage();
 	}
@@ -480,7 +496,13 @@ const QBrush &TimelapseSaverRunnable::PlaybackRunnable::getBackgroundBrush(
 	const QColor &backdropColor = m_parent->m_backdropColor;
 	int backdropAlpha = backdropColor.isValid() ? backdropColor.alpha() : 0;
 	if(backdropAlpha < 255) {
-		DP_Tile *t = DP_canvas_state_background_tile_noinc(canvasState.get());
+		DP_Tile *t;
+		if(m_overrideBackgroundTile.isNull()) {
+			t = DP_canvas_state_background_tile_noinc(canvasState.get());
+		} else {
+			t = m_overrideBackgroundTile.get();
+		}
+
 		bool needsNewBrush = m_lastBackgroundBrush.style() == Qt::NoBrush ||
 							 m_lastBackgroundTile.get() != t;
 		if(needsNewBrush) {
