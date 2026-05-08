@@ -64,6 +64,9 @@
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 #	include <QProcess>
 #endif
+#ifdef NDEBUG
+#	include <QLoggingCategory>
+#endif
 
 // Make sure that we're building against the proper patch set.
 #if defined(DRAWPILE_QSCROLLER_PATCH) &&                                       \
@@ -1503,7 +1506,10 @@ extern "C" void drawpileMain(int argc, char **argv)
 	DrawpileApp *app = &appInstance;
 #endif
 	DP_QT_LOCALE_RESET();
-
+#ifdef NDEBUG
+	QLoggingCategory::setFilterRules(
+		QStringLiteral("*.debug=false\n*.info=false"));
+#endif
 	startApplication(app, vsync, swapBehavior);
 
 #ifndef __EMSCRIPTEN__
