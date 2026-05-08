@@ -376,6 +376,7 @@ if(KRITA_QT)
 				qtbase:patches/androidimhnoeditmenu-qt5-krita.diff
 				qtbase:patches/androidhuawei-qt5-krita.diff
 				TARGET_BITS=64@qtbase:patches/android-16k-alignment-qt5-krita.diff
+				qtwebsockets:patches/qtwebsockets-qt5-krita.diff
 	)
 else()
 	set(TEMPLATE_URL "https://download.qt.io/archive/qt/@version_major@/@version@/submodules/@name@-everywhere-${URL_LICENSE}src-@version@.tar.xz")

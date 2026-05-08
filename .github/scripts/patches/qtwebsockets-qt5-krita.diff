@@ -1,0 +1,42 @@
+Description: This upgrades QtWebSockets from 5.15.7 to 5.15.18 in the hopes
+that it fixes some inexplicable 1002 errors about receiving continuation frames
+when no continuation was expected.
+
+--- a/src/websockets/qwebsocketdataprocessor.cpp
++++ b/src/websockets/qwebsocketdataprocessor.cpp
+@@ -273,7 +273,6 @@
+     if (!m_pConverterState)
+         m_pConverterState = new QTextCodec::ConverterState(QTextCodec::ConvertInvalidToNull |
+                                                            QTextCodec::IgnoreHeader);
+-    frame.clear();
+ }
+ 
+ /*!
+--- a/src/websockets/qwebsocket_p.cpp
++++ b/src/websockets/qwebsocket_p.cpp
+@@ -429,8 +429,10 @@
+                 QSslSocket *sslSocket = new QSslSocket(q);
+                 m_pSocket = sslSocket;
+                 if (Q_LIKELY(m_pSocket)) {
+-                    m_pSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+-                    m_pSocket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
++                    QObject::connect(sslSocket, &QSslSocket::connected, [sslSocket](){
++                        sslSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
++                        sslSocket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
++                    });
+                     m_pSocket->setReadBufferSize(m_readBufferSize);
+                     m_pSocket->setPauseMode(m_pauseMode);
+ 
+@@ -458,8 +460,10 @@
+         if (url.scheme() == QStringLiteral("ws")) {
+             m_pSocket = new QTcpSocket(q);
+             if (Q_LIKELY(m_pSocket)) {
+-                m_pSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+-                m_pSocket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
++                QObject::connect(m_pSocket, &QTcpSocket::connected, [this](){
++                    m_pSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
++                    m_pSocket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
++                });
+                 m_pSocket->setReadBufferSize(m_readBufferSize);
+                 m_pSocket->setPauseMode(m_pauseMode);
+ 
