@@ -4,13 +4,15 @@
 #include "libclient/net/login.h"
 #include "libclient/net/websocketserver.h"
 #include "libshared/net/servercmd.h"
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QMetaEnum>
 #include <QScopedValueRollback>
 #include <QUrlQuery>
 #ifdef HAVE_TCPSOCKETS
 #	include "libclient/net/tcpserver.h"
 #endif
+
+Q_LOGGING_CATEGORY(lcDpServer, "net.drawpile.server", QtWarningMsg)
 
 namespace net {
 
@@ -67,7 +69,7 @@ void Server::abortTentative()
 	if(m_loginstate) {
 		abortConnection();
 	} else {
-		qWarning("abortTentative: not in login state!");
+		qCWarning(lcDpServer, "abortTentative: not in login state!");
 	}
 }
 
@@ -76,7 +78,7 @@ void Server::replaceWithRedirect(LoginHandler *login, bool late)
 	if(m_loginstate) {
 		emit m_loginstate->replacedByRedirect(login, late);
 	} else {
-		qWarning("replaceWithRedirect: not in login state!");
+		qCWarning(lcDpServer, "replaceWithRedirect: not in login state!");
 	}
 }
 
@@ -129,14 +131,17 @@ void Server::handleSocketError()
 {
 	QAbstractSocket::SocketError errorCode = socketError();
 	if(m_handlingError) {
-		qWarning("Socket error %d while already handling one", int(errorCode));
+		qCWarning(
+			lcDpServer, "Socket error %d while already handling one",
+			int(errorCode));
 		return;
 	}
 
 	QScopedValueRollback<bool> rollback(m_handlingError, true);
 	QString errorString = socketErrorStringWithCode();
-	qWarning(
-		"Socket error %d: %s", int(errorCode), qUtf8Printable(errorString));
+	qCWarning(
+		lcDpServer, "Socket error %d: %s", int(errorCode),
+		qUtf8Printable(errorString));
 	if(errorCode != QAbstractSocket::RemoteHostClosedError) {
 		if(m_error.isEmpty()) {
 			m_error = errorString;
@@ -168,7 +173,7 @@ void Server::handleSocketError()
 void Server::handleReadError()
 {
 	QString errorString = socketErrorStringWithCode();
-	qWarning() << "Socket read error:" << errorString;
+	qCWarning(lcDpServer, "Socket read error: %s", qUtf8Printable(errorString));
 	if(m_error.isEmpty()) {
 		if(errorString.isEmpty()) {
 			m_error = tr("Network read error");
@@ -181,7 +186,8 @@ void Server::handleReadError()
 void Server::handleWriteError()
 {
 	QString errorString = socketErrorStringWithCode();
-	qWarning() << "Socket write error:" << errorString;
+	qCWarning(
+		lcDpServer, "Socket write error: %s", qUtf8Printable(errorString));
 	if(m_error.isEmpty()) {
 		if(errorString.isEmpty()) {
 			m_error = tr("Network write error");
@@ -193,7 +199,9 @@ void Server::handleWriteError()
 
 void Server::handleTimeout(qint64 idleTimeout)
 {
-	qWarning() << "Message queue exceeded timeout of" << idleTimeout << "ms";
+	qCWarning(
+		lcDpServer, "Message queue exceeded timeout of %lld ms",
+		static_cast<long long>(idleTimeout));
 	if(m_error.isEmpty()) {
 		m_error = tr("Network connection timed out");
 	}
@@ -287,9 +295,11 @@ void Server::receiveMessages()
 
 void Server::handleBadData(int len, int type, int contextId)
 {
-	qWarning() << "Received" << len
-			   << "bytes of unknown or invalid message type" << type
-			   << "from context ID" << contextId;
+	qCWarning(
+		lcDpServer,
+		"Received %d bytes of unknown or invalid message type %d "
+		"from context id %d",
+		len, type, contextId);
 	if(type < 64) {
 		// If message type is Transparent, the bad data came from the server.
 		// Something is wrong for sure.
@@ -303,6 +313,11 @@ void Server::handleBadData(int len, int type, int contextId)
 
 void Server::loginSuccess()
 {
+	qCDebug(
+		lcDpServer, "Logged in to session '%s' with user id %u",
+		qUtf8Printable(m_loginstate->url().toDisplayString()),
+		static_cast<unsigned int>(m_loginstate->userId()));
+
 	m_supportsPersistence = m_loginstate->supportsPersistence();
 	m_supportsCryptBanImpEx = m_loginstate->supportsCryptBanImEx();
 	m_supportsModBanImpEx = m_loginstate->supportsModBanImEx();
@@ -334,7 +349,7 @@ void Server::loginSuccess()
 
 void Server::loginFailure(const QString &message, const QString &errorcode)
 {
-	qWarning() << "Login failed:" << message;
+	qCWarning(lcDpServer, "Login failed: %s", qUtf8Printable(message));
 	m_error = message;
 	m_errorcode = errorcode;
 	m_localDisconnect = errorcode == "CANCELLED";
