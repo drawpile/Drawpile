@@ -6,6 +6,9 @@
 #include <wpcapi.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(lcDpParentalControlsWin, "net.drawpile.parentalcontrols.win", QtWarningMsg)
 
 namespace parentalcontrols {
 
@@ -17,7 +20,7 @@ static bool ACTIVE = false;
 void init(config::Config *cfg)
 {
 	g_cfg = cfg;
-	qDebug("Initializing parental controls");
+	qCDebug(lcDpParentalControlsWin, "Initializing parental controls");
 
 	CoInitialize(nullptr);
 	HRESULT hr;
@@ -25,7 +28,7 @@ void init(config::Config *cfg)
 	hr = CoCreateInstance(CLSID_WinParentalControls, nullptr, CLSCTX_INPROC, IID_IWinParentalControls, (void**)&pc);
 
 	if(FAILED(hr)) {
-		qDebug("parental controls failed");
+		qCDebug(lcDpParentalControlsWin, "parental controls failed");
 		return;
 	}
 
@@ -41,7 +44,7 @@ void init(config::Config *cfg)
 	}
 	pc->Release();
 
-	qDebug("parental controls: %s", ACTIVE?"active":"not enabled");
+	qCDebug(lcDpParentalControlsWin, "parental controls: %s", ACTIVE?"active":"not enabled");
 }
 
 bool isOSActive()
