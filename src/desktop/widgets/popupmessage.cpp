@@ -36,7 +36,10 @@ PopupMessage::PopupMessage(QWidget *parent)
 	, m_parentWidget{parent}
 #endif
 {
+	// Android doesn't support window masking.
+#ifndef Q_OS_ANDROID
 	setAttribute(Qt::WA_TranslucentBackground);
+#endif
 	m_timer->setSingleShot(true);
 	m_timer->setInterval(2500);
 
