@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/utils/androidutils.h"
 #include <QCoreApplication>
+#include <QLoggingCategory>
 #include <QString>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #	include <QtAndroid>
 #endif
+
+Q_LOGGING_CATEGORY(lcDpAndroidUtils, "net.drawpile.androidutils", QtWarningMsg)
 
 namespace utils {
 
 static bool clearException(QJniEnvironment &env)
 {
 	if(env->ExceptionCheck()) {
-		qWarning("JNI exception occurred");
+		qCWarning(lcDpAndroidUtils, "JNI exception occurred");
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 		return true;
@@ -25,7 +28,7 @@ static bool checkValid(const char *name, QJniObject &obj)
 	if(obj.isValid()) {
 		return true;
 	} else {
-		qWarning("JNI object '%s' is not valid", name);
+		qCWarning(lcDpAndroidUtils, "JNI object '%s' is not valid", name);
 		return false;
 	}
 }
@@ -76,7 +79,7 @@ static QJniObject acquireLock(
 		return QJniObject{};
 	}
 
-	qDebug("Acquired %s lock", what);
+	qCDebug(lcDpAndroidUtils, "Acquired %s lock", what);
 	return lock;
 }
 
@@ -86,9 +89,9 @@ static void releaseLock(const char *what, QJniObject &lock)
 	if(lock.isValid()) {
 		lock.callMethod<void>("release", "()V");
 		if(clearException(env)) {
-			qWarning("Error releasing %s lock", what);
+			qCWarning(lcDpAndroidUtils, "Error releasing %s lock", what);
 		} else {
-			qDebug("Released %s lock", what);
+			qCDebug(lcDpAndroidUtils, "Released %s lock", what);
 		}
 	}
 }
