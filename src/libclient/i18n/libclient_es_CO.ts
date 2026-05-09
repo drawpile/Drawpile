@@ -2494,7 +2494,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 comando de grabación: %2</translation>
     </message>
     <message>
         <location line="+5"/>
