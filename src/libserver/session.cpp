@@ -17,6 +17,7 @@ extern "C" {
 #include "libshared/util/qtcompat.h"
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QPointer>
 #include <QTimer>
 
 namespace server {
@@ -1861,17 +1862,30 @@ void Session::killSession(const QString &message, bool terminate, bool quiet)
 	unlistAnnouncement(QUrl(), false);
 	stopRecording();
 
+	// Disconnecting clients will modify the clients array, so make a copy of
+	// that first. Just in case they somehow get destructed along the way, we
+	// also use QPointers to make sure we don't hit a client that disappeared.
+	QVector<QPointer<Client>> clientsToDisconnect;
+	clientsToDisconnect.reserve(m_clients.size());
 	for(Client *c : m_clients) {
-		if(quiet) {
-			c->quietDisconnectClient();
-		} else {
-			c->disconnectClient(
-				Client::DisconnectionReason::Shutdown, message,
-				terminate ? QStringLiteral("terminate=true")
-						  : QStringLiteral("terminate=false"));
-		}
-		c->setSession(nullptr);
+		clientsToDisconnect.append(c);
 	}
+
+	for(const QPointer<Client> &p : clientsToDisconnect) {
+		if(Client *c = p.data(); c) {
+			if(quiet) {
+				c->quietDisconnectClient();
+			} else {
+				c->disconnectClient(
+					Client::DisconnectionReason::Shutdown, message,
+					terminate ? QStringLiteral("terminate=true")
+							  : QStringLiteral("terminate=false"));
+			}
+			c->setSession(nullptr);
+		}
+	}
+
+	// This should be empty at this point, but clear it anyway.
 	m_clients.clear();
 
 	if(quiet) {

@@ -102,6 +102,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Provide a better default name by default instead of just punting to "Untitled". The suggested name is now automatically prefixed with a date and tries to use a cleaned-up version of the session title if drawing online. Thanks tiar for suggesting.
  * Fix: Make automatic switching to frame view mode work properly even when the timeline isn't a floating or tabbed widget. The lack of a tab bar caused it to get misdetected as hidden.
  * Fix: Solve an issue where on some Android devices you would get disconnected on the first attempt of joining a session and then it worked fine on reconnect. Thanks Bluestrings for reporting.
+ * Server Fix: Properly disconnect notify all clients when a session is shut down. Previously it could miss some of them and leave them lingering without a session.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
