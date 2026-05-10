@@ -22,6 +22,7 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	m_announcements = new sessionlisting::Announcements(config, this);
 
 	QTimer *cleanupTimer = new QTimer(this);
+	cleanupTimer->setTimerType(Qt::VeryCoarseTimer);
 	connect(
 		cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
 	cleanupTimer->setInterval(15 * 1000);
