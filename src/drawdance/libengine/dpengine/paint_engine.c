@@ -659,7 +659,7 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
         int default_layer_id =
             DP_protocol_to_layer_id(DP_msg_default_layer_id(mdl));
-        if (DP_layer_id_normal(default_layer_id)) {
+        if (default_layer_id == 0 || DP_layer_id_normal(default_layer_id)) {
             DP_atomic_xch(&pe->default_layer_id, default_layer_id);
         }
         else {

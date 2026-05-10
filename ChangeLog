@@ -104,6 +104,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Solve an issue where on some Android devices you would get disconnected on the first attempt of joining a session and then it worked fine on reconnect. Thanks Bluestrings for reporting.
  * Server Fix: Properly disconnect notify all clients when a session is shut down. Previously it could miss some of them and leave them lingering without a session.
  * Server Feature: Allow disconnecting clients that linger too long without a session, either before joining/hosting one or after having left. The duration is configurable by server owners, not limited by default.
+ * Fix: Allow unsetting default layers again. Previously that operation got incorrectly filtered out as attempting to set the default layer to an invalid id.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.
