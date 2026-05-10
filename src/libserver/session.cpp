@@ -417,9 +417,12 @@ void Session::removeUser(Client *user)
 	// Try not to reuse the ID right away
 	m_history->idQueue().reserveId(user->id());
 
-	ensureOperatorExists();
-
-	emit sessionAttributeChanged(this);
+	// Don't mess with operators and session attributes if the session is going
+	// down anyway.
+	if(m_state != State::Shutdown) {
+		ensureOperatorExists();
+		emit sessionAttributeChanged(this);
+	}
 }
 
 void Session::onClientLeave(Client *client)
