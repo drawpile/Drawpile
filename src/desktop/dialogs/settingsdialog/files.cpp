@@ -143,7 +143,7 @@ void Files::initFormats(config::Config *cfg, QFormLayout *form)
 
 	QComboBox *preferredSaveFormat = new QComboBox;
 	preferredSaveFormat->addItem(
-		defaultTemplate.arg(QStringLiteral(".ora")), QString());
+		defaultTemplate.arg(QStringLiteral(".dppr/.dpcs")), QString());
 	preferredSaveFormat->addItem(
 		tr("OpenRaster (.ora)"), QStringLiteral("ora"));
 	preferredSaveFormat->addItem(
