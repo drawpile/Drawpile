@@ -945,6 +945,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	updateSelectTransformActions();
 	onProjectRecordingStopped(false);
+
+	if (!m_doc->client()->isConnected()) {
+		Q_EMIT hostSessionEnabled(true);
+	}
 }
 
 bool MainWindow::canReplace() const
