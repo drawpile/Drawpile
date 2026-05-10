@@ -181,7 +181,7 @@ private slots:
 	void removeSession(Session *session);
 	void removeClient(ThinServerClient *client);
 	void onSessionAttributeChanged(Session *session);
-	void cleanupSessions();
+	void cleanupSessionsAndClients();
 
 private:
 	SessionHistory *initHistory(

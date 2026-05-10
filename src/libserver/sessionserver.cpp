@@ -24,7 +24,8 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	QTimer *cleanupTimer = new QTimer(this);
 	cleanupTimer->setTimerType(Qt::VeryCoarseTimer);
 	connect(
-		cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
+		cleanupTimer, &QTimer::timeout, this,
+		&SessionServer::cleanupSessionsAndClients);
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
 }
@@ -390,36 +391,71 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 	}
 }
 
-void SessionServer::cleanupSessions()
+void SessionServer::cleanupSessionsAndClients()
 {
-	qint64 emptySessionLingerTime =
-		m_config->getConfigTime(config::EmptySessionLingerTime) * 1000;
-	qint64 expirationTime =
-		m_config->getConfigTime(config::IdleTimeLimit) * 1000;
-	bool allowIdleOverride =
-		expirationTime > 0 ? m_config->getConfigBool(config::AllowIdleOverride)
-						   : false;
-	for(Session *s : m_sessions) {
-		qint64 lastEventTime = s->lastEventTime();
-		if(!s->history()->hasFlag(SessionHistory::Persistent) &&
-		   s->isEffectivelyEmpty() && lastEventTime > emptySessionLingerTime) {
-			s->log(
-				Log()
-					.about(Log::Level::Info, Log::Topic::Status)
-					.message(QStringLiteral(
-						"Closing lingering non-persistent session.")));
-			s->killSession(QStringLiteral(
-				"Session terminated due to being empty too long"));
-		} else if(
-			expirationTime > 0 && lastEventTime > expirationTime &&
-			(!allowIdleOverride ||
-			 !s->history()->hasFlag(SessionHistory::IdleOverride))) {
-			s->log(
-				Log()
-					.about(Log::Level::Info, Log::Topic::Status)
-					.message(QStringLiteral("Idle session expired.")));
-			s->killSession(QStringLiteral(
-				"Session terminated due to being idle too long"));
+	if(!m_sessions.isEmpty()) {
+		qint64 emptySessionLingerTime =
+			m_config->getConfigTime(config::EmptySessionLingerTime) * 1000;
+		qint64 expirationTime =
+			m_config->getConfigTime(config::IdleTimeLimit) * 1000;
+		bool allowIdleOverride =
+			expirationTime > 0
+				? m_config->getConfigBool(config::AllowIdleOverride)
+				: false;
+		for(Session *s : m_sessions) {
+			qint64 lastEventTime = s->lastEventTime();
+			if(!s->history()->hasFlag(SessionHistory::Persistent) &&
+			   s->isEffectivelyEmpty() &&
+			   lastEventTime > emptySessionLingerTime) {
+				s->log(
+					Log()
+						.about(Log::Level::Info, Log::Topic::Status)
+						.message(QStringLiteral(
+							"Closing lingering non-persistent session.")));
+				s->killSession(QStringLiteral(
+					"Session terminated due to being empty too long"));
+			} else if(
+				expirationTime > 0 && lastEventTime > expirationTime &&
+				(!allowIdleOverride ||
+				 !s->history()->hasFlag(SessionHistory::IdleOverride))) {
+				s->log(
+					Log()
+						.about(Log::Level::Info, Log::Topic::Status)
+						.message(QStringLiteral("Idle session expired.")));
+				s->killSession(QStringLiteral(
+					"Session terminated due to being idle too long"));
+			}
+		}
+	}
+
+	if(!m_clients.isEmpty()) {
+		qint64 sessionLessClientLingerTime =
+			m_config->getConfigTime(config::SessionLessClientLingerTime) * 1000;
+		if(sessionLessClientLingerTime > 0) {
+			// Gather clients into a list first, since them leaving may modify
+			// m_clients from under us. Just in case they somehow get destructed
+			// along the way, we'll also use QPointer to track them.
+			QVector<QPointer<ThinServerClient>> clientsToDisconnect;
+			qint64 currentTimestamp = QDateTime::currentMSecsSinceEpoch();
+
+			for(ThinServerClient *c : m_clients) {
+				Client::ConnectionState cs = c->connectionState();
+				bool shouldDisconnect =
+					cs != Client::ConnectionState::GracefulDisconnect &&
+					cs != Client::ConnectionState::QuietDisconnect &&
+					!c->hasSession() &&
+					currentTimestamp - c->lastWithoutSession() >=
+						sessionLessClientLingerTime;
+				if(shouldDisconnect) {
+					clientsToDisconnect.append(c);
+				}
+			}
+
+			for(const QPointer<ThinServerClient> &p : clientsToDisconnect) {
+				if(ThinServerClient *c = p.data(); c) {
+					c->sessionLessKick();
+				}
+			}
 		}
 	}
 }

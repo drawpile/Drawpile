@@ -145,6 +145,7 @@ struct Client::Private {
 
 	qint64 lastActive = 0;
 	qint64 lastActiveDrawing = 0;
+	qint64 lastWithoutSession = QDateTime::currentMSecsSinceEpoch();
 
 	uint8_t id = 0;
 	bool isOperator = false;
@@ -262,8 +263,15 @@ QJsonObject Client::description(bool includeSession) const
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
 	u[QStringLiteral("browser")] = isBrowser();
-	if(includeSession && d->session) {
-		u["session"] = d->session->id();
+	if(hasSession()) {
+		if(includeSession) {
+			u.insert(QStringLiteral("session"), d->session->id());
+		}
+	} else {
+		u.insert(
+			QStringLiteral("lastWithoutSession"),
+			QDateTime::fromMSecsSinceEpoch(d->lastWithoutSession, utc)
+				.toString(Qt::ISODate));
 	}
 	QString state;
 	switch(connectionState()) {
@@ -453,14 +461,35 @@ JsonApiResult Client::jsonApiKick(const QString &message)
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
 }
 
+void Client::sessionLessKick()
+{
+	bool wasAlreadyDisconnecting = disconnectClient(
+		Client::DisconnectionReason::Kick,
+		QStringLiteral("the server (lingering without session)"),
+		QStringLiteral("session-less client cleanup"));
+	if(wasAlreadyDisconnecting) {
+		d->msgqueue->forceDisconnect();
+	}
+}
+
 void Client::setSession(Session *session)
 {
+	if(session) {
+		d->lastWithoutSession = 0;
+	} else if(!d->session) {
+		d->lastWithoutSession = QDateTime::currentMSecsSinceEpoch();
+	}
 	d->session = session;
 }
 
 Session *Client::session()
 {
 	return d->session.data();
+}
+
+bool Client::hasSession() const
+{
+	return !d->session.isNull();
 }
 
 QString Client::uid() const
@@ -828,6 +857,18 @@ qint64 Client::lastActive() const
 qint64 Client::lastActiveDrawing() const
 {
 	return d->lastActiveDrawing;
+}
+
+qint64 Client::lastWithoutSession() const
+{
+	if(d->session) {
+		return 0;
+	} else {
+		if(d->lastWithoutSession == 0) {
+			d->lastWithoutSession = QDateTime::currentMSecsSinceEpoch();
+		}
+		return d->lastWithoutSession;
+	}
 }
 
 QHostAddress Client::peerAddress() const

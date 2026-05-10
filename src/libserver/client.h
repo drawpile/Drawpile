@@ -59,6 +59,7 @@ public:
 	 */
 	void setSession(Session *session);
 	Session *session();
+	bool hasSession() const;
 
 	/**
 	 * @brief Get a reasonably unique id for this client
@@ -203,6 +204,16 @@ public:
 	 */
 	qint64 lastActiveDrawing() const;
 
+	/**
+	 * Timestamp that this client last became session-less. If the client
+	 * currently has a session, this will be zero. Calling this may cause the
+	 * client to notice that they have become session-less because their session
+	 * got destructed from under them and will update the value to the current
+	 * time, otherwise it will be set to the time of the construction of the
+	 * client or whenever they got removed from their session.
+	 */
+	qint64 lastWithoutSession() const;
+
 	enum class DisconnectionReason {
 		Kick,	  // kicked by an operator
 		Error,	  // kicked due to some server or protocol error
@@ -302,6 +313,8 @@ public:
 
 	JsonApiResult jsonApiKick(const QString &message);
 
+	void sessionLessKick();
+
 	/**
 	 * @brief Divert incoming messages to a holding buffer
 	 *
@@ -362,7 +375,6 @@ protected:
 	net::MessageQueue *messageQueue();
 
 private:
-	void handleSessionMessage(net::Message msg);
 	static bool rollEarlyTrigger();
 	void triggerNormalBan();
 	void triggerNetError();

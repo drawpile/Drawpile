@@ -176,7 +176,13 @@ static const ConfigKey
 	// this that the user sets (other than 0, which means disabled) are clamped
 	// to the minimum instead.
 	MinimumAutoresetThreshold(
-		54, "minimumAutoResetThreshold", "0", ConfigKey::SIZE);
+		54, "minimumAutoResetThreshold", "0", ConfigKey::SIZE),
+	// How long a client without a session is allowed to remain connected for.
+	// Clients can be session-less before they join or host one or after their
+	// session has ended, neither state should last for extended periods of
+	// time. Values less than or equal to zero mean there is no limit.
+	SessionLessClientLingerTime(
+		55, "sessionLessClientLingerTime", "0", ConfigKey::TIME);
 }
 
 //! Settings that are not adjustable after the server has started
