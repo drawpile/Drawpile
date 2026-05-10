@@ -577,6 +577,11 @@ static int getAutoselect(
 	const QVector<LayerListItem> &oldItems,
 	const QVector<LayerListItem> &newItems)
 {
+	// Only continue if there's actually something to select.
+	if(newItems.isEmpty()) {
+		return -1;
+	}
+
 	if(autoselectAny) {
 		// We haven't participated yet: select the default layer if it exists.
 		if(defaultLayer > 0) {
@@ -586,12 +591,18 @@ static int getAutoselect(
 				}
 			}
 		}
-		// No default layer, just pick latest newly created one we can find.
-		for(const LayerListItem &newItem : newItems) {
-			if(isNewLayerId(oldItems, newItem)) {
+		// Otherwise try to pick the bottom-most visible non-group layer.
+		for(QVector<LayerListItem>::const_reverse_iterator
+				it = newItems.crbegin(),
+				end = newItems.crend();
+			it != end; ++it) {
+			const LayerListItem &newItem = *it;
+			if(!newItem.group && !newItem.hidden && newItem.opacity > 0.0f) {
 				return newItem.id;
 			}
 		}
+		// Fall back to the bottom-most layer, whatever it is.
+		return newItems.constLast().id;
 	} else {
 		if(forceSelect) {
 			// This is a reconnect, look for what we had selected previously.
