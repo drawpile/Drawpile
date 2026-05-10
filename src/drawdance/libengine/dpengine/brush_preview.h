@@ -53,6 +53,7 @@ void DP_brush_preview_palette_set(DP_BrushPreview *bp, uint32_t foreground,
                                   uint32_t background, uint32_t smudge);
 
 void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit);
+void DP_brush_preview_keep_visible_set(DP_BrushPreview *bp, bool keep_visible);
 
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,

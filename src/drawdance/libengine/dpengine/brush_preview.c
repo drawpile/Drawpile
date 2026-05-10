@@ -53,6 +53,7 @@ struct DP_BrushPreview {
     uint32_t foreground;
     uint32_t background;
     uint32_t smudge;
+    bool keep_visible;
     union {
         int dummy; // To stop the compiler from whinging about initialization.
         DP_ClassicBrush classic;
@@ -79,6 +80,7 @@ DP_BrushPreview *DP_brush_preview_new(void)
         0xff000000u,
         0xffffffffu,
         0xffffffffu,
+        false,
         {0},
     };
     DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
@@ -115,6 +117,12 @@ void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit)
 {
     DP_ASSERT(bp);
     DP_brush_engine_size_limit_set(bp->be, limit);
+}
+
+void DP_brush_preview_keep_visible_set(DP_BrushPreview *bp, bool keep_visible)
+{
+    DP_ASSERT(bp);
+    bp->keep_visible = keep_visible;
 }
 
 
@@ -371,7 +379,14 @@ static DP_BrushEngineStrokeParams
 preview_stroke_params(bool allow_pixel_perfect)
 {
     return (DP_BrushEngineStrokeParams){
-        {NULL, NULL, 0, 0, 0.0f, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
+        {NULL, NULL, 0, 0, 0.0f, false, false, false},
+        NULL,
+        0.0,
+        0,
+        1,
+        0,
+        false,
+        false,
         allow_pixel_perfect};
 }
 
@@ -411,6 +426,11 @@ static DP_BlendMode plainify_blend_mode(DP_BlendMode blend_mode)
     }
 }
 
+static float calculate_max_keep_visible_size(int height)
+{
+    return DP_max_float(1.0f, DP_int_to_float(height) * 0.8f);
+}
+
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
                                      const DP_ClassicBrush *brush,
@@ -425,6 +445,13 @@ void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
     if (style == DP_BRUSH_PREVIEW_STYLE_PLAIN) {
         bp->classic.brush_mode = plainify_blend_mode(bp->classic.brush_mode);
         bp->classic.erase_mode = plainify_blend_mode(bp->classic.erase_mode);
+    }
+
+    if (bp->keep_visible) {
+        float max_size = calculate_max_keep_visible_size(height);
+        if (bp->classic.size.max > max_size) {
+            bp->classic.size.max = max_size;
+        }
     }
 
     render_brush_preview(bp, dc, width, height, style, shape, brush->color,
@@ -487,6 +514,18 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
             bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V, 0.0f);
         preview_disable_mypaint_setting(
             bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L, 0.0f);
+    }
+
+    if (bp->keep_visible) {
+        float max_radius_logarithmic =
+            logf(calculate_max_keep_visible_size(height) / 2.0f);
+        float *radius_logarithmic_base_value =
+            &bp->mypaint.settings
+                 .mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC]
+                 .base_value;
+        if (*radius_logarithmic_base_value > max_radius_logarithmic) {
+            *radius_logarithmic_base_value = max_radius_logarithmic;
+        }
     }
 
     render_brush_preview(bp, dc, width, height, style, shape, brush->color,

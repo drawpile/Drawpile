@@ -63,6 +63,11 @@ void BrushPreview::setSizeLimit(int limit)
 	DP_brush_preview_size_limit_set(m_data, limit);
 }
 
+void BrushPreview::setKeepVisible(bool keepVisible)
+{
+	DP_brush_preview_keep_visible_set(m_data, keepVisible);
+}
+
 void BrushPreview::renderClassic(
 	const DP_ClassicBrush &brush, DP_BrushPreviewStyle style,
 	DP_BrushPreviewShape shape)

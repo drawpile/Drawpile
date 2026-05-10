@@ -28,6 +28,7 @@ public:
 	void reset(QSize size);
 
 	void setSizeLimit(int limit);
+	void setKeepVisible(bool keepVisible);
 
 	void renderClassic(
 		const DP_ClassicBrush &brush, DP_BrushPreviewStyle style,

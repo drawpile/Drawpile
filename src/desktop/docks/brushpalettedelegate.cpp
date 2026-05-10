@@ -14,6 +14,7 @@ BrushPaletteDelegate::BrushPaletteDelegate(QObject *parent)
 	: QItemDelegate(parent)
 	, m_display(int(BrushPalette::Display::Thumbnails))
 {
+	m_brushPreview.setKeepVisible(true);
 }
 
 void BrushPaletteDelegate::paint(
