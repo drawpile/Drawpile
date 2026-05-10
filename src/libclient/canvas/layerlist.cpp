@@ -571,20 +571,6 @@ LayerListModel::CheckState LayerListModel::flattenLayerList(
 	}
 }
 
-static bool isNewLayerId(
-	const QVector<LayerListItem> &oldItems, const LayerListItem &newItem)
-{
-	// O(n²) loop but the number of layers is typically small enough that
-	// it doesn't matter
-	int id = newItem.id;
-	for(const LayerListItem &item : oldItems) {
-		if(item.id == id) {
-			return false;
-		}
-	}
-	return true;
-}
-
 static int getAutoselect(
 	uint8_t localUser, bool autoselectAny, bool forceSelect,
 	int layerIdToSelect, int defaultLayer,
@@ -616,12 +602,33 @@ static int getAutoselect(
 			}
 		}
 		// We already participated: we might have just created a new layer,
-		// try to select that one.
+		// try to select that one. First collect the candidates.
+		QSet<int> newLayerIdCandidates;
+		newLayerIdCandidates.reserve(newItems.size());
 		for(const LayerListItem &newItem : newItems) {
-			if(isNewLayerId(oldItems, newItem) &&
-			   (newItem.creatorId() == localUser ||
-				newItem.id == layerIdToSelect)) {
-				return newItem.id;
+			if(newItem.creatorId() == localUser ||
+			   newItem.id == layerIdToSelect) {
+				newLayerIdCandidates.insert(newItem.id);
+			}
+		}
+		// If we got any, remove any layers that already existed.
+		if(!newLayerIdCandidates.isEmpty()) {
+			for(const LayerListItem &oldItem : oldItems) {
+				newLayerIdCandidates.remove(oldItem.id);
+			}
+			// If there's any remaining, select that. If there's more than one,
+			// select the topmost one.
+			switch(newLayerIdCandidates.size()) {
+			case 0:
+				break;
+			case 1:
+				return *newLayerIdCandidates.constBegin();
+			default:
+				for(const LayerListItem &newItem : newItems) {
+					if(newLayerIdCandidates.contains(newItem.id)) {
+						return newItem.id;
+					}
+				}
 			}
 		}
 	}
