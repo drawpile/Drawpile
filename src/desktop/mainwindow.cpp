@@ -9300,9 +9300,9 @@ bool MainWindow::saveAsType(int saveImageType, bool force)
 
 void MainWindow::setPreferredSaveFormat(const QString &format)
 {
-	bool defaultIsDpcs = format == QStringLiteral("dpcs");
-	getAction(QStringLiteral("savedocumentasdpcs"))->setVisible(!defaultIsDpcs);
-	getAction(QStringLiteral("savedocumentasora"))->setVisible(defaultIsDpcs);
+	bool defaultIsOra = format == QStringLiteral("ora");
+	getAction(QStringLiteral("savedocumentasdpcs"))->setVisible(defaultIsOra);
+	getAction(QStringLiteral("savedocumentasora"))->setVisible(!defaultIsOra);
 }
 #endif
 
