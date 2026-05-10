@@ -4,6 +4,9 @@
 #include <QFontMetrics>
 #include <QIcon>
 #include <QPainter>
+#ifdef Q_OS_ANDROID
+#	include <QApplication>
+#endif
 
 namespace docks {
 
@@ -25,6 +28,11 @@ void BrushPaletteDelegate::paint(
 	QStyleOptionViewItem opt = setOptions(index, option);
 	bool selected = option.state & QStyle::State_Selected;
 	bool enabled = option.state & QStyle::State_Enabled;
+
+#ifdef Q_OS_ANDROID
+	// On Android this inexplicably uses a larger font.
+	painter->setFont(qApp->font());
+#endif
 
 	painter->setPen(Qt::NoBrush);
 	if(!selected && haveStroke()) {
@@ -50,7 +58,7 @@ void BrushPaletteDelegate::paint(
 		m_lock.unlock();
 		m_lock.lockForWrite();
 		preview = renderPreview(
-			index, opt.palette, opt.fontMetrics, previewSize.width(),
+			index, opt.palette, painter->fontMetrics(), previewSize.width(),
 			previewSize.height(), dpr);
 		preview.size = previewSize;
 		m_cache.insert(id, preview);
