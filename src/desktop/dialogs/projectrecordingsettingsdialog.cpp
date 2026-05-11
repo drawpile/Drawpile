@@ -163,8 +163,7 @@ QString ProjectRecordingSettingsDialog::getLimitText(
 		return tr(" There is no size limit set.");
 	} else {
 		int percent = qRound(
-			bytesInGiB(lastReportedSizeInBytes) / double(sizeLimitInBytes) *
-			100.0);
+			double(lastReportedSizeInBytes) / double(sizeLimitInBytes) * 100.0);
 		//: The %1% becomes a percentage, like "50%". Don't remove the second %!
 		//: %2 is a file size, like "5GB".
 		return tr(" This is %1% of the current %2 limit.")
