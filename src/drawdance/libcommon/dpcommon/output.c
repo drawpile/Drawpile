@@ -468,6 +468,9 @@ static size_t mem_output_write(void *internal, const void *buffer, size_t size)
         } while (mem_output_space(state) < size);
         state->buffer = DP_realloc(state->buffer, state->capacity);
     }
+    if (mem_output_space(state) < size) {
+        return 0;
+    }
     memcpy(state->buffer + state->used, buffer, size);
     size_t end = state->used + size;
     state->buffer[end] = '\0';
