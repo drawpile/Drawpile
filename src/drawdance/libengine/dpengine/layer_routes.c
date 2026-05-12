@@ -420,10 +420,9 @@ DP_LayerRoutesEntry *DP_layer_routes_entry_parent(DP_LayerRoutesEntry *lre)
     return lre->parent_lre;
 }
 
-void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
-                                               DP_CanvasState *cs,
-                                               uint16_t *out_parent_opacity,
-                                               DP_UPixel8 *out_parent_tint)
+bool DP_layer_routes_entry_parent_opacity_tint_hidden(
+    DP_LayerRoutesEntry *lre, DP_CanvasState *cs, uint16_t *out_parent_opacity,
+    DP_UPixel8 *out_parent_tint)
 {
     DP_ASSERT(lre);
     DP_ASSERT(cs);
@@ -433,6 +432,7 @@ void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
     int *indexes = lre->indexes;
     int group_indexes_count = lre->index_count - 1;
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    bool hidden = false;
     uint16_t parent_opacity = DP_BIT15;
     DP_UPixel8 parent_tint = {0};
 
@@ -440,6 +440,11 @@ void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
         int group_index = indexes[i];
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, group_index);
         lpl = DP_layer_props_children_noinc(lp);
+
+        if (DP_layer_props_hidden(lp)) {
+            hidden = true;
+        }
+
         uint16_t sketch_opacity = DP_layer_props_sketch_opacity(lp);
         if (sketch_opacity == 0) {
             parent_opacity =
@@ -456,6 +461,7 @@ void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
 
     *out_parent_opacity = parent_opacity;
     *out_parent_tint = parent_tint;
+    return hidden;
 }
 
 

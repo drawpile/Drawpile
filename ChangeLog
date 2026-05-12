@@ -106,6 +106,7 @@ Unreleased Version 2.3.1-pre
  * Server Feature: Allow disconnecting clients that linger too long without a session, either before joining/hosting one or after having left. The duration is configurable by server owners, not limited by default.
  * Fix: Allow unsetting default layers again. Previously that operation got incorrectly filtered out as attempting to set the default layer to an invalid id.
  * Fix: Select the bottom-most layer to start with if no default layer is set. Previously you'd end up on the newest layer, which was unpredictable and often enough confounding if you ended up on somebody's shading layer or similar.
+ * Fix: Properly hide and lock drawing on hidden layers in frame view. Thanks hipofiz for reporting.
 
 2025-11-18 Version 2.3.0
  * Fix: Don't show "exit layer view" notice when there's no canvas.

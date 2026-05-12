@@ -120,10 +120,10 @@ void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
 
 DP_LayerRoutesEntry *DP_layer_routes_entry_parent(DP_LayerRoutesEntry *lre);
 
-void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
-                                               DP_CanvasState *cs,
-                                               uint16_t *out_parent_opacity,
-                                               DP_UPixel8 *out_parent_tint);
+// Returns whether any entry in the layer route is hidden.
+bool DP_layer_routes_entry_parent_opacity_tint_hidden(
+    DP_LayerRoutesEntry *lre, DP_CanvasState *cs, uint16_t *out_parent_opacity,
+    DP_UPixel8 *out_parent_tint);
 
 DP_TransientLayerContent *
 DP_layer_routes_entry_indexes_transient_content(int index_count, int *indexes,

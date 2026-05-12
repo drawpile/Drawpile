@@ -117,7 +117,8 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		return m_viewMode == DP_VIEW_MODE_FRAME &&
 			   !m_frameLayers.contains(item.id);
 	case IsHiddenInTreeRole:
-		if(m_viewMode == DP_VIEW_MODE_NORMAL) {
+		if(m_viewMode == DP_VIEW_MODE_NORMAL ||
+		   m_viewMode == DP_VIEW_MODE_FRAME) {
 			if(isLayerOrClippingGroupHidden(index, item)) {
 				return true;
 			} else {

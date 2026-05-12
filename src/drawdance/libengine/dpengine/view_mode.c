@@ -555,13 +555,15 @@ DP_ViewModeContext DP_view_mode_context_root_at(
             DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
             DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
             if (lre) {
-                *out_lle = DP_layer_routes_entry_layer(lre, cs);
-                *out_lp = DP_layer_routes_entry_props(lre, cs);
-                *out_os = vmt->onion_skin;
-                DP_layer_routes_entry_parent_opacity_tint(
+                bool hidden = DP_layer_routes_entry_parent_opacity_tint_hidden(
                     lre, cs, out_parent_opacity, out_parent_tint);
-                *out_clip_count = 0;
-                return make_frame_context(internal_type, index, vmb);
+                if (internal_type != TYPE_FRAME_MANUAL || !hidden) {
+                    *out_lle = DP_layer_routes_entry_layer(lre, cs);
+                    *out_lp = DP_layer_routes_entry_props(lre, cs);
+                    *out_os = vmt->onion_skin;
+                    *out_clip_count = 0;
+                    return make_frame_context(internal_type, index, vmb);
+                }
             }
             else {
                 DP_warn("Track %d layer id %d not found", index, layer_id);
