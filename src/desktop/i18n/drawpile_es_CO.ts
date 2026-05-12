@@ -2492,17 +2492,17 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+2"/>
         <source>Timeline: zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Linea de tiempo: acercar</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Alejar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Linea de tiempo: alejar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2512,12 +2512,12 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+2"/>
         <source>Timeline: reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Línea de tiempo: Restablecer Zoom</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unassign Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Desasignar cuadro clave</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2532,35 +2532,36 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+849"/>
         <source>Disable view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactivar las notificaciones del modo de visualización</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Las notificaciones del modo de vista de capas están desactivadas.
+Puede volver a activarlas a través del menú Ver o las preferencias.</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicación de la Barra</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disable This Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilitar Esta Barra</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Invertir</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand/Shrink</source>
         <extracomment>Refers to expanding or shrinking the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Expandir/Contraer</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2571,7 +2572,7 @@ You can re-enable them via the View menu or preferences.</source>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar</translation>
     </message>
     <message>
         <location line="+3"/>
