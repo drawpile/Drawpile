@@ -2500,13 +2500,13 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 creando instantánea: %2</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Límite de tamaño de %1 superado</translation>
     </message>
 </context>
 <context>
@@ -2514,42 +2514,42 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../project/projectwrangler.cpp" line="+45"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicialización fallida</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Not initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>No inicializado</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error %d opening project file: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %d Abrir archivo de proyecto: %s</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %d generating project overview: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %d al generar la descripción general del proyecto: %s</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unhandled error %d of type %d: %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Error no controlado %d de tipo %d: %s</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir el archivo temporal &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo copiar &apos;%1&apos; al archivo temporal &apos;%2&apos;.</translation>
     </message>
 </context>
 <context>
