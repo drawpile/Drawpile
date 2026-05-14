@@ -264,6 +264,11 @@ if(TOOLS)
 	add_subdirectory(src/tools)
 endif()
 
+if(WIN_SHELL_EXT)
+	message(STATUS "Adding win-shell-ext")
+	add_subdirectory(src/win-shell-ext)
+endif()
+
 if(CARGO_COMMAND)
 	add_custom_target(clippy
 		COMMAND "${CARGO_COMMAND}" clippy --
