@@ -7,7 +7,6 @@ add_compile_definitions(
     NOMINMAX
 )
 
-find_package(SQLite3 REQUIRED)
 add_library(drawpile_shell_ext SHARED
 	main.cpp
 	ThumbnailProvider.cpp
@@ -26,6 +25,6 @@ dp_sign_executable(drawpile_shell_ext)
 dp_install_executables(TARGETS drawpile_shell_ext)
 
 if(TESTS)
-	add_executable(test_drawpile_shell_ext src/test_main.cpp)
+	add_executable(test_drawpile_shell_ext test_main.cpp)
 	target_link_libraries(test_drawpile_shell_ext PRIVATE shlwapi.lib)
 endif()
