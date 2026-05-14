@@ -11,6 +11,9 @@
 			Name="ThreadingModel" Value="Apartment" Type="string"/>
 		<RegistryValue Root="HKLM"
 			Key="Software\Classes\.dpcs\ShellEx\{E357FCCD-A995-4576-B01F-234630154E96}"
+			Value="{3C98D577-6E3D-4C7F-B4A2-1D9F82E5C301}" Type="string"/>		
+		<RegistryValue Root="HKLM"
+			Key="Software\Classes\.dppr\ShellEx\{E357FCCD-A995-4576-B01F-234630154E96}"
 			Value="{3C98D577-6E3D-4C7F-B4A2-1D9F82E5C301}" Type="string"/>
 	</CPackWiXFragment>
 </CPackWiXPatch>
