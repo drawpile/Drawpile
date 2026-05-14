@@ -15,7 +15,7 @@ add_library(drawpile_shell_ext SHARED
 	exports.def
 )
 target_link_libraries(drawpile_shell_ext PRIVATE
-	SQLite3::SQLite3
+	bundled_sqlite3
 	runtimeobject.lib
 )
 if(NOT MSVC) 
@@ -27,8 +27,5 @@ dp_install_executables(TARGETS drawpile_shell_ext)
 
 if(TESTS)
 	add_executable(test_drawpile_shell_ext src/test_main.cpp)
-	target_link_libraries(test_drawpile_shell_ext PRIVATE
-		SQLite3::SQLite3
-		shlwapi.lib
-	)
+	target_link_libraries(test_drawpile_shell_ext PRIVATE shlwapi.lib)
 endif()
