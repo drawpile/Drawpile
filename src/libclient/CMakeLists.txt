@@ -316,12 +316,17 @@ if(EMSCRIPTEN)
 	)
 else()
 	target_sources(dpclient PRIVATE
-		export/timelapsesaverrunnable.cpp
-		export/timelapsesaverrunnable.h
 		project/projectwrangler.cpp
 		project/projectwrangler.h
 		utils/news.cpp
 		utils/news.h
+	)
+endif()
+
+if(TARGET LIBAV::LIBAV)
+	target_sources(dpclient PRIVATE
+		export/timelapsesaverrunnable.cpp
+		export/timelapsesaverrunnable.h
 	)
 endif()
 

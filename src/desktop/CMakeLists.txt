@@ -766,7 +766,6 @@ add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidget
 if(NOT EMSCRIPTEN)
 	target_compile_definitions(drawpile PRIVATE
 		DRAWPILE_PROJECT_DIALOG=1
-		DRAWPILE_TIMELAPSE_DIALOG=1
 	)
 	target_sources(drawpile PRIVATE
 		dialogs/projectdialog.cpp
@@ -775,12 +774,20 @@ if(NOT EMSCRIPTEN)
 		dialogs/startdialog/recent.h
 		dialogs/startdialog/updatenotice.cpp
 		dialogs/startdialog/updatenotice.h
+	)
+	dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
+endif()
+
+if(TARGET LIBAV::LIBAV)
+	target_compile_definitions(drawpile PRIVATE
+		DRAWPILE_TIMELAPSE_DIALOG=1
+	)
+	target_sources(drawpile PRIVATE
 		dialogs/timelapsedialog.cpp
 		dialogs/timelapsedialog.h
 		widgets/timelapsepreview.cpp
 		widgets/timelapsepreview.h
 	)
-	dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
 endif()
 
 if(NOT EMSCRIPTEN AND NOT ANDROID)
