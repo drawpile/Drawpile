@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QPainter>
 #include <QPalette>
+#include <QStyle>
 
 namespace drawingboard {
 
@@ -78,39 +79,25 @@ void ToggleItem::paint(
 		painter,
 		QRect{
 			padding + padding / 4 * (m_right ? 1 : -1), padding, inner, inner});
-
-	qreal dpr = painter->device()->devicePixelRatioF();
-	if(qFuzzyCompare(dpr, m_dpr)) {
-		m_dpr = dpr;
-		refresh();
-	}
 }
 
-int ToggleItem::paddingSize() const
+int ToggleItem::paddingSize()
 {
-	return fontSize();
+	return qRound(baseSize() * 0.4);
 }
 
-int ToggleItem::innerSize() const
+int ToggleItem::innerSize()
 {
-	return fontSize() * 4;
+	return qRound(baseSize() * 1.5);
 }
 
-int ToggleItem::fontSize() const
+qreal ToggleItem::baseSize()
 {
-	QFont font = QApplication::font();
-	int size;
-	if(font.pixelSize() == -1) {
-		size = font.pointSize() - 1;
-	} else if(m_dpr > 1.0) {
-		size = qRound((qreal(font.pixelSize()) / m_dpr) - 1.0);
-	} else {
-		size = font.pixelSize() - 1;
-	}
-	return size < 1 ? 8 : size;
+	return qreal(qMax(
+		8, QApplication::style()->pixelMetric(QStyle::PM_ToolBarIconSize)));
 }
 
-QPainterPath ToggleItem::getLeftPath() const
+QPainterPath ToggleItem::getLeftPath()
 {
 	static QPainterPath path;
 	if(path.isEmpty()) {
@@ -119,7 +106,7 @@ QPainterPath ToggleItem::getLeftPath() const
 	return path;
 }
 
-QPainterPath ToggleItem::getRightPath() const
+QPainterPath ToggleItem::getRightPath()
 {
 	static QPainterPath path;
 	if(path.isEmpty()) {
@@ -128,7 +115,7 @@ QPainterPath ToggleItem::getRightPath() const
 	return path;
 }
 
-QPainterPath ToggleItem::makePath(bool right) const
+QPainterPath ToggleItem::makePath(bool right)
 {
 	constexpr qreal RADIUS = 10.0;
 	QPainterPath t;
