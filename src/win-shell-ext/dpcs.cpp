@@ -1,5 +1,6 @@
 #include "dpcs.h"
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <intsafe.h>
 #include <wincodec.h>
@@ -15,7 +16,7 @@ HRESULT IStreamToBuffer(IStream *stream, std::vector<unsigned char> &out)
 	if(FAILED(hr = stream->Stat(&stats, STATFLAG_NONAME)))
 		return hr;
 
-	out.resize(stats.cbSize.QuadPart);
+	out.resize(static_cast<size_t>(stats.cbSize.QuadPart));
 
 	ULONG bytesRead;
 	if(FAILED(
