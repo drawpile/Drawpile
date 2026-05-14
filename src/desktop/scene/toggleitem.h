@@ -34,22 +34,23 @@ protected:
 		QWidget *widget = nullptr) override;
 
 private:
-	static int totalSize() { return innerSize() + paddingSize() * 2; }
-	static int paddingSize();
-	static int innerSize();
-	static int fontSize();
+	int totalSize() const { return innerSize() + paddingSize() * 2; }
+	int paddingSize() const;
+	int innerSize() const;
+	int fontSize() const;
 
-	static QPainterPath getLeftPath();
-	static QPainterPath getRightPath();
-	static QPainterPath makePath(bool right);
+	QPainterPath getLeftPath() const;
+	QPainterPath getRightPath() const;
+	QPainterPath makePath(bool right) const;
 
 	static QIcon getIconForHudActionType(HudAction::Type hudActionType);
 
 	HudAction::Type m_hudActionType = HudAction::Type::None;
+	bool m_hover = false;
 	bool m_right;
+	double m_dpr = 1.0;
 	double m_fromTop;
 	QIcon m_icon;
-	bool m_hover = false;
 };
 
 }

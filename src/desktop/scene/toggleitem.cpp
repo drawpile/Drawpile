@@ -78,31 +78,39 @@ void ToggleItem::paint(
 		painter,
 		QRect{
 			padding + padding / 4 * (m_right ? 1 : -1), padding, inner, inner});
+
+	qreal dpr = painter->device()->devicePixelRatioF();
+	if(qFuzzyCompare(dpr, m_dpr)) {
+		m_dpr = dpr;
+		refresh();
+	}
 }
 
-int ToggleItem::paddingSize()
+int ToggleItem::paddingSize() const
 {
 	return fontSize();
 }
 
-int ToggleItem::innerSize()
+int ToggleItem::innerSize() const
 {
 	return fontSize() * 4;
 }
 
-int ToggleItem::fontSize()
+int ToggleItem::fontSize() const
 {
 	QFont font = QApplication::font();
 	int size;
 	if(font.pixelSize() == -1) {
 		size = font.pointSize() - 1;
+	} else if(m_dpr > 1.0) {
+		size = qRound((qreal(font.pixelSize()) / m_dpr) - 1.0);
 	} else {
 		size = font.pixelSize() - 1;
 	}
 	return size < 1 ? 8 : size;
 }
 
-QPainterPath ToggleItem::getLeftPath()
+QPainterPath ToggleItem::getLeftPath() const
 {
 	static QPainterPath path;
 	if(path.isEmpty()) {
@@ -111,7 +119,7 @@ QPainterPath ToggleItem::getLeftPath()
 	return path;
 }
 
-QPainterPath ToggleItem::getRightPath()
+QPainterPath ToggleItem::getRightPath() const
 {
 	static QPainterPath path;
 	if(path.isEmpty()) {
@@ -120,7 +128,7 @@ QPainterPath ToggleItem::getRightPath()
 	return path;
 }
 
-QPainterPath ToggleItem::makePath(bool right)
+QPainterPath ToggleItem::makePath(bool right) const
 {
 	constexpr qreal RADIUS = 10.0;
 	QPainterPath t;
