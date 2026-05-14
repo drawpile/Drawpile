@@ -23,6 +23,7 @@ if(NOT MSVC)
     target_compile_options(drawpile_shell_ext PRIVATE -Wno-language-extension-token -Wno-c++98-compat-extra-semi)
 endif()
 dp_sign_executable(drawpile_shell_ext)
+dp_install_executables(TARGETS drawpile_shell_ext)
 
 if(TESTS)
 	add_executable(test_drawpile_shell_ext src/test_main.cpp)
