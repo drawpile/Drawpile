@@ -1,5 +1,7 @@
 #include <cstdint>
 #include <shlobj.h>
+#include <sqlite3.h>
+#include <stdio.h>
 #include <windows.h>
 #include <wrl/module.h>
 
@@ -10,6 +12,12 @@ static HMODULE g_hModule = nullptr;
 BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID)
 {
 	if(dwReason == DLL_PROCESS_ATTACH) {
+		int rc = sqlite3_initialize();
+		if(rc != SQLITE_OK) {
+			fprintf(stderr, "Cannot initialize SQLite: %d\n", rc);
+			return FALSE;
+		}
+
 		g_hModule = static_cast<HMODULE>(hInstance);
 		DisableThreadLibraryCalls(hInstance);
 	}
