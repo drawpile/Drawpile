@@ -12,19 +12,19 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't try to set the one-finger touch input on Android according to whether the device says it has a stylus attached because devices just lie about it. It's always set to be dynamically detected by default now.
  * Fix: Make stylus buttons on some external tablets on Android work properly. The pen buttons used to not activate until pressing the pen down and release only if the pen was continued to be held. This is a patch to Qt.
  * Fix: Clamp OKLAB colors the proper way round. Thanks Bonbli for reporting.
- * Feature: Replace autosave mechanism with more robust auto-recording. Work in progress.
+ * Feature: Replace autosave mechanism with more robust autorecovery.
  * Fix: Make setting kinetic scrolling to touch drag not trigger long-presses immediately on Android.
  * Fix: Properly clear invalid selection areas when masking brush strokes (shouldn't happen in the first place though.)
  * Fix: Make stylus buttons on Xiaomi devices act as right and middle clicks instead of page up and page down. Can be toggled in the tablet preferences. This is a patch to Qt.
  * Fix: Make lines not come out all jaggy on Xiaomi devices by ignoring the (wrong) tablet position history. Can be toggled in the tablet preferences. This is a patch to Qt.
  * Fix: Default the global pressure curve on Xiaomi devices to be really steep, because their stylus has a similarly high threshold as Apple Pencils do.
- * Fix: Add "Anti-Strain", "Apple Pencil" and "Xiaomi Stylus" as a preset options for the global pressure curve.
+ * Feature: Add "Anti-Strain", "Apple Pencil" and "Xiaomi Stylus" as a preset options for the global pressure curve.
  * Fix: When saving a file, ask whether to overwrite it after confirming the format to avoid overwriting files unquestioned.
  * Fix: Properly preview editable fills when switching layers.
  * Feature: Allow toggling eraser, erase mode and alpha preserve via canvas shortcut. Thanks SOLARIS for suggesting.
  * Fix: Disable the annoyingly slow and sometimes even crashy animations when rearranging docks and toggling toolbar extensions. They now just occur instantly instead.
- * Feature: Allow viewing project statistics, such as length of sessions and work time, via File → Project statistics. Requires enabling autosave and saving to a dppr file.
- * Feature: Timelapses, via File → Make timelapse. Requires enabling autosave and saving to a dppr file.
+ * Feature: Allow viewing project statistics, such as length of sessions and work time, via File → Project statistics. Requires enabling autorecovery and saving to a dppr file.
+ * Feature: Timelapses, via File → Make timelapse. Requires enabling autorecovery and saving to a dppr file.
  * Feature: Allow triggering undo, redo, hide docks and any other actions via canvas shortcut. Thanks RubySnoot for suggesting.
  * Feature: Make right-clicking with the freehand tool draw with the background color. Thanks doughie for suggesting.
  * Fix: Properly disable color marker and blending option buttons in the layer properties dialog when you don't have permission to modify those. Thanks xxxx for reporting.
@@ -38,7 +38,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Rotation tool. Similar to the Pan and Zoom tools, this lets you rotate the canvas just by clicking on the canvas. Thanks Cryankiebuillars for suggesting.
  * Fix: Properly enable clipping and alpha lock controls in layer dock when switching from a non-editable to an editable layer. Thanks xxxx for reporting.
  * Fix: Don't clamp brushes with out of range inputs from the mere act of opening the brush editor. Thanks Phoneme for reporting.
- * Feature: Add numeric input fields to curve inputs to allow the exact numeric values of each curve point to be set exactly.
+ * Feature: Add numeric input fields to curve inputs to allow the exact numeric values of each curve point to be set exactly. Thanks Saphiros for suggesting.
  * Fix: Render repeated animation frames into exports, since some players get confused by frames held longer.
  * Feature: Brush preview styles. You can now toggle between the full style with the rainbow circles and a plain style that matches the UI colors and doesn't try to preview every aspect of the brush. You can also toggle the display of the brush's title and thumbnail. There's also the option of disabling the preview altogether. The default is to show the thumbnail and title with plain style, since that gives the best tradeoff between showing the relevant information without being too distracting. Thanks fadi123go for suggesting.
  * Fix: Use a fixed random seed for the brush preview so that it doesn't change erratically when adjusting a parameter, which made it hard to see what was actually changing.
