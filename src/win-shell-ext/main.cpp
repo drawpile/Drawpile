@@ -62,8 +62,11 @@ static constexpr wchar_t kKeyClsid[] =
 static constexpr wchar_t kKeyInproc[] =
 	L"Software\\Classes\\CLSID\\{3C98D577-6E3D-4C7F-B4A2-1D9F82E5C301}"
 	L"\\InprocServer32";
-static constexpr wchar_t kKeyShellEx[] =
+static constexpr wchar_t kKeyShellExDpcs[] =
 	L"Software\\Classes\\.dpcs\\ShellEx\\{E357FCCD-A995-4576-B01F-"
+	L"234630154E96}";
+static constexpr wchar_t kKeyShellExDppr[] =
+	L"Software\\Classes\\.dppr\\ShellEx\\{E357FCCD-A995-4576-B01F-"
 	L"234630154E96}";
 
 STDAPI DllRegisterServer()
@@ -86,7 +89,11 @@ STDAPI DllRegisterServer()
 		return hr;
 	if(FAILED(
 		   hr = SetRegValue(
-			   HKEY_LOCAL_MACHINE, kKeyShellEx, nullptr, kClsidStr)))
+			   HKEY_LOCAL_MACHINE, kKeyShellExDpcs, nullptr, kClsidStr)))
+		return hr;
+	if(FAILED(
+		   hr = SetRegValue(
+			   HKEY_LOCAL_MACHINE, kKeyShellExDppr, nullptr, kClsidStr)))
 		return hr;
 
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
@@ -96,7 +103,8 @@ STDAPI DllRegisterServer()
 STDAPI DllUnregisterServer()
 {
 	RegDeleteTreeW(HKEY_LOCAL_MACHINE, kKeyClsid);
-	RegDeleteTreeW(HKEY_LOCAL_MACHINE, kKeyShellEx);
+	RegDeleteTreeW(HKEY_LOCAL_MACHINE, kKeyShellExDpcs);
+	RegDeleteTreeW(HKEY_LOCAL_MACHINE, kKeyShellExDppr);
 
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 	return S_OK;
