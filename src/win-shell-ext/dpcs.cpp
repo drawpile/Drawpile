@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "dpcs.h"
 #include <algorithm>
 #include <cstddef>
@@ -16,12 +18,10 @@ HRESULT IStreamToBuffer(IStream *stream, std::vector<unsigned char> &out)
 	if(FAILED(hr = stream->Stat(&stats, STATFLAG_NONAME)))
 		return hr;
 
-	out.resize(static_cast<size_t>(stats.cbSize.QuadPart));
+	out.resize(size_t(stats.cbSize.QuadPart));
 
 	ULONG bytesRead;
-	if(FAILED(
-		   hr = stream->Read(
-			   out.data(), static_cast<uint32_t>(out.size()), &bytesRead)))
+	if(FAILED(hr = stream->Read(out.data(), uint32_t(out.size()), &bytesRead)))
 		return hr;
 
 	if(out.size() > bytesRead) {
@@ -60,7 +60,7 @@ HRESULT ExtractJPEG(sqlite3 *db, std::vector<unsigned char> &out)
 	sqlite3_stmt *stmt;
 	int rc;
 	rc = sqlite3_prepare_v2(
-		db, "SELECT thumbnail FROM snapshots ORDER BY taken_at DESC LIMIT 1",
+		db, "SELECT thumbnail FROM snapshots ORDER BY snapshot_id DESC LIMIT 1",
 		-1, &stmt, nullptr);
 	if(rc != SQLITE_OK) {
 		fprintf(stderr, "Fail to query database: %s\n", sqlite3_errmsg(db));
@@ -104,9 +104,7 @@ JpegToHBitmap(unsigned char *data, size_t size, uint32_t cx, HBITMAP *phbmp)
 	if(FAILED(hr = factory->CreateStream(&wicStream)))
 		return hr;
 	// InitializeFromMemory takes non-const BYTE* but does not modify the buffer
-	if(FAILED(
-		   hr = wicStream->InitializeFromMemory(
-			   data, static_cast<int32_t>(size))))
+	if(FAILED(hr = wicStream->InitializeFromMemory(data, int32_t(size))))
 		return hr;
 
 	ComPtr<IWICBitmapDecoder> decoder;
@@ -125,13 +123,14 @@ JpegToHBitmap(unsigned char *data, size_t size, uint32_t cx, HBITMAP *phbmp)
 		return hr;
 
 	// Scale to fit within cx×cx, maintaining aspect ratio
+	// Do computation with doubles to avoid overflow
 	uint32_t outW, outH;
 	if(srcW >= srcH) {
 		outW = cx;
-		outH = std::max(1u, srcH * cx / srcW);
+		outH = std::max(1u, uint32_t(double(srcH) * double(cx) / double(srcW)));
 	} else {
 		outH = cx;
-		outW = std::max(1u, srcW * cx / srcH);
+		outW = std::max(1u, uint32_t(double(srcW) * double(cx) / double(srcH)));
 	}
 
 	ComPtr<IWICBitmapScaler> scaler;
@@ -154,8 +153,8 @@ JpegToHBitmap(unsigned char *data, size_t size, uint32_t cx, HBITMAP *phbmp)
 
 	BITMAPINFO bmi{};
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = static_cast<int32_t>(outW);
-	bmi.bmiHeader.biHeight = -static_cast<int32_t>(outH);
+	bmi.bmiHeader.biWidth = int32_t(outW);
+	bmi.bmiHeader.biHeight = -int32_t(outH);
 	bmi.bmiHeader.biPlanes = 1;
 	bmi.bmiHeader.biBitCount = 32;
 	bmi.bmiHeader.biCompression = BI_RGB;

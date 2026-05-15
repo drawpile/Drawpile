@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <cstdint>
 #include <shlobj.h>
 #include <sqlite3.h>
@@ -45,7 +47,7 @@ static HRESULT SetRegValue(
 		nullptr, &hk, nullptr);
 	if(r != ERROR_SUCCESS)
 		return HRESULT_FROM_WIN32(r);
-	uint32_t cb = static_cast<uint32_t>((wcslen(data) + 1) * sizeof(wchar_t));
+	uint32_t cb = uint32_t((wcslen(data) + 1) * sizeof(wchar_t));
 	r = RegSetValueExW(
 		hk, valueName, 0, REG_SZ, reinterpret_cast<const BYTE *>(data), cb);
 	RegCloseKey(hk);

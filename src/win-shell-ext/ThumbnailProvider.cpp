@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "ThumbnailProvider.h"
 #include "dpcs.h"
 #include <wrl/module.h>
@@ -44,7 +46,12 @@ HRESULT STDMETHODCALLTYPE ThumbnailProvider::GetThumbnail(
 		return hr;
 	}
 
-	sqlite3_close(db);
+	int rc = sqlite3_close(db);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "Fail to close database: %s\n", sqlite3_errmsg(db));
+
+		return E_FAIL;
+	}
 
 	return S_OK;
 }

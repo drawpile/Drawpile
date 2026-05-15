@@ -53,7 +53,7 @@ if(NOT ANDROID AND NOT EMSCRIPTEN)
 	add_feature_info("Benchmarks (BENCHMARKS)" BENCHMARKS "")
 
 	cmake_dependent_option(
-		WIN_SHELL_EXT "Build Windows shell extension for .dpcs thumbnail provider"
+		WIN_SHELL_EXT "Build Windows shell extension for .dpcs/.dppr thumbnail provider"
 		ON "WIN32;CLIENT" OFF)
 	add_feature_info("Windows shell extension (WIN_SHELL_EXT)" WIN_SHELL_EXT "")
 else()

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <cstdint>
 #include <objbase.h>
 #include <shlwapi.h>
