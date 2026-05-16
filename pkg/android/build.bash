@@ -431,7 +431,7 @@ case $effective_deps_type in
         ;;
 esac
 
-qt_version_regex='^([56])\.([0-9][0-9]*)'
+qt_version_regex='^([56])\.([0-9a-zA-Z][0-9a-zA-Z]*)'
 if [[ $QT_VERSION =~ $qt_version_regex ]]; then
     QT_VERSION_MAJOR="${BASH_REMATCH[1]}"
     QT_VERSION_MINOR="${BASH_REMATCH[2]}"
