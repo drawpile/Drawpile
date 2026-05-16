@@ -57,7 +57,7 @@ TimelapseDialog::TimelapseDialog(
 {
 	setWindowTitle(tr("Timelapse"));
 	utils::makeModal(this);
-	resize(600, 800);
+	resize(600, 600);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	setLayout(layout);
@@ -75,7 +75,7 @@ TimelapseDialog::TimelapseDialog(
 	QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
 
 	m_timelapsePreview = new widgets::TimelapsePreview;
-	m_timelapsePreview->setFixedHeight(320);
+	m_timelapsePreview->setFixedHeight(280);
 	scrollLayout->addWidget(m_timelapsePreview);
 
 	m_settingsPage = new QWidget;
