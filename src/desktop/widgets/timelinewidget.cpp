@@ -106,10 +106,12 @@ struct ExposureToolState {
 		offset = toFrameIndex - fromFrameIndex;
 		for(int i = qMax(0, topIndex); offset != 0 && i <= bottomIndex; ++i) {
 			const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
-			if(offset < 0) {
-				clampOffsetDecrease(track);
-			} else {
-				clampOffsetIncrease(track, frameCount);
+			if(!track.moveLock) {
+				if(offset < 0) {
+					clampOffsetDecrease(track);
+				} else {
+					clampOffsetIncrease(track, frameCount);
+				}
 			}
 		}
 
