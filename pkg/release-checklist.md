@@ -55,6 +55,20 @@ Yes, this can be automated to a large degree, but it currently happens infrequen
     * Create a pull request into the appropriate branch, flathubbot will kick off a test build. If it doesn't, comment with "bot, build" to kick it off manually.
     * Wait for the test build to succeed.
     * Merge the pull request.
+* Update F-Droid (only necessary for beta versions, stable ones should get picked up automatically):
+    * Grab the F-Droid Data repository from <https://gitlab.com/fdroid/fdroiddata>
+    * Add four new entries to `metadata/net.drawpile.yml` for the four architectures using the new version name, version codes and commit hash.
+        * Note that they are each slightly different, so copy the four previous ones, not just the last one!
+        * Do **not** update the `CurrentVersion` or `CurrentVersionCode` at the bottom for betas! That's only for stable versions.
+    * Follow the steps described in the [F-Droid quick start build environment guide](https://f-droid.org/en/docs/Submitting_to_F-Droid_Quick_Start_Guide/#build-environment), replacing `com.example` with `net.drawpile`, but **stop before the `fdroid build` step**.
+    * Run the `sudo` steps from `metadata/net.drawpile.yml` with `sudo` in front of them.
+        * Note that the x86 and x86_64 sections each have two extra commands to fix up the NDK! Run those as well.
+    * Run `fdroid build net.drawpile:***{1,2,3,4}` where `***` is the version code prefix. The last digit is the architecture.
+        * Do **not** just run an unadorned `f-droid build net.drawpile`, that will attempt to build way too many versions. You must provide the version code.
+    * After it builds successfully locally, pose a merge request.
+        * Make sure you don't make it from a locked branch, otherwise the maintainers can't rebase. Either unlock the master branch or use a different one.
+        * Add a note that the pipeline will fail because of a timeout and that you built it locally to verify. The CI limit is too short to build Qt four times. The F-Droid maintainers will usually verify it locally on their side as well. The real builds don't have this time limit, it's only a CI pipeline thing.
+    * After merging, it may take a week or two before the next build run gets published.
 * Add artifacts to appdata XMLs:
     * Create an `artifacts` directory.
     * Download all assets:
