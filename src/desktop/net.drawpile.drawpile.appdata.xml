@@ -25,6 +25,122 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.3.1-beta.1" type="development" date="2026-05-16">
+      <url>https://drawpile.net/news/release-2.3.1-beta.1/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.</li>
+          <li>Fix: Make MyPaint brushes properly handle input values exactly on the point of a stair-step curve. Thanks Blozzom for testing.</li>
+          <li>Fix: Don't show MyPaint curves as continuing in a straight line outside the first and last point, sincet they don't.</li>
+          <li>Server Fix: Only show the fact that a session was reported in the event log, but leave the details to only be visible to the server owners. Thanks Liz for reporting.</li>
+          <li>Feature: Allow setting a blank brush cursor in the tools preferences. Thanks mixnmatt for suggesting.</li>
+          <li>Fix: Work around tablets not reporting when the eraser is brought near. Thanks Lauwenmark for reporting.</li>
+          <li>Feature: Show rectangle selection extents in the status bar. Thanks Mercia for suggesting.</li>
+          <li>Server Fix: Log streamed resets being blocked properly. Thanks grimsley for reporting.</li>
+          <li>Feature: Allow selecting custom color scheme files dropped into the application data.</li>
+          <li>Fix: Work around some some Android devices eating three- and four-finger taps unconditionally. Thanks Afiq for reporting.</li>
+          <li>Fix: Don't try to set the one-finger touch input on Android according to whether the device says it has a stylus attached because devices just lie about it. It's always set to be dynamically detected by default now.</li>
+          <li>Fix: Make stylus buttons on some external tablets on Android work properly. The pen buttons used to not activate until pressing the pen down and release only if the pen was continued to be held. This is a patch to Qt.</li>
+          <li>Fix: Clamp OKLAB colors the proper way round. Thanks Bonbli for reporting.</li>
+          <li>Feature: Replace autosave mechanism with more robust autorecovery.</li>
+          <li>Fix: Make setting kinetic scrolling to touch drag not trigger long-presses immediately on Android.</li>
+          <li>Fix: Properly clear invalid selection areas when masking brush strokes (shouldn't happen in the first place though.)</li>
+          <li>Fix: Make stylus buttons on Xiaomi devices act as right and middle clicks instead of page up and page down. Can be toggled in the tablet preferences. This is a patch to Qt.</li>
+          <li>Fix: Make lines not come out all jaggy on Xiaomi devices by ignoring the (wrong) tablet position history. Can be toggled in the tablet preferences. This is a patch to Qt.</li>
+          <li>Fix: Default the global pressure curve on Xiaomi devices to be really steep, because their stylus has a similarly high threshold as Apple Pencils do.</li>
+          <li>Feature: Add "Anti-Strain", "Apple Pencil" and "Xiaomi Stylus" as a preset options for the global pressure curve.</li>
+          <li>Fix: When saving a file, ask whether to overwrite it after confirming the format to avoid overwriting files unquestioned.</li>
+          <li>Fix: Properly preview editable fills when switching layers.</li>
+          <li>Feature: Allow toggling eraser, erase mode and alpha preserve via canvas shortcut. Thanks SOLARIS for suggesting.</li>
+          <li>Fix: Disable the annoyingly slow and sometimes even crashy animations when rearranging docks and toggling toolbar extensions. They now just occur instantly instead.</li>
+          <li>Feature: Allow viewing project statistics, such as length of sessions and work time, via File → Project statistics. Requires enabling autorecovery and saving to a dppr file.</li>
+          <li>Feature: Timelapses, via File → Make timelapse. Requires enabling autorecovery and saving to a dppr file.</li>
+          <li>Feature: Allow triggering undo, redo, hide docks and any other actions via canvas shortcut. Thanks RubySnoot for suggesting.</li>
+          <li>Feature: Make right-clicking with the freehand tool draw with the background color. Thanks doughie for suggesting.</li>
+          <li>Fix: Properly disable color marker and blending option buttons in the layer properties dialog when you don't have permission to modify those. Thanks xxxx for reporting.</li>
+          <li>Fix: Make bezier curve tool work with touch drawing. Thanks Notester32 for reporting.</li>
+          <li>Fix: Make refreshing flipbook not reset the playback to the beginning. Thanks BulletPepper for reporting.</li>
+          <li>Fix: Keep flipbook range to match the canvas range when it did so before even when closing the flipbook. Thanks BulletPepper for reporting.</li>
+          <li>Feature: Add next/previous frame within range actions, to move through the timeline but wrap at the edges of the frame range. Holding shift while pressing arrow keys actuates this action as well. Thanks BulletPepper for suggesting.</li>
+          <li>Feature: Add "set speed by FPS", "reset range" and "reset speed" actions to the flipbook. They are now behind the button that previously had only two zoom-related actions.</li>
+          <li>Fix: Make fonts not be a wonky size on some Android devices.</li>
+          <li>Feature: Ask for a UI scale on startup on Android, letting you adjust it and view the result, rather than having to restart Drawpile and potentially be left in an unworkable state. You can also pick the interface mode while you're at it.</li>
+          <li>Feature: Rotation tool. Similar to the Pan and Zoom tools, this lets you rotate the canvas just by clicking on the canvas. Thanks Cryankiebuillars for suggesting.</li>
+          <li>Fix: Properly enable clipping and alpha lock controls in layer dock when switching from a non-editable to an editable layer. Thanks xxxx for reporting.</li>
+          <li>Fix: Don't clamp brushes with out of range inputs from the mere act of opening the brush editor. Thanks Phoneme for reporting.</li>
+          <li>Feature: Add numeric input fields to curve inputs to allow the exact numeric values of each curve point to be set exactly. Thanks Saphiros for suggesting.</li>
+          <li>Fix: Render repeated animation frames into exports, since some players get confused by frames held longer.</li>
+          <li>Feature: Brush preview styles. You can now toggle between the full style with the rainbow circles and a plain style that matches the UI colors and doesn't try to preview every aspect of the brush. You can also toggle the display of the brush's title and thumbnail. There's also the option of disabling the preview altogether. The default is to show the thumbnail and title with plain style, since that gives the best tradeoff between showing the relevant information without being too distracting. Thanks fadi123go for suggesting.</li>
+          <li>Fix: Use a fixed random seed for the brush preview so that it doesn't change erratically when adjusting a parameter, which made it hard to see what was actually changing.</li>
+          <li>Feature: Only load brush thumbnails as they are needed. This should speed up startup if you have a lot of brushes.</li>
+          <li>Fix: Properly update alpha inherit icon when switching between dark and light themes. Thanks xxxx for reporting.</li>
+          <li>Feature: Allow choosing between thumbnails, strokes or both in the brushes dock. The default is both, since it gives the most amount of information at a glance.</li>
+          <li>Fix: Center brush dock thumbnails instead of having them left-aligned. Thanks MorrowShore for reporting.</li>
+          <li>Feature: Allow arbitrary scaling of brush dock sizes with a slider instead of a fixed set of sizes.</li>
+          <li>Fix: Handle additional stylus buttons on Android correctly. This makes some three-button styluses no longer interpret two of the side buttons as middle mouse.</li>
+          <li>Feature: Bind mouse button 5 to toggling the eraser by default. This makes three-button styluses have useful behavior.</li>
+          <li>Fix: Show correct MyPaint outline size when switching tools. It could sometimes end up showing an unadjusted size.</li>
+          <li>Fix: Properly mark MyPaint brushes as having been modified when modifying inputs other than pressure.</li>
+          <li>Fix: Don't limit flipbook range to 99 when opening it.</li>
+          <li>Feature: Allow using external ffmpeg for animation exports. This adds some more video codecs that normally don't come with Drawpile.</li>
+          <li>Fix: Make color selection in annotation tool asynchronous so that it doesn't crash in the browser. Thanks Curiosity for reporting.</li>
+          <li>Feature: An overview page for the shortcut preferences, to hopefully cut down on users not being able to find where to assign mouse buttons or similar.</li>
+          <li>Fix: Make status bar not end up huge when reattaching chat. Thanks hpar and xxxx for reporting.</li>
+          <li>Fix: Slow down the update rate of the status bar, since it causes performance issues on some devices. Thanks Liz and Hyper ifg for reporting.</li>
+          <li>Fix: Don't focus flipbook when it's already open to allow refreshing it without it taking away the keyboard focus from the main window.</li>
+          <li>Feature: Make the key frame delete action also delete the associated layer and add a separate unassign key frame action that only gets rid of the key frame.</li>
+          <li>Feature: Move the timeline track manipulation buttons into the top-left corner of the timeline above the tracks which was previously just a blank space.</li>
+          <li>Feature: Add an exposure tool to the timeline, which allows shifting multiple frames around without keyboard shortcuts. It is also accessible by holding Alt.</li>
+          <li>Feature: Allow zooming the animation timeline. There's a zoom menu on the timeline header now, you can use Ctrl+Mouse Wheel and you can bind keyboard shortcuts to it. Thanks Myathingoss for suggesting.</li>
+          <li>Feature: Allow playing back and exporting the tail end of an animation loop by setting the playback start larger than the end in the flipbook. This will play from flipbook range start to timeline range end, restarting from the timeline range start and playing until the flipbook range end, skipping the frames in the middle. Thanks Saphiros for suggesting.</li>
+          <li>Feature: Allow locking frame dragging on timeline tracks to prevent accidental frame moving, overwriting and changes in exposure. Thanks Saphiros for suggesting.</li>
+          <li>Fix: Make lone presses of the Alt key not focus the menu bar, since that interferes with shortcuts.</li>
+          <li>Feature: You can now configure the main menu bar actions in the shortcuts. They are also no longer dependent on which language you have Drawpile set to.</li>
+          <li>Feature: Allow dragging over numeric inputs to adjust their value. They also now don't annoyingly select the prefix and suffix anymore when you click on them. Thanks LingjenKaos for suggesting.</li>
+          <li>Fix: Don't consider the canvas eligible for long-pressing to open a (nonexistent) context menu.</li>
+          <li>Fix: Ignore motions right before releasing a numeric slider so that lifting the stylus doesn't annoyingly nudge the value off what you meant to pick.</li>
+          <li>Fix: Some text input on Android where spacebar wouldn't work, the view would turn blue on some devices, the text area would block stylus input or the text menu would cover up the text.</li>
+          <li>Fix: Handle F13 to F24 keys on Android and translate F21 to middle click by default. This is a workaround for OnePlus devices that inexplicably press this keyboard key when you press the button on their stylus. Thanks Clover_Yan for reporting.</li>
+          <li>Fix: Translate transforms with oversized selection masks to cut and paste operations instead of cancelling the transform. Thanks phanie for reporting.</li>
+          <li>Fix: Properly reset user id after leaving an online session and opening a file or creating a new image in the same window. Previously you would count as different users in different contexts, leading to permissions appearing wrong and your own strokes getting a user marker. Thanks grimsley for reporting.</li>
+          <li>Feature: Translate double-tap gesture on Huawei styluses on Android to the F25 key. Thanks noalero for suggesting.</li>
+          <li>Fix: Occasional crashes when using anti-overflow with a non-zero expand value at the edge of the canvas. Thanks Ausjamcian for reporting.</li>
+          <li>Feature: Allow clearing log files in the Files preferences. This is particularly useful on Android, where you can't manually delete them (although they probably don't take up much space either way.)</li>
+          <li>Fix: Immediately send local drawing commands from freehand strokes to the paint engine. This makes synchronized smudging way faster on some devices (and no perceptible difference on most others.)</li>
+          <li>Fix: Cancel strokes lingering from synchronized smudging when a new one is started. This prevents long-running strokes from just taking forever to finish and prevents the program hanging in some pathological cases.</li>
+          <li>Fix: Don't enable synchronized smudging on MyPaint brushes that don't have it explicitly set and only have infinitesimal smudge factor. There's several brushes where all it does is slow down the stroke with no perceptible difference.</li>
+          <li>Fix: Set frame ranges properly when only changing one side of the frame range in a session that doesn't have both sides set yet. Thanks dAVePAGE for reporting.</li>
+          <li>Fix: Properly load frame ranges from ORA files that don't have any timeline defined.</li>
+          <li>Fix: Default session host type to passworded instead of remembering that you had it set to public. This is a safer option than accidentally hosting something in public you didn't mean to and ending up in a panic trying to get the strangers out. Thanks Bluestrings and watt for reporting.</li>
+          <li>Fix: Change the wording on public and passworded session options to make it clearer what they do. Thanks Bluestrings, hyper and tiar for suggesting.</li>
+          <li>Feature: Generate a session password if none is set, rather than spewing an error telling the user they need to go fix it themselves.</li>
+          <li>Feature: When attempting to host a public session without a title, offer to host it invite-only instead of just showing an error. Thanks hyper for suggesting.</li>
+          <li>Feature: Move operator password settings to roles page, to avoid users mistaking it for the session password setting. Thanks Bluestrings for suggesting.</li>
+          <li>Feature: Show a warning that removing the password from a session will make it public. Thanks Bluestrings for suggesting.</li>
+          <li>Removed Server Feature: Closing sessions, called "block new joins" in the client. It's just a worse variant of setting/changing the password on the session to make it invite-only. That has none of the downsides of locking yourself out, letting strangers join if they time it right and the session becoming public on its own after everyone has left.</li>
+          <li>Feature: Add a prompt to the invite dialog to make sessions passworded if they're public and a button to open the session settings, to make those a bit easier to find. Thanks Bluestrings for suggesting.</li>
+          <li>Fix: Close invite dialog when disconnecting.</li>
+          <li>Feature: Load brush preset data and thumbnails on demand instead of preloading them. This makes startup, switching tags and other operations that reload brushes much faster, especially if you have a lot of brushes.</li>
+          <li>Feature: Add sections to the brush editor settings list and group the settings accordingly. Thanks Blozzom for suggesting.</li>
+          <li>Fix: Don't change current brush when using the brushes dock's search bar.</li>
+          <li>Feature: A notice in the invite dialog if the server or session doesn't support or restricts joining via web browser, with a prompt to use invite codes instead if appropriate. Thanks Bluestrings for suggesting.</li>
+          <li>Fix: Allow skipping around in the playback dialog again. This was caused by the check whether the canvas size is valid or not being flippe the wrong way round. Thanks Saova for reporting.</li>
+          <li>Feature: Adjust stabilizer with velocity. Enabled by default with a curve that lessens the stabilization for faster strokes, which makes it much more usable without having to constantly adjust the slider.</li>
+          <li>Fix: Properly preview lines, curves, circles and rectangles when using a brush with smudging turned on. Thanks retarj_o_burro for reporting.</li>
+          <li>Feature: Automatically resume drawings on Android, since the system will terminate Drawpile when it's in the background without giving you a chance to save. To avoid this, cleanly exit the application via File → Quit or by pressing the back button. Thanks tiar for suggesting.</li>
+          <li>Fix: Don't clear save paths when reconnecting to a session. This was particularly annoying on Android, since you can't save over existing files there. Thanks tiar for reporting.</li>
+          <li>Feature: Provide a better default name by default instead of just punting to "Untitled". The suggested name is now automatically prefixed with a date and tries to use a cleaned-up version of the session title if drawing online. Thanks tiar for suggesting.</li>
+          <li>Fix: Make automatic switching to frame view mode work properly even when the timeline isn't a floating or tabbed widget. The lack of a tab bar caused it to get misdetected as hidden.</li>
+          <li>Fix: Solve an issue where on some Android devices you would get disconnected on the first attempt of joining a session and then it worked fine on reconnect. Thanks Bluestrings for reporting.</li>
+          <li>Server Fix: Properly disconnect notify all clients when a session is shut down. Previously it could miss some of them and leave them lingering without a session.</li>
+          <li>Server Feature: Allow disconnecting clients that linger too long without a session, either before joining/hosting one or after having left. The duration is configurable by server owners, not limited by default.</li>
+          <li>Fix: Allow unsetting default layers again. Previously that operation got incorrectly filtered out as attempting to set the default layer to an invalid id.</li>
+          <li>Fix: Select the bottom-most layer to start with if no default layer is set. Previously you'd end up on the newest layer, which was unpredictable and often enough confounding if you ended up on somebody's shading layer or similar.</li>
+          <li>Fix: Properly hide and lock drawing on hidden layers in frame view. Thanks hipofiz for reporting.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.3.0" type="stable" date="2025-11-18">
       <url>https://drawpile.net/news/release-2.3.0/</url>
       <description>
