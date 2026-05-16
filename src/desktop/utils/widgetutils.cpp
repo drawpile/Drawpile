@@ -42,6 +42,9 @@
 #ifdef Q_OS_ANDROID
 #	include "libclient/utils/androidutils.h"
 #endif
+#ifdef Q_OS_MACOS
+#	include <QAction>
+#endif
 
 namespace utils {
 
