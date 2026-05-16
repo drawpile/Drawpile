@@ -859,12 +859,15 @@ import { UAParser } from "ua-parser-js";
   }
 
   function makeVersionSelector(params) {
-    const currentOption = tag(
-      "option",
-      { value: "current", selected: "" },
-      "Drawpile 2.3.0"
-    );
+    const currentOption = tag("option", { value: "current" }, "Drawpile 2.3.0");
     const betaOption = tag("option", { value: "beta" }, "Drawpile 2.3.1-beta.1");
+
+    const versionToSelect = params.get("version")?.trim();
+    if (versionToSelect && /beta|alpha/i.test(versionToSelect)) {
+      betaOption.setAttribute("selected", "");
+    } else {
+      currentOption.setAttribute("selected", "");
+    }
 
     const select = tag("select", [currentOption, betaOption]);
     const updateVersion = () => {
