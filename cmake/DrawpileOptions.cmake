@@ -51,6 +51,11 @@ if(NOT ANDROID AND NOT EMSCRIPTEN)
 
 	option(BENCHMARKS "Build benchmarks" OFF)
 	add_feature_info("Benchmarks (BENCHMARKS)" BENCHMARKS "")
+
+	cmake_dependent_option(
+		WIN_SHELL_EXT "Build Windows shell extension for .dpcs/.dppr thumbnail provider"
+		ON "WIN32;CLIENT" OFF)
+	add_feature_info("Windows shell extension (WIN_SHELL_EXT)" WIN_SHELL_EXT "")
 else()
 	# CMake allows unexposed options to be enabled
 	set(SERVER OFF CACHE BOOL "" FORCE)

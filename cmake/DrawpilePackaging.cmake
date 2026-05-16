@@ -75,6 +75,9 @@ elseif(WIN32)
 		configure_file("pkg/installer-${CPACK_WIX_ARCHITECTURE}.wix.in" pkg/installer.wix)
 
 		set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_BINARY_DIR}/pkg/installer.wix")
+		if(WIN_SHELL_EXT)
+			list(APPEND CPACK_WIX_PATCH_FILE "${PROJECT_SOURCE_DIR}/pkg/installer-shell-ext.wxs")
+		endif()
 
 		set(CPACK_WIX_EXTRA_SOURCES "${PROJECT_SOURCE_DIR}/pkg/installer-nolicense.wxs")
 		set(CPACK_WIX_UI_REF "WixUI_InstallDir_NoLicense")
