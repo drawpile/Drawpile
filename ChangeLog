@@ -1,4 +1,6 @@
 Unreleased Version 2.3.1-pre
+
+2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
  * Fix: Make MyPaint brushes properly handle input values exactly on the point of a stair-step curve. Thanks Blozzom for testing.
  * Fix: Don't show MyPaint curves as continuing in a straight line outside the first and last point, sincet they don't.
