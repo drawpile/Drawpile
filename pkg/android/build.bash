@@ -73,12 +73,12 @@ check_sdk() {
             fi
             ;;
         '35')
-            if ! check_java_version 17; then
+            if ! check_java_version 17 21; then
                 error=1
             fi
             ;;
         '36')
-            if ! check_java_version 17; then
+            if ! check_java_version 17 21; then
                 error=1
             fi
             ;;
