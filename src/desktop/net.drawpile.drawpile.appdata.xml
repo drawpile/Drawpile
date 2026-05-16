@@ -140,6 +140,53 @@
           <li>Fix: Properly hide and lock drawing on hidden layers in frame view. Thanks hipofiz for reporting.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-x86_64.msi</location>
+          <checksum type="sha256">f474b744a2d2f0ea6003ac5017b7f366db271fba4e424affa90405395cff8286</checksum>
+          <size type="download">24162304</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-x86.msi</location>
+          <checksum type="sha256">62d3fc3a96602c1180a5b96a9e72ca81d90fe6237d957dd32a71774dfc16bd39</checksum>
+          <size type="download">20979712</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-arm64.msi</location>
+          <checksum type="sha256">df342562c45af3b840fc2bec3b6664315bb5a407ac1e55e97d9785c2f3c30a35</checksum>
+          <size type="download">22073344</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-x86_64.dmg</location>
+          <checksum type="sha256">f1d8f3e069a2b403fb37c83d57eb9bab15f962e633d358753fde2e2a4a6585f3</checksum>
+          <size type="download">34665579</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-arm64.dmg</location>
+          <checksum type="sha256">fa67a4bd128ecf7b20c0edcfdd798b892351a44436344166ec1add0f31354ec5</checksum>
+          <size type="download">31972188</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-x86_64.AppImage</location>
+          <checksum type="sha256">d97ba5883e18e33f46361d2ec48de24f011414da995d3b76902bc8a8fd6c0850</checksum>
+          <size type="download">55993536</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-30-35-arm64-v8a.apk</location>
+          <checksum type="sha256">5bfe2836496e98280c28ce33d0c258a689487a6669c90781940796739e2962ca</checksum>
+          <size type="download">24294404</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.1/Drawpile-2.3.1-beta.1-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">2ffd023a044abb982bfa2c8aed1c5a82486ff8f5c7c1c999fac42419f6c3ad05</checksum>
+          <size type="download">20948190</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.1-beta.1.tar.gz</location>
+          <checksum type="sha256">aa5a2be9664ff61f4eacb95b928060e0b53dbc272eddb0b9ee6e0d3d4a9e0517</checksum>
+          <size type="download">11849147</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.3.0" type="stable" date="2025-11-18">
       <url>https://drawpile.net/news/release-2.3.0/</url>
