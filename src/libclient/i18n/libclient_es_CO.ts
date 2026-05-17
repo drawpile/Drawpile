@@ -2686,42 +2686,42 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Voltear verticalmente: ACTIVADO</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Voltear verticalmente: DESACTIVADO</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar horizontalmente: ACTIVADO</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar horizontalmente: DESACTIVADO</translation>
     </message>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Acercar: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación: %1º</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargando…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardando…</translation>
     </message>
 </context>
 </TS>
