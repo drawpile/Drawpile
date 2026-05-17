@@ -2578,25 +2578,26 @@ Puede volver a activarlas a través del menú Ver o las preferencias.</translati
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reflejar verticalmente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rotar -90º</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rotar +90º</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>La barra de selección está desactivada.
+Puede volver a activarla a través del menú Ver.</translation>
     </message>
     <message>
         <location line="+644"/>
@@ -3038,70 +3039,70 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="-1587"/>
         <source>Disable Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilitar la recuperación automática</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to disable autorecovery for this session?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Está seguro de que desea deshabilitar la recuperación automática para esta sesión?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsaved data will be discarded and can&apos;t be recovered. You will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los datos no guardados se descartarán y no se pueden recuperar. No podrás crear un timelapse.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, disable</source>
         <extracomment>&quot;Yes&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sip, desactivar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, keep enabled</source>
         <extracomment>&quot;No&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nop, dejarlo activado</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Autorecovery deactivated</source>
-        <translation type="unfinished"></translation>
+        <translation>Autorecuperación desactivada</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>The autorecovery file has exceeded %1% of the %2 size limit. Autorecovery will be disabled if the limit is reached.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de autorecuperación ha excedido el %1% del límite de tamaño %2. Autorecuperación se desactivará si se alcanza el límite.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de Autorecuperación</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de Autorecuperación: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery will be disabled for the current session. The file will be left available for recovery. If you continue, you will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Autorecuperación se desactivará para la sesión actual. El archivo quedará disponible para la recuperación. Si continúa, no podrá crear un timelapse (lapso de tiempo).</translation>
     </message>
     <message>
         <location line="+36"/>
         <location line="+10"/>
         <source>Project Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>Descripción general del proyecto</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>To view statistics, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Para ver las estadísticas, primero debe guardar un archivo de proyecto (.dppr). ¿Quieres hacerlo ahora?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the statistics?</source>
-        <translation type="unfinished"></translation>
+        <translation>Todavía hay cambios que no se han guardado en un archivo de proyecto (.dppr). ¿Quieres guardarlos ahora para que aparezcan en las estadísticas?</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3109,37 +3110,37 @@ You can re-enable it via the View menu.</source>
         <location line="+10"/>
         <location line="+30"/>
         <source>Timelapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Timelapse (linea de tiempo)</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>Unexpected save format. To view statistics, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de guardado inesperado. Para ver las estadísticas, debe guardar en un archivo de proyecto (.dppr).</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>To make a timelapse, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Para realizar un timelapse, primero debe guardar un archivo de proyecto (.dppr). ¿Quieres hacerlo ahora?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the timelapse?</source>
-        <translation type="unfinished"></translation>
+        <translation>Todavía hay cambios que no se han guardado en un archivo de proyecto (.dppr). ¿Quieres guardarlos ahora para que aparezcan en el timelapse?</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Unexpected save format. To make a timelapse, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de guardado inesperado. Para realizar un timelapse, debe guardar en un archivo de proyecto (.dppr).</translation>
     </message>
     <message>
         <location line="+792"/>
         <source>Open Recovered File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Archivo Recuperado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recovered file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de abrir un archivo recuperado y cerrar esta ventana.</translation>
     </message>
     <message>
         <location line="+597"/>
@@ -3340,12 +3341,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+37"/>
         <source>Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Autorecuperación</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage autorecovery…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestionan la autorecuperación…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3375,22 +3376,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+15"/>
         <source>Project statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estadísticas del Proyecto…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Make timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hacer un Timelapse (lapso de tiempo)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recover…</source>
-        <translation type="unfinished"></translation>
+        <translation>Recuperar…</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3425,7 +3426,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de entrada</translation>
     </message>
     <message>
         <location line="+179"/>
@@ -3440,7 +3441,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+47"/>
         <source>Interface scale…</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala de Interfaz…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3495,7 +3496,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+131"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -4018,37 +4019,37 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-366"/>
         <source>Increase Exposure on All Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Aumentar la Exposición en Todas las Pistas</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Decrease Exposure on All Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Disminuir la Exposición en Todas las Pistas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Track Visible for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista Visible para Ti</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista de Piel de Cebolla para Ti</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Frame Move Locked for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover Frame de Pista Bloqueado para ti</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Next Frame Within Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Cuadro Dentro del Rango</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame Within Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Marco Anterior Dentro del Rango</translation>
     </message>
     <message>
         <location line="+354"/>
@@ -4154,12 +4155,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+21"/>
         <source>File menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Archivo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Edit menu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Editar Menú</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -15605,32 +15606,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+416"/>
         <source>Vertical flip: ON</source>
-        <translation>Inversión vertical: Activada</translation>
+        <translation>Voltear verticalmente: ACTIVADO</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation>Inversión vertical: Desactivada</translation>
+        <translation>Voltear verticalmente: DESACTIVADO</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation>Inversión horizontal: Encendida</translation>
+        <translation>Reflejar horizontalmente: ACTIVADO</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>Inversión horizontal: Apagada</translation>
+        <translation>Reflejar horizontalmente: DESACTIVADO</translation>
     </message>
     <message>
         <location line="+2059"/>
         <source>Zoom: %1%</source>
-        <translation>Aumento: %1%</translation>
+        <translation>Acercar: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation>Rotacion: %1°</translation>
+        <translation>Rotación: %1º</translation>
     </message>
     <message>
         <location line="+30"/>
