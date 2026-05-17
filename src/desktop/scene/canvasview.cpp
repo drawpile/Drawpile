@@ -789,15 +789,15 @@ void CanvasView::rotateByDiscreteSteps(int steps)
 	// If we're not close to a discrete position, snap to it first.
 	qreal offset = std::fmod(m_rotate, ROTATION_STEP_SIZE);
 	if(steps < 0 && offset >= EPS && offset <= HALF) {
-		setRotation(qFloor(m_rotate / FULL) * FULL);
+		setRotation(qFloor(rotation() / FULL) * FULL);
 		++steps;
 	} else if(steps > 0 && offset >= HALF && offset <= FULL - EPS) {
-		setRotation(qCeil(m_rotate / FULL) * FULL);
+		setRotation(qCeil(rotation() / FULL) * FULL);
 		--steps;
 	}
 
 	if(steps != 0) {
-		setRotation((qRound(m_rotate / FULL) + steps) * FULL);
+		setRotation((qRound(rotation() / FULL) + steps) * FULL);
 	}
 }
 
