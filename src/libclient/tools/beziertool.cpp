@@ -70,6 +70,7 @@ void BezierTool::motion(const MotionParams &params)
 	if(m_points.isEmpty()) {
 		qWarning("BezierTool::motion: point vector is empty!");
 	} else if(m_firstPoint) {
+		m_points.first().cp = m_beginPoint - params.point;
 		movePoint(params.point);
 	} else {
 		m_points.last().cp = m_beginPoint - params.point;
