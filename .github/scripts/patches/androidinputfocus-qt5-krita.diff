@@ -308,10 +308,10 @@ significantly better when using a physical keyboard.
 +    private void initializeFocus()
 +    {
 +        setFocusable(true);
++        setFocusableInTouchMode(true);
 +        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 +            // On some devices, the entire view gets tinted blue when a key is
 +            // pressed to let the user know it's in focus. This should disable it.
-+            setFocusableInTouchMode(true);
 +            setFocusedByDefault(true);
 +            setDefaultFocusHighlightEnabled(false);
 +        }
