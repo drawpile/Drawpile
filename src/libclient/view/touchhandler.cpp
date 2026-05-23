@@ -1,5 +1,4 @@
-// SPDX-License-Idsrc/desktop/view/canvascontroller.cppentifier:
-// GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpcommon/event_log.h>
 }
