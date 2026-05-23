@@ -424,9 +424,19 @@ void TouchHandler::setOneFingerTapAction(int oneFingerTapAction)
 	m_oneFingerTapAction = oneFingerTapAction;
 }
 
+void TouchHandler::setOneFingerTapTrigger(const QString &oneFingerTapTrigger)
+{
+	m_oneFingerTapTrigger = oneFingerTapTrigger;
+}
+
 void TouchHandler::setTwoFingerTapAction(int twoFingerTapAction)
 {
 	m_twoFingerTapAction = twoFingerTapAction;
+}
+
+void TouchHandler::setTwoFingerTapTrigger(const QString &twoFingerTapTrigger)
+{
+	m_twoFingerTapTrigger = twoFingerTapTrigger;
 }
 
 void TouchHandler::setThreeFingerTapAction(int threeFingerTapAction)
@@ -434,9 +444,20 @@ void TouchHandler::setThreeFingerTapAction(int threeFingerTapAction)
 	m_threeFingerTapAction = threeFingerTapAction;
 }
 
+void TouchHandler::setThreeFingerTapTrigger(
+	const QString &threeFingerTapTrigger)
+{
+	m_threeFingerTapTrigger = threeFingerTapTrigger;
+}
+
 void TouchHandler::setFourFingerTapAction(int fourFingerTapAction)
 {
 	m_fourFingerTapAction = fourFingerTapAction;
+}
+
+void TouchHandler::setFourFingerTapTrigger(const QString &fourFingerTapTrigger)
+{
+	m_fourFingerTapTrigger = fourFingerTapTrigger;
 }
 
 void TouchHandler::setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction)
@@ -732,10 +753,19 @@ void TouchHandler::flushTouchDrawBuffer()
 	}
 }
 
-void TouchHandler::emitTapAction(int action)
+void TouchHandler::emitTapAction(int action, const QString &trigger)
 {
-	if(action != int(view::TouchTapAction::Nothing)) {
-		emit touchTapActionActivated(action);
+	switch(action) {
+	case int(view::TouchTapAction::Nothing):
+		break;
+	case int(view::TouchTapAction::TriggerAction):
+		if(!trigger.isEmpty()) {
+			Q_EMIT touchTapTriggerActivated(trigger);
+		}
+		break;
+	default:
+		Q_EMIT touchTapActionActivated(action);
+		break;
 	}
 }
 

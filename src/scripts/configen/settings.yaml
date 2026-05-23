@@ -671,6 +671,12 @@ settings:
     qsettings: 'settings/input/fourfingertap'
     legacy_package: 'desktop'
 
+  - id: fourFingerTapTrigger
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/input/fourfingertaptrigger'
+    legacy_package: 'desktop'
+
   - id: globalPressureCurve
     type: 'QString'
     default: 'tools::ToolController::globalPressureCurveDefault'
@@ -1192,6 +1198,12 @@ settings:
     qsettings: 'settings/input/onefingertap'
     legacy_package: 'desktop'
 
+  - id: oneFingerTapTrigger
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/input/onefingertaptrigger'
+    legacy_package: 'desktop'
+
   - id: oneFingerTapAndHold
     type: 'int'
     default: 'int(view::TouchTapAndHoldAction::ColorPickMode)'
@@ -1436,6 +1448,12 @@ settings:
     qsettings: 'settings/input/threefingertap'
     legacy_package: 'desktop'
 
+  - id: threeFingerTapTrigger
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/input/threefingertaptrigger'
+    legacy_package: 'desktop'
+
   - id: timelapseBackdropColor
     type: 'QColor'
     default: 'QColor(Qt::transparent)'
@@ -1609,6 +1627,12 @@ settings:
     type: 'int'
     default: 'int(view::TouchTapAction::Undo)'
     qsettings: 'settings/input/twofingertap'
+    legacy_package: 'desktop'
+
+  - id: twoFingerTapTrigger
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/input/twofingertaptrigger'
     legacy_package: 'desktop'
 
   - id: twoFingerTwist

@@ -3,6 +3,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make default filename use *months* as the second number, not *minutes*. Thanks hipofiz for reporting.
  * Fix: Allow dragging initial curve tool point to let you change its control point again. Thanks Astre for reporting.
  * Fix: A fix for the application not starting up on Android older than 8. Thanks freyalupen for reporting.
+ * Feature: Allow triggering any action via touch taps. Thanks Bnuuyman for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

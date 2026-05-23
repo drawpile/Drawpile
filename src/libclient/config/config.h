@@ -603,6 +603,10 @@ public:
 	virtual void setFourFingerTap(int value) = 0;
 	static int defaultFourFingerTap();
 
+	virtual QString getFourFingerTapTrigger() const = 0;
+	virtual void setFourFingerTapTrigger(const QString &value) = 0;
+	static QString defaultFourFingerTapTrigger();
+
 	virtual QString getGlobalPressureCurve() const = 0;
 	virtual void setGlobalPressureCurve(const QString &value) = 0;
 	static QString defaultGlobalPressureCurve();
@@ -965,6 +969,10 @@ public:
 	virtual void setOneFingerTapAndHold(int value) = 0;
 	static int defaultOneFingerTapAndHold();
 
+	virtual QString getOneFingerTapTrigger() const = 0;
+	virtual void setOneFingerTapTrigger(const QString &value) = 0;
+	static QString defaultOneFingerTapTrigger();
+
 	virtual int getOneFingerTouch() const = 0;
 	virtual void setOneFingerTouch(int value) = 0;
 	static int defaultOneFingerTouch();
@@ -1171,6 +1179,10 @@ public:
 	virtual void setThreeFingerTap(int value) = 0;
 	static int defaultThreeFingerTap();
 
+	virtual QString getThreeFingerTapTrigger() const = 0;
+	virtual void setThreeFingerTapTrigger(const QString &value) = 0;
+	static QString defaultThreeFingerTapTrigger();
+
 	virtual QColor getTimelapseBackdropColor() const = 0;
 	virtual void setTimelapseBackdropColor(const QColor &value) = 0;
 	static QColor defaultTimelapseBackdropColor();
@@ -1286,6 +1298,10 @@ public:
 	virtual int getTwoFingerTap() const = 0;
 	virtual void setTwoFingerTap(int value) = 0;
 	static int defaultTwoFingerTap();
+
+	virtual QString getTwoFingerTapTrigger() const = 0;
+	virtual void setTwoFingerTapTrigger(const QString &value) = 0;
+	static QString defaultTwoFingerTapTrigger();
 
 	virtual int getTwoFingerTwist() const = 0;
 	virtual void setTwoFingerTwist(int value) = 0;
@@ -1438,6 +1454,7 @@ Q_SIGNALS:
 	void changeFlipbookWindow(const QRect &value);
 	void changeFontSize(int value);
 	void changeFourFingerTap(int value);
+	void changeFourFingerTapTrigger(const QString &value);
 	void changeGlobalPressureCurve(const QString &value);
 	void changeGlobalPressureCurveEraser(const QString &value);
 	void changeGlobalPressureCurveMode(int value);
@@ -1530,6 +1547,7 @@ Q_SIGNALS:
 	void changeNotifSoundUnlock(bool value);
 	void changeOneFingerTap(int value);
 	void changeOneFingerTapAndHold(int value);
+	void changeOneFingerTapTrigger(const QString &value);
 	void changeOneFingerTouch(int value);
 	void changeOnionSkinsFrameCount(int value);
 	void changeOnionSkinsFrames(const QMap<int, int> &value);
@@ -1583,6 +1601,7 @@ Q_SIGNALS:
 	void changeThemePalette(const QString &value);
 	void changeThemeStyle(const QString &value);
 	void changeThreeFingerTap(int value);
+	void changeThreeFingerTapTrigger(const QString &value);
 	void changeTimelapseBackdropColor(const QColor &value);
 	void changeTimelapseDurationSeconds(int value);
 	void changeTimelapseExportFormat(int value);
@@ -1612,6 +1631,7 @@ Q_SIGNALS:
 	void changeTouchSmoothing(int value);
 	void changeTwoFingerPinch(int value);
 	void changeTwoFingerTap(int value);
+	void changeTwoFingerTapTrigger(const QString &value);
 	void changeTwoFingerTwist(int value);
 	void changeUpdateCheckEnabled(bool value);
 	void changeUseMipmaps(bool value);

@@ -27,11 +27,23 @@ WidgetTouchHandler::WidgetTouchHandler(QObject *parent)
 	CFG_BIND_SET(
 		cfg, OneFingerTap, this, WidgetTouchHandler::setOneFingerTapAction);
 	CFG_BIND_SET(
+		cfg, OneFingerTapTrigger, this,
+		WidgetTouchHandler::setOneFingerTapTrigger);
+	CFG_BIND_SET(
 		cfg, TwoFingerTap, this, WidgetTouchHandler::setTwoFingerTapAction);
+	CFG_BIND_SET(
+		cfg, TwoFingerTapTrigger, this,
+		WidgetTouchHandler::setTwoFingerTapTrigger);
 	CFG_BIND_SET(
 		cfg, ThreeFingerTap, this, WidgetTouchHandler::setThreeFingerTapAction);
 	CFG_BIND_SET(
+		cfg, ThreeFingerTapTrigger, this,
+		WidgetTouchHandler::setThreeFingerTapTrigger);
+	CFG_BIND_SET(
 		cfg, FourFingerTap, this, WidgetTouchHandler::setFourFingerTapAction);
+	CFG_BIND_SET(
+		cfg, FourFingerTapTrigger, this,
+		WidgetTouchHandler::setFourFingerTapTrigger);
 	CFG_BIND_SET(
 		cfg, OneFingerTapAndHold, this,
 		WidgetTouchHandler::setOneFingerTapAndHoldAction);

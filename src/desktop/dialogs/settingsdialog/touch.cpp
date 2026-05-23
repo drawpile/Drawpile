@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/touch.h"
+#include "desktop/dialogs/actionpickerdialog.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
+#include "libclient/utils/clickeventfilter.h"
+#include "libclient/utils/customshortcutmodel.h"
 #include "libclient/view/enums.h"
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -11,6 +14,7 @@
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -65,6 +69,85 @@ void Touch::addTouchPressureSettingTo(config::Config *cfg, QFormLayout *form)
 						"work for finger drawing!")));
 }
 
+Touch::TapActionWidget::TapActionWidget(
+	config::Config *cfg, const GetTriggerFn &getTrigger,
+	const SetTriggerFn &setTrigger, QWidget *parent)
+	: QWidget(parent)
+	, m_cfg(cfg)
+	, m_getTrigger(getTrigger)
+	, m_setTrigger(setTrigger)
+{
+	setContentsMargins(0, 0, 0, 0);
+
+	QHBoxLayout *widgetLayout = new QHBoxLayout(this);
+	widgetLayout->setContentsMargins(0, 0, 0, 0);
+	widgetLayout->setSpacing(0);
+
+	m_lineEdit = new QLineEdit;
+	m_lineEdit->setReadOnly(true);
+	m_lineEdit->setPlaceholderText(
+		QCoreApplication::translate(
+			"CanvasShortcutDialog", "Choose an action"));
+	widgetLayout->addWidget(m_lineEdit, 1);
+
+	m_changeButton = new QPushButton;
+	m_changeButton->setText(
+		QCoreApplication::translate(
+			"CanvasShortcutDialog", "Change\342\200\246"));
+	widgetLayout->addWidget(m_changeButton);
+
+	ClickEventFilter *triggerEditClickEventFilter = new ClickEventFilter(this);
+	m_lineEdit->installEventFilter(triggerEditClickEventFilter);
+	connect(
+		triggerEditClickEventFilter, &ClickEventFilter::clicked, this,
+		&TapActionWidget::changeTrigger);
+	connect(
+		m_changeButton, &QPushButton::clicked, this,
+		&TapActionWidget::changeTrigger);
+}
+
+void Touch::TapActionWidget::updateTapAction(int tapAction)
+{
+	setVisible(tapAction == int(view::TouchTapAction::TriggerAction));
+}
+
+void Touch::TapActionWidget::updateTriggerLabel(const QString &trigger)
+{
+	if(trigger.isEmpty()) {
+		m_lineEdit->clear();
+	} else {
+		m_lineEdit->setText(
+			CustomShortcutModel::getCustomizableActionTitle(trigger));
+	}
+}
+
+void Touch::TapActionWidget::changeTrigger()
+{
+	if(isEnabled()) {
+		QString objectName = QStringLiteral("actionpickerdialog");
+		ActionPickerDialog *dlg = findChild<ActionPickerDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+		if(dlg) {
+			dlg->activateWindow();
+			dlg->raise();
+		} else {
+			dlg = new ActionPickerDialog(this);
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			dlg->setObjectName(objectName);
+			dlg->setSelectedAction(m_getTrigger(m_cfg));
+			connect(
+				dlg, &ActionPickerDialog::actionSelected, this,
+				&TapActionWidget::setTriggerInConfig);
+			utils::showWindow(dlg);
+		}
+	}
+}
+
+void Touch::TapActionWidget::setTriggerInConfig(const QString &action)
+{
+	m_setTrigger(m_cfg, action);
+}
+
 void Touch::initMode(config::Config *cfg, QFormLayout *form)
 {
 	QButtonGroup *touchMode = utils::addRadioGroup(
@@ -79,38 +162,72 @@ void Touch::initMode(config::Config *cfg, QFormLayout *form)
 
 void Touch::initTapActions(config::Config *cfg, QFormLayout *form)
 {
-	QComboBox *oneFingerTap = new QComboBox;
-	QComboBox *twoFingerTap = new QComboBox;
-	QComboBox *threeFingerTap = new QComboBox;
-	QComboBox *fourFingerTap = new QComboBox;
-	for(QComboBox *tap :
-		{oneFingerTap, twoFingerTap, threeFingerTap, fourFingerTap}) {
-		tap->addItem(tr("No action"), int(view::TouchTapAction::Nothing));
-		tap->addItem(tr("Undo"), int(view::TouchTapAction::Undo));
-		tap->addItem(tr("Redo"), int(view::TouchTapAction::Redo));
-		tap->addItem(tr("Hide docks"), int(view::TouchTapAction::HideDocks));
-		tap->addItem(
-			tr("Toggle color picker"), int(view::TouchTapAction::ColorPicker));
-		tap->addItem(tr("Toggle eraser"), int(view::TouchTapAction::Eraser));
-		tap->addItem(
-			tr("Toggle erase mode"), int(view::TouchTapAction::EraseMode));
-		tap->addItem(
-			tr("Toggle recolor mode"), int(view::TouchTapAction::RecolorMode));
-	}
+	QComboBox *oneFingerTap = makeTapCombo();
+	QComboBox *twoFingerTap = makeTapCombo();
+	QComboBox *threeFingerTap = makeTapCombo();
+	QComboBox *fourFingerTap = makeTapCombo();
+
+	TapActionWidget *oneFingerTapWidget = new TapActionWidget(
+		cfg, &config::Config::getOneFingerTapTrigger,
+		&config::Config::setOneFingerTapTrigger);
+	TapActionWidget *twoFingerTapWidget = new TapActionWidget(
+		cfg, &config::Config::getTwoFingerTapTrigger,
+		&config::Config::setTwoFingerTapTrigger);
+	TapActionWidget *threeFingerTapWidget = new TapActionWidget(
+		cfg, &config::Config::getThreeFingerTapTrigger,
+		&config::Config::setThreeFingerTapTrigger);
+	TapActionWidget *fourFingerTapWidget = new TapActionWidget(
+		cfg, &config::Config::getFourFingerTapTrigger,
+		&config::Config::setFourFingerTapTrigger);
+
+	form->addRow(tr("One-finger tap:"), oneFingerTap);
+	form->addRow(nullptr, oneFingerTapWidget);
+	form->addRow(tr("Two-finger tap:"), twoFingerTap);
+	form->addRow(nullptr, twoFingerTapWidget);
+	form->addRow(tr("Three-finger tap:"), threeFingerTap);
+	form->addRow(nullptr, threeFingerTapWidget);
+	form->addRow(tr("Four-finger tap:"), fourFingerTap);
+	form->addRow(nullptr, fourFingerTapWidget);
 
 	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerTap, oneFingerTap);
 	CFG_BIND_COMBOBOX_USER_INT(cfg, TwoFingerTap, twoFingerTap);
 	CFG_BIND_COMBOBOX_USER_INT(cfg, ThreeFingerTap, threeFingerTap);
 	CFG_BIND_COMBOBOX_USER_INT(cfg, FourFingerTap, fourFingerTap);
 
-	CFG_BIND_SET(cfg, TouchGestures, twoFingerTap, QComboBox::setDisabled);
-	CFG_BIND_SET(cfg, TouchGestures, threeFingerTap, QComboBox::setDisabled);
-	CFG_BIND_SET(cfg, TouchGestures, fourFingerTap, QComboBox::setDisabled);
+	CFG_BIND_SET(
+		cfg, OneFingerTap, oneFingerTapWidget,
+		TapActionWidget::updateTapAction);
+	CFG_BIND_SET(
+		cfg, OneFingerTapTrigger, oneFingerTapWidget,
+		TapActionWidget::updateTriggerLabel);
+	CFG_BIND_SET(
+		cfg, TwoFingerTapTrigger, twoFingerTapWidget,
+		TapActionWidget::updateTriggerLabel);
+	CFG_BIND_SET(
+		cfg, TwoFingerTap, twoFingerTapWidget,
+		TapActionWidget::updateTapAction);
+	CFG_BIND_SET(
+		cfg, ThreeFingerTapTrigger, threeFingerTapWidget,
+		TapActionWidget::updateTriggerLabel);
+	CFG_BIND_SET(
+		cfg, ThreeFingerTap, threeFingerTapWidget,
+		TapActionWidget::updateTapAction);
+	CFG_BIND_SET(
+		cfg, FourFingerTapTrigger, fourFingerTapWidget,
+		TapActionWidget::updateTriggerLabel);
+	CFG_BIND_SET(
+		cfg, FourFingerTap, fourFingerTapWidget,
+		TapActionWidget::updateTapAction);
 
-	form->addRow(tr("One-finger tap:"), oneFingerTap);
-	form->addRow(tr("Two-finger tap:"), twoFingerTap);
-	form->addRow(tr("Three-finger tap:"), threeFingerTap);
-	form->addRow(tr("Four-finger tap:"), fourFingerTap);
+	CFG_BIND_SET(cfg, TouchGestures, twoFingerTap, QComboBox::setDisabled);
+	CFG_BIND_SET(
+		cfg, TouchGestures, twoFingerTapWidget, TapActionWidget::setDisabled);
+	CFG_BIND_SET(cfg, TouchGestures, threeFingerTap, QComboBox::setDisabled);
+	CFG_BIND_SET(
+		cfg, TouchGestures, threeFingerTapWidget, TapActionWidget::setDisabled);
+	CFG_BIND_SET(cfg, TouchGestures, fourFingerTap, QComboBox::setDisabled);
+	CFG_BIND_SET(
+		cfg, TouchGestures, fourFingerTapWidget, TapActionWidget::setDisabled);
 }
 
 void Touch::initTapAndHoldActions(config::Config *cfg, QFormLayout *form)
@@ -196,6 +313,24 @@ void Touch::initTouchActions(config::Config *cfg, QFormLayout *form)
 	disableKineticScrollingOnWidget(touchSmoothing);
 	CFG_BIND_SLIDERSPINBOX(cfg, TouchSmoothing, touchSmoothing);
 	form->addRow(nullptr, touchSmoothing);
+}
+
+QComboBox *Touch::makeTapCombo()
+{
+	QComboBox *tap = new QComboBox;
+	tap->addItem(tr("Do nothing"), int(view::TouchTapAction::Nothing));
+	tap->addItem(tr("Undo"), int(view::TouchTapAction::Undo));
+	tap->addItem(tr("Redo"), int(view::TouchTapAction::Redo));
+	tap->addItem(tr("Hide docks"), int(view::TouchTapAction::HideDocks));
+	tap->addItem(
+		tr("Toggle color picker"), int(view::TouchTapAction::ColorPicker));
+	tap->addItem(tr("Toggle eraser"), int(view::TouchTapAction::Eraser));
+	tap->addItem(tr("Toggle erase mode"), int(view::TouchTapAction::EraseMode));
+	tap->addItem(
+		tr("Toggle recolor mode"), int(view::TouchTapAction::RecolorMode));
+	tap->addItem(
+		tr("Trigger action"), int(view::TouchTapAction::TriggerAction));
+	return tap;
 }
 
 }

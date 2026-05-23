@@ -471,6 +471,11 @@ int Config::defaultFourFingerTap()
 	return int(view::TouchTapAction::HideDocks);
 }
 
+QString Config::defaultFourFingerTapTrigger()
+{
+	return QString();
+}
+
 QString Config::defaultGlobalPressureCurve()
 {
 	return tools::ToolController::globalPressureCurveDefault;
@@ -935,6 +940,11 @@ int Config::defaultOneFingerTapAndHold()
 	return int(view::TouchTapAndHoldAction::ColorPickMode);
 }
 
+QString Config::defaultOneFingerTapTrigger()
+{
+	return QString();
+}
+
 int Config::defaultOneFingerTouch()
 {
 	return int(ONE_FINGER_TOUCH_DEFAULT);
@@ -1196,6 +1206,11 @@ int Config::defaultThreeFingerTap()
 	return int(view::TouchTapAction::Redo);
 }
 
+QString Config::defaultThreeFingerTapTrigger()
+{
+	return QString();
+}
+
 QColor Config::defaultTimelapseBackdropColor()
 {
 	return QColor(Qt::transparent);
@@ -1339,6 +1354,11 @@ int Config::defaultTwoFingerPinch()
 int Config::defaultTwoFingerTap()
 {
 	return int(view::TouchTapAction::Undo);
+}
+
+QString Config::defaultTwoFingerTapTrigger()
+{
+	return QString();
 }
 
 int Config::defaultTwoFingerTwist()

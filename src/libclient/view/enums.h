@@ -95,6 +95,7 @@ enum class TouchTapAction : int {
 	Eraser,
 	EraseMode,
 	RecolorMode,
+	TriggerAction,
 };
 Q_ENUM_NS(TouchTapAction)
 

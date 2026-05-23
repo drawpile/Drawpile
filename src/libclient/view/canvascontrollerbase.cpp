@@ -1269,6 +1269,10 @@ void CanvasControllerBase::init()
 		touch, &TouchHandler::touchTapActionActivated, this,
 		&CanvasControllerBase::touchTapActionActivated, Qt::DirectConnection);
 	connect(
+		touch, &TouchHandler::touchTapTriggerActivated, this,
+		&CanvasControllerBase::canvasShortcutActionActivated,
+		Qt::DirectConnection);
+	connect(
 		touch, &TouchHandler::touchColorPicked, this,
 		&CanvasControllerBase::touchColorPick, Qt::DirectConnection);
 	connect(

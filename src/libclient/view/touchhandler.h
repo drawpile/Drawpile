@@ -47,6 +47,7 @@ signals:
 	void touchScrolledBy(qreal dx, qreal dy);
 	void touchZoomedRotated(qreal zoom, qreal rotation);
 	void touchTapActionActivated(int action);
+	void touchTapTriggerActivated(const QString &trigger);
 	void touchColorPicked(const QPointF &posf);
 	void touchColorPickFinished();
 
@@ -56,9 +57,13 @@ protected:
 	void setTwoFingerPinchAction(int twoFingerPinchAction);
 	void setTwoFingerTwistAction(int twoFingerTwistAction);
 	void setOneFingerTapAction(int oneFingerTapAction);
+	void setOneFingerTapTrigger(const QString &oneFingerTapTrigger);
 	void setTwoFingerTapAction(int twoFingerTapAction);
+	void setTwoFingerTapTrigger(const QString &twoFingerTapTrigger);
 	void setThreeFingerTapAction(int threeFingerTapAction);
+	void setThreeFingerTapTrigger(const QString &threeFingerTapTrigger);
 	void setFourFingerTapAction(int fourFingerTapAction);
+	void setFourFingerTapTrigger(const QString &fourFingerTapTrigger);
 	void setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction);
 	void setSmoothing(int smoothing);
 
@@ -67,10 +72,25 @@ protected:
 	void zoomRotate(qreal zoom, qreal rotation);
 	qreal adjustTwistRotation(qreal degrees) const;
 
-	void emitOneFingerTapAction() { emitTapAction(m_oneFingerTapAction); }
-	void emitTwoFingerTapAction() { emitTapAction(m_twoFingerTapAction); }
-	void emitThreeFingerTapAction() { emitTapAction(m_threeFingerTapAction); }
-	void emitFourFingerTapAction() { emitTapAction(m_fourFingerTapAction); }
+	void emitOneFingerTapAction()
+	{
+		emitTapAction(m_oneFingerTapAction, m_oneFingerTapTrigger);
+	}
+
+	void emitTwoFingerTapAction()
+	{
+		emitTapAction(m_twoFingerTapAction, m_twoFingerTapTrigger);
+	}
+
+	void emitThreeFingerTapAction()
+	{
+		emitTapAction(m_threeFingerTapAction, m_threeFingerTapTrigger);
+	}
+
+	void emitFourFingerTapAction()
+	{
+		emitTapAction(m_fourFingerTapAction, m_fourFingerTapTrigger);
+	}
 
 private:
 	static constexpr qreal TAP_SLOP_SQUARED = 16.0 * 16.0;
@@ -142,7 +162,7 @@ private:
 	void triggerTapAndHold();
 
 	void flushTouchDrawBuffer();
-	void emitTapAction(int action);
+	void emitTapAction(int action, const QString &trigger);
 
 	static bool shouldExecuteTap(bool cancel, int lastTouchPoints);
 
@@ -164,6 +184,10 @@ private:
 	int m_oneFingerTapAndHoldAction;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<TouchDrawPoint> m_touchDrawBuffer;
+	QString m_oneFingerTapTrigger;
+	QString m_twoFingerTapTrigger;
+	QString m_threeFingerTapTrigger;
+	QString m_fourFingerTapTrigger;
 	TouchState m_touchState;
 	QPoint m_touchGlobalPos;
 	qreal m_touchStartZoom = 0.0;

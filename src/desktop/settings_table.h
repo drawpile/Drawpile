@@ -231,6 +231,10 @@ SETTING(
 	fourFingerTap, FourFingerTap, "settings/input/fourfingertap",
 	config::Config::defaultFourFingerTap())
 SETTING(
+	fourFingerTapTrigger, FourFingerTapTrigger,
+	"settings/input/fourfingertaptrigger",
+	config::Config::defaultFourFingerTapTrigger())
+SETTING(
 	globalPressureCurve, GlobalPressureCurve, "settings/input/globalcurve",
 	config::Config::defaultGlobalPressureCurve())
 SETTING(
@@ -494,6 +498,10 @@ SETTING(
 	oneFingerTapAndHold, OneFingerTapAndHold,
 	"settings/input/onefingertapandhold",
 	config::Config::defaultOneFingerTapAndHold())
+SETTING(
+	oneFingerTapTrigger, OneFingerTapTrigger,
+	"settings/input/onefingertaptrigger",
+	config::Config::defaultOneFingerTapTrigger())
 SETTING_GETSET(
 	oneFingerTouch, OneFingerTouch, "settings/input/onefingertouch",
 	config::Config::defaultOneFingerTouch(), &oneFingerTouch::get, &any::set)
@@ -616,6 +624,10 @@ SETTING(
 	threeFingerTap, ThreeFingerTap, "settings/input/threefingertap",
 	config::Config::defaultThreeFingerTap())
 SETTING(
+	threeFingerTapTrigger, ThreeFingerTapTrigger,
+	"settings/input/threefingertaptrigger",
+	config::Config::defaultThreeFingerTapTrigger())
+SETTING(
 	timelapseBackdropColor, TimelapseBackdropColor, "timelapse/backdropcolor",
 	config::Config::defaultTimelapseBackdropColor())
 SETTING(
@@ -707,6 +719,10 @@ SETTING_GETSET(
 SETTING(
 	twoFingerTap, TwoFingerTap, "settings/input/twofingertap",
 	config::Config::defaultTwoFingerTap())
+SETTING(
+	twoFingerTapTrigger, TwoFingerTapTrigger,
+	"settings/input/twofingertaptrigger",
+	config::Config::defaultTwoFingerTapTrigger())
 SETTING_GETSET(
 	twoFingerTwist, TwoFingerTwist, "settings/input/twofingertwist",
 	config::Config::defaultTwoFingerTwist(), &twoFingerTwist::get, &any::set)

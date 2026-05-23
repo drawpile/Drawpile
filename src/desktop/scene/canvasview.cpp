@@ -304,6 +304,9 @@ CanvasView::CanvasView(QWidget *parent)
 		m_touch, &view::WidgetTouchHandler::touchTapActionActivated, this,
 		&CanvasView::touchTapActionActivated, Qt::DirectConnection);
 	connect(
+		m_touch, &view::WidgetTouchHandler::touchTapTriggerActivated, this,
+		&CanvasView::canvasShortcutActionActivated, Qt::DirectConnection);
+	connect(
 		m_touch, &view::WidgetTouchHandler::touchColorPicked, this,
 		&CanvasView::touchColorPick, Qt::DirectConnection);
 	connect(

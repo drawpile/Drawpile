@@ -275,6 +275,9 @@ public:
 	int getFourFingerTap() const override;
 	void setFourFingerTap(int value) override;
 
+	QString getFourFingerTapTrigger() const override;
+	void setFourFingerTapTrigger(const QString &value) override;
+
 	QString getGlobalPressureCurve() const override;
 	void setGlobalPressureCurve(const QString &value) override;
 
@@ -547,6 +550,9 @@ public:
 	int getOneFingerTapAndHold() const override;
 	void setOneFingerTapAndHold(int value) override;
 
+	QString getOneFingerTapTrigger() const override;
+	void setOneFingerTapTrigger(const QString &value) override;
+
 	int getOneFingerTouch() const override;
 	void setOneFingerTouch(int value) override;
 
@@ -702,6 +708,9 @@ public:
 	int getThreeFingerTap() const override;
 	void setThreeFingerTap(int value) override;
 
+	QString getThreeFingerTapTrigger() const override;
+	void setThreeFingerTapTrigger(const QString &value) override;
+
 	QColor getTimelapseBackdropColor() const override;
 	void setTimelapseBackdropColor(const QColor &value) override;
 
@@ -788,6 +797,9 @@ public:
 
 	int getTwoFingerTap() const override;
 	void setTwoFingerTap(int value) override;
+
+	QString getTwoFingerTapTrigger() const override;
+	void setTwoFingerTapTrigger(const QString &value) override;
 
 	int getTwoFingerTwist() const override;
 	void setTwoFingerTwist(int value) override;
@@ -932,6 +944,7 @@ private:
 	QRect m_flipbookWindow = defaultFlipbookWindow();
 	int m_fontSize = defaultFontSize();
 	int m_fourFingerTap = defaultFourFingerTap();
+	QString m_fourFingerTapTrigger = defaultFourFingerTapTrigger();
 	QString m_globalPressureCurve = defaultGlobalPressureCurve();
 	QString m_globalPressureCurveEraser = defaultGlobalPressureCurveEraser();
 	int m_globalPressureCurveMode = defaultGlobalPressureCurveMode();
@@ -1024,6 +1037,7 @@ private:
 	bool m_notifSoundUnlock = defaultNotifSoundUnlock();
 	int m_oneFingerTap = defaultOneFingerTap();
 	int m_oneFingerTapAndHold = defaultOneFingerTapAndHold();
+	QString m_oneFingerTapTrigger = defaultOneFingerTapTrigger();
 	int m_oneFingerTouch = defaultOneFingerTouch();
 	int m_onionSkinsFrameCount = defaultOnionSkinsFrameCount();
 	QMap<int, int> m_onionSkinsFrames = defaultOnionSkinsFrames();
@@ -1077,6 +1091,7 @@ private:
 	QString m_themePalette = defaultThemePalette();
 	QString m_themeStyle = defaultThemeStyle();
 	int m_threeFingerTap = defaultThreeFingerTap();
+	QString m_threeFingerTapTrigger = defaultThreeFingerTapTrigger();
 	QColor m_timelapseBackdropColor = defaultTimelapseBackdropColor();
 	int m_timelapseDurationSeconds = defaultTimelapseDurationSeconds();
 	int m_timelapseExportFormat = defaultTimelapseExportFormat();
@@ -1106,6 +1121,7 @@ private:
 	int m_touchSmoothing = defaultTouchSmoothing();
 	int m_twoFingerPinch = defaultTwoFingerPinch();
 	int m_twoFingerTap = defaultTwoFingerTap();
+	QString m_twoFingerTapTrigger = defaultTwoFingerTapTrigger();
 	int m_twoFingerTwist = defaultTwoFingerTwist();
 	bool m_updateCheckEnabled = defaultUpdateCheckEnabled();
 	bool m_useMipmaps = defaultUseMipmaps();
