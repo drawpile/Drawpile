@@ -961,6 +961,14 @@ public:
 	virtual void setNotifSoundUnlock(bool value) = 0;
 	static bool defaultNotifSoundUnlock();
 
+	virtual int getOneFingerDoubleTap() const = 0;
+	virtual void setOneFingerDoubleTap(int value) = 0;
+	static int defaultOneFingerDoubleTap();
+
+	virtual QString getOneFingerDoubleTapTrigger() const = 0;
+	virtual void setOneFingerDoubleTapTrigger(const QString &value) = 0;
+	static QString defaultOneFingerDoubleTapTrigger();
+
 	virtual int getOneFingerTap() const = 0;
 	virtual void setOneFingerTap(int value) = 0;
 	static int defaultOneFingerTap();
@@ -1545,6 +1553,8 @@ Q_SIGNALS:
 	void changeNotifSoundLogout(bool value);
 	void changeNotifSoundPrivateChat(bool value);
 	void changeNotifSoundUnlock(bool value);
+	void changeOneFingerDoubleTap(int value);
+	void changeOneFingerDoubleTapTrigger(const QString &value);
 	void changeOneFingerTap(int value);
 	void changeOneFingerTapAndHold(int value);
 	void changeOneFingerTapTrigger(const QString &value);

@@ -47,6 +47,12 @@ WidgetTouchHandler::WidgetTouchHandler(QObject *parent)
 	CFG_BIND_SET(
 		cfg, OneFingerTapAndHold, this,
 		WidgetTouchHandler::setOneFingerTapAndHoldAction);
+	CFG_BIND_SET(
+		cfg, OneFingerDoubleTap, this,
+		WidgetTouchHandler::setOneFingerDoubleTapAction);
+	CFG_BIND_SET(
+		cfg, OneFingerDoubleTapTrigger, this,
+		WidgetTouchHandler::setOneFingerDoubleTapTrigger);
 	CFG_BIND_SET(cfg, TouchSmoothing, this, WidgetTouchHandler::setSmoothing);
 }
 
@@ -61,7 +67,7 @@ void WidgetTouchHandler::handleGesture(
 			"tap state=0x%x touching=%d", unsigned(tapState),
 			int(isTouching()));
 		if(tapState == Qt::GestureFinished) {
-			emitOneFingerTapAction();
+			handleOneFingerTap();
 		}
 	}
 
@@ -145,6 +151,10 @@ void WidgetTouchHandler::handleGesture(
 		default:
 			break;
 		}
+	}
+
+	if(!tap && (pinch || pan)) {
+		flushBufferedOneFingerSingleTap();
 	}
 }
 

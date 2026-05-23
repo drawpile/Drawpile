@@ -492,6 +492,13 @@ SETTING(
 	notifSoundUnlock, NotifSoundUnlock, "notifications/unlock",
 	config::Config::defaultNotifSoundUnlock())
 SETTING(
+	oneFingerDoubleTap, OneFingerDoubleTap, "settings/input/onefingerdoubletap",
+	config::Config::defaultOneFingerDoubleTap())
+SETTING(
+	oneFingerDoubleTapTrigger, OneFingerDoubleTapTrigger,
+	"settings/input/onefingerdoubletaptrigger",
+	config::Config::defaultOneFingerDoubleTapTrigger())
+SETTING(
 	oneFingerTap, OneFingerTap, "settings/input/onefingertap",
 	config::Config::defaultOneFingerTap())
 SETTING(

@@ -1192,6 +1192,18 @@ settings:
     qsettings: 'notifications/unlock'
     legacy_package: 'desktop'
 
+  - id: oneFingerDoubleTap
+    type: 'int'
+    default: 'int(view::TouchTapAction::Nothing)'
+    qsettings: 'settings/input/onefingerdoubletap'
+    legacy_package: 'desktop'
+
+  - id: oneFingerDoubleTapTrigger
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/input/onefingerdoubletaptrigger'
+    legacy_package: 'desktop'
+
   - id: oneFingerTap
     type: 'int'
     default: 'int(view::TouchTapAction::Nothing)'

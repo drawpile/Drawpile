@@ -54,7 +54,7 @@ void Touch::setUp(config::Config *cfg, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 	initTapActions(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initTapAndHoldActions(cfg, utils::addFormSection(layout));
+	initTapExtraActions(cfg, utils::addFormSection(layout));
 }
 
 void Touch::addTouchPressureSettingTo(config::Config *cfg, QFormLayout *form)
@@ -230,7 +230,7 @@ void Touch::initTapActions(config::Config *cfg, QFormLayout *form)
 		cfg, TouchGestures, fourFingerTapWidget, TapActionWidget::setDisabled);
 }
 
-void Touch::initTapAndHoldActions(config::Config *cfg, QFormLayout *form)
+void Touch::initTapExtraActions(config::Config *cfg, QFormLayout *form)
 {
 	QComboBox *oneFingerTapAndHold = new QComboBox;
 	for(QComboBox *tapAndHold : {oneFingerTapAndHold}) {
@@ -242,10 +242,26 @@ void Touch::initTapAndHoldActions(config::Config *cfg, QFormLayout *form)
 
 	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerTapAndHold, oneFingerTapAndHold);
 
+	form->addRow(tr("One-finger tap and hold:"), oneFingerTapAndHold);
+
+	QComboBox *oneFingerDoubleTap = makeTapCombo();
+	TapActionWidget *oneFingerDoubleTapWidget = new TapActionWidget(
+		cfg, &config::Config::getOneFingerDoubleTapTrigger,
+		&config::Config::setOneFingerDoubleTapTrigger);
+
+	form->addRow(tr("One-finger double-tap:"), oneFingerDoubleTap);
+	form->addRow(nullptr, oneFingerDoubleTapWidget);
+
+	CFG_BIND_COMBOBOX_USER_INT(cfg, OneFingerDoubleTap, oneFingerDoubleTap);
+	CFG_BIND_SET(
+		cfg, OneFingerDoubleTap, oneFingerDoubleTapWidget,
+		TapActionWidget::updateTapAction);
+	CFG_BIND_SET(
+		cfg, OneFingerDoubleTapTrigger, oneFingerDoubleTapWidget,
+		TapActionWidget::updateTriggerLabel);
+
 	CFG_BIND_SET(
 		cfg, TouchGestures, oneFingerTapAndHold, QComboBox::setDisabled);
-
-	form->addRow(tr("One-finger tap and hold:"), oneFingerTapAndHold);
 }
 
 void Touch::initTouchActions(config::Config *cfg, QFormLayout *form)

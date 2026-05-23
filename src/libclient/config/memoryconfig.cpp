@@ -2244,6 +2244,32 @@ void MemoryConfig::setNotifSoundUnlock(bool value)
 	}
 }
 
+int MemoryConfig::getOneFingerDoubleTap() const
+{
+	return m_oneFingerDoubleTap;
+}
+
+void MemoryConfig::setOneFingerDoubleTap(int value)
+{
+	if(value != m_oneFingerDoubleTap) {
+		m_oneFingerDoubleTap = value;
+		Q_EMIT changeOneFingerDoubleTap(m_oneFingerDoubleTap);
+	}
+}
+
+QString MemoryConfig::getOneFingerDoubleTapTrigger() const
+{
+	return m_oneFingerDoubleTapTrigger;
+}
+
+void MemoryConfig::setOneFingerDoubleTapTrigger(const QString &value)
+{
+	if(value != m_oneFingerDoubleTapTrigger) {
+		m_oneFingerDoubleTapTrigger = value;
+		Q_EMIT changeOneFingerDoubleTapTrigger(m_oneFingerDoubleTapTrigger);
+	}
+}
+
 int MemoryConfig::getOneFingerTap() const
 {
 	return m_oneFingerTap;

@@ -544,6 +544,12 @@ public:
 	bool getNotifSoundUnlock() const override;
 	void setNotifSoundUnlock(bool value) override;
 
+	int getOneFingerDoubleTap() const override;
+	void setOneFingerDoubleTap(int value) override;
+
+	QString getOneFingerDoubleTapTrigger() const override;
+	void setOneFingerDoubleTapTrigger(const QString &value) override;
+
 	int getOneFingerTap() const override;
 	void setOneFingerTap(int value) override;
 
@@ -1035,6 +1041,8 @@ private:
 	bool m_notifSoundLogout = defaultNotifSoundLogout();
 	bool m_notifSoundPrivateChat = defaultNotifSoundPrivateChat();
 	bool m_notifSoundUnlock = defaultNotifSoundUnlock();
+	int m_oneFingerDoubleTap = defaultOneFingerDoubleTap();
+	QString m_oneFingerDoubleTapTrigger = defaultOneFingerDoubleTapTrigger();
 	int m_oneFingerTap = defaultOneFingerTap();
 	int m_oneFingerTapAndHold = defaultOneFingerTapAndHold();
 	QString m_oneFingerTapTrigger = defaultOneFingerTapTrigger();

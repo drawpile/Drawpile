@@ -930,6 +930,16 @@ bool Config::defaultNotifSoundUnlock()
 	return true;
 }
 
+int Config::defaultOneFingerDoubleTap()
+{
+	return int(view::TouchTapAction::Nothing);
+}
+
+QString Config::defaultOneFingerDoubleTapTrigger()
+{
+	return QString();
+}
+
 int Config::defaultOneFingerTap()
 {
 	return int(view::TouchTapAction::Nothing);

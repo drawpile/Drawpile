@@ -59,7 +59,7 @@ private:
 
 	void initTapActions(config::Config *cfg, QFormLayout *form);
 
-	void initTapAndHoldActions(config::Config *cfg, QFormLayout *form);
+	void initTapExtraActions(config::Config *cfg, QFormLayout *form);
 
 	void initTouchActions(config::Config *cfg, QFormLayout *form);
 

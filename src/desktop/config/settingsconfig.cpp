@@ -612,6 +612,13 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::notifSoundUnlockChanged, this,
 		&SettingsConfig::changeNotifSoundUnlock, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::oneFingerDoubleTapChanged,
+		this, &SettingsConfig::changeOneFingerDoubleTap, Qt::DirectConnection);
+	connect(
+		m_settings,
+		&desktop::settings::Settings::oneFingerDoubleTapTriggerChanged, this,
+		&SettingsConfig::changeOneFingerDoubleTapTrigger, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::oneFingerTapChanged, this,
 		&SettingsConfig::changeOneFingerTap, Qt::DirectConnection);
 	connect(
@@ -2683,6 +2690,26 @@ bool SettingsConfig::getNotifSoundUnlock() const
 void SettingsConfig::setNotifSoundUnlock(bool value)
 {
 	m_settings->setNotifSoundUnlock(value);
+}
+
+int SettingsConfig::getOneFingerDoubleTap() const
+{
+	return m_settings->oneFingerDoubleTap();
+}
+
+void SettingsConfig::setOneFingerDoubleTap(int value)
+{
+	m_settings->setOneFingerDoubleTap(value);
+}
+
+QString SettingsConfig::getOneFingerDoubleTapTrigger() const
+{
+	return m_settings->oneFingerDoubleTapTrigger();
+}
+
+void SettingsConfig::setOneFingerDoubleTapTrigger(const QString &value)
+{
+	m_settings->setOneFingerDoubleTapTrigger(value);
 }
 
 int SettingsConfig::getOneFingerTap() const

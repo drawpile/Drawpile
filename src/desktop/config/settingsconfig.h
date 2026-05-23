@@ -551,6 +551,12 @@ public:
 	bool getNotifSoundUnlock() const override;
 	void setNotifSoundUnlock(bool value) override;
 
+	int getOneFingerDoubleTap() const override;
+	void setOneFingerDoubleTap(int value) override;
+
+	QString getOneFingerDoubleTapTrigger() const override;
+	void setOneFingerDoubleTapTrigger(const QString &value) override;
+
 	int getOneFingerTap() const override;
 	void setOneFingerTap(int value) override;
 
