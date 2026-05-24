@@ -906,7 +906,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengguna2</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -916,12 +916,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Pemilik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>Umur</translation>
     </message>
     <message>
         <location line="+169"/>
@@ -936,7 +936,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>tutup</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -954,7 +954,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+44"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Biasa</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -964,7 +964,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Belakang</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -989,12 +989,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation>Berganda</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Skreen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1089,7 +1089,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-108"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lebih gelap</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1104,7 +1104,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-114"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Padamkan</translation>
     </message>
     <message>
         <location line="+6"/>
