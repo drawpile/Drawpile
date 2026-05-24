@@ -11,12 +11,12 @@
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Naik</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Turun</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -39,7 +39,7 @@
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>Alasan:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontot:</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Tmbh Server</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -103,7 +103,7 @@
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Saiz: </translation>
     </message>
     <message>
         <location line="-13"/>
@@ -192,7 +192,7 @@
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Jenis</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -237,12 +237,12 @@
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Org:</translation>
     </message>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>SHA1:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -257,7 +257,7 @@
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>MD5:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -307,7 +307,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih warna</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -322,12 +322,12 @@
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Biru</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -337,7 +337,7 @@
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Hijau</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -347,7 +347,7 @@
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Merah</translation>
     </message>
 </context>
 <context>
@@ -355,12 +355,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama:</translation>
     </message>
 </context>
 <context>
@@ -378,7 +378,7 @@
     <message>
         <location line="-135"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -403,7 +403,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selurh Fail2 diskng (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
