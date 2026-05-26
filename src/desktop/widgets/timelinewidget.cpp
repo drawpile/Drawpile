@@ -42,15 +42,7 @@ enum class TrackAction { None, ToggleVisible, ToggleOnionSkin, ToggleMoveLock };
 enum class TargetHeader { None, Header, RangeFirst, RangeLast };
 enum class TargetSide { None, Left, Right };
 
-struct TimelineWidget::Target {
-	int uiTrackIndex = -1;
-	int trackId = 0;
-	int frameIndex = -1;
-	int rawFrameIndex = -1;
-	TargetHeader header = TargetHeader::None;
-	TrackAction action = TrackAction::None;
-	TargetSide side = TargetSide::None;
-};
+namespace {
 
 struct Exposure {
 	int start;
@@ -154,6 +146,18 @@ struct ExposureToolState {
 			offset = minOffset;
 		}
 	}
+};
+
+}
+
+struct TimelineWidget::Target {
+	int uiTrackIndex = -1;
+	int trackId = 0;
+	int frameIndex = -1;
+	int rawFrameIndex = -1;
+	TargetHeader header = TargetHeader::None;
+	TrackAction action = TrackAction::None;
+	TargetSide side = TargetSide::None;
 };
 
 struct TimelineWidget::Private {
