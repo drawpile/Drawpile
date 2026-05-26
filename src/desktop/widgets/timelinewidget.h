@@ -2,6 +2,9 @@
 #ifndef TIMELINEWIDGET_H
 #define TIMELINEWIDGET_H
 #include <QColor>
+#include <QItemSelectionModel>
+#include <QModelIndex>
+#include <QVector>
 #include <QWidget>
 #include <functional>
 
@@ -28,6 +31,7 @@ public:
 	struct Actions {
 		QActionGroup *timelineToolGroup = nullptr;
 		QAction *timelineToolNormal = nullptr;
+		QAction *timelineToolSelect = nullptr;
 		QAction *timelineToolExposure = nullptr;
 		QAction *timelineZoomIn = nullptr;
 		QAction *timelineZoomOut = nullptr;
@@ -74,6 +78,11 @@ public:
 		QMenu *animationDuplicateMenu = nullptr;
 	};
 
+	struct SelectedFrame {
+		int trackId;
+		int frameIndex;
+	};
+
 	explicit TimelineWidget(QWidget *parent = nullptr);
 	~TimelineWidget() override;
 
@@ -93,6 +102,9 @@ public:
 	int frameCount() const;
 	int currentTrackId() const;
 	int currentFrame() const;
+
+	// Used in the layer list dock to create layers.
+	QVector<SelectedFrame> selectedNonKeyFrames() const;
 
 	int columnWidth() const;
 	void setColumnWidth(int columnWidth);
@@ -127,7 +139,7 @@ protected:
 	void leaveEvent(QEvent *event) override;
 
 private:
-	static constexpr char KEY_FRAME_MIME_TYPE[] = "x-drawpile/keyframe";
+	static constexpr char KEY_FRAMES_MIME_TYPE[] = "x-drawpile/keyframes";
 	static constexpr int TRACK_PADDING = 4;
 	static constexpr int ICON_SIZE = 16;
 	static constexpr int EXTRA_FRAME_COUNT = 101;
@@ -135,19 +147,49 @@ private:
 
 	enum class Drag { None, Track, KeyFrame };
 
-	void setKeyFrameLayer();
-	void setKeyFrameEmpty();
-	void cutKeyFrame();
-	void copyKeyFrame();
-	void pasteKeyFrame();
-	void setKeyFrameColor(QAction *action);
+	enum class SelectionAction {
+		Retain,
+		Replace,
+		ReplaceIfNotSelected,
+		ReplaceMove,
+		ToggleIfNotSelected,
+		SelectCurrentRange,
+		SelectRange,
+		DeselectRange,
+	};
+
+	enum class PendingSelectionAction {
+		None,
+		Replace,
+		Deselect,
+	};
+
+	struct SetCurrentResult {
+		QModelIndex idx;
+		bool wasSelected;
+	};
+
+	struct KeyFrameDrag {
+		int fromTrackId;
+		int fromFrameIndex;
+		int toTrackId;
+		int toTrackIndex;
+		int toFrameIndex;
+	};
+
+	void setKeyFramesLayer();
+	void setKeyFramesEmpty();
+	void cutKeyFrames();
+	void copyKeyFrames();
+	void pasteKeyFrames();
+	void setKeyFramesColor(QAction *action);
 	void showKeyFrameProperties();
 	void keyFramePropertiesChanged(
 		int trackId, int frame, const QColor &color, const QString &title,
 		const QHash<int, bool> &layerVisibility);
-	void deleteKeyFrameWith(bool deleteUnusedLayer);
-	void deleteKeyFrameLayer();
-	void unassignKeyFrame();
+	void deleteKeyFramesWith(bool deleteUnusedLayers);
+	void deleteKeyFramesLayers();
+	void unassignKeyFrames();
 	void increaseKeyFrameExposure();
 	void increaseKeyFrameExposureAll();
 	void decreaseKeyFrameExposure();
@@ -166,10 +208,14 @@ private:
 	void prevFrame();
 	void nextFrameClamp();
 	void prevFrameClamp();
+	void nextFrameWith(bool clamp, bool select);
+	void prevFrameWith(bool clamp, bool select);
 	void nextKeyFrame();
 	void prevKeyFrame();
 	void trackAbove();
 	void trackBelow();
+	void trackAboveWith(bool select);
+	void trackBelowWith(bool select);
 	void switchTool(QAction *action);
 	void updateTracks();
 	void updateFrameCount();
@@ -184,11 +230,21 @@ private:
 	void resetZoom();
 	void zoomBy(int delta);
 	void setZoomAdjust(int zoomAdjust);
+	void onSelectionChanged();
 
-	void
-	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
+	SetCurrentResult setCurrent(
+		int trackId, int frame, bool triggerUpdate, bool selectLayer,
+		SelectionAction selectionAction);
 
-	void setKeyFrame(int layerId);
+	QItemSelectionModel::SelectionFlags setCurrentSelectRange(
+		const QModelIndex &idx,
+		QItemSelectionModel::SelectionFlags rangeSelectionFlags);
+
+	bool setCurrentCheckPending(const QModelIndex &idx);
+
+	void executePendingSelectionAction();
+
+	void setKeyFrames(int layerId);
 	void setKeyFrameProperties(
 		int trackId, int frame, const QString &prevTitle,
 		const QHash<int, bool> prevLayerVisibility, const QString &title,
@@ -204,6 +260,9 @@ private:
 	void updateActions();
 	void updateScrollbars();
 	void startFrameViewRequestTimer();
+
+	bool checkKeyFrameDrag(const QDropEvent *event, bool updateSelection);
+	void shiftSelectionBy(int deltaTrackIndex, int deltaFrameIndex);
 
 	struct Target;
 	Target getMouseTarget(const QPoint &pos) const;

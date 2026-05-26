@@ -23,9 +23,7 @@ TimelineKeyFrame::makeTitleWithColor(const QString &title, const QColor &color)
 }
 
 TimelineModel::TimelineModel(CanvasModel *canvas)
-	: QObject{canvas}
-	, m_tracks{}
-	, m_aclState{nullptr}
+	: QObject(canvas)
 {
 }
 
@@ -167,6 +165,80 @@ TimelineModel::keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex)
 	}
 
 	return tkf;
+}
+
+
+TimelineItemModel::TimelineItemModel(QObject *parent)
+	: QAbstractItemModel(parent)
+{
+}
+
+void TimelineItemModel::setTrackCount(int trackCount)
+{
+	if(m_trackCount < trackCount) {
+		beginInsertRows(QModelIndex(), m_trackCount, trackCount - 1);
+		m_trackCount = trackCount;
+		endInsertRows();
+	} else if(m_trackCount > trackCount) {
+		beginRemoveRows(QModelIndex(), trackCount, m_trackCount - 1);
+		m_trackCount = trackCount;
+		endRemoveRows();
+	}
+}
+
+void TimelineItemModel::setFrameCount(int frameCount)
+{
+	if(m_frameCount < frameCount) {
+		beginInsertColumns(QModelIndex(), m_trackCount, frameCount - 1);
+		m_frameCount = frameCount;
+		endInsertColumns();
+	} else if(m_frameCount > frameCount) {
+		beginRemoveColumns(QModelIndex(), frameCount, m_frameCount - 1);
+		m_frameCount = frameCount;
+		endRemoveColumns();
+	}
+}
+
+QModelIndex
+TimelineItemModel::index(int row, int column, const QModelIndex &parent) const
+{
+	if(parent.isValid() || row < 0 || row >= m_trackCount || column < 0 ||
+	   column >= m_frameCount) {
+		return QModelIndex();
+	} else {
+		return createIndex(row, column);
+	}
+}
+
+QModelIndex TimelineItemModel::parent(const QModelIndex &child) const
+{
+	Q_UNUSED(child);
+	return QModelIndex();
+}
+
+int TimelineItemModel::rowCount(const QModelIndex &parent) const
+{
+	if(parent.isValid()) {
+		return 0;
+	} else {
+		return m_trackCount;
+	}
+}
+
+int TimelineItemModel::columnCount(const QModelIndex &parent) const
+{
+	if(parent.isValid()) {
+		return 0;
+	} else {
+		return m_frameCount;
+	}
+}
+
+QVariant TimelineItemModel::data(const QModelIndex &index, int role) const
+{
+	Q_UNUSED(index);
+	Q_UNUSED(role);
+	return QVariant();
 }
 
 }

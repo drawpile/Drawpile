@@ -7,6 +7,7 @@ extern "C" {
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/docks/layerlistdelegate.h"
 #include "desktop/docks/layerlistdock.h"
+#include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
@@ -37,6 +38,7 @@ extern "C" {
 #include <QTimer>
 #include <QTreeView>
 #include <QVBoxLayout>
+#include <algorithm>
 #include <functional>
 
 namespace docks {
@@ -439,7 +441,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		std::bind(&LayerList::addOrPromptLayerOrGroup, this, true));
 	connect(
 		m_actions.keyFrameCreateLayer, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, 0));
+		std::bind(&LayerList::addSelectedKeyFrameLayersOrGroups, this, false));
 	connect(
 		m_actions.keyFrameCreateLayerNext, &QAction::triggered, this,
 		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, 1));
@@ -448,7 +450,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, -1));
 	connect(
 		m_actions.keyFrameCreateGroup, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, true, false, true, 0));
+		std::bind(&LayerList::addSelectedKeyFrameLayersOrGroups, this, true));
 	connect(
 		m_actions.keyFrameCreateGroupNext, &QAction::triggered, this,
 		std::bind(&LayerList::addLayerOrGroup, this, true, false, true, 1));
@@ -753,16 +755,6 @@ void LayerList::selectBelow()
 	selectLayerIndex(m_view->indexBelow(currentSelection()), true);
 }
 
-void LayerList::setTrackId(int trackId)
-{
-	m_trackId = trackId;
-}
-
-void LayerList::setFrame(int frame)
-{
-	m_frame = frame;
-}
-
 void LayerList::updateFillSourceLayerId()
 {
 	if(m_canvas) {
@@ -1060,7 +1052,7 @@ void LayerList::addLayerOrGroupFromPrompt(
 		m_canvas->layerlist()->layerIndex(selectedId).isValid();
 	int layerId = makeAddLayerOrGroupCommands(
 		msgs, selectedExists ? selectedId : m_currentId, group, false, false, 0,
-		title);
+		title, getTimelineCurrentTrackId(), getTimelineCurrentFrame(), true);
 	if(layerId > 0 && !msgs.isEmpty()) {
 		uint8_t contextId = m_canvas->localUserId();
 		bool compatibilityMode = m_canvas->isCompatibilityMode();
@@ -1103,15 +1095,61 @@ void LayerList::addLayerOrGroup(
 	net::MessageList msgs;
 	makeAddLayerOrGroupCommands(
 		msgs, m_currentId, group, duplicateKeyFrame, keyFrame, keyFrameOffset,
-		QString());
+		QString(), getTimelineCurrentTrackId(), getTimelineCurrentFrame(),
+		true);
 	if(!msgs.isEmpty()) {
+		emit layerCommands(int(msgs.size()), msgs.constData());
+	}
+}
+
+void LayerList::addSelectedKeyFrameLayersOrGroups(bool group)
+{
+	if(!m_timeline) {
+		return;
+	}
+
+	QVector<widgets::TimelineWidget::SelectedFrame> sfs =
+		m_timeline->selectedNonKeyFrames();
+	if(sfs.isEmpty()) {
+		return;
+	}
+
+	// Rightmost frames go first so that the layers get inserted in the correct
+	// order. Track order doesn't matter, we just sort by id.
+	std::sort(
+		sfs.begin(), sfs.end(),
+		[](const widgets::TimelineWidget::SelectedFrame &a,
+		   const widgets::TimelineWidget::SelectedFrame &b) {
+			if(a.frameIndex < b.frameIndex) {
+				return true;
+			} else if(a.frameIndex > b.frameIndex) {
+				return false;
+			} else {
+				return a.trackId < b.trackId;
+			}
+		});
+
+	net::MessageList msgs;
+	QSet<int> additionalTakenLayerIds;
+	QSet<QString> additionalTakenLayerNames;
+	for(const widgets::TimelineWidget::SelectedFrame &sf : sfs) {
+		makeAddLayerOrGroupCommands(
+			msgs, m_currentId, group, false, true, 0, QString(), sf.trackId,
+			sf.frameIndex, false, &additionalTakenLayerIds,
+			&additionalTakenLayerNames);
+	}
+
+	if(!msgs.isEmpty()) {
+		msgs.prepend(net::makeUndoPointMessage(m_canvas->localUserId()));
 		emit layerCommands(int(msgs.size()), msgs.constData());
 	}
 }
 
 int LayerList::makeAddLayerOrGroupCommands(
 	net::MessageList &msgs, int selectedId, bool group, bool duplicateKeyFrame,
-	bool keyFrame, int keyFrameOffset, const QString &title)
+	bool keyFrame, int keyFrameOffset, const QString &title, int trackId,
+	int frame, bool undoPoint, QSet<int> *inOutAdditionalTakenLayerIds,
+	QSet<QString> *inOutAdditionalTakenLayerNames)
 {
 	canvas::LayerListModel *layers = m_canvas->layerlist();
 	QModelIndex index = layers->layerIndex(selectedId);
@@ -1152,22 +1190,31 @@ int LayerList::makeAddLayerOrGroupCommands(
 	// than just creating a plain layer when the track contains other stuff.
 	int requiredIdCount = 1;
 	QModelIndex referenceIdx;
-	if(keyFrame && !group && !duplicateKeyFrame && m_trackId != 0 &&
-	   m_frame != -1) {
-		referenceIdx = searchKeyFrameReference(requiredIdCount);
+	if(keyFrame && !group && !duplicateKeyFrame && trackId != 0 &&
+	   frame != -1) {
+		referenceIdx = searchKeyFrameReference(trackId, frame, requiredIdCount);
 		if(referenceIdx.isValid()) {
 			group = true;
 		}
 	}
 
-	QVector<int> ids = layers->getAvailableLayerIds(requiredIdCount);
+	QVector<int> ids = layers->getAvailableLayerIds(
+		requiredIdCount, inOutAdditionalTakenLayerIds);
 	if(ids.isEmpty() || int(ids.size()) < requiredIdCount) {
 		showOutOfIdsError(layers->layerIdLimit(), requiredIdCount);
 		return 0;
 	}
 
+	if(inOutAdditionalTakenLayerIds) {
+		for(int id : ids) {
+			inOutAdditionalTakenLayerIds->insert(id);
+		}
+	}
+
 	int firstId = ids.first();
-	msgs.append(net::makeUndoPointMessage(contextId));
+	if(undoPoint) {
+		msgs.append(net::makeUndoPointMessage(contextId));
+	}
 
 	int targetId = -1;
 	int sourceId = 0;
@@ -1175,13 +1222,13 @@ int LayerList::makeAddLayerOrGroupCommands(
 	int moveId = -1;
 	uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
 
-	if(keyFrame && m_trackId != 0 && m_frame != -1) {
+	if(keyFrame && trackId != 0 && frame != -1) {
 		// TODO: having to do a layer move here is dumb, there should be a
 		// layer create flag that throws the layer at the bottom instead.
-		targetFrame = m_frame + keyFrameOffset;
+		targetFrame = frame + keyFrameOffset;
 		moveId = intuitKeyFrameTarget(
-			duplicateKeyFrame ? m_frame : -1, targetFrame, sourceId, targetId,
-			flags);
+			trackId, duplicateKeyFrame ? frame : -1, targetFrame, sourceId,
+			targetId, flags);
 	}
 
 	if(targetId == -1 && index.isValid()) {
@@ -1206,9 +1253,14 @@ int LayerList::makeAddLayerOrGroupCommands(
 			}
 		}
 		effectiveTitle = layers->getAvailableLayerName(
-			baseName.isEmpty() ? getBaseName(group) : baseName);
+			baseName.isEmpty() ? getBaseName(group) : baseName,
+			inOutAdditionalTakenLayerNames);
 	} else {
 		effectiveTitle = title;
+	}
+
+	if(inOutAdditionalTakenLayerNames) {
+		inOutAdditionalTakenLayerNames->insert(effectiveTitle);
 	}
 
 	msgs.append(
@@ -1218,7 +1270,7 @@ int LayerList::makeAddLayerOrGroupCommands(
 	if(targetFrame >= 0) {
 		msgs.append(
 			net::makeKeyFrameSetMessage(
-				contextId, m_trackId, targetFrame, firstId, 0,
+				contextId, trackId, targetFrame, firstId, 0,
 				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
 	}
 	if(moveId != -1) {
@@ -1254,10 +1306,11 @@ int LayerList::makeAddLayerOrGroupCommands(
 	return firstId;
 }
 
-QModelIndex LayerList::searchKeyFrameReference(int &outRequiredIdCount) const
+QModelIndex LayerList::searchKeyFrameReference(
+	int trackId, int frame, int &outRequiredIdCount) const
 {
 	const canvas::TimelineModel *timeline = m_canvas->timeline();
-	const canvas::TimelineTrack *track = timeline->getTrackById(m_trackId);
+	const canvas::TimelineTrack *track = timeline->getTrackById(trackId);
 	if(!track) {
 		return QModelIndex();
 	}
@@ -1276,8 +1329,8 @@ QModelIndex LayerList::searchKeyFrameReference(int &outRequiredIdCount) const
 		}
 
 		if(idx.isValid()) {
-			if(bestFrameIndex <= m_frame) {
-				if(keyFrame.frameIndex > m_frame ||
+			if(bestFrameIndex <= frame) {
+				if(keyFrame.frameIndex > frame ||
 				   keyFrame.frameIndex < bestFrameIndex) {
 					continue;
 				}
@@ -1315,7 +1368,7 @@ int LayerList::countRequiredIds(
 }
 
 int LayerList::intuitKeyFrameTarget(
-	int sourceFrame, int targetFrame, int &sourceId, int &targetId,
+	int trackId, int sourceFrame, int targetFrame, int &sourceId, int &targetId,
 	uint8_t &flags) const
 {
 	// Guess where we're supposed to throw this new layer in relation to
@@ -1323,7 +1376,7 @@ int LayerList::intuitKeyFrameTarget(
 	// put it above its layer. If not, put it below the previous key frame's
 	// layer. In absence of both, we just act like it's a regular layer.
 	const canvas::TimelineModel *timeline = m_canvas->timeline();
-	const canvas::TimelineTrack *track = timeline->getTrackById(m_trackId);
+	const canvas::TimelineTrack *track = timeline->getTrackById(trackId);
 	if(!track) {
 		return -1;
 	}
@@ -2461,6 +2514,24 @@ QString LayerList::getBaseName(bool group)
 		}
 	}
 	return group ? tr("Group") : tr("Layer");
+}
+
+int LayerList::getTimelineCurrentTrackId() const
+{
+	if(m_timeline) {
+		return m_timeline->currentTrackId();
+	} else {
+		return 0;
+	}
+}
+
+int LayerList::getTimelineCurrentFrame() const
+{
+	if(m_timeline) {
+		return m_timeline->currentFrame();
+	} else {
+		return -1;
+	}
 }
 
 

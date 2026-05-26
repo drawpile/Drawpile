@@ -39,6 +39,7 @@ class GroupedToolButton;
 namespace docks {
 
 class LayerAclMenu;
+class Timeline;
 
 class LayerList final : public DockBase {
 	Q_OBJECT
@@ -88,6 +89,8 @@ public:
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
+	void setTimeline(Timeline *timeline) { m_timeline = timeline; }
+
 	//! These actions are shown in a menu outside this dock
 	void setLayerEditActions(const Actions &actions);
 
@@ -107,8 +110,6 @@ public:
 	void selectAbove();
 	void selectBelow();
 
-	void setTrackId(int trackId);
-	void setFrame(int frame);
 	void updateFillSourceLayerId();
 
 signals:
@@ -193,16 +194,20 @@ private:
 		const QColor &sketchTint);
 	void addLayerOrGroup(
 		bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
+	void addSelectedKeyFrameLayersOrGroups(bool group);
 	int makeAddLayerOrGroupCommands(
 		net::MessageList &msgs, int selectedId, bool group,
 		bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset,
-		const QString &title);
-	QModelIndex searchKeyFrameReference(int &outRequiredIdCount) const;
+		const QString &title, int trackId, int frame, bool undoPoint,
+		QSet<int> *inOutAdditionalTakenLayerIds = nullptr,
+		QSet<QString> *inOutAdditionalTakenLayerNames = nullptr);
+	QModelIndex searchKeyFrameReference(
+		int trackId, int frame, int &outRequiredIdCount) const;
 	static int countRequiredIds(
 		const canvas::LayerListModel *layerlist, const QModelIndex &idx);
 	int intuitKeyFrameTarget(
-		int sourceFrame, int targetFrame, int &sourceId, int &targetId,
-		uint8_t &flags) const;
+		int trackId, int sourceFrame, int targetFrame, int &sourceId,
+		int &targetId, uint8_t &flags) const;
 	void makeKeyFrameReferenceAddCommands(
 		const canvas::LayerListModel *layerlist, net::MessageList &msgs,
 		QVector<int> ids, int &idIndex, uint8_t contextId,
@@ -243,7 +248,11 @@ private:
 
 	QString getBaseName(bool group);
 
+	int getTimelineCurrentTrackId() const;
+	int getTimelineCurrentFrame() const;
+
 	canvas::CanvasModel *m_canvas = nullptr;
+	Timeline *m_timeline = nullptr;
 
 	// cache selection and remember it across model resets
 	int m_currentId = 0;
@@ -253,9 +262,6 @@ private:
 	// try to retain view status across model resets
 	QSet<int> m_expandedGroups;
 	int m_lastScrollPosition = 0;
-
-	int m_trackId = 0;
-	int m_frame = -1;
 
 	bool m_noupdate = false;
 	bool m_sketchMode = false;

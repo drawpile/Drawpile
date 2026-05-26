@@ -11,6 +11,7 @@
 #include <functional>
 #include <optional>
 
+class QAction;
 class QAbstractScrollArea;
 class QBoxLayout;
 class QButtonGroup;
@@ -334,6 +335,9 @@ QDialog *getOrRaiseInputDouble(
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QMessageBox *showFfmpegUnsupportedError(QWidget *parent);
+
+// Sets both the text and the tool tip of the given action to the given text.
+void setActionText(QAction *action, const QString &text);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 QString scrubAccelerators(const QString &text);

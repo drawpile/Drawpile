@@ -9,6 +9,7 @@
 #include "libshared/util/qtcompat.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
+#include <QAction>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QCursor>
@@ -41,9 +42,6 @@
 #include <QWidget>
 #ifdef Q_OS_ANDROID
 #	include "libclient/utils/androidutils.h"
-#endif
-#ifdef Q_OS_MACOS
-#	include <QAction>
 #endif
 
 namespace utils {
@@ -1273,6 +1271,17 @@ QMessageBox *showCritical(
 	QMessageBox *msgbox = makeCritical(parent, title, text, informativeText);
 	showMessageBox(msgbox);
 	return msgbox;
+}
+
+void setActionText(QAction *action, const QString &text)
+{
+	if(action) {
+		action->setText(text);
+		if(!action->shortcut().isEmpty()) {
+			action->setToolTip(
+				utils::makeActionShortcutText(text, action->shortcut()));
+		}
+	}
 }
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut)

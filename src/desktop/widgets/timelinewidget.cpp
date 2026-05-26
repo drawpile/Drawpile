@@ -18,11 +18,13 @@ extern "C" {
 #include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
+#include <QCoreApplication>
 #include <QDeadlineTimer>
 #include <QDrag>
 #include <QHBoxLayout>
 #include <QHash>
 #include <QIcon>
+#include <QItemSelectionModel>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -30,14 +32,17 @@ extern "C" {
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPair>
 #include <QScopedValueRollback>
 #include <QScrollBar>
+#include <QSet>
 #include <QSignalBlocker>
 #include <QtMath>
+#include <algorithm>
 
 namespace widgets {
 
-enum class TimelineTool { Normal, Exposure };
+enum class TimelineTool { Normal, Select, Exposure };
 enum class TrackAction { None, ToggleVisible, ToggleOnionSkin, ToggleMoveLock };
 enum class TargetHeader { None, Header, RangeFirst, RangeLast };
 enum class TargetSide { None, Left, Right };
@@ -148,6 +153,85 @@ struct ExposureToolState {
 	}
 };
 
+struct SelectionKeyFrame {
+	int trackId;
+	int trackIndex;
+	int frameIndex;
+	int layerId;
+};
+
+class SelectionState {
+public:
+	const QVector<SelectionKeyFrame> keyFrames() const { return m_keyFrames; }
+
+	int keyFrameCount() const { return m_keyFrames.size(); }
+
+	QVector<SelectionKeyFrame>
+	sortedKeyFrames(int deltaTrackIndex, int deltaFrameIndex) const
+	{
+		QVector<SelectionKeyFrame> skfs = m_keyFrames;
+		std::sort(
+			skfs.begin(), skfs.end(),
+			[up = deltaTrackIndex < 0, left = deltaFrameIndex < 0](
+				const SelectionKeyFrame &a, const SelectionKeyFrame &b) {
+				if(a.trackIndex < b.trackIndex) {
+					return up;
+				} else if(a.trackIndex > b.trackIndex) {
+					return !up;
+				} else if(left) {
+					return a.frameIndex < b.frameIndex;
+				} else {
+					return a.frameIndex > b.frameIndex;
+				}
+			});
+		return skfs;
+	}
+
+	QSet<int> selectedLayerIds() const
+	{
+		QSet<int> layerIds;
+		for(const SelectionKeyFrame &skf : m_keyFrames) {
+			if(skf.layerId > 0) {
+				layerIds.insert(skf.layerId);
+			}
+		}
+		return layerIds;
+	}
+
+	QSet<QPair<int, int>> selectedTrackIdKeyFrameIndexPairs() const
+	{
+		QSet<QPair<int, int>> pairs;
+		for(const SelectionKeyFrame &skf : m_keyFrames) {
+			pairs.insert({skf.trackId, skf.frameIndex});
+		}
+		return pairs;
+	}
+
+	void addKeyFrame(
+		int trackId, int trackIndex, int frameIndex, int layerId,
+		bool trackMoveLock)
+	{
+		m_keyFrames.append({trackId, trackIndex, frameIndex, layerId});
+		if(trackMoveLock) {
+			m_anyKeyFrameLocked = true;
+		} else {
+			m_anyKeyFrameUnlocked = true;
+		}
+	}
+
+	void clear()
+	{
+		m_keyFrames.clear();
+		m_anyKeyFrameUnlocked = false;
+		m_anyKeyFrameLocked = false;
+	}
+
+private:
+	QVector<SelectionKeyFrame> m_keyFrames;
+	bool m_anyKeyFrameUnlocked = false;
+	bool m_anyKeyFrameLocked = false;
+};
+
 }
 
 struct TimelineWidget::Target {
@@ -163,8 +247,13 @@ struct TimelineWidget::Target {
 struct TimelineWidget::Private {
 	TimelineWidget *const q;
 	canvas::CanvasModel *canvas = nullptr;
+	canvas::TimelineItemModel *itemModel;
+	QItemSelectionModel *itemSelectionModel;
+	SelectionState selectionState;
 
+	bool selectionUpdatesBlocked = false;
 	bool haveActions = false;
+	bool selectionStateValid = false;
 	Actions actions;
 	QWidget *trackActionsWidget = nullptr;
 	QMenu *trackMenu = nullptr;
@@ -196,7 +285,14 @@ struct TimelineWidget::Private {
 	bool zoomInProgress = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
+	QVector<TimelineWidget::KeyFrameDrag> dragKeyFrames;
+	QSet<QPair<int, int>> dragKeyFrameIndexes;
 	Qt::DropAction dropAction;
+	SelectionAction moveSelectionAction = SelectionAction::ReplaceMove;
+	PendingSelectionAction pendingSelectionAction =
+		PendingSelectionAction::None;
+	QModelIndex selectionPressIndex;
+	QModelIndex selectionRangeStartIndex;
 	QPoint dragOrigin;
 	QPoint dragPos;
 	QPoint lastPos;
@@ -211,6 +307,8 @@ struct TimelineWidget::Private {
 
 	Private(TimelineWidget *widget)
 		: q(widget)
+		, itemModel(new canvas::TimelineItemModel(q))
+		, itemSelectionModel(new QItemSelectionModel(itemModel, q))
 	{
 	}
 
@@ -669,7 +767,7 @@ struct TimelineWidget::Private {
 		setModifiers(event->modifiers());
 	}
 
-	bool isCurrentExposureTool()
+	bool isCurrentExposureTool() const
 	{
 		if(currentTool == TimelineTool::Exposure) {
 			return modifiersDown != Qt::AltModifier;
@@ -678,11 +776,72 @@ struct TimelineWidget::Private {
 		}
 	}
 
+	bool isCurrentSelectTool() const
+	{
+		return currentTool == TimelineTool::Select;
+	}
+
 	void updateExposureToolState(const QVector<canvas::TimelineTrack> &tracks)
 	{
 		if(exposureTool.active && !exposureTool.valid) {
 			exposureTool.update(tracks, frameCount());
 		}
+	}
+
+	const SelectionState &getSelectionState()
+	{
+		if(!selectionStateValid) {
+			selectionStateValid = true;
+			selectionState.clear();
+			if(canvas) {
+				const QVector<canvas::TimelineTrack> &tracks = getTracks();
+				int trackCount = tracks.size();
+				for(int i = 0; i < trackCount; ++i) {
+					const canvas::TimelineTrack &track = tracks[i];
+					for(const canvas::TimelineKeyFrame &kf : track.keyFrames) {
+						QModelIndex idx = itemModel->index(i, kf.frameIndex);
+						if(itemSelectionModel->isSelected(idx)) {
+							selectionState.addKeyFrame(
+								track.id, i, kf.frameIndex, kf.layerId,
+								track.moveLock);
+						}
+					}
+				}
+			}
+		}
+		return selectionState;
+	}
+
+	bool isCurrentKeyFrameSelected()
+	{
+		for(const SelectionKeyFrame &skf : getSelectionState().keyFrames()) {
+			if(skf.trackId == currentTrackId &&
+			   skf.frameIndex == currentFrame) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	net::Message makeKeyFrameLayerAttributesMessage(
+		uint8_t contextId, int trackId, int frameIndex,
+		const QHash<int, bool> layerVisibility)
+	{
+		QVector<uint32_t> layers;
+		layers.reserve(layerVisibility.size());
+
+		for(QHash<int, bool>::const_iterator it = layerVisibility.constBegin(),
+											 end = layerVisibility.constEnd();
+			it != end; ++it) {
+
+			uint32_t id = it.key();
+			uint32_t flags = it.value() ? DP_KEY_FRAME_LAYER_REVEALED
+										: DP_KEY_FRAME_LAYER_HIDDEN;
+			layers.append((id & uint32_t(0xffffffu)) | (flags << uint32_t(24)));
+		}
+
+		return net::makeKeyFrameLayerAttributesMessage(
+			contextId, trackId, frameIndex, layers);
 	}
 };
 
@@ -713,6 +872,9 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	connect(
 		d->verticalScroll, &QScrollBar::valueChanged, this,
 		&TimelineWidget::setVerticalScroll);
+	connect(
+		d->itemSelectionModel, &QItemSelectionModel::selectionChanged, this,
+		&TimelineWidget::onSelectionChanged, Qt::DirectConnection);
 	updateScrollbars();
 }
 
@@ -724,6 +886,7 @@ TimelineWidget::~TimelineWidget()
 void TimelineWidget::setCanvas(canvas::CanvasModel *canvas)
 {
 	d->canvas = canvas;
+	d->selectionStateValid = false;
 	connect(
 		canvas->timeline(), &canvas::TimelineModel::tracksChanged, this,
 		&TimelineWidget::updateTracks);
@@ -748,6 +911,7 @@ void TimelineWidget::setActions(const Actions &actions)
 	Q_ASSERT(!d->haveActions);
 	d->haveActions = true;
 	d->actions = actions;
+	actions.keyFramePaste->setEnabled(false);
 
 	d->trackActionsWidget = new QWidget(this);
 	d->trackActionsWidget->setContentsMargins(0, 0, 0, 0);
@@ -834,31 +998,31 @@ void TimelineWidget::setActions(const Actions &actions)
 		&TimelineWidget::updateKeyFrameColorMenuIcon);
 	connect(
 		actions.keyFrameSetLayer, &QAction::triggered, this,
-		&TimelineWidget::setKeyFrameLayer);
+		&TimelineWidget::setKeyFramesLayer);
 	connect(
 		actions.keyFrameSetEmpty, &QAction::triggered, this,
-		&TimelineWidget::setKeyFrameEmpty);
+		&TimelineWidget::setKeyFramesEmpty);
 	connect(
 		actions.keyFrameCut, &QAction::triggered, this,
-		&TimelineWidget::cutKeyFrame);
+		&TimelineWidget::cutKeyFrames);
 	connect(
 		actions.keyFrameCopy, &QAction::triggered, this,
-		&TimelineWidget::copyKeyFrame);
+		&TimelineWidget::copyKeyFrames);
 	connect(
 		actions.keyFramePaste, &QAction::triggered, this,
-		&TimelineWidget::pasteKeyFrame);
+		&TimelineWidget::pasteKeyFrames);
 	connect(
 		actions.keyFrameProperties, &QAction::triggered, this,
 		&TimelineWidget::showKeyFrameProperties);
 	connect(
 		actions.animationKeyFrameColorMenu, &QMenu::triggered, this,
-		&TimelineWidget::setKeyFrameColor);
+		&TimelineWidget::setKeyFramesColor);
 	connect(
 		actions.keyFrameDeleteLayer, &QAction::triggered, this,
-		&TimelineWidget::deleteKeyFrameLayer);
+		&TimelineWidget::deleteKeyFramesLayers);
 	connect(
 		actions.keyFrameUnassign, &QAction::triggered, this,
-		&TimelineWidget::unassignKeyFrame);
+		&TimelineWidget::unassignKeyFrames);
 	connect(
 		actions.keyFrameExposureIncrease, &QAction::triggered, this,
 		&TimelineWidget::increaseKeyFrameExposure);
@@ -975,12 +1139,12 @@ void TimelineWidget::setActions(const Actions &actions)
 
 void TimelineWidget::setCurrentFrame(int frame)
 {
-	setCurrent(d->currentTrackId, frame, true, true);
+	setCurrent(d->currentTrackId, frame, true, true, SelectionAction::Replace);
 }
 
 void TimelineWidget::setCurrentTrack(int trackId)
 {
-	setCurrent(trackId, d->currentFrame, true, true);
+	setCurrent(trackId, d->currentFrame, true, true, SelectionAction::Replace);
 }
 
 void TimelineWidget::setCurrentLayer(int layerId)
@@ -1025,6 +1189,37 @@ int TimelineWidget::currentTrackId() const
 int TimelineWidget::currentFrame() const
 {
 	return d->currentFrame;
+}
+
+QVector<TimelineWidget::SelectedFrame>
+TimelineWidget::selectedNonKeyFrames() const
+{
+	const SelectionState selectionState = d->getSelectionState();
+	QModelIndexList selectedIndexes = d->itemSelectionModel->selectedIndexes();
+	int selectedIndexCount = selectedIndexes.size();
+	int selectedNonKeyFrameCount =
+		selectedIndexCount - selectionState.keyFrameCount();
+
+	QVector<SelectedFrame> sfs;
+	if(selectedNonKeyFrameCount > 0) {
+		sfs.reserve(selectedNonKeyFrameCount);
+
+		int visibleFrameCount = d->visibleFrameCount();
+		QSet<QPair<int, int>> selectedKeyFrameSet =
+			d->getSelectionState().selectedTrackIdKeyFrameIndexPairs();
+
+		for(const QModelIndex &idx : selectedIndexes) {
+			int trackId = d->trackIdByIndex(idx.row());
+			int frameIndex = idx.column();
+			if(trackId != 0 && frameIndex >= 0 &&
+			   frameIndex < visibleFrameCount &&
+			   !selectedKeyFrameSet.contains({trackId, frameIndex})) {
+				sfs.append({trackId, frameIndex});
+			}
+		}
+	}
+
+	return sfs;
 }
 
 int TimelineWidget::columnWidth() const
@@ -1148,18 +1343,19 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.setBrush(bodyColor);
 	painter.drawRect(bodyRect);
 
-	// Selected row and column.
+	// Selected rows and columns.
 	int bodyVisibleRight = qMin(
 		bodyRect.right(),
 		headerWidth + visibleFrameCount * columnWidth - xScroll);
 	if(trackCount != 0 && !d->isCurrentExposureTool()) {
-		QColor selectedColor = pal.highlight().color();
-		selectedColor.setAlphaF(0.5f);
-		painter.setBrush(selectedColor);
+		painter.setBrush(pal.highlight());
+		painter.setOpacity(0.5);
+
 		if(currentFrame != -1) {
 			int x = headerWidth + currentFrame * columnWidth - xScroll;
 			painter.drawRect(x, bodyRect.top(), columnWidth, bodyRect.height());
 		}
+
 		if(currentTrackIndex != -1) {
 			int i = trackCount - currentTrackIndex - 1;
 			int y = rowHeight + i * rowHeight - yScroll;
@@ -1167,6 +1363,15 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				bodyRect.left(), y, bodyVisibleRight - bodyRect.left() + 1,
 				rowHeight);
 		}
+
+		for(const QModelIndex &idx : d->itemSelectionModel->selectedIndexes()) {
+			int x = headerWidth + idx.column() * columnWidth - xScroll;
+			int y =
+				rowHeight + (trackCount - idx.row() - 1) * rowHeight - yScroll;
+			painter.drawRect(x, y, columnWidth, rowHeight);
+		}
+
+		painter.setOpacity(1.0);
 	}
 
 	// Key frames.
@@ -1174,7 +1379,8 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		d->currentVisibleKeyFrame();
 	for(int i = 0; i < trackCount; ++i) {
 		int y = rowHeight + i * rowHeight - yScroll;
-		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
+		int trackIndex = trackCount - i - 1;
+		const canvas::TimelineTrack &track = tracks[trackIndex];
 		bool exposureTrackActive =
 			d->exposureTool.active && i >= d->exposureTool.topIndex &&
 			i <= d->exposureTool.bottomIndex && !track.moveLock;
@@ -1192,15 +1398,19 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 			}
 
 			int x = headerWidth + offsetFrame * columnWidth - xScroll;
-			bool isSelected =
-				currentFrame == frame && d->currentTrackId == track.id;
+			bool isSelected = d->itemSelectionModel->isSelected(
+				d->itemModel->index(trackIndex, frame));
 			QBrush brush;
 			if(keyFrame.color.isValid()) {
 				brush = isSelected ? keyFrame.color.lighter() : keyFrame.color;
 			} else {
 				brush = isSelected ? pal.highlightedText() : pal.windowText();
 			}
-			if(keyFrame.layerId == 0) {
+
+			if(d->dragHover == Drag::KeyFrame &&
+			   d->dragKeyFrameIndexes.contains({trackIndex, frame})) {
+				brush.setStyle(Qt::Dense6Pattern);
+			} else if(keyFrame.layerId == 0) {
 				brush.setStyle(Qt::DiagCrossPattern);
 			} else {
 				bool sameContentAsCurrent =
@@ -1346,13 +1556,19 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		painter.drawLine(0, y, headerWidth, y);
 
 	} else if(d->dragHover == Drag::KeyFrame) {
-		Target target = getMouseTarget(d->dragPos);
-		QBrush brush = pal.highlightedText();
-		brush.setStyle(Qt::Dense5Pattern);
-		painter.setBrush(brush);
-		int x = headerWidth + target.frameIndex * columnWidth - xScroll;
-		int y = rowHeight + target.uiTrackIndex * rowHeight - yScroll;
-		painter.drawRect(x, y, columnWidth, rowHeight);
+		if(!d->dragKeyFrames.isEmpty()) {
+			QBrush brush = pal.highlightedText();
+			painter.setPen(QPen(brush, 1.0));
+			brush.setStyle(Qt::Dense7Pattern);
+			painter.setBrush(brush);
+			for(const KeyFrameDrag &kfd : d->dragKeyFrames) {
+				int x = headerWidth + kfd.toFrameIndex * columnWidth - xScroll;
+				int y = rowHeight +
+						(trackCount - kfd.toTrackIndex - 1) * rowHeight -
+						yScroll;
+				painter.drawRect(x, y, columnWidth, rowHeight);
+			}
+		}
 
 	} else if(const ExposureToolState &e = d->exposureTool; e.active) {
 		if(e.topIndex <= e.bottomIndex) {
@@ -1450,6 +1666,49 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		}));
 	}
 
+	if(d->dragHover != Drag::KeyFrame && !d->isCurrentExposureTool()) {
+		painter.setClipRect(bodyRect);
+		painter.setOpacity(1.0);
+		painter.setBrush(Qt::NoBrush);
+		QPen outerPen(pal.highlightedText(), 1.0);
+		QPen innerPen(pal.highlight(), 1.0);
+		for(const QModelIndex &idx : d->itemSelectionModel->selectedIndexes()) {
+			int x = headerWidth + idx.column() * columnWidth - xScroll;
+			int y =
+				rowHeight + (trackCount - idx.row() - 1) * rowHeight - yScroll;
+			painter.setPen(outerPen);
+			painter.drawRect(x, y, columnWidth, rowHeight);
+			painter.setPen(innerPen);
+			painter.drawRect(x + 1, y + 1, columnWidth - 2, rowHeight - 2);
+		}
+	}
+
+	// For debugging. Shows red rectangles on selected indexes and a yellow
+	// rectangle on the current index.
+	if constexpr(false) {
+		painter.setClipRect(bodyRect);
+		painter.setPen(QPen(Qt::black, 1.0));
+		int debugWidth = qMax(1, columnWidth / 4);
+		int debugHeight = qMax(1, rowHeight / 4);
+
+		for(const QModelIndex &idx : d->itemSelectionModel->selectedIndexes()) {
+			int x = headerWidth + idx.column() * columnWidth - xScroll;
+			int y =
+				rowHeight + (trackCount - idx.row() - 1) * rowHeight - yScroll;
+			painter.setBrush(Qt::red);
+			painter.drawRect(x, y, debugWidth, debugHeight);
+		}
+
+		QModelIndex currentIdx = d->itemSelectionModel->currentIndex();
+		if(currentIdx.isValid()) {
+			int x = headerWidth + currentIdx.column() * columnWidth - xScroll;
+			int y = rowHeight +
+					(trackCount - currentIdx.row() - 1) * rowHeight - yScroll;
+			painter.setBrush(Qt::yellow);
+			painter.drawRect(x, y + debugHeight, debugWidth, debugHeight);
+		}
+	}
+
 	if(trackCount == 0) {
 		painter.setOpacity(1.0);
 		painter.setClipRect(QRect(), Qt::NoClip);
@@ -1491,27 +1750,23 @@ void TimelineWidget::keyPressEvent(QKeyEvent *event)
 	switch(event->key()) {
 	case Qt::Key_Left:
 		event->accept();
-		if(event->modifiers().testFlag(Qt::ShiftModifier)) {
-			prevFrameClamp();
-		} else {
-			prevFrame();
-		}
+		prevFrameWith(
+			event->modifiers().testFlag(Qt::ControlModifier),
+			event->modifiers().testFlag(Qt::ShiftModifier));
 		break;
 	case Qt::Key_Up:
 		event->accept();
-		trackAbove();
+		trackAboveWith(event->modifiers().testFlag(Qt::ShiftModifier));
 		break;
 	case Qt::Key_Right:
 		event->accept();
-		if(event->modifiers().testFlag(Qt::ShiftModifier)) {
-			nextFrameClamp();
-		} else {
-			nextFrame();
-		}
+		nextFrameWith(
+			event->modifiers().testFlag(Qt::ControlModifier),
+			event->modifiers().testFlag(Qt::ShiftModifier));
 		break;
 	case Qt::Key_Down:
 		event->accept();
-		trackBelow();
+		trackBelowWith(event->modifiers().testFlag(Qt::ShiftModifier));
 		break;
 	default:
 		if(d->updateModifierState(event, true)) {
@@ -1543,13 +1798,17 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 	updateCursor();
 
 	Drag dragType = d->drag;
-	bool shouldDrag = d->editable && !d->exposureTool.active &&
-					  ((dragType == Drag::Track && d->currentTrack()) ||
-					   (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
-					  (mousePos - d->dragOrigin).manhattanLength() >=
-						  QApplication::startDragDistance();
+	bool shouldDrag =
+		d->editable && !d->exposureTool.active &&
+		((dragType == Drag::Track && d->currentTrack()) ||
+		 (dragType == Drag::KeyFrame && d->isCurrentKeyFrameSelected() &&
+		  !d->trackMoveLockedById(d->currentTrackId))) &&
+		(mousePos - d->dragOrigin).manhattanLength() >=
+			QApplication::startDragDistance();
 	if(shouldDrag) {
 		d->drag = Drag::None;
+		d->dragKeyFrames.clear();
+		d->dragKeyFrameIndexes.clear();
 
 		QPixmap pixmap;
 		QMimeData *mimeData;
@@ -1582,7 +1841,8 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 
 			mimeData = new QMimeData;
 			mimeData->setProperty("dragType", int(Drag::KeyFrame));
-			mimeData->setProperty("trackId", d->currentTrackId);
+			mimeData->setProperty(
+				"trackIndex", d->trackIndexById(d->currentTrackId));
 			mimeData->setProperty("frameIndex", keyFrame->frameIndex);
 		} else {
 			qWarning("Unknown drag type %d", int(dragType));
@@ -1619,7 +1879,9 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 		}
 	} else if(
 		d->pressedHeader != TargetHeader::None && target.frameIndex != -1) {
-		setCurrent(0, target.frameIndex, true, true);
+		setCurrent(
+			d->isCurrentSelectTool() ? target.trackId : 0, target.frameIndex,
+			true, true, d->moveSelectionAction);
 	}
 
 	if(needsUpdate) {
@@ -1664,6 +1926,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			updateCursor();
 			update();
 		} else if(
+			!d->isCurrentSelectTool() &&
 			d->keyFrameBy(target.trackId, target.frameIndex) &&
 			!d->trackMoveLockedById(target.trackId)) {
 			drag = Drag::KeyFrame;
@@ -1712,7 +1975,14 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 		} else if(
 			target.frameIndex != -1 && target.trackId != 0 &&
 			!d->isCurrentExposureTool()) {
-			if(d->currentKeyFrame()) {
+			if(d->isCurrentSelectTool()) {
+				// Use the Header target to allow dragging.
+				if(target.header == TargetHeader::None) {
+					d->pressedHeader = TargetHeader::Header;
+				} else {
+					d->pressedHeader = target.header;
+				}
+			} else if(d->currentKeyFrame()) {
 				showKeyFrameProperties();
 			} else if(d->editable) {
 				d->actions.keyFrameCreateLayer->trigger();
@@ -1743,6 +2013,9 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 		d->pressedHeader = TargetHeader::None;
 		d->drag = Drag::None;
 	}
+
+	executePendingSelectionAction();
+	d->moveSelectionAction = SelectionAction::ReplaceMove;
 }
 
 void TimelineWidget::wheelEvent(QWheelEvent *event)
@@ -1799,17 +2072,13 @@ void TimelineWidget::dragMoveEvent(QDragMoveEvent *event)
 
 	} else if(dragType == int(Drag::KeyFrame)) {
 		bool isValid = false;
-		QPoint dragPos;
 
 		QRect rect{
 			d->headerWidth, d->rowHeight,
 			qMin(width() - d->headerWidth, d->fullBodyWidth()),
 			qMin(height() - d->rowHeight, d->bodyHeight())};
 		if(event->source() == this && event->answerRect().intersects(rect)) {
-			dragPos = compat::dropPos(*event);
-			if(!d->trackMoveLockedById(getMouseTarget(dragPos).trackId)) {
-				isValid = true;
-			}
+			isValid = checkKeyFrameDrag(event, false);
 		}
 
 		if(isValid) {
@@ -1862,31 +2131,39 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 		emitCommand([&](uint8_t contextId) {
 			return net::makeTrackOrderMessage(contextId, trackIds);
 		});
+
 	} else if(dragType == int(Drag::KeyFrame)) {
-		int sourceTrackId = mimeData->property("trackId").toInt();
-		int sourceFrameIndex = mimeData->property("frameIndex").toInt();
-		Target target = getMouseTarget(compat::dropPos(*event));
-		bool isValid = target.trackId != 0 && target.frameIndex != -1 &&
-					   (sourceTrackId != target.trackId ||
-						sourceFrameIndex != target.frameIndex) &&
-					   !d->trackMoveLockedById(sourceTrackId) &&
-					   !d->trackMoveLockedById(target.trackId);
-		if(isValid) {
-			applyMouseTarget(nullptr, target, false);
-			emitCommand([&](uint8_t contextId) {
-				if(event->dropAction() == Qt::CopyAction) {
-					return net::makeKeyFrameSetMessage(
-						contextId, target.trackId, target.frameIndex,
-						sourceTrackId, sourceFrameIndex,
-						DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME);
-				} else {
-					return net::makeKeyFrameDeleteMessage(
-						contextId, sourceTrackId, sourceFrameIndex,
-						target.trackId, target.frameIndex);
-				}
-			});
+		if(!checkKeyFrameDrag(event, true)) {
+			return;
 		}
+
+		net::MessageList msgs;
+		msgs.reserve(1 + int(d->dragKeyFrames.size()));
+
+		uint8_t contextId = d->canvas->localUserId();
+		msgs.append(net::makeUndoPointMessage(contextId));
+
+		bool copy = event->dropAction() == Qt::CopyAction;
+		for(const KeyFrameDrag &kfd : d->dragKeyFrames) {
+			if(copy) {
+				msgs.append(
+					net::makeKeyFrameSetMessage(
+						contextId, kfd.toTrackId, kfd.toFrameIndex,
+						kfd.fromTrackId, kfd.fromFrameIndex,
+						DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME));
+			} else {
+				msgs.append(
+					net::makeKeyFrameDeleteMessage(
+						contextId, kfd.fromTrackId, kfd.fromFrameIndex,
+						kfd.toTrackId, kfd.toFrameIndex));
+			}
+		}
+
+		Q_EMIT timelineEditCommands(msgs.size(), msgs.constData());
 	}
+
+	d->dragKeyFrames.clear();
+	d->dragKeyFrameIndexes.clear();
 }
 
 void TimelineWidget::leaveEvent(QEvent *event)
@@ -1899,122 +2176,220 @@ void TimelineWidget::leaveEvent(QEvent *event)
 	updateCursor();
 }
 
-void TimelineWidget::setKeyFrameLayer()
+void TimelineWidget::setKeyFramesLayer()
 {
 	if(!d->editable) {
 		return;
 	}
 	if(d->selectedLayerId > 0) {
-		setKeyFrame(d->selectedLayerId);
+		setKeyFrames(d->selectedLayerId);
 	}
 }
 
-void TimelineWidget::setKeyFrameEmpty()
+void TimelineWidget::setKeyFramesEmpty()
 {
 	if(!d->editable) {
 		return;
 	}
-	setKeyFrame(0);
+	setKeyFrames(0);
 	emit blankLayerSelected();
 }
 
-void TimelineWidget::cutKeyFrame()
+void TimelineWidget::cutKeyFrames()
 {
-	copyKeyFrame();
-	unassignKeyFrame();
+	copyKeyFrames();
+	unassignKeyFrames();
 }
 
-void TimelineWidget::copyKeyFrame()
+void TimelineWidget::copyKeyFrames()
 {
 	if(!d->editable) {
 		return;
 	}
 
-	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
-	if(!keyFrame) {
+	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
+	int currentFrameIndex = d->currentFrame;
+	const QVector<SelectionKeyFrame> &skfs = d->getSelectionState().keyFrames();
+	if(currentTrackIndex < 0 || currentFrameIndex < 0 || skfs.isEmpty()) {
 		return;
 	}
 
-	QJsonArray layerVisibilityJson;
-	using LayersIt = QHash<int, bool>::const_iterator;
-	const LayersIt end = keyFrame->layerVisibility.constEnd();
-	for(LayersIt it = keyFrame->layerVisibility.constBegin(); it != end; ++it) {
-		layerVisibilityJson.append(
-			QJsonObject{
-				{"layerId", it.key()},
-				{"visible", it.value()},
-			});
+	QJsonArray keyFramesJson;
+	for(const SelectionKeyFrame &skf : skfs) {
+		const canvas::TimelineKeyFrame *keyFrame =
+			d->keyFrameBy(skf.trackId, skf.frameIndex);
+		if(keyFrame) {
+
+			QJsonArray layerVisibilityJson;
+			for(QHash<int, bool>::const_iterator
+					it = keyFrame->layerVisibility.constBegin(),
+					end = keyFrame->layerVisibility.constEnd();
+				it != end; ++it) {
+
+				layerVisibilityJson.append(QJsonObject({
+					{QStringLiteral("layerId"), it.key()},
+					{QStringLiteral("visible"), it.value()},
+				}));
+			}
+
+			keyFramesJson.append(QJsonObject({
+				{QStringLiteral("layerId"), keyFrame->layerId},
+				{QStringLiteral("title"), keyFrame->titleWithColor()},
+				{QStringLiteral("layerVisibility"), layerVisibilityJson},
+				{QStringLiteral("trackOffset"),
+				 skf.trackIndex - currentTrackIndex},
+				{QStringLiteral("frameOffset"),
+				 skf.frameIndex - currentFrameIndex},
+			}));
+		}
 	}
 
-	QJsonDocument doc{QJsonObject{
-		{"layerId", keyFrame->layerId},
-		{"title", keyFrame->titleWithColor()},
-		{"layerVisibility", layerVisibilityJson},
-	}};
+	QJsonDocument doc(QJsonObject({
+		{QStringLiteral("keyFrames"), keyFramesJson},
+	}));
 
 	QMimeData *mimeData = new QMimeData;
-	mimeData->setData(KEY_FRAME_MIME_TYPE, doc.toJson(QJsonDocument::Compact));
+	mimeData->setData(KEY_FRAMES_MIME_TYPE, doc.toJson(QJsonDocument::Compact));
 	QApplication::clipboard()->setMimeData(mimeData);
 }
 
-void TimelineWidget::pasteKeyFrame()
+void TimelineWidget::pasteKeyFrames()
 {
-	if(!d->editable) {
+	if(!d->editable || !d->canvas) {
 		return;
 	}
 
-	int trackId = d->currentTrackId;
-	int frame = d->currentFrame;
-	if(trackId == 0 || frame == -1) {
+	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
+	int currentFrameIndex = d->currentFrame;
+	int trackCount = d->trackCount();
+	int frameCount = d->frameCount();
+	if(currentTrackIndex < 0 || currentFrameIndex < 0) {
 		return;
 	}
 
 	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-	if(!mimeData->hasFormat(KEY_FRAME_MIME_TYPE)) {
+	if(!mimeData->hasFormat(KEY_FRAMES_MIME_TYPE)) {
 		return;
 	}
 
 	QJsonParseError err;
 	QJsonDocument doc =
-		QJsonDocument::fromJson(mimeData->data(KEY_FRAME_MIME_TYPE), &err);
+		QJsonDocument::fromJson(mimeData->data(KEY_FRAMES_MIME_TYPE), &err);
 	if(!doc.isObject()) {
 		qWarning(
-			"Error parsing key frame on clipboard: %s",
+			"Error parsing key frames on clipboard: %s",
 			qUtf8Printable(err.errorString()));
 		return;
 	}
 
-	QJsonObject keyFrameJson = doc.object();
-	setKeyFrame(keyFrameJson["layerId"].toInt());
-
-	QString title = keyFrameJson["title"].toString();
-	QHash<int, bool> layerVisibility;
-	for(const QJsonValue &value : keyFrameJson["layerVisibility"].toArray()) {
-		QJsonObject obj = value.toObject();
-		layerVisibility.insert(obj["layerId"].toInt(), obj["visible"].toBool());
+	QJsonArray keyFramesArray =
+		doc.object().value(QStringLiteral("keyFrames")).toArray();
+	if(keyFramesArray.isEmpty()) {
+		return;
 	}
-	setKeyFrameProperties(trackId, frame, {}, {}, title, layerVisibility);
+
+	net::MessageList msgs;
+	msgs.reserve(1 + keyFramesArray.size() * 3);
+
+	uint8_t contextId = d->canvas->localUserId();
+	msgs.append(net::makeUndoPointMessage(contextId));
+
+	QHash<int, bool> layerVisibility;
+	for(const QJsonValue keyFrameValue : keyFramesArray) {
+		if(!keyFrameValue.isObject()) {
+			continue;
+		}
+
+		QJsonObject keyFrameObject = keyFrameValue.toObject();
+
+		int trackIndex =
+			currentTrackIndex +
+			keyFrameObject.value(QStringLiteral("trackOffset")).toInt();
+		if(trackIndex < 0 || trackIndex >= trackCount) {
+			continue;
+		}
+
+		int frameIndex =
+			currentFrameIndex +
+			keyFrameObject.value(QStringLiteral("frameOffset")).toInt();
+		if(frameIndex < 0 || frameIndex >= frameCount) {
+			continue;
+		}
+
+		int trackId = d->trackIdByIndex(trackIndex);
+		if(trackId <= 0) {
+			continue;
+		}
+
+		msgs.append(
+			net::makeKeyFrameSetMessage(
+				contextId, trackId, frameIndex,
+				keyFrameObject.value(QStringLiteral("layerId")).toInt(), 0,
+				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+
+		QString title =
+			keyFrameObject.value(QStringLiteral("title")).toString();
+		if(!title.isEmpty()) {
+			msgs.append(
+				net::makeKeyFrameRetitleMessage(
+					contextId, trackId, frameIndex, title));
+		}
+
+		QJsonArray layerVisibilityArray =
+			keyFrameObject.value(QStringLiteral("layerVisibility")).toArray();
+		if(!layerVisibility.isEmpty()) {
+			layerVisibility.reserve(layerVisibilityArray.size());
+
+			for(const QJsonValue &value : layerVisibilityArray) {
+				QJsonObject obj = value.toObject();
+				layerVisibility.insert(
+					obj.value(QStringLiteral("layerId")).toInt(),
+					obj.value(QStringLiteral("visible")).toBool());
+			}
+
+			msgs.append(d->makeKeyFrameLayerAttributesMessage(
+				contextId, trackId, frameIndex, layerVisibility));
+
+			layerVisibility.clear();
+		}
+	}
+
+	if(msgs.size() > 1) {
+		Q_EMIT timelineEditCommands(msgs.size(), msgs.constData());
+	}
 }
 
-void TimelineWidget::setKeyFrameColor(QAction *action)
+void TimelineWidget::setKeyFramesColor(QAction *action)
 {
 	if(!d->editable) {
 		return;
 	}
 
-	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
-	if(!keyFrame) {
-		return;
-	}
+	const QVector<SelectionKeyFrame> &skfs = d->getSelectionState().keyFrames();
+	int skfCount = skfs.size();
+	if(skfCount != 0) {
+		net::MessageList msgs;
+		msgs.reserve(1 + skfCount);
 
-	QColor color = action->property("markercolor").value<QColor>();
-	if(color != keyFrame->color) {
-		setKeyFrameProperties(
-			d->currentTrackId, keyFrame->frameIndex, keyFrame->titleWithColor(),
-			keyFrame->layerVisibility,
-			canvas::TimelineKeyFrame::makeTitleWithColor(
-				keyFrame->title, color),
-			keyFrame->layerVisibility);
+		uint8_t contextId = d->canvas->localUserId();
+		msgs.append(net::makeUndoPointMessage(contextId));
+
+		QColor color = action->property("markercolor").value<QColor>();
+		for(const SelectionKeyFrame &skf : skfs) {
+			const canvas::TimelineKeyFrame *keyFrame =
+				d->keyFrameBy(skf.trackId, skf.frameIndex);
+			if(keyFrame && color != keyFrame->color) {
+				msgs.append(
+					net::makeKeyFrameRetitleMessage(
+						contextId, skf.trackId, skf.frameIndex,
+						canvas::TimelineKeyFrame::makeTitleWithColor(
+							keyFrame->title, color)));
+			}
+		}
+
+		if(msgs.size() > 1) {
+			Q_EMIT timelineEditCommands(msgs.size(), msgs.constData());
+		}
 	}
 }
 
@@ -2077,54 +2452,62 @@ void TimelineWidget::keyFramePropertiesChanged(
 		layerVisibility);
 }
 
-void TimelineWidget::deleteKeyFrameWith(bool deleteUnusedLayer)
+void TimelineWidget::deleteKeyFramesWith(bool deleteUnusedLayers)
 {
 	if(!d->editable) {
 		return;
 	}
 
-	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
-	if(keyFrame) {
-		bool shouldDeleteLayer =
-			deleteUnusedLayer && keyFrame->layerId > 0 &&
-			([this, layerId = keyFrame->layerId, trackId = d->currentTrackId,
-			  frameIndex = keyFrame->frameIndex] {
-				for(const canvas::TimelineTrack &t : d->getTracks()) {
-					for(const canvas::TimelineKeyFrame &kf : t.keyFrames) {
-						if(kf.layerId == layerId &&
-						   (t.id != trackId || kf.frameIndex != frameIndex)) {
-							return false;
-						}
-					}
+	const SelectionState &selectionState = d->getSelectionState();
+	const QVector<SelectionKeyFrame> &keyFrames = selectionState.keyFrames();
+	int keyFrameCount = keyFrames.size();
+	if(keyFrameCount == 0) {
+		return;
+	}
+
+	QSet<int> layerIdsToDelete;
+	if(deleteUnusedLayers) {
+		layerIdsToDelete = selectionState.selectedLayerIds();
+
+		QSet<QPair<int, int>> selected =
+			selectionState.selectedTrackIdKeyFrameIndexPairs();
+
+		for(const canvas::TimelineTrack &t : d->getTracks()) {
+			for(const canvas::TimelineKeyFrame &kf : t.keyFrames) {
+				if(!selected.contains({t.id, kf.frameIndex})) {
+					layerIdsToDelete.remove(kf.layerId);
 				}
-				return true;
-			})();
+			}
+		}
+	}
 
-		net::MessageList msgs;
-		msgs.reserve(shouldDeleteLayer ? 3 : 2);
+	net::MessageList msgs;
+	msgs.reserve(1 + keyFrameCount + int(layerIdsToDelete.size()));
 
-		uint8_t contextId = d->canvas->localUserId();
-		msgs.append(net::makeUndoPointMessage(contextId));
+	uint8_t contextId = d->canvas->localUserId();
+	msgs.append(net::makeUndoPointMessage(contextId));
+
+	for(const SelectionKeyFrame &skf : keyFrames) {
 		msgs.append(
 			net::makeKeyFrameDeleteMessage(
-				contextId, d->currentTrackId, keyFrame->frameIndex, 0, 0));
-		if(shouldDeleteLayer) {
-			msgs.append(
-				net::makeLayerTreeDeleteMessage(
-					contextId, keyFrame->layerId, 0));
-		}
-		emit timelineEditCommands(msgs.size(), msgs.constData());
+				contextId, skf.trackId, skf.frameIndex, 0, 0));
 	}
+
+	for(int layerId : layerIdsToDelete) {
+		msgs.append(net::makeLayerTreeDeleteMessage(contextId, layerId, 0));
+	}
+
+	emit timelineEditCommands(msgs.size(), msgs.constData());
 }
 
-void TimelineWidget::unassignKeyFrame()
+void TimelineWidget::unassignKeyFrames()
 {
-	deleteKeyFrameWith(false);
+	deleteKeyFramesWith(false);
 }
 
-void TimelineWidget::deleteKeyFrameLayer()
+void TimelineWidget::deleteKeyFramesLayers()
 {
-	deleteKeyFrameWith(true);
+	deleteKeyFramesWith(true);
 }
 
 void TimelineWidget::increaseKeyFrameExposure()
@@ -2431,29 +2814,54 @@ void TimelineWidget::setAnimationProperties(
 
 void TimelineWidget::nextFrame()
 {
-	int targetFrame = d->currentFrame + 1;
-	setCurrentFrame(targetFrame < d->visibleFrameCount() ? targetFrame : 0);
+	nextFrameWith(false, false);
 }
 
 void TimelineWidget::prevFrame()
 {
-	int targetFrame = d->currentFrame - 1;
-	setCurrentFrame(
-		targetFrame >= 0 ? targetFrame : d->visibleFrameCount() - 1);
+	prevFrameWith(false, false);
 }
 
 void TimelineWidget::nextFrameClamp()
 {
-	int targetFrame = d->currentFrame + 1;
-	setCurrentFrame(
-		d->isInRange(targetFrame) ? targetFrame : d->frameRangeFirst());
+	nextFrameWith(true, false);
 }
 
 void TimelineWidget::prevFrameClamp()
 {
+	prevFrameWith(true, false);
+}
+
+void TimelineWidget::nextFrameWith(bool clamp, bool select)
+{
+	int targetFrame = d->currentFrame + 1;
+	if(clamp) {
+		if(!d->isInRange(targetFrame)) {
+			targetFrame = d->frameRangeFirst();
+		}
+	} else if(targetFrame >= d->visibleFrameCount()) {
+		targetFrame = 0;
+	}
+	setCurrent(
+		d->currentTrackId, targetFrame, true, true,
+		select ? SelectionAction::SelectCurrentRange
+			   : SelectionAction::Replace);
+}
+
+void TimelineWidget::prevFrameWith(bool clamp, bool select)
+{
 	int targetFrame = d->currentFrame - 1;
-	setCurrentFrame(
-		d->isInRange(targetFrame) ? targetFrame : d->frameRangeLast());
+	if(clamp) {
+		if(!d->isInRange(targetFrame)) {
+			targetFrame = d->frameRangeLast();
+		}
+	} else if(targetFrame < 0) {
+		targetFrame = d->visibleFrameCount() - 1;
+	}
+	setCurrent(
+		d->currentTrackId, targetFrame, true, true,
+		select ? SelectionAction::SelectCurrentRange
+			   : SelectionAction::Replace);
 }
 
 void TimelineWidget::nextKeyFrame()
@@ -2503,16 +2911,36 @@ void TimelineWidget::prevKeyFrame()
 
 void TimelineWidget::trackAbove()
 {
-	int targetTrack = d->trackIndexById(d->currentTrackId) + 1;
-	setCurrentTrack(
-		d->trackIdByIndex(targetTrack < d->trackCount() ? targetTrack : 0));
+	trackAboveWith(false);
 }
 
 void TimelineWidget::trackBelow()
 {
+	trackBelowWith(false);
+}
+
+void TimelineWidget::trackAboveWith(bool select)
+{
+	int targetTrack = d->trackIndexById(d->currentTrackId) + 1;
+	if(targetTrack >= d->trackCount()) {
+		targetTrack = 0;
+	}
+	setCurrent(
+		d->trackIdByIndex(targetTrack), d->currentFrame, true, true,
+		select ? SelectionAction::SelectCurrentRange
+			   : SelectionAction::Replace);
+}
+
+void TimelineWidget::trackBelowWith(bool select)
+{
 	int targetTrack = d->trackIndexById(d->currentTrackId) - 1;
-	setCurrentTrack(d->trackIdByIndex(
-		targetTrack >= 0 ? targetTrack : d->trackCount() - 1));
+	if(targetTrack < 0) {
+		targetTrack = d->trackCount() - 1;
+	}
+	setCurrent(
+		d->trackIdByIndex(targetTrack), d->currentFrame, true, true,
+		select ? SelectionAction::SelectCurrentRange
+			   : SelectionAction::Replace);
 }
 
 void TimelineWidget::switchTool(QAction *action)
@@ -2520,6 +2948,8 @@ void TimelineWidget::switchTool(QAction *action)
 	TimelineTool tool;
 	if(action == d->actions.timelineToolExposure) {
 		tool = TimelineTool::Exposure;
+	} else if(action == d->actions.timelineToolSelect) {
+		tool = TimelineTool::Select;
 	} else {
 		tool = TimelineTool::Normal;
 	}
@@ -2533,9 +2963,13 @@ void TimelineWidget::switchTool(QAction *action)
 
 void TimelineWidget::updateTracks()
 {
+	d->selectionStateValid = false;
 	if(!d->canvas) {
+		d->itemModel->setTrackCount(0);
 		return;
 	}
+
+	d->itemModel->setTrackCount(d->trackCount());
 
 	const QFontMetrics fm = fontMetrics();
 	d->rowHeight = qMax(fm.height() * 3 / 2, ICON_SIZE);
@@ -2577,7 +3011,9 @@ void TimelineWidget::updateTracks()
 	}
 	setMinimumHeight(
 		d->rowHeight * 3 + d->horizontalScroll->sizeHint().height());
-	setCurrent(effectiveTrackId, d->currentFrame, false, false);
+	setCurrent(
+		effectiveTrackId, d->currentFrame, false, false,
+		SelectionAction::Retain);
 	updateActions();
 	updateScrollbars();
 	update();
@@ -2595,13 +3031,17 @@ void TimelineWidget::updateTracks()
 
 void TimelineWidget::updateFrameCount()
 {
+	d->selectionStateValid = false;
 	d->exposureTool.valid = false;
-	setCurrent(d->currentTrackId, d->currentFrame, false, false);
+	setCurrent(
+		d->currentTrackId, d->currentFrame, false, false,
+		SelectionAction::Retain);
 	updateFrameRange();
 }
 
 void TimelineWidget::updateFrameRange()
 {
+	d->itemModel->setFrameCount(d->frameCount());
 	d->exposureTool.valid = false;
 	updateActions();
 	updateScrollbars();
@@ -2655,20 +3095,21 @@ void TimelineWidget::finishExposureTool()
 
 void TimelineWidget::updatePasteAction()
 {
-	if(d->canvas && d->haveActions) {
+	bool enabled = false;
+	if(d->canvas && d->haveActions && d->editable &&
+	   d->visibleFrameCount() > 0 && d->currentTrack() &&
+	   d->currentFrame >= 0) {
 		const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-		d->actions.keyFramePaste->setEnabled(
-			d->editable && d->frameCount() > 0 && d->currentTrack() &&
-			d->currentFrame != -1 && mimeData &&
-			mimeData->hasFormat(KEY_FRAME_MIME_TYPE));
+		enabled = mimeData && mimeData->hasFormat(KEY_FRAMES_MIME_TYPE);
 	}
+	d->actions.keyFramePaste->setEnabled(enabled);
 }
 
 void TimelineWidget::updateCursor()
 {
 	if(d->pressedHeader == TargetHeader::RangeFirst ||
 	   d->pressedHeader == TargetHeader::RangeLast ||
-	   (d->currentTool == TimelineTool::Normal &&
+	   (d->currentTool != TimelineTool::Exposure &&
 		(d->hoverTarget.header == TargetHeader::RangeFirst ||
 		 d->hoverTarget.header == TargetHeader::RangeLast) &&
 		!d->isCurrentExposureTool())) {
@@ -2729,15 +3170,28 @@ void TimelineWidget::setZoomAdjust(int zoomAdjust)
 	}
 }
 
-void TimelineWidget::setCurrent(
-	int trackId, int frame, bool triggerUpdate, bool selectLayer)
+void TimelineWidget::onSelectionChanged()
+{
+	d->selectionStateValid = false;
+	if(!d->selectionUpdatesBlocked) {
+		updateActions();
+		update();
+	}
+}
+
+TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
+	int trackId, int frame, bool triggerUpdate, bool selectLayer,
+	SelectionAction selectionAction)
 {
 	bool needsUpdate = false;
 
-	if(d->trackIndexById(trackId) != -1) {
+	int trackIndex = d->trackIndexById(trackId);
+	if(trackIndex != -1) {
 		d->currentTrackId = trackId;
 		emit trackSelected(trackId);
 		needsUpdate = true;
+	} else {
+		trackIndex = d->trackIndexById(d->currentTrackId);
 	}
 
 	int actualFrame = qBound(0, frame, qMax(0, d->visibleFrameCount() - 1));
@@ -2751,6 +3205,76 @@ void TimelineWidget::setCurrent(
 			selectLayer = false;
 		}
 	}
+
+	// Only update based on selection changes if we want updates from this
+	// operation and there isn't another update that's going to happen anyway.
+	d->selectionUpdatesBlocked = !triggerUpdate || needsUpdate;
+
+	QModelIndex idx = d->itemModel->index(trackIndex, d->currentFrame);
+	bool isSelected = d->itemSelectionModel->isSelected(idx);
+
+	QItemSelectionModel::SelectionFlags selectionFlags;
+	switch(selectionAction) {
+	case SelectionAction::Retain:
+		d->selectionRangeStartIndex = idx;
+		if(isSelected || d->itemSelectionModel->hasSelection()) {
+			selectionFlags = QItemSelectionModel::NoUpdate;
+			int deltaTrackIndex =
+				idx.row() - d->itemSelectionModel->currentIndex().row();
+			if(deltaTrackIndex != 0) {
+				shiftSelectionBy(deltaTrackIndex, 0);
+			}
+		} else {
+			selectionFlags = QItemSelectionModel::ClearAndSelect;
+		}
+		break;
+	case SelectionAction::ReplaceMove:
+		if(setCurrentCheckPending(idx)) {
+			selectionFlags = QItemSelectionModel::NoUpdate;
+			break;
+		}
+		Q_FALLTHROUGH();
+	case SelectionAction::Replace:
+		d->selectionRangeStartIndex = idx;
+		selectionFlags = QItemSelectionModel::ClearAndSelect;
+		break;
+	case SelectionAction::ReplaceIfNotSelected:
+		d->selectionRangeStartIndex = idx;
+		if(isSelected) {
+			selectionFlags = QItemSelectionModel::NoUpdate;
+		} else {
+			selectionFlags = QItemSelectionModel::ClearAndSelect;
+		}
+		break;
+	case SelectionAction::ToggleIfNotSelected:
+		d->selectionRangeStartIndex = idx;
+		if(isSelected) {
+			selectionFlags = QItemSelectionModel::NoUpdate;
+		} else {
+			selectionFlags = QItemSelectionModel::Select;
+		}
+		break;
+	case SelectionAction::SelectCurrentRange:
+		selectionFlags = setCurrentSelectRange(
+			idx, QItemSelectionModel::Select | QItemSelectionModel::Current);
+		break;
+	case SelectionAction::SelectRange:
+		selectionFlags =
+			setCurrentSelectRange(idx, QItemSelectionModel::Select);
+		d->selectionRangeStartIndex = idx;
+		break;
+	case SelectionAction::DeselectRange:
+		selectionFlags =
+			setCurrentSelectRange(idx, QItemSelectionModel::Deselect);
+		d->selectionRangeStartIndex = idx;
+		break;
+	default:
+		qWarning("Unknown selection action %d", int(selectionAction));
+		selectionFlags = QItemSelectionModel::ClearAndSelect;
+		break;
+	}
+
+	d->itemSelectionModel->setCurrentIndex(idx, selectionFlags);
 
 	if(needsUpdate && triggerUpdate) {
 		if(selectLayer) {
@@ -2767,18 +3291,97 @@ void TimelineWidget::setCurrent(
 		updateActions();
 		update();
 	}
+
+	d->selectionUpdatesBlocked = false;
+	return {idx, isSelected};
 }
 
-void TimelineWidget::setKeyFrame(int layerId)
+QItemSelectionModel::SelectionFlags TimelineWidget::setCurrentSelectRange(
+	const QModelIndex &idx,
+	QItemSelectionModel::SelectionFlags rangeSelectionFlags)
+{
+	if(setCurrentCheckPending(idx)) {
+		return QItemSelectionModel::NoUpdate | QItemSelectionModel::Current;
+	} else if(idx.isValid() && d->selectionRangeStartIndex.isValid()) {
+		int idxRow = idx.row();
+		int idxCol = idx.column();
+		int selRow = d->selectionRangeStartIndex.row();
+		int selCol = d->selectionRangeStartIndex.column();
+		d->itemSelectionModel->select(
+			QItemSelection(
+				d->itemModel->index(qMin(idxRow, selRow), qMin(idxCol, selCol)),
+				d->itemModel->index(
+					qMax(idxRow, selRow), qMax(idxCol, selCol))),
+			rangeSelectionFlags);
+		return QItemSelectionModel::NoUpdate | QItemSelectionModel::Current;
+	} else {
+		return QItemSelectionModel::ClearAndSelect;
+	}
+}
+
+bool TimelineWidget::setCurrentCheckPending(const QModelIndex &idx)
+{
+	if(d->pendingSelectionAction != PendingSelectionAction::None) {
+		if(idx == d->selectionPressIndex) {
+			return true;
+		} else {
+			executePendingSelectionAction();
+		}
+	}
+	return false;
+}
+
+void TimelineWidget::executePendingSelectionAction()
+{
+	switch(d->pendingSelectionAction) {
+	case PendingSelectionAction::None:
+		return;
+	case PendingSelectionAction::Replace:
+		d->itemSelectionModel->select(
+			d->selectionPressIndex, QItemSelectionModel::ClearAndSelect);
+		d->pendingSelectionAction = PendingSelectionAction::None;
+		return;
+	case PendingSelectionAction::Deselect:
+		d->itemSelectionModel->select(
+			d->selectionPressIndex, QItemSelectionModel::Deselect);
+		d->pendingSelectionAction = PendingSelectionAction::None;
+		return;
+	}
+	qWarning(
+		"Unhandled pending selection action %d",
+		int(d->pendingSelectionAction));
+	d->pendingSelectionAction = PendingSelectionAction::None;
+}
+
+void TimelineWidget::setKeyFrames(int layerId)
 {
 	if(layerId > 0) {
 		startFrameViewRequestTimer();
 	}
-	emitCommand([&](uint8_t contextId) {
-		return net::makeKeyFrameSetMessage(
-			contextId, d->currentTrackId, d->currentFrame, layerId, 0,
-			DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
-	});
+
+	QModelIndexList idxs = d->itemSelectionModel->selectedIndexes();
+	int idxCount = idxs.size();
+	if(idxCount != 0) {
+		net::MessageList msgs;
+		msgs.reserve(1 + idxCount);
+
+		uint8_t contextId = d->canvas->localUserId();
+		msgs.append(net::makeUndoPointMessage(contextId));
+
+		for(const QModelIndex &idx : idxs) {
+			int trackId = d->trackIdByIndex(idx.row());
+			if(trackId > 0) {
+				msgs.append(
+					net::makeKeyFrameSetMessage(
+						contextId, trackId, idx.column(), layerId, 0,
+						DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+			}
+		}
+
+		if(msgs.size() > 1) {
+			Q_EMIT timelineEditCommands(msgs.size(), msgs.constData());
+		}
+	}
 }
 
 void TimelineWidget::setKeyFrameProperties(
@@ -2799,19 +3402,8 @@ void TimelineWidget::setKeyFrameProperties(
 				contextId, trackId, frame, title);
 		}
 		if(layersChanged) {
-			QVector<uint32_t> layers;
-			layers.reserve(layerVisibility.size());
-			using LayersIt = QHash<int, bool>::const_iterator;
-			const LayersIt end = layerVisibility.constEnd();
-			for(LayersIt it = layerVisibility.constBegin(); it != end; ++it) {
-				uint32_t id = it.key();
-				uint32_t flags = it.value() ? DP_KEY_FRAME_LAYER_REVEALED
-											: DP_KEY_FRAME_LAYER_HIDDEN;
-				layers.append(
-					(id & uint32_t(0xffffffu)) | (flags << uint32_t(24)));
-			}
-			messages[fill++] = net::makeKeyFrameLayerAttributesMessage(
-				contextId, trackId, frame, layers);
+			messages[fill++] = d->makeKeyFrameLayerAttributesMessage(
+				contextId, trackId, frame, layerVisibility);
 		}
 		emit timelineEditCommands(fill, messages);
 	}
@@ -2951,14 +3543,15 @@ void TimelineWidget::updateActions()
 	d->actions.trackBelow->setEnabled(haveMultipleTracks);
 
 	bool keyFrameSettable = trackEditable && visibleFrameCount > 0;
-
 	const canvas::TimelineKeyFrame *currentKeyFrame = d->currentKeyFrame();
-	d->actions.keyFrameSetEmpty->setEnabled(
-		keyFrameSettable &&
-		(!currentKeyFrame || currentKeyFrame->layerId != 0));
 
 	bool haveKeyFrameLayer = false;
 	bool isSameKeyFrameLayer = false;
+	const SelectionState selectionState = d->getSelectionState();
+	QModelIndexList selectedIndexes = d->itemSelectionModel->selectedIndexes();
+	int selectedIndexCount = selectedIndexes.size();
+	int selectedNonKeyFrameCount =
+		qMax(0, selectedIndexCount - selectionState.keyFrameCount());
 	QString keyFrameSetLayerText;
 	if(d->selectedLayerId > 0) {
 		QModelIndex layerIndex = d->layerIndexById(d->selectedLayerId);
@@ -2967,25 +3560,60 @@ void TimelineWidget::updateActions()
 				layerIndex.data(canvas::LayerListModel::IdRole).toInt();
 			QString layerTitle =
 				layerIndex.data(canvas::LayerListModel::TitleRole).toString();
-			keyFrameSetLayerText = tr("Set Key Frame to %1").arg(layerTitle);
+			//: %1 is the name of a layer.
+			keyFrameSetLayerText = QCoreApplication::translate(
+									   "MainWindow", "Set Key Frame(s) to %1",
+									   nullptr, selectedIndexCount)
+									   .arg(layerTitle);
 			haveKeyFrameLayer = true;
-			isSameKeyFrameLayer =
-				currentKeyFrame && layerId == currentKeyFrame->layerId;
+
+			if(selectedNonKeyFrameCount == 0) {
+				isSameKeyFrameLayer = true;
+				for(const SelectionKeyFrame &skf : selectionState.keyFrames()) {
+					if(skf.layerId != layerId) {
+						isSameKeyFrameLayer = false;
+						break;
+					}
+				}
+			}
 		}
 	}
 
 	d->actions.keyFrameSetLayer->setEnabled(
-		keyFrameSettable && haveKeyFrameLayer && !isSameKeyFrameLayer);
+		keyFrameSettable && haveKeyFrameLayer && !isSameKeyFrameLayer &&
+		selectedIndexCount != 0);
 	if(haveKeyFrameLayer) {
-		d->actions.keyFrameSetLayer->setText(keyFrameSetLayerText);
+		utils::setActionText(d->actions.keyFrameSetLayer, keyFrameSetLayerText);
 	} else {
-		d->actions.keyFrameSetLayer->setText(
-			tr("Set Key Frame to Current Layer"));
+		utils::setActionText(
+			d->actions.keyFrameSetLayer,
+			QCoreApplication::translate(
+				"MainWindow", "Set Key Frame(s) to Current Layer", nullptr,
+				selectedIndexCount));
 	}
 
-	bool keyFrameCreatable = keyFrameSettable && !currentKeyFrame;
+	d->actions.keyFrameSetEmpty->setEnabled(
+		keyFrameSettable &&
+		(!currentKeyFrame || currentKeyFrame->layerId != 0) &&
+		selectedIndexCount != 0);
+	utils::setActionText(
+		d->actions.keyFrameSetEmpty, QCoreApplication::translate(
+										 "MainWindow", "Set Blank Key Frame(s)",
+										 nullptr, selectedIndexCount));
+
+	bool keyFrameCreatable = keyFrameSettable && selectedNonKeyFrameCount != 0;
 	d->actions.keyFrameCreateLayer->setEnabled(keyFrameCreatable);
 	d->actions.keyFrameCreateGroup->setEnabled(keyFrameCreatable);
+	utils::setActionText(
+		d->actions.keyFrameCreateLayer,
+		QCoreApplication::translate(
+			"MainWindow", "Create Layers on Current Key Frame(s)", nullptr,
+			selectedNonKeyFrameCount));
+	utils::setActionText(
+		d->actions.keyFrameCreateGroup,
+		QCoreApplication::translate(
+			"MainWindow", "Create Layer Group(s) on Current Key Frame(s)",
+			nullptr, selectedNonKeyFrameCount));
 
 	bool nextKeyFrameCreatable = keyFrameSettable &&
 								 d->currentFrame < d->frameCount() - 1 &&
@@ -3006,17 +3634,44 @@ void TimelineWidget::updateActions()
 		prevKeyFrameCreatable && keyFrameDuplicatable);
 
 	bool keyFrameEditable = keyFrameSettable && currentKeyFrame;
-	d->actions.keyFrameCut->setEnabled(keyFrameEditable);
-	d->actions.keyFrameCopy->setEnabled(keyFrameEditable);
-	d->actions.animationKeyFrameColorMenu->setEnabled(keyFrameEditable);
+	d->actions.keyFrameProperties->setEnabled(keyFrameEditable);
+
+	int selectedKeyFrameCount = selectionState.keyFrameCount();
+	bool anySelectedKeyFramesEditable =
+		timelineEditable && visibleFrameCount > 0 && selectedKeyFrameCount > 0;
+
+	d->actions.animationKeyFrameColorMenu->setEnabled(
+		anySelectedKeyFramesEditable);
+	// This isn't correct if multiple frames are selected, but whatever.
 	d->actions.animationKeyFrameColorMenu->setProperty(
 		"markercolor", currentKeyFrame ? currentKeyFrame->color : QColor());
 	for(QAction *ca : d->actions.animationKeyFrameColorMenu->actions()) {
-		ca->setEnabled(keyFrameEditable);
+		ca->setEnabled(anySelectedKeyFramesEditable);
 	}
-	d->actions.keyFrameProperties->setEnabled(keyFrameEditable);
-	d->actions.keyFrameDeleteLayer->setEnabled(keyFrameEditable);
-	d->actions.keyFrameUnassign->setEnabled(keyFrameEditable);
+
+	d->actions.keyFrameCut->setEnabled(anySelectedKeyFramesEditable);
+	utils::setActionText(
+		d->actions.keyFrameCut,
+		QCoreApplication::translate(
+			"MainWindow", "Cut Key Frame(s)", nullptr, selectedKeyFrameCount));
+
+	d->actions.keyFrameCopy->setEnabled(anySelectedKeyFramesEditable);
+	utils::setActionText(
+		d->actions.keyFrameCopy,
+		QCoreApplication::translate(
+			"MainWindow", "Copy Key Frame(s)", nullptr, selectedKeyFrameCount));
+
+	d->actions.keyFrameDeleteLayer->setEnabled(anySelectedKeyFramesEditable);
+	utils::setActionText(
+		d->actions.keyFrameDeleteLayer, QCoreApplication::translate(
+											"MainWindow", "Delete Key Frame(s)",
+											nullptr, selectedKeyFrameCount));
+
+	d->actions.keyFrameUnassign->setEnabled(anySelectedKeyFramesEditable);
+	utils::setActionText(
+		d->actions.keyFrameUnassign, QCoreApplication::translate(
+										 "MainWindow", "Unassign Key Frame(s)",
+										 nullptr, selectedKeyFrameCount));
 
 	bool canIncreaseExposure = false;
 	bool canDecreaseExposure = false;
@@ -3084,6 +3739,125 @@ void TimelineWidget::startFrameViewRequestTimer()
 {
 	if(d->editable) {
 		d->frameViewRequestTimer.setRemainingTime(10000, Qt::VeryCoarseTimer);
+	}
+}
+
+bool TimelineWidget::checkKeyFrameDrag(
+	const QDropEvent *event, bool updateSelection)
+{
+	const QMimeData *mimeData = event->mimeData();
+	int sourceTrackIndex = mimeData->property("trackIndex").toInt();
+	int sourceFrameIndex = mimeData->property("frameIndex").toInt();
+
+	Target target = getMouseTarget(compat::dropPos(*event));
+	int targetTrackIndex = d->trackCount() - target.uiTrackIndex - 1;
+	int targetFrameIndex = target.frameIndex;
+
+	int deltaTrackIndex = targetTrackIndex - sourceTrackIndex;
+	int deltaFrameIndex = targetFrameIndex - sourceFrameIndex;
+	if(deltaTrackIndex == 0 && deltaFrameIndex == 0) {
+		return false;
+	}
+
+	QVector<SelectionKeyFrame> skfs =
+		d->selectionState.sortedKeyFrames(deltaTrackIndex, deltaFrameIndex);
+
+	const QVector<canvas::TimelineTrack> &tracks = d->getTracks();
+	int trackCount = tracks.size();
+	int frameCount = d->frameCount();
+	int moveCount = 0;
+	for(SelectionKeyFrame &skf : skfs) {
+		if(skf.trackIndex >= 0 && skf.trackIndex < trackCount &&
+		   !tracks[skf.trackIndex].moveLock) {
+			int toTrackIndex = skf.trackIndex + deltaTrackIndex;
+			if(toTrackIndex < 0 || toTrackIndex >= trackCount ||
+			   tracks[toTrackIndex].moveLock) {
+				return false;
+			}
+
+			int toFrameIndex = skf.frameIndex + deltaFrameIndex;
+			if(toFrameIndex < 0 || toFrameIndex >= frameCount) {
+				return false;
+			}
+
+			++moveCount;
+		} else {
+			skf.trackIndex = -1;
+		}
+	}
+
+	if(moveCount == 0) {
+		return false;
+	}
+
+	d->dragKeyFrames.clear();
+	d->dragKeyFrameIndexes.clear();
+	d->dragKeyFrames.reserve(moveCount);
+	d->dragKeyFrameIndexes.reserve(moveCount);
+	for(const SelectionKeyFrame &skf : skfs) {
+		if(skf.trackIndex != -1) {
+			int toTrackIndex = skf.trackIndex + deltaTrackIndex;
+			d->dragKeyFrames.append({
+				skf.trackId,
+				skf.frameIndex,
+				tracks[toTrackIndex].id,
+				toTrackIndex,
+				skf.frameIndex + deltaFrameIndex,
+			});
+			d->dragKeyFrameIndexes.insert({skf.trackIndex, skf.frameIndex});
+		}
+	}
+
+	if(updateSelection) {
+		d->selectionUpdatesBlocked = true;
+
+		int newTrackIndex = qBound(
+			0, d->trackIndexById(d->currentTrackId) + deltaTrackIndex,
+			trackCount - 1);
+		int newTrackId = tracks[newTrackIndex].id;
+		if(newTrackId != d->currentTrackId) {
+			d->currentTrackId = newTrackId;
+			Q_EMIT trackSelected(newTrackId);
+		}
+
+		int newFrameIndex =
+			qBound(0, d->currentFrame + deltaFrameIndex, frameCount - 1);
+		if(newFrameIndex != d->currentFrame) {
+			d->currentFrame = newFrameIndex;
+			Q_EMIT frameSelected(newFrameIndex);
+		}
+
+		d->itemSelectionModel->setCurrentIndex(
+			d->itemModel->index(newTrackIndex, newFrameIndex),
+			QItemSelectionModel::NoUpdate);
+
+		shiftSelectionBy(deltaTrackIndex, deltaFrameIndex);
+
+		d->selectionUpdatesBlocked = false;
+		updateActions();
+		update();
+	}
+
+	return true;
+}
+
+void TimelineWidget::shiftSelectionBy(int deltaTrackIndex, int deltaFrameIndex)
+{
+	QItemSelection selection;
+	for(QModelIndex &idx : d->itemSelectionModel->selectedIndexes()) {
+		QModelIndex siblingIdx = idx.sibling(
+			idx.row() + deltaTrackIndex, idx.column() + deltaFrameIndex);
+		if(siblingIdx.isValid()) {
+			selection.select(siblingIdx, siblingIdx);
+		}
+	}
+	d->itemSelectionModel->select(
+		selection, QItemSelectionModel::ClearAndSelect);
+
+	if(d->selectionRangeStartIndex.isValid()) {
+		d->selectionRangeStartIndex = d->selectionRangeStartIndex.sibling(
+			d->selectionRangeStartIndex.row() + deltaTrackIndex,
+			d->selectionRangeStartIndex.column() + deltaFrameIndex);
 	}
 }
 
@@ -3156,10 +3930,74 @@ void TimelineWidget::applyMouseTarget(
 
 	bool right = event && event->button() == Qt::RightButton;
 	bool onTrack = target.frameIndex == -1;
+	d->pendingSelectionAction = PendingSelectionAction::None;
+
 	if((!action && (onTrack || !d->isCurrentExposureTool())) || right) {
+		// These conditions should reflect how Qt widgets usually behave with
+		// regards to selections between using right-click or left-click with
+		// modifiers. There's a slight difference here because our frames can be
+		// key frames or not and only the former is draggable, so this adds a
+		// few more cases where we have to handle the user clicking and sliding.
+		SelectionAction selectionAction;
+		if(target.frameIndex == -1) {
+			selectionAction = SelectionAction::Retain;
+		} else if(right) {
+			selectionAction = SelectionAction::ReplaceIfNotSelected;
+		} else if(d->isCurrentSelectTool()) {
+			if(event && event->type() == QEvent::MouseButtonDblClick) {
+				selectionAction = SelectionAction::Replace;
+			} else {
+				selectionAction = SelectionAction::ToggleIfNotSelected;
+				d->pendingSelectionAction = PendingSelectionAction::Deselect;
+			}
+		} else if(event) {
+			Qt::KeyboardModifiers mods = event->modifiers();
+			if(mods.testFlag(Qt::ShiftModifier)) {
+				selectionAction = SelectionAction::SelectCurrentRange;
+			} else if(mods.testFlag(Qt::ControlModifier)) {
+				selectionAction = SelectionAction::ToggleIfNotSelected;
+				d->pendingSelectionAction = PendingSelectionAction::Deselect;
+			} else {
+				selectionAction = SelectionAction::ReplaceIfNotSelected;
+				d->pendingSelectionAction = PendingSelectionAction::Replace;
+			}
+		} else {
+			selectionAction = SelectionAction::ReplaceIfNotSelected;
+		}
+
 		int trackId = target.trackId == 0 ? d->currentTrackId : target.trackId;
 		int frame = onTrack ? d->currentFrame : target.frameIndex;
-		setCurrent(trackId, frame, true, event && !right);
+		SetCurrentResult result =
+			setCurrent(trackId, frame, true, event && !right, selectionAction);
+		d->selectionPressIndex = result.idx;
+
+		switch(selectionAction) {
+		case SelectionAction::Replace:
+			d->moveSelectionAction = SelectionAction::SelectRange;
+			break;
+		case SelectionAction::ReplaceIfNotSelected:
+			d->moveSelectionAction = SelectionAction::ReplaceMove;
+			break;
+		case SelectionAction::ToggleIfNotSelected:
+			if(result.wasSelected) {
+				d->moveSelectionAction = SelectionAction::DeselectRange;
+			} else {
+				d->moveSelectionAction = SelectionAction::SelectRange;
+			}
+			break;
+		default:
+			d->moveSelectionAction = selectionAction;
+			break;
+		}
+
+		// A pending selection action is set by *IfNotSelected above. If nothing
+		// was selected, there's nothing pending, so reset it again.
+		if(!result.wasSelected || onTrack) {
+			d->pendingSelectionAction = PendingSelectionAction::None;
+		}
+
+	} else {
+		d->moveSelectionAction = SelectionAction::ReplaceMove;
 	}
 }
 

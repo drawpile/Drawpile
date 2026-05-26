@@ -380,6 +380,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView->connectViewStatus(m_viewstatus);
 	m_canvasView->connectViewStatusBar(m_viewStatusBar);
 	m_canvasView->connectToolSettings(m_dockToolSettings);
+	m_dockLayers->setTimeline(m_dockTimeline);
 	// clang-format off
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::triggerUpdateLockState);
@@ -491,10 +492,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_dockTimeline, &docks::Timeline::blankLayerSelected, m_dockLayers,
 		&docks::LayerList::clearLayerSelection);
-	connect(m_dockTimeline, &docks::Timeline::trackSelected, m_dockLayers, &docks::LayerList::setTrackId);
-	m_dockLayers->setTrackId(m_dockTimeline->currentTrackId());
-	connect(m_dockTimeline, &docks::Timeline::frameSelected, m_dockLayers, &docks::LayerList::setFrame);
-	m_dockLayers->setFrame(m_dockTimeline->currentFrame());
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			m_dockToolSettings->annotationSettings(), &tools::AnnotationSettings::setSelectionId);
 	connect(
@@ -7566,11 +7563,16 @@ void MainWindow::setupActions()
 			.icon("kdenlive-show-video")
 			.noDefaultShortcut();
 	QAction *timelineToolNormal =
-		makeAction("timeline-tool-normal", tr("Select"))
+		makeAction("timeline-tool-normal", tr("Edit"))
 			.icon(QStringLiteral("cursor-arrow"))
-			.noDefaultShortcutWithTitle(tr("Timeline tool: select"))
+			.noDefaultShortcutWithTitle(tr("Timeline tool: edit"))
 			.checkable()
 			.checked();
+	QAction *timelineToolSelect =
+		makeAction("timeline-tool-select", tr("Select"))
+			.icon(QStringLiteral("draw-highlight"))
+			.noDefaultShortcutWithTitle(tr("Timeline tool: select"))
+			.checkable();
 	QAction *timelineToolExposure =
 		makeAction("timeline-tool-exposure", tr("Exposure"))
 			.icon(QStringLiteral("drawpile_exposure"))
@@ -7591,21 +7593,26 @@ void MainWindow::setupActions()
 			.icon(QStringLiteral("zoom-original"))
 			.noDefaultShortcutWithTitle(tr("Timeline: reset zoom"));
 	QAction *keyFrameSetLayer =
-		makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer"))
+		makeAction(
+			"key-frame-set-layer",
+			tr("Set Key Frame(s) to Current Layer", nullptr, 1))
 			.icon("keyframe")
 			.shortcut("Ctrl+Shift+F");
 	QAction *keyFrameSetEmpty =
-		makeAction("key-frame-set-empty", tr("Set Blank Key Frame"))
+		makeAction(
+			"key-frame-set-empty", tr("Set Blank Key Frame(s)", nullptr, 1))
 			.icon("keyframe-disable")
 			.shortcut("Ctrl+Shift+B");
-	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame"))
-							   .icon("edit-cut")
-							   .noDefaultShortcut();
-	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame"))
-								.icon("edit-copy")
-								.noDefaultShortcut();
+	QAction *keyFrameCut =
+		makeAction("key-frame-cut", tr("Cut Key Frame(s)", nullptr, 1))
+			.icon("edit-cut")
+			.noDefaultShortcut();
+	QAction *keyFrameCopy =
+		makeAction("key-frame-copy", tr("Copy Key Frame(s)", nullptr, 1))
+			.icon("edit-copy")
+			.noDefaultShortcut();
 	QAction *keyFramePaste =
-		makeAction("key-frame-paste", tr("Paste Key Frame"))
+		makeAction("key-frame-paste", tr("Paste Key Frame(s)", nullptr, 1))
 			.icon("edit-paste")
 			.noDefaultShortcut();
 	QVector<QAction *> keyFrameColors;
@@ -7621,11 +7628,12 @@ void MainWindow::setupActions()
 			.icon("configure")
 			.shortcut("Ctrl+Shift+P");
 	QAction *keyFrameDeleteLayer =
-		makeAction("key-frame-delete", tr("Delete Key Frame"))
+		makeAction("key-frame-delete", tr("Delete Key Frame(s)", nullptr, 1))
 			.icon("keyframe-remove")
 			.shortcut("Ctrl+Shift+G");
 	QAction *keyFrameUnassign =
-		makeAction("key-frame-unassign", tr("Unassign Key Frame"))
+		makeAction(
+			"key-frame-unassign", tr("Unassign Key Frame(s)", nullptr, 1))
 			.icon("drawpile_keyframe_unlink")
 			.noDefaultShortcut();
 	QAction *keyFrameExposureIncrease =
@@ -7667,18 +7675,34 @@ void MainWindow::setupActions()
 	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K").autoRepeat();
 	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J").autoRepeat();
 
-	QAction *keyFrameCreateLayer = makeAction("key-frame-create-layer", tr("Create Layers on Current Key Frame")).icon("keyframe-add").shortcut("Ctrl+Shift+R");
+	// clang-format on
+	QAction *keyFrameCreateLayer =
+		makeAction(
+			"key-frame-create-layer",
+			//: Note that "layers" is always supposed to be plural! This may
+			//: create multiple layers even on a single key frame.
+			tr("Create Layers on Current Key Frame(s)", nullptr, 1))
+			.icon(QStringLiteral("keyframe-add"))
+			.shortcut(QStringLiteral("Ctrl+Shift+R"));
+	// clang-format off
 	QAction *keyFrameCreateLayerNext = makeAction("key-frame-create-layer-next", tr("Create Layers on Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+T");
 	QAction *keyFrameCreateLayerPrev = makeAction("key-frame-create-layer-prev", tr("Create Layers on Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+E");
-	QAction *keyFrameCreateGroup = makeAction("key-frame-create-group", tr("Create Group on Current Key Frame")).icon("keyframe-add").noDefaultShortcut();
+	// clang-format on
+	QAction *keyFrameCreateGroup =
+		makeAction(
+			"key-frame-create-group",
+			tr("Create Layer Group(s) on Current Key Frame(s)", nullptr, 1))
+			.icon(QStringLiteral("keyframe-add"))
+			.noDefaultShortcut();
+	// clang-format off
 	QAction *keyFrameCreateGroupNext = makeAction("key-frame-create-group-next", tr("Create Group on Next Key Frame")).icon("keyframe-next").noDefaultShortcut();
 	QAction *keyFrameCreateGroupPrev = makeAction("key-frame-create-group-prev", tr("Create Group on Previous Key Frame")).icon("keyframe-previous").noDefaultShortcut();
 	QAction *keyFrameDuplicateNext = makeAction("key-frame-duplicate-next", tr("Duplicate to Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Alt+Shift+T");
 	QAction *keyFrameDuplicatePrev = makeAction("key-frame-duplicate-prev", tr("Duplicate to Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Alt+Shift+E");
 
-	// clang-format on
 	QActionGroup *timelineToolGroup = new QActionGroup(this);
 	timelineToolGroup->addAction(timelineToolNormal);
+	timelineToolGroup->addAction(timelineToolSelect);
 	timelineToolGroup->addAction(timelineToolExposure);
 
 	QActionGroup *layerKeyFrameGroup = new QActionGroup{this};
@@ -7792,6 +7816,7 @@ void MainWindow::setupActions()
 		{
 			timelineToolGroup,
 			timelineToolNormal,
+			timelineToolSelect,
 			timelineToolExposure,
 			timelineZoomIn,
 			timelineZoomOut,

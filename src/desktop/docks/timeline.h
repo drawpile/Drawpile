@@ -41,6 +41,10 @@ public:
 	int currentTrackId() const;
 	int currentFrame() const;
 
+	// Used in the layer list dock to create layers.
+	QVector<widgets::TimelineWidget::SelectedFrame>
+	selectedNonKeyFrames() const;
+
 	void updateKeyFrameColorMenuIcon();
 
 	void setCurrentLayer(int layerId);

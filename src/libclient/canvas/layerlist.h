@@ -211,14 +211,16 @@ public:
 	 * @return layer ID or 0 if all are taken
 	 */
 	int getAvailableLayerId() const;
-	QVector<int> getAvailableLayerIds(int count) const;
+	QVector<int> getAvailableLayerIds(
+		int count, const QSet<int> *additionalTakenLayerIds = nullptr) const;
 
 	/**
 	 * @brief Find a unique name for a layer
-	 * @param basename
 	 * @return unique name
 	 */
-	QString getAvailableLayerName(QString basename) const;
+	QString getAvailableLayerName(
+		QString basename,
+		const QSet<QString> *additionalTakenLayerNames = nullptr) const;
 
 	/**
 	 * Find the nearest layer to the one given.

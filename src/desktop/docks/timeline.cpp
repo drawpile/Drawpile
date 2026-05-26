@@ -92,6 +92,12 @@ int Timeline::currentFrame() const
 	return m_widget->currentFrame();
 }
 
+QVector<widgets::TimelineWidget::SelectedFrame>
+Timeline::selectedNonKeyFrames() const
+{
+	return m_widget->selectedNonKeyFrames();
+}
+
 void Timeline::updateKeyFrameColorMenuIcon()
 {
 	m_widget->updateKeyFrameColorMenuIcon();
@@ -130,6 +136,8 @@ void Timeline::setUpTitleWidget(
 
 	addTitleButton(
 		titlebar, actions.timelineToolNormal, GroupedToolButton::GroupLeft);
+	addTitleButton(
+		titlebar, actions.timelineToolSelect, GroupedToolButton::GroupCenter);
 	addTitleButton(
 		titlebar, actions.timelineToolExposure, GroupedToolButton::GroupRight);
 

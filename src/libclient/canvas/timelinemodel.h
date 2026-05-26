@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_CANVAS_TIMELINEMODEL_H
 #define LIBCLIENT_CANVAS_TIMELINEMODEL_H
+#include <QAbstractItemModel>
 #include <QColor>
 #include <QHash>
 #include <QObject>
@@ -91,10 +92,38 @@ private:
 	keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex);
 
 	QVector<TimelineTrack> m_tracks;
-	AclState *m_aclState;
+	AclState *m_aclState = nullptr;
 	int m_lastFrameIndex = -1;
 	int m_selectedTrackIdToRestore = 0;
 	int m_selectedFrameIndexToRestore = -1;
+};
+
+// Dummy model to implement multi-frame selection. Doesn't actually return any
+// useful data, just keeps track of the number of tracks and frames.
+class TimelineItemModel final : public QAbstractItemModel {
+	Q_OBJECT
+public:
+	TimelineItemModel(QObject *parent = nullptr);
+
+	void setTrackCount(int trackCount);
+	void setFrameCount(int frameCount);
+
+	QModelIndex index(
+		int row, int column,
+		const QModelIndex &parent = QModelIndex()) const override;
+
+	QModelIndex parent(const QModelIndex &child) const override;
+
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+private:
+	int m_trackCount = 0;
+	int m_frameCount = 0;
 };
 
 }

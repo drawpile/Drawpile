@@ -1218,7 +1218,8 @@ int LayerListModel::getAvailableLayerId() const
 	return foundIds.isEmpty() ? 0 : foundIds.first();
 }
 
-QVector<int> LayerListModel::getAvailableLayerIds(int count) const
+QVector<int> LayerListModel::getAvailableLayerIds(
+	int count, const QSet<int> *additionalTakenLayerIds) const
 {
 	Q_ASSERT(m_aclstate);
 
@@ -1228,6 +1229,15 @@ QVector<int> LayerListModel::getAvailableLayerIds(int count) const
 	for(const LayerListItem &item : m_items) {
 		takenIds.insert(item.id);
 		++takenPerUser[DP_layer_id_context_id(item.id)];
+	}
+
+	if(additionalTakenLayerIds) {
+		for(int additionalTakenLayerId : *additionalTakenLayerIds) {
+			if(!takenIds.contains(additionalTakenLayerId)) {
+				takenIds.insert(additionalTakenLayerId);
+				++takenPerUser[DP_layer_id_context_id(additionalTakenLayerId)];
+			}
+		}
 	}
 
 	unsigned int localUserId = m_aclstate->localUserId();
@@ -1298,7 +1308,8 @@ int LayerListModel::searchAvailableLayerId(
 	return 0;
 }
 
-QString LayerListModel::getAvailableLayerName(QString basename) const
+QString LayerListModel::getAvailableLayerName(
+	QString basename, const QSet<QString> *additionalTakenLayerNames) const
 {
 	// Return a layer name of format "basename n" where n is one bigger than the
 	// biggest suffix number of layers named "basename n".
@@ -1313,8 +1324,9 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 	int highestSuffix = 0;
 	QRegularExpression suffixRe(QStringLiteral("\\A%1(\\s*)(0*)([0-9]+)\\s*\\z")
 									.arg(QRegularExpression::escape(basename)));
-	for(const LayerListItem &l : m_items) {
-		QRegularExpressionMatch m = suffixRe.match(l.title);
+
+	auto handle = [&](const QString &title) {
+		QRegularExpressionMatch m = suffixRe.match(title);
 		if(m.hasMatch()) {
 			int suffix = m.captured(3).toInt();
 			if(suffix > highestSuffix) {
@@ -1322,6 +1334,16 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 				fieldWidth = m.captured(2).length() + m.captured(3).length();
 				highestSuffix = suffix;
 			}
+		}
+	};
+
+	for(const LayerListItem &l : m_items) {
+		handle(l.title);
+	}
+
+	if(additionalTakenLayerNames) {
+		for(const QString &title : *additionalTakenLayerNames) {
+			handle(title);
 		}
 	}
 
