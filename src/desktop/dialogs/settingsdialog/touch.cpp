@@ -345,6 +345,11 @@ QComboBox *Touch::makeTapCombo()
 	tap->addItem(
 		tr("Toggle recolor mode"), int(view::TouchTapAction::RecolorMode));
 	tap->addItem(
+		tr("Mirror canvas horizontally"),
+		int(view::TouchTapAction::MirrorCanvas));
+	tap->addItem(
+		tr("Flip canvas upside-down"), int(view::TouchTapAction::FlipCanvas));
+	tap->addItem(
 		tr("Trigger action"), int(view::TouchTapAction::TriggerAction));
 	return tap;
 }
