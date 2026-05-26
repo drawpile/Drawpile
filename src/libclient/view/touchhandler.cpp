@@ -398,7 +398,12 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 				lcDpTouchHandler, "Executing %s tap with %d touch points",
 				cancel ? "cancelled" : "ended", maxTouchPoints);
 			if(maxTouchPoints == 1) {
-				handleOneFingerTap();
+				QPointF posf = points.isEmpty()
+								   ? m_touchState.currentCenter()
+								   : compat::touchPos(points.first());
+				TouchDrawPoint releasePoint = {
+					QDateTime::currentMSecsSinceEpoch(), posf, 0.0};
+				handleOneFingerTapWith(&releasePoint);
 			} else {
 				flushBufferedOneFingerSingleTap();
 				if(maxTouchPoints == 2) {
@@ -594,31 +599,17 @@ void TouchHandler::flushBufferedOneFingerSingleTap()
 {
 	qCDebug(lcDpTouchHandler, "Flush buffered one-finger single tap");
 	if(m_awaitingOneFingerDoubleTap) {
-		qCDebug(lcDpTouchHandler, "Executing buffered tap");
 		m_awaitingOneFingerDoubleTap = false;
 		stopMultiTapTimer();
-		emitOneFingerTapAction();
-	} else {
-		qCDebug(lcDpTouchHandler, "Not executing buffered tap");
-	}
-}
-
-void TouchHandler::handleOneFingerTap()
-{
-	if(haveOneFingerDoubleTapAction()) {
-		if(m_awaitingOneFingerDoubleTap) {
-			qCDebug(lcDpTouchHandler, "Executing one-finger double tap");
-			m_awaitingOneFingerDoubleTap = false;
-			stopMultiTapTimer();
-			emitOneFingerDoubleTapAction();
+		if(m_delayedTouchDrawBuffer.isEmpty()) {
+			qCDebug(lcDpTouchHandler, "Executing buffered tap");
+			emitOneFingerTapAction();
 		} else {
-			qCDebug(lcDpTouchHandler, "Awaiting one-finger double tap");
-			m_awaitingOneFingerDoubleTap = true;
-			startMultiTapTimer();
+			qCDebug(lcDpTouchHandler, "Executing buffered stroke");
+			flushDelayedTouchDrawBuffer();
 		}
 	} else {
-		qCDebug(lcDpTouchHandler, "Executing one-finger single tap");
-		emitOneFingerTapAction();
+		qCDebug(lcDpTouchHandler, "Not executing buffered tap");
 	}
 }
 
@@ -831,20 +822,70 @@ void TouchHandler::triggerTapAndHold()
 
 void TouchHandler::flushTouchDrawBuffer()
 {
-	int bufferCount = m_touchDrawBuffer.size();
+	flushTouchDrawPoints(m_touchDrawBuffer, m_touchGlobalPos, false);
+}
+
+void TouchHandler::flushDelayedTouchDrawBuffer()
+{
+	flushTouchDrawPoints(
+		m_delayedTouchDrawBuffer, m_delayedTouchGlobalPos, true);
+}
+
+void TouchHandler::flushTouchDrawPoints(
+	QVector<TouchDrawPoint> &buffer, const QPoint &globalPos, bool releaseLast)
+{
+	int bufferCount = buffer.size();
 	qCDebug(
 		lcDpTouchHandler, "Flush touch draw buffer with %d point(s)",
 		bufferCount);
-	if(bufferCount != 0) {
-		const TouchDrawPoint &press = m_touchDrawBuffer.first();
-		emit touchPressed(
-			nullptr, press.timeMsec, press.posf, m_touchGlobalPos,
-			press.pressure);
+
+	// For flushing delayed touch points after waiting for a double-tap, we take
+	// off the last point that gets handles specially.
+	if(releaseLast) {
+		--bufferCount;
+	}
+
+	if(bufferCount > 0) {
+		const TouchDrawPoint &press = buffer.first();
+		Q_EMIT touchPressed(
+			nullptr, press.timeMsec, press.posf, globalPos, press.pressure);
+
 		for(int i = 0; i < bufferCount; ++i) {
-			const TouchDrawPoint &move = m_touchDrawBuffer[i];
-			emit touchMoved(move.timeMsec, move.posf, move.pressure);
+			const TouchDrawPoint &move = buffer[i];
+			Q_EMIT touchMoved(move.timeMsec, move.posf, move.pressure);
 		}
-		m_touchDrawBuffer.clear();
+
+		if(releaseLast) {
+			const TouchDrawPoint &release = buffer[bufferCount];
+			Q_EMIT touchReleased(release.timeMsec, release.posf);
+		}
+
+		buffer.clear();
+	}
+}
+
+void TouchHandler::handleOneFingerTapWith(TouchDrawPoint *releasePointOrNull)
+{
+	if(haveOneFingerDoubleTapAction()) {
+		m_delayedTouchDrawBuffer.clear();
+		if(m_awaitingOneFingerDoubleTap) {
+			qCDebug(lcDpTouchHandler, "Executing one-finger double tap");
+			m_awaitingOneFingerDoubleTap = false;
+			stopMultiTapTimer();
+			emitOneFingerDoubleTapAction();
+		} else {
+			qCDebug(lcDpTouchHandler, "Awaiting one-finger double tap");
+			m_awaitingOneFingerDoubleTap = true;
+			if(releasePointOrNull && !haveOneFingerTapAction()) {
+				m_delayedTouchGlobalPos = m_touchGlobalPos;
+				m_delayedTouchDrawBuffer.swap(m_touchDrawBuffer);
+				m_delayedTouchDrawBuffer.append(*releasePointOrNull);
+			}
+			startMultiTapTimer();
+		}
+	} else {
+		qCDebug(lcDpTouchHandler, "Executing one-finger single tap");
+		emitOneFingerTapAction();
 	}
 }
 

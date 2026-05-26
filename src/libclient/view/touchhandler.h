@@ -75,7 +75,8 @@ protected:
 	qreal adjustTwistRotation(qreal degrees) const;
 
 	void flushBufferedOneFingerSingleTap();
-	void handleOneFingerTap();
+
+	void handleOneFingerTap() { handleOneFingerTapWith(nullptr); }
 
 	void emitOneFingerTapAction()
 	{
@@ -172,6 +173,11 @@ private:
 
 	void triggerTapAndHold();
 	void flushTouchDrawBuffer();
+	void flushDelayedTouchDrawBuffer();
+	void flushTouchDrawPoints(
+		QVector<TouchDrawPoint> &buffer, const QPoint &globalPos,
+		bool releaseLast);
+	void handleOneFingerTapWith(TouchDrawPoint *releasePointOrNull);
 	void emitTapAction(int action, const QString &trigger);
 
 	void startTapAndHoldTimer() { safeStartTimer("hold", m_tapAndHoldTimer); }
@@ -219,6 +225,7 @@ private:
 	int m_oneFingerDoubleTapAction;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<TouchDrawPoint> m_touchDrawBuffer;
+	QVector<TouchDrawPoint> m_delayedTouchDrawBuffer;
 	QString m_oneFingerTapTrigger;
 	QString m_twoFingerTapTrigger;
 	QString m_threeFingerTapTrigger;
@@ -226,6 +233,7 @@ private:
 	QString m_oneFingerDoubleTapTrigger;
 	TouchState m_touchState;
 	QPoint m_touchGlobalPos;
+	QPoint m_delayedTouchGlobalPos;
 	qreal m_touchStartZoom = 0.0;
 	qreal m_touchStartRotate = 0.0;
 	QPointF m_gestureStartPos;
