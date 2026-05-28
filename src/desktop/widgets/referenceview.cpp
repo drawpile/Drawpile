@@ -2,6 +2,7 @@
 #include "desktop/widgets/referenceview.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/utils/cursors.h"
+#include "libclient/utils/images.h"
 #include "libclient/view/zoom.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
@@ -11,7 +12,6 @@
 #include <QGraphicsScene>
 #include <QGuiApplication>
 #include <QImage>
-#include <QImageReader>
 #include <QKeyEvent>
 #include <QMimeData>
 #include <QMouseEvent>
@@ -436,8 +436,7 @@ bool ReferenceView::canHandleDrop(const QMimeData *mimeData)
 			QUrl url = mimeData->urls().first();
 			if(url.isLocalFile()) {
 				QFileInfo info(url.toLocalFile());
-				if(QImageReader::supportedImageFormats().contains(
-					   info.suffix().toCaseFolded().toUtf8())) {
+				if(utils::isLoadableImageFileSuffix(info.suffix())) {
 					return true;
 				}
 			}

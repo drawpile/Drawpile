@@ -1070,14 +1070,8 @@ void FileWrangler::openImageFileContent(
 		};
 #else
 	OpenFn fileOpenCompleted = [imageOpenCompleted](const QString &fileName) {
-		QImage img;
 		QString error;
-		{
-			QImageReader reader(fileName);
-			if(!reader.read(&img)) {
-				error = reader.errorString();
-			}
-		}
+		QImage img = utils::loadImageFromFile(fileName, &error);
 		imageOpenCompleted(img, error);
 	};
 #endif

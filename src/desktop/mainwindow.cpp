@@ -5406,10 +5406,14 @@ void MainWindow::pasteFile()
 void MainWindow::pasteFilePath(const QString &path)
 {
 	QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-	QImage img(path);
+	QString error;
+	QImage img = utils::loadImageFromFile(path, &error);
 	if(img.isNull()) {
 		QGuiApplication::restoreOverrideCursor();
-		showErrorMessage(tr("The image could not be loaded"));
+		showErrorMessage(
+			error.isEmpty() ? tr("The image could not be loaded")
+							: tr("The image could not be loaded: %1.")
+								  .arg(error));
 	} else {
 		pasteImage(img);
 		QGuiApplication::restoreOverrideCursor();

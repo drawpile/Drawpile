@@ -7,10 +7,10 @@
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/referenceview.h"
 #include "libclient/document.h"
+#include "libclient/utils/images.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QHBoxLayout>
-#include <QImageReader>
 #include <QMenu>
 #include <QScrollBar>
 #include <QSignalBlocker>
@@ -237,14 +237,8 @@ void ReferenceDock::handleImageDrop(const QImage &img)
 
 void ReferenceDock::handlePathDrop(const QString &path)
 {
-	QImage img;
 	QString error;
-	{
-		QImageReader reader(path);
-		if(!reader.read(&img)) {
-			error = reader.errorString();
-		}
-	}
+	QImage img = utils::loadImageFromFile(path, &error);
 	showReferenceImageFromFile(img, error);
 }
 

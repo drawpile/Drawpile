@@ -6,9 +6,11 @@
 class QSize;
 class QImage;
 class QColor;
+class QString;
 
 #include <QVector>
 #include <QPair>
+#include <QStringList>
 
 namespace utils {
 
@@ -56,8 +58,9 @@ Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)
 
 QStringList fileFormatFilterList(FileFormatOptions formats);
+QImage loadImageFromFile(const QString &path, QString *outError = nullptr);
+bool isLoadableImageFileSuffix(const QString &suffix);
 
 }
 
 #endif
-

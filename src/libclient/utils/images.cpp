@@ -2,12 +2,17 @@
 
 #include "libclient/utils/images.h"
 #include "cmake-config/config.h"
+#include "libclient/drawdance/image.h"
 
 extern "C" {
+#include <dpcommon/input.h>
+#include <dpimpex/image_impex.h>
 #include <dpimpex/load.h>
 #include <dpimpex/save.h>
 }
 
+#include <QFileInfo>
+#include <QImage>
 #include <QSize>
 #include <QImageReader>
 #include <QImageWriter>
@@ -37,6 +42,127 @@ static const QVector<ImageFormat> &writableImageFormats()
 	return formats;
 }
 
+static QString normalizedSuffix(QString suffix)
+{
+	if(suffix.startsWith('.')) {
+		suffix.remove(0, 1);
+	}
+	return suffix.toCaseFolded();
+}
+
+static bool suffixMatchesPatternList(const QString &suffix, const char *patterns)
+{
+	const QString normalized = normalizedSuffix(suffix);
+	for(const QString &pattern :
+		QString::fromUtf8(patterns).split(' ', Qt::SkipEmptyParts)) {
+		QString extension = pattern;
+		if(extension.startsWith(QStringLiteral("*."))) {
+			extension.remove(0, 2);
+		}
+		if(normalized == extension.toCaseFolded()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static void appendUniqueImagePattern(QStringList &patterns, const QString &pattern)
+{
+	if(!patterns.contains(pattern, Qt::CaseInsensitive)) {
+		patterns.append(pattern);
+	}
+}
+
+static QString qtAndNativeFlatImageFilterPatterns()
+{
+	QStringList patterns;
+	for(QByteArray format : QImageReader::supportedImageFormats()) {
+		appendUniqueImagePattern(
+			patterns,
+			QStringLiteral("*.%1").arg(QString::fromLatin1(format)));
+	}
+	for(const QString &pattern : QString::fromUtf8(
+			cmake_config::file_group::flatImage())
+								  .split(' ', Qt::SkipEmptyParts)) {
+		appendUniqueImagePattern(patterns, pattern);
+	}
+	return patterns.join(' ');
+}
+
+static QImage loadImageWithQt(const QString &path, QString &outError)
+{
+	QImage img;
+	QImageReader reader(path);
+	if(reader.read(&img) && !img.isNull()) {
+		outError.clear();
+		return img;
+	} else {
+		outError = reader.errorString();
+		return QImage{};
+	}
+}
+
+static QImage loadImageWithDrawdance(const QString &path, QString &outError)
+{
+	QByteArray pathBytes = path.toUtf8();
+	DP_Input *input = DP_file_input_new_from_path(pathBytes.constData());
+	if(!input) {
+		outError = QString::fromUtf8(DP_error());
+		return QImage{};
+	}
+
+	DP_Image *img =
+		DP_image_new_from_file(input, DP_IMAGE_FILE_TYPE_GUESS, nullptr);
+	DP_input_free(input);
+	if(img) {
+		outError.clear();
+		return drawdance::wrapImage(img);
+	} else {
+		outError = QString::fromUtf8(DP_error());
+		return QImage{};
+	}
+}
+
+bool isLoadableImageFileSuffix(const QString &suffix)
+{
+	return QImageReader::supportedImageFormats().contains(
+			   normalizedSuffix(suffix).toUtf8()) ||
+		   suffixMatchesPatternList(suffix, cmake_config::file_group::flatImage());
+}
+
+QImage loadImageFromFile(const QString &path, QString *outError)
+{
+	const QString suffix = QFileInfo(path).suffix();
+	const bool preferDrawdance =
+		suffix.compare(QStringLiteral("webp"), Qt::CaseInsensitive) == 0 ||
+		suffix.compare(QStringLiteral("qoi"), Qt::CaseInsensitive) == 0;
+
+	QString primaryError;
+	QString fallbackError;
+	QImage img = preferDrawdance ? loadImageWithDrawdance(path, primaryError)
+								 : loadImageWithQt(path, primaryError);
+	if(!img.isNull()) {
+		if(outError) {
+			outError->clear();
+		}
+		return img;
+	}
+
+	img = preferDrawdance ? loadImageWithQt(path, fallbackError)
+						  : loadImageWithDrawdance(path, fallbackError);
+	if(!img.isNull()) {
+		if(outError) {
+			outError->clear();
+		}
+		return img;
+	}
+
+	if(outError) {
+		*outError = fallbackError.isEmpty() ? primaryError : fallbackError;
+	}
+	return QImage{};
+}
+
 QStringList fileFormatFilterList(FileFormatOptions formats)
 {
 	QStringList filter;
@@ -62,9 +188,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 		} else {
 			// A single Images filter for loading
 			if(formats.testFlag(FileFormatOption::QtImagesOnly)) {
-				for(QByteArray format : QImageReader::supportedImageFormats()) {
-					readImages += "*." + format + " ";
-				}
+				readImages = qtAndNativeFlatImageFilterPatterns();
 			} else {
 				readImages = cmake_config::file_group::image();
 			}
