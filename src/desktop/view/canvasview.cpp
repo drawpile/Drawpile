@@ -380,7 +380,12 @@ void CanvasView::setTouchUseGestureEvents(bool touchUseGestureEvents)
 void CanvasView::handleDragDrop(QDropEvent *event, bool drop)
 {
 	const QMimeData *mimeData = event->mimeData();
-	if(mimeData->hasImage()) {
+	if(mimeData->hasUrls() && !mimeData->urls().isEmpty()) {
+		event->acceptProposedAction();
+		if(drop) {
+			emit urlDropped(mimeData->urls().first());
+		}
+	} else if(mimeData->hasImage()) {
 		// Don't accept layer drops from the same canvas, that just leads to
 		// accidental dragging of layers duplicating their contents.
 		if(!qobject_cast<const canvas::LayerMimeData *>(mimeData)) {
@@ -388,11 +393,6 @@ void CanvasView::handleDragDrop(QDropEvent *event, bool drop)
 			if(drop) {
 				emit imageDropped(qvariant_cast<QImage>(mimeData->imageData()));
 			}
-		}
-	} else if(mimeData->hasUrls() && !mimeData->urls().isEmpty()) {
-		event->acceptProposedAction();
-		if(drop) {
-			emit urlDropped(mimeData->urls().first());
 		}
 	} else if(mimeData->hasColor()) {
 		event->acceptProposedAction();
