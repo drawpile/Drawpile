@@ -1277,17 +1277,17 @@ QMessageBox *showCritical(
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut)
 {
-	static const QRegularExpression acceleratorRegex(QStringLiteral("&([^&])"));
-	text.replace(acceleratorRegex, QStringLiteral("\\1"));
-
 	// In languages with non-latin alphabets, it's a common
 	// convention to add a keyboard shortcut like this:
 	// English: &File
 	// Japanese: ファイル(&F)
-	int i = text.lastIndexOf('(');
+	int i = text.lastIndexOf(QStringLiteral("(&"));
 	if(i > 0) {
 		text.truncate(i);
 	}
+
+	static const QRegularExpression acceleratorRegex(QStringLiteral("&([^&])"));
+	text.replace(acceleratorRegex, QStringLiteral("\\1"));
 
 	if(shortcut.isEmpty()) {
 		return text;
