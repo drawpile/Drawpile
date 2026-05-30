@@ -2827,6 +2827,14 @@ void CanvasView::dragMoveEvent(QDragMoveEvent *event)
 	handleDragDrop(event, false);
 }
 
+void CanvasView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	// Nothing, this is just here so that QGraphicsView doesn't balk about
+	// receiving a drag leave event without a drag enter event, since we
+	// override that and don't call the parent functiion.
+	Q_UNUSED(event);
+}
+
 void CanvasView::dropEvent(QDropEvent *event)
 {
 	handleDragDrop(event, true);
