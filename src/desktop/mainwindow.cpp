@@ -10,6 +10,7 @@ extern "C" {
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/dumpplaybackdialog.h"
+#include "desktop/dialogs/inputdebugdialog.h"
 #include "desktop/dialogs/inputsettingsdialog.h"
 #include "desktop/dialogs/invitedialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
@@ -5860,6 +5861,22 @@ void MainWindow::openProjectInfo()
 }
 #endif
 
+void MainWindow::openInputDebugDialog()
+{
+	QString objectName = QStringLiteral("inputdebugdialog");
+	dialogs::InputDebugDialog *dlg = findChild<dialogs::InputDebugDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::InputDebugDialog(this);
+		dlg->setObjectName(objectName);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		utils::showWindow(dlg);
+	}
+}
+
 void MainWindow::causeCrash()
 {
 	QMessageBox *box = utils::makeQuestion(
@@ -8033,6 +8050,8 @@ void MainWindow::setupActions()
 	QAction *projectInfo = makeAction("projectinfo", tr("Project Information…"));
 #endif
 	// clang-format on
+	QAction *inputDebug =
+		makeAction("inputdebug", tr("Debug Input Events…")).noDefaultShortcut();
 #ifdef Q_OS_ANDROID
 	QAction *androidTextDebug =
 		makeAction("androidtextdebug", tr("Text Input Debug Overlay"))
@@ -8052,6 +8071,7 @@ void MainWindow::setupActions()
 	devtoolsmenu->addAction(projectInfo);
 #endif
 	// clang-format on
+	devtoolsmenu->addAction(inputDebug);
 #ifdef Q_OS_ANDROID
 	devtoolsmenu->addAction(androidTextDebug);
 #endif
@@ -8069,6 +8089,9 @@ void MainWindow::setupActions()
 	connect(projectInfo, &QAction::triggered, this, &MainWindow::openProjectInfo);
 #endif
 	// clang-format on
+	connect(
+		inputDebug, &QAction::triggered, this,
+		&MainWindow::openInputDebugDialog);
 #ifdef Q_OS_ANDROID
 	connect(androidTextDebug, &QAction::triggered, this, [](bool checked) {
 		if(checked) {

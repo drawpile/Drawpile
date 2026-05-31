@@ -304,6 +304,7 @@ private slots:
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 	void openProjectInfo();
 #endif
+	void openInputDebugDialog();
 	void causeCrash();
 
 	void updateTemporaryToolSwitch();

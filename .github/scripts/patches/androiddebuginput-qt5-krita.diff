@@ -1,0 +1,181 @@
+diff --git a/src/corelib/kernel/qcoreapplication.h b/src/corelib/kernel/qcoreapplication.h
+index 4f0d71cb00..1c798eabc1 100644
+--- a/src/corelib/kernel/qcoreapplication.h
++++ b/src/corelib/kernel/qcoreapplication.h
+@@ -56,6 +56,10 @@ typedef struct tagMSG MSG;
+ #endif
+ #endif
+ 
++#ifdef Q_OS_ANDROID
++#include <QtCore/qvariant.h>
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ 
+@@ -94,6 +98,10 @@ class QAbstractNativeEventFilter;
+ #   define KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS 2u
+ #endif
+ 
++#ifdef Q_OS_ANDROID
++#   define KRITA_QATTRIBUTE_ANDROID_DEBUG_INPUT_EVENTS 4u
++#endif
++
+ // End of Krita attributes.
+ 
+ class Q_CORE_EXPORT QCoreApplication
+@@ -216,6 +224,10 @@ Q_SIGNALS:
+     void applicationNameChanged();
+     void applicationVersionChanged();
+ 
++#ifdef Q_OS_ANDROID
++    void debugAndroidInputEvent(const QVariantHash &data);
++#endif
++
+ protected:
+     bool event(QEvent *) override;
+ 
+diff --git a/src/plugins/platforms/android/MotionEventWrapper.h b/src/plugins/platforms/android/MotionEventWrapper.h
+index f493d1a2a4..83963a97f8 100644
+--- a/src/plugins/platforms/android/MotionEventWrapper.h
++++ b/src/plugins/platforms/android/MotionEventWrapper.h
+@@ -101,6 +101,11 @@ public:
+         return AMotionEvent_getAxisValue(m_motionEvent, axis, 0);
+     }
+ 
++    inline float getAxisValue(int32_t axis, int32_t pointerIndex) const
++    {
++        return AMotionEvent_getAxisValue(m_motionEvent, axis, pointerIndex);
++    }
++
+     inline float getX(int pointerIndex) const
+     {
+         return AMotionEvent_getX(m_motionEvent, pointerIndex);
+diff --git a/src/plugins/platforms/android/androidjniinput.cpp b/src/plugins/platforms/android/androidjniinput.cpp
+index 9d94e45a51..d29e42b18e 100644
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -57,6 +57,60 @@
+ #include <QGuiApplication>
+ #include <QDebug>
+ #include <QtMath>
++#include <QVariantHash>
++#include <QVariantList>
++
++#define DEBUG_MOTION_EVENT_AXIS_LIST \
++    DEBUG_MOTION_EVENT_AXIS_X(BRAKE) \
++    DEBUG_MOTION_EVENT_AXIS_X(DISTANCE) \
++    DEBUG_MOTION_EVENT_AXIS_X(GAS) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_1) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_2) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_3) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_4) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_5) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_6) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_7) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_8) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_9) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_10) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_11) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_12) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_13) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_14) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_15) \
++    DEBUG_MOTION_EVENT_AXIS_X(GENERIC_16) \
++    DEBUG_MOTION_EVENT_AXIS_X(GESTURE_PINCH_SCALE_FACTOR) \
++    DEBUG_MOTION_EVENT_AXIS_X(GESTURE_SCROLL_X_DISTANCE) \
++    DEBUG_MOTION_EVENT_AXIS_X(GESTURE_SCROLL_Y_DISTANCE) \
++    DEBUG_MOTION_EVENT_AXIS_X(GESTURE_X_OFFSET) \
++    DEBUG_MOTION_EVENT_AXIS_X(GESTURE_Y_OFFSET) \
++    DEBUG_MOTION_EVENT_AXIS_X(HAT_X) \
++    DEBUG_MOTION_EVENT_AXIS_X(HAT_Y) \
++    DEBUG_MOTION_EVENT_AXIS_X(HSCROLL) \
++    DEBUG_MOTION_EVENT_AXIS_X(LTRIGGER) \
++    DEBUG_MOTION_EVENT_AXIS_X(ORIENTATION) \
++    DEBUG_MOTION_EVENT_AXIS_X(PRESSURE) \
++    DEBUG_MOTION_EVENT_AXIS_X(RELATIVE_X) \
++    DEBUG_MOTION_EVENT_AXIS_X(RELATIVE_Y) \
++    DEBUG_MOTION_EVENT_AXIS_X(RTRIGGER) \
++    DEBUG_MOTION_EVENT_AXIS_X(RUDDER) \
++    DEBUG_MOTION_EVENT_AXIS_X(RX) \
++    DEBUG_MOTION_EVENT_AXIS_X(RY) \
++    DEBUG_MOTION_EVENT_AXIS_X(RZ) \
++    DEBUG_MOTION_EVENT_AXIS_X(SCROLL) \
++    DEBUG_MOTION_EVENT_AXIS_X(SIZE) \
++    DEBUG_MOTION_EVENT_AXIS_X(THROTTLE) \
++    DEBUG_MOTION_EVENT_AXIS_X(TILT) \
++    DEBUG_MOTION_EVENT_AXIS_X(TOOL_MAJOR) \
++    DEBUG_MOTION_EVENT_AXIS_X(TOOL_MINOR) \
++    DEBUG_MOTION_EVENT_AXIS_X(TOUCH_MAJOR) \
++    DEBUG_MOTION_EVENT_AXIS_X(TOUCH_MINOR) \
++    DEBUG_MOTION_EVENT_AXIS_X(VSCROLL) \
++    DEBUG_MOTION_EVENT_AXIS_X(WHEEL) \
++    DEBUG_MOTION_EVENT_AXIS_X(X) \
++    DEBUG_MOTION_EVENT_AXIS_X(Y) \
++    DEBUG_MOTION_EVENT_AXIS_X(Z)
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -524,6 +578,62 @@ namespace QtAndroidInput
+ 
+     static void dispatchTabletMotionEvent(MotionEventWrapper &ev, QTabletEvent::PointerType pointerType)
+     {
++        if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_DEBUG_INPUT_EVENTS)) {
++            QCoreApplication *app = QCoreApplication::instance();
++            if (app) {
++                QVariantList pointers;
++                size_t pointerCount = ev.getPointerCount();
++                for (size_t pointerIndex = 0; pointerIndex < pointerCount; ++pointerIndex) {
++                    pointers.append(QVariantHash({
++                        {QStringLiteral("pointerIndex"), qulonglong(pointerIndex)},
++                        {QStringLiteral("pointerId"), ev.getPointerId(pointerIndex)},
++                        {QStringLiteral("axes"), QVariantHash({
++#define DEBUG_MOTION_EVENT_AXIS_X(AXIS) {QStringLiteral(#AXIS), ev.getAxisValue(AMOTION_EVENT_AXIS_ ## AXIS, pointerIndex)},
++                        DEBUG_MOTION_EVENT_AXIS_LIST
++#undef DEBUG_MOTION_EVENT_AXIS_X
++                        })},
++                    }));
++                }
++
++                QVariantList history;
++                const size_t historySize = ev.getHistorySize();
++                for (size_t historicalIndex = 0; historicalIndex < historySize; ++historicalIndex) {
++                    QVariantList historicalPointers;
++                    for (size_t pointerIndex = 0; pointerIndex < pointerCount; ++pointerIndex) {
++                        historicalPointers.append(QVariantHash({
++                            {QStringLiteral("pointerIndex"), qulonglong(pointerIndex)},
++                            {QStringLiteral("pointerId"), ev.getPointerId(pointerIndex)},
++                            {QStringLiteral("axes"), QVariantHash({
++#define DEBUG_MOTION_EVENT_AXIS_X(AXIS) {QStringLiteral(#AXIS), ev.getHistoricalAxisValue(AMOTION_EVENT_AXIS_ ## AXIS, pointerIndex, historicalIndex)},
++                            DEBUG_MOTION_EVENT_AXIS_LIST
++#undef DEBUG_MOTION_EVENT_AXIS_X
++                            })},
++                        }));
++                    }
++
++                    history.append(QVariantHash({
++                        {QStringLiteral("historyIndex"), qulonglong(historicalIndex)},
++                        {QStringLiteral("eventTime"), qlonglong(ev.getHistoricalEventTime(historicalIndex))},
++                        {QStringLiteral("pointers"), historicalPointers},
++                    }));
++                }
++
++                QVariantHash data = {
++                    {QStringLiteral("deviceId"), ev.getDeviceId()},
++                    {QStringLiteral("action"), ev.getAction()},
++                    {QStringLiteral("actionMasked"), ev.getActionMasked()},
++                    {QStringLiteral("eventTime"), qlonglong(ev.getEventTime())},
++                    {QStringLiteral("buttonState"), ev.getButtonState()},
++                    {QStringLiteral("metaState"), ev.getMetaState()},
++                    {QStringLiteral("pointerCount"), qulonglong(pointerCount)},
++                    {QStringLiteral("pointers"), pointers},
++                    {QStringLiteral("history"), history},
++                };
++
++                Q_EMIT app->debugAndroidInputEvent(data);
++            }
++        }
++
+         // Xiaomi tablets report complete garbage as their tablet events, they're just the "real"
+         // points connected with a straight line and no pressure interpolation at all.
+         if (!QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)) {
