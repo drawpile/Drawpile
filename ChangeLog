@@ -7,6 +7,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add one-finger double-tap touch action. Lets you bind stuff to tapping twice quickly with a single finger. Thanks Bnuuyman for suggesting.
  * Feature: Allow selecting multiple frames in the timeline, letting you move, copy, delete etc. them all at once. You can use Shift or Ctrl or switch to the "select" timeline tool to do it without keyboard keys.
  * Feature: Add support for stylus barrel rotation on Android, for styluses that support it. Thanks kwh0209 for helping test this. This is a patch to Qt.
+ * Fix: Make repeated move transforms not cause the transformation to get scaled by one pixel. Thanks Hermanni for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

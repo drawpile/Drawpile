@@ -810,7 +810,11 @@ void TransformTool::dragMove(canvas::TransformModel *transform, bool constrain)
 			delta.setY(0.0);
 		}
 	}
-	updateQuad(transform, m_dragStartQuad.polygon().translated(delta));
+	// Go via integers to not cause precision issues. The actual transform uses
+	// integer coordinates anyway, so this shouldn't lose information.
+	QPolygon polygon = m_dragStartQuad.polygon().toPolygon();
+	polygon.translate(delta.toPoint());
+	updateQuad(transform, QPolygonF(polygon));
 }
 
 void TransformTool::dragRotate(
