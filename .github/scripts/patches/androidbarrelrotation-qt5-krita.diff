@@ -1,0 +1,60 @@
+diff --git a/src/plugins/platforms/android/androidjniinput.cpp b/src/plugins/platforms/android/androidjniinput.cpp
+index c2600670c7..294e98c03c 100644
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -39,6 +39,7 @@
+ ****************************************************************************/
+ 
+ #include <android/input.h>
++#include <cmath>
+ 
+ #include <QtGui/qtguiglobal.h>
+ 
+@@ -576,6 +577,13 @@ namespace QtAndroidInput
+         }
+     }
+ 
++    static float normalizeBarrelRotation(float rad)
++    {
++        // On Android, zero degrees points toward the bottom, but Qt expects it to point toward the
++        // top instead. Flip it around.
++        return std::remainder(qRadiansToDegrees(rad) + 180.0f, 360.0f);
++    }
++
+     static void dispatchTabletMotionEvent(MotionEventWrapper &ev, QTabletEvent::PointerType pointerType)
+     {
+         if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_DEBUG_INPUT_EVENTS)) {
+@@ -647,14 +655,15 @@ namespace QtAndroidInput
+                 const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
+                 const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
+ 
+-                const float orientationDegrees = qRadiansToDegrees(orientation);
++                const float barrelRotationDegrees = normalizeBarrelRotation(
++                        ev.getHistoricalAxisValue(AMOTION_EVENT_AXIS_RZ, 0, historicalIndex));
+ 
+                 tabletEvent(ev.getDeviceId(), ev.getHistoricalEventTimeMs(historicalIndex),
+                             ev.getActionMasked(), pointerType, ev.getButtonState(),
+                             ev.getHistoricalX(historicalIndex),
+                             ev.getHistoricalY(historicalIndex),
+                             ev.getHistoricalPressure(historicalIndex), tiltX, tiltY,
+-                            orientationDegrees, ev.getMetaState());
++                            barrelRotationDegrees, ev.getMetaState());
+             }
+         }
+ 
+@@ -664,11 +673,13 @@ namespace QtAndroidInput
+         const float tiltX = qRadiansToDegrees(-sin(orientation) * tiltRot);
+         const float tiltY = qRadiansToDegrees(cos(orientation) * tiltRot);
+ 
+-        const float orientationDegrees = qRadiansToDegrees(orientation);
++        const float barrelRotationDegrees = normalizeBarrelRotation(
++                ev.getAxisValue(AMOTION_EVENT_AXIS_RZ));
+ 
+         tabletEvent(ev.getDeviceId(), ev.getEventTimeMs(), ev.getActionMasked(),
+                     pointerType, ev.getButtonState(), ev.getX(), ev.getY(),
+-                    ev.getPressure(), tiltX, tiltY, orientationDegrees, ev.getMetaState());
++                    ev.getPressure(), tiltX, tiltY, barrelRotationDegrees,
++                    ev.getMetaState());
+     }
+ 
+     static void dispatchMotionEvent(JNIEnv *env, jobject /*thiz*/, jint /*winId*/,
