@@ -3249,6 +3249,10 @@ TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
 			selectionFlags = QItemSelectionModel::ClearAndSelect;
 		}
 		break;
+	case SelectionAction::Toggle:
+		d->selectionRangeStartIndex = idx;
+		selectionFlags = QItemSelectionModel::Toggle;
+		break;
 	case SelectionAction::ToggleIfNotSelected:
 		d->selectionRangeStartIndex = idx;
 		if(isSelected) {
@@ -3260,6 +3264,10 @@ TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
 	case SelectionAction::SelectCurrentRange:
 		selectionFlags = setCurrentSelectRange(
 			idx, QItemSelectionModel::Select | QItemSelectionModel::Current);
+		break;
+	case SelectionAction::DeselectCurrentRange:
+		selectionFlags = setCurrentSelectRange(
+			idx, QItemSelectionModel::Deselect | QItemSelectionModel::Current);
 		break;
 	case SelectionAction::SelectRange:
 		selectionFlags =
@@ -3950,8 +3958,8 @@ void TimelineWidget::applyMouseTarget(
 			if(event && event->type() == QEvent::MouseButtonDblClick) {
 				selectionAction = SelectionAction::Replace;
 			} else {
-				selectionAction = SelectionAction::ToggleIfNotSelected;
-				d->pendingSelectionAction = PendingSelectionAction::Deselect;
+				selectionAction = SelectionAction::Toggle;
+				d->pendingSelectionAction = PendingSelectionAction::None;
 			}
 		} else if(event) {
 			Qt::KeyboardModifiers mods = event->modifiers();
@@ -3976,10 +3984,17 @@ void TimelineWidget::applyMouseTarget(
 
 		switch(selectionAction) {
 		case SelectionAction::Replace:
-			d->moveSelectionAction = SelectionAction::SelectRange;
+			d->moveSelectionAction = SelectionAction::SelectCurrentRange;
 			break;
 		case SelectionAction::ReplaceIfNotSelected:
 			d->moveSelectionAction = SelectionAction::ReplaceMove;
+			break;
+		case SelectionAction::Toggle:
+			if(result.wasSelected) {
+				d->moveSelectionAction = SelectionAction::DeselectCurrentRange;
+			} else {
+				d->moveSelectionAction = SelectionAction::SelectCurrentRange;
+			}
 			break;
 		case SelectionAction::ToggleIfNotSelected:
 			if(result.wasSelected) {

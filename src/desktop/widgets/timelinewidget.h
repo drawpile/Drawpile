@@ -152,8 +152,10 @@ private:
 		Replace,
 		ReplaceIfNotSelected,
 		ReplaceMove,
+		Toggle,
 		ToggleIfNotSelected,
 		SelectCurrentRange,
+		DeselectCurrentRange,
 		SelectRange,
 		DeselectRange,
 	};
