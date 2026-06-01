@@ -387,7 +387,7 @@ private:
 #endif
 		const QString &ffmpegPath, int format, int loops,
 		const QVector<int> &frameIndexes, double framerate, const QRect &crop,
-		int scalePercent, bool scaleSmooth);
+		double scalePercent, bool scaleSmooth);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);
@@ -576,7 +576,7 @@ private:
 	dialogs::ServerLogDialog *m_serverLogDialog;
 	dialogs::Flipbook::State m_flipbookState;
 	int m_animationExportLoops = 1;
-	int m_animationExportScalePercent = 100;
+	double m_animationExportScalePercent = 100.0;
 	bool m_animationExportScaleSmooth = true;
 
 #ifndef __EMSCRIPTEN__

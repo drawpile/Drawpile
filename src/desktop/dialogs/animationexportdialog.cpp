@@ -28,7 +28,7 @@
 namespace dialogs {
 
 AnimationExportDialog::AnimationExportDialog(
-	int loops, int scalePercent, bool scaleSmooth, QWidget *parent)
+	int loops, double scalePercent, bool scaleSmooth, QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Export Animation"));
@@ -98,9 +98,9 @@ AnimationExportDialog::AnimationExportDialog(
 	m_loopsSpinner->setValue(loops);
 	outputForm->addRow(m_loopsLabel, m_loopsSpinner);
 
-	m_scaleSpinner = new KisSliderSpinBox;
+	m_scaleSpinner = new KisDoubleSliderSpinBox;
 	m_scaleSpinner->setIndeterminate(true);
-	m_scaleSpinner->setRange(1, 1000);
+	m_scaleSpinner->setRange(1.0, 1000.0, 2);
 	m_scaleSpinner->setValue(scalePercent);
 	m_scaleSpinner->setSuffix(tr("%"));
 
@@ -220,8 +220,9 @@ AnimationExportDialog::AnimationExportDialog(
 		m_formatCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &AnimationExportDialog::updateOutputUi);
 	connect(
-		m_scaleSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		this, &AnimationExportDialog::updateScalingUi);
+		m_scaleSpinner,
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
 	connect(
 		m_x1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX2Range);
@@ -310,10 +311,10 @@ void AnimationExportDialog::setFlipbookState(
 }
 
 QSize AnimationExportDialog::getScaledSizeFor(
-	int scalePercent, const QRect &rect)
+	double scalePercent, const QRect &rect)
 {
-	QSize size = rect.size() * (scalePercent / 100.0);
-	return QSize(qMax(size.width(), 1), qMax(size.height(), 1));
+	QSizeF size = QSizeF(rect.size()) * (scalePercent / 100.0);
+	return QSize(qMax(qRound(size.width()), 1), qMax(qRound(size.height()), 1));
 }
 
 #ifndef __EMSCRIPTEN__
@@ -355,7 +356,7 @@ void AnimationExportDialog::updateOutputUi()
 
 void AnimationExportDialog::updateScalingUi()
 {
-	int scalePercent = m_scaleSpinner->value();
+	double scalePercent = m_scaleSpinner->value();
 	QSize size = getScaledSizeFor(scalePercent, getCropRect());
 	m_scaleLabel->setText(tr("Output resolution will be %1x%2 pixels.")
 							  .arg(size.width())

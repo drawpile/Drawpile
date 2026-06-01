@@ -3338,7 +3338,7 @@ void MainWindow::exportAnimation(
 #endif
 	const QString &ffmpegPath, int format, int loops,
 	const QVector<int> &frameIndexes, double framerate, const QRect &crop,
-	int scalePercent, bool scaleSmooth)
+	double scalePercent, bool scaleSmooth)
 {
 	m_animationExportLoops = loops;
 	m_animationExportScalePercent = scalePercent;
