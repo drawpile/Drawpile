@@ -10,6 +10,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make repeated move transforms not cause the transformation to get scaled by one pixel. Thanks Hermanni for reporting.
  * Feature: Allow fractional scaling for animation exports, in case you need very specific pixel dimensions.
  * Feature: Allow configuring right-click drawing to do nothing (the default), draw with the background color or erase. Thanks noelle and walnut for suggesting.
+ * Fix: Give select layer above and below shortcuts a proper title with "layer" in the name so that you have a chance of finding them in the list. Thanks anonymous for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

@@ -7298,10 +7298,15 @@ void MainWindow::setupActions()
 		makeAction("layerlockmove", tr("Lock layer position"))
 			.checkable()
 			.noDefaultShortcut();
-	// clang-format off
 
-	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X").autoRepeat();
-	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z").autoRepeat();
+	QAction *layerUpAct =
+		makeAction("layer-up", tr("Select Above"))
+			.shortcutWithTitle("Shift+X", tr("Select Layer Above"))
+			.autoRepeat();
+	QAction *layerDownAct =
+		makeAction("layer-down", tr("Select Below"))
+			.shortcutWithTitle("Shift+Z", tr("Select Layer Below"))
+			.autoRepeat();
 
 	QAction *layerCheckToggle =
 		makeAction("layerchecktoggle", tr("&Toggle Layer Check State"))
@@ -7310,6 +7315,7 @@ void MainWindow::setupActions()
 		makeAction("layercheckall", tr("&Check All")).noDefaultShortcut();
 	QAction *layerUncheckAll =
 		makeAction("layeruncheckall", tr("&Uncheck All")).noDefaultShortcut();
+	// clang-format off
 
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
