@@ -88,6 +88,10 @@ SETTING(
 	engineUndoDepth, EngineUndoDepth, "settings/paintengine/undodepthlimit",
 	config::Config::defaultEngineUndoDepth())
 SETTING(
+	freehandRightClickAction, FreehandRightClickAction,
+	"settings/tools/freehandrightclickaction",
+	config::Config::defaultFreehandRightClickAction())
+SETTING(
 	interpolateInputs, InterpolateInputs, "settings/input/interpolate",
 	config::Config::defaultInterpolateInputs())
 SETTING(

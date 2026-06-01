@@ -635,6 +635,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	CFG_BIND_SET(cfg, ActionBar, this, MainWindow::setActionBarSetting);
 	CFG_BIND_SET(
 		cfg, ActionBarLocation, this, MainWindow::setActionBarLocation);
+	CFG_BIND_SET(
+		cfg, FreehandRightClickAction, this,
+		MainWindow::setFreehandRightClickAction);
 	CFG_BIND_ACTION(
 		cfg, AutomaticAlphaPreserve, getAction("layerautomaticalphapreserve"));
 	CFG_BIND_ACTION(cfg, LeftyMode, getAction("smallscreenleftymode"));
@@ -8193,6 +8196,30 @@ void MainWindow::setupActions()
 	QAction *previousSlot = makeAction("prevslot", tr("Previous Brush Slot"))
 								.noDefaultShortcut()
 								.autoRepeat();
+
+	QAction *freehandRightClickNone =
+		makeAction("freehand-right-click-none", tr("None"))
+			.noDefaultShortcutWithTitle(tr("Right-click drawing: none"))
+			.checkable();
+	QAction *freehandRightClickBackground =
+		makeAction(
+			"freehand-right-click-background", tr("Use background color"))
+			.noDefaultShortcutWithTitle(
+				tr("Right-click drawing: use background color"))
+			.checkable();
+	QAction *freehandRightClickErase =
+		makeAction("freehand-right-click-erase", tr("Erase"))
+			.noDefaultShortcutWithTitle(tr("Right-click drawing: erase"))
+			.checkable();
+
+	QActionGroup *freehandRightClickActionGroup = new QActionGroup(this);
+	freehandRightClickActionGroup->addAction(freehandRightClickNone);
+	freehandRightClickActionGroup->addAction(freehandRightClickBackground);
+	freehandRightClickActionGroup->addAction(freehandRightClickErase);
+	connect(
+		freehandRightClickActionGroup, &QActionGroup::triggered, this,
+		&MainWindow::onFreehandRightClickActionTriggered);
+
 	connect(
 		currentEraseMode, &QAction::triggered, m_dockToolSettings,
 		&docks::ToolSettings::toggleEraserMode);
@@ -8240,6 +8267,9 @@ void MainWindow::setupActions()
 	connect(
 		reloadAllPresets, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::resetAllPresets);
+	connect(
+		freehandRightClickNone, &QAction::triggered, m_dockBrushPalette,
+		&docks::BrushPalette::resetAllPresets);
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(currentRecolorMode);
@@ -8285,7 +8315,7 @@ void MainWindow::setupActions()
 	m_dockToolSettings->brushSettings()->setActions(
 		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot,
 		previousSlot, layerAutomaticAlphaPreserve, maskselection,
-		layerSetFillSource);
+		layerSetFillSource, freehandRightClickActionGroup);
 	m_dockToolSettings->lassoFillSettings()->setActions(
 		layerAutomaticAlphaPreserve, maskselection);
 	m_dockToolSettings->gradientSettings()->setActions(
@@ -8778,6 +8808,38 @@ void MainWindow::onActionBarLocationActionTriggered(QAction *action)
 	if(location != -1) {
 		dpAppConfig()->setActionBarLocation(location);
 	}
+}
+
+void MainWindow::setFreehandRightClickAction(int freehandRightClickAction)
+{
+	QAction *action;
+	switch(freehandRightClickAction) {
+	case int(tools::FreehandRightClickAction::Background):
+		action = getAction(QStringLiteral("freehand-right-click-background"));
+		break;
+	case int(tools::FreehandRightClickAction::Erase):
+		action = getAction(QStringLiteral("freehand-right-click-erase"));
+		break;
+	default:
+		action = getAction(QStringLiteral("freehand-right-click-none"));
+		break;
+	}
+	action->setChecked(true);
+}
+
+void MainWindow::onFreehandRightClickActionTriggered(QAction *action)
+{
+	int freehandRightClickAction;
+	if(action == getAction(QStringLiteral("freehand-right-click-background"))) {
+		freehandRightClickAction =
+			int(tools::FreehandRightClickAction::Background);
+	} else if(
+		action == getAction(QStringLiteral("freehand-right-click-erase"))) {
+		freehandRightClickAction = int(tools::FreehandRightClickAction::Erase);
+	} else {
+		freehandRightClickAction = int(tools::FreehandRightClickAction::None);
+	}
+	dpAppConfig()->setFreehandRightClickAction(freehandRightClickAction);
 }
 
 void MainWindow::updateInterfaceModeActions()

@@ -285,6 +285,9 @@ public:
 	QString getFourFingerTapTrigger() const override;
 	void setFourFingerTapTrigger(const QString &value) override;
 
+	int getFreehandRightClickAction() const override;
+	void setFreehandRightClickAction(int value) override;
+
 	QString getGlobalPressureCurve() const override;
 	void setGlobalPressureCurve(const QString &value) override;
 

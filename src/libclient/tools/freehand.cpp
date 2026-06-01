@@ -130,6 +130,20 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 		return;
 	}
 
+	QColor color;
+	if(params.right) {
+		switch(m_owner.freehandRightClickAction()) {
+		case int(tools::FreehandRightClickAction::Background):
+			color = m_owner.backgroundColor();
+			break;
+		case int(tools::FreehandRightClickAction::Erase):
+			// Already set in ToolController::startDrawing.
+			break;
+		default:
+			return;
+		}
+	}
+
 	const brushes::ActiveBrush &brush = m_owner.activeBrush();
 	bool pixelArtInput = brush.isPixelArtInput();
 	target->setSnapToPixel(pixelArtInput);
@@ -166,8 +180,7 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 	m_cancelling = true;
 	cancelStroke();
 	m_owner.setStrokeWorkerBrush(
-		m_strokeWorker, type(), floodLc, floodTolerance, floodExpand,
-		params.right ? m_owner.backgroundColor() : QColor());
+		m_strokeWorker, type(), floodLc, floodTolerance, floodExpand, color);
 	m_cancelling = false;
 
 	// The pressure value of the first point is unreliable

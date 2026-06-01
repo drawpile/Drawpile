@@ -1098,6 +1098,19 @@ void MemoryConfig::setFourFingerTapTrigger(const QString &value)
 	}
 }
 
+int MemoryConfig::getFreehandRightClickAction() const
+{
+	return m_freehandRightClickAction;
+}
+
+void MemoryConfig::setFreehandRightClickAction(int value)
+{
+	if(value != m_freehandRightClickAction) {
+		m_freehandRightClickAction = value;
+		Q_EMIT changeFreehandRightClickAction(m_freehandRightClickAction);
+	}
+}
+
 QString MemoryConfig::getGlobalPressureCurve() const
 {
 	return m_globalPressureCurve;

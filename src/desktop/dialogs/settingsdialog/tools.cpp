@@ -4,6 +4,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/config/config.h"
+#include "libclient/tools/enums.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/view/enums.h"
 #include <QButtonGroup>
@@ -38,7 +39,7 @@ Tools::Tools(config::Config *cfg, QWidget *parent)
 
 void Tools::setUp(config::Config *cfg, QVBoxLayout *layout)
 {
-	initKeyboardShortcuts(cfg, utils::addFormSection(layout));
+	initMain(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initSlots(cfg, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
@@ -123,8 +124,20 @@ void Tools::initCursors(config::Config *cfg, QFormLayout *form)
 	form->addRow(tr("Color picker:"), samplingRing);
 }
 
-void Tools::initKeyboardShortcuts(config::Config *cfg, QFormLayout *form)
+void Tools::initMain(config::Config *cfg, QFormLayout *form)
 {
+	QComboBox *freehandRightClickAction = new QComboBox;
+	freehandRightClickAction->addItem(
+		tr("Do nothing"), int(tools::FreehandRightClickAction::None));
+	freehandRightClickAction->addItem(
+		tr("Use background color"),
+		int(tools::FreehandRightClickAction::Background));
+	freehandRightClickAction->addItem(
+		tr("Erase"), int(tools::FreehandRightClickAction::Erase));
+	form->addRow(tr("Right-click drawing:"), freehandRightClickAction);
+	CFG_BIND_COMBOBOX_USER_INT(
+		cfg, FreehandRightClickAction, freehandRightClickAction);
+
 	QCheckBox *toggleKeys =
 		new QCheckBox(tr("Toggle between previous and current tool"));
 	CFG_BIND_CHECKBOX(cfg, ToolToggle, toggleKeys);

@@ -278,6 +278,9 @@ public:
 	QString getFourFingerTapTrigger() const override;
 	void setFourFingerTapTrigger(const QString &value) override;
 
+	int getFreehandRightClickAction() const override;
+	void setFreehandRightClickAction(int value) override;
+
 	QString getGlobalPressureCurve() const override;
 	void setGlobalPressureCurve(const QString &value) override;
 
@@ -951,6 +954,7 @@ private:
 	int m_fontSize = defaultFontSize();
 	int m_fourFingerTap = defaultFourFingerTap();
 	QString m_fourFingerTapTrigger = defaultFourFingerTapTrigger();
+	int m_freehandRightClickAction = defaultFreehandRightClickAction();
 	QString m_globalPressureCurve = defaultGlobalPressureCurve();
 	QString m_globalPressureCurveEraser = defaultGlobalPressureCurveEraser();
 	int m_globalPressureCurveMode = defaultGlobalPressureCurveMode();

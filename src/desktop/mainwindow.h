@@ -470,6 +470,8 @@ private:
 	void setActionBarEnabled(bool enabled, bool updateSetting);
 	void setActionBarLocation(int location);
 	void onActionBarLocationActionTriggered(QAction *action);
+	void setFreehandRightClickAction(int freehandRightClickAction);
+	void onFreehandRightClickActionTriggered(QAction *action);
 	void updateInterfaceModeActions();
 	void reenableUpdates();
 	void keepCanvasPosition(const std::function<void()> &block);

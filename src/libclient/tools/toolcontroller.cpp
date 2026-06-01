@@ -46,6 +46,8 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_client(client)
 	, m_model(nullptr)
 	, m_activeTool(nullptr)
+	, m_freehandRightClickAction(
+		  config::Config::defaultFreehandRightClickAction())
 	, m_drawing(false)
 	, m_applyGlobalSmoothing(true)
 	, m_mouseSmoothing(false)
@@ -186,6 +188,11 @@ void ToolController::setActiveAnnotation(int id)
 		m_activeAnnotation = id;
 		emit activeAnnotationChanged(id);
 	}
+}
+
+void ToolController::setFreehandRightClickAction(int freehandRightClickAction)
+{
+	m_freehandRightClickAction = freehandRightClickAction;
 }
 
 void ToolController::setSelectionEditActive(bool selectionEditActive)
@@ -563,7 +570,13 @@ void ToolController::startDrawing(
 		m_drawing = true;
 		m_applyGlobalSmoothing =
 			deviceType != int(DeviceType::Mouse) || m_mouseSmoothing;
-		m_activebrush.setEraserOverride(eraserOverride);
+
+		m_activebrush.setEraserOverride(
+			eraserOverride ||
+			(right && m_activeTool->type() == Tool::FREEHAND &&
+			 m_freehandRightClickAction ==
+				 int(FreehandRightClickAction::Erase)));
+
 		m_activeTool->begin(
 			Tool::BeginParams{
 				canvas::Point(
@@ -577,7 +590,13 @@ void ToolController::startDrawing(
 
 		if(m_activeTool->usesBrushColor() && !m_activebrush.isEraser() &&
 		   !m_activebrush.isEraserOverride()) {
-			emit colorUsed(m_activebrush.qColor());
+			if(right && m_activeTool->type() == Tool::FREEHAND &&
+			   m_freehandRightClickAction ==
+				   int(FreehandRightClickAction::Background)) {
+				Q_EMIT colorUsed(m_backgroundColor);
+			} else {
+				Q_EMIT colorUsed(m_activebrush.qColor());
+			}
 		}
 	}
 }

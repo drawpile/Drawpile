@@ -59,6 +59,9 @@ Document::Document(
 
 	m_toolctrl = new tools::ToolController(m_client, this);
 	CFG_BIND_SET(
+		m_cfg, FreehandRightClickAction, m_toolctrl,
+		tools::ToolController::setFreehandRightClickAction);
+	CFG_BIND_SET(
 		m_cfg, Smoothing, m_toolctrl,
 		tools::ToolController::setGlobalSmoothing);
 	CFG_BIND_SET(

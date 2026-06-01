@@ -607,6 +607,10 @@ public:
 	virtual void setFourFingerTapTrigger(const QString &value) = 0;
 	static QString defaultFourFingerTapTrigger();
 
+	virtual int getFreehandRightClickAction() const = 0;
+	virtual void setFreehandRightClickAction(int value) = 0;
+	static int defaultFreehandRightClickAction();
+
 	virtual QString getGlobalPressureCurve() const = 0;
 	virtual void setGlobalPressureCurve(const QString &value) = 0;
 	static QString defaultGlobalPressureCurve();
@@ -1463,6 +1467,7 @@ Q_SIGNALS:
 	void changeFontSize(int value);
 	void changeFourFingerTap(int value);
 	void changeFourFingerTapTrigger(const QString &value);
+	void changeFreehandRightClickAction(int value);
 	void changeGlobalPressureCurve(const QString &value);
 	void changeGlobalPressureCurveEraser(const QString &value);
 	void changeGlobalPressureCurveMode(int value);

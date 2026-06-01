@@ -476,6 +476,11 @@ QString Config::defaultFourFingerTapTrigger()
 	return QString();
 }
 
+int Config::defaultFreehandRightClickAction()
+{
+	return int(tools::FreehandRightClickAction::None);
+}
+
 QString Config::defaultGlobalPressureCurve()
 {
 	return tools::ToolController::globalPressureCurveDefault;

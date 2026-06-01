@@ -113,6 +113,9 @@ public:
 	void setActiveAnnotation(int id);
 	int activeAnnotation() const { return m_activeAnnotation; }
 
+	void setFreehandRightClickAction(int freehandRightClickAction);
+	int freehandRightClickAction() const { return m_freehandRightClickAction; }
+
 	void setSelectionEditActive(bool selectionEditActive);
 	bool isSelectionEditActive() const { return m_selectionEditActive; }
 
@@ -362,6 +365,7 @@ private:
 	Tool *m_activeTool;
 	int m_activeLayer;
 	int m_activeAnnotation;
+	int m_freehandRightClickAction;
 	QSet<int> m_selectedLayers;
 	QColor m_foregroundColor = Qt::black;
 	QColor m_backgroundColor = Qt::white;

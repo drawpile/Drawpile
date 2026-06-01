@@ -321,6 +321,10 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeFourFingerTapTrigger,
 		Qt::DirectConnection);
 	connect(
+		m_settings,
+		&desktop::settings::Settings::freehandRightClickActionChanged, this,
+		&SettingsConfig::changeFreehandRightClickAction, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::globalPressureCurveChanged,
 		this, &SettingsConfig::changeGlobalPressureCurve, Qt::DirectConnection);
 	connect(
@@ -1808,6 +1812,16 @@ QString SettingsConfig::getFourFingerTapTrigger() const
 void SettingsConfig::setFourFingerTapTrigger(const QString &value)
 {
 	m_settings->setFourFingerTapTrigger(value);
+}
+
+int SettingsConfig::getFreehandRightClickAction() const
+{
+	return m_settings->freehandRightClickAction();
+}
+
+void SettingsConfig::setFreehandRightClickAction(int value)
+{
+	m_settings->setFreehandRightClickAction(value);
 }
 
 QString SettingsConfig::getGlobalPressureCurve() const

@@ -165,6 +165,12 @@ settings:
     qsettings: 'settings/paintengine/undodepthlimit'
     legacy_package: 'libclient'
 
+  - id: freehandRightClickAction
+    type: 'int'
+    default: 'int(tools::FreehandRightClickAction::None)'
+    qsettings: 'settings/tools/freehandrightclickaction'
+    legacy_package: 'libclient'
+
   - id: interpolateInputs
     type: 'bool'
     default: 'true'

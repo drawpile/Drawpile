@@ -21,7 +21,7 @@ private:
 
 	void initCursors(config::Config *cfg, QFormLayout *form);
 
-	void initKeyboardShortcuts(config::Config *cfg, QFormLayout *form);
+	void initMain(config::Config *cfg, QFormLayout *form);
 
 	void initSlots(config::Config *cfg, QFormLayout *form);
 };

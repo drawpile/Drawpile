@@ -6,6 +6,7 @@
 
 class KisSliderSpinBox;
 class QAction;
+class QActionGroup;
 
 namespace tools {
 
@@ -30,7 +31,7 @@ public:
 		QAction *reloadPreset, QAction *reloadPresetSlots,
 		QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
 		QAction *automaticAlphaPreserve, QAction *maskSelection,
-		QAction *setFillSource);
+		QAction *setFillSource, QActionGroup *freehandRightClickActions);
 	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }

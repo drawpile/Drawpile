@@ -281,12 +281,18 @@ void BrushSettings::setActions(
 	QAction *reloadPreset, QAction *reloadPresetSlots,
 	QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
 	QAction *automaticAlphaPreserve, QAction *maskSelection,
-	QAction *setFillSource)
+	QAction *setFillSource, QActionGroup *freehandRightClickActions)
 {
 	d->ui.reloadButton->setDefaultAction(reloadPreset);
 	d->menu->addSeparator();
 	d->menu->addAction(automaticAlphaPreserve);
 	d->menu->addAction(maskSelection);
+
+	QMenu *freehandRightClickMenu = d->menu->addMenu(tr("Right-click drawing"));
+	for(QAction *action : freehandRightClickActions->actions()) {
+		freehandRightClickMenu->addAction(action);
+	}
+
 	connect(
 		d->resetBrushAction, &QAction::triggered, reloadPreset,
 		&QAction::trigger);

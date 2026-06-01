@@ -51,6 +51,12 @@ enum class EraserAction {
 #endif
 };
 
+enum class FreehandRightClickAction {
+	None,
+	Background,
+	Erase,
+};
+
 enum class RotationMode {
 	Normal,
 	NoSnap,
