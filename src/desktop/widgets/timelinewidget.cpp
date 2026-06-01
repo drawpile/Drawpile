@@ -1547,9 +1547,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		painter.drawLine(0, y + rowHeight, headerWidth, y + rowHeight);
 	}
 	painter.setOpacity(1.0);
-	painter.setClipRect(QRect{}, Qt::NoClip);
 
 	if(d->dragHover == Drag::Track) {
+		painter.setClipRect(QRect{}, Qt::NoClip);
 		painter.setPen(textColor);
 		int y = d->trackDropIndex(d->dragPos.y()) * rowHeight + rowHeight -
 				d->yScroll;
@@ -1557,6 +1557,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 	} else if(d->dragHover == Drag::KeyFrame) {
 		if(!d->dragKeyFrames.isEmpty()) {
+			painter.setClipRect(bodyRect);
 			QBrush brush = pal.highlightedText();
 			painter.setPen(QPen(brush, 1.0));
 			brush.setStyle(Qt::Dense7Pattern);
@@ -1582,6 +1583,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 					? bodyRect.bottom()
 					: 2 * rowHeight + e.bottomIndex * rowHeight - yScroll;
 
+			painter.setClipRect(QRect{}, Qt::NoClip);
 			painter.setBrush(Qt::NoBrush);
 			painter.setPen(QPen(pal.highlightedText(), 1));
 			painter.drawLine(
@@ -1610,6 +1612,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		}
 		int x = headerWidth + xIndex * columnWidth - xScroll;
 
+		painter.setClipRect(QRect{}, Qt::NoClip);
 		painter.setBrush(Qt::NoBrush);
 		painter.setPen(QPen(pal.highlight(), 5));
 		painter.drawLine(x, 0, x, h);
