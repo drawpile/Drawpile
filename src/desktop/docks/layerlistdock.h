@@ -83,6 +83,7 @@ public:
 		QAction *layerLockMove = nullptr;
 		QAction *layerCensor = nullptr;
 		QAction *layerCensorLocal = nullptr;
+		QActionGroup *selectLayerByColor;
 	};
 
 	LayerList(QWidget *parent = nullptr);
@@ -160,6 +161,8 @@ private:
 	void toggleSelection(const QModelIndex &idx);
 	void
 	changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
+
+	void selectLayerByColor(QAction *action);
 
 	void layerLockStatusChanged(int layerId);
 	void userLockStatusChanged(bool);

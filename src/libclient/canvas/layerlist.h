@@ -232,6 +232,9 @@ public:
 	 */
 	int findNearestLayer(int layerId) const;
 
+	QModelIndex
+	findNextColorLayer(const QModelIndex &currentIdx, const QColor &color);
+
 	QModelIndex findHighestLayer(const QSet<int> &layerIds) const;
 
 	QSet<int> topLevelSelectedIds(const QSet<int> &layerIds) const;

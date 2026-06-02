@@ -1606,24 +1606,32 @@ const QVector<MarkerColor> &markerColors()
 			QCoreApplication::translate("MarkerColors", "None"),
 			QCoreApplication::translate("MarkerColors", "Unmark layer"),
 			QCoreApplication::translate("MarkerColors", "Unmark key frame"),
+			QString(),
 			"layer-mark-none",
 			"key-frame-mark-none",
+			nullptr,
 		},
 		{
 			QColor(0xff5491b5),
 			QCoreApplication::translate("MarkerColors", "Blue"),
 			QCoreApplication::translate("MarkerColors", "Mark layer blue"),
 			QCoreApplication::translate("MarkerColors", "Mark key frame blue"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select blue-marked layer"),
 			"layer-mark-blue",
 			"key-frame-mark-blue",
+			"layer-select-blue",
 		},
 		{
 			QColor(0xff81a73e),
 			QCoreApplication::translate("MarkerColors", "Green"),
 			QCoreApplication::translate("MarkerColors", "Mark layer green"),
 			QCoreApplication::translate("MarkerColors", "Mark key frame green"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select green-marked layer"),
 			"layer-mark-green",
 			"key-frame-mark-green",
+			"layer-select-green",
 		},
 		{
 			QColor(0xffc9bb3d),
@@ -1631,8 +1639,11 @@ const QVector<MarkerColor> &markerColors()
 			QCoreApplication::translate("MarkerColors", "Mark layer yellow"),
 			QCoreApplication::translate(
 				"MarkerColors", "Mark key frame yellow"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select yellow-marked layer"),
 			"layer-mark-yellow",
 			"key-frame-mark-yellow",
+			"layer-select-yellow",
 		},
 		{
 			QColor(0xffcf8f3e),
@@ -1640,24 +1651,33 @@ const QVector<MarkerColor> &markerColors()
 			QCoreApplication::translate("MarkerColors", "Mark layer orange"),
 			QCoreApplication::translate(
 				"MarkerColors", "Mark key frame orange"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select orange-marked layer"),
 			"layer-mark-orange",
 			"key-frame-mark-orange",
+			"layer-select-orange",
 		},
 		{
 			QColor(0xff945c3e),
 			QCoreApplication::translate("MarkerColors", "Brown"),
 			QCoreApplication::translate("MarkerColors", "Mark layer brown"),
 			QCoreApplication::translate("MarkerColors", "Mark key frame brown"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select brown-marked layer"),
 			"layer-mark-brown",
 			"key-frame-mark-brown",
+			"layer-select-brown",
 		},
 		{
 			QColor(0xffc23535),
 			QCoreApplication::translate("MarkerColors", "Red"),
 			QCoreApplication::translate("MarkerColors", "Mark layer red"),
 			QCoreApplication::translate("MarkerColors", "Mark key frame red"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select red-marked layer"),
 			"layer-mark-red",
 			"key-frame-mark-red",
+			"layer-select-red",
 		},
 		{
 			QColor(0xff9f5fac),
@@ -1665,16 +1685,22 @@ const QVector<MarkerColor> &markerColors()
 			QCoreApplication::translate("MarkerColors", "Mark layer purple"),
 			QCoreApplication::translate(
 				"MarkerColors", "Mark key frame purple"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select purple-marked layer"),
 			"layer-mark-purple",
 			"key-frame-mark-purple",
+			"layer-select-purple",
 		},
 		{
 			QColor(0xff7a7b76),
 			QCoreApplication::translate("MarkerColors", "Gray"),
 			QCoreApplication::translate("MarkerColors", "Mark layer gray"),
 			QCoreApplication::translate("MarkerColors", "Mark key frame gray"),
+			QCoreApplication::translate(
+				"MarkerColors", "Select gray-marked layer"),
 			"layer-mark-gray",
 			"key-frame-mark-gray",
+			"layer-select-gray",
 		},
 	};
 	return instance;

@@ -7225,11 +7225,21 @@ void MainWindow::setupActions()
 	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double").noDefaultShortcut();
 	// clang-format on
 	QVector<QAction *> layerColors;
+	QActionGroup *selectLayerByColor = new QActionGroup(this);
+	selectLayerByColor->setExclusive(false);
 	for(const utils::MarkerColor &mc : utils::markerColors()) {
+		QIcon markerIcon = utils::makeColorIcon(16, mc.color);
 		layerColors.append(makeAction(mc.layerActionName, mc.layerActionText)
-							   .icon(utils::makeColorIcon(16, mc.color))
+							   .icon(markerIcon)
 							   .property("markercolor", mc.color)
 							   .noDefaultShortcut());
+		if(mc.layerSelectActionName) {
+			selectLayerByColor->addAction(
+				makeAction(mc.layerSelectActionName, mc.layerSelectActionText)
+					.icon(markerIcon)
+					.property("markercolor", mc.color)
+					.noDefaultShortcut());
+		}
 	}
 	// clang-format off
 	QAction *layerProperties = makeAction("layerproperties", tr("Layer Properties…")).icon("configure").noDefaultShortcut();
@@ -7839,6 +7849,7 @@ void MainWindow::setupActions()
 		layerLockMove,
 		layerCensor,
 		layerCensorLocal,
+		selectLayerByColor,
 	});
 	m_dockTimeline->setActions(
 		{

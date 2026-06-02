@@ -349,6 +349,25 @@ int LayerListModel::findNearestLayer(int layerId) const
 	return 0;
 }
 
+QModelIndex LayerListModel::findNextColorLayer(
+	const QModelIndex &currentIdx, const QColor &color)
+{
+	if(currentIdx.isValid()) {
+		int count = m_items.size();
+		int current = currentIdx.internalId();
+		if(current >= 0 && current < count) {
+			for(int offset = 0; offset < count - 1; ++offset) {
+				int i = (current + offset + 1) % count;
+				const LayerListItem &item = m_items[i];
+				if(item.color == color) {
+					return createIndex(item.relIndex, 0, i);
+				}
+			}
+		}
+	}
+	return QModelIndex();
+}
+
 QModelIndex LayerListModel::findHighestLayer(const QSet<int> &layerIds) const
 {
 	int count = m_items.size();

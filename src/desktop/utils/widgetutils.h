@@ -356,8 +356,10 @@ struct MarkerColor {
 	QString name;
 	QString layerActionText;
 	QString keyFrameActionText;
+	QString layerSelectActionText;
 	const char *layerActionName;
 	const char *keyFrameActionName;
+	const char *layerSelectActionName;
 };
 
 const QVector<MarkerColor> &markerColors();

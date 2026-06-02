@@ -536,6 +536,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_alphaLockButton, &widgets::GroupedToolButton::clicked,
 		actions.layerAlphaLock, &QAction::trigger);
+	connect(
+		m_actions.selectLayerByColor, &QActionGroup::triggered, this,
+		&LayerList::selectLayerByColor);
 
 	updateActionLabels();
 	updateLockedControls();
@@ -1025,6 +1028,18 @@ void LayerList::changeLayerAcl(
 				net::makeLayerAclMessage(contextId, layerId, flags, exclusive));
 		}
 		emit layerCommands(msgs.size(), msgs.constData());
+	}
+}
+
+void LayerList::selectLayerByColor(QAction *action)
+{
+	if(m_canvas) {
+		disableAutoselectAny();
+		selectLayerIndex(
+			m_canvas->layerlist()->findNextColorLayer(
+				currentSelection(),
+				action->property("markercolor").value<QColor>()),
+			true);
 	}
 }
 
