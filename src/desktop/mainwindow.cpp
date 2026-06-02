@@ -7299,13 +7299,15 @@ void MainWindow::setupActions()
 			.checkable()
 			.noDefaultShortcut();
 
-	QAction *layerUpAct =
-		makeAction("layer-up", tr("Select Above"))
-			.shortcutWithTitle("Shift+X", tr("Select Layer Above"))
-			.autoRepeat();
+	QAction *layerUpAct = makeAction("layer-up", tr("Select Above"))
+							  .shortcutWithTitle(
+								  tr("Select Layer Above"),
+								  QKeySequence(QStringLiteral("Shift+X")))
+							  .autoRepeat();
 	QAction *layerDownAct =
 		makeAction("layer-down", tr("Select Below"))
-			.shortcutWithTitle("Shift+Z", tr("Select Layer Below"))
+			.shortcutWithTitle(
+				tr("Select Layer Below"), QStringLiteral("Shift+Z"))
 			.autoRepeat();
 
 	QAction *layerCheckToggle =
