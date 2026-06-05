@@ -12,6 +12,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow configuring right-click drawing to do nothing (the default), draw with the background color or erase. Thanks noelle and walnut for suggesting.
  * Fix: Give select layer above and below shortcuts a proper title with "layer" in the name so that you have a chance of finding them in the list. Thanks anonymous for reporting.
  * Feature: Allow selecting color-marked layers via keyboard shortcuts. Thanks anonymous for suggesting.
+ * Feature: If Drawpile on Android is terminated due to resource exhaustion, such as running out of memory, it will now show a message about it on the next startup. Thanks Bluestrings for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

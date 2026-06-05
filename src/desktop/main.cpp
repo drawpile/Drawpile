@@ -75,10 +75,13 @@
 #endif
 
 
-#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+#ifdef Q_OS_ANDROID
+static bool androidForegroundResourceExhaustionExitWarningPending;
+#	ifdef KRITA_QT_SCREEN_DENSITY_ADJUSTMENT
 static QPointer<QScreen> initialPrimaryScreen;
 static double initialPrimaryScreenDevicePixelRatio;
 static bool initialAndroidScalingDialog;
+#	endif
 #endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
@@ -659,7 +662,16 @@ bool DrawpileApp::takeAndroidScalingJustChanged()
 #endif
 }
 
-#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+#ifdef Q_OS_ANDROID
+void DrawpileApp::showAndroidForegroundResourceExhaustionExitWarning()
+{
+	if(androidForegroundResourceExhaustionExitWarningPending) {
+		androidForegroundResourceExhaustionExitWarningPending = false;
+		utils::androidShowForegroundResourceExhaustionWarningDialog();
+	}
+}
+
+#	ifdef KRITA_QT_SCREEN_DENSITY_ADJUSTMENT
 void DrawpileApp::showAndroidScalingDialog()
 {
 	scalingJustChanged = false;
@@ -691,7 +703,9 @@ void DrawpileApp::handleAndroidScalingDialogDismissed()
 		}
 		scalingMainWindow.clear();
 	}
+	dpApp().showAndroidForegroundResourceExhaustionExitWarning();
 }
+#	endif
 #endif
 
 MainWindow *
@@ -1310,13 +1324,33 @@ static void startApplication(
 		QSurfaceFormat::setDefaultFormat(format);
 	}
 
-#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+#ifdef Q_OS_ANDROID
+	utils::AndroidExitInfo androidExitInfo =
+		utils::androidGetLastApplicationExitInfo();
+	if(androidExitInfo.isValid()) {
+		if(androidExitInfo.looksLikeCleanExit()) {
+			qInfo(
+				"Last exit: %s",
+				qUtf8Printable(androidExitInfo.buildLogString()));
+		} else {
+			qWarning(
+				"Last exit: %s",
+				qUtf8Printable(androidExitInfo.buildLogString()));
+		}
+
+		if(androidExitInfo.looksLikeForegroundResourceExhaustionExit()) {
+			androidForegroundResourceExhaustionExitWarningPending = true;
+		}
+	}
+
+#	ifdef KRITA_QT_SCREEN_DENSITY_ADJUSTMENT
 	if(initialAndroidScalingDialog) {
 		initialAndroidScalingDialog = false;
 		scalingMainWindow = new MainWindow(false);
 		app->showAndroidScalingDialog();
 		return;
 	}
+#	endif
 #endif
 
 	if(!startupOptions.joinUrl.isEmpty()) {
@@ -1350,6 +1384,8 @@ static void startApplication(
 		app->openStart(
 			startupOptions.startPage, startupOptions.restoreWindowPosition);
 	}
+
+	app->showAndroidForegroundResourceExhaustionExitWarning();
 }
 
 

@@ -7,12 +7,17 @@ import android.os.Build;
 import android.util.Log;
 import android.view.ViewConfiguration;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.ApplicationExitInfo;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
 import org.qtproject.qt5.android.QtNative;
 import org.qtproject.qt5.android.bindings.QtActivity;
 import org.qtproject.qt5.android.bindings.QtApplication;
+
+import java.util.List;
 
 public class MainActivity extends QtActivity {
 
@@ -139,5 +144,46 @@ public class MainActivity extends QtActivity {
                     defaultScale, interfaceMode, showOnStartup, canShowOnStartup);
             scalingDialog.show();
         });
+    }
+
+    public void showForegroundResourceExhaustionWarningDialog(
+            String titleText, String messageText, String buttonText) {
+        QtNative.activity().runOnUiThread(() -> {
+            new AlertDialog.Builder(this)
+                .setTitle(titleText)
+                .setMessage(messageText)
+                .setPositiveButton(buttonText, (dlg, which) -> dlg.dismiss())
+                .setCancelable(true)
+                .show();
+        });
+    }
+
+    public ApplicationExitInfo getLastApplicationExitInfo() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                ActivityManager activityManager = getSystemService(ActivityManager.class);
+                if (activityManager != null) {
+                    List<ApplicationExitInfo> exitReasons =
+                        activityManager.getHistoricalProcessExitReasons(null, 0, 1);
+                    if (exitReasons != null && !exitReasons.isEmpty()) {
+                        return exitReasons.get(0);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Exception getting last application exit info", e);
+            }
+        }
+        return null;
+    }
+
+    public static boolean isLowMemoryKillReportSupported() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                return ActivityManager.isLowMemoryKillReportSupported();
+            } catch (Exception e) {
+                Log.e(TAG, "Exception getting low memory kill report support", e);
+            }
+        }
+        return false;
     }
 }

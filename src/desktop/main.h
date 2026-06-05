@@ -120,9 +120,12 @@ public:
 	static bool isAndroidScalingDialogShown();
 	static bool takeAndroidScalingJustChanged();
 
-#if defined(Q_OS_ANDROID) && defined(KRITA_QT_SCREEN_DENSITY_ADJUSTMENT)
+#ifdef Q_OS_ANDROID
+	void showAndroidForegroundResourceExhaustionExitWarning();
+#	ifdef KRITA_QT_SCREEN_DENSITY_ADJUSTMENT
 	void showAndroidScalingDialog();
 	void handleAndroidScalingDialogDismissed();
+#	endif
 #endif
 
 signals:
