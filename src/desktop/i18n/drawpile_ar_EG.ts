@@ -354,22 +354,22 @@
     <message>
         <location line="+3"/>
         <source>Hide Docks</source>
-        <translation type="unfinished">خبي النافذات</translation>
+        <translation>إخفاء القوائم</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>تنفيذ الفعل</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished">أداة التقييد</translation>
+        <translation>أداة التقييد</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Center Tool</source>
-        <translation type="unfinished">أداة المركز</translation>
+        <translation>أداة المركز</translation>
     </message>
     <message>
         <location line="+3"/>
