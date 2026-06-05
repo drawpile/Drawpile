@@ -471,7 +471,7 @@
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation>أداة التوسيط</translation>
+        <translation>أداة المركز</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -538,12 +538,12 @@
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>إخفاء القوائم</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>تنفيذ الفعل</translation>
     </message>
     <message>
         <location line="+2"/>
