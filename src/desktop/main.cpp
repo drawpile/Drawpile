@@ -1385,7 +1385,9 @@ static void startApplication(
 			startupOptions.startPage, startupOptions.restoreWindowPosition);
 	}
 
+#ifdef Q_OS_ANDROID
 	app->showAndroidForegroundResourceExhaustionExitWarning();
+#endif
 }
 
 
