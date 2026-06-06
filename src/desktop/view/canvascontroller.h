@@ -71,6 +71,8 @@ protected:
 	QPointF viewCursorPosOrCenter() const override;
 
 private:
+	void setIgnoreBlotches(bool ignoreBlotches);
+
 	CanvasScene *m_scene;
 	CanvasInterface *m_canvasWidget = nullptr;
 	WidgetTouchHandler *m_touchHandler;

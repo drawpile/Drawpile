@@ -138,6 +138,13 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, InterpolateInputs, interpolate);
 	form->addRow(tr("Workarounds:"), interpolate);
 
+	QCheckBox *ignoreBlotches =
+		//: Ugee is a brand that makes pen tablets. This is a setting for a
+		//: workaround that ignores full-pressure blotches from those.
+		new QCheckBox(tr("Ignore full-pressure blotches (Ugee)"));
+	CFG_BIND_CHECKBOX(cfg, IgnoreBlotches, ignoreBlotches);
+	form->addRow(nullptr, ignoreBlotches);
+
 #ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS
 	QCheckBox *highFunctionKeysWorkaround =
 		//: OnePlus is a brand that makes Android tablets. This is a setting for

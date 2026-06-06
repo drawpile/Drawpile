@@ -171,6 +171,15 @@ settings:
     qsettings: 'settings/tools/freehandrightclickaction'
     legacy_package: 'libclient'
 
+  - id: ignoreBlotches
+    type: 'bool'
+    default:
+      - value: 'true'
+        condition: 'defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)'
+      - value: 'false'
+    qsettings: 'settings/input/ignoreblotches'
+    legacy_package: 'libclient'
+
   - id: interpolateInputs
     type: 'bool'
     default: 'true'

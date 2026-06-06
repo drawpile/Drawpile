@@ -62,6 +62,8 @@ CanvasController::CanvasController(CanvasScene *scene, QObject *parent)
 	CFG_BIND_SET(
 		cfg, TabletPressTimerDelay, this,
 		CanvasController::setTabletEventTimerDelay);
+	CFG_BIND_SET(
+		cfg, IgnoreBlotches, this, CanvasController::setIgnoreBlotches);
 
 	connect(
 		m_scene->hud(), &HudHandler::currentActionBarChanged, this,
@@ -204,6 +206,11 @@ QPointF CanvasController::viewTransformOffset() const
 QPointF CanvasController::viewCursorPosOrCenter() const
 {
 	return m_scene->isCursorOnCanvas() ? m_scene->cursorPos() : viewCenterF();
+}
+
+void CanvasController::setIgnoreBlotches(bool ignoreBlotches)
+{
+	m_tabletFilter.setIgnoreBlotches(ignoreBlotches);
 }
 
 }

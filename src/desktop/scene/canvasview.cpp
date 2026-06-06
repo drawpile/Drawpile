@@ -254,6 +254,7 @@ CanvasView::CanvasView(QWidget *parent)
 		widgets::CanvasView::setBrushOutlineWidth);
 	CFG_BIND_SET(
 		cfg, TabletPressTimerDelay, this, CanvasView::setTabletEventTimerDelay);
+	CFG_BIND_SET(cfg, IgnoreBlotches, this, CanvasView::setIgnoreBlotches);
 
 	CFG_BIND_SET_FN(
 		cfg, GlobalPressureCurve, this, [=](QString serializedCurve) {
@@ -898,6 +899,11 @@ void CanvasView::setTabletEventTimerDelay(int tabletEventTimerDelay)
 {
 	m_tabletEventTimerDelay = tabletEventTimerDelay;
 	m_tabletEventTimer.setRemainingTime(0);
+}
+
+void CanvasView::setIgnoreBlotches(bool ignoreBlotches)
+{
+	m_tabletFilter.setIgnoreBlotches(ignoreBlotches);
 }
 
 void CanvasView::setShowTransformNotices(bool showTransformNotices)

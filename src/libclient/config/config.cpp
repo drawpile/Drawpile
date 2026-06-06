@@ -501,6 +501,15 @@ bool Config::defaultHostEnableAdvanced()
 	return false;
 }
 
+bool Config::defaultIgnoreBlotches()
+{
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+	return true;
+#else
+	return false;
+#endif
+}
+
 bool Config::defaultIgnoreCarrierGradeNat()
 {
 	return false;

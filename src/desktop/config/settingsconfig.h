@@ -300,6 +300,9 @@ public:
 	bool getHostEnableAdvanced() const override;
 	void setHostEnableAdvanced(bool value) override;
 
+	bool getIgnoreBlotches() const override;
+	void setIgnoreBlotches(bool value) override;
+
 	bool getIgnoreCarrierGradeNat() const override;
 	void setIgnoreCarrierGradeNat(bool value) override;
 

@@ -261,6 +261,7 @@ public slots:
 	void setBrushOutlineWidth(qreal outlineWidth);
 	void setBrushBlendMode(int brushBlendMode);
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
+	void setIgnoreBlotches(bool ignoreBlotches);
 
 	void setShowTransformNotices(bool showTransformNotices);
 #if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)

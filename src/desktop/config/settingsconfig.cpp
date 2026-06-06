@@ -339,6 +339,9 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::hostEnableAdvancedChanged,
 		this, &SettingsConfig::changeHostEnableAdvanced, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::ignoreBlotchesChanged, this,
+		&SettingsConfig::changeIgnoreBlotches, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::ignoreCarrierGradeNatChanged,
 		this, &SettingsConfig::changeIgnoreCarrierGradeNat,
 		Qt::DirectConnection);
@@ -1862,6 +1865,16 @@ bool SettingsConfig::getHostEnableAdvanced() const
 void SettingsConfig::setHostEnableAdvanced(bool value)
 {
 	m_settings->setHostEnableAdvanced(value);
+}
+
+bool SettingsConfig::getIgnoreBlotches() const
+{
+	return m_settings->ignoreBlotches();
+}
+
+void SettingsConfig::setIgnoreBlotches(bool value)
+{
+	m_settings->setIgnoreBlotches(value);
 }
 
 bool SettingsConfig::getIgnoreCarrierGradeNat() const

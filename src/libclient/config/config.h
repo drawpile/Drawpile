@@ -627,6 +627,10 @@ public:
 	virtual void setHostEnableAdvanced(bool value) = 0;
 	static bool defaultHostEnableAdvanced();
 
+	virtual bool getIgnoreBlotches() const = 0;
+	virtual void setIgnoreBlotches(bool value) = 0;
+	static bool defaultIgnoreBlotches();
+
 	virtual bool getIgnoreCarrierGradeNat() const = 0;
 	virtual void setIgnoreCarrierGradeNat(bool value) = 0;
 	static bool defaultIgnoreCarrierGradeNat();
@@ -1472,6 +1476,7 @@ Q_SIGNALS:
 	void changeGlobalPressureCurveEraser(const QString &value);
 	void changeGlobalPressureCurveMode(int value);
 	void changeHostEnableAdvanced(bool value);
+	void changeIgnoreBlotches(bool value);
 	void changeIgnoreCarrierGradeNat(bool value);
 	void changeInputPresets(const QVector<QVariantMap> &value);
 	void changeInsecurePasswordStorage(bool value);

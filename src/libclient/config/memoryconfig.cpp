@@ -1163,6 +1163,19 @@ void MemoryConfig::setHostEnableAdvanced(bool value)
 	}
 }
 
+bool MemoryConfig::getIgnoreBlotches() const
+{
+	return m_ignoreBlotches;
+}
+
+void MemoryConfig::setIgnoreBlotches(bool value)
+{
+	if(value != m_ignoreBlotches) {
+		m_ignoreBlotches = value;
+		Q_EMIT changeIgnoreBlotches(m_ignoreBlotches);
+	}
+}
+
 bool MemoryConfig::getIgnoreCarrierGradeNat() const
 {
 	return m_ignoreCarrierGradeNat;

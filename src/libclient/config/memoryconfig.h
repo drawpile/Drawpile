@@ -293,6 +293,9 @@ public:
 	bool getHostEnableAdvanced() const override;
 	void setHostEnableAdvanced(bool value) override;
 
+	bool getIgnoreBlotches() const override;
+	void setIgnoreBlotches(bool value) override;
+
 	bool getIgnoreCarrierGradeNat() const override;
 	void setIgnoreCarrierGradeNat(bool value) override;
 
@@ -959,6 +962,7 @@ private:
 	QString m_globalPressureCurveEraser = defaultGlobalPressureCurveEraser();
 	int m_globalPressureCurveMode = defaultGlobalPressureCurveMode();
 	bool m_hostEnableAdvanced = defaultHostEnableAdvanced();
+	bool m_ignoreBlotches = defaultIgnoreBlotches();
 	bool m_ignoreCarrierGradeNat = defaultIgnoreCarrierGradeNat();
 	QVector<QVariantMap> m_inputPresets = defaultInputPresets();
 	bool m_insecurePasswordStorage = defaultInsecurePasswordStorage();
