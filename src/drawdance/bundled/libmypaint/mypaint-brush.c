@@ -133,6 +133,8 @@ struct MyPaintBrush {
     gboolean reset_requested;
     // Drawpile patch: initialize direction properly at the start of strokes.
     gboolean needs_direction;
+    // Drawpile patch: put down initial dabs properly.
+    gboolean needs_initial_dab;
 #ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
     json_object *brush_json;
 #endif
@@ -189,6 +191,8 @@ brush_reset(MyPaintBrush *self)
     }
     // Drawpile patch: initialize direction properly at the start of strokes.
     self->needs_direction = TRUE;
+    // Drawpile patch: put down initial dabs properly.
+    self->needs_initial_dab = TRUE;
 }
 
 /**
@@ -1462,7 +1466,9 @@ mypaint_brush_stroke_to_internal(
       STATE(self, ACTUAL_Y) = STATE(self, Y);
       STATE(self, STROKE) = 1.0; // start in a state as if the stroke was long finished
 
-      return TRUE;
+      // Drawpile patch: put down initial dabs properly.
+      // return TRUE;
+      self->needs_initial_dab = TRUE;
     }
 
     // Drawpile patch: initialize direction properly at the start of strokes.
@@ -1493,7 +1499,19 @@ mypaint_brush_stroke_to_internal(
     // draw many (or zero) dabs to the next position
     // see doc/images/stroke2dabs.png
     float dabs_moved = STATE(self, PARTIAL_DABS);
-    float dabs_todo = count_dabs_to (self, x, y, dtime, legacy);
+    float dabs_todo_counted = count_dabs_to (self, x, y, dtime, legacy);
+
+    // Drawpile patch: put down initial dabs properly.
+    gboolean force_initial_dab;
+    float dabs_todo;
+    if (self->needs_initial_dab && dabs_moved == 0.0f && dabs_todo < 1.0f) {
+        force_initial_dab = TRUE;
+        dabs_todo = 1.0f;
+    } else {
+        force_initial_dab = FALSE;
+        dabs_todo = dabs_todo_counted;
+    }
+
     while (dabs_moved + dabs_todo >= 1.0) { // there are dabs pending
       { // linear interpolation (nonlinear variant was too slow, see SVN log)
         float frac; // fraction of the remaining distance to move
@@ -1536,11 +1554,18 @@ mypaint_brush_stroke_to_internal(
       // update value of random input only when drawing the dab
       self->random_input = rng_double_next(self->rng);
 
-      dtime_left -= step_dtime;
-      dabs_todo = count_dabs_to(self, x, y, dtime_left, legacy);
+      if (force_initial_dab) {
+        dtime_left = 0.0f;
+        dabs_todo = 0.0f;
+      } else {
+        dtime_left -= step_dtime;
+        dabs_todo = count_dabs_to(self, x, y, dtime_left, legacy);
+      }
     }
 
-    {
+    if (force_initial_dab) {
+      STATE(self, PARTIAL_DABS) = dabs_todo_counted - 1.0f;
+    } else {
       // "move" the brush to the current time (no more dab will happen)
       // Important to do this at least once every event, because
       // brush_count_dabs_to depends on the radius and the radius can
@@ -1558,13 +1583,13 @@ mypaint_brush_stroke_to_internal(
       step_barrel_rotation = smallest_angular_difference(STATE(self, BARREL_ROTATION), barrel_rotation * 360);
 
       update_states_and_setting_values (self, step_ddab, step_dx, step_dy, step_dpressure, step_declination, step_ascension, step_dtime, viewzoom, viewrotation, step_declinationx, step_declinationy, step_barrel_rotation);
+
+      // save the fraction of a dab that is already done now
+      STATE(self, PARTIAL_DABS) = dabs_moved + dabs_todo;
     }
 
     // Drawpile patch: initialize direction properly at the start of strokes.
     self->needs_direction = FALSE;
-
-    // save the fraction of a dab that is already done now
-    STATE(self, PARTIAL_DABS) = dabs_moved + dabs_todo;
 
     /* not working any more with the new rng...
     // next seed for the RNG (GRand has no get_state() and states[] must always contain our full state)
