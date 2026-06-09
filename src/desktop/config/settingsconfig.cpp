@@ -263,6 +263,9 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::debounceDelayMsChanged, this,
 		&SettingsConfig::changeDebounceDelayMs, Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::delayInitialDabChanged, this,
+		&SettingsConfig::changeDelayInitialDab, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::donationLinksEnabledChanged,
 		this, &SettingsConfig::changeDonationLinksEnabled,
 		Qt::DirectConnection);
@@ -1635,6 +1638,16 @@ int SettingsConfig::getDebounceDelayMs() const
 void SettingsConfig::setDebounceDelayMs(int value)
 {
 	m_settings->setDebounceDelayMs(value);
+}
+
+bool SettingsConfig::getDelayInitialDab() const
+{
+	return m_settings->delayInitialDab();
+}
+
+void SettingsConfig::setDelayInitialDab(bool value)
+{
+	m_settings->setDelayInitialDab(value);
 }
 
 bool SettingsConfig::getDonationLinksEnabled() const

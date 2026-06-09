@@ -535,6 +535,10 @@ public:
 	virtual void setDebounceDelayMs(int value) = 0;
 	static int defaultDebounceDelayMs();
 
+	virtual bool getDelayInitialDab() const = 0;
+	virtual void setDelayInitialDab(bool value) = 0;
+	static bool defaultDelayInitialDab();
+
 	virtual bool getDonationLinksEnabled() const = 0;
 	virtual void setDonationLinksEnabled(bool value) = 0;
 	static bool defaultDonationLinksEnabled();
@@ -1453,6 +1457,7 @@ Q_SIGNALS:
 #endif
 	void changeCurvesPresets(const QVector<QVariantMap> &value);
 	void changeDebounceDelayMs(int value);
+	void changeDelayInitialDab(bool value);
 	void changeDonationLinksEnabled(bool value);
 	void changeDoubleTapAltToFocusCanvas(bool value);
 	void changeEngineFrameRate(int value);

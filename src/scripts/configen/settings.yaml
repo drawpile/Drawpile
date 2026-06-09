@@ -138,6 +138,12 @@ settings:
     qsettings: 'settings/checkercolor2'
     legacy_package: 'libclient'
 
+  - id: delayInitialDab
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/input/delayinitialdab'
+    legacy_package: 'libclient'
+
   - id: engineFrameRate
     type: 'int'
     default: '60'

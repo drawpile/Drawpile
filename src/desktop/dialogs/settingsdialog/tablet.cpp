@@ -138,6 +138,11 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, InterpolateInputs, interpolate);
 	form->addRow(tr("Workarounds:"), interpolate);
 
+	QCheckBox *delayInitialDab =
+		new QCheckBox(tr("Wait for movement before starting strokes"));
+	CFG_BIND_CHECKBOX(cfg, DelayInitialDab, delayInitialDab);
+	form->addRow(nullptr, delayInitialDab);
+
 	QCheckBox *ignoreBlotches =
 		//: Ugee is a brand that makes pen tablets. This is a setting for a
 		//: workaround that ignores full-pressure blotches from those.

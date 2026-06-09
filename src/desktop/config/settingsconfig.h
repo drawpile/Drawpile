@@ -231,6 +231,9 @@ public:
 	int getDebounceDelayMs() const override;
 	void setDebounceDelayMs(int value) override;
 
+	bool getDelayInitialDab() const override;
+	void setDelayInitialDab(bool value) override;
+
 	bool getDonationLinksEnabled() const override;
 	void setDonationLinksEnabled(bool value) override;
 

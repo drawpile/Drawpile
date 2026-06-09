@@ -16,6 +16,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add a workaround for full-pressure blotches on Ugee tablets. Enabled by default on Android and the browser where it is known to happen, shouldn't cause interference for styluses that behave normally. Thanks London for reporting.
  * Fix: Make sure MyPaint brush strokes start with proper directional values if the brush makes use of them. Previously they could end up with the value being zero degrees instead. Thanks tiar for reporting.
  * Fix: Call the Option key on macOS by its proper name. Thanks Axocrat for reporting.
+ * Feature: Allow configuring whether a stroke is started only when moving the stylus. Enabled by default, as it was before. Thanks dAVePAGE for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

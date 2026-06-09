@@ -74,6 +74,9 @@ SETTING(
 	checkerColor2, CheckerColor2, "settings/checkercolor2",
 	config::Config::defaultCheckerColor2())
 SETTING(
+	delayInitialDab, DelayInitialDab, "settings/input/delayinitialdab",
+	config::Config::defaultDelayInitialDab())
+SETTING(
 	engineFrameRate, EngineFrameRate, "settings/paintengine/fps",
 	config::Config::defaultEngineFrameRate())
 SETTING(

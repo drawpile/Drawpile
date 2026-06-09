@@ -864,6 +864,19 @@ void MemoryConfig::setDebounceDelayMs(int value)
 	}
 }
 
+bool MemoryConfig::getDelayInitialDab() const
+{
+	return m_delayInitialDab;
+}
+
+void MemoryConfig::setDelayInitialDab(bool value)
+{
+	if(value != m_delayInitialDab) {
+		m_delayInitialDab = value;
+		Q_EMIT changeDelayInitialDab(m_delayInitialDab);
+	}
+}
+
 bool MemoryConfig::getDonationLinksEnabled() const
 {
 	return m_donationLinksEnabled;

@@ -388,6 +388,7 @@ private:
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;
+	bool m_delayInitialDab;
 
 	int m_globalSmoothing;
 	bool m_interpolateInputs;

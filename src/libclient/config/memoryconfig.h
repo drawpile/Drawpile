@@ -224,6 +224,9 @@ public:
 	int getDebounceDelayMs() const override;
 	void setDebounceDelayMs(int value) override;
 
+	bool getDelayInitialDab() const override;
+	void setDelayInitialDab(bool value) override;
+
 	bool getDonationLinksEnabled() const override;
 	void setDonationLinksEnabled(bool value) override;
 
@@ -939,6 +942,7 @@ private:
 #endif
 	QVector<QVariantMap> m_curvesPresets = defaultCurvesPresets();
 	int m_debounceDelayMs = defaultDebounceDelayMs();
+	bool m_delayInitialDab = defaultDelayInitialDab();
 	bool m_donationLinksEnabled = defaultDonationLinksEnabled();
 	bool m_doubleTapAltToFocusCanvas = defaultDoubleTapAltToFocusCanvas();
 	int m_engineFrameRate = defaultEngineFrameRate();

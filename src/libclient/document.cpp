@@ -71,6 +71,9 @@ Document::Document(
 		m_cfg, MouseSmoothing, m_toolctrl,
 		tools::ToolController::setMouseSmoothing);
 	CFG_BIND_SET(
+		m_cfg, DelayInitialDab, m_toolctrl,
+		tools::ToolController::setDelayInitialDab);
+	CFG_BIND_SET(
 		m_cfg, CancelDeselects, m_toolctrl,
 		tools::ToolController::setCancelDeselects);
 	CFG_BIND_SET(

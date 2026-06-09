@@ -192,7 +192,7 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 	m_mirror = params.mirror;
 	m_flip = params.flip;
 
-	if(pixelArtInput) {
+	if(pixelArtInput || !m_owner.delayInitialDab()) {
 		strokeTo(params.point);
 	}
 }

@@ -51,6 +51,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_drawing(false)
 	, m_applyGlobalSmoothing(true)
 	, m_mouseSmoothing(false)
+	, m_delayInitialDab(config::Config::defaultDelayInitialDab())
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
@@ -523,6 +524,11 @@ void ToolController::setGlobalSmoothing(int smoothing)
 void ToolController::setMouseSmoothing(bool mouseSmoothing)
 {
 	m_mouseSmoothing = mouseSmoothing;
+}
+
+void ToolController::setDelayInitialDab(bool delayInitialDab)
+{
+	m_delayInitialDab = delayInitialDab;
 }
 
 void ToolController::setCancelDeselects(bool cancelDeselects)

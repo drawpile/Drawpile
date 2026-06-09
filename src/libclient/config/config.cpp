@@ -382,6 +382,11 @@ int Config::defaultDebounceDelayMs()
 	return 250;
 }
 
+bool Config::defaultDelayInitialDab()
+{
+	return true;
+}
+
 bool Config::defaultDonationLinksEnabled()
 {
 	return true;
