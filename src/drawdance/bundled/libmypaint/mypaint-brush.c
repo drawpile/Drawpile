@@ -758,6 +758,14 @@ void print_inputs(MyPaintBrush *self, float* inputs)
       self->settings_value[i] = mypaint_mapping_calculate(self->settings[i], (inputs));
     }
 
+    // Drawpile patch: put down initial dabs properly.
+    if (self->needs_initial_dab) {
+      // These values get set above, but are invalid if no dab has been placed yet.
+      STATE(self, DABS_PER_BASIC_RADIUS) = SETTING(self, DABS_PER_BASIC_RADIUS);
+      STATE(self, DABS_PER_ACTUAL_RADIUS) = SETTING(self, DABS_PER_ACTUAL_RADIUS);
+      STATE(self, DABS_PER_SECOND) = SETTING(self, DABS_PER_SECOND);
+    }
+
     {
       const float fac = 1.0 - exp_decay(SETTING(self, SLOW_TRACKING_PER_DAB), step_ddab);
       STATE(self, ACTUAL_X) += (STATE(self, X) - STATE(self, ACTUAL_X)) * fac;
@@ -1466,9 +1474,7 @@ mypaint_brush_stroke_to_internal(
       STATE(self, ACTUAL_Y) = STATE(self, Y);
       STATE(self, STROKE) = 1.0; // start in a state as if the stroke was long finished
 
-      // Drawpile patch: put down initial dabs properly.
-      // return TRUE;
-      self->needs_initial_dab = TRUE;
+      return TRUE;
     }
 
     // Drawpile patch: initialize direction properly at the start of strokes.
@@ -1499,17 +1505,15 @@ mypaint_brush_stroke_to_internal(
     // draw many (or zero) dabs to the next position
     // see doc/images/stroke2dabs.png
     float dabs_moved = STATE(self, PARTIAL_DABS);
-    float dabs_todo_counted = count_dabs_to (self, x, y, dtime, legacy);
+    float dabs_todo = count_dabs_to (self, x, y, dtime, legacy);
 
     // Drawpile patch: put down initial dabs properly.
     gboolean force_initial_dab;
-    float dabs_todo;
     if (self->needs_initial_dab && dabs_moved == 0.0f && dabs_todo < 1.0f) {
         force_initial_dab = TRUE;
-        dabs_todo = 1.0f;
     } else {
         force_initial_dab = FALSE;
-        dabs_todo = dabs_todo_counted;
+        self->needs_initial_dab = FALSE;
     }
 
     while (dabs_moved + dabs_todo >= 1.0) { // there are dabs pending
@@ -1554,17 +1558,41 @@ mypaint_brush_stroke_to_internal(
       // update value of random input only when drawing the dab
       self->random_input = rng_double_next(self->rng);
 
-      if (force_initial_dab) {
-        dtime_left = 0.0f;
-        dabs_todo = 0.0f;
-      } else {
-        dtime_left -= step_dtime;
-        dabs_todo = count_dabs_to(self, x, y, dtime_left, legacy);
-      }
+      dtime_left -= step_dtime;
+      dabs_todo = count_dabs_to(self, x, y, dtime_left, legacy);
     }
 
     if (force_initial_dab) {
-      STATE(self, PARTIAL_DABS) = dabs_todo_counted - 1.0f;
+      STATE(self, X) = x;
+      STATE(self, Y) = y;
+      STATE(self, PRESSURE) = pressure;
+      STATE(self, DECLINATION) = tilt_declination;
+      STATE(self, DECLINATIONX) = tilt_declinationx;
+      STATE(self, DECLINATIONY) = tilt_declinationy;
+      STATE(self, ASCENSION) = tilt_ascension;
+      STATE(self, BARREL_ROTATION) = barrel_rotation * 360.0f;
+
+      update_states_and_setting_values (self, 1.0f, 0.0f, 0.0f,
+                                        0.0f, tilt_declination,
+                                        tilt_ascension, dtime, viewzoom,
+                                        viewrotation, tilt_declinationx,
+                                        tilt_declinationy, barrel_rotation * 360.0f);
+
+      STATE(self, FLIP) *= -1;
+      gboolean painted_now = prepare_and_draw_dab (self, surface, legacy, linear);
+      if (painted_now) {
+        painted = YES;
+      } else if (painted == UNKNOWN) {
+        painted = NO;
+      }
+
+      self->random_input = rng_double_next(self->rng);
+
+      dabs_todo = count_dabs_to(self, x, y, dtime_left, legacy);
+
+      STATE(self, PARTIAL_DABS) = dabs_todo - 1.0f;
+      self->needs_initial_dab = FALSE;
+
     } else {
       // "move" the brush to the current time (no more dab will happen)
       // Important to do this at least once every event, because
