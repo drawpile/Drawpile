@@ -103,7 +103,7 @@ struct ToolSettings::Private {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::LassoFillSettings(ctrl)),
 			"lassofill", QIcon::fromTheme("drawpile_lassofill"),
-			QApplication::tr("Lasso Fill")};
+			QApplication::tr("Shape Fill")};
 		pages[tools::Tool::GRADIENT] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::GradientSettings(ctrl)),

@@ -18,6 +18,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Call the Option key on macOS by its proper name. Thanks Axocrat for reporting.
  * Feature: Allow configuring whether a stroke is started only when moving the stylus. Enabled by default, as it was before. Thanks dAVePAGE for suggesting.
  * Fix: Make MyPaint brushes not require movement to put down the first part of their stroke. Brushes that use directional inputs don't do this, since movement is needed to have a direction. Thanks dAVePAGE for reporting.
+ * Feature: Turn the lasso fill tool into a shape fill tool with two shape options: lasso and fan. The latter option does not produce holes, everything gets filled. Thanks lan700ng and VolutBrum for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

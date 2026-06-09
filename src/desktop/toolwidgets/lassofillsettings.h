@@ -21,6 +21,12 @@ namespace tools {
 class LassoFillSettings final : public ToolSettings {
 	Q_OBJECT
 public:
+	enum class FillMode {
+		Lasso,
+		Fan,
+		Last = Fan,
+	};
+
 	LassoFillSettings(ToolController *ctrl, QObject *parent = nullptr);
 
 	void setActions(QAction *automaticAlphaPreserve, QAction *maskSelection);
@@ -74,6 +80,7 @@ private:
 	QAction *m_stabilizerSettingsAction = nullptr;
 	widgets::GroupedToolButton *m_alphaPreserveButton = nullptr;
 	QComboBox *m_blendModeCombo = nullptr;
+	QButtonGroup *m_fillModeGroup = nullptr;
 	QCheckBox *m_antiAliasCheckBox;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;

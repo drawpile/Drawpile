@@ -7469,7 +7469,7 @@ void MainWindow::setupActions()
 			.noDefaultShortcut();
 	QAction *maskselection =
 		makeAction(
-			"maskselection", tr("Mas&k Strokes/Lasso Fills by Selection"))
+			"maskselection", tr("Mas&k Strokes/Shape Fills by Selection"))
 			.statusTip(tr("Keep brush strokes inside the selection mask"))
 			.checkable()
 			.checked()

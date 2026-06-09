@@ -10,6 +10,7 @@
 #include "libclient/utils/icons.h"
 #include <QAction>
 #include <QActionGroup>
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -34,7 +35,10 @@ static const ToolProperties::RangedValue<int> opacity{
 		int(brushes::LastStabilizationMode)},
 	blendMode{
 		QStringLiteral("blendMode"), DP_BLEND_MODE_NORMAL, 0,
-		DP_BLEND_MODE_MAX};
+		DP_BLEND_MODE_MAX},
+	fillMode{
+		QStringLiteral("fillMode"), int(LassoFillSettings::FillMode::Lasso), 0,
+		int(LassoFillSettings::FillMode::Last)};
 }
 
 LassoFillSettings::LassoFillSettings(ToolController *ctrl, QObject *parent)
@@ -71,6 +75,7 @@ ToolProperties LassoFillSettings::saveToolSettings()
 	cfg.setValue(props::smoothing, m_smoothingSpinner->value());
 	cfg.setValue(props::stabilizationMode, getCurrentStabilizationMode());
 	cfg.setValue(props::blendMode, m_blendModeManager->getCurrentBlendMode());
+	cfg.setValue(props::fillMode, m_fillModeGroup->checkedId());
 	return cfg;
 }
 
@@ -90,6 +95,11 @@ void LassoFillSettings::restoreToolSettings(const ToolProperties &cfg)
 		m_stabilizerSpinner->show();
 	}
 	m_blendModeManager->selectBlendMode(cfg.value(props::blendMode));
+	QAbstractButton *fillModeButton =
+		m_fillModeGroup->button(cfg.value(props::fillMode));
+	if(fillModeButton) {
+		fillModeButton->setChecked(true);
+	}
 }
 
 void LassoFillSettings::toggleEraserMode()
@@ -126,7 +136,8 @@ void LassoFillSettings::pushSettings()
 		m_opacitySpinner->value() / 100.0f, getCurrentStabilizationMode(),
 		m_stabilizerSpinner->value(), m_smoothingSpinner->value(),
 		m_blendModeManager->getCurrentBlendMode(),
-		m_antiAliasCheckBox->isChecked());
+		m_antiAliasCheckBox->isChecked(),
+		m_fillModeGroup->checkedId() == int(FillMode::Fan));
 }
 
 QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
@@ -269,6 +280,39 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 	modeLayout->addWidget(m_alphaPreserveButton);
 	modeLayout->addWidget(m_blendModeCombo);
 	layout->addRow(tr("Mode:"), modeLayout);
+
+	widgets::GroupedToolButton *lassoButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	lassoButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	lassoButton->setText(tr("Lasso"));
+	lassoButton->setStatusTip(
+		tr("Fills the shape with intersections making holes"));
+	lassoButton->setToolTip(lassoButton->statusTip());
+	lassoButton->setCheckable(true);
+	lassoButton->setChecked(true);
+
+	widgets::GroupedToolButton *fanButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	fanButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	fanButton->setText(tr("Fan"));
+	fanButton->setStatusTip(tr("Fills the shape without holes"));
+	fanButton->setToolTip(fanButton->statusTip());
+	fanButton->setCheckable(true);
+
+	m_fillModeGroup = new QButtonGroup(this);
+	m_fillModeGroup->addButton(lassoButton, int(FillMode::Lasso));
+	m_fillModeGroup->addButton(fanButton, int(FillMode::Fan));
+	connect(
+		m_fillModeGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		&LassoFillSettings::pushSettings);
+
+	QHBoxLayout *fillModeLayout = new QHBoxLayout;
+	fillModeLayout->setContentsMargins(0, 0, 0, 0);
+	fillModeLayout->setSpacing(0);
+	fillModeLayout->addWidget(lassoButton);
+	fillModeLayout->addWidget(fanButton);
+	layout->addRow(tr("Shape:"), fillModeLayout);
 
 	m_antiAliasCheckBox = new QCheckBox(tr("Anti-aliasing"));
 	m_antiAliasCheckBox->setStatusTip(tr("Smoothe out fill edges"));

@@ -63,8 +63,8 @@ void LassoFillTool::begin(const BeginParams &params)
 		}
 
 		m_shape.begin(
-			m_antiAlias, m_owner.activeLayer(), m_blendMode, color, selBounds,
-			selImage);
+			m_antiAlias, m_fan, m_owner.activeLayer(), m_blendMode, color,
+			selBounds, selImage);
 		m_lastTimeMsec = params.point.timeMsec();
 		m_owner.setStrokeEngineParams(
 			m_strokeEngine, getEffectiveStabilizerSampleCount(),
@@ -155,7 +155,7 @@ void LassoFillTool::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
 
 void LassoFillTool::setParams(
 	float opacity, int stabilizationMode, int stabilizerSampleCount,
-	int smoothing, int blendMode, bool antiAlias)
+	int smoothing, int blendMode, bool antiAlias, bool fan)
 {
 	m_opacity = opacity;
 	m_stabilizationMode = stabilizationMode;
@@ -163,15 +163,17 @@ void LassoFillTool::setParams(
 	m_smoothing = smoothing;
 	m_blendMode = blendMode;
 	m_antiAlias = antiAlias;
+	m_fan = fan;
 }
 
 void LassoFillTool::Shape::begin(
-	bool antiAlias, int layerId, int blendMode, const QColor &color,
+	bool antiAlias, bool fan, int layerId, int blendMode, const QColor &color,
 	const QRect &selBounds, const QImage &selImage)
 {
 	clear();
 	m_pending = true;
 	m_antiAlias = antiAlias;
+	m_fan = fan;
 	m_layerId = layerId;
 	m_blendMode = blendMode;
 	m_color = color;
@@ -183,11 +185,14 @@ void LassoFillTool::Shape::clear()
 {
 	m_pending = false;
 	m_imageValid = false;
+	m_lastCount = 0;
 	m_polygon.clear();
 	m_polygonF.clear();
+	m_lastBounds = QRect();
 	m_selBounds = QRect();
 	m_selImage = QImage();
 	m_image = QImage();
+	m_fanImage = QImage();
 }
 
 int LassoFillTool::Shape::pointCount() const
@@ -230,7 +235,10 @@ bool LassoFillTool::Shape::get(QPoint *outPos, const QImage **outImage)
 
 void LassoFillTool::Shape::updateImage()
 {
-	if(m_pending && !m_imageValid && pointCount() > 1) {
+	constexpr QImage::Format FORMAT = QImage::Format_ARGB32_Premultiplied;
+
+	int count;
+	if(m_pending && !m_imageValid && (count = pointCount()) > 2) {
 		QRect bounds = m_antiAlias ? m_polygonF.boundingRect().toAlignedRect()
 								   : m_polygon.boundingRect();
 
@@ -242,29 +250,116 @@ void LassoFillTool::Shape::updateImage()
 		if(!bounds.isEmpty()) {
 			m_imageValid = true;
 			m_pos = bounds.topLeft();
-			m_image = QImage(
-				bounds.width(), bounds.height(),
-				QImage::Format_ARGB32_Premultiplied);
-			m_image.fill(0);
-			QPainter painter(&m_image);
-			painter.setPen(Qt::NoPen);
-			painter.setBrush(m_color);
-			painter.setRenderHint(QPainter::Antialiasing, m_antiAlias);
-			painter.translate(-m_pos);
-			if(m_antiAlias) {
-				painter.drawPolygon(m_polygonF);
-			} else {
-				painter.drawPolygon(m_polygon);
-			}
 
-			if(haveSel) {
-				painter.resetTransform();
-				painter.setCompositionMode(
-					QPainter::CompositionMode_DestinationIn);
-				painter.drawImage(m_selBounds.topLeft() - m_pos, m_selImage);
+			QSize imageSize = bounds.size();
+			if(m_fan) {
+				// The fan fill draws a bunch of separate triangles, which means
+				// we can't use regular anti-aliasing or else we get gaps in the
+				// middle of the fill. We instead use 4x super-sampling, that
+				// seems to give the same end result as anti-aliased painting.
+				int fanScale;
+				if(m_antiAlias) {
+					fanScale = 4;
+				} else {
+					fanScale = 1;
+				}
+
+				// The fan fill just needs to add the new triangle, it never
+				// removes anything from the fill, so we can re-use the image.
+				QSize fanImageSize = imageSize * fanScale;
+				if(m_fanImage.isNull() || m_lastBounds.isEmpty()) {
+					m_fanImage = QImage(fanImageSize, FORMAT);
+					m_fanImage.fill(0);
+
+				} else if(m_lastBounds != bounds) {
+					// QImage::copy doesn't accept negative indexes, so we have
+					// to make a new image and paint the previous one to it.
+					QImage newImage(fanImageSize, FORMAT);
+					newImage.fill(0);
+					{
+						QPainter newImagePainter(&newImage);
+						newImagePainter.setCompositionMode(
+							QPainter::CompositionMode_Source);
+						newImagePainter.drawImage(
+							(m_lastBounds.topLeft() - m_pos) * fanScale,
+							m_fanImage);
+					}
+					m_fanImage = std::move(newImage);
+
+				} else {
+					// Bounds are still the same, no need for a new image.
+				}
+
+				{
+					QPainter fanPainter(&m_fanImage);
+					fanPainter.setPen(Qt::NoPen);
+					fanPainter.setBrush(m_color);
+					fanPainter.setRenderHint(QPainter::Antialiasing, false);
+					if(fanScale != 1) {
+						fanPainter.scale(qreal(fanScale), qreal(fanScale));
+					}
+					fanPainter.translate(-m_pos);
+
+					int firstIndex = qMax(1, m_lastCount - 2);
+					if(m_antiAlias) {
+						for(int i = firstIndex; i < count - 1; ++i) {
+							QPolygonF triangle(
+								{m_polygonF[0], m_polygonF[i],
+								 m_polygonF[i + 1]});
+							fanPainter.drawPolygon(triangle);
+						}
+						m_image = m_fanImage.scaled(
+							imageSize, Qt::IgnoreAspectRatio,
+							Qt::SmoothTransformation);
+					} else {
+						for(int i = firstIndex; i < count - 1; ++i) {
+							QPolygon triangle(
+								{m_polygon[0], m_polygon[i], m_polygon[i + 1]});
+							fanPainter.drawPolygon(triangle);
+						}
+						m_image = m_fanImage;
+					}
+				}
+
+				if(haveSel) {
+					QPainter painter(&m_image);
+					applySelection(painter);
+				}
+
+			} else {
+				// The regular lasso fill needs to repaint everything.
+				if(m_image.isNull() || m_image.size() != imageSize) {
+					m_image = QImage(imageSize, FORMAT);
+				}
+				m_image.fill(0);
+
+				QPainter painter(&m_image);
+				painter.setPen(Qt::NoPen);
+				painter.setBrush(m_color);
+				painter.setRenderHint(QPainter::Antialiasing, m_antiAlias);
+				painter.translate(-m_pos);
+				if(m_antiAlias) {
+					painter.drawPolygon(m_polygonF);
+				} else {
+					painter.drawPolygon(m_polygon);
+				}
+
+				if(haveSel) {
+					applySelection(painter);
+				}
 			}
 		}
+
+		m_lastBounds = bounds;
+		m_lastCount = count;
 	}
+}
+
+void LassoFillTool::Shape::applySelection(QPainter &painter)
+{
+	painter.resetTransform();
+	painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+	painter.drawImage(m_selBounds.topLeft() - m_pos, m_selImage);
 }
 
 int LassoFillTool::getEffectiveStabilizerSampleCount() const

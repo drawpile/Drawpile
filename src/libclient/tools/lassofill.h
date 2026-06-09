@@ -8,6 +8,8 @@
 #include <QPointF>
 #include <QTimer>
 
+class QButtonGroup;
+
 namespace tools {
 
 class LassoFillTool final : public Tool {
@@ -27,14 +29,15 @@ public:
 
 	void setParams(
 		float opacity, int stabilizationMode, int stabilizerSampleCount,
-		int smoothing, int blendMode, bool antiAlias);
+		int smoothing, int blendMode, bool antiAlias, bool fan);
 
 private:
 	class Shape {
 	public:
 		void begin(
-			bool antiAlias, int layerId, int blendMode, const QColor &color,
-			const QRect &selBounds, const QImage &selImage);
+			bool antiAlias, bool fan, int layerId, int blendMode,
+			const QColor &color, const QRect &selBounds,
+			const QImage &selImage);
 		void clear();
 
 		bool isPending() const { return m_pending; }
@@ -49,18 +52,23 @@ private:
 
 	private:
 		void updateImage();
+		void applySelection(QPainter &painter);
 
 		bool m_pending = false;
 		bool m_antiAlias = false;
+		bool m_fan = true;
 		bool m_imageValid = false;
 		int m_layerId = 0;
 		int m_blendMode = 0;
+		int m_lastCount = 0;
 		QColor m_color;
 		QPolygon m_polygon;
 		QPolygonF m_polygonF;
 		QPoint m_pos;
+		QRect m_lastBounds;
 		QRect m_selBounds;
 		QImage m_selImage;
+		QImage m_fanImage;
 		QImage m_image;
 	};
 
@@ -83,6 +91,7 @@ private:
 	int m_smoothing = 0;
 	int m_blendMode;
 	bool m_antiAlias = false;
+	bool m_fan = true;
 	bool m_drawing = false;
 	bool m_previewUpdatePending = false;
 	ClickDetector m_clickDetector;
