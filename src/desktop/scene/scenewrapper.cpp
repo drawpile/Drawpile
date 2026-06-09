@@ -396,22 +396,22 @@ void SceneWrapper::connectDocument(Document *doc)
 
 	connect(
 		m_view, &CanvasView::penDown, toolCtrl,
-		&tools::ToolController::startDrawing);
+		&tools::ToolController::startDrawing, Qt::DirectConnection);
 	connect(
 		m_view, &CanvasView::penMove, toolCtrl,
-		&tools::ToolController::continueDrawing);
+		&tools::ToolController::continueDrawing, Qt::DirectConnection);
 	connect(
 		m_view, &CanvasView::penHold, toolCtrl,
-		&tools::ToolController::holdDrawing);
+		&tools::ToolController::holdDrawing, Qt::DirectConnection);
 	connect(
 		m_view, &CanvasView::penModify, toolCtrl,
-		&tools::ToolController::modifyDrawing);
+		&tools::ToolController::modifyDrawing, Qt::DirectConnection);
 	connect(
 		m_view, &CanvasView::penHover, toolCtrl,
-		&tools::ToolController::hoverDrawing);
+		&tools::ToolController::hoverDrawing, Qt::DirectConnection);
 	connect(
 		m_view, &CanvasView::penUp, toolCtrl,
-		&tools::ToolController::endDrawing);
+		&tools::ToolController::endDrawing, Qt::DirectConnection);
 
 	m_scene->setComparisonColor(toolCtrl->foregroundColor());
 }
