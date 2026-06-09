@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/referenceview.h"
+#include "cmake-config/config.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/utils/cursors.h"
 #include "libclient/view/zoom.h"
+#include "libshared/util/qtcompat.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
@@ -23,6 +25,31 @@
 #include <QWheelEvent>
 
 namespace widgets {
+
+static bool isLoadableImageSuffix(const QString &suffix)
+{
+	QByteArray suffixUtf8 = suffix.toCaseFolded().toUtf8();
+	if(QImageReader::supportedImageFormats().contains(suffixUtf8)) {
+		return true;
+	}
+
+	// Only the flat image formats can be decoded by drawdance::loadImage (used
+	// by handlePathDrop); layered formats like ORA/PSD are not loadable here.
+	const QString globs =
+		QString::fromUtf8(cmake_config::file_group::flatImage());
+	const QList<QString> tokens =
+		globs.split(QLatin1Char(' '), compat::SkipEmptyParts);
+	for(const QString &token : tokens) {
+		QString ext = token;
+		if(ext.startsWith(QStringLiteral("*."))) {
+			ext = ext.mid(2);
+		}
+		if(!ext.isEmpty() && suffix.compare(ext, Qt::CaseInsensitive) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
 
 class ReferenceView::ReferenceItem : public QGraphicsItem {
 public:
@@ -436,8 +463,7 @@ bool ReferenceView::canHandleDrop(const QMimeData *mimeData)
 			QUrl url = mimeData->urls().first();
 			if(url.isLocalFile()) {
 				QFileInfo info(url.toLocalFile());
-				if(QImageReader::supportedImageFormats().contains(
-					   info.suffix().toCaseFolded().toUtf8())) {
+				if(isLoadableImageSuffix(info.suffix())) {
 					return true;
 				}
 			}

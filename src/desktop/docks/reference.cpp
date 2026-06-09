@@ -6,11 +6,11 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/referenceview.h"
+#include "libclient/drawdance/image.h"
 #include "libclient/document.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QHBoxLayout>
-#include <QImageReader>
 #include <QMenu>
 #include <QScrollBar>
 #include <QSignalBlocker>
@@ -237,14 +237,8 @@ void ReferenceDock::handleImageDrop(const QImage &img)
 
 void ReferenceDock::handlePathDrop(const QString &path)
 {
-	QImage img;
 	QString error;
-	{
-		QImageReader reader(path);
-		if(!reader.read(&img)) {
-			error = reader.errorString();
-		}
-	}
+	QImage img = drawdance::loadImage(path, &error);
 	showReferenceImageFromFile(img, error);
 }
 

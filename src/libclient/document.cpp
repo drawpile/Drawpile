@@ -14,6 +14,7 @@ extern "C" {
 #include "libclient/canvas/userlist.h"
 #include "libclient/config/config.h"
 #include "libclient/document.h"
+#include "libclient/drawdance/image.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/projectsaver.h"
 #include "libclient/export/thumbnailerrunnable.h"
@@ -33,6 +34,7 @@ extern "C" {
 #include <QGuiApplication>
 #include <QPainter>
 #include <QRunnable>
+#include <QStringList>
 #include <QSysInfo>
 #include <QTemporaryDir>
 #include <QThreadPool>
@@ -2330,8 +2332,19 @@ const QMimeData *Document::getClipboardData()
 bool Document::clipboardHasImageData()
 {
 	const QMimeData *mimeData = getClipboardData();
-	return mimeData && (mimeData->hasImage() ||
-						mimeData->hasFormat(QStringLiteral("image/png")));
+	if(!mimeData) {
+		return false;
+	}
+	if(mimeData->hasImage()) {
+		return true;
+	}
+	const QStringList formats = mimeData->formats();
+	for(const QString &format : formats) {
+		if(format.startsWith(QStringLiteral("image/"))) {
+			return true;
+		}
+	}
+	return false;
 }
 
 QImage Document::getClipboardImageData(const QMimeData *mimeData)
@@ -2339,11 +2352,25 @@ QImage Document::getClipboardImageData(const QMimeData *mimeData)
 	if(mimeData) {
 		if(mimeData->hasImage()) {
 			return mimeData->imageData().value<QImage>();
-		} else if(mimeData->hasFormat(QStringLiteral("image/png"))) {
-			QImage img;
-			if(img.loadFromData(
-				   mimeData->data(QStringLiteral("image/png")), "PNG")) {
+		}
+		// Try raw image byte buffers (e.g. image/png, image/webp) through the
+		// Drawdance loader so formats like WebP and QOI decode the same as
+		// they do via File > Open.
+		const QString pngFormat = QStringLiteral("image/png");
+		if(mimeData->hasFormat(pngFormat)) {
+			QImage img = drawdance::loadImage(mimeData->data(pngFormat));
+			if(!img.isNull()) {
 				return img;
+			}
+		}
+		const QStringList formats = mimeData->formats();
+		for(const QString &format : formats) {
+			if(format != pngFormat &&
+			   format.startsWith(QStringLiteral("image/"))) {
+				QImage img = drawdance::loadImage(mimeData->data(format));
+				if(!img.isNull()) {
+					return img;
+				}
 			}
 		}
 	}

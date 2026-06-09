@@ -85,6 +85,7 @@ extern "C" {
 #include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/drawdance/eventlog.h"
+#include "libclient/drawdance/image.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/import/canvasloaderrunnable.h"
@@ -5407,7 +5408,7 @@ void MainWindow::pasteFile()
 void MainWindow::pasteFilePath(const QString &path)
 {
 	QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-	QImage img(path);
+	QImage img = drawdance::loadImage(path);
 	if(img.isNull()) {
 		QGuiApplication::restoreOverrideCursor();
 		showErrorMessage(tr("The image could not be loaded"));

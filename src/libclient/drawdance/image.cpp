@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpcommon/geom.h>
+#include <dpcommon/input.h>
 #include <dpengine/image.h>
+#include <dpimpex/image_impex.h>
 }
 #include "libclient/drawdance/global.h"
 #include "libclient/drawdance/image.h"
+#include <QImageReader>
 
 static void cleanupImage(void *user)
 {
@@ -26,6 +29,19 @@ static DP_Pixel8 getPixel(void *user, int x, int y)
 
 namespace drawdance {
 
+static QImage decodeWithDrawdance(DP_Input *input)
+{
+	// input is consumed/freed here.
+	DP_Image *dpImg = input
+						  ? DP_image_new_from_file(
+								input, DP_IMAGE_FILE_TYPE_GUESS, nullptr)
+						  : nullptr;
+	if(input) {
+		DP_input_free(input);
+	}
+	return wrapImage(dpImg);
+}
+
 QImage wrapImage(DP_Image *img)
 {
 	if(img) {
@@ -39,6 +55,48 @@ QImage wrapImage(DP_Image *img)
 	} else {
 		return QImage{};
 	}
+}
+
+QImage loadImage(const QString &path, QString *outError)
+{
+	QByteArray pathBytes = path.toUtf8();
+	DP_Input *input = DP_file_input_new_from_path(pathBytes.constData());
+	QImage img = decodeWithDrawdance(input);
+	if(!img.isNull()) {
+		return img;
+	}
+
+	QImageReader reader(path);
+	QImage qtImg;
+	if(reader.read(&qtImg)) {
+		return qtImg;
+	}
+	if(outError) {
+		*outError = reader.errorString();
+	}
+	return QImage();
+}
+
+QImage loadImage(const QByteArray &bytes, QString *outError)
+{
+	DP_Input *input = bytes.isEmpty()
+						  ? nullptr
+						  : DP_mem_input_new_keep_on_close(
+								bytes.constData(),
+								static_cast<size_t>(bytes.size()));
+	QImage img = decodeWithDrawdance(input);
+	if(!img.isNull()) {
+		return img;
+	}
+
+	QImage qtImg;
+	if(qtImg.loadFromData(bytes)) {
+		return qtImg;
+	}
+	if(outError) {
+		*outError = QStringLiteral("Unsupported or corrupt image data");
+	}
+	return QImage();
 }
 
 QImage wrapPixels8(int width, int height, DP_Pixel8 *pixels)
