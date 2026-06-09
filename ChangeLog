@@ -14,6 +14,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow selecting color-marked layers via keyboard shortcuts. Thanks anonymous for suggesting.
  * Feature: If Drawpile on Android is terminated due to resource exhaustion, such as running out of memory, it will now show a message about it on the next startup. Thanks Bluestrings for suggesting.
  * Feature: Add a workaround for full-pressure blotches on Ugee tablets. Enabled by default on Android and the browser where it is known to happen, shouldn't cause interference for styluses that behave normally. Thanks London for reporting.
+ * Fix: Make sure MyPaint brush strokes start with proper directional values if the brush makes use of them. Previously they could end up with the value being zero degrees instead. Thanks tiar for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

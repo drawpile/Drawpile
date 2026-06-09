@@ -131,6 +131,8 @@ struct MyPaintBrush {
     float speed_mapping_q[2];
 
     gboolean reset_requested;
+    // Drawpile patch: initialize direction properly at the start of strokes.
+    gboolean needs_direction;
 #ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
     json_object *brush_json;
 #endif
@@ -185,6 +187,8 @@ brush_reset(MyPaintBrush *self)
     for(int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
         self->settings_value[i] = 0.0f;
     }
+    // Drawpile patch: initialize direction properly at the start of strokes.
+    self->needs_direction = TRUE;
 }
 
 /**
@@ -774,7 +778,9 @@ void print_inputs(MyPaintBrush *self, float* inputs)
       STATE(self, NORM_DY_SLOW) += (norm_dy - STATE(self, NORM_DY_SLOW)) * fac;
     }
 
-    { // orientation (similar lowpass filter as above, but use dabtime instead of wallclock time)
+    // Drawpile patch: initialize direction properly at the start of strokes.
+    if (!self->needs_direction) {
+      // orientation (similar lowpass filter as above, but use dabtime instead of wallclock time)
       // adjust speed with viewzoom
       float dx = step_dx * STATE(self, VIEWZOOM);
       float dy = step_dy * STATE(self, VIEWZOOM);
@@ -1459,6 +1465,25 @@ mypaint_brush_stroke_to_internal(
       return TRUE;
     }
 
+    // Drawpile patch: initialize direction properly at the start of strokes.
+    if (self->needs_direction) {
+      // Only need to bother with directions if the brush makes use of them.
+      if (mypaint_brush_has_direction_inputs(self)) {
+        float dir_dx = x - STATE(self, X);
+        float dir_dy = y - STATE(self, Y);
+        if (dir_dx != 0.0f || dir_dy != 0.0f) {
+          STATE(self, DIRECTION_DX) = dir_dx;
+          STATE(self, DIRECTION_DY) = dir_dy;
+          STATE(self, DIRECTION_ANGLE_DX) = dir_dx;
+          STATE(self, DIRECTION_ANGLE_DY) = dir_dy;
+        } else {
+          return TRUE; // Gotta wait for more movement.
+        }
+      } else {
+        self->needs_direction = FALSE;
+      }
+    }
+
     enum { UNKNOWN, YES, NO } painted = UNKNOWN;
     double dtime_left = dtime;
 
@@ -1534,6 +1559,9 @@ mypaint_brush_stroke_to_internal(
 
       update_states_and_setting_values (self, step_ddab, step_dx, step_dy, step_dpressure, step_declination, step_ascension, step_dtime, viewzoom, viewrotation, step_declinationx, step_declinationy, step_barrel_rotation);
     }
+
+    // Drawpile patch: initialize direction properly at the start of strokes.
+    self->needs_direction = FALSE;
 
     // save the fraction of a dab that is already done now
     STATE(self, PARTIAL_DABS) = dabs_moved + dabs_todo;
@@ -1745,4 +1773,19 @@ RngDouble *
 mypaint_brush_rng(MyPaintBrush *self)
 {
     return self->rng;
+}
+
+// Drawpile patch
+gboolean
+mypaint_brush_has_direction_inputs(MyPaintBrush *self)
+{
+    for (int s = 0; s < MYPAINT_BRUSH_SETTINGS_COUNT; s++) {
+        MyPaintMapping *setting = self->settings[s];
+        if (mypaint_mapping_get_n(setting, MYPAINT_BRUSH_INPUT_DIRECTION)
+         || mypaint_mapping_get_n(setting, MYPAINT_BRUSH_INPUT_DIRECTION_ANGLE)
+         || mypaint_mapping_get_n(setting, MYPAINT_BRUSH_INPUT_ATTACK_ANGLE)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }

@@ -265,6 +265,13 @@ typedef struct RngDouble RngDouble;
 RngDouble *
 mypaint_brush_rng(MyPaintBrush *self);
 
+// Drawpile patch: check if the given brush uses any directional inputs. This
+// means that it can't safely down a dab without knowing which direction the
+// stroke is going to move in. The inputs are "Direction", "Direction 360" and
+// "Attack Angle".
+gboolean
+mypaint_brush_has_direction_inputs(MyPaintBrush *self);
+
 
 G_END_DECLS
 
