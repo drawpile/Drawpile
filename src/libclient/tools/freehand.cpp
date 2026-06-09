@@ -204,6 +204,17 @@ void Freehand::motion(const MotionParams &params)
 	}
 }
 
+void Freehand::hold(const MotionParams &params)
+{
+	if(m_drawing && m_firstPoint) {
+		m_start.setTimeMsec(params.point.timeMsec());
+		m_start.setPressure(params.point.pressure());
+		m_start.setXtilt(params.point.xtilt());
+		m_start.setYtilt(params.point.ytilt());
+		m_start.setRotation(params.point.rotation());
+	}
+}
+
 void Freehand::strokeTo(const canvas::Point &point)
 {
 	Q_ASSERT(m_drawing);
@@ -215,7 +226,6 @@ void Freehand::strokeTo(const canvas::Point &point)
 		m_strokeWorker.beginStroke(
 			localUserId(), canvasState, isCompatibilityMode(), true, m_mirror,
 			m_flip, m_zoom, m_angle);
-		m_start.setPressure(qMin(m_start.pressure(), point.pressure()));
 		m_strokeWorker.strokeTo(m_start, canvasState);
 	}
 
@@ -395,6 +405,11 @@ void FreehandEraser::begin(const BeginParams &params)
 void FreehandEraser::motion(const MotionParams &params)
 {
 	m_freehand->motion(params);
+}
+
+void FreehandEraser::hold(const MotionParams &params)
+{
+	m_freehand->hold(params);
 }
 
 void FreehandEraser::end(const EndParams &params)

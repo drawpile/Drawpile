@@ -157,6 +157,10 @@ signals:
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool constrain, bool center,
 		const QPointF &viewPos);
+	void penHold(
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, bool constrain, bool center,
+		const QPointF &viewPos);
 	void penModify(bool constrain, bool center);
 	void penHover(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,

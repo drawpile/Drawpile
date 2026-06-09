@@ -44,6 +44,7 @@ public:
 	void begin(const BeginParams &params) override;
 	void beginStroke(const BeginParams &params, SnapToPixelToggle *target);
 	void motion(const MotionParams &params) override;
+	void hold(const MotionParams &params) override;
 	void end(const EndParams &params) override;
 
 	bool undoRedo(bool redo) override;
@@ -97,6 +98,7 @@ public:
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
+	void hold(const MotionParams &params) override;
 	void end(const EndParams &params) override;
 
 	bool undoRedo(bool redo) override;

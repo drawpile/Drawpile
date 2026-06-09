@@ -1627,6 +1627,15 @@ void CanvasControllerBase::penMoveEvent(
 				}
 			}
 			m_prevPoint = point;
+		} else if(
+			m_penState != PenState::Up && m_penMode == PenMode::Normal &&
+			m_canvasModel) {
+			CanvasShortcuts::ConstraintMatch match =
+				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+			Q_EMIT penHold(
+				point.timeMsec(), point, point.pressure(), point.xtilt(),
+				point.ytilt(), point.rotation(), match.toolConstraint1(),
+				match.toolConstraint2(), posf);
 		}
 		updateOutlinePos(point);
 	}

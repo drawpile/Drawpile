@@ -616,6 +616,21 @@ void ToolController::continueDrawing(
 	}
 }
 
+void ToolController::holdDrawing(
+	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation, bool constrain, bool center,
+	const QPointF &viewPos)
+{
+	Q_ASSERT(m_activeTool);
+	if(m_model && m_drawing) {
+		m_activeTool->hold(
+			Tool::MotionParams{
+				canvas::Point(
+					timeMsec, point, pressure, xtilt, ytilt, rotation),
+				viewPos, constrain, center});
+	}
+}
+
 void ToolController::modifyDrawing(bool constrain, bool center)
 {
 	Q_ASSERT(m_activeTool);

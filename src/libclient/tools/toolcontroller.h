@@ -174,6 +174,10 @@ public:
 	int globalSmoothing() const { return m_globalSmoothing; }
 
 	void setMouseSmoothing(bool mouseSmoothing);
+
+	void setDelayInitialDab(bool delayInitialDab);
+	bool delayInitialDab() const { return m_delayInitialDab; }
+
 	void setCancelDeselects(bool cancelDeselects);
 
 	void setTransformParams(bool accurate, int interpolation);
@@ -245,6 +249,12 @@ public slots:
 
 	//! Continue a stroke
 	void continueDrawing(
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, bool constrain, bool center,
+		const QPointF &viewPos);
+
+	//! Stroke is held in the same-ish position
+	void holdDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool constrain, bool center,
 		const QPointF &viewPos);
