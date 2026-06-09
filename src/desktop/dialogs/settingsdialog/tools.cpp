@@ -143,8 +143,16 @@ void Tools::initMain(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, ToolToggle, toggleKeys);
 	form->addRow(tr("Keyboard shortcuts:"), toggleKeys);
 
+#ifdef Q_OS_MACOS
+	//: The Option key on Mac computer keyboards. On macOS, you have this key on
+	//: your keyboard instead of the Alt key.
+	QString altKey = tr("Option");
+#else
+	//: The Alt key on PC keyboards.
+	QString altKey = tr("Alt");
+#endif
 	QCheckBox *focusCanvas =
-		new QCheckBox(tr("Double-tap Alt key to focus canvas"));
+		new QCheckBox(tr("Double-tap %1 key to focus canvas").arg(altKey));
 	CFG_BIND_CHECKBOX(cfg, DoubleTapAltToFocusCanvas, focusCanvas);
 	form->addRow(nullptr, focusCanvas);
 
