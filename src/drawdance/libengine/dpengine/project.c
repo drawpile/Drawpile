@@ -3165,8 +3165,8 @@ static int project_save_copy_initial_snapshot(DP_Project *prj,
             "insert into sav.snapshot_key_frame_layers (snapshot_id,\n"
             "    track_index, frame_index, layer_id, flags)\n"
             "select ?,\n"
-            "    track_index, frame_index, title, layer_id\n"
-            "from main.snapshot_key_frames\n"
+            "    track_index, frame_index, layer_id, flags\n"
+            "from main.snapshot_key_frame_layers\n"
             "where snapshot_id = ?",
 
             "insert into sav.snapshot_messages (snapshot_id,\n"
