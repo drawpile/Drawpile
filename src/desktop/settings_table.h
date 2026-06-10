@@ -35,6 +35,12 @@ SETTING_GETSET_V(
 SETTING(
 	animationExportFormat, AnimationExportFormat, "animationexport/format",
 	config::Config::defaultAnimationExportFormat())
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+SETTING(
+	animationExportPreferAndroid, AnimationExportPreferAndroid,
+	"animationexport/preferandroid",
+	config::Config::defaultAnimationExportPreferAndroid())
+#endif
 SETTING(
 	animationExportPreferFfmpeg, AnimationExportPreferFfmpeg,
 	"animationexport/preferffmpeg",
@@ -695,6 +701,11 @@ SETTING(
 	timelapseMaxQueueEntries, TimelapseMaxQueueEntries,
 	"timelapse/maxqueueentries",
 	config::Config::defaultTimelapseMaxQueueEntries())
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+SETTING(
+	timelapsePreferAndroid, TimelapsePreferAndroid, "timelapse/preferandroid",
+	config::Config::defaultTimelapsePreferAndroid())
+#endif
 SETTING(
 	timelapsePreferFfmpeg, TimelapsePreferFfmpeg, "timelapse/preferffmpeg",
 	config::Config::defaultTimelapsePreferFfmpeg())

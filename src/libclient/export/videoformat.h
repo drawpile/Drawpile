@@ -27,11 +27,14 @@ struct VideoFormatOption {
 	QString title;
 	bool libavSupported;
 	bool ffmpegSupported;
+	bool androidSupported;
 };
 
 bool isVideoFormatSupported(VideoFormat format);
 
 bool isVideoFormatSupportedFfmpeg(VideoFormat format);
+
+bool isVideoFormatSupportedAndroid(VideoFormat format);
 
 QVector<VideoFormatOption> getVideoFormatOptions(
 	VideoFormatApplication application, bool *outAnyFfmpegSupported);

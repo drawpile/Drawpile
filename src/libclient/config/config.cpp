@@ -99,6 +99,13 @@ int Config::defaultAnimationExportFormat()
 	return -1;
 }
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool Config::defaultAnimationExportPreferAndroid()
+{
+	return true;
+}
+#endif
+
 bool Config::defaultAnimationExportPreferFfmpeg()
 {
 	return false;
@@ -1329,6 +1336,13 @@ int Config::defaultTimelapseMaxQueueEntries()
 {
 	return 8;
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool Config::defaultTimelapsePreferAndroid()
+{
+	return true;
+}
+#endif
 
 bool Config::defaultTimelapsePreferFfmpeg()
 {

@@ -24,6 +24,9 @@ extern "C" {
 #include <QTemporaryFile>
 #include <QThreadPool>
 #include <cmath>
+#ifdef DP_ANDROID_VIDEO_ENCODER
+#	include <QDir>
+#endif
 
 Q_LOGGING_CATEGORY(
 	lcDpTimelapseSaverRunnable, "net.drawpile.export.timelapsesaverrunnable",
@@ -31,7 +34,12 @@ Q_LOGGING_CATEGORY(
 
 TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const drawdance::CanvasState &canvasState,
-	const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
+	const DP_ViewModeFilter *vmfOrNull,
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	bool useAndroidVideoEncoder,
+#else
+	const QString &ffmpegPath,
+#endif
 	const QString &outputPath, const QString &inputPath, int format, int width,
 	int height, int interpolation, const QRect &crop,
 	const QColor &overrideBackgroundColor, const QColor &backdropColor,
@@ -44,7 +52,11 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	int frameRangeLast, double animationFramerate, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	, m_useAndroidVideoEncoder(useAndroidVideoEncoder)
+#else
 	, m_ffmpegPath(ffmpegPath)
+#endif
 	, m_outputPath(outputPath)
 	, m_inputPath(inputPath)
 	, m_format(format)
@@ -797,14 +809,34 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 	{
 		DP_SaveVideoDestination destination;
 		void *destinationParam;
-		DP_SaveVideoFfmpegParams ffmpegParams;
-		QByteArray ffmpegPathBytes;
 		QByteArray outputPathBytes = m_outputPath.toUtf8();
 
-		if(m_ffmpegPath.isEmpty()) {
+#ifdef DP_ANDROID_VIDEO_ENCODER
+		DP_SaveVideoAndroidParams androidParams;
+		QString tempPath;
+		QByteArray tempPathBytes;
+		bool useLibav = !m_useAndroidVideoEncoder;
+#else
+		DP_SaveVideoFfmpegParams ffmpegParams;
+		QByteArray ffmpegPathBytes;
+		bool useLibav = m_ffmpegPath.isEmpty();
+#endif
+
+		if(useLibav) {
 			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
 			destinationParam = outputPathBytes.data();
 		} else {
+#ifdef DP_ANDROID_VIDEO_ENCODER
+			destination = DP_SAVE_VIDEO_DESTINATION_ANDROID;
+			destinationParam = &androidParams;
+			tempPath = QDir::temp().filePath(QStringLiteral("timelapsetemp"));
+			QFile::remove(tempPath);
+			tempPathBytes = tempPath.toUtf8();
+			androidParams = {
+				outputPathBytes.constData(),
+				tempPathBytes.constData(),
+			};
+#else
 			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
 			destinationParam = &ffmpegParams;
 			ffmpegPathBytes = m_ffmpegPath.toUtf8();
@@ -813,6 +845,7 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 				nullptr,
 				outputPathBytes.constData(),
 			};
+#endif
 		}
 
 		DP_SaveVideoParams params = {
@@ -830,6 +863,11 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 			this,
 		};
 		result = DP_save_video(params);
+#ifdef DP_ANDROID_VIDEO_ENCODER
+		if(!tempPath.isEmpty()) {
+			QFile::remove(tempPath);
+		}
+#endif
 	}
 
 	finishPlaybackThread(pr);

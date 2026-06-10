@@ -31,7 +31,12 @@ class TimelapseSaverRunnable final : public QObject, public QRunnable {
 public:
 	TimelapseSaverRunnable(
 		const drawdance::CanvasState &canvasState,
-		const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
+		const DP_ViewModeFilter *vmfOrNull,
+#ifdef DP_ANDROID_VIDEO_ENCODER
+		bool useAndroidVideoEncoder,
+#else
+		const QString &ffmpegPath,
+#endif
 		const QString &outputPath, const QString &inputPath, int format,
 		int width, int height, int interpolation, const QRect &crop,
 		const QColor &overrideBackgroundColor, const QColor &backdropColor,
@@ -161,7 +166,11 @@ private:
 	static void runPlayback(void *user);
 
 	const drawdance::CanvasState m_canvasState;
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	const bool m_useAndroidVideoEncoder;
+#else
 	const QString m_ffmpegPath;
+#endif
 	const QString m_outputPath;
 	const QString m_inputPath;
 	const int m_format;

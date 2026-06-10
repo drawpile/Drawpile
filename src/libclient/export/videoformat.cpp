@@ -10,11 +10,10 @@ extern "C" {
 
 
 namespace {
-static bool isSaveVideoFormatSupported(VideoFormat format, bool ffmpeg)
+static bool
+isSaveVideoFormatSupported(VideoFormat format, bool (*predicate)(int))
 {
 #ifdef DP_LIBAV
-	bool (*predicate)(int) = ffmpeg ? DP_save_video_format_supported_ffmpeg
-									: DP_save_video_format_supported;
 	switch(format) {
 	case VideoFormat::Gif:
 		return predicate(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
@@ -53,6 +52,7 @@ static void appendFormatOption(
 			title,
 			isVideoFormatSupported(format),
 			isVideoFormatSupportedFfmpeg(format),
+			isVideoFormatSupportedAndroid(format),
 		});
 	}
 }
@@ -67,13 +67,21 @@ bool isVideoFormatSupported(VideoFormat format)
 	case VideoFormat::Zip:
 		return true;
 	default:
-		return isSaveVideoFormatSupported(format, false);
+		return isSaveVideoFormatSupported(
+			format, DP_save_video_format_supported);
 	}
 }
 
 bool isVideoFormatSupportedFfmpeg(VideoFormat format)
 {
-	return isSaveVideoFormatSupported(format, true);
+	return isSaveVideoFormatSupported(
+		format, DP_save_video_format_supported_ffmpeg);
+}
+
+bool isVideoFormatSupportedAndroid(VideoFormat format)
+{
+	return isSaveVideoFormatSupported(
+		format, DP_save_video_format_supported_android);
 }
 
 

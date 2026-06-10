@@ -73,6 +73,13 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::animationExportFormatChanged,
 		this, &SettingsConfig::changeAnimationExportFormat,
 		Qt::DirectConnection);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::animationExportPreferAndroidChanged, this,
+		&SettingsConfig::changeAnimationExportPreferAndroid,
+		Qt::DirectConnection);
+#endif
 	connect(
 		m_settings,
 		&desktop::settings::Settings::animationExportPreferFfmpegChanged, this,
@@ -890,6 +897,12 @@ SettingsConfig::SettingsConfig(
 		m_settings,
 		&desktop::settings::Settings::timelapseMaxQueueEntriesChanged, this,
 		&SettingsConfig::changeTimelapseMaxQueueEntries, Qt::DirectConnection);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	connect(
+		m_settings, &desktop::settings::Settings::timelapsePreferAndroidChanged,
+		this, &SettingsConfig::changeTimelapsePreferAndroid,
+		Qt::DirectConnection);
+#endif
 	connect(
 		m_settings, &desktop::settings::Settings::timelapsePreferFfmpegChanged,
 		this, &SettingsConfig::changeTimelapsePreferFfmpeg,
@@ -1105,6 +1118,18 @@ void SettingsConfig::setAnimationExportFormat(int value)
 {
 	m_settings->setAnimationExportFormat(value);
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool SettingsConfig::getAnimationExportPreferAndroid() const
+{
+	return m_settings->animationExportPreferAndroid();
+}
+
+void SettingsConfig::setAnimationExportPreferAndroid(bool value)
+{
+	m_settings->setAnimationExportPreferAndroid(value);
+}
+#endif
 
 bool SettingsConfig::getAnimationExportPreferFfmpeg() const
 {
@@ -3483,6 +3508,18 @@ void SettingsConfig::setTimelapseMaxQueueEntries(int value)
 {
 	m_settings->setTimelapseMaxQueueEntries(value);
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool SettingsConfig::getTimelapsePreferAndroid() const
+{
+	return m_settings->timelapsePreferAndroid();
+}
+
+void SettingsConfig::setTimelapsePreferAndroid(bool value)
+{
+	m_settings->setTimelapsePreferAndroid(value);
+}
+#endif
 
 bool SettingsConfig::getTimelapsePreferFfmpeg() const
 {

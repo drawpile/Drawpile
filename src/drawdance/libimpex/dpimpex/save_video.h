@@ -17,6 +17,7 @@ typedef struct DP_Rect DP_Rect;
 #define DP_SAVE_VIDEO_GIF_PALETTE_DIMENSION 16
 #define DP_SAVE_VIDEO_GIF_PALETTE_BYTES     ((size_t)1024)
 
+// Keep this in sync with VideoEncoder.java!
 typedef enum DP_SaveVideoFormat {
     DP_SAVE_VIDEO_FORMAT_MP4_VP9,
     DP_SAVE_VIDEO_FORMAT_WEBM_VP8,
@@ -32,6 +33,7 @@ typedef enum DP_SaveVideoDestination {
     DP_SAVE_VIDEO_DESTINATION_PATH,
     DP_SAVE_VIDEO_DESTINATION_OUTPUT,
     DP_SAVE_VIDEO_DESTINATION_FFMPEG,
+    DP_SAVE_VIDEO_DESTINATION_ANDROID,
 } DP_SaveVideoDestination;
 
 typedef struct DP_SaveVideoNextFrame {
@@ -50,6 +52,11 @@ typedef struct DP_SaveVideoFfmpegParams {
     const char **custom_args;
     const char *output;
 } DP_SaveVideoFfmpegParams;
+
+typedef struct DP_SaveVideoAndroidParams {
+    const char *output;
+    const char *temp;
+} DP_SaveVideoAndroidParams;
 
 typedef struct DP_SaveVideoParams {
     DP_SaveVideoDestination destination;
@@ -103,6 +110,8 @@ typedef struct DP_SaveAnimationGifParams {
 bool DP_save_video_format_supported(int format);
 
 bool DP_save_video_format_supported_ffmpeg(int format);
+
+bool DP_save_video_format_supported_android(int format);
 
 DP_SaveResult DP_save_video(DP_SaveVideoParams params);
 

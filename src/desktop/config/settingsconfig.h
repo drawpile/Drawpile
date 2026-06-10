@@ -68,6 +68,11 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool getAnimationExportPreferAndroid() const override;
+	void setAnimationExportPreferAndroid(bool value) override;
+#endif
+
 	bool getAnimationExportPreferFfmpeg() const override;
 	void setAnimationExportPreferFfmpeg(bool value) override;
 
@@ -786,6 +791,11 @@ public:
 
 	int getTimelapseMaxQueueEntries() const override;
 	void setTimelapseMaxQueueEntries(int value) override;
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool getTimelapsePreferAndroid() const override;
+	void setTimelapsePreferAndroid(bool value) override;
+#endif
 
 	bool getTimelapsePreferFfmpeg() const override;
 	void setTimelapsePreferFfmpeg(bool value) override;

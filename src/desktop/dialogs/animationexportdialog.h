@@ -48,17 +48,24 @@ signals:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		const QString &ffmpegPath, int format, int loops,
-		const QVector<int> &frameIndexes, double framerate, const QRect &crop,
-		double scalePercent, bool scaleSmooth);
+#ifdef DP_ANDROID_VIDEO_ENCODER
+		bool useAndroidVideoEncoder,
+#else
+		const QString &ffmpegPath,
+#endif
+		int format, int loops, const QVector<int> &frameIndexes,
+		double framerate, const QRect &crop, double scalePercent,
+		bool scaleSmooth);
 
 private:
 	void updateOutputUi();
 	void updateScalingUi();
-	void updateFfmpegUi();
+	void updateEncoderUi();
+#ifndef DP_ANDROID_VIDEO_ENCODER
 	void showFfmpegSettings();
 	void setFfmpegPath(const QString &ffmpegPath);
 	void updateFfmpegFormatIcons();
+#endif
 #ifndef __EMSCRIPTEN__
 	QString choosePath();
 #endif
@@ -85,14 +92,11 @@ private:
 	QString m_path;
 #endif
 	QComboBox *m_formatCombo;
-	utils::FormNote *m_ffmpegNote = nullptr;
 	QLabel *m_loopsLabel;
 	KisDoubleSliderSpinBox *m_scaleSpinner;
 	QCheckBox *m_scaleSmoothBox;
 	QLabel *m_scaleLabel;
 	KisSliderSpinBox *m_loopsSpinner;
-	QCheckBox *m_ffmpegCheckBox = nullptr;
-	QPushButton *m_ffmpegButton = nullptr;
 	KisSliderSpinBox *m_startSpinner;
 	KisSliderSpinBox *m_endSpinner;
 	KisDoubleSliderSpinBox *m_framerateSpinner;
@@ -113,7 +117,14 @@ private:
 	int m_flipbookEnd = -1;
 	double m_flipbookFramerate = -1.0;
 	QRect m_flipbookCrop;
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	QCheckBox *m_androidCheckBox;
+#else
+	utils::FormNote *m_ffmpegNote = nullptr;
+	QCheckBox *m_ffmpegCheckBox = nullptr;
+	QPushButton *m_ffmpegButton = nullptr;
 	QString m_ffmpegPath;
+#endif
 };
 
 }

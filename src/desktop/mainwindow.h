@@ -385,9 +385,14 @@ private:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		const QString &ffmpegPath, int format, int loops,
-		const QVector<int> &frameIndexes, double framerate, const QRect &crop,
-		double scalePercent, bool scaleSmooth);
+#ifdef DP_ANDROID_VIDEO_ENCODER
+		bool useAndroidVideoEncoder,
+#else
+		const QString &ffmpegPath,
+#endif
+		int format, int loops, const QVector<int> &frameIndexes,
+		double framerate, const QRect &crop, double scalePercent,
+		bool scaleSmooth);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);

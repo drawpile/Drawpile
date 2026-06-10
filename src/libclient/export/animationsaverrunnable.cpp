@@ -15,6 +15,10 @@ extern "C" {
 #	include <QDateTime>
 #	include <QFile>
 #endif
+#ifdef DP_ANDROID_VIDEO_ENCODER
+#	include <QFile>
+#	include <QDir>
+#endif
 
 AnimationSaverRunnable::AnimationSaverRunnable(
 #ifndef __EMSCRIPTEN__
@@ -23,7 +27,12 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	int format, int width, int height, int loops,
 	const QVector<int> &frameIndexes, double framerate, const QRect &crop,
 	bool scaleSmooth, const drawdance::CanvasState &canvasState,
-	const QString &ffmpegPath, QObject *parent)
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	bool useAndroidVideoEncoder,
+#else
+	const QString &ffmpegPath,
+#endif
+	QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
@@ -36,7 +45,11 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_crop(crop)
 	, m_frameIndexes(frameIndexes)
 	, m_canvasState(canvasState)
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	, m_useAndroidVideoEncoder(useAndroidVideoEncoder)
+#else
 	, m_ffmpegPath(ffmpegPath)
+#endif
 	, m_scaleSmooth(scaleSmooth)
 	, m_cancelled(false)
 {
@@ -120,13 +133,33 @@ void AnimationSaverRunnable::run()
 	case int(VideoFormat::Apng): {
 		DP_SaveVideoDestination destination;
 		void *destinationParam;
+
+#	ifdef DP_ANDROID_VIDEO_ENCODER
+		DP_SaveVideoAndroidParams androidParams;
+		QString tempPath;
+		QByteArray tempPathBytes;
+		bool useLibav = !m_useAndroidVideoEncoder;
+#	else
 		DP_SaveVideoFfmpegParams ffmpegParams;
 		QByteArray ffmpegPathBytes;
+		bool useLibav = m_ffmpegPath.isEmpty();
+#	endif
 
-		if(m_ffmpegPath.isEmpty()) {
+		if(useLibav) {
 			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
 			destinationParam = pathBytes.data();
 		} else {
+#	ifdef DP_ANDROID_VIDEO_ENCODER
+			destination = DP_SAVE_VIDEO_DESTINATION_ANDROID;
+			destinationParam = &androidParams;
+			tempPath = QDir::temp().filePath(QStringLiteral("animtemp"));
+			QFile::remove(tempPath);
+			tempPathBytes = tempPath.toUtf8();
+			androidParams = {
+				pathBytes.constData(),
+				tempPathBytes.constData(),
+			};
+#	else
 			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
 			destinationParam = &ffmpegParams;
 			ffmpegPathBytes = m_ffmpegPath.toUtf8();
@@ -135,6 +168,7 @@ void AnimationSaverRunnable::run()
 				nullptr,
 				pathBytes.constData(),
 			};
+#	endif
 		}
 
 		DP_SaveAnimationVideoParams params = {
@@ -157,6 +191,11 @@ void AnimationSaverRunnable::run()
 			this,
 		};
 		result = DP_save_animation_video(params);
+#	ifdef DP_ANDROID_VIDEO_ENCODER
+		if(!tempPath.isEmpty()) {
+			QFile::remove(tempPath);
+		}
+#	endif
 		break;
 	}
 #endif

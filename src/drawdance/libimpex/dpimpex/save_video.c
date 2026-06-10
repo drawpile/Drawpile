@@ -17,6 +17,9 @@
 #include <libavformat/avformat.h>
 #include <libavutil/opt.h>
 #include <libswscale/swscale.h>
+#ifdef DP_ANDROID_VIDEO_ENCODER
+#    include "android_video_encoder.h"
+#endif
 
 
 // Same as IO_BUFFER_SIZE in ffmpeg's avio.c.
@@ -54,6 +57,11 @@ static bool is_destination_ok(DP_SaveVideoDestination destination,
         const DP_SaveVideoFfmpegParams *ffmpeg = destination_param;
         return ffmpeg && ffmpeg->program && ffmpeg->program[0] != '\0'
             && ffmpeg->output && ffmpeg->output[0] != '\0';
+    }
+    case DP_SAVE_VIDEO_DESTINATION_ANDROID: {
+        const DP_SaveVideoAndroidParams *android = destination_param;
+        return android && android->output && android->output[0] != '\0'
+            && android->temp && android->temp[0] != '\0';
     }
     default:
         return false;
@@ -1152,6 +1160,25 @@ bool DP_save_video_format_supported_ffmpeg(int format)
     return DP_process_supported() && is_valid_ffmpeg_format(format);
 }
 
+bool DP_save_video_format_supported_android(int format)
+{
+#ifdef DP_ANDROID_VIDEO_ENCODER
+    // Don't bother with the JNI rigmarole unnecessarily.
+    switch (format) {
+    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
+    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
+    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
+    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
+        return DP_android_video_encoder_format_supported(format);
+    default:
+        return false;
+    }
+#else
+    (void)format;
+    return false;
+#endif
+}
+
 static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
 {
     DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
@@ -1318,6 +1345,266 @@ cleanup:
     return result;
 }
 
+#ifdef DP_ANDROID_VIDEO_ENCODER
+#    define ANDROID_PREPARE_OK          0
+#    define ANDROID_DRAIN_END_OF_STREAM (-1)
+#    define ANDROID_DRAIN_ERROR         (-2)
+#    define ANDROID_PREPARE_ERROR       (-3)
+
+typedef struct DP_SaveVideoAndroidProgress {
+    double progress;
+    DP_SaveProgressFn progress_fn;
+    void *user;
+} DP_SaveVideoAndroidProgress;
+
+static bool android_report_progress(DP_SaveVideoAndroidProgress *ap,
+                                    DP_SaveResult *out_save_result)
+{
+    if (report_progress(ap->progress_fn, ap->user, ap->progress)) {
+        return true;
+    }
+    else {
+        *out_save_result = DP_SAVE_RESULT_CANCEL;
+        return false;
+    }
+}
+
+static int android_drain(DP_AndroidVideoEncoder *ave, long long initial_timeout,
+                         DP_SaveVideoAndroidProgress *ap,
+                         DP_SaveResult *out_save_result)
+{
+    int count = 0;
+    long long timeout = initial_timeout;
+    while (true) {
+        if (!android_report_progress(ap, out_save_result)) {
+            return ANDROID_DRAIN_ERROR;
+        }
+
+        int ave_result = DP_android_video_encoder_drain(ave, timeout);
+        if (ave_result == DP_ANDROID_VIDEO_ENCODER_STATUS_OK) {
+            timeout = 0LL; // Keep draining whatever is there without waiting.
+            ++count;
+        }
+        else if (ave_result == DP_ANDROID_VIDEO_ENCODER_STATUS_TIMEOUT) {
+            break;
+        }
+        else if (ave_result == DP_ANDROID_VIDEO_ENCODER_STATUS_END_OF_STREAM) {
+            return ANDROID_DRAIN_END_OF_STREAM;
+        }
+        else {
+            *out_save_result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            return ANDROID_DRAIN_ERROR;
+        }
+    }
+    return count;
+}
+
+static int android_prepare(DP_AndroidVideoEncoder *ave,
+                           DP_SaveVideoAndroidProgress *ap,
+                           DP_SaveResult *out_save_result)
+{
+    while (true) {
+        if (!android_report_progress(ap, out_save_result)) {
+            return ANDROID_PREPARE_ERROR;
+        }
+
+        int prepare_result = DP_android_video_encoder_prepare(ave, 100000LL);
+        if (prepare_result == DP_ANDROID_VIDEO_ENCODER_STATUS_OK) {
+            break;
+        }
+        else if (prepare_result == DP_ANDROID_VIDEO_ENCODER_STATUS_TIMEOUT) {
+            int drain_result = android_drain(ave, 0LL, ap, out_save_result);
+            if (drain_result == ANDROID_DRAIN_END_OF_STREAM) {
+                DP_error_set("Unexpected end of stream");
+                *out_save_result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                return ANDROID_DRAIN_END_OF_STREAM;
+            }
+            else if (drain_result < 0) {
+                return drain_result;
+            }
+        }
+        else {
+            return ANDROID_PREPARE_ERROR;
+        }
+    }
+    return 0;
+}
+#endif
+
+static DP_SaveResult save_video_android(DP_SaveVideoParams params)
+{
+#ifdef DP_ANDROID_VIDEO_ENCODER
+    DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
+    DP_AndroidVideoEncoder *ave = NULL;
+    struct SwsContext *sws_context = NULL;
+
+    {
+        const DP_SaveVideoAndroidParams *svap = params.destination_param;
+        ave = DP_android_video_encoder_new((DP_AndroidVideoEncoderParams){
+            svap->output,
+            svap->temp,
+            params.framerate,
+            params.format,
+            params.width,
+            params.height,
+        });
+    }
+    if (!ave) {
+        result = DP_SAVE_RESULT_OPEN_ERROR;
+        goto cleanup;
+    }
+
+    int ave_result = DP_android_video_encoder_start(ave);
+    if (ave_result != DP_ANDROID_VIDEO_ENCODER_STATUS_OK) {
+        result = DP_SAVE_RESULT_INTERNAL_ERROR;
+        goto cleanup;
+    }
+
+    int output_width = get_format_dimension(params.format, params.width);
+    int output_height = get_format_dimension(params.format, params.height);
+
+    DP_SaveVideoAndroidProgress ap = {0.0, params.progress_fn, params.user};
+    DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
+    while (params.next_frame_fn(params.user, &f)) {
+        int input_width = f.width;
+        int input_height = f.height;
+        if (input_width <= 0 || input_height <= 0 || !f.pixels) {
+            DP_error_set("Frame has no image");
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        if (f.instances < 1) {
+            DP_error_set("Frame has %d instances (should be >= 1)",
+                         f.instances);
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        if (isfinite(f.progress) && f.progress >= ap.progress) {
+            ap.progress = DP_min_double(f.progress, 1.0) * 0.97;
+        }
+
+        // Kind of dumb to do so much extra work.
+        for (int i = 0; i < f.instances; ++i) {
+            if (android_prepare(ave, &ap, &result) != ANDROID_PREPARE_OK) {
+                goto cleanup;
+            }
+
+            DP_AndroidVideoEncoderImage image;
+            if (!DP_android_video_encoder_image(ave, &image)) {
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
+            // Android has hardware-based encoding, which has a "flexible" YUV
+            // format. It either has everything in its own plane, which means
+            // the U and V values are right next to each other with a pixel
+            // stride of 1, or the UV values as a combined plane, which means
+            // the pixel stride of each individual value is 2.
+            enum AVPixelFormat output_pixel_format;
+            if (image.pixel_stride_u == 1 && image.pixel_stride_v == 1) {
+                output_pixel_format = AV_PIX_FMT_YUV420P;
+            }
+            else if (image.pixel_stride_u == 2 && image.pixel_stride_v == 2) {
+                output_pixel_format = AV_PIX_FMT_NV12;
+            }
+            else {
+                DP_error_set("Unknown pixel format with strides %d and %d",
+                             image.pixel_stride_u, image.pixel_stride_v);
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
+            sws_context = sws_getCachedContext(
+                sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
+                output_width, output_height, output_pixel_format,
+                get_scaling_flags(params.flags, input_width, input_height,
+                                  output_width, output_height),
+                NULL, NULL, NULL);
+            if (!sws_context) {
+                DP_error_set("Failed to allocate scaling context");
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
+            const uint8_t *src_slice[] = {f.pixels, NULL, NULL, NULL};
+            uint8_t *dst_slice[] = {image.buffer_y, image.buffer_u,
+                                    image.buffer_v, NULL};
+            const int src_stride[] = {f.width * 4, 0, 0, 0};
+            const int dst_stride[] = {image.row_stride_y, image.row_stride_u,
+                                      image.row_stride_v, 0};
+            sws_scale(sws_context, src_slice, src_stride, 0, f.height,
+                      dst_slice, dst_stride);
+
+            ave_result = DP_android_video_encoder_commit(ave);
+            if (ave_result != DP_ANDROID_VIDEO_ENCODER_STATUS_OK) {
+                result = DP_SAVE_RESULT_WRITE_ERROR;
+                goto cleanup;
+            }
+
+            if (!android_report_progress(&ap, &result)) {
+                goto cleanup;
+            }
+        }
+    }
+
+    if (f.result != DP_SAVE_RESULT_SUCCESS) {
+        result = f.result;
+        goto cleanup;
+    }
+
+    ap.progress = 0.98;
+    if (!android_report_progress(&ap, &result)) {
+        goto cleanup;
+    }
+
+    sws_freeContext(sws_context);
+    sws_context = NULL;
+
+    if (android_prepare(ave, &ap, &result) != ANDROID_PREPARE_OK) {
+        goto cleanup;
+    }
+
+    ave_result = DP_android_video_encoder_finish(ave);
+    if (ave_result != DP_ANDROID_VIDEO_ENCODER_STATUS_OK) {
+        result = DP_SAVE_RESULT_WRITE_ERROR;
+        goto cleanup;
+    }
+
+    ap.progress = 0.99;
+    while (true) {
+        int drain_result = android_drain(ave, 1000000LL, &ap, &result);
+        if (drain_result == ANDROID_DRAIN_END_OF_STREAM) {
+            break;
+        }
+        else if (drain_result < 0) {
+            goto cleanup;
+        }
+    }
+
+    ap.progress = 1.0;
+    if (!android_report_progress(&ap, &result)) {
+        goto cleanup;
+    }
+
+    ave_result = DP_android_video_encoder_close(ave);
+    if (ave_result != DP_ANDROID_VIDEO_ENCODER_STATUS_OK) {
+        result = DP_SAVE_RESULT_WRITE_ERROR;
+        goto cleanup;
+    }
+
+cleanup:
+    sws_freeContext(sws_context);
+    DP_android_video_encoder_free(ave);
+    return result;
+#else
+    (void)params;
+    DP_error_set("Android video encoder not supported");
+    return DP_SAVE_RESULT_BAD_ARGUMENTS;
+#endif
+}
+
 DP_SaveResult DP_save_video(DP_SaveVideoParams params)
 {
     bool params_ok =
@@ -1343,10 +1630,12 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
         params.framerate = 24.0;
     }
 
-    if (params.destination == DP_SAVE_VIDEO_DESTINATION_FFMPEG) {
+    switch (params.destination) {
+    case DP_SAVE_VIDEO_DESTINATION_FFMPEG:
         return save_video_ffmpeg(params);
-    }
-    else {
+    case DP_SAVE_VIDEO_DESTINATION_ANDROID:
+        return save_video_android(params);
+    default:
         return save_video_libav(params);
     }
 }

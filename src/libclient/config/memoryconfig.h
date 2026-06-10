@@ -61,6 +61,11 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool getAnimationExportPreferAndroid() const override;
+	void setAnimationExportPreferAndroid(bool value) override;
+#endif
+
 	bool getAnimationExportPreferFfmpeg() const override;
 	void setAnimationExportPreferFfmpeg(bool value) override;
 
@@ -780,6 +785,11 @@ public:
 	int getTimelapseMaxQueueEntries() const override;
 	void setTimelapseMaxQueueEntries(int value) override;
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool getTimelapsePreferAndroid() const override;
+	void setTimelapsePreferAndroid(bool value) override;
+#endif
+
 	bool getTimelapsePreferFfmpeg() const override;
 	void setTimelapsePreferFfmpeg(bool value) override;
 
@@ -883,6 +893,9 @@ private:
 		defaultAndroidWorkaroundIgnoreHistoricTabletEvents();
 #endif
 	int m_animationExportFormat = defaultAnimationExportFormat();
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool m_animationExportPreferAndroid = defaultAnimationExportPreferAndroid();
+#endif
 	bool m_animationExportPreferFfmpeg = defaultAnimationExportPreferFfmpeg();
 	bool m_autoRecordHost = defaultAutoRecordHost();
 	bool m_autoRecordJoin = defaultAutoRecordJoin();
@@ -1130,6 +1143,9 @@ private:
 	double m_timelapseLogoScale = defaultTimelapseLogoScale();
 	double m_timelapseMaxDeltaSeconds = defaultTimelapseMaxDeltaSeconds();
 	int m_timelapseMaxQueueEntries = defaultTimelapseMaxQueueEntries();
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool m_timelapsePreferAndroid = defaultTimelapsePreferAndroid();
+#endif
 	bool m_timelapsePreferFfmpeg = defaultTimelapsePreferFfmpeg();
 	bool m_timelapseShowAdvanced = defaultTimelapseShowAdvanced();
 	bool m_timelapseTimeOwnOnly = defaultTimelapseTimeOwnOnly();

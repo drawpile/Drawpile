@@ -330,6 +330,13 @@ settings:
     qsettings: 'animationexport/format'
     legacy_package: 'desktop'
 
+  - id: animationExportPreferAndroid
+    type: 'bool'
+    default: 'true'
+    qsettings: 'animationexport/preferandroid'
+    legacy_package: 'desktop'
+    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
+
   - id: animationExportPreferFfmpeg
     type: 'bool'
     default: 'false'
@@ -1594,6 +1601,13 @@ settings:
     default: '8'
     qsettings: 'timelapse/maxqueueentries'
     legacy_package: 'desktop'
+
+  - id: timelapsePreferAndroid
+    type: 'bool'
+    default: 'true'
+    qsettings: 'timelapse/preferandroid'
+    legacy_package: 'desktop'
+    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
 
   - id: timelapsePreferFfmpeg
     type: 'bool'

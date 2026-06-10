@@ -319,6 +319,12 @@ public:
 	virtual void setAnimationExportFormat(int value) = 0;
 	static int defaultAnimationExportFormat();
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	virtual bool getAnimationExportPreferAndroid() const = 0;
+	virtual void setAnimationExportPreferAndroid(bool value) = 0;
+	static bool defaultAnimationExportPreferAndroid();
+#endif
+
 	virtual bool getAnimationExportPreferFfmpeg() const = 0;
 	virtual void setAnimationExportPreferFfmpeg(bool value) = 0;
 	static bool defaultAnimationExportPreferFfmpeg();
@@ -1275,6 +1281,12 @@ public:
 	virtual void setTimelapseMaxQueueEntries(int value) = 0;
 	static int defaultTimelapseMaxQueueEntries();
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	virtual bool getTimelapsePreferAndroid() const = 0;
+	virtual void setTimelapsePreferAndroid(bool value) = 0;
+	static bool defaultTimelapsePreferAndroid();
+#endif
+
 	virtual bool getTimelapsePreferFfmpeg() const = 0;
 	virtual void setTimelapsePreferFfmpeg(bool value) = 0;
 	static bool defaultTimelapsePreferFfmpeg();
@@ -1400,6 +1412,9 @@ Q_SIGNALS:
 	void changeAndroidWorkaroundIgnoreHistoricTabletEvents(bool value);
 #endif
 	void changeAnimationExportFormat(int value);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	void changeAnimationExportPreferAndroid(bool value);
+#endif
 	void changeAnimationExportPreferFfmpeg(bool value);
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
@@ -1645,6 +1660,9 @@ Q_SIGNALS:
 	void changeTimelapseLogoScale(double value);
 	void changeTimelapseMaxDeltaSeconds(double value);
 	void changeTimelapseMaxQueueEntries(int value);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	void changeTimelapsePreferAndroid(bool value);
+#endif
 	void changeTimelapsePreferFfmpeg(bool value);
 	void changeTimelapseShowAdvanced(bool value);
 	void changeTimelapseTimeOwnOnly(bool value);

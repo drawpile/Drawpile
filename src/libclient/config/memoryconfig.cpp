@@ -169,6 +169,22 @@ void MemoryConfig::setAnimationExportFormat(int value)
 	}
 }
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool MemoryConfig::getAnimationExportPreferAndroid() const
+{
+	return m_animationExportPreferAndroid;
+}
+
+void MemoryConfig::setAnimationExportPreferAndroid(bool value)
+{
+	if(value != m_animationExportPreferAndroid) {
+		m_animationExportPreferAndroid = value;
+		Q_EMIT changeAnimationExportPreferAndroid(
+			m_animationExportPreferAndroid);
+	}
+}
+#endif
+
 bool MemoryConfig::getAnimationExportPreferFfmpeg() const
 {
 	return m_animationExportPreferFfmpeg;
@@ -3261,6 +3277,21 @@ void MemoryConfig::setTimelapseMaxQueueEntries(int value)
 		Q_EMIT changeTimelapseMaxQueueEntries(m_timelapseMaxQueueEntries);
 	}
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool MemoryConfig::getTimelapsePreferAndroid() const
+{
+	return m_timelapsePreferAndroid;
+}
+
+void MemoryConfig::setTimelapsePreferAndroid(bool value)
+{
+	if(value != m_timelapsePreferAndroid) {
+		m_timelapsePreferAndroid = value;
+		Q_EMIT changeTimelapsePreferAndroid(m_timelapsePreferAndroid);
+	}
+}
+#endif
 
 bool MemoryConfig::getTimelapsePreferFfmpeg() const
 {

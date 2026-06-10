@@ -21,7 +21,7 @@
 #include <QSignalBlocker>
 #include <QTabWidget>
 #include <QVBoxLayout>
-#ifdef DRAWPILE_FFMPEG_DIALOG
+#if defined(DRAWPILE_FFMPEG_DIALOG) && !defined(DP_ANDROID_VIDEO_ENCODER)
 #	include "desktop/dialogs/ffmpegdialog.h"
 #endif
 
@@ -52,7 +52,7 @@ AnimationExportDialog::AnimationExportDialog(
 	outputForm->addRow(tr("Format:"), m_formatCombo);
 
 	for(const VideoFormatOption &vfo : formatOptions) {
-		if(vfo.libavSupported) {
+		if(vfo.libavSupported || vfo.androidSupported) {
 			m_formatCombo->addItem(vfo.title, int(vfo.format));
 			if(int(vfo.format) == lastFormat) {
 				m_formatCombo->setCurrentIndex(m_formatCombo->count() - 1);
@@ -60,6 +60,7 @@ AnimationExportDialog::AnimationExportDialog(
 		}
 	}
 
+#ifndef DP_ANDROID_VIDEO_ENCODER
 	if(anyFormatFfmpegSupported) {
 		bool needSeparator = true;
 		for(const VideoFormatOption &vfo : formatOptions) {
@@ -90,6 +91,7 @@ AnimationExportDialog::AnimationExportDialog(
 			m_ffmpegNote, &utils::FormNote::linkClicked, this,
 			&AnimationExportDialog::showFfmpegSettings);
 	}
+#endif
 
 	m_loopsLabel = new QLabel(tr("Loops:"));
 	m_loopsSpinner = new KisSliderSpinBox;
@@ -115,6 +117,13 @@ AnimationExportDialog::AnimationExportDialog(
 	m_scaleLabel = new QLabel;
 	outputForm->addRow(m_scaleLabel);
 
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	m_androidCheckBox = new QCheckBox(
+		QCoreApplication::translate(
+			"dialogs::TimelapseDialog", "Prefer Android encoder"));
+	outputForm->addRow(m_androidCheckBox);
+	CFG_BIND_CHECKBOX(cfg, AnimationExportPreferAndroid, m_androidCheckBox);
+#else
 	if(anyFormatFfmpegSupported) {
 		utils::addFormSpacer(outputForm);
 
@@ -126,7 +135,7 @@ AnimationExportDialog::AnimationExportDialog(
 		CFG_BIND_CHECKBOX(cfg, AnimationExportPreferFfmpeg, m_ffmpegCheckBox);
 		connect(
 			m_ffmpegCheckBox, &QCheckBox::clicked, this,
-			&AnimationExportDialog::updateFfmpegUi);
+			&AnimationExportDialog::updateEncoderUi);
 
 		QHBoxLayout *ffmpegButtonLayout = new QHBoxLayout;
 		ffmpegButtonLayout->setContentsMargins(0, 0, 0, 0);
@@ -144,6 +153,7 @@ AnimationExportDialog::AnimationExportDialog(
 
 		ffmpegButtonLayout->addStretch();
 	}
+#endif
 
 	QWidget *inputWidget = new QWidget;
 	QFormLayout *inputForm = new QFormLayout(inputWidget);
@@ -263,10 +273,14 @@ AnimationExportDialog::AnimationExportDialog(
 		this, &AnimationExportDialog::accepted, this,
 		&AnimationExportDialog::requestExport, Qt::DirectConnection);
 
+#ifndef DP_ANDROID_VIDEO_ENCODER
 	m_ffmpegPath = cfg->getFfmpegPath();
+#endif
 	updateOutputUi();
 	updateScalingUi();
+#ifndef DP_ANDROID_VIDEO_ENCODER
 	updateFfmpegFormatIcons();
+#endif
 }
 
 void AnimationExportDialog::setCanvas(canvas::CanvasModel *canvas)
@@ -320,6 +334,7 @@ QSize AnimationExportDialog::getScaledSizeFor(
 #ifndef __EMSCRIPTEN__
 void AnimationExportDialog::accept()
 {
+#	ifndef DP_ANDROID_VIDEO_ENCODER
 	int format = m_formatCombo->currentData().toInt();
 	bool needsFfmpeg = !isVideoFormatSupported(VideoFormat(format));
 	if(needsFfmpeg & m_ffmpegPath.isEmpty()) {
@@ -334,6 +349,7 @@ void AnimationExportDialog::accept()
 			&AnimationExportDialog::showFfmpegSettings);
 		return;
 	}
+#	endif
 
 	m_path = choosePath();
 	if(!m_path.isEmpty()) {
@@ -351,7 +367,7 @@ void AnimationExportDialog::updateOutputUi()
 					 format == int(VideoFormat::Mp4Av1);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
-	updateFfmpegUi();
+	updateEncoderUi();
 }
 
 void AnimationExportDialog::updateScalingUi()
@@ -363,8 +379,14 @@ void AnimationExportDialog::updateScalingUi()
 							  .arg(size.height()));
 }
 
-void AnimationExportDialog::updateFfmpegUi()
+void AnimationExportDialog::updateEncoderUi()
 {
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	int format = m_formatCombo->currentData().toInt();
+	bool libavSupported = isVideoFormatSupported(VideoFormat(format));
+	bool androidSupported = isVideoFormatSupportedAndroid(VideoFormat(format));
+	m_androidCheckBox->setVisible(libavSupported && androidSupported);
+#else
 	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegCheckBox) {
 		int format = m_formatCombo->currentData().toInt();
 		bool libavSupported = isVideoFormatSupported(VideoFormat(format));
@@ -395,11 +417,13 @@ void AnimationExportDialog::updateFfmpegUi()
 			m_ffmpegCheckBox->setVisible(libavSupported && ffmpegSupported);
 		}
 	}
+#endif
 }
 
+#ifndef DP_ANDROID_VIDEO_ENCODER
 void AnimationExportDialog::showFfmpegSettings()
 {
-#ifdef DRAWPILE_FFMPEG_DIALOG
+#	ifdef DRAWPILE_FFMPEG_DIALOG
 	QString objectName = QStringLiteral("ffmpegdialog");
 	FfmpegDialog *dlg =
 		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
@@ -415,16 +439,16 @@ void AnimationExportDialog::showFfmpegSettings()
 			&AnimationExportDialog::setFfmpegPath);
 		dlg->show();
 	}
-#else
+#	else
 	utils::showFfmpegUnsupportedError(this);
-#endif
+#	endif
 }
 
 void AnimationExportDialog::setFfmpegPath(const QString &ffmpegPath)
 {
 	if(ffmpegPath != m_ffmpegPath) {
 		m_ffmpegPath = ffmpegPath;
-		updateFfmpegUi();
+		updateEncoderUi();
 		updateFfmpegFormatIcons();
 	}
 }
@@ -444,6 +468,7 @@ void AnimationExportDialog::updateFfmpegFormatIcons()
 		}
 	}
 }
+#endif
 
 #ifndef __EMSCRIPTEN__
 QString AnimationExportDialog::choosePath()
@@ -599,6 +624,12 @@ void AnimationExportDialog::requestExport()
 	config::Config *cfg = dpAppConfig();
 	cfg->setAnimationExportFormat(format);
 
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	bool useAndroidVideoEncoder =
+		!isVideoFormatSupported(VideoFormat(format)) ||
+		(m_androidCheckBox->isChecked() &&
+		 isVideoFormatSupportedAndroid(VideoFormat(format)));
+#else
 	QString ffmpegPath;
 	bool wantFfmpeg = !isVideoFormatSupported(VideoFormat(format)) ||
 					  (m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked() &&
@@ -606,12 +637,18 @@ void AnimationExportDialog::requestExport()
 	if(wantFfmpeg) {
 		ffmpegPath = m_ffmpegPath;
 	}
+#endif
 
 	emit exportRequested(
 #ifndef __EMSCRIPTEN__
 		m_path,
 #endif
-		ffmpegPath, format, m_loopsSpinner->value(), buildFrameIndexes(),
+#ifdef DP_ANDROID_VIDEO_ENCODER
+		useAndroidVideoEncoder,
+#else
+		ffmpegPath,
+#endif
+		format, m_loopsSpinner->value(), buildFrameIndexes(),
 		m_framerateSpinner->value(), getCropRect(), m_scaleSpinner->value(),
 		m_scaleSmoothBox->isChecked());
 }
