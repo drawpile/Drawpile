@@ -3582,6 +3582,40 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta(
 					"Tablet enabled: %d", cfg->getTabletEvents());
 				DP_event_log_write_meta(
+					"Global pressure curve mode: %d",
+					cfg->getGlobalPressureCurveMode());
+				DP_event_log_write_meta(
+					"Global pressure curve: %s",
+					qUtf8Printable(cfg->getGlobalPressureCurve()));
+				DP_event_log_write_meta(
+					"Global pressure curve eraser: %s",
+					qUtf8Printable(cfg->getGlobalPressureCurveEraser()));
+				DP_event_log_write_meta(
+					"Global smoothing: %d", cfg->getSmoothing());
+				DP_event_log_write_meta(
+					"Mouse smoothing: %d", cfg->getMouseSmoothing());
+				DP_event_log_write_meta(
+					"Interpolate inputs: %d", cfg->getInterpolateInputs());
+				DP_event_log_write_meta(
+					"Delay initial dab: %d", cfg->getDelayInitialDab());
+				DP_event_log_write_meta(
+					"Ignore blotches: %d", cfg->getIgnoreBlotches());
+#ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_HIGH_FUNCTION_KEYS
+				DP_event_log_write_meta(
+					"Emulate mouse buttons for high function keys: %d",
+					cfg->getAndroidWorkaroundEmulateMouseButtonsForHighFunctionKeys());
+#endif
+#ifdef KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN
+				DP_event_log_write_meta(
+					"Emulate mouse buttons for page up/down: %d",
+					cfg->getAndroidWorkaroundEmulateMouseButtonsForPageUpDown());
+#endif
+#ifdef KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS
+				DP_event_log_write_meta(
+					"Ignore historic tablet evets: %d",
+					cfg->getAndroidWorkaroundIgnoreHistoricTabletEvents());
+#endif
+				DP_event_log_write_meta(
 					"Tablet eraser action: %d", cfg->getTabletEraserAction());
 				DP_event_log_write_meta(
 					"One-finger touch action: %d", cfg->getOneFingerTouch());
@@ -3597,6 +3631,12 @@ void MainWindow::toggleTabletEventLog()
 					"Three-finger tap action: %d", cfg->getThreeFingerTap());
 				DP_event_log_write_meta(
 					"Four-finger tap action: %d", cfg->getFourFingerTap());
+				DP_event_log_write_meta(
+					"One-finger tap-and-hold action: %d",
+					cfg->getOneFingerTapAndHold());
+				DP_event_log_write_meta(
+					"One-finger double-tap action: %d",
+					cfg->getOneFingerDoubleTap());
 				DP_event_log_write_meta(
 					"Gestures: %d", cfg->getTouchGestures());
 			} else {
