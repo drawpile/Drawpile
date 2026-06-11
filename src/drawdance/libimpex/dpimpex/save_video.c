@@ -1502,6 +1502,19 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 goto cleanup;
             }
 
+            uint8_t *dst_buffers[4] = {
+                image.buffer_y,
+                image.buffer_u,
+                image.buffer_v,
+                NULL,
+            };
+            int dst_linesizes[4] = {
+                image.row_stride_y,
+                image.row_stride_u,
+                image.row_stride_v,
+                0,
+            };
+
             // Android has hardware-based encoding, which has a "flexible" YUV
             // format. It either has everything in its own plane, which means
             // the U and V values are right next to each other with a pixel
@@ -1513,6 +1526,8 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
             }
             else if (image.pixel_stride_u == 2 && image.pixel_stride_v == 2) {
                 output_pixel_format = AV_PIX_FMT_NV12;
+                dst_buffers[2] = NULL;
+                dst_linesizes[2] = 0;
             }
             else {
                 DP_error_set("Unknown pixel format with strides %d and %d",
@@ -1520,11 +1535,6 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 result = DP_SAVE_RESULT_INTERNAL_ERROR;
                 goto cleanup;
             }
-
-            uint8_t *dst_buffers[] = {image.buffer_y, image.buffer_u,
-                                      image.buffer_v, NULL};
-            const int dst_linesizes[] = {image.row_stride_y, image.row_stride_u,
-                                         image.row_stride_v, 0};
 
             if (f.instances == 1) {
                 // Just a single frame, scale it into the native buffer.
