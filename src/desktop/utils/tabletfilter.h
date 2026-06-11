@@ -28,7 +28,9 @@ public:
 #ifdef Q_OS_WIN
 		bool spontaneous = event->spontaneous();
 		if(m_ignoreSpontaneous) {
-			return spontaneous;
+			if (spontaneous) {
+				return true;
+			}
 		} else {
 			if(!spontaneous && tabletinput::ignoreSpontaneous()) {
 				m_ignoreSpontaneous = true;
