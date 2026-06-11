@@ -166,9 +166,19 @@ TimelapseDialog::TimelapseDialog(
 	m_formatCombo = new widgets::NoScrollComboBox;
 	settingsForm->addRow(tr("Format:"), m_formatCombo);
 
+#ifdef DP_ANDROID_VIDEO_ENCODER
+	QIcon androidFormatIcon =
+		QIcon::fromTheme(QStringLiteral("media-playback-start"));
+#endif
 	for(const VideoFormatOption &vfo : formatOptions) {
 		if(vfo.libavSupported || vfo.androidSupported) {
 			m_formatCombo->addItem(vfo.title, int(vfo.format));
+#ifdef DP_ANDROID_VIDEO_ENCODER
+			if(vfo.androidSupported) {
+				m_formatCombo->setItemIcon(
+					m_formatCombo->count() - 1, androidFormatIcon);
+			}
+#endif
 		}
 	}
 
