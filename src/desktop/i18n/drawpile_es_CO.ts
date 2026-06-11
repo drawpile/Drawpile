@@ -4165,37 +4165,37 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>View menu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Menú de Vista</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Capas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Selección</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Animación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Sesión</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Herramientas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Help menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Ayuda</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -4235,7 +4235,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+22"/>
         <source>Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animación</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -4280,7 +4280,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+39"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -4335,7 +4335,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Rotate the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar vista del lienzo</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -4350,12 +4350,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+14"/>
         <source>Project Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Información de Proyecto…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Text Input Debug Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Superposición de depuración de entrada de texto</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -5329,9 +5329,9 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message numerus="yes">
         <location filename="../utils/widgetutils.cpp" line="+16"/>
         <source>%n days(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n día</numerusform>
+            <numerusform>%n dias</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -5530,13 +5530,13 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+4"/>
         <source>%1 and %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 y %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>unknown</source>
         <extracomment>An unknown work time. Will be shown to the user like &quot;Your work time: unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>desconocido</translation>
     </message>
 </context>
 <context>
@@ -5703,7 +5703,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/actionpickerdialog.cpp" line="+21"/>
         <source>Select Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar acción</translation>
     </message>
 </context>
 <context>
@@ -5829,7 +5829,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+116"/>
         <source>FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -6432,7 +6432,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-502"/>
         <source>Common</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Común</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6632,7 +6632,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+52"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6642,7 +6642,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+9"/>
         <source>Basic</source>
-        <translation type="unfinished"></translation>
+        <translation>Básico</translation>
     </message>
     <message>
         <location line="+25"/>
