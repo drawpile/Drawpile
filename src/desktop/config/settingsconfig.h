@@ -76,6 +76,11 @@ public:
 	bool getAnimationExportPreferFfmpeg() const override;
 	void setAnimationExportPreferFfmpeg(bool value) override;
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool getAnimationExportPreferHardware() const override;
+	void setAnimationExportPreferHardware(bool value) override;
+#endif
+
 	bool getAutoRecordHost() const override;
 	void setAutoRecordHost(bool value) override;
 
@@ -799,6 +804,11 @@ public:
 
 	bool getTimelapsePreferFfmpeg() const override;
 	void setTimelapsePreferFfmpeg(bool value) override;
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	bool getTimelapsePreferHardware() const override;
+	void setTimelapsePreferHardware(bool value) override;
+#endif
 
 	bool getTimelapseShowAdvanced() const override;
 	void setTimelapseShowAdvanced(bool value) override;

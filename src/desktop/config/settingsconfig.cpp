@@ -85,6 +85,13 @@ SettingsConfig::SettingsConfig(
 		&desktop::settings::Settings::animationExportPreferFfmpegChanged, this,
 		&SettingsConfig::changeAnimationExportPreferFfmpeg,
 		Qt::DirectConnection);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::animationExportPreferHardwareChanged,
+		this, &SettingsConfig::changeAnimationExportPreferHardware,
+		Qt::DirectConnection);
+#endif
 	connect(
 		m_settings, &desktop::settings::Settings::autoRecordHostChanged, this,
 		&SettingsConfig::changeAutoRecordHost, Qt::DirectConnection);
@@ -907,6 +914,12 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::timelapsePreferFfmpegChanged,
 		this, &SettingsConfig::changeTimelapsePreferFfmpeg,
 		Qt::DirectConnection);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapsePreferHardwareChanged, this,
+		&SettingsConfig::changeTimelapsePreferHardware, Qt::DirectConnection);
+#endif
 	connect(
 		m_settings, &desktop::settings::Settings::timelapseShowAdvancedChanged,
 		this, &SettingsConfig::changeTimelapseShowAdvanced,
@@ -1140,6 +1153,18 @@ void SettingsConfig::setAnimationExportPreferFfmpeg(bool value)
 {
 	m_settings->setAnimationExportPreferFfmpeg(value);
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool SettingsConfig::getAnimationExportPreferHardware() const
+{
+	return m_settings->animationExportPreferHardware();
+}
+
+void SettingsConfig::setAnimationExportPreferHardware(bool value)
+{
+	m_settings->setAnimationExportPreferHardware(value);
+}
+#endif
 
 bool SettingsConfig::getAutoRecordHost() const
 {
@@ -3530,6 +3555,18 @@ void SettingsConfig::setTimelapsePreferFfmpeg(bool value)
 {
 	m_settings->setTimelapsePreferFfmpeg(value);
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool SettingsConfig::getTimelapsePreferHardware() const
+{
+	return m_settings->timelapsePreferHardware();
+}
+
+void SettingsConfig::setTimelapsePreferHardware(bool value)
+{
+	m_settings->setTimelapsePreferHardware(value);
+}
+#endif
 
 bool SettingsConfig::getTimelapseShowAdvanced() const
 {

@@ -198,6 +198,22 @@ void MemoryConfig::setAnimationExportPreferFfmpeg(bool value)
 	}
 }
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool MemoryConfig::getAnimationExportPreferHardware() const
+{
+	return m_animationExportPreferHardware;
+}
+
+void MemoryConfig::setAnimationExportPreferHardware(bool value)
+{
+	if(value != m_animationExportPreferHardware) {
+		m_animationExportPreferHardware = value;
+		Q_EMIT changeAnimationExportPreferHardware(
+			m_animationExportPreferHardware);
+	}
+}
+#endif
+
 bool MemoryConfig::getAutoRecordHost() const
 {
 	return m_autoRecordHost;
@@ -3305,6 +3321,21 @@ void MemoryConfig::setTimelapsePreferFfmpeg(bool value)
 		Q_EMIT changeTimelapsePreferFfmpeg(m_timelapsePreferFfmpeg);
 	}
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool MemoryConfig::getTimelapsePreferHardware() const
+{
+	return m_timelapsePreferHardware;
+}
+
+void MemoryConfig::setTimelapsePreferHardware(bool value)
+{
+	if(value != m_timelapsePreferHardware) {
+		m_timelapsePreferHardware = value;
+		Q_EMIT changeTimelapsePreferHardware(m_timelapsePreferHardware);
+	}
+}
+#endif
 
 bool MemoryConfig::getTimelapseShowAdvanced() const
 {

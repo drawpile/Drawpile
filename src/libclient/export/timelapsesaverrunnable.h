@@ -33,7 +33,7 @@ public:
 		const drawdance::CanvasState &canvasState,
 		const DP_ViewModeFilter *vmfOrNull,
 #ifdef DP_ANDROID_VIDEO_ENCODER
-		bool useAndroidVideoEncoder,
+		bool useAndroidVideoEncoder, bool useHardware,
 #else
 		const QString &ffmpegPath,
 #endif
@@ -168,6 +168,7 @@ private:
 	const drawdance::CanvasState m_canvasState;
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	const bool m_useAndroidVideoEncoder;
+	const bool m_useHardware;
 #else
 	const QString m_ffmpegPath;
 #endif

@@ -50,6 +50,7 @@ signals:
 #endif
 #ifdef DP_ANDROID_VIDEO_ENCODER
 		bool useAndroidVideoEncoder,
+		bool useHardware,
 #else
 		const QString &ffmpegPath,
 #endif
@@ -119,6 +120,7 @@ private:
 	QRect m_flipbookCrop;
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	QCheckBox *m_androidCheckBox;
+	QCheckBox *m_androidHardwareCheckBox;
 #else
 	utils::FormNote *m_ffmpegNote = nullptr;
 	QCheckBox *m_ffmpegCheckBox = nullptr;

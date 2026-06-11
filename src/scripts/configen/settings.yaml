@@ -337,6 +337,13 @@ settings:
     legacy_package: 'desktop'
     condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
 
+  - id: animationExportPreferHardware
+    type: 'bool'
+    default: 'false'
+    qsettings: 'animationexport/preferhardware'
+    legacy_package: 'desktop'
+    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
+
   - id: animationExportPreferFfmpeg
     type: 'bool'
     default: 'false'
@@ -1606,6 +1613,13 @@ settings:
     type: 'bool'
     default: 'true'
     qsettings: 'timelapse/preferandroid'
+    legacy_package: 'desktop'
+    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
+
+  - id: timelapsePreferHardware
+    type: 'bool'
+    default: 'false'
+    qsettings: 'timelapse/preferhardware'
     legacy_package: 'desktop'
     condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
 

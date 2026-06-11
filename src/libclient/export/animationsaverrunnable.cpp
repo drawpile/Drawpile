@@ -28,7 +28,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	const QVector<int> &frameIndexes, double framerate, const QRect &crop,
 	bool scaleSmooth, const drawdance::CanvasState &canvasState,
 #ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder,
+	bool useAndroidVideoEncoder, bool useHardware,
 #else
 	const QString &ffmpegPath,
 #endif
@@ -47,6 +47,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_canvasState(canvasState)
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	, m_useAndroidVideoEncoder(useAndroidVideoEncoder)
+	, m_useHardware(useHardware)
 #else
 	, m_ffmpegPath(ffmpegPath)
 #endif
@@ -112,8 +113,7 @@ void AnimationSaverRunnable::run()
 			pr,
 			DP_SAVE_VIDEO_DESTINATION_PATH,
 			const_cast<char *>(pathBytes.constData()),
-			m_scaleSmooth ? DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH
-						  : DP_SAVE_VIDEO_FLAGS_NONE,
+			DP_flag_uint(m_scaleSmooth, DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH),
 			m_width,
 			m_height,
 			m_frameIndexes.constData(),
@@ -145,6 +145,11 @@ void AnimationSaverRunnable::run()
 		bool useLibav = m_ffmpegPath.isEmpty();
 #	endif
 
+		unsigned int flags = DP_SAVE_VIDEO_FLAGS_NONE;
+		if(m_scaleSmooth) {
+			flags |= DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH;
+		}
+
 		if(useLibav) {
 			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
 			destinationParam = pathBytes.data();
@@ -159,6 +164,9 @@ void AnimationSaverRunnable::run()
 				pathBytes.constData(),
 				tempPathBytes.constData(),
 			};
+			if(m_useHardware) {
+				flags |= DP_SAVE_VIDEO_FLAGS_HARDWARE;
+			}
 #	else
 			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
 			destinationParam = &ffmpegParams;
@@ -178,8 +186,7 @@ void AnimationSaverRunnable::run()
 			destinationParam,
 			nullptr,
 			0,
-			m_scaleSmooth ? DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH
-						  : DP_SAVE_VIDEO_FLAGS_NONE,
+			flags,
 			formatToSaveVideoFormat(),
 			m_width,
 			m_height,

@@ -96,9 +96,10 @@ DP_android_video_encoder_new(DP_AndroidVideoEncoderParams params)
 
     QJniObject *encoder = new QJniObject(
         "net/drawpile/android/VideoEncoder",
-        "(IIIFLjava/lang/String;Ljava/lang/String;)V", jint(params.format),
+        "(IIIFLjava/lang/String;Ljava/lang/String;Z)V", jint(params.format),
         jint(params.width), jint(params.height), jfloat(params.framerate),
-        output_obj.object<jstring>(), temp_obj.object<jstring>());
+        output_obj.object<jstring>(), temp_obj.object<jstring>(),
+        jboolean(params.hardware));
     if (clear_exception(env) || !check_valid("encoder", *encoder)) {
         delete encoder;
         return nullptr;

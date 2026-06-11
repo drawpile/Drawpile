@@ -192,6 +192,7 @@ private:
 	bool m_cancelling = false;
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	QLabel *m_androidLabel;
+	QCheckBox *m_androidHardwareCheckBox;
 	QCheckBox *m_androidCheckBox;
 #else
 	utils::FormNote *m_ffmpegNote = nullptr;

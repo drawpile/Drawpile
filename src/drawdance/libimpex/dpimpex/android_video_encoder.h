@@ -18,6 +18,7 @@ typedef struct DP_AndroidVideoEncoderParams {
     int format;
     int width;
     int height;
+    bool hardware;
 } DP_AndroidVideoEncoderParams;
 
 typedef struct DP_AndroidVideoEncoderImage {

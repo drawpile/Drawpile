@@ -12,6 +12,7 @@ typedef struct DP_Rect DP_Rect;
 
 #define DP_SAVE_VIDEO_FLAGS_NONE         0x0u
 #define DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH 0x1u
+#define DP_SAVE_VIDEO_FLAGS_HARDWARE     0x2u
 
 // GIF palette sizes, always 16x16 images in BGRA format.
 #define DP_SAVE_VIDEO_GIF_PALETTE_DIMENSION 16

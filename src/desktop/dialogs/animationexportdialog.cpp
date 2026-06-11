@@ -128,6 +128,14 @@ AnimationExportDialog::AnimationExportDialog(
 	outputForm->addRow(m_scaleLabel);
 
 #ifdef DP_ANDROID_VIDEO_ENCODER
+	m_androidHardwareCheckBox = new QCheckBox(
+		QCoreApplication::translate(
+			"dialogs::TimelapseDialog",
+			"Hardware encoding (faster, may cause artifacts)"));
+	outputForm->addRow(m_androidHardwareCheckBox);
+	CFG_BIND_CHECKBOX(
+		cfg, AnimationExportPreferHardware, m_androidHardwareCheckBox);
+
 	m_androidCheckBox = new QCheckBox(
 		QCoreApplication::translate(
 			"dialogs::TimelapseDialog", "Prefer Android encoder"));
@@ -395,6 +403,7 @@ void AnimationExportDialog::updateEncoderUi()
 	int format = m_formatCombo->currentData().toInt();
 	bool libavSupported = isVideoFormatSupported(VideoFormat(format));
 	bool androidSupported = isVideoFormatSupportedAndroid(VideoFormat(format));
+	m_androidHardwareCheckBox->setVisible(androidSupported);
 	m_androidCheckBox->setVisible(libavSupported && androidSupported);
 #else
 	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegCheckBox) {
@@ -654,7 +663,7 @@ void AnimationExportDialog::requestExport()
 		m_path,
 #endif
 #ifdef DP_ANDROID_VIDEO_ENCODER
-		useAndroidVideoEncoder,
+		useAndroidVideoEncoder, m_androidHardwareCheckBox->isChecked(),
 #else
 		ffmpegPath,
 #endif

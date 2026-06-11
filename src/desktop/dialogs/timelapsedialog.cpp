@@ -401,8 +401,12 @@ TimelapseDialog::TimelapseDialog(
 
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	m_androidLabel = new QLabel(tr("Encoder:"));
+	m_androidHardwareCheckBox =
+		new QCheckBox(tr("Hardware encoding (faster, may cause artifacts)"));
+	advancedForm->addRow(m_androidLabel, m_androidHardwareCheckBox);
+
 	m_androidCheckBox = new QCheckBox(tr("Prefer Android encoder"));
-	advancedForm->addRow(m_androidLabel, m_androidCheckBox);
+	advancedForm->addRow(nullptr, m_androidCheckBox);
 #else
 	if(anyFormatFfmpegSupported) {
 		m_ffmpegLabel = new QLabel(tr("Encoder:"));
@@ -776,7 +780,7 @@ void TimelapseDialog::accept()
 			m_saver = new TimelapseSaverRunnable(
 				m_canvasState, &m_vmf,
 #ifdef DP_ANDROID_VIDEO_ENCODER
-				useAndroidVideoEncoder,
+				useAndroidVideoEncoder, m_androidHardwareCheckBox->isChecked(),
 #else
 				useFfmpeg ? m_ffmpegPath : QString(),
 #endif
@@ -941,6 +945,8 @@ void TimelapseDialog::resetToDefaultSettings()
 		checkLogoLocation(int(LogoLocation::Default));
 	}
 #ifdef DP_ANDROID_VIDEO_ENCODER
+	m_androidHardwareCheckBox->setChecked(
+		config::Config::defaultTimelapsePreferHardware());
 	m_androidCheckBox->setChecked(
 		config::Config::defaultTimelapsePreferAndroid());
 #else
@@ -1034,6 +1040,7 @@ void TimelapseDialog::loadSettings()
 	}
 	updateAdvanced(cfg->getTimelapseShowAdvanced());
 #ifdef DP_ANDROID_VIDEO_ENCODER
+	m_androidHardwareCheckBox->setChecked(cfg->getTimelapsePreferHardware());
 	m_androidCheckBox->setChecked(cfg->getTimelapsePreferAndroid());
 #else
 	m_ffmpegPath = cfg->getFfmpegPath();
@@ -1085,6 +1092,7 @@ void TimelapseDialog::saveSettings()
 	cfg->setTimelapseLogoLocation(m_logoLocationGroup->checkedId());
 	cfg->setTimelapseShowAdvanced(m_advancedWidget->isEnabled());
 #ifdef DP_ANDROID_VIDEO_ENCODER
+	cfg->setTimelapsePreferHardware(m_androidHardwareCheckBox->isChecked());
 	cfg->setTimelapsePreferAndroid(m_androidCheckBox->isChecked());
 #else
 	if(m_ffmpegCheckBox) {
@@ -1174,10 +1182,11 @@ void TimelapseDialog::updateEncoder()
 {
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	int format = m_formatCombo->currentData().toInt();
-	bool visible = isVideoFormatSupported(VideoFormat(format)) &&
-				   isVideoFormatSupportedAndroid(VideoFormat(format));
-	m_androidLabel->setVisible(visible);
-	m_androidCheckBox->setVisible(visible);
+	bool libavSupported = isVideoFormatSupported(VideoFormat(format));
+	bool androidSupported = isVideoFormatSupportedAndroid(VideoFormat(format));
+	m_androidLabel->setVisible(androidSupported);
+	m_androidHardwareCheckBox->setVisible(androidSupported);
+	m_androidCheckBox->setVisible(libavSupported && androidSupported);
 #else
 	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegLabel || m_ffmpegCheckBox) {
 		int format = m_formatCombo->currentData().toInt();

@@ -386,7 +386,7 @@ private:
 		const QString &path,
 #endif
 #ifdef DP_ANDROID_VIDEO_ENCODER
-		bool useAndroidVideoEncoder,
+		bool useAndroidVideoEncoder, bool useHardware,
 #else
 		const QString &ffmpegPath,
 #endif

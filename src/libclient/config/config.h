@@ -329,6 +329,12 @@ public:
 	virtual void setAnimationExportPreferFfmpeg(bool value) = 0;
 	static bool defaultAnimationExportPreferFfmpeg();
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	virtual bool getAnimationExportPreferHardware() const = 0;
+	virtual void setAnimationExportPreferHardware(bool value) = 0;
+	static bool defaultAnimationExportPreferHardware();
+#endif
+
 	virtual bool getAutoRecordHost() const = 0;
 	virtual void setAutoRecordHost(bool value) = 0;
 	static bool defaultAutoRecordHost();
@@ -1291,6 +1297,12 @@ public:
 	virtual void setTimelapsePreferFfmpeg(bool value) = 0;
 	static bool defaultTimelapsePreferFfmpeg();
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	virtual bool getTimelapsePreferHardware() const = 0;
+	virtual void setTimelapsePreferHardware(bool value) = 0;
+	static bool defaultTimelapsePreferHardware();
+#endif
+
 	virtual bool getTimelapseShowAdvanced() const = 0;
 	virtual void setTimelapseShowAdvanced(bool value) = 0;
 	static bool defaultTimelapseShowAdvanced();
@@ -1416,6 +1428,9 @@ Q_SIGNALS:
 	void changeAnimationExportPreferAndroid(bool value);
 #endif
 	void changeAnimationExportPreferFfmpeg(bool value);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	void changeAnimationExportPreferHardware(bool value);
+#endif
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
 	void changeAutoRecordMetadataIntervalMinutes(int value);
@@ -1664,6 +1679,9 @@ Q_SIGNALS:
 	void changeTimelapsePreferAndroid(bool value);
 #endif
 	void changeTimelapsePreferFfmpeg(bool value);
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+	void changeTimelapsePreferHardware(bool value);
+#endif
 	void changeTimelapseShowAdvanced(bool value);
 	void changeTimelapseTimeOwnOnly(bool value);
 	void changeToolBarConfig(const QVariantHash &value);

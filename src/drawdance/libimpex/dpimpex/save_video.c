@@ -1452,6 +1452,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
             params.format,
             params.width,
             params.height,
+            params.flags & DP_SAVE_VIDEO_FLAGS_HARDWARE,
         });
     }
     if (!ave) {

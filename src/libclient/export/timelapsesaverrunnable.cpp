@@ -36,7 +36,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const drawdance::CanvasState &canvasState,
 	const DP_ViewModeFilter *vmfOrNull,
 #ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder,
+	bool useAndroidVideoEncoder, bool useHardware,
 #else
 	const QString &ffmpegPath,
 #endif
@@ -54,6 +54,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	, m_canvasState(canvasState)
 #ifdef DP_ANDROID_VIDEO_ENCODER
 	, m_useAndroidVideoEncoder(useAndroidVideoEncoder)
+	, m_useHardware(useHardware)
 #else
 	, m_ffmpegPath(ffmpegPath)
 #endif
@@ -822,6 +823,8 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 		bool useLibav = m_ffmpegPath.isEmpty();
 #endif
 
+		unsigned int flags = DP_SAVE_VIDEO_FLAGS_NONE;
+
 		if(useLibav) {
 			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
 			destinationParam = outputPathBytes.data();
@@ -836,6 +839,9 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 				outputPathBytes.constData(),
 				tempPathBytes.constData(),
 			};
+			if(m_useHardware) {
+				flags |= DP_SAVE_VIDEO_FLAGS_HARDWARE;
+			}
 #else
 			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
 			destinationParam = &ffmpegParams;
@@ -853,7 +859,7 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 			destinationParam,
 			nullptr,
 			0,
-			DP_SAVE_VIDEO_FLAGS_NONE,
+			flags,
 			formatToSaveVideoFormat(),
 			m_width,
 			m_height,

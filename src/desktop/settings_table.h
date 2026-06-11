@@ -45,6 +45,12 @@ SETTING(
 	animationExportPreferFfmpeg, AnimationExportPreferFfmpeg,
 	"animationexport/preferffmpeg",
 	config::Config::defaultAnimationExportPreferFfmpeg())
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+SETTING(
+	animationExportPreferHardware, AnimationExportPreferHardware,
+	"animationexport/preferhardware",
+	config::Config::defaultAnimationExportPreferHardware())
+#endif
 SETTING(
 	automaticAlphaPreserve, AutomaticAlphaPreserve,
 	"settings/automaticalphapreserve",
@@ -709,6 +715,12 @@ SETTING(
 SETTING(
 	timelapsePreferFfmpeg, TimelapsePreferFfmpeg, "timelapse/preferffmpeg",
 	config::Config::defaultTimelapsePreferFfmpeg())
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+SETTING(
+	timelapsePreferHardware, TimelapsePreferHardware,
+	"timelapse/preferhardware",
+	config::Config::defaultTimelapsePreferHardware())
+#endif
 SETTING(
 	timelapseShowAdvanced, TimelapseShowAdvanced, "timelapse/showadvanced",
 	config::Config::defaultTimelapseShowAdvanced())

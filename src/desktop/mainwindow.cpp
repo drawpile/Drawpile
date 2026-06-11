@@ -3340,7 +3340,7 @@ void MainWindow::exportAnimation(
 	const QString &path,
 #endif
 #ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder,
+	bool useAndroidVideoEncoder, bool useHardware,
 #else
 	const QString &ffmpegPath,
 #endif
@@ -3373,7 +3373,7 @@ void MainWindow::exportAnimation(
 		format, size.width(), size.height(), loops, frameIndexes, framerate,
 		effectiveCrop, scaleSmooth, canvasState,
 #ifdef DP_ANDROID_VIDEO_ENCODER
-		useAndroidVideoEncoder,
+		useAndroidVideoEncoder, useHardware,
 #else
 		ffmpegPath,
 #endif

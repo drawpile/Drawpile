@@ -111,6 +111,13 @@ bool Config::defaultAnimationExportPreferFfmpeg()
 	return false;
 }
 
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool Config::defaultAnimationExportPreferHardware()
+{
+	return false;
+}
+#endif
+
 bool Config::defaultAutoRecordHost()
 {
 #if defined(__EMSCRIPTEN__)
@@ -1348,6 +1355,13 @@ bool Config::defaultTimelapsePreferFfmpeg()
 {
 	return false;
 }
+
+#if defined(DP_ANDROID_VIDEO_ENCODER)
+bool Config::defaultTimelapsePreferHardware()
+{
+	return false;
+}
+#endif
 
 bool Config::defaultTimelapseShowAdvanced()
 {
