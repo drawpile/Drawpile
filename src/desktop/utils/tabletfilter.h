@@ -28,7 +28,7 @@ public:
 #ifdef Q_OS_WIN
 		bool spontaneous = event->spontaneous();
 		if(m_ignoreSpontaneous) {
-			if (spontaneous) {
+			if(spontaneous) {
 				return true;
 			}
 		} else {
@@ -37,7 +37,7 @@ public:
 			}
 			return false;
 		}
-#else
+#endif
 		if(m_ignoreBlotches) {
 			if(event->type() == QEvent::TabletRelease) {
 				m_pressure = 0.0;
@@ -53,7 +53,6 @@ public:
 			}
 		}
 		return false;
-#endif
 	}
 
 private:
