@@ -21,6 +21,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Turn the lasso fill tool into a shape fill tool with two shape options: lasso and fan. The latter option does not produce holes, everything gets filled. Thanks lan700ng and VolutBrum for suggesting.
  * Fix: Correct saving of key frame properties to dppr files. Thanks marddle for reporting.
  * Feature: Allow exporting animations and timelapses on Android with the OS-supplied media encoder. Thanks Bluestrings, hpar and marddle for testing.
+ * Fix: Make WEBM video export use a higher quality.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

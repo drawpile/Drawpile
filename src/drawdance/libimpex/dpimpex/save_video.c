@@ -246,7 +246,7 @@ static void set_format_codec_params(int format, AVCodecContext *codec_context)
     case DP_SAVE_VIDEO_FORMAT_APNG:
         break;
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
-        codec_context->bit_rate = 1 * 1024 * 1024;
+        codec_context->bit_rate = 50 * 1024 * 1024;
         set_option(codec_context->priv_data, "crf", "15");
         break;
     case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
@@ -1084,7 +1084,7 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-crf");
             argv_push(args, "15");
             argv_push(args, "-b:v");
-            argv_push(args, "1M");
+            argv_push(args, "50M");
             argv_push(args, "-an");
             argv_push(args, "-f");
             argv_push(args, "webm");
