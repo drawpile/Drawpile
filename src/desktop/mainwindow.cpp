@@ -3339,13 +3339,9 @@ void MainWindow::exportAnimation(
 #ifndef __EMSCRIPTEN__
 	const QString &path,
 #endif
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder, bool useHardware,
-#else
-	const QString &ffmpegPath,
-#endif
-	int format, int loops, const QVector<int> &frameIndexes, double framerate,
-	const QRect &crop, double scalePercent, bool scaleSmooth)
+	const QString &ffmpegPath, const QString &encoderKey, int format, int loops,
+	const QVector<int> &frameIndexes, double framerate, const QRect &crop,
+	double scalePercent, bool scaleSmooth)
 {
 	m_animationExportLoops = loops;
 	m_animationExportScalePercent = scalePercent;
@@ -3371,13 +3367,7 @@ void MainWindow::exportAnimation(
 		path,
 #endif
 		format, size.width(), size.height(), loops, frameIndexes, framerate,
-		effectiveCrop, scaleSmooth, canvasState,
-#ifdef DP_ANDROID_VIDEO_ENCODER
-		useAndroidVideoEncoder, useHardware,
-#else
-		ffmpegPath,
-#endif
-		this);
+		effectiveCrop, scaleSmooth, canvasState, ffmpegPath, encoderKey, this);
 	saver->setAutoDelete(true);
 
 	connect(

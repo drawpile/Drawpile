@@ -169,50 +169,33 @@ void MemoryConfig::setAnimationExportFormat(int value)
 	}
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool MemoryConfig::getAnimationExportPreferAndroid() const
+QVariantHash MemoryConfig::getAnimationExportPreferredEncoders() const
 {
-	return m_animationExportPreferAndroid;
+	return m_animationExportPreferredEncoders;
 }
 
-void MemoryConfig::setAnimationExportPreferAndroid(bool value)
+void MemoryConfig::setAnimationExportPreferredEncoders(
+	const QVariantHash &value)
 {
-	if(value != m_animationExportPreferAndroid) {
-		m_animationExportPreferAndroid = value;
-		Q_EMIT changeAnimationExportPreferAndroid(
-			m_animationExportPreferAndroid);
-	}
-}
-#endif
-
-bool MemoryConfig::getAnimationExportPreferFfmpeg() const
-{
-	return m_animationExportPreferFfmpeg;
-}
-
-void MemoryConfig::setAnimationExportPreferFfmpeg(bool value)
-{
-	if(value != m_animationExportPreferFfmpeg) {
-		m_animationExportPreferFfmpeg = value;
-		Q_EMIT changeAnimationExportPreferFfmpeg(m_animationExportPreferFfmpeg);
+	if(value != m_animationExportPreferredEncoders) {
+		m_animationExportPreferredEncoders = value;
+		Q_EMIT changeAnimationExportPreferredEncoders(
+			m_animationExportPreferredEncoders);
 	}
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool MemoryConfig::getAnimationExportPreferHardware() const
+bool MemoryConfig::getAnimationExportShowAdvanced() const
 {
-	return m_animationExportPreferHardware;
+	return m_animationExportShowAdvanced;
 }
 
-void MemoryConfig::setAnimationExportPreferHardware(bool value)
+void MemoryConfig::setAnimationExportShowAdvanced(bool value)
 {
-	if(value != m_animationExportPreferHardware) {
-		m_animationExportPreferHardware = value;
-		Q_EMIT changeAnimationExportPreferHardware(
-			m_animationExportPreferHardware);
+	if(value != m_animationExportShowAdvanced) {
+		m_animationExportShowAdvanced = value;
+		Q_EMIT changeAnimationExportShowAdvanced(m_animationExportShowAdvanced);
 	}
 }
-#endif
 
 bool MemoryConfig::getAutoRecordHost() const
 {
@@ -3294,48 +3277,18 @@ void MemoryConfig::setTimelapseMaxQueueEntries(int value)
 	}
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool MemoryConfig::getTimelapsePreferAndroid() const
+QVariantHash MemoryConfig::getTimelapsePreferredEncoders() const
 {
-	return m_timelapsePreferAndroid;
+	return m_timelapsePreferredEncoders;
 }
 
-void MemoryConfig::setTimelapsePreferAndroid(bool value)
+void MemoryConfig::setTimelapsePreferredEncoders(const QVariantHash &value)
 {
-	if(value != m_timelapsePreferAndroid) {
-		m_timelapsePreferAndroid = value;
-		Q_EMIT changeTimelapsePreferAndroid(m_timelapsePreferAndroid);
+	if(value != m_timelapsePreferredEncoders) {
+		m_timelapsePreferredEncoders = value;
+		Q_EMIT changeTimelapsePreferredEncoders(m_timelapsePreferredEncoders);
 	}
 }
-#endif
-
-bool MemoryConfig::getTimelapsePreferFfmpeg() const
-{
-	return m_timelapsePreferFfmpeg;
-}
-
-void MemoryConfig::setTimelapsePreferFfmpeg(bool value)
-{
-	if(value != m_timelapsePreferFfmpeg) {
-		m_timelapsePreferFfmpeg = value;
-		Q_EMIT changeTimelapsePreferFfmpeg(m_timelapsePreferFfmpeg);
-	}
-}
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool MemoryConfig::getTimelapsePreferHardware() const
-{
-	return m_timelapsePreferHardware;
-}
-
-void MemoryConfig::setTimelapsePreferHardware(bool value)
-{
-	if(value != m_timelapsePreferHardware) {
-		m_timelapsePreferHardware = value;
-		Q_EMIT changeTimelapsePreferHardware(m_timelapsePreferHardware);
-	}
-}
-#endif
 
 bool MemoryConfig::getTimelapseShowAdvanced() const
 {

@@ -25,18 +25,31 @@ enum class VideoFormatApplication {
 struct VideoFormatOption {
 	VideoFormat format;
 	QString title;
-	bool libavSupported;
 	bool ffmpegSupported;
-	bool androidSupported;
+	bool nonFfmpegSupported;
+
+	bool isOnlyFfmpegSupported() const
+	{
+		return !nonFfmpegSupported && ffmpegSupported;
+	}
 };
 
-bool isVideoFormatSupported(VideoFormat format);
+struct VideoEncoderOption {
+	QString key;
+	QString title;
+	int internalType;
+};
 
 bool isVideoFormatSupportedFfmpeg(VideoFormat format);
 
-bool isVideoFormatSupportedAndroid(VideoFormat format);
+bool isVideoFormatSupportedNonFfmpeg(VideoFormat format);
 
 QVector<VideoFormatOption> getVideoFormatOptions(
 	VideoFormatApplication application, bool *outAnyFfmpegSupported);
+
+QVector<VideoEncoderOption> getVideoEncoderOptions(VideoFormat format);
+
+int getAutomaticVideoEncoderOptionIndex(
+	const QVector<VideoEncoderOption> &options, bool haveFfmpeg);
 
 #endif

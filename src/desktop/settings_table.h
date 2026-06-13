@@ -35,22 +35,14 @@ SETTING_GETSET_V(
 SETTING(
 	animationExportFormat, AnimationExportFormat, "animationexport/format",
 	config::Config::defaultAnimationExportFormat())
-#if defined(DP_ANDROID_VIDEO_ENCODER)
 SETTING(
-	animationExportPreferAndroid, AnimationExportPreferAndroid,
-	"animationexport/preferandroid",
-	config::Config::defaultAnimationExportPreferAndroid())
-#endif
+	animationExportPreferredEncoders, AnimationExportPreferredEncoders,
+	"animationexport/preferredencoders",
+	config::Config::defaultAnimationExportPreferredEncoders())
 SETTING(
-	animationExportPreferFfmpeg, AnimationExportPreferFfmpeg,
-	"animationexport/preferffmpeg",
-	config::Config::defaultAnimationExportPreferFfmpeg())
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-SETTING(
-	animationExportPreferHardware, AnimationExportPreferHardware,
-	"animationexport/preferhardware",
-	config::Config::defaultAnimationExportPreferHardware())
-#endif
+	animationExportShowAdvanced, AnimationExportShowAdvanced,
+	"animationexport/showadvanced",
+	config::Config::defaultAnimationExportShowAdvanced())
 SETTING(
 	automaticAlphaPreserve, AutomaticAlphaPreserve,
 	"settings/automaticalphapreserve",
@@ -707,20 +699,10 @@ SETTING(
 	timelapseMaxQueueEntries, TimelapseMaxQueueEntries,
 	"timelapse/maxqueueentries",
 	config::Config::defaultTimelapseMaxQueueEntries())
-#if defined(DP_ANDROID_VIDEO_ENCODER)
 SETTING(
-	timelapsePreferAndroid, TimelapsePreferAndroid, "timelapse/preferandroid",
-	config::Config::defaultTimelapsePreferAndroid())
-#endif
-SETTING(
-	timelapsePreferFfmpeg, TimelapsePreferFfmpeg, "timelapse/preferffmpeg",
-	config::Config::defaultTimelapsePreferFfmpeg())
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-SETTING(
-	timelapsePreferHardware, TimelapsePreferHardware,
-	"timelapse/preferhardware",
-	config::Config::defaultTimelapsePreferHardware())
-#endif
+	timelapsePreferredEncoders, TimelapsePreferredEncoders,
+	"timelapse/preferredencoders",
+	config::Config::defaultTimelapsePreferredEncoders())
 SETTING(
 	timelapseShowAdvanced, TimelapseShowAdvanced, "timelapse/showadvanced",
 	config::Config::defaultTimelapseShowAdvanced())

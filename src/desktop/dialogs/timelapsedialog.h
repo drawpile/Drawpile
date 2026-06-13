@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QImage>
 #include <QRect>
+#include <QVariantHash>
 
 class KisDoubleSliderSpinBox;
 class KisSliderSpinBox;
@@ -85,7 +86,13 @@ private:
 	void updateSecondsText(int seconds);
 	int getDurationSeconds() const;
 	void setDurationSeconds(int seconds);
+	void updateFormat();
 	void updateEncoder();
+	void updateFfmpeg();
+	bool isAllEncodersFfmpeg() const;
+	bool isAnyEncoderFfmpeg() const;
+	bool isCurrentEncoderFfmpeg() const;
+	QString currentEncoderKey() const;
 	void updateWidth(int value);
 	void updateHeight(int value);
 	void updateAspectRatio(bool checked);
@@ -106,11 +113,9 @@ private:
 	const QImage &getLogoImage();
 	QColor getOverrideBackgroundColor() const;
 
-#ifndef DP_ANDROID_VIDEO_ENCODER
 	void showFfmpegSettings();
 	void setFfmpegPath(const QString &ffmpegPath);
 	void updateFfmpegFormatIcons();
-#endif
 	void pickBackgroundColor();
 	void pickBackdropColor();
 	void pickFlashColor();
@@ -137,12 +142,14 @@ private:
 	DP_ViewModeFilter m_vmf;
 	QRect m_crop;
 	QString m_tempPath;
+	QVariantHash m_preferredEncoders;
 	QScrollArea *m_scroll;
 	widgets::TimelapsePreview *m_timelapsePreview;
 	QWidget *m_settingsPage;
 	QWidget *m_progressPage;
 	QWidget *m_finishPage;
 	QComboBox *m_formatCombo;
+	utils::FormNote *m_ffmpegFormatNote = nullptr;
 	KisSliderSpinBox *m_minutesSpinner;
 	KisSliderSpinBox *m_secondsSpinner;
 	KisSliderSpinBox *m_widthSpinner;
@@ -155,6 +162,8 @@ private:
 	utils::FormNote *m_dimensionsNote;
 	QPushButton *m_advancedButton;
 	QWidget *m_advancedWidget;
+	QComboBox *m_encoderCombo;
+	utils::FormNote *m_ffmpegEncoderNote = nullptr;
 	QComboBox *m_interpolationCombo;
 	QCheckBox *m_ownCheckBox;
 	color_widgets::ColorPreview *m_backgroundPreview;
@@ -173,10 +182,12 @@ private:
 	KisSliderSpinBox *m_maxQueueEntriesSlider;
 	KisDoubleSliderSpinBox *m_framerateSlider;
 	utils::FormNote *m_framerateNote;
+	QPushButton *m_ffmpegButton = nullptr;
 	QLabel *m_progressLabel;
 	QProgressBar *m_progressBar;
 	QLabel *m_finishLabel;
 	QDialogButtonBox *m_buttons;
+	QString m_ffmpegPath;
 	TimelapseSaverRunnable *m_saver = nullptr;
 	QImage m_logoImage;
 	QSize m_fullResolution;
@@ -190,17 +201,6 @@ private:
 	double m_flipbookFramerate = 24.0;
 	bool m_inFrameView;
 	bool m_cancelling = false;
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	QLabel *m_androidLabel;
-	QCheckBox *m_androidHardwareCheckBox;
-	QCheckBox *m_androidCheckBox;
-#else
-	utils::FormNote *m_ffmpegNote = nullptr;
-	QLabel *m_ffmpegLabel = nullptr;
-	QCheckBox *m_ffmpegCheckBox = nullptr;
-	QPushButton *m_ffmpegButton = nullptr;
-	QString m_ffmpegPath;
-#endif
 };
 
 }

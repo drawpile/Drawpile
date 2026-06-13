@@ -50,26 +50,11 @@ static void appendFormatOption(
 		options.append({
 			format,
 			title,
-			isVideoFormatSupported(format),
 			isVideoFormatSupportedFfmpeg(format),
-			isVideoFormatSupportedAndroid(format),
+			isVideoFormatSupportedNonFfmpeg(format),
 		});
 	}
 }
-}
-
-bool isVideoFormatSupported(VideoFormat format)
-{
-	switch(format) {
-#if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
-	case VideoFormat::Frames:
-#endif
-	case VideoFormat::Zip:
-		return true;
-	default:
-		return isSaveVideoFormatSupported(
-			format, DP_save_video_format_supported);
-	}
 }
 
 bool isVideoFormatSupportedFfmpeg(VideoFormat format)
@@ -78,10 +63,10 @@ bool isVideoFormatSupportedFfmpeg(VideoFormat format)
 		format, DP_save_video_format_supported_ffmpeg);
 }
 
-bool isVideoFormatSupportedAndroid(VideoFormat format)
+bool isVideoFormatSupportedNonFfmpeg(VideoFormat format)
 {
 	return isSaveVideoFormatSupported(
-		format, DP_save_video_format_supported_android);
+		format, DP_save_video_format_supported_non_ffmpeg);
 }
 
 
@@ -147,4 +132,104 @@ QVector<VideoFormatOption> getVideoFormatOptions(
 	}
 
 	return options;
+}
+
+namespace {
+static void addVideoEncoderOption(
+	QVector<VideoEncoderOption> &options, const DP_SaveVideoSupportEntry *entry)
+{
+	if(entry) {
+		QString name = QString::fromUtf8(entry->name);
+		QString suffix;
+		if(!name.isEmpty()) {
+			suffix = QStringLiteral(" - %1").arg(name);
+		}
+
+		int type = entry->type;
+		switch(type) {
+		case DP_SAVE_VIDEO_ENCODER_TYPE_LIBAV:
+			options.append(
+				{QStringLiteral("libav:") + name,
+				 QStringLiteral("libav") + suffix, type});
+			return;
+		case DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG:
+			options.append(
+				{QStringLiteral("ffmpeg:") + name,
+				 QStringLiteral("Ffmpeg") + suffix, type});
+			return;
+		case DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE:
+			options.append(
+				{QStringLiteral("androidsoftware:") + name,
+				 QStringLiteral("Android") + suffix, type});
+			return;
+		case DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_HARDWARE:
+			options.append(
+				{QStringLiteral("androidhardware:") + name,
+				 QStringLiteral("Hardware") + suffix, type});
+			return;
+		}
+		DP_warn("Unhandled encoder type %d", type);
+	}
+}
+}
+
+QVector<VideoEncoderOption> getVideoEncoderOptions(VideoFormat format)
+{
+	DP_SaveVideoSupport *support;
+	switch(format) {
+	case VideoFormat::Webp:
+		support = DP_save_video_format_support(DP_SAVE_VIDEO_FORMAT_WEBP);
+		break;
+	case VideoFormat::Mp4Vp9:
+		support = DP_save_video_format_support(DP_SAVE_VIDEO_FORMAT_MP4_VP9);
+		break;
+	case VideoFormat::WebmVp8:
+		support = DP_save_video_format_support(DP_SAVE_VIDEO_FORMAT_WEBM_VP8);
+		break;
+	case VideoFormat::Mp4H264:
+		support = DP_save_video_format_support(DP_SAVE_VIDEO_FORMAT_MP4_H264);
+		break;
+	case VideoFormat::Mp4Av1:
+		support = DP_save_video_format_support(DP_SAVE_VIDEO_FORMAT_MP4_AV1);
+		break;
+	case VideoFormat::Apng:
+		support = DP_save_video_format_support(DP_SAVE_VIDEO_FORMAT_APNG);
+		break;
+	default:
+		support = nullptr;
+		break;
+	}
+
+	QVector<VideoEncoderOption> options;
+	if(support) {
+		int count = DP_save_video_support_count(support);
+		options.reserve(count);
+		for(int i = 0; i < count; ++i) {
+			addVideoEncoderOption(
+				options, DP_save_video_support_entry(support, i));
+		}
+	}
+	return options;
+}
+
+int getAutomaticVideoEncoderOptionIndex(
+	const QVector<VideoEncoderOption> &options, bool haveFfmpeg)
+{
+	int types[] = {
+		DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG,
+		DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE,
+		DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_HARDWARE,
+		DP_SAVE_VIDEO_ENCODER_TYPE_LIBAV,
+	};
+	int count = options.size();
+	for(int type : types) {
+		if(haveFfmpeg || type != DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG) {
+			for(int i = 0; i < count; ++i) {
+				if(options[i].internalType == type) {
+					return i;
+				}
+			}
+		}
+	}
+	return 0;
 }

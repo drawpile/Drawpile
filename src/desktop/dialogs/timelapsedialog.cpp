@@ -39,7 +39,7 @@ extern "C" {
 #include <QtColorWidgets/ColorPreview>
 #include <cmath>
 #include <functional>
-#if defined(DRAWPILE_FFMPEG_DIALOG) && !defined(DP_ANDROID_VIDEO_ENCODER)
+#ifdef DRAWPILE_FFMPEG_DIALOG
 #	include "desktop/dialogs/ffmpegdialog.h"
 #endif
 
@@ -166,27 +166,16 @@ TimelapseDialog::TimelapseDialog(
 	m_formatCombo = new widgets::NoScrollComboBox;
 	settingsForm->addRow(tr("Format:"), m_formatCombo);
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	QIcon androidFormatIcon =
-		QIcon::fromTheme(QStringLiteral("media-playback-start"));
-#endif
 	for(const VideoFormatOption &vfo : formatOptions) {
-		if(vfo.libavSupported || vfo.androidSupported) {
+		if(vfo.nonFfmpegSupported) {
 			m_formatCombo->addItem(vfo.title, int(vfo.format));
-#ifdef DP_ANDROID_VIDEO_ENCODER
-			if(vfo.androidSupported) {
-				m_formatCombo->setItemIcon(
-					m_formatCombo->count() - 1, androidFormatIcon);
-			}
-#endif
 		}
 	}
 
-#ifndef DP_ANDROID_VIDEO_ENCODER
 	if(anyFormatFfmpegSupported) {
 		bool needSeparator = true;
 		for(const VideoFormatOption &vfo : formatOptions) {
-			if(!vfo.libavSupported && vfo.ffmpegSupported) {
+			if(vfo.isOnlyFfmpegSupported()) {
 				if(needSeparator) {
 					needSeparator = false;
 					int separatorIndex = m_formatCombo->count();
@@ -199,20 +188,19 @@ TimelapseDialog::TimelapseDialog(
 			}
 		}
 
-		m_ffmpegNote = new utils::FormNote(
+		m_ffmpegFormatNote = new utils::FormNote(
 			tr("This format requires FFmpeg, click here to set it up."), false,
 			QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
-		m_ffmpegNote->hide();
-		settingsForm->addRow(nullptr, m_ffmpegNote);
+		m_ffmpegFormatNote->hide();
+		settingsForm->addRow(nullptr, m_ffmpegFormatNote);
 		connect(
-			m_ffmpegNote, &utils::FormNote::linkClicked, this,
+			m_ffmpegFormatNote, &utils::FormNote::linkClicked, this,
 			&TimelapseDialog::showFfmpegSettings);
 	}
-#endif
 
 	connect(
 		m_formatCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &TimelapseDialog::updateEncoder);
+		this, &TimelapseDialog::updateFormat);
 
 	QHBoxLayout *durationLayout = new QHBoxLayout;
 	durationLayout->setContentsMargins(0, 0, 0, 0);
@@ -353,9 +341,6 @@ TimelapseDialog::TimelapseDialog(
 		}
 	}
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	utils::addFormSpacer(settingsLayout);
-#else
 	if(anyFormatFfmpegSupported) {
 		QHBoxLayout *ffmpegButtonLayout = new QHBoxLayout;
 		ffmpegButtonLayout->setContentsMargins(0, 0, 0, 0);
@@ -375,7 +360,6 @@ TimelapseDialog::TimelapseDialog(
 	} else {
 		utils::addFormSpacer(settingsLayout);
 	}
-#endif
 
 	QHBoxLayout *advancedButtonLayout = new QHBoxLayout;
 	advancedButtonLayout->setContentsMargins(0, 0, 0, 0);
@@ -399,25 +383,22 @@ TimelapseDialog::TimelapseDialog(
 	QFormLayout *advancedForm = new QFormLayout(m_advancedWidget);
 	advancedForm->setContentsMargins(0, 0, 0, 0);
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	m_androidLabel = new QLabel(tr("Encoder:"));
-	m_androidHardwareCheckBox =
-		new QCheckBox(tr("Hardware encoding (faster, may cause artifacts)"));
-	advancedForm->addRow(m_androidLabel, m_androidHardwareCheckBox);
+	m_encoderCombo = new widgets::NoScrollComboBox;
+	advancedForm->addRow(tr("Encoder:"), m_encoderCombo);
+	connect(
+		m_encoderCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &TimelapseDialog::updateEncoder);
 
-	m_androidCheckBox = new QCheckBox(tr("Prefer Android encoder"));
-	advancedForm->addRow(nullptr, m_androidCheckBox);
-#else
 	if(anyFormatFfmpegSupported) {
-		m_ffmpegLabel = new QLabel(tr("Encoder:"));
-		m_ffmpegCheckBox =
-			new QCheckBox(tr("Prefer FFmpeg over internal encoder"));
-		advancedForm->addRow(m_ffmpegLabel, m_ffmpegCheckBox);
+		m_ffmpegEncoderNote = new utils::FormNote(
+			tr("This encoder requires FFmpeg, click here to set it up."), false,
+			QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
+		m_ffmpegEncoderNote->hide();
+		advancedForm->addRow(nullptr, m_ffmpegEncoderNote);
 		connect(
-			m_ffmpegCheckBox, &QCheckBox::clicked, this,
-			&TimelapseDialog::updateEncoder);
+			m_ffmpegEncoderNote, &utils::FormNote::linkClicked, this,
+			&TimelapseDialog::showFfmpegSettings);
 	}
-#endif
 
 	QPair<QString, int> interpolationPairs[] = {
 		//: Image scaling option that picks an algorithm automatically.
@@ -666,10 +647,8 @@ TimelapseDialog::TimelapseDialog(
 	updateCurrentResolution();
 	updateAnimation();
 	loadSettings();
-	updateEncoder();
-#ifndef DP_ANDROID_VIDEO_ENCODER
+	updateFormat();
 	updateFfmpegFormatIcons();
-#endif
 }
 
 TimelapseDialog::~TimelapseDialog()
@@ -697,36 +676,20 @@ void TimelapseDialog::setTempPath(const QString &tempPath)
 void TimelapseDialog::accept()
 {
 	if(!m_saver) {
-		int format = m_formatCombo->currentData().toInt();
-
-#ifdef DP_ANDROID_VIDEO_ENCODER
-		bool useAndroidVideoEncoder =
-			!isVideoFormatSupported(VideoFormat(format)) ||
-			(m_androidCheckBox->isChecked() &&
-			 isVideoFormatSupportedAndroid(VideoFormat(format)));
-#else
-		bool useFfmpeg;
-		if(isVideoFormatSupported(VideoFormat(format))) {
-			useFfmpeg = m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked() &&
-						!m_ffmpegPath.isEmpty();
-		} else {
-			useFfmpeg = true;
-		}
-
-		if(useFfmpeg & m_ffmpegPath.isEmpty()) {
+		if(isCurrentEncoderFfmpeg() && m_ffmpegPath.isEmpty()) {
 			QMessageBox *box = utils::showQuestion(
 				this, tr("FFmpeg"),
-				tr("The selected format requires FFmpeg. Do you want to set it "
-				   "up now?"));
+				tr("The selected encoder requires FFmpeg. Do you want to set "
+				   "it up now?"));
 			connect(
 				box, &QMessageBox::accepted, this,
 				&TimelapseDialog::showFfmpegSettings);
 			return;
 		}
-#endif
 
 		saveSettings();
 
+		int format = m_formatCombo->currentData().toInt();
 		QString outputPath = choosePath(format);
 		if(!outputPath.isEmpty()) {
 			bool lingerAnimation = m_animationResultCheckBox &&
@@ -778,13 +741,8 @@ void TimelapseDialog::accept()
 
 			const config::Config *cfg = dpAppConfig();
 			m_saver = new TimelapseSaverRunnable(
-				m_canvasState, &m_vmf,
-#ifdef DP_ANDROID_VIDEO_ENCODER
-				useAndroidVideoEncoder, m_androidHardwareCheckBox->isChecked(),
-#else
-				useFfmpeg ? m_ffmpegPath : QString(),
-#endif
-				outputPath, m_tempPath, format, m_widthSpinner->value(),
+				m_canvasState, &m_vmf, m_ffmpegPath, outputPath, m_tempPath,
+				currentEncoderKey(), format, m_widthSpinner->value(),
 				m_heightSpinner->value(),
 				m_interpolationCombo->currentData().toInt(),
 				m_cropCheckBox->isChecked() ? m_crop : QRect(),
@@ -935,6 +893,7 @@ void TimelapseDialog::setUseCrop(bool checked)
 
 void TimelapseDialog::resetToDefaultSettings()
 {
+	m_preferredEncoders.clear();
 	m_keepAspectCheckBox->setChecked(true);
 	m_cropCheckBox->setChecked(!m_crop.isEmpty());
 	setDefaultResolutions();
@@ -944,17 +903,6 @@ void TimelapseDialog::resetToDefaultSettings()
 	if(!checkLogoLocation(config::Config::defaultTimelapseLogoLocation())) {
 		checkLogoLocation(int(LogoLocation::Default));
 	}
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	m_androidHardwareCheckBox->setChecked(
-		config::Config::defaultTimelapsePreferHardware());
-	m_androidCheckBox->setChecked(
-		config::Config::defaultTimelapsePreferAndroid());
-#else
-	if(m_ffmpegCheckBox) {
-		m_ffmpegCheckBox->setChecked(
-			config::Config::defaultTimelapsePreferFfmpeg());
-	}
-#endif
 	if(!selectInterpolation(config::Config::defaultTimelapseInterpolation())) {
 		m_interpolationCombo->setCurrentIndex(0);
 	}
@@ -1014,8 +962,7 @@ void TimelapseDialog::resetDefaultExportFormat()
 	};
 	// Pick a format that doesn't require ffmpeg if possible.
 	for(int format : formats) {
-		if((isVideoFormatSupported(VideoFormat(format)) ||
-			isVideoFormatSupportedAndroid(VideoFormat(format))) &&
+		if(isVideoFormatSupportedNonFfmpeg(VideoFormat(format)) &&
 		   selectExportFormat(format)) {
 			return;
 		}
@@ -1031,6 +978,8 @@ void TimelapseDialog::resetDefaultExportFormat()
 void TimelapseDialog::loadSettings()
 {
 	config::Config *cfg = dpAppConfig();
+	m_preferredEncoders = cfg->getTimelapsePreferredEncoders();
+	m_ffmpegPath = cfg->getFfmpegPath();
 	if(!selectExportFormat(cfg->getTimelapseExportFormat())) {
 		resetDefaultExportFormat();
 	}
@@ -1039,15 +988,6 @@ void TimelapseDialog::loadSettings()
 		checkLogoLocation(int(LogoLocation::Default));
 	}
 	updateAdvanced(cfg->getTimelapseShowAdvanced());
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	m_androidHardwareCheckBox->setChecked(cfg->getTimelapsePreferHardware());
-	m_androidCheckBox->setChecked(cfg->getTimelapsePreferAndroid());
-#else
-	m_ffmpegPath = cfg->getFfmpegPath();
-	if(m_ffmpegCheckBox) {
-		m_ffmpegCheckBox->setChecked(cfg->getTimelapsePreferFfmpeg());
-	}
-#endif
 	if(!selectInterpolation(cfg->getTimelapseInterpolation())) {
 		m_interpolationCombo->setCurrentIndex(0);
 	}
@@ -1087,18 +1027,11 @@ void TimelapseDialog::loadSettings()
 void TimelapseDialog::saveSettings()
 {
 	config::Config *cfg = dpAppConfig();
+	cfg->setTimelapsePreferredEncoders(m_preferredEncoders);
 	cfg->setTimelapseExportFormat(m_formatCombo->currentData().toInt());
 	cfg->setTimelapseDurationSeconds(getDurationSeconds());
 	cfg->setTimelapseLogoLocation(m_logoLocationGroup->checkedId());
 	cfg->setTimelapseShowAdvanced(m_advancedWidget->isEnabled());
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	cfg->setTimelapsePreferHardware(m_androidHardwareCheckBox->isChecked());
-	cfg->setTimelapsePreferAndroid(m_androidCheckBox->isChecked());
-#else
-	if(m_ffmpegCheckBox) {
-		cfg->setTimelapsePreferFfmpeg(m_ffmpegCheckBox->isChecked());
-	}
-#endif
 	cfg->setTimelapseInterpolation(m_interpolationCombo->currentData().toInt());
 	cfg->setTimelapseTimeOwnOnly(m_ownCheckBox->isChecked());
 	cfg->setTimelapseBackdropColor(m_backdropPreview->color());
@@ -1178,46 +1111,122 @@ void TimelapseDialog::setDurationSeconds(int seconds)
 	m_secondsSpinner->setValue(seconds % 60);
 }
 
+void TimelapseDialog::updateFormat()
+{
+	int format = m_formatCombo->currentData().toInt();
+	QVector<VideoEncoderOption> options =
+		getVideoEncoderOptions(VideoFormat(format));
+
+	QSignalBlocker blocker(m_encoderCombo);
+	m_encoderCombo->clear();
+
+	int count = options.size();
+	if(count == 0) {
+		m_encoderCombo->addItem(tr("Internal"));
+		m_encoderCombo->setEnabled(false);
+	} else {
+		int automaticIndex = getAutomaticVideoEncoderOptionIndex(
+			options, !m_ffmpegPath.isEmpty());
+		const VideoEncoderOption &automaticOption = options[automaticIndex];
+		m_encoderCombo->addItem(
+			tr("Automatic (%1)").arg(automaticOption.title),
+			QVariant(automaticOption.key));
+
+		QString preferredKey =
+			m_preferredEncoders.value(QString::number(format)).toString();
+		int preferredIndex = 0;
+		for(int i = 0; i < count; ++i) {
+			const VideoEncoderOption &option = options[i];
+			m_encoderCombo->addItem(option.title, QVariant(option.key));
+			if(option.key == preferredKey) {
+				preferredIndex = i + 1;
+			}
+		}
+
+		m_encoderCombo->setCurrentIndex(preferredIndex);
+		m_encoderCombo->setEnabled(true);
+	}
+
+	updateFfmpeg();
+}
+
 void TimelapseDialog::updateEncoder()
 {
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	int format = m_formatCombo->currentData().toInt();
-	bool libavSupported = isVideoFormatSupported(VideoFormat(format));
-	bool androidSupported = isVideoFormatSupportedAndroid(VideoFormat(format));
-	m_androidLabel->setVisible(androidSupported);
-	m_androidHardwareCheckBox->setVisible(androidSupported);
-	m_androidCheckBox->setVisible(libavSupported && androidSupported);
-#else
-	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegLabel || m_ffmpegCheckBox) {
-		int format = m_formatCombo->currentData().toInt();
-		bool libavSupported = isVideoFormatSupported(VideoFormat(format));
-		bool ffmpegSupported =
-			isVideoFormatSupportedFfmpeg(VideoFormat(format));
-
-		if(m_ffmpegNote) {
-			m_ffmpegNote->setVisible(
-				!libavSupported && ffmpegSupported && m_ffmpegPath.isEmpty());
-		}
-
-		if(m_ffmpegButton) {
-			if(m_ffmpegPath.isEmpty()) {
-				m_ffmpegButton->setText(tr("Set up FFmpeg"));
-			} else {
-				m_ffmpegButton->setText(tr("FFmpeg settings"));
-			}
-			m_ffmpegButton->setVisible(
-				(!libavSupported && ffmpegSupported) ||
-				(m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked()));
-		}
-
-		if(m_ffmpegLabel) {
-			m_ffmpegLabel->setVisible(libavSupported && ffmpegSupported);
-		}
-		if(m_ffmpegCheckBox) {
-			m_ffmpegCheckBox->setVisible(libavSupported && ffmpegSupported);
+	if(m_encoderCombo->count() != 0) {
+		QString key = QString::number(m_formatCombo->currentData().toInt());
+		// The first item is the "Automatic" entry.
+		if(m_encoderCombo->currentIndex() == 0) {
+			m_preferredEncoders.remove(key);
+		} else {
+			QString preferredKey = m_encoderCombo->currentData().toString();
+			m_preferredEncoders.insert(key, preferredKey);
 		}
 	}
-#endif
+	updateFfmpeg();
+}
+
+void TimelapseDialog::updateFfmpeg()
+{
+	if(m_ffmpegFormatNote) {
+		m_ffmpegFormatNote->setVisible(
+			m_ffmpegPath.isEmpty() && isAllEncodersFfmpeg());
+	}
+
+	if(m_ffmpegEncoderNote) {
+		m_ffmpegEncoderNote->setVisible(
+			m_ffmpegPath.isEmpty() && isCurrentEncoderFfmpeg());
+	}
+
+	if(m_ffmpegButton) {
+		m_ffmpegButton->setVisible(isAnyEncoderFfmpeg());
+		if(m_ffmpegPath.isEmpty()) {
+			m_ffmpegButton->setText(tr("Set up FFmpeg"));
+		} else {
+			m_ffmpegButton->setText(tr("FFmpeg settings"));
+		}
+	}
+}
+
+bool TimelapseDialog::isAllEncodersFfmpeg() const
+{
+	int count = m_encoderCombo->count();
+	if(count == 0) {
+		return false;
+	} else {
+		for(int i = 0; i < count; ++i) {
+			if(!m_encoderCombo->itemData(i).toString().startsWith(
+				   QStringLiteral("ffmpeg:"))) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+bool TimelapseDialog::isAnyEncoderFfmpeg() const
+{
+	int count = m_encoderCombo->count();
+	for(int i = 0; i < count; ++i) {
+		if(m_encoderCombo->itemData(i).toString().startsWith(
+			   QStringLiteral("ffmpeg:"))) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool TimelapseDialog::isCurrentEncoderFfmpeg() const
+{
+	return currentEncoderKey().startsWith(QStringLiteral("ffmpeg:"));
+}
+
+QString TimelapseDialog::currentEncoderKey() const
+{
+	if(m_encoderCombo->count() == 0) {
+		return QString();
+	} else {
+		return m_encoderCombo->currentData().toString();
+	}
 }
 
 void TimelapseDialog::updateWidth(int value)
@@ -1414,10 +1423,9 @@ QColor TimelapseDialog::getOverrideBackgroundColor() const
 	}
 }
 
-#ifndef DP_ANDROID_VIDEO_ENCODER
 void TimelapseDialog::showFfmpegSettings()
 {
-#	ifdef DRAWPILE_FFMPEG_DIALOG
+#ifdef DRAWPILE_FFMPEG_DIALOG
 	QString objectName = QStringLiteral("ffmpegdialog");
 	FfmpegDialog *dlg =
 		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
@@ -1433,16 +1441,16 @@ void TimelapseDialog::showFfmpegSettings()
 			&TimelapseDialog::setFfmpegPath);
 		dlg->show();
 	}
-#	else
+#else
 	utils::showFfmpegUnsupportedError(this);
-#	endif
+#endif
 }
 
 void TimelapseDialog::setFfmpegPath(const QString &ffmpegPath)
 {
 	if(ffmpegPath != m_ffmpegPath) {
 		m_ffmpegPath = ffmpegPath;
-		updateEncoder();
+		updateFormat();
 		updateFfmpegFormatIcons();
 	}
 }
@@ -1457,12 +1465,11 @@ void TimelapseDialog::updateFfmpegFormatIcons()
 	int count = m_formatCombo->count();
 	for(int i = 0; i < count; ++i) {
 		int format = m_formatCombo->itemData(i).toInt();
-		if(!isVideoFormatSupported(VideoFormat(format))) {
+		if(!isVideoFormatSupportedNonFfmpeg(VideoFormat(format))) {
 			m_formatCombo->setItemIcon(i, icon);
 		}
 	}
 }
-#endif
 
 void TimelapseDialog::pickBackgroundColor()
 {

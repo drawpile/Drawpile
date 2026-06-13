@@ -9,16 +9,20 @@
 #define DP_ANDROID_VIDEO_ENCODER_STATUS_NEEDS_COPY    3
 #define DP_ANDROID_VIDEO_ENCODER_STATUS_ERROR_COPY    999
 
+typedef void (*DP_AndroidVideoEncoderFormatSupportAddFn)(void *user,
+                                                         const char *name,
+                                                         bool hardware);
+
 typedef struct DP_AndroidVideoEncoder DP_AndroidVideoEncoder;
 
 typedef struct DP_AndroidVideoEncoderParams {
     const char *output;
     const char *temp;
+    const char *encoder;
     double framerate;
     int format;
     int width;
     int height;
-    bool hardware;
 } DP_AndroidVideoEncoderParams;
 
 typedef struct DP_AndroidVideoEncoderImage {
@@ -32,7 +36,8 @@ typedef struct DP_AndroidVideoEncoderImage {
     int pixel_stride_v;
 } DP_AndroidVideoEncoderImage;
 
-bool DP_android_video_encoder_format_supported(int format);
+void DP_android_video_encoder_format_support(
+    int format, DP_AndroidVideoEncoderFormatSupportAddFn fn, void *user);
 
 DP_AndroidVideoEncoder *
 DP_android_video_encoder_new(DP_AndroidVideoEncoderParams params);

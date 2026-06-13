@@ -12,7 +12,6 @@ typedef struct DP_Rect DP_Rect;
 
 #define DP_SAVE_VIDEO_FLAGS_NONE         0x0u
 #define DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH 0x1u
-#define DP_SAVE_VIDEO_FLAGS_HARDWARE     0x2u
 
 // GIF palette sizes, always 16x16 images in BGRA format.
 #define DP_SAVE_VIDEO_GIF_PALETTE_DIMENSION 16
@@ -28,6 +27,7 @@ typedef enum DP_SaveVideoFormat {
     DP_SAVE_VIDEO_FORMAT_MP4_H264,
     DP_SAVE_VIDEO_FORMAT_MP4_AV1,
     DP_SAVE_VIDEO_FORMAT_APNG,
+    DP_SAVE_VIDEO_FORMAT_LAST = DP_SAVE_VIDEO_FORMAT_APNG,
 } DP_SaveVideoFormat;
 
 typedef enum DP_SaveVideoDestination {
@@ -36,6 +36,20 @@ typedef enum DP_SaveVideoDestination {
     DP_SAVE_VIDEO_DESTINATION_FFMPEG,
     DP_SAVE_VIDEO_DESTINATION_ANDROID,
 } DP_SaveVideoDestination;
+
+typedef enum DP_SaveVideoEncoderType {
+    DP_SAVE_VIDEO_ENCODER_TYPE_LIBAV,
+    DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG,
+    DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE,
+    DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_HARDWARE,
+} DP_SaveVideoEncoderType;
+
+typedef struct DP_SaveVideoSupportEntry {
+    DP_SaveVideoEncoderType type;
+    const char *name;
+} DP_SaveVideoSupportEntry;
+
+typedef struct DP_SaveVideoSupport DP_SaveVideoSupport;
 
 typedef struct DP_SaveVideoNextFrame {
     DP_SaveResult result;
@@ -57,6 +71,7 @@ typedef struct DP_SaveVideoFfmpegParams {
 typedef struct DP_SaveVideoAndroidParams {
     const char *output;
     const char *temp;
+    const char *encoder;
 } DP_SaveVideoAndroidParams;
 
 typedef struct DP_SaveVideoParams {
@@ -108,11 +123,16 @@ typedef struct DP_SaveAnimationGifParams {
     void *user;
 } DP_SaveAnimationGifParams;
 
-bool DP_save_video_format_supported(int format);
+DP_SaveVideoSupport *DP_save_video_format_support(int format);
+
+int DP_save_video_support_count(DP_SaveVideoSupport *support);
+
+const DP_SaveVideoSupportEntry *
+DP_save_video_support_entry(DP_SaveVideoSupport *support, int index);
 
 bool DP_save_video_format_supported_ffmpeg(int format);
 
-bool DP_save_video_format_supported_android(int format);
+bool DP_save_video_format_supported_non_ffmpeg(int format);
 
 DP_SaveResult DP_save_video(DP_SaveVideoParams params);
 

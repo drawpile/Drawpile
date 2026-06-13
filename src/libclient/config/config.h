@@ -319,21 +319,14 @@ public:
 	virtual void setAnimationExportFormat(int value) = 0;
 	static int defaultAnimationExportFormat();
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	virtual bool getAnimationExportPreferAndroid() const = 0;
-	virtual void setAnimationExportPreferAndroid(bool value) = 0;
-	static bool defaultAnimationExportPreferAndroid();
-#endif
+	virtual QVariantHash getAnimationExportPreferredEncoders() const = 0;
+	virtual void
+	setAnimationExportPreferredEncoders(const QVariantHash &value) = 0;
+	static QVariantHash defaultAnimationExportPreferredEncoders();
 
-	virtual bool getAnimationExportPreferFfmpeg() const = 0;
-	virtual void setAnimationExportPreferFfmpeg(bool value) = 0;
-	static bool defaultAnimationExportPreferFfmpeg();
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	virtual bool getAnimationExportPreferHardware() const = 0;
-	virtual void setAnimationExportPreferHardware(bool value) = 0;
-	static bool defaultAnimationExportPreferHardware();
-#endif
+	virtual bool getAnimationExportShowAdvanced() const = 0;
+	virtual void setAnimationExportShowAdvanced(bool value) = 0;
+	static bool defaultAnimationExportShowAdvanced();
 
 	virtual bool getAutoRecordHost() const = 0;
 	virtual void setAutoRecordHost(bool value) = 0;
@@ -1287,21 +1280,9 @@ public:
 	virtual void setTimelapseMaxQueueEntries(int value) = 0;
 	static int defaultTimelapseMaxQueueEntries();
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	virtual bool getTimelapsePreferAndroid() const = 0;
-	virtual void setTimelapsePreferAndroid(bool value) = 0;
-	static bool defaultTimelapsePreferAndroid();
-#endif
-
-	virtual bool getTimelapsePreferFfmpeg() const = 0;
-	virtual void setTimelapsePreferFfmpeg(bool value) = 0;
-	static bool defaultTimelapsePreferFfmpeg();
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	virtual bool getTimelapsePreferHardware() const = 0;
-	virtual void setTimelapsePreferHardware(bool value) = 0;
-	static bool defaultTimelapsePreferHardware();
-#endif
+	virtual QVariantHash getTimelapsePreferredEncoders() const = 0;
+	virtual void setTimelapsePreferredEncoders(const QVariantHash &value) = 0;
+	static QVariantHash defaultTimelapsePreferredEncoders();
 
 	virtual bool getTimelapseShowAdvanced() const = 0;
 	virtual void setTimelapseShowAdvanced(bool value) = 0;
@@ -1424,13 +1405,8 @@ Q_SIGNALS:
 	void changeAndroidWorkaroundIgnoreHistoricTabletEvents(bool value);
 #endif
 	void changeAnimationExportFormat(int value);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	void changeAnimationExportPreferAndroid(bool value);
-#endif
-	void changeAnimationExportPreferFfmpeg(bool value);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	void changeAnimationExportPreferHardware(bool value);
-#endif
+	void changeAnimationExportPreferredEncoders(const QVariantHash &value);
+	void changeAnimationExportShowAdvanced(bool value);
 	void changeAutoRecordHost(bool value);
 	void changeAutoRecordJoin(bool value);
 	void changeAutoRecordMetadataIntervalMinutes(int value);
@@ -1675,13 +1651,7 @@ Q_SIGNALS:
 	void changeTimelapseLogoScale(double value);
 	void changeTimelapseMaxDeltaSeconds(double value);
 	void changeTimelapseMaxQueueEntries(int value);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	void changeTimelapsePreferAndroid(bool value);
-#endif
-	void changeTimelapsePreferFfmpeg(bool value);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	void changeTimelapsePreferHardware(bool value);
-#endif
+	void changeTimelapsePreferredEncoders(const QVariantHash &value);
 	void changeTimelapseShowAdvanced(bool value);
 	void changeTimelapseTimeOwnOnly(bool value);
 	void changeToolBarConfig(const QVariantHash &value);

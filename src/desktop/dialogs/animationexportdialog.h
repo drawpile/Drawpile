@@ -2,6 +2,7 @@
 #ifndef DESKTOP_DIALOGS_ANIMATIONEXPORTDIALOG
 #define DESKTOP_DIALOGS_ANIMATIONEXPORTDIALOG
 #include <QDialog>
+#include <QVariantHash>
 #include <QVector>
 
 class KisDoubleSliderSpinBox;
@@ -39,34 +40,32 @@ public:
 	static QSize getScaledSizeFor(double scalePercent, const QRect &rect);
 
 public slots:
-#ifndef __EMSCRIPTEN__
 	void accept() override;
-#endif
+	void reject() override;
 
 signals:
 	void exportRequested(
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-#ifdef DP_ANDROID_VIDEO_ENCODER
-		bool useAndroidVideoEncoder,
-		bool useHardware,
-#else
-		const QString &ffmpegPath,
-#endif
-		int format, int loops, const QVector<int> &frameIndexes,
-		double framerate, const QRect &crop, double scalePercent,
-		bool scaleSmooth);
+		const QString &ffmpegPath, const QString &encoderKey, int format,
+		int loops, const QVector<int> &frameIndexes, double framerate,
+		const QRect &crop, double scalePercent, bool scaleSmooth);
 
 private:
-	void updateOutputUi();
 	void updateScalingUi();
-	void updateEncoderUi();
-#ifndef DP_ANDROID_VIDEO_ENCODER
+	void toggleAdvanced();
+	void updateAdvanced(bool enabled);
+	void updateFormat();
+	void updateEncoder();
+	void updateFfmpegUi();
+	bool isAllEncodersFfmpeg() const;
+	bool isAnyEncoderFfmpeg() const;
+	bool isCurrentEncoderFfmpeg() const;
+	QString currentEncoderKey() const;
 	void showFfmpegSettings();
 	void setFfmpegPath(const QString &ffmpegPath);
 	void updateFfmpegFormatIcons();
-#endif
 #ifndef __EMSCRIPTEN__
 	QString choosePath();
 #endif
@@ -83,6 +82,7 @@ private:
 	void setCanvasFrameCount(int frameCount);
 	void setCanvasFramerate(double framerate);
 
+	void saveSettings();
 	void requestExport();
 
 	QRect getCropRect() const;
@@ -92,12 +92,19 @@ private:
 #ifndef __EMSCRIPTEN__
 	QString m_path;
 #endif
+	QVariantHash m_preferredEncoders;
 	QComboBox *m_formatCombo;
+	utils::FormNote *m_ffmpegFormatNote = nullptr;
 	QLabel *m_loopsLabel;
 	KisDoubleSliderSpinBox *m_scaleSpinner;
 	QCheckBox *m_scaleSmoothBox;
 	QLabel *m_scaleLabel;
 	KisSliderSpinBox *m_loopsSpinner;
+	QPushButton *m_ffmpegButton = nullptr;
+	QPushButton *m_advancedButton;
+	QWidget *m_advancedWidget;
+	QComboBox *m_encoderCombo;
+	utils::FormNote *m_ffmpegEncoderNote = nullptr;
 	KisSliderSpinBox *m_startSpinner;
 	KisSliderSpinBox *m_endSpinner;
 	KisDoubleSliderSpinBox *m_framerateSpinner;
@@ -118,15 +125,7 @@ private:
 	int m_flipbookEnd = -1;
 	double m_flipbookFramerate = -1.0;
 	QRect m_flipbookCrop;
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	QCheckBox *m_androidCheckBox;
-	QCheckBox *m_androidHardwareCheckBox;
-#else
-	utils::FormNote *m_ffmpegNote = nullptr;
-	QCheckBox *m_ffmpegCheckBox = nullptr;
-	QPushButton *m_ffmpegButton = nullptr;
 	QString m_ffmpegPath;
-#endif
 };
 
 }

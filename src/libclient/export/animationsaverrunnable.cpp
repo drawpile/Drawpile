@@ -10,14 +10,12 @@ extern "C" {
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/videoformat.h"
+#include <QDir>
 #include <QElapsedTimer>
+#include <QFile>
 #ifdef __EMSCRIPTEN__
 #	include <QDateTime>
 #	include <QFile>
-#endif
-#ifdef DP_ANDROID_VIDEO_ENCODER
-#	include <QFile>
-#	include <QDir>
 #endif
 
 AnimationSaverRunnable::AnimationSaverRunnable(
@@ -27,12 +25,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	int format, int width, int height, int loops,
 	const QVector<int> &frameIndexes, double framerate, const QRect &crop,
 	bool scaleSmooth, const drawdance::CanvasState &canvasState,
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder, bool useHardware,
-#else
-	const QString &ffmpegPath,
-#endif
-	QObject *parent)
+	const QString &ffmpegPath, const QString &encoderKey, QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
@@ -45,15 +38,18 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_crop(crop)
 	, m_frameIndexes(frameIndexes)
 	, m_canvasState(canvasState)
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	, m_useAndroidVideoEncoder(useAndroidVideoEncoder)
-	, m_useHardware(useHardware)
-#else
 	, m_ffmpegPath(ffmpegPath)
-#endif
+	, m_encoderKey(encoderKey)
 	, m_scaleSmooth(scaleSmooth)
 	, m_cancelled(false)
 {
+}
+
+namespace {
+union VideoParams {
+	DP_SaveVideoFfmpegParams ffmpeg;
+	DP_SaveVideoAndroidParams android;
+};
 }
 
 void AnimationSaverRunnable::run()
@@ -133,50 +129,43 @@ void AnimationSaverRunnable::run()
 	case int(VideoFormat::Apng): {
 		DP_SaveVideoDestination destination;
 		void *destinationParam;
-
-#	ifdef DP_ANDROID_VIDEO_ENCODER
-		DP_SaveVideoAndroidParams androidParams;
+		VideoParams videoParams;
 		QString tempPath;
-		QByteArray tempPathBytes;
-		bool useLibav = !m_useAndroidVideoEncoder;
-#	else
-		DP_SaveVideoFfmpegParams ffmpegParams;
-		QByteArray ffmpegPathBytes;
-		bool useLibav = m_ffmpegPath.isEmpty();
-#	endif
+		QByteArray extraPathBytes;
 
-		unsigned int flags = DP_SAVE_VIDEO_FLAGS_NONE;
-		if(m_scaleSmooth) {
-			flags |= DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH;
+		int encoderColonIndex = m_encoderKey.indexOf(QChar(':'));
+		QString encoderType;
+		QByteArray encoderNameBytes;
+		if(encoderColonIndex != -1) {
+			encoderType = m_encoderKey.mid(0, encoderColonIndex);
 		}
 
-		if(useLibav) {
-			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
-			destinationParam = pathBytes.data();
-		} else {
-#	ifdef DP_ANDROID_VIDEO_ENCODER
-			destination = DP_SAVE_VIDEO_DESTINATION_ANDROID;
-			destinationParam = &androidParams;
-			tempPath = QDir::temp().filePath(QStringLiteral("animtemp"));
-			QFile::remove(tempPath);
-			tempPathBytes = tempPath.toUtf8();
-			androidParams = {
-				pathBytes.constData(),
-				tempPathBytes.constData(),
-			};
-			if(m_useHardware) {
-				flags |= DP_SAVE_VIDEO_FLAGS_HARDWARE;
-			}
-#	else
+		if(encoderType == QStringLiteral("ffmpeg")) {
 			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
-			destinationParam = &ffmpegParams;
-			ffmpegPathBytes = m_ffmpegPath.toUtf8();
-			ffmpegParams = {
-				ffmpegPathBytes.constData(),
+			destinationParam = &videoParams.ffmpeg;
+			extraPathBytes = m_ffmpegPath.toUtf8();
+			videoParams.ffmpeg = {
+				extraPathBytes.constData(),
 				nullptr,
 				pathBytes.constData(),
 			};
-#	endif
+
+		} else if(encoderType.startsWith(QStringLiteral("android"))) {
+			destination = DP_SAVE_VIDEO_DESTINATION_ANDROID;
+			destinationParam = &videoParams.android;
+			tempPath = QDir::temp().filePath(QStringLiteral("animtemp"));
+			QFile::remove(tempPath);
+			extraPathBytes = tempPath.toUtf8();
+			encoderNameBytes = m_encoderKey.mid(encoderColonIndex + 1).toUtf8();
+			videoParams.android = {
+				pathBytes.constData(),
+				extraPathBytes.constData(),
+				encoderNameBytes.constData(),
+			};
+
+		} else {
+			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
+			destinationParam = pathBytes.data();
 		}
 
 		DP_SaveAnimationVideoParams params = {
@@ -186,7 +175,7 @@ void AnimationSaverRunnable::run()
 			destinationParam,
 			nullptr,
 			0,
-			flags,
+			DP_flag_uint(m_scaleSmooth, DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH),
 			formatToSaveVideoFormat(),
 			m_width,
 			m_height,
@@ -198,11 +187,9 @@ void AnimationSaverRunnable::run()
 			this,
 		};
 		result = DP_save_animation_video(params);
-#	ifdef DP_ANDROID_VIDEO_ENCODER
 		if(!tempPath.isEmpty()) {
 			QFile::remove(tempPath);
 		}
-#	endif
 		break;
 	}
 #endif

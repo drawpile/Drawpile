@@ -61,18 +61,12 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool getAnimationExportPreferAndroid() const override;
-	void setAnimationExportPreferAndroid(bool value) override;
-#endif
+	QVariantHash getAnimationExportPreferredEncoders() const override;
+	void
+	setAnimationExportPreferredEncoders(const QVariantHash &value) override;
 
-	bool getAnimationExportPreferFfmpeg() const override;
-	void setAnimationExportPreferFfmpeg(bool value) override;
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool getAnimationExportPreferHardware() const override;
-	void setAnimationExportPreferHardware(bool value) override;
-#endif
+	bool getAnimationExportShowAdvanced() const override;
+	void setAnimationExportShowAdvanced(bool value) override;
 
 	bool getAutoRecordHost() const override;
 	void setAutoRecordHost(bool value) override;
@@ -790,18 +784,8 @@ public:
 	int getTimelapseMaxQueueEntries() const override;
 	void setTimelapseMaxQueueEntries(int value) override;
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool getTimelapsePreferAndroid() const override;
-	void setTimelapsePreferAndroid(bool value) override;
-#endif
-
-	bool getTimelapsePreferFfmpeg() const override;
-	void setTimelapsePreferFfmpeg(bool value) override;
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool getTimelapsePreferHardware() const override;
-	void setTimelapsePreferHardware(bool value) override;
-#endif
+	QVariantHash getTimelapsePreferredEncoders() const override;
+	void setTimelapsePreferredEncoders(const QVariantHash &value) override;
 
 	bool getTimelapseShowAdvanced() const override;
 	void setTimelapseShowAdvanced(bool value) override;
@@ -903,14 +887,9 @@ private:
 		defaultAndroidWorkaroundIgnoreHistoricTabletEvents();
 #endif
 	int m_animationExportFormat = defaultAnimationExportFormat();
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool m_animationExportPreferAndroid = defaultAnimationExportPreferAndroid();
-#endif
-	bool m_animationExportPreferFfmpeg = defaultAnimationExportPreferFfmpeg();
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool m_animationExportPreferHardware =
-		defaultAnimationExportPreferHardware();
-#endif
+	QVariantHash m_animationExportPreferredEncoders =
+		defaultAnimationExportPreferredEncoders();
+	bool m_animationExportShowAdvanced = defaultAnimationExportShowAdvanced();
 	bool m_autoRecordHost = defaultAutoRecordHost();
 	bool m_autoRecordJoin = defaultAutoRecordJoin();
 	int m_autoRecordMetadataIntervalMinutes =
@@ -1157,13 +1136,8 @@ private:
 	double m_timelapseLogoScale = defaultTimelapseLogoScale();
 	double m_timelapseMaxDeltaSeconds = defaultTimelapseMaxDeltaSeconds();
 	int m_timelapseMaxQueueEntries = defaultTimelapseMaxQueueEntries();
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool m_timelapsePreferAndroid = defaultTimelapsePreferAndroid();
-#endif
-	bool m_timelapsePreferFfmpeg = defaultTimelapsePreferFfmpeg();
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	bool m_timelapsePreferHardware = defaultTimelapsePreferHardware();
-#endif
+	QVariantHash m_timelapsePreferredEncoders =
+		defaultTimelapsePreferredEncoders();
 	bool m_timelapseShowAdvanced = defaultTimelapseShowAdvanced();
 	bool m_timelapseTimeOwnOnly = defaultTimelapseTimeOwnOnly();
 	QVariantHash m_toolBarConfig = defaultToolBarConfig();

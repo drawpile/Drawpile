@@ -16,9 +16,20 @@ import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class VideoEncoder {
+
+    public static class Support {
+        public final String name;
+        public final boolean hardware;
+
+        public Support(String name, boolean hardware) {
+            this.name = name;
+            this.hardware = hardware;
+        }
+    }
 
     private static final String TAG = "drawpile.VideoEncoder";
 
@@ -65,7 +76,7 @@ public class VideoEncoder {
     private final double mFrameDurationUs;
     private final String mOutputPath;
     private final String mTempPath;
-    private final boolean mUseHardwareEncoder;
+    private final String mEncoderName;
     private final MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
     private MediaCodec mEncoder = null;
     private MediaMuxer mMuxer = null;
@@ -77,7 +88,7 @@ public class VideoEncoder {
     private Image mInputImage = null;
 
     public VideoEncoder(int format, int width, int height, float framerate, String outputPath,
-                        String tempPath, boolean useHardwareEncoder) {
+                        String tempPath, String encoderName) {
         mFormat = format;
         mWidth = width;
         mHeight = height;
@@ -85,7 +96,7 @@ public class VideoEncoder {
         mFrameDurationUs = 1000000.0 / ((double) framerate);
         mOutputPath = outputPath;
         mTempPath = tempPath;
-        mUseHardwareEncoder = useHardwareEncoder;
+        mEncoderName = encoderName;
     }
 
     public int start(Context context) {
@@ -417,33 +428,14 @@ public class VideoEncoder {
     }
 
     private MediaCodec createEncoder(String videoMimeType) throws Exception {
-        if (!mUseHardwareEncoder) {
-            for (MediaCodecInfo codecInfo : getEncodersForMimeType(videoMimeType)) {
-                try {
-                    if (looksLikeSoftwareEncoder(codecInfo)) {
-                        return MediaCodec.createByCodecName(codecInfo.getName());
-                    }
-                } catch (Exception e) {
-                    Log.w(TAG, "Failed to create encoder", e);
-                }
+        if (mEncoderName != null && !mEncoderName.isEmpty()) {
+            try {
+                return MediaCodec.createByCodecName(mEncoderName);
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to create encoder " + mEncoderName, e);
             }
         }
         return MediaCodec.createEncoderByType(videoMimeType);
-    }
-
-    private static boolean looksLikeSoftwareEncoder(MediaCodecInfo codecInfo) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                if (codecInfo.isSoftwareOnly()) {
-                    return true;
-                }
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to check software-only for codec " + codecInfo.getName());
-            }
-        }
-        // These are the built-in Android software encoders.
-        String lowerName = codecInfo.getName().toLowerCase();
-        return lowerName.startsWith("omx.google.") || lowerName.startsWith("c2.android.");
     }
 
     private MediaMuxer initializeMuxer(Context context) throws Exception {
@@ -484,15 +476,17 @@ public class VideoEncoder {
         return Math.round(((double) mFrameIndex) * mFrameDurationUs);
     }
 
-    public static boolean isFormatSupported(int format) {
-        // Also check DP_save_video_format_supported_android! It filters out possible formats
-        // before this function is hit.
+    public static List<Support> getSupportsForFormat(int format) {
         String mimeType = getFormatMimeType(format);
-        return mimeType != null && !getEncodersForMimeType(mimeType).isEmpty();
+        if (mimeType == null) {
+            return Collections.emptyList();
+        } else {
+            return getSupportsForMimeType(mimeType);
+        }
     }
 
-    private static List<MediaCodecInfo> getEncodersForMimeType(String mimeType) {
-        List<MediaCodecInfo> encoders = new ArrayList<>();
+    private static List<Support> getSupportsForMimeType(String mimeType) {
+        List<Support> supports = new ArrayList<>();
 
         MediaCodecInfo[] codecInfos;
         try {
@@ -500,7 +494,7 @@ public class VideoEncoder {
             codecInfos = codecList.getCodecInfos();
         } catch (Exception e) {
             Log.e(TAG, "Error getting available codecs for " + mimeType, e);
-            return encoders;
+            return supports;
         }
 
         if (codecInfos != null) {
@@ -509,7 +503,8 @@ public class VideoEncoder {
                     if (codecInfo.isEncoder()) {
                         for (String type : codecInfo.getSupportedTypes()) {
                             if (mimeType.equalsIgnoreCase(type)) {
-                                encoders.add(codecInfo);
+                                supports.add(new Support(codecInfo.getName(),
+                                        !looksLikeSoftwareEncoder(codecInfo)));
                             }
                         }
                     }
@@ -519,7 +514,22 @@ public class VideoEncoder {
             }
         }
 
-        return encoders;
+        return supports;
+    }
+
+    private static boolean looksLikeSoftwareEncoder(MediaCodecInfo codecInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                if (codecInfo.isSoftwareOnly()) {
+                    return true;
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to check software-only for codec " + codecInfo.getName());
+            }
+        }
+        // These are the built-in Android software encoders.
+        String lowerName = codecInfo.getName().toLowerCase();
+        return lowerName.startsWith("omx.google.") || lowerName.startsWith("c2.android.");
     }
 
     private static String getFormatMimeType(int format) {

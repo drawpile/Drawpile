@@ -93,12 +93,6 @@ static enum AVCodecID get_format_codec_id(int format)
     }
 }
 
-bool DP_save_video_format_supported(int format)
-{
-    enum AVCodecID codec_id = get_format_codec_id(format);
-    return codec_id != AV_CODEC_ID_NONE && avcodec_find_encoder(codec_id);
-}
-
 
 static DP_Rect get_crop(DP_CanvasState *cs, const DP_Rect *area)
 {
@@ -1057,7 +1051,8 @@ static void argv_push(DP_Vector *args, const char *s)
     DP_VECTOR_PUSH_TYPE(args, const char *, s);
 }
 
-static bool push_format_ffmpeg_args(DP_Vector *args, int format)
+static bool push_format_ffmpeg_args(DP_Vector *args, int format,
+                                    const char **out_name)
 {
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
@@ -1074,6 +1069,9 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-f");
             argv_push(args, "mp4");
         }
+        if (out_name) {
+            *out_name = "libvpx-vp9";
+        }
         return true;
     case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         if (args) {
@@ -1088,6 +1086,9 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-an");
             argv_push(args, "-f");
             argv_push(args, "webm");
+        }
+        if (out_name) {
+            *out_name = "libvpx";
         }
         return true;
     case DP_SAVE_VIDEO_FORMAT_WEBP:
@@ -1105,6 +1106,9 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-f");
             argv_push(args, "webp");
         }
+        if (out_name) {
+            *out_name = "libwebp";
+        }
         return true;
     case DP_SAVE_VIDEO_FORMAT_MP4_H264:
         if (args) {
@@ -1119,6 +1123,9 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-an");
             argv_push(args, "-f");
             argv_push(args, "mp4");
+        }
+        if (out_name) {
+            *out_name = "libx264";
         }
         return true;
     case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
@@ -1135,6 +1142,9 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-f");
             argv_push(args, "mp4");
         }
+        if (out_name) {
+            *out_name = "libsvtav1";
+        }
         return true;
     case DP_SAVE_VIDEO_FORMAT_APNG:
         if (args) {
@@ -1145,40 +1155,142 @@ static bool push_format_ffmpeg_args(DP_Vector *args, int format)
             argv_push(args, "-f");
             argv_push(args, "apng");
         }
+        if (out_name) {
+            *out_name = "apng";
+        }
         return true;
     default:
         return false;
     }
 }
 
-static bool is_valid_ffmpeg_format(int format)
+
+struct DP_SaveVideoSupport {
+    unsigned int type_flags;
+    int count;
+    DP_SaveVideoSupportEntry entries[];
+};
+
+static void get_save_video_format_support_libav(int format, DP_Vector *vec)
 {
-    return push_format_ffmpeg_args(NULL, format);
+    enum AVCodecID codec_id = get_format_codec_id(format);
+    if (codec_id != AV_CODEC_ID_NONE) {
+        const AVCodec *encoder = avcodec_find_encoder(codec_id);
+        if (encoder) {
+            DP_SaveVideoSupportEntry entry = {DP_SAVE_VIDEO_ENCODER_TYPE_LIBAV,
+                                              encoder->name};
+            DP_VECTOR_PUSH_TYPE(vec, DP_SaveVideoSupportEntry, entry);
+        }
+    }
+}
+
+static void get_save_video_format_support_ffmpeg(int format, DP_Vector *vec)
+{
+    const char *name;
+    if (DP_process_supported()
+        && push_format_ffmpeg_args(NULL, format, &name)) {
+        DP_SaveVideoSupportEntry entry = {DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG,
+                                          name};
+        DP_VECTOR_PUSH_TYPE(vec, DP_SaveVideoSupportEntry, entry);
+    }
+}
+
+#ifdef DP_ANDROID_VIDEO_ENCODER
+static void add_android_support_save_video_support_entry(void *user,
+                                                         const char *name,
+                                                         bool hardware)
+{
+    DP_SaveVideoSupportEntry entry = {
+        hardware ? DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_HARDWARE
+                 : DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE,
+        DP_strdup(name)};
+    DP_VECTOR_PUSH_TYPE(user, DP_SaveVideoSupportEntry, entry);
+}
+
+static void get_save_video_format_support_android(int format, DP_Vector *vec)
+{
+    DP_android_video_encoder_format_support(
+        format, add_android_support_save_video_support_entry, vec);
+}
+#endif
+
+static DP_SaveVideoSupport *get_save_video_format_support(int format)
+{
+    DP_Vector vec;
+    DP_VECTOR_INIT_TYPE(&vec, DP_SaveVideoSupport, 8);
+
+    get_save_video_format_support_libav(format, &vec);
+    get_save_video_format_support_ffmpeg(format, &vec);
+#ifdef DP_ANDROID_VIDEO_ENCODER
+    get_save_video_format_support_android(format, &vec);
+#endif
+
+    DP_SaveVideoSupport *support =
+        malloc(DP_FLEX_SIZEOF(DP_SaveVideoSupport, entries, vec.used));
+
+    support->type_flags = 0u;
+    support->count = DP_size_to_int(vec.used);
+    for (size_t i = 0; i < vec.used; ++i) {
+        support->entries[i] =
+            DP_VECTOR_AT_TYPE(&vec, DP_SaveVideoSupportEntry, i);
+        support->type_flags |= 1u << ((unsigned int)support->entries[i].type);
+    }
+
+    DP_vector_dispose(&vec);
+    return support;
+}
+
+DP_SaveVideoSupport *DP_save_video_format_support(int format)
+{
+    static DP_SaveVideoSupport *supports[DP_SAVE_VIDEO_FORMAT_LAST + 1];
+    if (format >= 0 && format <= DP_SAVE_VIDEO_FORMAT_LAST) {
+        DP_SaveVideoSupport *support = supports[format];
+        if (!support) {
+            support = get_save_video_format_support(format);
+            supports[format] = support;
+        }
+        return support;
+    }
+    else {
+        DP_warn("Video format %d out of bounds", format);
+        static DP_SaveVideoSupport null_support;
+        return &null_support;
+    }
+}
+
+int DP_save_video_support_count(DP_SaveVideoSupport *support)
+{
+    if (support) {
+        return support->count;
+    }
+    else {
+        return 0;
+    }
+}
+
+const DP_SaveVideoSupportEntry *
+DP_save_video_support_entry(DP_SaveVideoSupport *support, int index)
+{
+    if (support && index >= 0 && index < support->count) {
+        return &support->entries[index];
+    }
+    else {
+        return NULL;
+    }
 }
 
 bool DP_save_video_format_supported_ffmpeg(int format)
 {
-    return DP_process_supported() && is_valid_ffmpeg_format(format);
+    return DP_save_video_format_support(format)->type_flags
+         & (1u << ((unsigned int)DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG));
 }
 
-bool DP_save_video_format_supported_android(int format)
+bool DP_save_video_format_supported_non_ffmpeg(int format)
 {
-#ifdef DP_ANDROID_VIDEO_ENCODER
-    // Don't bother with the JNI rigmarole unnecessarily.
-    switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
-    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
-    case DP_SAVE_VIDEO_FORMAT_MP4_H264:
-    case DP_SAVE_VIDEO_FORMAT_MP4_AV1:
-        return DP_android_video_encoder_format_supported(format);
-    default:
-        return false;
-    }
-#else
-    (void)format;
-    return false;
-#endif
+    return DP_save_video_format_support(format)->type_flags
+         & ~(1u << ((unsigned int)DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG));
 }
+
 
 static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
 {
@@ -1189,12 +1301,6 @@ static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
     DP_Process *process = NULL;
     struct SwsContext *sws_context = NULL;
     unsigned char *output_buffer = NULL;
-
-    if (!is_valid_ffmpeg_format(params.format)) {
-        DP_error_set("Unsupported ffmpeg format");
-        result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
-        goto cleanup;
-    }
 
     if (!DP_process_supported()) {
         DP_error_set("Process spawning not supported");
@@ -1223,7 +1329,7 @@ static DP_SaveResult save_video_ffmpeg(DP_SaveVideoParams params)
     argv_push(&args, "-i");
     argv_push(&args, "pipe:0");
 
-    if (!push_format_ffmpeg_args(&args, params.format)) {
+    if (!push_format_ffmpeg_args(&args, params.format, NULL)) {
         DP_error_set("Unhandled format for ffmpeg");
         result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
         goto cleanup;
@@ -1448,11 +1554,11 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
         ave = DP_android_video_encoder_new((DP_AndroidVideoEncoderParams){
             svap->output,
             svap->temp,
+            svap->encoder,
             params.framerate,
             params.format,
             params.width,
             params.height,
-            params.flags & DP_SAVE_VIDEO_FLAGS_HARDWARE,
         });
     }
     if (!ave) {

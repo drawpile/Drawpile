@@ -17,6 +17,7 @@ extern "C" {
 #include "libclient/export/videoformat.h"
 #include "libshared/util/paths.h"
 #include <QCoreApplication>
+#include <QDir>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QLoggingCategory>
@@ -24,9 +25,6 @@ extern "C" {
 #include <QTemporaryFile>
 #include <QThreadPool>
 #include <cmath>
-#ifdef DP_ANDROID_VIDEO_ENCODER
-#	include <QDir>
-#endif
 
 Q_LOGGING_CATEGORY(
 	lcDpTimelapseSaverRunnable, "net.drawpile.export.timelapsesaverrunnable",
@@ -34,32 +32,24 @@ Q_LOGGING_CATEGORY(
 
 TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const drawdance::CanvasState &canvasState,
-	const DP_ViewModeFilter *vmfOrNull,
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder, bool useHardware,
-#else
-	const QString &ffmpegPath,
-#endif
-	const QString &outputPath, const QString &inputPath, int format, int width,
-	int height, int interpolation, const QRect &crop,
-	const QColor &overrideBackgroundColor, const QColor &backdropColor,
-	const QColor &checkerColor1, const QColor &checkerColor2,
-	const QColor &flashColor, const QRect &logoRect, double logoOpacity,
-	const QImage &logoImage, double framerate, double lingerBeforeSeconds,
-	double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
-	double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
-	int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
-	int frameRangeLast, double animationFramerate, QObject *parent)
+	const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
+	const QString &outputPath, const QString &inputPath,
+	const QString &encoderKey, int format, int width, int height,
+	int interpolation, const QRect &crop, const QColor &overrideBackgroundColor,
+	const QColor &backdropColor, const QColor &checkerColor1,
+	const QColor &checkerColor2, const QColor &flashColor,
+	const QRect &logoRect, double logoOpacity, const QImage &logoImage,
+	double framerate, double lingerBeforeSeconds, double playbackSeconds,
+	double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
+	int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
+	int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
+	double animationFramerate, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	, m_useAndroidVideoEncoder(useAndroidVideoEncoder)
-	, m_useHardware(useHardware)
-#else
 	, m_ffmpegPath(ffmpegPath)
-#endif
 	, m_outputPath(outputPath)
 	, m_inputPath(inputPath)
+	, m_encoderKey(encoderKey)
 	, m_format(format)
 	, m_width(width)
 	, m_height(height)
@@ -798,6 +788,13 @@ DP_ProjectPlayback *TimelapseSaverRunnable::openProjectPlayback(
 	return pb;
 }
 
+namespace {
+union VideoParams {
+	DP_SaveVideoFfmpegParams ffmpeg;
+	DP_SaveVideoAndroidParams android;
+};
+}
+
 bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 {
 	PlaybackRunnable *pr = startPlaybackThread();
@@ -810,48 +807,44 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 	{
 		DP_SaveVideoDestination destination;
 		void *destinationParam;
+		VideoParams videoParams;
+		QString tempPath;
+		QByteArray extraPathBytes;
 		QByteArray outputPathBytes = m_outputPath.toUtf8();
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-		DP_SaveVideoAndroidParams androidParams;
-		QString tempPath;
-		QByteArray tempPathBytes;
-		bool useLibav = !m_useAndroidVideoEncoder;
-#else
-		DP_SaveVideoFfmpegParams ffmpegParams;
-		QByteArray ffmpegPathBytes;
-		bool useLibav = m_ffmpegPath.isEmpty();
-#endif
+		int encoderColonIndex = m_encoderKey.indexOf(QChar(':'));
+		QString encoderType;
+		QByteArray encoderNameBytes;
+		if(encoderColonIndex != -1) {
+			encoderType = m_encoderKey.mid(0, encoderColonIndex);
+		}
 
-		unsigned int flags = DP_SAVE_VIDEO_FLAGS_NONE;
-
-		if(useLibav) {
-			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
-			destinationParam = outputPathBytes.data();
-		} else {
-#ifdef DP_ANDROID_VIDEO_ENCODER
-			destination = DP_SAVE_VIDEO_DESTINATION_ANDROID;
-			destinationParam = &androidParams;
-			tempPath = QDir::temp().filePath(QStringLiteral("timelapsetemp"));
-			QFile::remove(tempPath);
-			tempPathBytes = tempPath.toUtf8();
-			androidParams = {
-				outputPathBytes.constData(),
-				tempPathBytes.constData(),
-			};
-			if(m_useHardware) {
-				flags |= DP_SAVE_VIDEO_FLAGS_HARDWARE;
-			}
-#else
+		if(encoderType == QStringLiteral("ffmpeg")) {
 			destination = DP_SAVE_VIDEO_DESTINATION_FFMPEG;
-			destinationParam = &ffmpegParams;
-			ffmpegPathBytes = m_ffmpegPath.toUtf8();
-			ffmpegParams = {
-				ffmpegPathBytes.constData(),
+			destinationParam = &videoParams.ffmpeg;
+			extraPathBytes = m_ffmpegPath.toUtf8();
+			videoParams.ffmpeg = {
+				extraPathBytes.constData(),
 				nullptr,
 				outputPathBytes.constData(),
 			};
-#endif
+
+		} else if(encoderType.startsWith(QStringLiteral("android"))) {
+			destination = DP_SAVE_VIDEO_DESTINATION_ANDROID;
+			destinationParam = &videoParams.android;
+			tempPath = QDir::temp().filePath(QStringLiteral("timelapsetemp"));
+			QFile::remove(tempPath);
+			extraPathBytes = tempPath.toUtf8();
+			encoderNameBytes = m_encoderKey.mid(encoderColonIndex + 1).toUtf8();
+			videoParams.android = {
+				outputPathBytes.constData(),
+				extraPathBytes.constData(),
+				encoderNameBytes.constData(),
+			};
+
+		} else {
+			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
+			destinationParam = outputPathBytes.data();
 		}
 
 		DP_SaveVideoParams params = {
@@ -859,7 +852,7 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 			destinationParam,
 			nullptr,
 			0,
-			flags,
+			DP_SAVE_VIDEO_FLAGS_NONE,
 			formatToSaveVideoFormat(),
 			m_width,
 			m_height,

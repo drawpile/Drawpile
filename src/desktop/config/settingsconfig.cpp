@@ -73,25 +73,16 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::animationExportFormatChanged,
 		this, &SettingsConfig::changeAnimationExportFormat,
 		Qt::DirectConnection);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
 	connect(
 		m_settings,
-		&desktop::settings::Settings::animationExportPreferAndroidChanged, this,
-		&SettingsConfig::changeAnimationExportPreferAndroid,
+		&desktop::settings::Settings::animationExportPreferredEncodersChanged,
+		this, &SettingsConfig::changeAnimationExportPreferredEncoders,
 		Qt::DirectConnection);
-#endif
 	connect(
 		m_settings,
-		&desktop::settings::Settings::animationExportPreferFfmpegChanged, this,
-		&SettingsConfig::changeAnimationExportPreferFfmpeg,
+		&desktop::settings::Settings::animationExportShowAdvancedChanged, this,
+		&SettingsConfig::changeAnimationExportShowAdvanced,
 		Qt::DirectConnection);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	connect(
-		m_settings,
-		&desktop::settings::Settings::animationExportPreferHardwareChanged,
-		this, &SettingsConfig::changeAnimationExportPreferHardware,
-		Qt::DirectConnection);
-#endif
 	connect(
 		m_settings, &desktop::settings::Settings::autoRecordHostChanged, this,
 		&SettingsConfig::changeAutoRecordHost, Qt::DirectConnection);
@@ -904,22 +895,11 @@ SettingsConfig::SettingsConfig(
 		m_settings,
 		&desktop::settings::Settings::timelapseMaxQueueEntriesChanged, this,
 		&SettingsConfig::changeTimelapseMaxQueueEntries, Qt::DirectConnection);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-	connect(
-		m_settings, &desktop::settings::Settings::timelapsePreferAndroidChanged,
-		this, &SettingsConfig::changeTimelapsePreferAndroid,
-		Qt::DirectConnection);
-#endif
-	connect(
-		m_settings, &desktop::settings::Settings::timelapsePreferFfmpegChanged,
-		this, &SettingsConfig::changeTimelapsePreferFfmpeg,
-		Qt::DirectConnection);
-#if defined(DP_ANDROID_VIDEO_ENCODER)
 	connect(
 		m_settings,
-		&desktop::settings::Settings::timelapsePreferHardwareChanged, this,
-		&SettingsConfig::changeTimelapsePreferHardware, Qt::DirectConnection);
-#endif
+		&desktop::settings::Settings::timelapsePreferredEncodersChanged, this,
+		&SettingsConfig::changeTimelapsePreferredEncoders,
+		Qt::DirectConnection);
 	connect(
 		m_settings, &desktop::settings::Settings::timelapseShowAdvancedChanged,
 		this, &SettingsConfig::changeTimelapseShowAdvanced,
@@ -1132,39 +1112,26 @@ void SettingsConfig::setAnimationExportFormat(int value)
 	m_settings->setAnimationExportFormat(value);
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool SettingsConfig::getAnimationExportPreferAndroid() const
+QVariantHash SettingsConfig::getAnimationExportPreferredEncoders() const
 {
-	return m_settings->animationExportPreferAndroid();
+	return m_settings->animationExportPreferredEncoders();
 }
 
-void SettingsConfig::setAnimationExportPreferAndroid(bool value)
+void SettingsConfig::setAnimationExportPreferredEncoders(
+	const QVariantHash &value)
 {
-	m_settings->setAnimationExportPreferAndroid(value);
-}
-#endif
-
-bool SettingsConfig::getAnimationExportPreferFfmpeg() const
-{
-	return m_settings->animationExportPreferFfmpeg();
+	m_settings->setAnimationExportPreferredEncoders(value);
 }
 
-void SettingsConfig::setAnimationExportPreferFfmpeg(bool value)
+bool SettingsConfig::getAnimationExportShowAdvanced() const
 {
-	m_settings->setAnimationExportPreferFfmpeg(value);
+	return m_settings->animationExportShowAdvanced();
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool SettingsConfig::getAnimationExportPreferHardware() const
+void SettingsConfig::setAnimationExportShowAdvanced(bool value)
 {
-	return m_settings->animationExportPreferHardware();
+	m_settings->setAnimationExportShowAdvanced(value);
 }
-
-void SettingsConfig::setAnimationExportPreferHardware(bool value)
-{
-	m_settings->setAnimationExportPreferHardware(value);
-}
-#endif
 
 bool SettingsConfig::getAutoRecordHost() const
 {
@@ -3534,39 +3501,15 @@ void SettingsConfig::setTimelapseMaxQueueEntries(int value)
 	m_settings->setTimelapseMaxQueueEntries(value);
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool SettingsConfig::getTimelapsePreferAndroid() const
+QVariantHash SettingsConfig::getTimelapsePreferredEncoders() const
 {
-	return m_settings->timelapsePreferAndroid();
+	return m_settings->timelapsePreferredEncoders();
 }
 
-void SettingsConfig::setTimelapsePreferAndroid(bool value)
+void SettingsConfig::setTimelapsePreferredEncoders(const QVariantHash &value)
 {
-	m_settings->setTimelapsePreferAndroid(value);
+	m_settings->setTimelapsePreferredEncoders(value);
 }
-#endif
-
-bool SettingsConfig::getTimelapsePreferFfmpeg() const
-{
-	return m_settings->timelapsePreferFfmpeg();
-}
-
-void SettingsConfig::setTimelapsePreferFfmpeg(bool value)
-{
-	m_settings->setTimelapsePreferFfmpeg(value);
-}
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool SettingsConfig::getTimelapsePreferHardware() const
-{
-	return m_settings->timelapsePreferHardware();
-}
-
-void SettingsConfig::setTimelapsePreferHardware(bool value)
-{
-	m_settings->setTimelapsePreferHardware(value);
-}
-#endif
 
 bool SettingsConfig::getTimelapseShowAdvanced() const
 {

@@ -23,11 +23,7 @@ public:
 		int format, int width, int height, int loops,
 		const QVector<int> &frameIndexes, double framerate, const QRect &crop,
 		bool scaleSmooth, const drawdance::CanvasState &canvasState,
-#ifdef DP_ANDROID_VIDEO_ENCODER
-		bool useAndroidVideoEncoder, bool useHardware,
-#else
-		const QString &ffmpegPath,
-#endif
+		const QString &ffmpegPath, const QString &encoderKey,
 		QObject *parent = nullptr);
 
 	void run() override;
@@ -66,12 +62,8 @@ private:
 	const QRect m_crop;
 	const QVector<int> m_frameIndexes;
 	const drawdance::CanvasState m_canvasState;
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	const bool m_useAndroidVideoEncoder;
-	const bool m_useHardware;
-#else
 	const QString m_ffmpegPath;
-#endif
+	const QString m_encoderKey;
 	const bool m_scaleSmooth;
 	bool m_cancelled;
 };

@@ -99,24 +99,15 @@ int Config::defaultAnimationExportFormat()
 	return -1;
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool Config::defaultAnimationExportPreferAndroid()
+QVariantHash Config::defaultAnimationExportPreferredEncoders()
 {
-	return true;
+	return QVariantHash();
 }
-#endif
 
-bool Config::defaultAnimationExportPreferFfmpeg()
+bool Config::defaultAnimationExportShowAdvanced()
 {
 	return false;
 }
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool Config::defaultAnimationExportPreferHardware()
-{
-	return false;
-}
-#endif
 
 bool Config::defaultAutoRecordHost()
 {
@@ -1344,24 +1335,10 @@ int Config::defaultTimelapseMaxQueueEntries()
 	return 8;
 }
 
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool Config::defaultTimelapsePreferAndroid()
+QVariantHash Config::defaultTimelapsePreferredEncoders()
 {
-	return true;
+	return QVariantHash();
 }
-#endif
-
-bool Config::defaultTimelapsePreferFfmpeg()
-{
-	return false;
-}
-
-#if defined(DP_ANDROID_VIDEO_ENCODER)
-bool Config::defaultTimelapsePreferHardware()
-{
-	return false;
-}
-#endif
 
 bool Config::defaultTimelapseShowAdvanced()
 {

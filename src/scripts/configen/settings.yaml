@@ -330,24 +330,16 @@ settings:
     qsettings: 'animationexport/format'
     legacy_package: 'desktop'
 
-  - id: animationExportPreferAndroid
-    type: 'bool'
-    default: 'true'
-    qsettings: 'animationexport/preferandroid'
+  - id: animationExportPreferredEncoders
+    type: 'QVariantHash'
+    default: 'QVariantHash()'
+    qsettings: 'animationexport/preferredencoders'
     legacy_package: 'desktop'
-    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
 
-  - id: animationExportPreferHardware
+  - id: animationExportShowAdvanced
     type: 'bool'
     default: 'false'
-    qsettings: 'animationexport/preferhardware'
-    legacy_package: 'desktop'
-    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
-
-  - id: animationExportPreferFfmpeg
-    type: 'bool'
-    default: 'false'
-    qsettings: 'animationexport/preferffmpeg'
+    qsettings: 'animationexport/showadvanced'
     legacy_package: 'desktop'
 
   - id: automaticAlphaPreserve
@@ -1609,24 +1601,10 @@ settings:
     qsettings: 'timelapse/maxqueueentries'
     legacy_package: 'desktop'
 
-  - id: timelapsePreferAndroid
-    type: 'bool'
-    default: 'true'
-    qsettings: 'timelapse/preferandroid'
-    legacy_package: 'desktop'
-    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
-
-  - id: timelapsePreferHardware
-    type: 'bool'
-    default: 'false'
-    qsettings: 'timelapse/preferhardware'
-    legacy_package: 'desktop'
-    condition: 'defined(DP_ANDROID_VIDEO_ENCODER)'
-
-  - id: timelapsePreferFfmpeg
-    type: 'bool'
-    default: 'false'
-    qsettings: 'timelapse/preferffmpeg'
+  - id: timelapsePreferredEncoders
+    type: 'QVariantHash'
+    default: 'QVariantHash()'
+    qsettings: 'timelapse/preferredencoders'
     legacy_package: 'desktop'
 
   - id: timelapseShowAdvanced

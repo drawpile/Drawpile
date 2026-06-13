@@ -4,6 +4,7 @@
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/noscroll.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/paintengine.h"
@@ -21,7 +22,7 @@
 #include <QSignalBlocker>
 #include <QTabWidget>
 #include <QVBoxLayout>
-#if defined(DRAWPILE_FFMPEG_DIALOG) && !defined(DP_ANDROID_VIDEO_ENCODER)
+#ifdef DRAWPILE_FFMPEG_DIALOG
 #	include "desktop/dialogs/ffmpegdialog.h"
 #endif
 
@@ -41,40 +42,32 @@ AnimationExportDialog::AnimationExportDialog(
 	layout->addWidget(tabs);
 
 	QWidget *outputWidget = new QWidget;
-	QFormLayout *outputForm = new QFormLayout(outputWidget);
+	QVBoxLayout *outputLayout = new QVBoxLayout(outputWidget);
 	tabs->addTab(outputWidget, tr("Output"));
+
+	QFormLayout *outputForm = new QFormLayout;
+	outputLayout->addLayout(outputForm);
 
 	bool anyFormatFfmpegSupported;
 	QVector<VideoFormatOption> formatOptions = getVideoFormatOptions(
 		VideoFormatApplication::Animation, &anyFormatFfmpegSupported);
 	int lastFormat = cfg->getAnimationExportFormat();
-	m_formatCombo = new QComboBox;
+	m_formatCombo = new widgets::NoScrollComboBox;
 	outputForm->addRow(tr("Format:"), m_formatCombo);
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	QIcon androidFormatIcon =
-		QIcon::fromTheme(QStringLiteral("media-playback-start"));
-#endif
 	for(const VideoFormatOption &vfo : formatOptions) {
-		if(vfo.libavSupported || vfo.androidSupported) {
+		if(vfo.nonFfmpegSupported) {
 			m_formatCombo->addItem(vfo.title, int(vfo.format));
-#ifdef DP_ANDROID_VIDEO_ENCODER
-			if(vfo.androidSupported) {
-				m_formatCombo->setItemIcon(
-					m_formatCombo->count() - 1, androidFormatIcon);
-			}
-#endif
 			if(int(vfo.format) == lastFormat) {
 				m_formatCombo->setCurrentIndex(m_formatCombo->count() - 1);
 			}
 		}
 	}
 
-#ifndef DP_ANDROID_VIDEO_ENCODER
 	if(anyFormatFfmpegSupported) {
 		bool needSeparator = true;
 		for(const VideoFormatOption &vfo : formatOptions) {
-			if(!vfo.libavSupported && vfo.ffmpegSupported) {
+			if(vfo.isOnlyFfmpegSupported()) {
 				if(needSeparator) {
 					needSeparator = false;
 					int separatorIndex = m_formatCombo->count();
@@ -90,18 +83,17 @@ AnimationExportDialog::AnimationExportDialog(
 			}
 		}
 
-		m_ffmpegNote = new utils::FormNote(
+		m_ffmpegFormatNote = new utils::FormNote(
 			QCoreApplication::translate(
 				"dialogs::TimelapseDialog",
 				"This format requires FFmpeg, click here to set it up."),
 			false, QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
-		m_ffmpegNote->hide();
-		outputForm->addRow(nullptr, m_ffmpegNote);
+		m_ffmpegFormatNote->hide();
+		outputForm->addRow(nullptr, m_ffmpegFormatNote);
 		connect(
-			m_ffmpegNote, &utils::FormNote::linkClicked, this,
+			m_ffmpegFormatNote, &utils::FormNote::linkClicked, this,
 			&AnimationExportDialog::showFfmpegSettings);
 	}
-#endif
 
 	m_loopsLabel = new QLabel(tr("Loops:"));
 	m_loopsSpinner = new KisSliderSpinBox;
@@ -127,37 +119,12 @@ AnimationExportDialog::AnimationExportDialog(
 	m_scaleLabel = new QLabel;
 	outputForm->addRow(m_scaleLabel);
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	m_androidHardwareCheckBox = new QCheckBox(
-		QCoreApplication::translate(
-			"dialogs::TimelapseDialog",
-			"Hardware encoding (faster, may cause artifacts)"));
-	outputForm->addRow(m_androidHardwareCheckBox);
-	CFG_BIND_CHECKBOX(
-		cfg, AnimationExportPreferHardware, m_androidHardwareCheckBox);
+	utils::addFormSpacer(outputLayout);
 
-	m_androidCheckBox = new QCheckBox(
-		QCoreApplication::translate(
-			"dialogs::TimelapseDialog", "Prefer Android encoder"));
-	outputForm->addRow(m_androidCheckBox);
-	CFG_BIND_CHECKBOX(cfg, AnimationExportPreferAndroid, m_androidCheckBox);
-#else
 	if(anyFormatFfmpegSupported) {
-		utils::addFormSpacer(outputForm);
-
-		m_ffmpegCheckBox = new QCheckBox(
-			QCoreApplication::translate(
-				"dialogs::TimelapseDialog",
-				"Prefer FFmpeg over internal encoder"));
-		outputForm->addRow(m_ffmpegCheckBox);
-		CFG_BIND_CHECKBOX(cfg, AnimationExportPreferFfmpeg, m_ffmpegCheckBox);
-		connect(
-			m_ffmpegCheckBox, &QCheckBox::clicked, this,
-			&AnimationExportDialog::updateEncoderUi);
-
 		QHBoxLayout *ffmpegButtonLayout = new QHBoxLayout;
 		ffmpegButtonLayout->setContentsMargins(0, 0, 0, 0);
-		outputForm->addRow(ffmpegButtonLayout);
+		outputLayout->addLayout(ffmpegButtonLayout);
 
 		m_ffmpegButton = new QPushButton(
 			QIcon::fromTheme(QStringLiteral("kdenlive-show-video")), QString());
@@ -171,7 +138,57 @@ AnimationExportDialog::AnimationExportDialog(
 
 		ffmpegButtonLayout->addStretch();
 	}
-#endif
+
+	QHBoxLayout *advancedButtonLayout = new QHBoxLayout;
+	advancedButtonLayout->setContentsMargins(0, 0, 0, 0);
+	outputLayout->addLayout(advancedButtonLayout);
+
+	m_advancedButton = new QPushButton(
+		QCoreApplication::translate(
+			"dialogs::TimelapseDialog", "Advanced settings"));
+	m_advancedButton->setFlat(true);
+	advancedButtonLayout->addWidget(m_advancedButton);
+	connect(
+		m_advancedButton, &QPushButton::clicked, this,
+		&AnimationExportDialog::toggleAdvanced);
+
+	advancedButtonLayout->addStretch();
+
+	m_advancedWidget = new QWidget;
+	m_advancedWidget->setContentsMargins(0, 0, 0, 0);
+	m_advancedWidget->setEnabled(false);
+	m_advancedWidget->setVisible(false);
+	outputLayout->addWidget(m_advancedWidget);
+
+	m_advancedWidget = new QWidget;
+	m_advancedWidget->setContentsMargins(0, 0, 0, 0);
+	m_advancedWidget->setEnabled(false);
+	m_advancedWidget->setVisible(false);
+	outputLayout->addWidget(m_advancedWidget);
+
+	QFormLayout *advancedForm = new QFormLayout(m_advancedWidget);
+	advancedForm->setContentsMargins(0, 0, 0, 0);
+
+	m_encoderCombo = new widgets::NoScrollComboBox;
+	advancedForm->addRow(tr("Encoder:"), m_encoderCombo);
+	connect(
+		m_encoderCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &AnimationExportDialog::updateEncoder);
+
+	if(anyFormatFfmpegSupported) {
+		m_ffmpegEncoderNote = new utils::FormNote(
+			QCoreApplication::translate(
+				"dialogs::TimelapseDialog",
+				"This encoder requires FFmpeg, click here to set it up."),
+			false, QIcon::fromTheme(QStringLiteral("dialog-warning")), true);
+		m_ffmpegEncoderNote->hide();
+		advancedForm->addRow(nullptr, m_ffmpegEncoderNote);
+		connect(
+			m_ffmpegEncoderNote, &utils::FormNote::linkClicked, this,
+			&AnimationExportDialog::showFfmpegSettings);
+	}
+
+	outputLayout->addStretch();
 
 	QWidget *inputWidget = new QWidget;
 	QFormLayout *inputForm = new QFormLayout(inputWidget);
@@ -180,17 +197,17 @@ AnimationExportDialog::AnimationExportDialog(
 	QHBoxLayout *rangeLayout = new QHBoxLayout;
 	inputForm->addRow(tr("Frame Range:"), rangeLayout);
 
-	m_startSpinner = new KisSliderSpinBox;
+	m_startSpinner = new widgets::NoScrollKisSliderSpinBox;
 	m_startSpinner->setIndeterminate(true);
 	rangeLayout->addWidget(m_startSpinner, 1);
 
 	rangeLayout->addWidget(new QLabel(QStringLiteral("-")));
 
-	m_endSpinner = new KisSliderSpinBox;
+	m_endSpinner = new widgets::NoScrollKisSliderSpinBox;
 	m_endSpinner->setIndeterminate(true);
 	rangeLayout->addWidget(m_endSpinner, 1);
 
-	m_framerateSpinner = new KisDoubleSliderSpinBox;
+	m_framerateSpinner = new widgets::NoScrollKisDoubleSliderSpinBox;
 	m_framerateSpinner->setIndeterminate(true);
 	m_framerateSpinner->setRange(0.01, 999.99, 2);
 	m_framerateSpinner->setSuffix(tr(" FPS"));
@@ -199,26 +216,26 @@ AnimationExportDialog::AnimationExportDialog(
 	QHBoxLayout *xCropLayout = new QHBoxLayout;
 	inputForm->addRow(tr("Crop X:"), xCropLayout);
 
-	m_x1Spinner = new KisSliderSpinBox;
+	m_x1Spinner = new widgets::NoScrollKisSliderSpinBox;
 	m_x1Spinner->setIndeterminate(true);
 	xCropLayout->addWidget(m_x1Spinner, 1);
 
 	xCropLayout->addWidget(new QLabel(QStringLiteral("-")));
 
-	m_x2Spinner = new KisSliderSpinBox;
+	m_x2Spinner = new widgets::NoScrollKisSliderSpinBox;
 	m_x2Spinner->setIndeterminate(true);
 	xCropLayout->addWidget(m_x2Spinner, 1);
 
 	QHBoxLayout *yCropLayout = new QHBoxLayout;
 	inputForm->addRow(tr("Crop Y:"), yCropLayout);
 
-	m_y1Spinner = new KisSliderSpinBox;
+	m_y1Spinner = new widgets::NoScrollKisSliderSpinBox;
 	m_y1Spinner->setIndeterminate(true);
 	yCropLayout->addWidget(m_y1Spinner, 1);
 
 	yCropLayout->addWidget(new QLabel(QStringLiteral("-")));
 
-	m_y2Spinner = new KisSliderSpinBox;
+	m_y2Spinner = new widgets::NoScrollKisSliderSpinBox;
 	m_y2Spinner->setIndeterminate(true);
 	yCropLayout->addWidget(m_y2Spinner, 1);
 
@@ -245,7 +262,7 @@ AnimationExportDialog::AnimationExportDialog(
 
 	connect(
 		m_formatCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &AnimationExportDialog::updateOutputUi);
+		this, &AnimationExportDialog::updateFormat);
 	connect(
 		m_scaleSpinner,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
@@ -290,14 +307,12 @@ AnimationExportDialog::AnimationExportDialog(
 		this, &AnimationExportDialog::accepted, this,
 		&AnimationExportDialog::requestExport, Qt::DirectConnection);
 
-#ifndef DP_ANDROID_VIDEO_ENCODER
 	m_ffmpegPath = cfg->getFfmpegPath();
-#endif
-	updateOutputUi();
+	m_preferredEncoders = cfg->getAnimationExportPreferredEncoders();
+	updateFormat();
 	updateScalingUi();
-#ifndef DP_ANDROID_VIDEO_ENCODER
 	updateFfmpegFormatIcons();
-#endif
+	updateAdvanced(cfg->getAnimationExportShowAdvanced());
 }
 
 void AnimationExportDialog::setCanvas(canvas::CanvasModel *canvas)
@@ -348,43 +363,37 @@ QSize AnimationExportDialog::getScaledSizeFor(
 	return QSize(qMax(qRound(size.width()), 1), qMax(qRound(size.height()), 1));
 }
 
-#ifndef __EMSCRIPTEN__
 void AnimationExportDialog::accept()
 {
-#	ifndef DP_ANDROID_VIDEO_ENCODER
-	int format = m_formatCombo->currentData().toInt();
-	bool needsFfmpeg = !isVideoFormatSupported(VideoFormat(format));
-	if(needsFfmpeg & m_ffmpegPath.isEmpty()) {
+#ifdef __EMSCRIPTEN__
+	saveSettings();
+	QDialog::accept();
+#else
+	if(isCurrentEncoderFfmpeg() && m_ffmpegPath.isEmpty()) {
 		QMessageBox *box = utils::showQuestion(
 			this, tr("FFmpeg"),
 			QCoreApplication::translate(
 				"dialogs::TimelapseDialog",
-				"The selected format requires FFmpeg. Do you want to set it up "
-				"now?"));
+				"The selected encoder requires FFmpeg. Do you want to set it "
+				"up now?"));
 		connect(
 			box, &QMessageBox::accepted, this,
 			&AnimationExportDialog::showFfmpegSettings);
 		return;
 	}
-#	endif
 
 	m_path = choosePath();
 	if(!m_path.isEmpty()) {
+		saveSettings();
 		QDialog::accept();
 	}
-}
 #endif
+}
 
-void AnimationExportDialog::updateOutputUi()
+void AnimationExportDialog::reject()
 {
-	int format = m_formatCombo->currentData().toInt();
-	bool showLoops = format == int(VideoFormat::Mp4Vp9) ||
-					 format == int(VideoFormat::WebmVp8) ||
-					 format == int(VideoFormat::Mp4H264) ||
-					 format == int(VideoFormat::Mp4Av1);
-	m_loopsLabel->setVisible(showLoops);
-	m_loopsSpinner->setVisible(showLoops);
-	updateEncoderUi();
+	saveSettings();
+	QDialog::reject();
 }
 
 void AnimationExportDialog::updateScalingUi()
@@ -396,52 +405,165 @@ void AnimationExportDialog::updateScalingUi()
 							  .arg(size.height()));
 }
 
-void AnimationExportDialog::updateEncoderUi()
+void AnimationExportDialog::toggleAdvanced()
 {
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	int format = m_formatCombo->currentData().toInt();
-	bool libavSupported = isVideoFormatSupported(VideoFormat(format));
-	bool androidSupported = isVideoFormatSupportedAndroid(VideoFormat(format));
-	m_androidHardwareCheckBox->setVisible(androidSupported);
-	m_androidCheckBox->setVisible(libavSupported && androidSupported);
-#else
-	if(m_ffmpegNote || m_ffmpegButton || m_ffmpegCheckBox) {
-		int format = m_formatCombo->currentData().toInt();
-		bool libavSupported = isVideoFormatSupported(VideoFormat(format));
-		bool ffmpegSupported =
-			isVideoFormatSupportedFfmpeg(VideoFormat(format));
-
-		if(m_ffmpegNote) {
-			m_ffmpegNote->setVisible(
-				!libavSupported && ffmpegSupported && m_ffmpegPath.isEmpty());
-		}
-
-		if(m_ffmpegButton) {
-			if(m_ffmpegPath.isEmpty()) {
-				m_ffmpegButton->setText(
-					QCoreApplication::translate(
-						"dialogs::TimelapseDialog", "Set up FFmpeg"));
-			} else {
-				m_ffmpegButton->setText(
-					QCoreApplication::translate(
-						"dialogs::TimelapseDialog", "FFmpeg settings"));
-			}
-			m_ffmpegButton->setVisible(
-				(!libavSupported && ffmpegSupported) ||
-				(m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked()));
-		}
-
-		if(m_ffmpegCheckBox) {
-			m_ffmpegCheckBox->setVisible(libavSupported && ffmpegSupported);
-		}
-	}
-#endif
+	updateAdvanced(!m_advancedWidget->isEnabled());
 }
 
-#ifndef DP_ANDROID_VIDEO_ENCODER
+void AnimationExportDialog::updateAdvanced(bool enabled)
+{
+	QSignalBlocker blocker(m_advancedButton);
+
+	QString iconName;
+	if(enabled) {
+		iconName = QStringLiteral("arrow-down");
+	} else if(isRightToLeft()) {
+		iconName = QStringLiteral("arrow-left");
+	} else {
+		iconName = QStringLiteral("arrow-right");
+	}
+
+	m_advancedButton->setIcon(QIcon::fromTheme(iconName));
+	m_advancedWidget->setEnabled(enabled);
+	m_advancedWidget->setVisible(enabled);
+}
+
+void AnimationExportDialog::updateFormat()
+{
+	int format = m_formatCombo->currentData().toInt();
+	bool showLoops = format == int(VideoFormat::Mp4Vp9) ||
+					 format == int(VideoFormat::WebmVp8) ||
+					 format == int(VideoFormat::Mp4H264) ||
+					 format == int(VideoFormat::Mp4Av1);
+	m_loopsLabel->setVisible(showLoops);
+	m_loopsSpinner->setVisible(showLoops);
+
+	QVector<VideoEncoderOption> options =
+		getVideoEncoderOptions(VideoFormat(format));
+
+	QSignalBlocker blocker(m_encoderCombo);
+	m_encoderCombo->clear();
+
+	int count = options.size();
+	if(count == 0) {
+		m_encoderCombo->addItem(
+			QCoreApplication::translate(
+				"dialogs::TimelapseDialog", "Internal"));
+		m_encoderCombo->setEnabled(false);
+	} else {
+		int automaticIndex = getAutomaticVideoEncoderOptionIndex(
+			options, !m_ffmpegPath.isEmpty());
+		const VideoEncoderOption &automaticOption = options[automaticIndex];
+		m_encoderCombo->addItem(
+			QCoreApplication::translate(
+				"dialogs::TimelapseDialog", "Automatic (%1)")
+				.arg(automaticOption.title),
+			QVariant(automaticOption.key));
+
+		QString preferredKey =
+			m_preferredEncoders.value(QString::number(format)).toString();
+		int preferredIndex = 0;
+		for(int i = 0; i < count; ++i) {
+			const VideoEncoderOption &option = options[i];
+			m_encoderCombo->addItem(option.title, QVariant(option.key));
+			if(option.key == preferredKey) {
+				preferredIndex = i + 1;
+			}
+		}
+
+		m_encoderCombo->setCurrentIndex(preferredIndex);
+		m_encoderCombo->setEnabled(true);
+	}
+
+	updateFfmpegUi();
+}
+
+void AnimationExportDialog::updateEncoder()
+{
+	if(m_encoderCombo->count() != 0) {
+		QString key = QString::number(m_formatCombo->currentData().toInt());
+		// The first item is the "Automatic" entry.
+		if(m_encoderCombo->currentIndex() == 0) {
+			m_preferredEncoders.remove(key);
+		} else {
+			QString preferredKey = m_encoderCombo->currentData().toString();
+			m_preferredEncoders.insert(key, preferredKey);
+		}
+	}
+	updateFfmpegUi();
+}
+
+void AnimationExportDialog::updateFfmpegUi()
+{
+	if(m_ffmpegFormatNote) {
+		m_ffmpegFormatNote->setVisible(
+			m_ffmpegPath.isEmpty() && isAllEncodersFfmpeg());
+	}
+
+	if(m_ffmpegEncoderNote) {
+		m_ffmpegEncoderNote->setVisible(
+			m_ffmpegPath.isEmpty() && isCurrentEncoderFfmpeg());
+	}
+
+	if(m_ffmpegButton) {
+		m_ffmpegButton->setVisible(isAnyEncoderFfmpeg());
+		if(m_ffmpegPath.isEmpty()) {
+			m_ffmpegButton->setText(
+				QCoreApplication::translate(
+					"dialogs::TimelapseDialog", "Set up FFmpeg"));
+		} else {
+			m_ffmpegButton->setText(
+				QCoreApplication::translate(
+					"dialogs::TimelapseDialog", "FFmpeg settings"));
+		}
+	}
+}
+
+bool AnimationExportDialog::isAllEncodersFfmpeg() const
+{
+	int count = m_encoderCombo->count();
+	if(count == 0) {
+		return false;
+	} else {
+		for(int i = 0; i < count; ++i) {
+			if(!m_encoderCombo->itemData(i).toString().startsWith(
+				   QStringLiteral("ffmpeg:"))) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+bool AnimationExportDialog::isAnyEncoderFfmpeg() const
+{
+	int count = m_encoderCombo->count();
+	for(int i = 0; i < count; ++i) {
+		if(m_encoderCombo->itemData(i).toString().startsWith(
+			   QStringLiteral("ffmpeg:"))) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AnimationExportDialog::isCurrentEncoderFfmpeg() const
+{
+	return currentEncoderKey().startsWith(QStringLiteral("ffmpeg:"));
+}
+
+QString AnimationExportDialog::currentEncoderKey() const
+{
+	if(m_encoderCombo->count() == 0) {
+		return QString();
+	} else {
+		return m_encoderCombo->currentData().toString();
+	}
+}
+
 void AnimationExportDialog::showFfmpegSettings()
 {
-#	ifdef DRAWPILE_FFMPEG_DIALOG
+#ifdef DRAWPILE_FFMPEG_DIALOG
 	QString objectName = QStringLiteral("ffmpegdialog");
 	FfmpegDialog *dlg =
 		findChild<FfmpegDialog *>(objectName, Qt::FindDirectChildrenOnly);
@@ -457,16 +579,16 @@ void AnimationExportDialog::showFfmpegSettings()
 			&AnimationExportDialog::setFfmpegPath);
 		dlg->show();
 	}
-#	else
+#else
 	utils::showFfmpegUnsupportedError(this);
-#	endif
+#endif
 }
 
 void AnimationExportDialog::setFfmpegPath(const QString &ffmpegPath)
 {
 	if(ffmpegPath != m_ffmpegPath) {
 		m_ffmpegPath = ffmpegPath;
-		updateEncoderUi();
+		updateFormat();
 		updateFfmpegFormatIcons();
 	}
 }
@@ -481,12 +603,11 @@ void AnimationExportDialog::updateFfmpegFormatIcons()
 	int count = m_formatCombo->count();
 	for(int i = 0; i < count; ++i) {
 		int format = m_formatCombo->itemData(i).toInt();
-		if(!isVideoFormatSupported(VideoFormat(format))) {
+		if(!isVideoFormatSupportedNonFfmpeg(VideoFormat(format))) {
 			m_formatCombo->setItemIcon(i, icon);
 		}
 	}
 }
-#endif
 
 #ifndef __EMSCRIPTEN__
 QString AnimationExportDialog::choosePath()
@@ -636,37 +757,22 @@ void AnimationExportDialog::setCanvasFramerate(double framerate)
 	m_canvasFramerate = framerate;
 }
 
+void AnimationExportDialog::saveSettings()
+{
+	config::Config *cfg = dpAppConfig();
+	cfg->setAnimationExportFormat(m_formatCombo->currentData().toInt());
+	cfg->setAnimationExportPreferredEncoders(m_preferredEncoders);
+	cfg->setAnimationExportShowAdvanced(m_advancedWidget->isEnabled());
+}
+
 void AnimationExportDialog::requestExport()
 {
-	int format = m_formatCombo->currentData().toInt();
-	config::Config *cfg = dpAppConfig();
-	cfg->setAnimationExportFormat(format);
-
-#ifdef DP_ANDROID_VIDEO_ENCODER
-	bool useAndroidVideoEncoder =
-		!isVideoFormatSupported(VideoFormat(format)) ||
-		(m_androidCheckBox->isChecked() &&
-		 isVideoFormatSupportedAndroid(VideoFormat(format)));
-#else
-	QString ffmpegPath;
-	bool wantFfmpeg = !isVideoFormatSupported(VideoFormat(format)) ||
-					  (m_ffmpegCheckBox && m_ffmpegCheckBox->isChecked() &&
-					   isVideoFormatSupportedFfmpeg(VideoFormat(format)));
-	if(wantFfmpeg) {
-		ffmpegPath = m_ffmpegPath;
-	}
-#endif
-
 	emit exportRequested(
 #ifndef __EMSCRIPTEN__
 		m_path,
 #endif
-#ifdef DP_ANDROID_VIDEO_ENCODER
-		useAndroidVideoEncoder, m_androidHardwareCheckBox->isChecked(),
-#else
-		ffmpegPath,
-#endif
-		format, m_loopsSpinner->value(), buildFrameIndexes(),
+		m_ffmpegPath, currentEncoderKey(), m_formatCombo->currentData().toInt(),
+		m_loopsSpinner->value(), buildFrameIndexes(),
 		m_framerateSpinner->value(), getCropRect(), m_scaleSpinner->value(),
 		m_scaleSmoothBox->isChecked());
 }

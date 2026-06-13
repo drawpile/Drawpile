@@ -4,7 +4,6 @@ extern "C" {
 }
 #include <QByteArray>
 #include <QFile>
-#include <QHash>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #    include <QJniEnvironment>
 #    include <QJniObject>
@@ -53,29 +52,47 @@ static bool is_error(int result)
 }
 }
 
-extern "C" bool DP_android_video_encoder_format_supported(int format)
+extern "C" void DP_android_video_encoder_format_support(
+    int format, DP_AndroidVideoEncoderFormatSupportAddFn fn, void *user)
 {
-    // Also check DP_save_video_format_supported_android! It filters out
-    // possible formats before this function is hit.
-    static QHash<int, bool> *cache;
-    if (cache) {
-        QHash<int, bool>::const_iterator it = cache->constFind(format);
-        if (it != cache->constEnd()) {
-            return *it;
-        }
-    }
-    else {
-        cache = new QHash<int, bool>();
-    }
-
     QJniEnvironment env;
-    jboolean supported = QJniObject::callStaticMethod<jboolean>(
-        "net/drawpile/android/VideoEncoder", "isFormatSupported", "(I)Z",
-        jint(format));
+    QJniObject supports = QJniObject::callStaticObjectMethod(
+        "net/drawpile/android/VideoEncoder", "getSupportsForFormat",
+        "(I)Ljava/util/List;", jint(format));
+    if (clear_exception(env) || !check_valid("supports", supports)) {
+        return;
+    }
 
-    bool result = !clear_exception(env) && supported;
-    cache->insert(format, result);
-    return result;
+    jint count = supports.callMethod<jint>("size", "()I");
+    if (clear_exception(env)) {
+        return;
+    }
+
+    for (jint i = 0; i < count; ++i) {
+        QJniObject entry =
+            supports.callObjectMethod("get", "(I)Ljava/lang/Object;", i);
+        if (clear_exception(env) || !check_valid("entry", entry)) {
+            continue;
+        }
+
+        QJniObject name_obj =
+            entry.getObjectField("name", "Ljava/lang/String;");
+        if (clear_exception(env) || !check_valid("name_obj", entry)) {
+            continue;
+        }
+
+        QByteArray nameBytes = name_obj.toString().toUtf8();
+        if (clear_exception(env) || nameBytes.isEmpty()) {
+            continue;
+        }
+
+        bool hardware = entry.getField<jboolean>("hardware");
+        if (clear_exception(env)) {
+            continue;
+        }
+
+        fn(user, nameBytes.constData(), hardware);
+    }
 }
 
 extern "C" DP_AndroidVideoEncoder *
@@ -94,12 +111,19 @@ DP_android_video_encoder_new(DP_AndroidVideoEncoderParams params)
         return nullptr;
     }
 
+    QJniObject encoder_obj;
+    if (params.encoder && params.encoder[0] != '\0') {
+        QString encoder = QString::fromUtf8(params.encoder);
+        encoder_obj = QJniObject::fromString(encoder);
+        clear_exception(env);
+    }
+
     QJniObject *encoder = new QJniObject(
         "net/drawpile/android/VideoEncoder",
-        "(IIIFLjava/lang/String;Ljava/lang/String;Z)V", jint(params.format),
-        jint(params.width), jint(params.height), jfloat(params.framerate),
-        output_obj.object<jstring>(), temp_obj.object<jstring>(),
-        jboolean(params.hardware));
+        "(IIIFLjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+        jint(params.format), jint(params.width), jint(params.height),
+        jfloat(params.framerate), output_obj.object<jstring>(),
+        temp_obj.object<jstring>(), encoder_obj.object<jstring>());
     if (clear_exception(env) || !check_valid("encoder", *encoder)) {
         delete encoder;
         return nullptr;
