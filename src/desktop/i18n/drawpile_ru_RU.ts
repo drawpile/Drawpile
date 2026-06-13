@@ -289,7 +289,7 @@
     <message>
         <location line="+3"/>
         <source>Pick Color</source>
-        <translation type="unfinished">Выбрать слой</translation>
+        <translation>Выбрать цвет</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -692,7 +692,7 @@
     <message>
         <location line="+9"/>
         <source>Project Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о проекте</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -777,7 +777,7 @@
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation>Выбранный формат сохранит изображение в объединённом виде. Если вы хотите сохранить слои, аннотации и временную шкалу анимации, необходимо сохранить файл в другом формате (ORA).</translation>
+        <translation>Выбранный формат сохранит изображение в объединённом виде. Если вы хотите сохранить слои, аннотации и временную шкалу анимации, необходимо сохранить файл в другом формате.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -2839,7 +2839,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Анимация</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3316,37 +3316,37 @@ You can exit it via the View menu or the timeline.</source>
         <location line="+10"/>
         <location line="+30"/>
         <source>Timelapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Таймлапс</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>Unexpected save format. To view statistics, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
+        <translation>Неожиданный формат сохранения. Для просмотра статистики, нужно сохранить файл проекта (.dppr).</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>To make a timelapse, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Для создания таймлапса, сначала нужно сохранить файл проекта (.dppr). Хотите сделать это сейчас?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the timelapse?</source>
-        <translation type="unfinished"></translation>
+        <translation>Имеются несохранённые изменения в файле проекта (.dppr). Хотите сохранить их сейчас, чтобы они отобразились в таймлапсе?</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Unexpected save format. To make a timelapse, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
+        <translation>Неожиданный формат сохранения. Для создания таймлапса, выберите формат файла проекта (.dppr).</translation>
     </message>
     <message>
         <location line="+792"/>
         <source>Open Recovered File</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть восстановленный файл</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recovered file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы собираетесь открыть восстановленный файл и закрыть это окно.</translation>
     </message>
     <message>
         <location line="+1365"/>
@@ -3443,7 +3443,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation>Вы действительно хотите вызвать сбой в Drawpile? Это завершит программу, и вы потеряете все несохранённые данные.</translation>
+        <translation>Вы действительно хотите вызвать сбой в Drawpile? Это завершит программу, и вы потеряете все несохранённые данные!</translation>
     </message>
     <message>
         <location line="+230"/>
@@ -3458,12 +3458,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+21"/>
         <source>Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Автовосстановление</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage autorecovery…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки автовосстановления…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3483,27 +3483,27 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+9"/>
         <source>Project statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Статистика проекта…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Make timelapse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать таймлапс…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recover…</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановление…</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location line="+187"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки ввода</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -3533,7 +3533,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+69"/>
         <source>Interface scale…</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер интерфейса…</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3733,7 +3733,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+131"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -8971,7 +8971,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation>Это имя пользователя не принадлежит учётной записи на этом сервере. Это не ваша учётная запись drawpile.net.</translation>
+        <translation>Это имя пользователя не принадлежит учётной записи на этом сервере. Это не ваша учётная запись drawpile.net!</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8981,7 +8981,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+628"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation>Введите имя пользователя и пароль для вашей учётной записи на этом сервере. Это не ваша учётная запись drawpile.net.</translation>
+        <translation>Введите имя пользователя и пароль для вашей учётной записи на этом сервере. Это не ваша учётная запись drawpile.net!</translation>
     </message>
     <message>
         <location line="-723"/>
@@ -9006,10 +9006,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation>См. %1 для получения дополнительной информации об этом сервере. Чтобы зарегистрироваться, посетите %2.
-Это имя пользователя принадлежит учетной записи, выберите другое.
-Аутентификация %1 не работает.
-Это имя пользователя не принадлежит учетной записи на %1.</translation>
+        <translation>См. %1 для получения дополнительной информации об этом сервере. Чтобы зарегистрироваться, посетите %2.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12062,7 +12059,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Pick color</source>
-        <translation>Pick color</translation>
+        <translation>Выбрать цвет</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12176,7 +12173,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <location line="+196"/>
         <source>Disabled</source>
-        <translation>Отключён</translation>
+        <translation>Выключено</translation>
     </message>
     <message>
         <location line="-195"/>
@@ -12449,7 +12446,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+93"/>
         <source>Nothing here yet!</source>
-        <translation>Здесь пока ничего нет.</translation>
+        <translation>Здесь пока ничего нет!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12900,7 +12897,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation>Доступна новая версия Drawpile.</translation>
+        <translation>Доступна новая версия Drawpile!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12928,7 +12925,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation>Вы используете веб-версию Drawpile в автономном режиме. Она &lt;strong&gt;не&lt;/strong&gt; будет автоматически сохранять ваши рисунки, поэтому сохраняйте их как можно чаще.</translation>
+        <translation>Вы используете веб-версию Drawpile в автономном режиме. Она &lt;strong&gt;не&lt;/strong&gt; будет автоматически сохранять ваши рисунки, поэтому сохраняйте их как можно чаще!</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -15640,22 +15637,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+416"/>
         <source>Vertical flip: ON</source>
-        <translation>Вертикальный переворот: ВКЛ</translation>
+        <translation>Отражение по вертикали: ВКЛ</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation>Вертикальный переворот: ОТКЛ</translation>
+        <translation>Отражение по вертикали: ВЫКЛ</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation>Горизонтальное отражение: ВКЛ</translation>
+        <translation>Горизонтальное зеркало: ВКЛ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>Горизонтальное отражение: ОТКЛ</translation>
+        <translation>Горизонтальное зеркало: ВЫКЛ</translation>
     </message>
     <message>
         <location line="+2059"/>
@@ -15665,12 +15662,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation>Повторот: %1°</translation>
+        <translation>Поворот: %1°</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Downloading…</source>
-        <translation>Загрузка…</translation>
+        <translation>Скачивание…</translation>
     </message>
     <message>
         <location line="+2"/>
