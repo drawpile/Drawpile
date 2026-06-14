@@ -1437,7 +1437,8 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
 #ifdef DP_ANDROID_VIDEO_ENCODER
     DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
     DP_AndroidVideoEncoder *ave = NULL;
-    struct SwsContext *sws_context = NULL;
+    struct SwsContext *native_sws_context = NULL;
+    struct SwsContext *buffer_sws_context = NULL;
     uint8_t *img_buffers[4];
     int img_linesizes[4];
     enum AVPixelFormat img_format = AV_PIX_FMT_NONE;
@@ -1501,6 +1502,19 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 goto cleanup;
             }
 
+            uint8_t *dst_buffers[4] = {
+                image.buffer_y,
+                image.buffer_u,
+                image.buffer_v,
+                NULL,
+            };
+            int dst_linesizes[4] = {
+                image.row_stride_y,
+                image.row_stride_u,
+                image.row_stride_v,
+                0,
+            };
+
             // Android has hardware-based encoding, which has a "flexible" YUV
             // format. It either has everything in its own plane, which means
             // the U and V values are right next to each other with a pixel
@@ -1512,6 +1526,8 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
             }
             else if (image.pixel_stride_u == 2 && image.pixel_stride_v == 2) {
                 output_pixel_format = AV_PIX_FMT_NV12;
+                dst_buffers[2] = NULL;
+                dst_linesizes[2] = 0;
             }
             else {
                 DP_error_set("Unknown pixel format with strides %d and %d",
@@ -1520,83 +1536,77 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 goto cleanup;
             }
 
-            if (i == 0 || img_format != output_pixel_format) {
-                if (img_format != output_pixel_format) {
-                    // The Android encoder really shouldn't be changing
-                    // pixel formats along the way, but just in case.
-                    if (img_format != AV_PIX_FMT_NONE) {
-                        DP_warn("Encoder changed pixel format from %d to "
-                                "%d, reallocating image",
-                                (int)img_format, (int)output_pixel_format);
-                        img_format = AV_PIX_FMT_NONE;
-                        av_freep(&img_buffers[0]);
-                    }
-
-                    int img_result =
-                        av_image_alloc(img_buffers, img_linesizes, output_width,
-                                       output_height, output_pixel_format, 32);
-                    if (img_result < 0) {
-                        DP_error_set("Error %d allocating image buffer",
-                                     img_result);
-                        result = DP_SAVE_RESULT_INTERNAL_ERROR;
-                        goto cleanup;
-                    }
-                    img_format = output_pixel_format;
-                }
-
-                sws_context = sws_getCachedContext(
-                    sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
-                    output_width, output_height, img_format,
+            if (f.instances == 1) {
+                // Just a single frame, scale it into the native buffer.
+                native_sws_context = sws_getCachedContext(
+                    native_sws_context, input_width, input_height,
+                    AV_PIX_FMT_BGRA, output_width, output_height,
+                    output_pixel_format,
                     get_scaling_flags(params.flags, input_width, input_height,
                                       output_width, output_height),
                     NULL, NULL, NULL);
-                if (!sws_context) {
-                    DP_error_set("Failed to allocate buffer scaling context");
+                if (!native_sws_context) {
+                    DP_error_set("Failed to allocate scaling context");
                     result = DP_SAVE_RESULT_INTERNAL_ERROR;
                     goto cleanup;
                 }
 
-                const uint8_t *src_slice[] = {f.pixels, NULL, NULL, NULL};
-                const int src_stride[] = {f.width * 4, 0, 0, 0};
-                sws_scale(sws_context, src_slice, src_stride, 0, f.height,
-                          img_buffers, img_linesizes);
-            }
-
-            // Using manual memcpy here instead of av_image_copy2 because on
-            // some devices the SIMD access causes artifacting somehow.
-
-            // The lightness plane uses the full height and width.
-            size_t full_row_size = DP_int_to_size(output_width);
-            for (int row = 0; row < output_height; ++row) {
-                memcpy(((uint8_t *)image.buffer_y) + (row * image.row_stride_y),
-                       img_buffers[0] + (row * img_linesizes[0]),
-                       full_row_size);
-            }
-
-            // The chroma planes uses half the height.
-            int half_height = (output_height + 1) / 2;
-            if (output_pixel_format == AV_PIX_FMT_YUV420P) {
-                // U and V are separate planes, each one half the width.
-                size_t half_row_size = DP_int_to_size((output_width + 1) / 2);
-                for (int row = 0; row < half_height; ++row) {
-                    memcpy(((uint8_t *)image.buffer_u)
-                               + (row * image.row_stride_u),
-                           img_buffers[1] + (row * img_linesizes[1]),
-                           half_row_size);
-                    memcpy(((uint8_t *)image.buffer_v)
-                               + (row * image.row_stride_v),
-                           img_buffers[2] + (row * img_linesizes[2]),
-                           half_row_size);
-                }
+                const uint8_t *src_buffers[] = {f.pixels, NULL, NULL, NULL};
+                const int src_linesizes[] = {f.width * 4, 0, 0, 0};
+                sws_scale(native_sws_context, src_buffers, src_linesizes, 0,
+                          f.height, dst_buffers, dst_linesizes);
             }
             else {
-                // U and V are a combined plane, so full width taken together.
-                for (int row = 0; row < half_height; ++row) {
-                    memcpy(((uint8_t *)image.buffer_u)
-                               + (row * image.row_stride_u),
-                           img_buffers[1] + (row * img_linesizes[1]),
-                           full_row_size);
+                // Repeated frame, scale it into an intermediate buffer, then
+                // copy it over to the native one for each instance.
+                if (i == 0 || img_format != output_pixel_format) {
+                    if (img_format != output_pixel_format) {
+                        // The Android encoder really shouldn't be changing
+                        // pixel formats along the way, but just in case.
+                        if (img_format != AV_PIX_FMT_NONE) {
+                            DP_warn("Encoder changed pixel format from %d to "
+                                    "%d, reallocating image",
+                                    (int)img_format, (int)output_pixel_format);
+                            img_format = AV_PIX_FMT_NONE;
+                            av_freep(&img_buffers[0]);
+                        }
+
+                        int img_result = av_image_alloc(
+                            img_buffers, img_linesizes, output_width,
+                            output_height, output_pixel_format, 32);
+                        if (img_result < 0) {
+                            DP_error_set("Error %d allocating image buffer",
+                                         img_result);
+                            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                            goto cleanup;
+                        }
+                        img_format = output_pixel_format;
+                    }
+
+                    buffer_sws_context = sws_getCachedContext(
+                        buffer_sws_context, input_width, input_height,
+                        AV_PIX_FMT_BGRA, output_width, output_height,
+                        img_format,
+                        get_scaling_flags(params.flags, input_width,
+                                          input_height, output_width,
+                                          output_height),
+                        NULL, NULL, NULL);
+                    if (!buffer_sws_context) {
+                        DP_error_set(
+                            "Failed to allocate buffer scaling context");
+                        result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                        goto cleanup;
+                    }
+
+                    const uint8_t *src_slice[] = {f.pixels, NULL, NULL, NULL};
+                    const int src_stride[] = {f.width * 4, 0, 0, 0};
+                    sws_scale(buffer_sws_context, src_slice, src_stride, 0,
+                              f.height, img_buffers, img_linesizes);
                 }
+
+                av_image_copy2(dst_buffers, dst_linesizes, img_buffers,
+                               img_linesizes, output_pixel_format, output_width,
+                               output_height);
             }
 
             ave_result = DP_android_video_encoder_commit(ave);
@@ -1625,8 +1635,10 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
         img_format = AV_PIX_FMT_NONE;
         av_freep(&img_buffers[0]);
     }
-    sws_freeContext(sws_context);
-    sws_context = NULL;
+    sws_freeContext(buffer_sws_context);
+    buffer_sws_context = NULL;
+    sws_freeContext(native_sws_context);
+    native_sws_context = NULL;
 
     if (android_prepare(ave, &ap, &result) != ANDROID_PREPARE_OK) {
         goto cleanup;
@@ -1664,7 +1676,8 @@ cleanup:
     if (img_format != AV_PIX_FMT_NONE) {
         av_freep(&img_buffers[0]);
     }
-    sws_freeContext(sws_context);
+    sws_freeContext(buffer_sws_context);
+    sws_freeContext(native_sws_context);
     DP_android_video_encoder_free(ave);
     return result;
 #else
