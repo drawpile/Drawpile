@@ -192,8 +192,7 @@ AnimationExportDialog::AnimationExportDialog(
 
 	m_framerateSpinner = new KisDoubleSliderSpinBox;
 	m_framerateSpinner->setIndeterminate(true);
-	m_framerateSpinner->setDecimals(2);
-	m_framerateSpinner->setRange(0.01, 999.99);
+	m_framerateSpinner->setRange(0.01, 999.99, 2);
 	m_framerateSpinner->setSuffix(tr(" FPS"));
 	inputForm->addRow(tr("Framerate:"), m_framerateSpinner);
 
