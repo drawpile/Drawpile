@@ -169,7 +169,7 @@ extern "C" int DP_android_video_encoder_prepare(DP_AndroidVideoEncoder *ave,
 
 namespace {
 static bool get_plane_buffer(QJniEnvironment &env, QJniObject &encoder,
-                             int index, void **out_buffer)
+                             int index, uint8_t **out_buffer)
 {
     QJniObject plane = encoder.callObjectMethod(
         "getInputImagePlaneBuffer", "(I)Ljava/nio/ByteBuffer;", jint(index));
@@ -177,7 +177,8 @@ static bool get_plane_buffer(QJniEnvironment &env, QJniObject &encoder,
         return false;
     }
 
-    void *buffer = env->GetDirectBufferAddress(plane.object<jobject>());
+    uint8_t *buffer = static_cast<uint8_t *>(
+        env->GetDirectBufferAddress(plane.object<jobject>()));
     if (!buffer) {
         DP_error_set("No plane buffer at index %d", index);
         return false;

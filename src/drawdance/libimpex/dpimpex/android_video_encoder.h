@@ -22,9 +22,9 @@ typedef struct DP_AndroidVideoEncoderParams {
 } DP_AndroidVideoEncoderParams;
 
 typedef struct DP_AndroidVideoEncoderImage {
-    void *buffer_y;
-    void *buffer_u;
-    void *buffer_v;
+    uint8_t *buffer_y;
+    uint8_t *buffer_u;
+    uint8_t *buffer_v;
     int row_stride_y;
     int row_stride_u;
     int row_stride_v;

@@ -1502,12 +1502,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 goto cleanup;
             }
 
-            uint8_t *dst_buffers[4] = {
-                image.buffer_y,
-                image.buffer_u,
-                image.buffer_v,
-                NULL,
-            };
+            uint8_t *dst_buffers[4] = {NULL, NULL, NULL, NULL};
             int dst_linesizes[4] = {
                 image.row_stride_y,
                 image.row_stride_u,
@@ -1523,15 +1518,33 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
             enum AVPixelFormat output_pixel_format;
             if (image.pixel_stride_u == 1 && image.pixel_stride_v == 1) {
                 output_pixel_format = AV_PIX_FMT_YUV420P;
+                dst_buffers[0] = image.buffer_y;
+                dst_buffers[1] = image.buffer_u;
+                dst_buffers[2] = image.buffer_v;
+                dst_linesizes[0] = image.row_stride_y;
+                dst_linesizes[1] = image.row_stride_u;
+                dst_linesizes[2] = image.row_stride_v;
             }
-            else if (image.pixel_stride_u == 2 && image.pixel_stride_v == 2) {
+            else if (image.pixel_stride_u == 2 && image.pixel_stride_v == 2
+                     && image.buffer_u + 1 == image.buffer_v) {
                 output_pixel_format = AV_PIX_FMT_NV12;
-                dst_buffers[2] = NULL;
-                dst_linesizes[2] = 0;
+                dst_buffers[0] = image.buffer_y;
+                dst_buffers[1] = image.buffer_u;
+                dst_linesizes[0] = image.row_stride_y;
+                dst_linesizes[1] = image.row_stride_u;
+            }
+            else if (image.pixel_stride_u == 2 && image.pixel_stride_v == 2
+                     && image.buffer_v + 1 == image.buffer_u) {
+                output_pixel_format = AV_PIX_FMT_NV21;
+                dst_buffers[0] = image.buffer_y;
+                dst_buffers[1] = image.buffer_v;
+                dst_linesizes[0] = image.row_stride_y;
+                dst_linesizes[1] = image.row_stride_v;
             }
             else {
-                DP_error_set("Unknown pixel format with strides %d and %d",
-                             image.pixel_stride_u, image.pixel_stride_v);
+                DP_error_set("Unknown pixel format with u=%p/%d v=%p/%d",
+                             (void *)image.buffer_u, image.pixel_stride_u,
+                             (void *)image.buffer_y, image.pixel_stride_v);
                 result = DP_SAVE_RESULT_INTERNAL_ERROR;
                 goto cleanup;
             }
