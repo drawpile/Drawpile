@@ -1609,12 +1609,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
             }
 
             uint8_t *dst_buffers[4] = {NULL, NULL, NULL, NULL};
-            int dst_linesizes[4] = {
-                image.row_stride_y,
-                image.row_stride_u,
-                image.row_stride_v,
-                0,
-            };
+            int dst_linesizes[4] = {0, 0, 0, 0};
 
             // Android has hardware-based encoding, which has a "flexible" YUV
             // format. It either has everything in its own plane, which means
