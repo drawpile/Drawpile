@@ -77,7 +77,7 @@ extern "C" void DP_android_video_encoder_format_support(
 
         QJniObject name_obj =
             entry.getObjectField("name", "Ljava/lang/String;");
-        if (clear_exception(env) || !check_valid("name_obj", entry)) {
+        if (clear_exception(env) || !check_valid("name_obj", name_obj)) {
             continue;
         }
 
