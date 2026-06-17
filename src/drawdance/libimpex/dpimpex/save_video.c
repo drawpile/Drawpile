@@ -1543,8 +1543,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
 #ifdef DP_ANDROID_VIDEO_ENCODER
     DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
     DP_AndroidVideoEncoder *ave = NULL;
-    struct SwsContext *native_sws_context = NULL;
-    struct SwsContext *buffer_sws_context = NULL;
+    struct SwsContext *sws_context = NULL;
     uint8_t *img_buffers[4];
     int img_linesizes[4];
     enum AVPixelFormat img_format = AV_PIX_FMT_NONE;
@@ -1650,25 +1649,24 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 goto cleanup;
             }
 
+            sws_context = sws_getCachedContext(
+                sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
+                output_width, output_height, output_pixel_format,
+                get_scaling_flags(params.flags, input_width, input_height,
+                                  output_width, output_height),
+                NULL, NULL, NULL);
+            if (!sws_context) {
+                DP_error_set("Failed to allocate scaling context");
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
             if (f.instances == 1) {
                 // Just a single frame, scale it into the native buffer.
-                native_sws_context = sws_getCachedContext(
-                    native_sws_context, input_width, input_height,
-                    AV_PIX_FMT_BGRA, output_width, output_height,
-                    output_pixel_format,
-                    get_scaling_flags(params.flags, input_width, input_height,
-                                      output_width, output_height),
-                    NULL, NULL, NULL);
-                if (!native_sws_context) {
-                    DP_error_set("Failed to allocate scaling context");
-                    result = DP_SAVE_RESULT_INTERNAL_ERROR;
-                    goto cleanup;
-                }
-
                 const uint8_t *src_buffers[] = {f.pixels, NULL, NULL, NULL};
                 const int src_linesizes[] = {f.width * 4, 0, 0, 0};
-                sws_scale(native_sws_context, src_buffers, src_linesizes, 0,
-                          f.height, dst_buffers, dst_linesizes);
+                sws_scale(sws_context, src_buffers, src_linesizes, 0, f.height,
+                          dst_buffers, dst_linesizes);
             }
             else {
                 // Repeated frame, scale it into an intermediate buffer, then
@@ -1697,25 +1695,10 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                         img_format = output_pixel_format;
                     }
 
-                    buffer_sws_context = sws_getCachedContext(
-                        buffer_sws_context, input_width, input_height,
-                        AV_PIX_FMT_BGRA, output_width, output_height,
-                        img_format,
-                        get_scaling_flags(params.flags, input_width,
-                                          input_height, output_width,
-                                          output_height),
-                        NULL, NULL, NULL);
-                    if (!buffer_sws_context) {
-                        DP_error_set(
-                            "Failed to allocate buffer scaling context");
-                        result = DP_SAVE_RESULT_INTERNAL_ERROR;
-                        goto cleanup;
-                    }
-
                     const uint8_t *src_slice[] = {f.pixels, NULL, NULL, NULL};
                     const int src_stride[] = {f.width * 4, 0, 0, 0};
-                    sws_scale(buffer_sws_context, src_slice, src_stride, 0,
-                              f.height, img_buffers, img_linesizes);
+                    sws_scale(sws_context, src_slice, src_stride, 0, f.height,
+                              img_buffers, img_linesizes);
                 }
 
                 av_image_copy2(dst_buffers, dst_linesizes, img_buffers,
@@ -1749,10 +1732,8 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
         img_format = AV_PIX_FMT_NONE;
         av_freep(&img_buffers[0]);
     }
-    sws_freeContext(buffer_sws_context);
-    buffer_sws_context = NULL;
-    sws_freeContext(native_sws_context);
-    native_sws_context = NULL;
+    sws_freeContext(sws_context);
+    sws_context = NULL;
 
     if (android_prepare(ave, &ap, &result) != ANDROID_PREPARE_OK) {
         goto cleanup;
@@ -1790,8 +1771,7 @@ cleanup:
     if (img_format != AV_PIX_FMT_NONE) {
         av_freep(&img_buffers[0]);
     }
-    sws_freeContext(buffer_sws_context);
-    sws_freeContext(native_sws_context);
+    sws_freeContext(sws_context);
     DP_android_video_encoder_free(ave);
     return result;
 #else
