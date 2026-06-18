@@ -162,7 +162,7 @@ struct SelectionKeyFrame {
 
 class SelectionState {
 public:
-	const QVector<SelectionKeyFrame> keyFrames() const { return m_keyFrames; }
+	const QVector<SelectionKeyFrame> &keyFrames() const { return m_keyFrames; }
 
 	int keyFrameCount() const { return m_keyFrames.size(); }
 
@@ -185,6 +185,16 @@ public:
 				}
 			});
 		return skfs;
+	}
+
+	bool isAnyLayerIdsSelected() const
+	{
+		for(const SelectionKeyFrame &skf : m_keyFrames) {
+			if(skf.layerId > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	QSet<int> selectedLayerIds() const
@@ -962,6 +972,7 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameProperties);
 	d->frameMenu->addAction(actions.keyFrameDeleteLayer);
 	d->frameMenu->addAction(actions.keyFrameUnassign);
+	d->frameMenu->addAction(actions.keyFrameDeclone);
 	d->frameMenu->addSeparator();
 	d->frameMenu->addAction(actions.keyFrameExposureIncrease);
 	d->frameMenu->addAction(actions.keyFrameExposureIncreaseAll);
@@ -1023,6 +1034,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.keyFrameUnassign, &QAction::triggered, this,
 		&TimelineWidget::unassignKeyFrames);
+	connect(
+		actions.keyFrameDeclone, &QAction::triggered, this,
+		&TimelineWidget::decloneKeyFrames);
 	connect(
 		actions.keyFrameExposureIncrease, &QAction::triggered, this,
 		&TimelineWidget::increaseKeyFrameExposure);
@@ -2503,14 +2517,100 @@ void TimelineWidget::deleteKeyFramesWith(bool deleteUnusedLayers)
 	emit timelineEditCommands(msgs.size(), msgs.constData());
 }
 
+void TimelineWidget::deleteKeyFramesLayers()
+{
+	deleteKeyFramesWith(true);
+}
+
 void TimelineWidget::unassignKeyFrames()
 {
 	deleteKeyFramesWith(false);
 }
 
-void TimelineWidget::deleteKeyFramesLayers()
+void TimelineWidget::decloneKeyFrames()
 {
-	deleteKeyFramesWith(true);
+	if(!d->editable || !d->canvas) {
+		return;
+	}
+
+	QHash<int, int> layerIdReferenceCounts;
+	for(const canvas::TimelineTrack &track : d->getTracks()) {
+		for(const canvas::TimelineKeyFrame &keyFrame : track.keyFrames) {
+			int layerId = keyFrame.layerId;
+			if(layerId > 0) {
+				++layerIdReferenceCounts[layerId];
+			}
+		}
+	}
+
+	canvas::LayerListModel *layers = d->canvas->layerlist();
+	QVector<QPair<SelectionKeyFrame, QString>> declone;
+	int requiredLayerIds = 0;
+
+	// Reversed ordering so that we duplicate the left-most key frames last,
+	// otherwise it's weird that the "first" key frame gets a new layer and the
+	// "last" one still references the original.
+	for(const SelectionKeyFrame &skf :
+		d->getSelectionState().sortedKeyFrames(1, 1)) {
+		int layerId = skf.layerId;
+		if(layerId > 0) {
+			int &refcount = layerIdReferenceCounts[layerId];
+			if(refcount > 1) {
+				QModelIndex idx = layers->layerIndex(layerId);
+				if(idx.isValid()) {
+					requiredLayerIds += layers->countRequiredIds(idx);
+					declone.append(
+						{skf, idx.data(canvas::LayerListModel::TitleRole)
+								  .toString()});
+					--refcount;
+				} else {
+					qWarning("Layer %d to declone not found", layerId);
+				}
+			}
+		}
+	}
+
+	int count = declone.size();
+	if(count == 0) {
+		return;
+	}
+
+	QVector<int> layerIds = layers->getAvailableLayerIds(requiredLayerIds);
+	if(layerIds.isEmpty() ||
+	   compat::cast_6<int>(layerIds.size()) < requiredLayerIds) {
+		qWarning("Could not find enough layer ids to declone");
+		return;
+	}
+
+	net::MessageList msgs;
+	msgs.reserve(count * 2 + 1);
+
+	uint8_t contextId = d->canvas->localUserId();
+	// We will prepend the messages so that the layers get proper titles.
+
+	QSet<QString> additionalTakenLayerNames;
+	additionalTakenLayerNames.reserve(count);
+	for(int i = 0; i < count; ++i) {
+		// Reversed order, since the list is inverted from before.
+		const QPair<SelectionKeyFrame, QString> &p = declone[count - i - 1];
+		int oldLayerId = p.first.layerId;
+		int newLayerId = layerIds[i];
+		QString newLayerName =
+			layers->getAvailableLayerName(p.second, &additionalTakenLayerNames);
+		additionalTakenLayerNames.insert(newLayerName);
+		msgs.prepend(
+			net::makeKeyFrameSetMessage(
+				contextId, p.first.trackId, p.first.frameIndex, newLayerId, 0,
+				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+		msgs.prepend(
+			net::makeLayerTreeCreateMessage(
+				contextId, newLayerId, oldLayerId, oldLayerId, 0, 0,
+				newLayerName));
+	}
+
+	msgs.prepend(net::makeUndoPointMessage(contextId));
+
+	Q_EMIT timelineEditCommands(msgs.size(), msgs.constData());
 }
 
 void TimelineWidget::increaseKeyFrameExposure()
@@ -3683,6 +3783,9 @@ void TimelineWidget::updateActions()
 		d->actions.keyFrameUnassign, QCoreApplication::translate(
 										 "MainWindow", "Unassign Key Frame(s)",
 										 nullptr, selectedKeyFrameCount));
+
+	d->actions.keyFrameDeclone->setEnabled(
+		anySelectedKeyFramesEditable && selectionState.isAnyLayerIdsSelected());
 
 	bool canIncreaseExposure = false;
 	bool canDecreaseExposure = false;

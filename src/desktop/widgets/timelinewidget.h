@@ -52,6 +52,7 @@ public:
 		QAction *keyFrameProperties = nullptr;
 		QAction *keyFrameDeleteLayer = nullptr;
 		QAction *keyFrameUnassign = nullptr;
+		QAction *keyFrameDeclone = nullptr;
 		QAction *keyFrameExposureIncrease = nullptr;
 		QAction *keyFrameExposureIncreaseAll = nullptr;
 		QAction *keyFrameExposureDecrease = nullptr;
@@ -192,6 +193,7 @@ private:
 	void deleteKeyFramesWith(bool deleteUnusedLayers);
 	void deleteKeyFramesLayers();
 	void unassignKeyFrames();
+	void decloneKeyFrames();
 	void increaseKeyFrameExposure();
 	void increaseKeyFrameExposureAll();
 	void decreaseKeyFrameExposure();

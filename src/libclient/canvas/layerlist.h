@@ -214,6 +214,8 @@ public:
 	QVector<int> getAvailableLayerIds(
 		int count, const QSet<int> *additionalTakenLayerIds = nullptr) const;
 
+	int countRequiredIds(const QModelIndex &idx) const;
+
 	/**
 	 * @brief Find a unique name for a layer
 	 * @return unique name

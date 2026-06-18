@@ -1363,23 +1363,8 @@ QModelIndex LayerList::searchKeyFrameReference(
 		return QModelIndex();
 	}
 
-	outRequiredIdCount = countRequiredIds(layerlist, idx);
+	outRequiredIdCount = layerlist->countRequiredIds(idx);
 	return idx;
-}
-
-int LayerList::countRequiredIds(
-	const canvas::LayerListModel *layerlist, const QModelIndex &idx)
-{
-	if(idx.isValid()) {
-		int count = 1;
-		int childCount = layerlist->rowCount(idx);
-		for(int i = 0; i < childCount; ++i) {
-			count += countRequiredIds(layerlist, layerlist->index(i, 0, idx));
-		}
-		return count;
-	} else {
-		return 0;
-	}
 }
 
 int LayerList::intuitKeyFrameTarget(
@@ -1503,7 +1488,7 @@ void LayerList::duplicateLayer()
 
 	int id;
 	{
-		int requiredIdCount = countRequiredIds(layers, index);
+		int requiredIdCount = layers->countRequiredIds(index);
 		QVector<int> ids = layers->getAvailableLayerIds(requiredIdCount);
 		if(ids.isEmpty() || int(ids.size()) < requiredIdCount) {
 			showOutOfIdsError(layers->layerIdLimit(), requiredIdCount);

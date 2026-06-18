@@ -1291,6 +1291,20 @@ QVector<int> LayerListModel::getAvailableLayerIds(
 	return foundIds;
 }
 
+int LayerListModel::countRequiredIds(const QModelIndex &idx) const
+{
+	if(idx.isValid()) {
+		int count = 1;
+		int childCount = rowCount(idx);
+		for(int i = 0; i < childCount; ++i) {
+			count += countRequiredIds(index(i, 0, idx));
+		}
+		return count;
+	} else {
+		return 0;
+	}
+}
+
 void LayerListModel::updateCheckedLayerAcl(int layerId)
 {
 	if(m_checkMode) {

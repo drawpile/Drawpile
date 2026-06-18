@@ -7714,6 +7714,10 @@ void MainWindow::setupActions()
 			"key-frame-unassign", tr("Unassign Key Frame(s)", nullptr, 1))
 			.icon("drawpile_keyframe_unlink")
 			.noDefaultShortcut();
+	QAction *keyFrameDeclone =
+		makeAction("key-frame-declone", tr("Declone Key Frame Layers"))
+			.icon("edit-clone-unlink")
+			.noDefaultShortcut();
 	QAction *keyFrameExposureIncrease =
 		makeAction(
 			"key-frame-exposure-increase",
@@ -7811,6 +7815,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameProperties);
 	animationMenu->addAction(keyFrameDeleteLayer);
 	animationMenu->addAction(keyFrameUnassign);
+	animationMenu->addAction(keyFrameDeclone);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameExposureIncrease);
 	animationMenu->addAction(keyFrameExposureIncreaseAll);
@@ -7916,6 +7921,7 @@ void MainWindow::setupActions()
 			keyFrameProperties,
 			keyFrameDeleteLayer,
 			keyFrameUnassign,
+			keyFrameDeclone,
 			keyFrameExposureIncrease,
 			keyFrameExposureIncreaseAll,
 			keyFrameExposureDecrease,

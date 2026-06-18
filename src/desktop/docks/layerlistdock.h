@@ -206,8 +206,6 @@ private:
 		QSet<QString> *inOutAdditionalTakenLayerNames = nullptr);
 	QModelIndex searchKeyFrameReference(
 		int trackId, int frame, int &outRequiredIdCount) const;
-	static int countRequiredIds(
-		const canvas::LayerListModel *layerlist, const QModelIndex &idx);
 	int intuitKeyFrameTarget(
 		int trackId, int sourceFrame, int targetFrame, int &sourceId,
 		int &targetId, uint8_t &flags) const;
