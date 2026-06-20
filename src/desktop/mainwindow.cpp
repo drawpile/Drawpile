@@ -7693,6 +7693,11 @@ void MainWindow::setupActions()
 		makeAction("key-frame-paste", tr("Paste Key Frame(s)", nullptr, 1))
 			.icon("edit-paste")
 			.noDefaultShortcut();
+	QAction *keyFramePasteDeclone =
+		makeAction(
+			"key-frame-paste-declone", tr("Paste Decloned Key Frame Layers"))
+			.icon("special_paste")
+			.noDefaultShortcut();
 	QVector<QAction *> keyFrameColors;
 	for(const utils::MarkerColor &mc : utils::markerColors()) {
 		keyFrameColors.append(
@@ -7807,6 +7812,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameCut);
 	animationMenu->addAction(keyFrameCopy);
 	animationMenu->addAction(keyFramePaste);
+	animationMenu->addAction(keyFramePasteDeclone);
 	QMenu *animationKeyFrameColorMenu = animationMenu->addMenu(
 		utils::makeColorIcon(16, QColor()), tr("Key Frame Color Marker"));
 	for(QAction *keyFrameColor : keyFrameColors) {
@@ -7918,6 +7924,7 @@ void MainWindow::setupActions()
 			keyFrameCut,
 			keyFrameCopy,
 			keyFramePaste,
+			keyFramePasteDeclone,
 			keyFrameProperties,
 			keyFrameDeleteLayer,
 			keyFrameUnassign,

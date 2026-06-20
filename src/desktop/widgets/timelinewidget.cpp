@@ -242,6 +242,16 @@ private:
 	bool m_anyKeyFrameLocked = false;
 };
 
+struct PasteKeyFrame {
+	int trackId;
+	int frameIndex;
+	int layerId;
+	int createLayerId;
+	QString title;
+	QString createLayerName;
+	QHash<int, bool> layerVisibility;
+};
+
 }
 
 struct TimelineWidget::Target {
@@ -833,9 +843,28 @@ struct TimelineWidget::Private {
 		return false;
 	}
 
+	QHash<int, int> collectLayerIdReferenceCounts(
+		const QSet<QPair<int, int>> *clobbered = nullptr) const
+	{
+		QHash<int, int> layerIdReferenceCounts;
+		for(const canvas::TimelineTrack &track : getTracks()) {
+			int trackId = track.id;
+			for(const canvas::TimelineKeyFrame &keyFrame : track.keyFrames) {
+				int layerId = keyFrame.layerId;
+				if(layerId > 0 &&
+				   (!clobbered ||
+					!clobbered->contains({trackId, keyFrame.frameIndex}))) {
+					++layerIdReferenceCounts[layerId];
+				}
+			}
+		}
+		return layerIdReferenceCounts;
+	}
+
 	net::Message makeKeyFrameLayerAttributesMessage(
 		uint8_t contextId, int trackId, int frameIndex,
-		const QHash<int, bool> layerVisibility)
+		const QHash<int, bool> layerVisibility,
+		const QHash<int, int> *layerIdMap = nullptr)
 	{
 		QVector<uint32_t> layers;
 		layers.reserve(layerVisibility.size());
@@ -844,7 +873,16 @@ struct TimelineWidget::Private {
 											 end = layerVisibility.constEnd();
 			it != end; ++it) {
 
-			uint32_t id = it.key();
+			int layerId = it.key();
+			if(layerIdMap) {
+				QHash<int, int>::const_iterator layerIdIt =
+					layerIdMap->constFind(layerId);
+				if(layerIdIt != layerIdMap->constEnd()) {
+					layerId = layerIdIt.value();
+				}
+			}
+
+			uint32_t id = layerId;
 			uint32_t flags = it.value() ? DP_KEY_FRAME_LAYER_REVEALED
 										: DP_KEY_FRAME_LAYER_HIDDEN;
 			layers.append((id & uint32_t(0xffffffu)) | (flags << uint32_t(24)));
@@ -922,6 +960,7 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->haveActions = true;
 	d->actions = actions;
 	actions.keyFramePaste->setEnabled(false);
+	actions.keyFrameDeclone->setEnabled(false);
 
 	d->trackActionsWidget = new QWidget(this);
 	d->trackActionsWidget->setContentsMargins(0, 0, 0, 0);
@@ -968,6 +1007,7 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameCut);
 	d->frameMenu->addAction(actions.keyFrameCopy);
 	d->frameMenu->addAction(actions.keyFramePaste);
+	d->frameMenu->addAction(actions.keyFramePasteDeclone);
 	d->frameMenu->addMenu(actions.animationKeyFrameColorMenu);
 	d->frameMenu->addAction(actions.keyFrameProperties);
 	d->frameMenu->addAction(actions.keyFrameDeleteLayer);
@@ -1022,6 +1062,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.keyFramePaste, &QAction::triggered, this,
 		&TimelineWidget::pasteKeyFrames);
+	connect(
+		actions.keyFramePasteDeclone, &QAction::triggered, this,
+		&TimelineWidget::pasteKeyFramesDeclone);
 	connect(
 		actions.keyFrameProperties, &QAction::triggered, this,
 		&TimelineWidget::showKeyFrameProperties);
@@ -2272,6 +2315,16 @@ void TimelineWidget::copyKeyFrames()
 
 void TimelineWidget::pasteKeyFrames()
 {
+	pasteKeyFramesWith(false);
+}
+
+void TimelineWidget::pasteKeyFramesDeclone()
+{
+	pasteKeyFramesWith(true);
+}
+
+void TimelineWidget::pasteKeyFramesWith(bool declone)
+{
 	if(!d->editable || !d->canvas) {
 		return;
 	}
@@ -2289,85 +2342,201 @@ void TimelineWidget::pasteKeyFrames()
 		return;
 	}
 
-	QJsonParseError err;
-	QJsonDocument doc =
-		QJsonDocument::fromJson(mimeData->data(KEY_FRAMES_MIME_TYPE), &err);
-	if(!doc.isObject()) {
-		qWarning(
-			"Error parsing key frames on clipboard: %s",
-			qUtf8Printable(err.errorString()));
+	int messageCapacityToReserve = 1;
+	QVector<PasteKeyFrame> pkfs;
+	{
+		QJsonParseError err;
+		QJsonDocument doc =
+			QJsonDocument::fromJson(mimeData->data(KEY_FRAMES_MIME_TYPE), &err);
+		if(!doc.isObject()) {
+			qWarning(
+				"Error parsing key frames on clipboard: %s",
+				qUtf8Printable(err.errorString()));
+			return;
+		}
+
+		QJsonArray keyFramesArray =
+			doc.object().value(QStringLiteral("keyFrames")).toArray();
+		for(const QJsonValue keyFrameValue : keyFramesArray) {
+			if(!keyFrameValue.isObject()) {
+				continue;
+			}
+
+			QJsonObject keyFrameObject = keyFrameValue.toObject();
+
+			int trackIndex =
+				currentTrackIndex +
+				keyFrameObject.value(QStringLiteral("trackOffset")).toInt();
+			if(trackIndex < 0 || trackIndex >= trackCount) {
+				continue;
+			}
+
+			int frameIndex =
+				currentFrameIndex +
+				keyFrameObject.value(QStringLiteral("frameOffset")).toInt();
+			if(frameIndex < 0 || frameIndex >= frameCount) {
+				continue;
+			}
+
+			int trackId = d->trackIdByIndex(trackIndex);
+			if(trackId <= 0) {
+				continue;
+			}
+
+			++messageCapacityToReserve;
+
+			int layerId =
+				keyFrameObject.value(QStringLiteral("layerId")).toInt();
+
+			QString title =
+				keyFrameObject.value(QStringLiteral("title")).toString();
+			if(!title.isEmpty()) {
+				++messageCapacityToReserve;
+			}
+
+			QJsonArray layerVisibilityArray =
+				keyFrameObject.value(QStringLiteral("layerVisibility"))
+					.toArray();
+			int layerVisibilityCount = layerVisibilityArray.size();
+
+			QHash<int, bool> layerVisibility;
+			if(layerVisibilityCount != 0) {
+				++messageCapacityToReserve;
+				layerVisibility.reserve(layerVisibilityCount);
+				for(const QJsonValue &value : layerVisibilityArray) {
+					QJsonObject obj = value.toObject();
+					layerVisibility.insert(
+						obj.value(QStringLiteral("layerId")).toInt(),
+						obj.value(QStringLiteral("visible")).toBool());
+				}
+			}
+
+			pkfs.append({
+				trackId,
+				frameIndex,
+				layerId,
+				0,
+				title,
+				QString(),
+				layerVisibility,
+			});
+		}
+	}
+	if(pkfs.isEmpty()) {
 		return;
 	}
 
-	QJsonArray keyFramesArray =
-		doc.object().value(QStringLiteral("keyFrames")).toArray();
-	if(keyFramesArray.isEmpty()) {
-		return;
+	QHash<int, int> declonedLayerIds;
+	if(declone) {
+		QHash<int, int> layerIdReferenceCounts = [this, &pkfs] {
+			QSet<QPair<int, int>> clobbered;
+			for(const PasteKeyFrame &pkf : pkfs) {
+				clobbered.insert({pkf.trackId, pkf.frameIndex});
+			}
+			return d->collectLayerIdReferenceCounts(&clobbered);
+		}();
+
+		canvas::LayerListModel *layers = d->canvas->layerlist();
+		QHash<int, QPair<int, QString>> declonePending;
+		int totalRequiredLayerIds = 0;
+		for(const PasteKeyFrame &pkf : pkfs) {
+			int layerId = pkf.layerId;
+			if(layerId > 0 && layerIdReferenceCounts.value(layerId) > 0) {
+				if(!declonePending.contains(layerId)) {
+					QModelIndex idx = layers->layerIndex(layerId);
+					if(idx.isValid()) {
+						int requiredLayerIds = layers->countRequiredIds(idx);
+						declonePending.insert(
+							layerId,
+							{requiredLayerIds,
+							 idx.data(canvas::LayerListModel::TitleRole)
+								 .toString()});
+						totalRequiredLayerIds += requiredLayerIds;
+					} else {
+						qWarning(
+							"Layer %d to paste declone not found", layerId);
+					}
+				}
+			}
+		}
+
+		if(!declonePending.isEmpty()) {
+			QVector<int> layerIds =
+				layers->getAvailableLayerIds(totalRequiredLayerIds);
+			if(totalRequiredLayerIds == 0 ||
+			   compat::cast_6<int>(layerIds.size()) < totalRequiredLayerIds) {
+				qWarning(
+					"Could not find %d layer ids to paste declone",
+					totalRequiredLayerIds);
+				return;
+			}
+
+			QSet<QString> additionalTakenLayerNames;
+			for(PasteKeyFrame &pkf : pkfs) {
+				int layerId = pkf.layerId;
+				QPair<int, QString> p;
+				if(layerId > 0 &&
+				   (p = declonePending.value(layerId)).first > 0) {
+					int &newLayerId = declonedLayerIds[layerId];
+					if(newLayerId == 0) {
+						++messageCapacityToReserve;
+						newLayerId = layerIds.takeFirst();
+						pkf.createLayerId = newLayerId;
+						pkf.createLayerName = layers->getAvailableLayerName(
+							p.second, &additionalTakenLayerNames);
+						if(!pkf.createLayerName.isEmpty()) {
+							additionalTakenLayerNames.insert(
+								pkf.createLayerName);
+						}
+					} else {
+						pkf.layerId = newLayerId;
+					}
+
+					// TODO: implement this properly. Needs a proper mapping
+					// between layer ids within a group, rather than duplicating
+					// the group in one message and not really knowing the
+					// effective layer ids.
+					if(!pkf.layerVisibility.isEmpty()) {
+						pkf.layerVisibility.clear();
+					}
+				}
+			}
+		}
 	}
 
 	net::MessageList msgs;
-	msgs.reserve(1 + keyFramesArray.size() * 3);
+	msgs.reserve(messageCapacityToReserve);
 
 	uint8_t contextId = d->canvas->localUserId();
 	msgs.append(net::makeUndoPointMessage(contextId));
 
-	QHash<int, bool> layerVisibility;
-	for(const QJsonValue keyFrameValue : keyFramesArray) {
-		if(!keyFrameValue.isObject()) {
-			continue;
-		}
-
-		QJsonObject keyFrameObject = keyFrameValue.toObject();
-
-		int trackIndex =
-			currentTrackIndex +
-			keyFrameObject.value(QStringLiteral("trackOffset")).toInt();
-		if(trackIndex < 0 || trackIndex >= trackCount) {
-			continue;
-		}
-
-		int frameIndex =
-			currentFrameIndex +
-			keyFrameObject.value(QStringLiteral("frameOffset")).toInt();
-		if(frameIndex < 0 || frameIndex >= frameCount) {
-			continue;
-		}
-
-		int trackId = d->trackIdByIndex(trackIndex);
-		if(trackId <= 0) {
-			continue;
+	for(const PasteKeyFrame &pkf : pkfs) {
+		int layerId;
+		if(pkf.createLayerId == 0) {
+			layerId = pkf.layerId;
+		} else {
+			layerId = pkf.createLayerId;
+			msgs.append(
+				net::makeLayerTreeCreateMessage(
+					contextId, pkf.createLayerId, pkf.layerId, pkf.layerId, 0,
+					0, pkf.createLayerName));
 		}
 
 		msgs.append(
 			net::makeKeyFrameSetMessage(
-				contextId, trackId, frameIndex,
-				keyFrameObject.value(QStringLiteral("layerId")).toInt(), 0,
+				contextId, pkf.trackId, pkf.frameIndex, layerId, 0,
 				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
 
-		QString title =
-			keyFrameObject.value(QStringLiteral("title")).toString();
-		if(!title.isEmpty()) {
+		if(!pkf.title.isEmpty()) {
 			msgs.append(
 				net::makeKeyFrameRetitleMessage(
-					contextId, trackId, frameIndex, title));
+					contextId, pkf.trackId, pkf.frameIndex, pkf.title));
 		}
 
-		QJsonArray layerVisibilityArray =
-			keyFrameObject.value(QStringLiteral("layerVisibility")).toArray();
-		if(!layerVisibility.isEmpty()) {
-			layerVisibility.reserve(layerVisibilityArray.size());
-
-			for(const QJsonValue &value : layerVisibilityArray) {
-				QJsonObject obj = value.toObject();
-				layerVisibility.insert(
-					obj.value(QStringLiteral("layerId")).toInt(),
-					obj.value(QStringLiteral("visible")).toBool());
-			}
-
+		if(!pkf.layerVisibility.isEmpty()) {
 			msgs.append(d->makeKeyFrameLayerAttributesMessage(
-				contextId, trackId, frameIndex, layerVisibility));
-
-			layerVisibility.clear();
+				contextId, pkf.trackId, pkf.frameIndex, pkf.layerVisibility,
+				declone ? &declonedLayerIds : nullptr));
 		}
 	}
 
@@ -2533,16 +2702,7 @@ void TimelineWidget::decloneKeyFrames()
 		return;
 	}
 
-	QHash<int, int> layerIdReferenceCounts;
-	for(const canvas::TimelineTrack &track : d->getTracks()) {
-		for(const canvas::TimelineKeyFrame &keyFrame : track.keyFrames) {
-			int layerId = keyFrame.layerId;
-			if(layerId > 0) {
-				++layerIdReferenceCounts[layerId];
-			}
-		}
-	}
-
+	QHash<int, int> layerIdReferenceCounts = d->collectLayerIdReferenceCounts();
 	canvas::LayerListModel *layers = d->canvas->layerlist();
 	QVector<QPair<SelectionKeyFrame, QString>> declone;
 	int requiredLayerIds = 0;
@@ -3206,6 +3366,7 @@ void TimelineWidget::updatePasteAction()
 		enabled = mimeData && mimeData->hasFormat(KEY_FRAMES_MIME_TYPE);
 	}
 	d->actions.keyFramePaste->setEnabled(enabled);
+	d->actions.keyFramePasteDeclone->setEnabled(enabled);
 }
 
 void TimelineWidget::updateCursor()

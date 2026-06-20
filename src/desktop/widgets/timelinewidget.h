@@ -49,6 +49,7 @@ public:
 		QAction *keyFrameCut = nullptr;
 		QAction *keyFrameCopy = nullptr;
 		QAction *keyFramePaste = nullptr;
+		QAction *keyFramePasteDeclone = nullptr;
 		QAction *keyFrameProperties = nullptr;
 		QAction *keyFrameDeleteLayer = nullptr;
 		QAction *keyFrameUnassign = nullptr;
@@ -185,6 +186,8 @@ private:
 	void cutKeyFrames();
 	void copyKeyFrames();
 	void pasteKeyFrames();
+	void pasteKeyFramesDeclone();
+	void pasteKeyFramesWith(bool declone);
 	void setKeyFramesColor(QAction *action);
 	void showKeyFrameProperties();
 	void keyFramePropertiesChanged(
