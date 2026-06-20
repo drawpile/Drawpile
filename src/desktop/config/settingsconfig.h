@@ -235,6 +235,9 @@ public:
 	int getDebounceDelayMs() const override;
 	void setDebounceDelayMs(int value) override;
 
+	QString getDefaultSaveFileNameTemplate() const override;
+	void setDefaultSaveFileNameTemplate(const QString &value) override;
+
 	bool getDelayInitialDab() const override;
 	void setDelayInitialDab(bool value) override;
 

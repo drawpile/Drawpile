@@ -387,6 +387,11 @@ int Config::defaultDebounceDelayMs()
 	return 250;
 }
 
+QString Config::defaultDefaultSaveFileNameTemplate()
+{
+	return QString();
+}
+
 bool Config::defaultDelayInitialDab()
 {
 	return true;

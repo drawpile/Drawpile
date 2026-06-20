@@ -540,6 +540,10 @@ public:
 	virtual void setDebounceDelayMs(int value) = 0;
 	static int defaultDebounceDelayMs();
 
+	virtual QString getDefaultSaveFileNameTemplate() const = 0;
+	virtual void setDefaultSaveFileNameTemplate(const QString &value) = 0;
+	static QString defaultDefaultSaveFileNameTemplate();
+
 	virtual bool getDelayInitialDab() const = 0;
 	virtual void setDelayInitialDab(bool value) = 0;
 	static bool defaultDelayInitialDab();
@@ -1463,6 +1467,7 @@ Q_SIGNALS:
 #endif
 	void changeCurvesPresets(const QVector<QVariantMap> &value);
 	void changeDebounceDelayMs(int value);
+	void changeDefaultSaveFileNameTemplate(const QString &value);
 	void changeDelayInitialDab(bool value);
 	void changeDonationLinksEnabled(bool value);
 	void changeDoubleTapAltToFocusCanvas(bool value);

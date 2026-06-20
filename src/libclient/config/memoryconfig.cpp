@@ -879,6 +879,19 @@ void MemoryConfig::setDebounceDelayMs(int value)
 	}
 }
 
+QString MemoryConfig::getDefaultSaveFileNameTemplate() const
+{
+	return m_defaultSaveFileNameTemplate;
+}
+
+void MemoryConfig::setDefaultSaveFileNameTemplate(const QString &value)
+{
+	if(value != m_defaultSaveFileNameTemplate) {
+		m_defaultSaveFileNameTemplate = value;
+		Q_EMIT changeDefaultSaveFileNameTemplate(m_defaultSaveFileNameTemplate);
+	}
+}
+
 bool MemoryConfig::getDelayInitialDab() const
 {
 	return m_delayInitialDab;

@@ -618,6 +618,12 @@ settings:
     legacy_get: 'debounceDelayMs::get'
     legacy_set: 'debounceDelayMs::set'
 
+  - id: defaultSaveFileNameTemplate
+    type: 'QString'
+    default: 'QString()'
+    qsettings: 'settings/defaultsavefilenametemplate'
+    legacy_package: 'desktop'
+
   - id: donationLinksEnabled
     type: 'bool'
     default: 'true'

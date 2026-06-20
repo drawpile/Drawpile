@@ -228,6 +228,9 @@ public:
 	int getDebounceDelayMs() const override;
 	void setDebounceDelayMs(int value) override;
 
+	QString getDefaultSaveFileNameTemplate() const override;
+	void setDefaultSaveFileNameTemplate(const QString &value) override;
+
 	bool getDelayInitialDab() const override;
 	void setDelayInitialDab(bool value) override;
 
@@ -948,6 +951,8 @@ private:
 #endif
 	QVector<QVariantMap> m_curvesPresets = defaultCurvesPresets();
 	int m_debounceDelayMs = defaultDebounceDelayMs();
+	QString m_defaultSaveFileNameTemplate =
+		defaultDefaultSaveFileNameTemplate();
 	bool m_delayInitialDab = defaultDelayInitialDab();
 	bool m_donationLinksEnabled = defaultDonationLinksEnabled();
 	bool m_doubleTapAltToFocusCanvas = defaultDoubleTapAltToFocusCanvas();

@@ -197,6 +197,10 @@ SETTING_GETSET(
 	config::Config::defaultDebounceDelayMs(), &debounceDelayMs::get,
 	&debounceDelayMs::set)
 SETTING(
+	defaultSaveFileNameTemplate, DefaultSaveFileNameTemplate,
+	"settings/defaultsavefilenametemplate",
+	config::Config::defaultDefaultSaveFileNameTemplate())
+SETTING(
 	donationLinksEnabled, DonationLinksEnabled, "settings/donationlinksenabled",
 	config::Config::defaultDonationLinksEnabled())
 SETTING(

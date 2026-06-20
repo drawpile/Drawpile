@@ -1479,10 +1479,7 @@ void FileWrangler::withFileTypeDialog(
 
 QString FileWrangler::getAutoTitle(Document *doc)
 {
-	QString autoTitle =
-		QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd"));
-	autoTitle.append(QStringLiteral("_"));
-
+	QDateTime now = QDateTime::currentDateTime();
 	QString sessionTitle;
 	if(doc) {
 		sessionTitle = doc->lastSessionTitle();
@@ -1505,11 +1502,43 @@ QString FileWrangler::getAutoTitle(Document *doc)
 				QStringLiteral("_"));
 		}
 	}
-
 	if(sessionTitle.isEmpty()) {
-		autoTitle.append(tr("Untitled"));
-	} else {
-		autoTitle.append(sessionTitle);
+		sessionTitle = tr("Untitled");
+	}
+
+	QString autoTitle;
+	QString tpl = dpAppConfig()->getDefaultSaveFileNameTemplate().trimmed();
+	int len = tpl.length();
+	for(int i = 0; i < len; ++i) {
+		QChar c = tpl[i];
+		if(c == QChar('%') && i < len - 1) {
+			QChar t = tpl[++i];
+			if(t == QChar('Y')) {
+				autoTitle.append(now.toString(QStringLiteral("yyyy")));
+			} else if(t == QChar('m')) {
+				autoTitle.append(now.toString(QStringLiteral("MM")));
+			} else if(t == QChar('d')) {
+				autoTitle.append(now.toString(QStringLiteral("dd")));
+			} else if(t == QChar('H')) {
+				autoTitle.append(now.toString(QStringLiteral("hh")));
+			} else if(t == QChar('M')) {
+				autoTitle.append(now.toString(QStringLiteral("mm")));
+			} else if(t == QChar('S')) {
+				autoTitle.append(now.toString(QStringLiteral("ss")));
+			} else if(t == QChar('T')) {
+				autoTitle.append(sessionTitle);
+			} else {
+				autoTitle.append(c);
+				autoTitle.append(t);
+			}
+		} else {
+			autoTitle.append(c);
+		}
+	}
+
+	if(autoTitle.isEmpty()) {
+		autoTitle = now.toString(QStringLiteral("yyyyMMdd")) +
+					QStringLiteral("_") + sessionTitle;
 	}
 
 	return autoTitle;

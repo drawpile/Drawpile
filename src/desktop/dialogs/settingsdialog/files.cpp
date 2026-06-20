@@ -16,6 +16,7 @@
 #include <QFormLayout>
 #include <QFrame>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -174,6 +175,20 @@ void Files::initFormats(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_COMBOBOX_USER_STRING(
 		cfg, PreferredExportFormat, preferredExportFormat);
 	form->addRow(tr("Preferred export format:"), preferredExportFormat);
+
+	QLineEdit *defaultSaveFileNameTemplate = new QLineEdit;
+	defaultSaveFileNameTemplate->setPlaceholderText(
+		QStringLiteral("%Y%m%d_%T"));
+	CFG_BIND_LINEEDIT(
+		cfg, DefaultSaveFileNameTemplate, defaultSaveFileNameTemplate);
+	form->addRow(tr("Default file name:"), defaultSaveFileNameTemplate);
+	form->addRow(
+		utils::formNote(
+			//: These are template placeholders for the default file name. For
+			//: example, if the user types in %Y, it will be replaced with the
+			//: current year. Do not change the letters or casing!
+			tr("Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, "
+			   "%S seconds, %T session title.")));
 }
 
 void Files::initLogging(config::Config *cfg, QFormLayout *form)

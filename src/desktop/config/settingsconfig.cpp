@@ -268,6 +268,11 @@ SettingsConfig::SettingsConfig(
 		m_settings, &desktop::settings::Settings::debounceDelayMsChanged, this,
 		&SettingsConfig::changeDebounceDelayMs, Qt::DirectConnection);
 	connect(
+		m_settings,
+		&desktop::settings::Settings::defaultSaveFileNameTemplateChanged, this,
+		&SettingsConfig::changeDefaultSaveFileNameTemplate,
+		Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::delayInitialDabChanged, this,
 		&SettingsConfig::changeDelayInitialDab, Qt::DirectConnection);
 	connect(
@@ -1655,6 +1660,16 @@ int SettingsConfig::getDebounceDelayMs() const
 void SettingsConfig::setDebounceDelayMs(int value)
 {
 	m_settings->setDebounceDelayMs(value);
+}
+
+QString SettingsConfig::getDefaultSaveFileNameTemplate() const
+{
+	return m_settings->defaultSaveFileNameTemplate();
+}
+
+void SettingsConfig::setDefaultSaveFileNameTemplate(const QString &value)
+{
+	m_settings->setDefaultSaveFileNameTemplate(value);
 }
 
 bool SettingsConfig::getDelayInitialDab() const
