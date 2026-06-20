@@ -65,8 +65,17 @@ bool isVideoFormatSupportedFfmpeg(VideoFormat format)
 
 bool isVideoFormatSupportedNonFfmpeg(VideoFormat format)
 {
-	return isSaveVideoFormatSupported(
-		format, DP_save_video_format_supported_non_ffmpeg);
+	switch(format) {
+	case VideoFormat::Frames:
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+		return false;
+#endif
+	case VideoFormat::Zip:
+		return true;
+	default:
+		return isSaveVideoFormatSupported(
+			format, DP_save_video_format_supported_non_ffmpeg);
+	}
 }
 
 
