@@ -3,6 +3,7 @@
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/noscroll.h"
 #include "libclient/config/config.h"
 #include "libclient/utils/logging.h"
 #include "libshared/util/paths.h"
@@ -81,7 +82,7 @@ void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, AutoRecordJoin, autoRecordJoin);
 	form->addRow(nullptr, autoRecordJoin);
 
-	KisSliderSpinBox *snapshotInterval = new KisSliderSpinBox;
+	KisSliderSpinBox *snapshotInterval = new widgets::NoScrollKisSliderSpinBox;
 	snapshotInterval->setRange(1, 60);
 	CFG_BIND_SLIDERSPINBOX(
 		cfg, AutoRecordSnapshotIntervalMinutes, snapshotInterval);
@@ -97,7 +98,8 @@ void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 		snapshotInterval, updateSnapshotIntervalText);
 	updateSnapshotIntervalText(snapshotInterval->value());
 
-	KisDoubleSliderSpinBox *sizeLimit = new KisDoubleSliderSpinBox;
+	KisDoubleSliderSpinBox *sizeLimit =
+		new widgets::NoScrollKisDoubleSliderSpinBox;
 	dialogs::ProjectRecordingSettingsDialog::initSizeLimitSlider(
 		sizeLimit, 0.5);
 	connect(
@@ -141,7 +143,7 @@ void Files::initFormats(config::Config *cfg, QFormLayout *form)
 	//: %1 is a file extension, like ".ora" or ".png"
 	QString defaultTemplate = tr("Default (%1)");
 
-	QComboBox *preferredSaveFormat = new QComboBox;
+	QComboBox *preferredSaveFormat = new widgets::NoScrollComboBox;
 	preferredSaveFormat->addItem(
 		defaultTemplate.arg(QStringLiteral(".dppr/.dpcs")), QString());
 	preferredSaveFormat->addItem(
@@ -154,7 +156,7 @@ void Files::initFormats(config::Config *cfg, QFormLayout *form)
 		cfg, PreferredSaveFormat, preferredSaveFormat);
 	form->addRow(tr("Preferred save format:"), preferredSaveFormat);
 
-	QComboBox *preferredExportFormat = new QComboBox;
+	QComboBox *preferredExportFormat = new widgets::NoScrollComboBox;
 	preferredExportFormat->addItem(
 		defaultTemplate.arg(QStringLiteral(".png")), QString());
 	preferredExportFormat->addItem(tr("PNG (.png)"), QStringLiteral("png"));
