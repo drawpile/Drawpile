@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QVariantAnimation>
 #include <QPointer>
+#include <QDeadlineTimer>
 
 #include <cmath>
 #include <utility>
@@ -55,6 +56,7 @@ public:
     KisSliderSpinBoxPrivate(SpinBoxType *q)
         : m_q(q)
         , m_lineEdit(m_q->lineEdit())
+        , m_lastEditEndTimer(0, Qt::VeryCoarseTimer)
     {
         m_q->installEventFilter(this);
 
@@ -112,6 +114,7 @@ public:
         m_lineEdit->setCursor(Qt::SplitHCursor);
         m_lineEdit->update();
         m_q->update();
+        m_lastEditEndTimer.setRemainingTime(2000); // Drawpile patch
     }
 
     bool isEditModeActive() const
@@ -478,6 +481,7 @@ public:
                 endEditing();
             }
         }
+        m_lastEditEndTimer.setRemainingTime(0); // Drawpile patch
         return false;
     }
 
@@ -514,7 +518,30 @@ public:
             case Qt::Key_Return:
                 if (!e->isAutoRepeat()) {
                     if (!isEditModeActive()) {
-                        startEditing();
+                        // Drawpile patch: if the user just exited edit mode,
+                        // pass the key press through to the parent widget so
+                        // that the user can accept a dialog with it. To allow
+                        // the user to make this behavior explicit, we let them
+                        // hold modifiers to circumvent the guessing.
+                        bool ctrlHeld = e->modifiers().testFlag(Qt::ControlModifier);
+                        bool shiftHeld = e->modifiers().testFlag(Qt::ShiftModifier);
+                        qWarning() << e->modifiers();
+                        bool shouldStartEditing;
+                        if (ctrlHeld && !shiftHeld) {
+                            shouldStartEditing = true;
+                        } else if (shiftHeld && !ctrlHeld) {
+                            shouldStartEditing = false;
+                            e->setModifiers(Qt::NoModifier);
+                        } else {
+                            shouldStartEditing = m_lastEditEndTimer.hasExpired();
+                        }
+
+                        if (shouldStartEditing) {
+                            startEditing();
+                        } else {
+                            return false;
+                        }
+
                     } else {
                         if (m_q->isLastValid()) {
                             endEditing();
@@ -1122,6 +1149,7 @@ private:
     qint64 m_safeReleaseTimestamp {0};
     qint64 m_lastDragTimestamp {0};
     QString m_overrideText; // Drawpile patch
+    QDeadlineTimer m_lastEditEndTimer; // Drawpile patch
 
     enum SoftRangeViewMode
     {

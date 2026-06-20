@@ -24,6 +24,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make WEBM video export use a higher quality.
  * Feature: Add a declone key frame layers action. For the selected key frames, it will duplicate the layers referenced by multiple key frames.
  * Feature: Add a paste decloned key frame layerse action. Will paste and duplicate layers if necessary.
+ * Fix: Allow hitting enter/return twice on a number input to accept the dialog they're in, rather than entering edit mode again. You can also hold Shift to explicitly accept the dialog and Ctrl to explicitly enter edit mode instead.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
