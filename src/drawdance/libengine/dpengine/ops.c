@@ -1703,6 +1703,13 @@ static DP_KeyFrame *get_key_frame_set(void *user, DP_KeyFrame *prev_kf)
 DP_CanvasState *DP_ops_key_frame_set(DP_CanvasState *cs, int track_id,
                                      int frame_index, int layer_id)
 {
+    if (layer_id != 0) {
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        if (!DP_layer_routes_search(lr, layer_id)) {
+            DP_warn("Key frame layer set: layer id %d not found", layer_id);
+            layer_id = 0;
+        }
+    }
     return set_key_frame("set", cs, track_id, frame_index, get_key_frame_set,
                          &layer_id);
 }
