@@ -13,6 +13,7 @@ extern "C" {
 #include <QIODevice>
 #include <QImage>
 #include <QImageReader>
+#include <QImageWriter>
 
 
 extern "C" void DP_image_impex_init(void)
@@ -95,12 +96,15 @@ class DP_OutputDevice : public QIODevice {
 static bool load_qimage_from_qiodevice(QIODevice *dev, const char *format,
                                        QImage &qi, int &width, int &height)
 {
-    if (qi.load(dev, format)) {
+    QImageReader reader(dev, format);
+    if (reader.read(&qi)) {
         width = qi.width();
         height = qi.height();
         return width > 0 && height > 0;
     }
     else {
+        DP_error_set("Error %d reading %s image: %s", int(reader.error()),
+                     format, qUtf8Printable(reader.errorString()));
         return false;
     }
 }
@@ -120,7 +124,6 @@ static bool load_qimage(DP_Input *input, const char *format, QImage &qi,
 
 static DP_Image *read_image(DP_Input *input, const char *format)
 {
-    unsigned int error_count = DP_error_count();
     QImage qi;
     int width, height;
     if (load_qimage(input, format, qi, width, height)) {
@@ -138,9 +141,6 @@ static DP_Image *read_image(DP_Input *input, const char *format)
         return img;
     }
     else {
-        if (DP_error_count_since(error_count) == 0) {
-            DP_error_set("Could not load %s image", format);
-        }
         return nullptr;
     }
 }
@@ -158,17 +158,16 @@ extern "C" DP_Image *DP_image_jpeg_read(DP_Input *input)
 
 static bool write_image_to_qiodevice(QIODevice *dev, int width, int height,
                                      uchar *pixels, const char *format,
-                                     int quality, QImage::Format imageFormat,
-                                     unsigned int error_count)
+                                     int quality, QImage::Format imageFormat)
 {
-    QImage qi(pixels, width, height, width * 4, imageFormat);
-    if (qi.save(dev, format, quality)) {
+    QImageWriter writer(dev, format);
+    writer.setQuality(quality);
+    if (writer.write(QImage(pixels, width, height, width * 4, imageFormat))) {
         return true;
     }
     else {
-        if (DP_error_count_since(error_count) == 0) {
-            DP_error_set("Could not save %s image", format);
-        }
+        DP_error_set("Error %d writing %s image: %s", int(writer.error()),
+                     format, qUtf8Printable(writer.errorString()));
         return false;
     }
 }
@@ -177,17 +176,16 @@ static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
                         const char *format, int quality,
                         QImage::Format imageFormat)
 {
-    unsigned int error_count = DP_error_count();
     QIODevice *dev = DP_output_qiodevice(output);
     bool ok;
     if (dev) {
         ok = write_image_to_qiodevice(dev, width, height, pixels, format,
-                                      quality, imageFormat, error_count);
+                                      quality, imageFormat);
     }
     else {
         DP_OutputDevice wrapper(output);
         ok = write_image_to_qiodevice(&wrapper, width, height, pixels, format,
-                                      quality, imageFormat, error_count);
+                                      quality, imageFormat);
     }
     return ok ? DP_output_flush(output) : false;
 }
