@@ -8045,7 +8045,7 @@ void MainWindow::setupActions()
 	QAction *ellipsetool = makeAction("toolellipse", tr("&Ellipse")).icon("draw-ellipse").statusTip(tr("Draw unfilled circles and ellipses")).shortcut("O").checkable();
 	QAction *beziertool = makeAction("toolbezier", tr("Bezier Curve")).icon("draw-bezier-curves").statusTip(tr("Draw bezier curves")).shortcut("Ctrl+B").checkable();
 	QAction *filltool = makeAction("toolfill", tr("&Flood Fill")).icon("fill-color").statusTip(tr("Fill areas")).shortcut("F").checkable();
-	QAction *lassofilltool = makeAction("toollassofill", tr("Lass&o Fill")).icon("drawpile_lassofill").statusTip(tr("Fill enclosed areas")).shortcut("Shift+F").checkable();
+	QAction *lassofilltool = makeAction("toollassofill", tr("S&hape Fill")).icon("drawpile_lassofill").statusTip(tr("Fill enclosed areas")).shortcut("Shift+F").checkable();
 	QAction *gradienttool = makeAction("toolgradient", tr("&Gradient")).icon("drawpile_gradient").statusTip(tr("Create a gradient inside selected areas")).shortcut("G").checkable();
 	QAction *annotationtool = makeAction("tooltext", tr("&Annotation")).icon("draw-text").statusTip(tr("Add text to the picture")).shortcut("A").checked();
 
