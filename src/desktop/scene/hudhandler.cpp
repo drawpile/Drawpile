@@ -5,6 +5,7 @@
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/noticeitem.h"
 #include "desktop/scene/statusitem.h"
+#include "desktop/scene/titleitem.h"
 #include "desktop/scene/toggleitem.h"
 #include <QAction>
 #include <QCoreApplication>
@@ -220,6 +221,20 @@ void HudHandler::setTopOffset(int topOffset)
 	}
 }
 
+void HudHandler::setCursorPos(const QPointF &cursorPos)
+{
+	if(m_layerTitle) {
+		updateLayerTitlePosition(cursorPos);
+	}
+}
+
+void HudHandler::setCursorOnCanvas(bool cursorOnCanvas)
+{
+	if(m_layerTitle) {
+		m_layerTitle->updateVisibility(cursorOnCanvas);
+	}
+}
+
 bool HudHandler::showTransformNotice(const QString &text)
 {
 	if(m_transformNotice) {
@@ -385,6 +400,42 @@ void HudHandler::setShowToggleItems(bool showToggleItems, bool leftyMode)
 		}
 		m_toggleItems.clear();
 	}
+}
+
+void HudHandler::setCurrentLayerTitle(const QString &currentLayerTitle)
+{
+	if(currentLayerTitle != m_currentLayerTitle) {
+		m_currentLayerTitle = currentLayerTitle;
+		if(m_layerTitle && m_layerTitle->setText(currentLayerTitle)) {
+			updateLayerTitlePosition(m_scene->hudCursorPos());
+		}
+	}
+}
+
+void HudHandler::setCurrentLayerColor(const QColor &currentLayerColor)
+{
+	if(currentLayerColor != m_currentLayerColor) {
+		m_currentLayerColor = currentLayerColor;
+		if(m_layerTitle) {
+			m_layerTitle->setColor(currentLayerColor);
+		}
+	}
+}
+
+void HudHandler::showLayerTitle()
+{
+	if(!m_layerTitle) {
+		m_layerTitle = new drawingboard::TitleItem(
+			m_currentLayerTitle, m_currentLayerColor);
+		updateLayerTitlePosition(m_scene->hudCursorPos());
+		m_scene->hudAddItem(m_layerTitle);
+	}
+}
+
+void HudHandler::hideLayerTitle()
+{
+	delete m_layerTitle;
+	m_layerTitle = nullptr;
 }
 
 void HudHandler::advanceAnimations(qreal dt)
@@ -571,6 +622,29 @@ void HudHandler::updateToggleItemsPositions()
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->updateSceneBounds(sceneRect);
 	}
+}
+
+void HudHandler::updateLayerTitlePosition(const QPointF &cursorPos)
+{
+	QRectF layerTitleBounds = m_layerTitle->boundingRect();
+	layerTitleBounds.moveTo(
+		cursorPos.x() - layerTitleBounds.width() / 2.0, cursorPos.y() + 12.0);
+
+	QRectF sceneRect = m_scene->hudSceneRect();
+
+	if(layerTitleBounds.left() < sceneRect.left()) {
+		layerTitleBounds.moveLeft(sceneRect.left());
+	} else if(layerTitleBounds.right() > sceneRect.right()) {
+		layerTitleBounds.moveRight(sceneRect.right());
+	}
+
+	if(layerTitleBounds.top() < sceneRect.top()) {
+		layerTitleBounds.moveTop(sceneRect.top());
+	} else if(layerTitleBounds.bottom() > sceneRect.bottom()) {
+		layerTitleBounds.moveBottom(sceneRect.bottom());
+	}
+
+	m_layerTitle->updatePosition(layerTitleBounds.topLeft());
 }
 
 void HudHandler::refreshApplicationStyle()

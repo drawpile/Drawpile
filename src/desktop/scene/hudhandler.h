@@ -2,6 +2,7 @@
 #ifndef DESKTOP_SCENE_HUDHANDLER_H
 #define DESKTOP_SCENE_HUDHANDLER_H
 #include "libclient/view/hudaction.h"
+#include <QColor>
 #include <QObject>
 #include <QVector>
 
@@ -13,6 +14,7 @@ class BaseItem;
 class CatchupItem;
 class NoticeItem;
 class StatusItem;
+class TitleItem;
 class ToggleItem;
 }
 
@@ -21,6 +23,8 @@ public:
 	virtual ~HudScene() = default;
 
 	virtual QRectF hudSceneRect() const = 0;
+	virtual QPointF hudCursorPos() const = 0;
+	virtual bool hudCursorOnCanvas() const = 0;
 
 	virtual void hudAddItem(drawingboard::BaseItem *item) = 0;
 	virtual void hudRemoveItem(drawingboard::BaseItem *item) = 0;
@@ -59,6 +63,8 @@ public:
 	void activateHudAction(const HudAction &action, const QPoint &globalPos);
 
 	void setTopOffset(int topOffset);
+	void setCursorPos(const QPointF &cursorPos);
+	void setCursorOnCanvas(bool cursorOnCanvas);
 
 	bool showTransformNotice(const QString &text);
 	bool showLockStatus(const QString &text, const QVector<QAction *> &actions);
@@ -68,6 +74,11 @@ public:
 	void setCatchupProgress(int percent);
 	void setStreamResetProgress(int percent);
 	void setShowToggleItems(bool showToggleItems, bool leftyMode);
+
+	void setCurrentLayerTitle(const QString &currentLayerTitle);
+	void setCurrentLayerColor(const QColor &currentLayerColor);
+	void showLayerTitle();
+	void hideLayerTitle();
 
 	void advanceAnimations(qreal dt);
 
@@ -98,6 +109,7 @@ private:
 	void updateSelectionActionBarPosition();
 	void updateTransformActionBarPosition();
 	void updateToggleItemsPositions();
+	void updateLayerTitlePosition(const QPointF &cursorPos);
 
 	void refreshApplicationStyle();
 	void refreshApplicationFont();
@@ -116,7 +128,10 @@ private:
 	drawingboard::NoticeItem *m_streamResetNotice = nullptr;
 	drawingboard::ActionBarItem *m_selectionActionBar = nullptr;
 	drawingboard::ActionBarItem *m_transformActionBar = nullptr;
+	drawingboard::TitleItem *m_layerTitle = nullptr;
 	QVector<drawingboard::ToggleItem *> m_toggleItems;
+	QString m_currentLayerTitle;
+	QColor m_currentLayerColor;
 };
 
 #endif

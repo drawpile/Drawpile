@@ -21,6 +21,7 @@ class LoginDialog;
 }
 
 namespace docks {
+class LayerList;
 class Navigator;
 class ToolSettings;
 }
@@ -134,6 +135,8 @@ public:
 	virtual void connectCanvasFrame(widgets::CanvasFrame *canvasFrame) = 0;
 
 	virtual void connectDocument(Document *doc) = 0;
+
+	virtual void connectLayers(docks::LayerList *layers) = 0;
 
 	virtual void connectLock(Lock *lock) = 0;
 

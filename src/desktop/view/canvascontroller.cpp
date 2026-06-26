@@ -130,6 +130,16 @@ void CanvasController::hideColorPick()
 	m_scene->hideColorPick();
 }
 
+void CanvasController::showLayerTitle()
+{
+	m_scene->hud()->showLayerTitle();
+}
+
+void CanvasController::hideLayerTitle()
+{
+	m_scene->hud()->hideLayerTitle();
+}
+
 HudAction CanvasController::checkHudHover(const QPointF &posf)
 {
 	return m_scene->hud()->checkHover(posf);

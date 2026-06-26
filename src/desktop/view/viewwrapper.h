@@ -70,6 +70,8 @@ public:
 
 	void connectDocument(Document *doc) override;
 
+	void connectLayers(docks::LayerList *layers) override;
+
 	void connectLock(view::Lock *lock) override;
 
 	void connectLoginDialog(Document *doc, dialogs::LoginDialog *dlg) override;

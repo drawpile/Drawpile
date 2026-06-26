@@ -112,6 +112,8 @@ public:
 
 	HudHandler *hud() { return m_hud; }
 	QRectF hudSceneRect() const override;
+	QPointF hudCursorPos() const override;
+	bool hudCursorOnCanvas() const override;
 	void hudAddItem(BaseItem *item) override;
 	void hudRemoveItem(BaseItem *item) override;
 
@@ -122,8 +124,6 @@ signals:
 private:
 	void addSceneItem(BaseItem *item);
 	void removeSceneItem(BaseItem *item);
-
-	void onSceneRectChanged();
 
 	void onUserJoined(int id);
 	void
@@ -160,6 +160,7 @@ private:
 	int m_colorPickVisibility;
 	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;
+	QString m_currentLayerTitle;
 	QHash<int, UserMarkerItem *> m_userMarkers;
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;
 

@@ -49,6 +49,8 @@ protected:
 
 	void showColorPick(int source, const QPointF &posf) override;
 	void hideColorPick() override;
+	void showLayerTitle() override;
+	void hideLayerTitle() override;
 
 	HudAction checkHudHover(const QPointF &point) override;
 	void activateHudAction(

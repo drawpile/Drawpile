@@ -328,6 +328,7 @@ void CanvasScene::setCursorOnCanvas(bool cursorOnCanvas)
 		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
 			item->setCursorPosValid(cursorOnCanvas && !m_showOwnUserMarker);
 		}
+		m_hud->setCursorOnCanvas(cursorOnCanvas);
 	}
 }
 
@@ -341,6 +342,7 @@ void CanvasScene::setCursorPos(const QPointF &cursorPos)
 		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
 			item->setCursorPos(cursorPos);
 		}
+		m_hud->setCursorPos(cursorPos);
 	}
 }
 
@@ -459,6 +461,16 @@ void CanvasScene::setTransformToolState(int mode, int handle, bool dragging)
 QRectF CanvasScene::hudSceneRect() const
 {
 	return sceneRect();
+}
+
+QPointF CanvasScene::hudCursorPos() const
+{
+	return m_cursorPos;
+}
+
+bool CanvasScene::hudCursorOnCanvas() const
+{
+	return m_cursorOnCanvas;
 }
 
 void CanvasScene::hudAddItem(BaseItem *item)

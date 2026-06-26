@@ -376,6 +376,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView->connectCanvasFrame(m_canvasFrame);
 	m_canvasView->connectDocument(m_doc);
 	m_canvasView->connectMainWindow(this);
+	m_canvasView->connectLayers(m_dockLayers);
 	m_canvasView->connectNavigator(m_dockNavigator);
 	m_canvasView->connectLock(m_viewLock);
 	m_canvasView->connectViewStatus(m_viewstatus);

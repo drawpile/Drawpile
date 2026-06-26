@@ -705,6 +705,7 @@ void CanvasScene::setCursorOnCanvas(bool onCanvas)
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setCursorPosValid(onCanvas && !m_showOwnUserMarker);
 		}
+		m_hud->setCursorOnCanvas(onCanvas);
 	}
 }
 
@@ -718,6 +719,7 @@ void CanvasScene::setCursorPos(const QPointF &pos)
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setCursorPos(pos);
 		}
+		m_hud->setCursorPos(pos);
 	}
 }
 
@@ -731,6 +733,16 @@ void CanvasScene::setCursor(const QCursor &cursor)
 QRectF CanvasScene::hudSceneRect() const
 {
 	return m_sceneBounds;
+}
+
+QPointF CanvasScene::hudCursorPos() const
+{
+	return m_cursorPos;
+}
+
+bool CanvasScene::hudCursorOnCanvas() const
+{
+	return m_cursorOnCanvas;
 }
 
 void CanvasScene::hudAddItem(BaseItem *item)

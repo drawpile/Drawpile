@@ -222,6 +222,8 @@ protected:
 
 	virtual void showColorPick(int source, const QPointF &posf) = 0;
 	virtual void hideColorPick() = 0;
+	virtual void showLayerTitle() = 0;
+	virtual void hideLayerTitle() = 0;
 
 	virtual HudAction checkHudHover(const QPointF &point) = 0;
 	virtual void
@@ -310,6 +312,7 @@ private:
 	void touchReleaseEvent(long long timeMsec, const QPointF &posf);
 	void touchZoomRotate(qreal zoom, qreal rotation);
 
+	void setPenMode(PenMode penMode);
 	void setDrag(const SetDragParams &params);
 	void moveDrag(const QPoint &point);
 	void dragRotate(

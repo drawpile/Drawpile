@@ -1083,14 +1083,15 @@ void CanvasControllerBase::handleKeyPress(QKeyEvent *event)
 						.setDragMode(ViewDragMode::Prepared));
 				break;
 			case CanvasShortcuts::COLOR_PICK:
-				m_penMode = toolAllowsColorPick() ? PenMode::Colorpick
-												  : PenMode::Normal;
+				setPenMode(
+					toolAllowsColorPick() ? PenMode::Colorpick
+										  : PenMode::Normal);
 				break;
 			case CanvasShortcuts::LAYER_PICK:
-				m_penMode = PenMode::Layerpick;
+				setPenMode(PenMode::Layerpick);
 				break;
 			default:
-				m_penMode = PenMode::Normal;
+				setPenMode(PenMode::Normal);
 				emitPenModify(modifiers);
 				break;
 			}
@@ -1228,14 +1229,14 @@ void CanvasControllerBase::handleKeyRelease(QKeyEvent *event)
 	if(m_penState == PenState::Up) {
 		switch(mouseMatch.action()) {
 		case CanvasShortcuts::COLOR_PICK:
-			m_penMode =
-				toolAllowsColorPick() ? PenMode::Colorpick : PenMode::Normal;
+			setPenMode(
+				toolAllowsColorPick() ? PenMode::Colorpick : PenMode::Normal);
 			break;
 		case CanvasShortcuts::LAYER_PICK:
-			m_penMode = PenMode::Layerpick;
+			setPenMode(PenMode::Layerpick);
 			break;
 		default:
-			m_penMode = PenMode::Normal;
+			setPenMode(PenMode::Normal);
 			emitPenModify(modifiers);
 			break;
 		}
@@ -1789,7 +1790,7 @@ void CanvasControllerBase::penPressEvent(
 			m_prevPoint = point;
 
 			if(penMode != m_penMode) {
-				m_penMode = penMode;
+				setPenMode(penMode);
 				resetCursor();
 			}
 
@@ -1921,14 +1922,14 @@ void CanvasControllerBase::penReleaseEvent(
 				break;
 			case CanvasShortcuts::COLOR_PICK:
 				if(toolAllowsColorPick()) {
-					m_penMode = PenMode::Colorpick;
+					setPenMode(PenMode::Colorpick);
 				}
 				break;
 			case CanvasShortcuts::LAYER_PICK:
-				m_penMode = PenMode::Layerpick;
+				setPenMode(PenMode::Layerpick);
 				break;
 			default:
-				m_penMode = PenMode::Normal;
+				setPenMode(PenMode::Normal);
 				break;
 			}
 		}
@@ -1971,13 +1972,25 @@ void CanvasControllerBase::touchZoomRotate(qreal zoom, qreal rotation)
 	showTouchTransformNotice();
 }
 
+void CanvasControllerBase::setPenMode(PenMode penMode)
+{
+	if(penMode == PenMode::Layerpick) {
+		if(m_penMode != PenMode::Layerpick) {
+			showLayerTitle();
+		}
+	} else if(m_penMode == PenMode::Layerpick) {
+		hideLayerTitle();
+	}
+	m_penMode = penMode;
+}
+
 void CanvasControllerBase::setDrag(const SetDragParams &params)
 {
 	ViewDragMode prevMode = m_dragMode;
 	CanvasShortcuts::Action prevAction = m_dragAction;
 
 	if(params.hasPenMode()) {
-		m_penMode = params.penMode();
+		setPenMode(params.penMode());
 	}
 
 	if(params.isDragConditionFulfilled()) {

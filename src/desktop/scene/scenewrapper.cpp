@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/scenewrapper.h"
 #include "desktop/dialogs/logindialog.h"
+#include "desktop/docks/layerlistdock.h"
 #include "desktop/docks/navigator.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
@@ -414,6 +415,19 @@ void SceneWrapper::connectDocument(Document *doc)
 		&tools::ToolController::endDrawing, Qt::DirectConnection);
 
 	m_scene->setComparisonColor(toolCtrl->foregroundColor());
+}
+
+void SceneWrapper::connectLayers(docks::LayerList *layers)
+{
+	HudHandler *hud = m_scene->hud();
+	connect(
+		layers, &docks::LayerList::currentTitleChanged, hud,
+		&HudHandler::setCurrentLayerTitle);
+	connect(
+		layers, &docks::LayerList::currentColorChanged, hud,
+		&HudHandler::setCurrentLayerColor);
+	hud->setCurrentLayerTitle(layers->currentTitle());
+	hud->setCurrentLayerColor(layers->currentColor());
 }
 
 void SceneWrapper::connectLock(view::Lock *lock)

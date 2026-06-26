@@ -102,6 +102,8 @@ public:
 
 	HudHandler *hud() { return m_hud; }
 	QRectF hudSceneRect() const override;
+	QPointF hudCursorPos() const override;
+	bool hudCursorOnCanvas() const override;
 	void hudAddItem(BaseItem *item) override;
 	void hudRemoveItem(BaseItem *item) override;
 

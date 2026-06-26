@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/view/viewwrapper.h"
 #include "desktop/dialogs/logindialog.h"
+#include "desktop/docks/layerlistdock.h"
 #include "desktop/docks/navigator.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
@@ -402,6 +403,19 @@ void ViewWrapper::connectDocument(Document *doc)
 		&tools::ToolController::endDrawing, Qt::DirectConnection);
 
 	m_scene->setComparisonColor(toolCtrl->foregroundColor());
+}
+
+void ViewWrapper::connectLayers(docks::LayerList *layers)
+{
+	HudHandler *hud = m_scene->hud();
+	connect(
+		layers, &docks::LayerList::currentTitleChanged, hud,
+		&HudHandler::setCurrentLayerTitle);
+	connect(
+		layers, &docks::LayerList::currentColorChanged, hud,
+		&HudHandler::setCurrentLayerColor);
+	hud->setCurrentLayerTitle(layers->currentTitle());
+	hud->setCurrentLayerColor(layers->currentColor());
 }
 
 void ViewWrapper::connectLock(view::Lock *lock)

@@ -99,6 +99,8 @@ public:
 	QFlags<view::Lock::Reason> currentFillSourceLock() const;
 
 	int currentId() const { return m_currentId; }
+	const QString &currentTitle() const { return m_currentTitle; }
+	const QColor &currentColor() const { return m_currentColor; }
 
 	bool isExpanded(const QModelIndex &index) const;
 	bool isSelected(int id) const { return m_selectedIds.contains(id); }
@@ -118,6 +120,8 @@ signals:
 	void layerSelected(int id);
 	void layerSelectionChanged(const QSet<int> &layerIds);
 	void layerChecked(int layerId, bool checked);
+	void currentTitleChanged(const QString &title);
+	void currentColorChanged(const QColor &color);
 	void activeLayerVisibilityChanged();
 	void fillSourceSet(int layerId);
 
@@ -259,6 +263,8 @@ private:
 	int m_currentId = 0;
 	int m_nearestToDeletedId = 0;
 	QSet<int> m_selectedIds;
+	QString m_currentTitle;
+	QColor m_currentColor;
 
 	// try to retain view status across model resets
 	QSet<int> m_expandedGroups;

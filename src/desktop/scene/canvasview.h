@@ -301,6 +301,7 @@ private:
 	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
 	static constexpr qreal ROTATION_STEP_SIZE = 15.0;
 
+	enum class PenMode { Normal, Colorpick, Layerpick };
 	enum class NotificationBarState { None, Reconnect, Reset, ProjectSize };
 
 	class SetDragParams;
@@ -334,6 +335,7 @@ private:
 	enum class ViewDragMode { None, Prepared, Started };
 
 	void wheelAdjust(QWheelEvent *event, int param, bool allowed, int delta);
+	void setPenMode(PenMode penMode);
 	void setDrag(const SetDragParams &params);
 	void dragAdjust(int type, int delta, qreal acceleration);
 	void moveDrag(const QPoint &point);
@@ -461,8 +463,6 @@ private:
 	 * - TABLETDOWN tablet stylus is down
 	 */
 	enum { NOTDOWN, MOUSEDOWN, TABLETDOWN } m_pendown;
-
-	enum class PenMode { Normal, Colorpick, Layerpick };
 
 	NotificationBar *m_notificationBar;
 	NotificationBarState m_notificationBarState = NotificationBarState::None;

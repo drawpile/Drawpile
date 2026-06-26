@@ -2199,17 +2199,25 @@ void LayerList::updateCurrent(const QModelIndex &current)
 		triggerUpdate();
 	}
 
+	QString lastTitle = m_currentTitle;
+	QColor lastColor = m_currentColor;
 	if(current.isValid()) {
 		updateUiFromCurrent();
 	} else {
 		m_currentId = 0;
+		m_currentTitle.clear();
+		updateActionLabels();
+		updateLockedControls();
+		updateCheckActions();
 	}
 
-	updateActionLabels();
-	updateLockedControls();
-	updateCheckActions();
-
-	emit layerSelected(m_currentId);
+	Q_EMIT layerSelected(m_currentId);
+	if(lastTitle != m_currentTitle) {
+		Q_EMIT currentTitleChanged(m_currentTitle);
+	}
+	if(lastColor != m_currentColor) {
+		Q_EMIT currentColorChanged(m_currentColor);
+	}
 }
 
 void LayerList::updateUiFromCurrent()
@@ -2217,6 +2225,8 @@ void LayerList::updateUiFromCurrent()
 	const canvas::LayerListItem &layer =
 		currentSelection().data().value<canvas::LayerListItem>();
 	m_currentId = layer.id;
+	m_currentTitle = layer.title;
+	m_currentColor = layer.color;
 
 	QScopedValueRollback<bool> rollback(m_noupdate, true);
 	m_alphaLockButton->setChecked(!layer.group && layer.alphaLock);
