@@ -172,7 +172,7 @@ canvas::PointVector Line::pointVector() const
 
 QPointF Line::getConstrainPoint() const
 {
-	return constraints::angle(m_start, m_current);
+	return constraints::angle(m_start, m_current, angle());
 }
 
 Rectangle::Rectangle(ToolController &owner, DP_MaskSync *ms)

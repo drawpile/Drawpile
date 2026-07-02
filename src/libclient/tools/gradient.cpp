@@ -34,6 +34,7 @@ GradientTool::GradientTool(ToolController &owner)
 void GradientTool::begin(const BeginParams &params)
 {
 	m_zoom = params.zoom;
+	m_angle = params.angle;
 	if(params.right) {
 		cancelMultipart();
 	} else {
@@ -77,8 +78,8 @@ void GradientTool::motion(const MotionParams &params)
 					const QPointF &otherPoint = m_dragIndex == 0
 													? m_points.constLast()
 													: m_points.constFirst();
-					point =
-						constraints::angle(otherPoint, originalPoint + delta);
+					point = constraints::angle(
+						otherPoint, originalPoint + delta, m_angle);
 				} else {
 					point = originalPoint + delta;
 				}

@@ -8,15 +8,15 @@ namespace tools {
 
 namespace constraints {
 
-QPointF angle(const QPointF &p1, const QPointF &p2)
+QPointF angle(const QPointF &p1, const QPointF &p2, qreal viewAngle)
 {
 	QPointF dp = p2 - p1;
 	double a = qAtan2(dp.y(), dp.x());
 	double m = hypot(dp.x(), dp.y());
 
-	// Round a to the nearest multiple of π/4
 	const double STEPS = M_PI / 4.0;
-	a = qRound(a / STEPS) * STEPS;
+	qreal v = qDegreesToRadians(viewAngle);
+	a = qRound((a + v) / STEPS) * STEPS - v;
 
 	return p1 + QPointF(cos(a)*m, sin(a)*m);
 }

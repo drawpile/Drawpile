@@ -62,6 +62,7 @@ private:
 	QVector<QVector<QPointF>> m_pointsStack;
 	QPointF m_dragStartPoint;
 	qreal m_zoom = 1.0;
+	qreal m_angle = 0.0;
 	qreal m_focus = 0.0;
 	Shape m_shape = Shape::Linear;
 	Spread m_spread = Spread::Pad;

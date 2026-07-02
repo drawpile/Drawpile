@@ -27,6 +27,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Allow hitting enter/return twice on a number input to accept the dialog they're in, rather than entering edit mode again. You can also hold Shift to explicitly accept the dialog and Ctrl to explicitly enter edit mode instead.
  * Feature: Allow configuring the default save file name format under Edit > Preferences > Files. Thanks Bluestrings for suggesting.
  * Feature: Show the current layer title on the cursor when using the layer pick canvas shortcut (Ctrl+Shift+Left Click by default.) Thanks Gabr for suggesting.
+ * Fix: Take the canvas rotation into account when constraining the angle (Shift by default) in the line and gradient tools. Thanks Ben for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

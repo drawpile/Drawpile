@@ -39,6 +39,7 @@ protected:
 	virtual QPointF getConstrainPoint() const;
 	void updatePreview();
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
+	qreal angle() const { return m_angle; }
 
 	QPointF m_start, m_current, m_p1, m_p2;
 	bool m_drawing = false;
