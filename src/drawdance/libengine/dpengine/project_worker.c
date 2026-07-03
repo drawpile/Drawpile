@@ -42,6 +42,7 @@ struct DP_ProjectWorker {
     DP_Semaphore *sem;
     DP_Thread *thread;
     DP_Project *prj;
+    DP_ProjectPlayer *pp;
     DP_ProjectSessionTimes pst;
     unsigned int last_file_id;
     unsigned int open_file_id;
@@ -68,6 +69,7 @@ typedef enum DP_ProjectWorkerCommandType {
     DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
     DP_PROJECT_WORKER_COMMAND_SAVE,
     DP_PROJECT_WORKER_COMMAND_INFO,
+    DP_PROJECT_WORKER_COMMAND_PLAYER_PREPARE,
 } DP_ProjectWorkerCommandType;
 
 typedef struct DP_ProjectWorkerCommand {
@@ -153,6 +155,12 @@ typedef struct DP_ProjectWorkerCommand {
             unsigned int flags;
             unsigned int file_id;
         } info;
+        struct {
+            DP_DrawContext *dc;
+            double max_delta_seconds;
+            int timestamp_index_interval;
+            unsigned int file_id;
+        } player_prepare;
     };
 } DP_ProjectWorkerCommand;
 
@@ -202,6 +210,8 @@ static void handle_close(DP_ProjectWorker *pw, unsigned int file_id)
     DP_MUTEX_MUST_LOCK(mutex);
     DP_Project *prj = pw->prj;
     pw->prj = NULL;
+    DP_project_player_free(pw->pp);
+    pw->pp = NULL;
     pw->open_file_id = 0u;
     DP_free(pw->continue_source_param);
     pw->continue_source_param = NULL;
@@ -715,6 +725,52 @@ static void handle_info(DP_ProjectWorker *pw, unsigned int file_id,
     }
 }
 
+static void handle_player_prepare(DP_ProjectWorker *pw, unsigned int file_id,
+                                  DP_DrawContext *dc,
+                                  int timestamp_index_interval,
+                                  double max_delta_seconds)
+{
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_warn("Not preparing player on file id %u, currently open is %u",
+                file_id, open_file_id);
+        return;
+    }
+
+    if (pw->pp) {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_ERROR,
+                           .error = {file_id, DP_PROJECT_PLAYBACK_ERROR_MISUSE,
+                                     "Project player already prepared"}});
+        return;
+    }
+
+    DP_ProjectPlayer *pp = DP_project_player_new(pw->prj, dc);
+    if (!pp) {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_ERROR,
+                           .error = {file_id, DP_PROJECT_PLAYBACK_ERROR_MISUSE,
+                                     DP_error()}});
+        return;
+    }
+
+    int result = DP_project_player_prepare(pp, timestamp_index_interval,
+                                           max_delta_seconds);
+    if (result == 0) {
+        pw->pp = pp;
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_DONE,
+                           .total_playback_seconds =
+                               DP_project_player_total_playback_seconds(pp)});
+    }
+    else {
+        DP_project_player_free(pp);
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_ERROR,
+                           .error = {file_id, result, DP_error()}});
+    }
+}
+
 static void handle_command(DP_ProjectWorker *pw,
                            const DP_ProjectWorkerCommand *command)
 {
@@ -848,6 +904,18 @@ static void handle_command(DP_ProjectWorker *pw,
         handle_info(pw, command->info.file_id, command->info.flags,
                     command->info.callback, command->info.user);
         return;
+    case DP_PROJECT_WORKER_COMMAND_PLAYER_PREPARE:
+        DP_PROJECT_WORKER_DEBUG(
+            "handle project player prepare %u timestamp index interval %d "
+            "max delta seconds %f",
+            command->player_prepare.file_id,
+            command->player_prepare.timestamp_index_interval,
+            command->player_prepare.max_delta_seconds);
+        handle_player_prepare(pw, command->player_prepare.file_id,
+                              command->player_prepare.dc,
+                              command->player_prepare.timestamp_index_interval,
+                              command->player_prepare.max_delta_seconds);
+        return;
     }
     DP_warn("Unhandled project worker command %d", (int)command->type);
 }
@@ -910,6 +978,7 @@ DP_project_worker_new(DP_ProjectWorkerHandleEventFn handle_event_fn,
         sem,
         NULL,
         NULL,
+        NULL,
         DP_project_session_times_null(),
         0u,
         0u,
@@ -944,6 +1013,7 @@ void DP_project_worker_free_join(DP_ProjectWorker *pw)
         DP_queue_dispose(&pw->queue);
         DP_semaphore_free(pw->sem);
         DP_mutex_free(pw->mutex);
+        DP_project_player_free(pw->pp);
 
         DP_Project *prj = pw->prj;
         if (prj) {
@@ -1163,6 +1233,20 @@ void DP_project_worker_info(DP_ProjectWorker *pw, unsigned int file_id,
     push_command(pw, (DP_ProjectWorkerCommand){
                          DP_PROJECT_WORKER_COMMAND_INFO,
                          .info = {callback, user, flags, file_id}});
+}
+
+void DP_project_worker_player_prepare(DP_ProjectWorker *pw,
+                                      unsigned int file_id, DP_DrawContext *dc,
+                                      int timestamp_index_interval,
+                                      double max_delta_seconds)
+{
+    DP_ASSERT(pw);
+    DP_ASSERT(dc);
+    push_command(pw,
+                 (DP_ProjectWorkerCommand){
+                     DP_PROJECT_WORKER_COMMAND_PLAYER_PREPARE,
+                     .player_prepare = {dc, max_delta_seconds,
+                                        timestamp_index_interval, file_id}});
 }
 
 bool DP_project_worker_cancel(DP_ProjectWorker *pw, unsigned int file_id)

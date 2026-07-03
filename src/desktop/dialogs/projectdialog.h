@@ -21,12 +21,15 @@ public:
 
 	void setTempPath(const QString &tempPath);
 
+	static void showUnhandledProjectErrorMessageBoxOn(
+		QWidget *parent, const QString &errorMessage);
+
 private:
 	void openProject();
 	void requestCancel();
 
+	void handleProjectError(int type, const QString &errorMessage);
 	void showErrorPage(const QString &errorMessage);
-	void showUnhandledErrorMessageBox(const QString &errorMessage);
 	void handleSync(unsigned int syncId);
 	void handleOpenSucceeded();
 	void handleOverviewGenerated();

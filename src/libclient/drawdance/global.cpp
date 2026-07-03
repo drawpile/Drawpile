@@ -122,7 +122,20 @@ void DrawContextPool::deinit()
 DrawContext DrawContextPool::acquire()
 {
 	Q_ASSERT(instance);
+	return instance->acquireWrappedContext();
+}
+
+DP_DrawContext *DrawContextPool::acquireRaw()
+{
+	Q_ASSERT(instance);
 	return instance->acquireContext();
+}
+
+void DrawContextPool::releaseRaw(DP_DrawContext *dc)
+{
+	Q_ASSERT(instance);
+	Q_ASSERT(dc);
+	instance->releaseContext(dc);
 }
 
 DrawContextPoolStatistics DrawContextPool::statistics()
@@ -139,7 +152,12 @@ DrawContextPool::~DrawContextPool()
 	DP_mutex_free(m_mutex);
 }
 
-DrawContext DrawContextPool::acquireContext()
+DrawContext DrawContextPool::acquireWrappedContext()
+{
+	return DrawContext(acquireContext(), this);
+}
+
+DP_DrawContext *DrawContextPool::acquireContext()
 {
 	DP_DrawContext *dc;
 	DP_MUTEX_MUST_LOCK(m_mutex);
@@ -150,7 +168,7 @@ DrawContext DrawContextPool::acquireContext()
 		dc = m_available.pop();
 	}
 	DP_MUTEX_MUST_UNLOCK(m_mutex);
-	return DrawContext{dc, this};
+	return dc;
 }
 
 void DrawContextPool::releaseContext(DP_DrawContext *dc)

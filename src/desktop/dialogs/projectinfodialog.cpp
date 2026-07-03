@@ -204,6 +204,9 @@ void ProjectInfoDialog::onProjectInfoSession(const DP_ProjectInfoSession &info)
 	if(info.flags & DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED) {
 		flagNames.append(QStringLiteral("project_closed"));
 	}
+	if(info.flags & DP_PROJECT_SESSION_FLAG_CONVERTED) {
+		flagNames.append(QStringLiteral("converted"));
+	}
 
 	addRow(
 		m_sessionsTable,
@@ -259,6 +262,9 @@ void ProjectInfoDialog::onProjectInfoSnapshot(
 	}
 	if(info.flags & DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION) {
 		flagNames.append(QStringLiteral("continuation"));
+	}
+	if(info.flags & DP_PROJECT_SNAPSHOT_FLAG_CONVERTED) {
+		flagNames.append(QStringLiteral("converted"));
 	}
 
 	QString continuation;

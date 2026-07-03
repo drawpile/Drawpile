@@ -132,6 +132,9 @@ DP_Message *DP_message_deserialize_compat(const unsigned char *buf,
 #endif
 
 
+long long DP_message_guess_msecs(DP_Message *msg, bool *out_next_has_time);
+
+
 bool DP_message_type_is_draw_dabs(DP_MessageType type);
 
 int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc);

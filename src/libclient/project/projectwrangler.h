@@ -10,6 +10,7 @@
 #include <functional>
 
 class QTemporaryFile;
+struct DP_DrawContext;
 struct DP_Mutex;
 struct DP_ProjectInfo;
 struct DP_ProjectInfoOverview;
@@ -33,12 +34,21 @@ class ProjectWrangler final : public QObject {
 	Q_OBJECT
 	Q_DISABLE_COPY_MOVE(ProjectWrangler)
 public:
+	enum class Error {
+		Unhandled,
+		Open,
+		Overview,
+		PreparePlayer,
+	};
+
 	explicit ProjectWrangler(QObject *parent = nullptr);
 	~ProjectWrangler() override;
 
 	void openProject(const QString &path);
 
 	void generateOverview();
+
+	void preparePlayer(int timestampIndexInterval, double maxDeltaSeconds);
 
 	void requestCancel(unsigned int syncId);
 
@@ -48,12 +58,11 @@ public:
 Q_SIGNALS:
 	// The following signals are emitted from the worker thread, use
 	// Qt::QueuedConnection to attach to them.
-	void openErrorOccurred(const QString &errorMessage);
-	void overviewErrorOccurred(const QString &errorMessage);
-	void unhandledErrorOccurred(const QString &errorMessage);
+	void errorOccurred(int type, const QString &errorMessage);
 	void syncReceived(unsigned int syncId);
 	void openSucceeded();
 	void overviewGenerated();
+	void playerPrepared(double totalPlaybackSeconds);
 
 private:
 	struct OpenParams {
@@ -98,6 +107,7 @@ private:
 	overviewEntryLessThan(const OverviewEntry &a, const OverviewEntry &b);
 
 	DP_ProjectWorker *m_pw = nullptr;
+	DP_DrawContext *m_dc = nullptr;
 	DP_Mutex *m_mutex = nullptr;
 	QHash<unsigned int, QTemporaryFile *> m_temporaryFiles;
 	QVector<OverviewEntry> m_overviewEntries;

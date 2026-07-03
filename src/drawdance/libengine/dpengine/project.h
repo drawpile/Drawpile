@@ -171,9 +171,11 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SOURCE_RESUME  4
 
 #define DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED (1u << 0u)
+#define DP_PROJECT_SESSION_FLAG_CONVERTED      (1u << 1u)
 
-#define DP_PROJECT_MESSAGE_FLAG_OWN      (1u << 0u)
-#define DP_PROJECT_MESSAGE_FLAG_CONTINUE (1u << 1u)
+#define DP_PROJECT_MESSAGE_FLAG_OWN       (1u << 0u)
+#define DP_PROJECT_MESSAGE_FLAG_CONTINUE  (1u << 1u)
+#define DP_PROJECT_MESSAGE_FLAG_CONVERTED (1u << 2u)
 
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET      (-1)
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI      (-2)
@@ -189,6 +191,7 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS (1u << 6u)
 #define DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS    (1u << 7u)
 #define DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION   (1u << 8u)
+#define DP_PROJECT_SNAPSHOT_FLAG_CONVERTED      (1u << 9u)
 
 #define DP_PROJECT_SAVE_FLAG_NO_MESSAGES (1u << 0u)
 
@@ -203,6 +206,7 @@ typedef struct DP_Rect DP_Rect;
 
 typedef struct DP_Project DP_Project;
 typedef struct DP_ProjectPlayback DP_ProjectPlayback;
+typedef struct DP_ProjectPlayer DP_ProjectPlayer;
 
 typedef enum DP_ProjectCheckType {
     DP_PROJECT_CHECK_NONE,    // Not a project file.
@@ -521,6 +525,17 @@ int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
                              DP_ProjectPlaybackCallbackFn callback, void *user);
 
 const DP_Rect *DP_project_playback_crop_or_null(DP_ProjectPlayback *pb);
+
+
+DP_ProjectPlayer *DP_project_player_new(DP_Project *prj, DP_DrawContext *dc);
+
+int DP_project_player_free(DP_ProjectPlayer *pp);
+
+int DP_project_player_prepare(DP_ProjectPlayer *pp,
+                              int timestamp_index_interval,
+                              double max_delta_seconds);
+
+double DP_project_player_total_playback_seconds(DP_ProjectPlayer *pp);
 
 
 #endif

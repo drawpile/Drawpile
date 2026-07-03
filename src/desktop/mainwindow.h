@@ -66,7 +66,7 @@ namespace dialogs {
 class DumpPlaybackDialog;
 class HostDialog;
 class InputSettingsDialog;
-class PlaybackDialog;
+class ProjectPlaybackDialog;
 class ProjectRecordingSettingsDialog;
 class ServerLogDialog;
 class SessionSettingsDialog;
@@ -433,6 +433,7 @@ private:
 #ifdef DRAWPILE_PROJECT_DIALOG
 	void requestProjectOverview();
 #endif
+	void requestProjectPlayback();
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	void requestTimelapseDialog();
 #endif
@@ -574,7 +575,7 @@ private:
 	QToolButton *m_statusChatButton;
 	widgets::ProjectRecordingStatusButton *m_statusAutoRecordButton = nullptr;
 
-	QPointer<dialogs::PlaybackDialog> m_playbackDialog;
+	QPointer<dialogs::ProjectPlaybackDialog> m_projectPlaybackDialog;
 	QPointer<dialogs::DumpPlaybackDialog> m_dumpPlaybackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;

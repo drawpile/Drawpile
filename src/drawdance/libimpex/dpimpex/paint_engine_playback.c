@@ -21,47 +21,6 @@ static void push_playback(DP_PaintEnginePushMessageFn push_message, void *user,
     push_message(user, DP_msg_internal_playback_new(0, position));
 }
 
-static long long guess_message_msecs(DP_Message *msg, DP_MessageType type,
-                                     bool *out_next_has_time)
-{
-    // The recording format doesn't contain proper timing information, so we
-    // just make some wild guesses as to how long each message takes to try to
-    // get some vaguely okayly timed playback out of it.
-    switch (type) {
-    case DP_MSG_DRAW_DABS_CLASSIC:
-    case DP_MSG_DRAW_DABS_PIXEL:
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-    case DP_MSG_DRAW_DABS_MYPAINT:
-    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
-        return 5;
-    case DP_MSG_PUT_IMAGE:
-    case DP_MSG_MOVE_POINTER:
-        return 10;
-    case DP_MSG_LAYER_ATTRIBUTES:
-    case DP_MSG_LAYER_RETITLE:
-    case DP_MSG_ANNOTATION_RESHAPE:
-    case DP_MSG_ANNOTATION_EDIT:
-        return 20;
-    case DP_MSG_CANVAS_RESIZE:
-        return 60;
-    case DP_MSG_UNDO:
-        // An undo for user 0 means that the next message is actually an undone
-        // entry, which happens at the start of recordings. We treat those
-        // messages as having a length of 0, since they just get appended to the
-        // history and aren't visible.
-        if (DP_message_context_id(msg) == 0
-            && DP_msg_undo_override_user(DP_message_internal(msg)) == 0) {
-            *out_next_has_time = false;
-            return 0;
-        }
-        else {
-            return 20;
-        }
-    default:
-        return 0;
-    }
-}
-
 static DP_PlayerResult
 skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
                       DP_PaintEngineFilterMessageFn filter_message_or_null,
@@ -122,9 +81,8 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
                 }
                 else if (what == PLAYBACK_STEP_MSECS) {
                     if (DP_paint_engine_playback(pe)->next_has_time) {
-                        long long msecs = guess_message_msecs(
-                            msg, type,
-                            &DP_paint_engine_playback(pe)->next_has_time);
+                        long long msecs = DP_message_guess_msecs(
+                            msg, &DP_paint_engine_playback(pe)->next_has_time);
                         if (should_time) {
                             done += msecs;
                         }

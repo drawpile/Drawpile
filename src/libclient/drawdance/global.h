@@ -22,59 +22,65 @@ void initStaticTiles();
 class DrawContextPool;
 
 class DrawContext final {
-    friend DrawContextPool;
+	friend DrawContextPool;
+
 public:
-    DrawContext(DrawContext &&);
-    ~DrawContext();
+	DrawContext(DrawContext &&);
+	~DrawContext();
 
-    DrawContext(const DrawContext &) = delete;
-    DrawContext &operator=(const DrawContext &) = delete;
-    DrawContext &operator=(DrawContext &&) = delete;
+	DrawContext(const DrawContext &) = delete;
+	DrawContext &operator=(const DrawContext &) = delete;
+	DrawContext &operator=(DrawContext &&) = delete;
 
-    DP_DrawContext *get() { return m_dc; }
+	DP_DrawContext *get() { return m_dc; }
 
 private:
-    DrawContext(DP_DrawContext *dc, DrawContextPool *pool);
+	DrawContext(DP_DrawContext *dc, DrawContextPool *pool);
 
-    DP_DrawContext *m_dc;
-    DrawContextPool *m_pool;
+	DP_DrawContext *m_dc;
+	DrawContextPool *m_pool;
 };
 
 struct DrawContextPoolStatistics {
-    int contextsUsed;
-    int contextsTotal;
-    size_t bytesUsed;
-    size_t bytesTotal;
+	int contextsUsed;
+	int contextsTotal;
+	size_t bytesUsed;
+	size_t bytesTotal;
 };
 
 class DrawContextPool final {
-    friend DrawContext;
+	friend DrawContext;
+
 public:
-    static void init();
-    static void deinit();
+	static void init();
+	static void deinit();
 
-    static DrawContext acquire();
+	static DrawContext acquire();
 
-    static DrawContextPoolStatistics statistics();
+	static DP_DrawContext *acquireRaw();
+	static void releaseRaw(DP_DrawContext *dc);
 
-    ~DrawContextPool();
+	static DrawContextPoolStatistics statistics();
 
-    DrawContextPool(const DrawContextPool &) = delete;
-    DrawContextPool(DrawContextPool &&) = delete;
-    DrawContextPool &operator=(const DrawContextPool &) = delete;
-    DrawContextPool &operator=(DrawContextPool &&) = delete;
+	~DrawContextPool();
+
+	DrawContextPool(const DrawContextPool &) = delete;
+	DrawContextPool(DrawContextPool &&) = delete;
+	DrawContextPool &operator=(const DrawContextPool &) = delete;
+	DrawContextPool &operator=(DrawContextPool &&) = delete;
 
 private:
-    DrawContextPool();
+	DrawContextPool();
 
-    DrawContext acquireContext();
-    void releaseContext(DP_DrawContext *dc);
+	DrawContext acquireWrappedContext();
+	DP_DrawContext *acquireContext();
+	void releaseContext(DP_DrawContext *dc);
 
-    DrawContextPoolStatistics instanceStatistics();
+	DrawContextPoolStatistics instanceStatistics();
 
-    DP_Mutex *m_mutex;
-    QStack<DP_DrawContext *> m_available;
-    QVector<DP_DrawContext *> m_contexts;
+	DP_Mutex *m_mutex;
+	QStack<DP_DrawContext *> m_available;
+	QVector<DP_DrawContext *> m_contexts;
 };
 
 }

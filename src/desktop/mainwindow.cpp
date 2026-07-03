@@ -15,7 +15,7 @@ extern "C" {
 #include "desktop/dialogs/invitedialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
-#include "desktop/dialogs/playbackdialog.h"
+#include "desktop/dialogs/projectplaybackdialog.h"
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/dialogs/resizedialog.h"
@@ -198,7 +198,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_netstatus(nullptr),
 	  m_viewstatus(nullptr),
 	  m_statusChatButton(nullptr),
-	  m_playbackDialog(nullptr),
+	  m_projectPlaybackDialog(nullptr),
 	  m_dumpPlaybackDialog(nullptr),
 	  m_sessionSettings(nullptr),
 	  m_serverLogDialog(nullptr),
@@ -994,7 +994,7 @@ MainWindow::ReplacementCriteria MainWindow::getReplacementCriteria() const
 	if(m_doc->isRecording()) {
 		rc.setFlag(ReplacementCriterion::Recording);
 	}
-	if(m_playbackDialog || m_dumpPlaybackDialog) {
+	if(m_projectPlaybackDialog || m_dumpPlaybackDialog) {
 		rc.setFlag(ReplacementCriterion::Playback);
 	}
 	return rc;
@@ -1893,6 +1893,23 @@ void MainWindow::requestProjectOverview()
 	}
 }
 #endif
+
+void MainWindow::requestProjectPlayback()
+{
+	QString objectName = QStringLiteral("projectplaybackdialog");
+	dialogs::ProjectPlaybackDialog *dlg =
+		findChild<dialogs::ProjectPlaybackDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::ProjectPlaybackDialog(this);
+		dlg->setObjectName(objectName);
+		dlg->openProject(QStringLiteral("test"));
+		dlg->show();
+	}
+}
 
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 void MainWindow::requestTimelapseDialog()
@@ -2843,40 +2860,11 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 	if(QRegularExpression(QStringLiteral("\\.dp(rec|txt)$"), opt)
 		   .match(basename)
 		   .hasMatch()) {
-		bool isTemplate;
-		DP_LoadResult result =
-			m_doc->loadRecording(loadPath, false, &isTemplate);
-		showLoadResultMessage(result);
-		if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
-			m_playbackDialog =
-				new dialogs::PlaybackDialog(m_doc->canvas(), this);
-			m_playbackDialog->setWindowTitle(
-				QStringLiteral("%1 - %2")
-					.arg(utils::PathInfo::stripExtension(basename))
-					.arg(m_playbackDialog->windowTitle()));
-			m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
-			m_playbackDialog->show();
-			m_playbackDialog->centerOnParent();
-			if(tempFile) {
-				tempFile->setParent(m_playbackDialog);
-			}
-			connect(
-				m_playbackDialog, &dialogs::PlaybackDialog::playbackToggled,
-				this, &MainWindow::setRecorderStatus);
-			connect(
-				m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this,
-				[this, path](QObject *) {
-					m_playbackDialog = nullptr;
-					setRecorderStatus(false);
-					canvas::CanvasModel *canvas = m_doc->canvas();
-					if(canvas && dpAppConfig()->getAutoRecordHost()) {
-						canvas->startProjectRecording(
-							dpAppConfig(), DP_PROJECT_SOURCE_FILE);
-					}
-				});
-		} else {
-			delete tempFile;
-		}
+		m_projectPlaybackDialog = new dialogs::ProjectPlaybackDialog(this);
+		m_projectPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
+		m_projectPlaybackDialog->openRecording(basename, loadPath, tempFile);
+		m_projectPlaybackDialog->show();
+		utils::centerOnParent(m_projectPlaybackDialog);
 
 	} else if(
 		QRegularExpression(QStringLiteral("\\.drawdancedump$"), opt)
@@ -3480,8 +3468,8 @@ void MainWindow::setRecorderStatus(bool on)
 #else
 	QAction *recordAction = getAction("recordsession");
 
-	if(m_playbackDialog) {
-		if(m_playbackDialog->isPlaying()) {
+	if(m_projectPlaybackDialog) {
+		if(m_projectPlaybackDialog->isPlaying()) {
 			recordAction->setIcon(QIcon::fromTheme("media-playback-pause"));
 			recordAction->setText(tr("Pause"));
 		} else {
@@ -3519,9 +3507,9 @@ void MainWindow::showSystemInfo()
 
 void MainWindow::toggleRecording()
 {
-	if(m_playbackDialog) {
+	if(m_projectPlaybackDialog) {
 		// If the playback dialog is visible, this action works as the play/pause button
-		m_playbackDialog->setPlaying(!m_playbackDialog->isPlaying());
+		m_projectPlaybackDialog->setPlaying(!m_projectPlaybackDialog->isPlaying());
 		return;
 	}
 
@@ -6342,15 +6330,18 @@ void MainWindow::setupActions()
 						  .icon("media-record")
 						  .noDefaultShortcut();
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	QAction *makeTimelapse =
+		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
+#endif
 #ifdef DRAWPILE_PROJECT_DIALOG
 	QAction *projectOverview =
 		makeAction("projectoverview", tr("Project statistics…"))
 			.noDefaultShortcut();
 #endif
-#ifdef DRAWPILE_TIMELAPSE_DIALOG
-	QAction *makeTimelapse =
-		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
-#endif
+	QAction *projectPlayback =
+		makeAction("projectplayback", tr("Project playback…"))
+			.noDefaultShortcut();
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 	QAction *recover = makeAction("recover", tr("Recover…"))
 						   .icon(QStringLiteral("backup"))
@@ -6439,16 +6430,19 @@ void MainWindow::setupActions()
 	connect(
 		exportBrushes, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::exportBrushes);
-#ifdef DRAWPILE_PROJECT_DIALOG
-	connect(
-		projectOverview, &QAction::triggered, this,
-		&MainWindow::requestProjectOverview);
-#endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	connect(
 		makeTimelapse, &QAction::triggered, this,
 		&MainWindow::requestTimelapseDialog);
 #endif
+#ifdef DRAWPILE_PROJECT_DIALOG
+	connect(
+		projectOverview, &QAction::triggered, this,
+		&MainWindow::requestProjectOverview);
+#endif
+	connect(
+		projectPlayback, &QAction::triggered, this,
+		&MainWindow::requestProjectPlayback);
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 	connect(recover, &QAction::triggered, this, &MainWindow::showRecover);
 
@@ -6518,9 +6512,11 @@ void MainWindow::setupActions()
 #if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
 	filemenu->addSeparator();
 #endif
+	QMenu *projectMenu = filemenu->addMenu(tr("Project"));
 #ifdef DRAWPILE_PROJECT_DIALOG
-	filemenu->addAction(projectOverview);
+	projectMenu->addAction(projectOverview);
 #endif
+	projectMenu->addAction(projectPlayback);
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	filemenu->addAction(makeTimelapse);
 #endif

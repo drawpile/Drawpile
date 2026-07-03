@@ -4,6 +4,7 @@ extern "C" {
 #include <dpengine/project.h>
 #include <dpengine/project_worker.h>
 }
+#include "libclient/drawdance/global.h"
 #include "libclient/project/projectwrangler.h"
 #include "libshared/util/paths.h"
 #include <QFile>
@@ -27,6 +28,9 @@ ProjectWrangler::~ProjectWrangler()
 	qCDebug(lcDpProjectWrangler, "Delete wrangler");
 	DP_project_worker_free_join(m_pw);
 	DP_mutex_free(m_mutex);
+	if(m_dc) {
+		drawdance::DrawContextPool::releaseRaw(m_dc);
+	}
 	for(QTemporaryFile *tempFile : m_temporaryFiles) {
 		qCWarning(
 			lcDpProjectWrangler, "Delete lingering temp file '%s'",
@@ -42,7 +46,7 @@ void ProjectWrangler::openProject(const QString &path)
 			m_pw, &ProjectWrangler::handleOpenSyncCallback,
 			new OpenParams{this, path});
 	} else {
-		Q_EMIT openErrorOccurred(tr("Initialization failed"));
+		Q_EMIT errorOccurred(int(Error::Open), tr("Initialization failed"));
 	}
 }
 
@@ -56,7 +60,21 @@ void ProjectWrangler::generateOverview()
 			DP_PROJECT_INFO_FLAG_OVERVIEW | DP_PROJECT_INFO_FLAG_WORK_TIMES,
 			&ProjectWrangler::handleInfoCallback, this);
 	} else {
-		Q_EMIT overviewErrorOccurred(tr("Not initialized"));
+		Q_EMIT errorOccurred(int(Error::Overview), tr("Not initialized"));
+	}
+}
+
+void ProjectWrangler::preparePlayer(
+	int timestampIndexInterval, double maxDeltaSeconds)
+{
+	if(m_pw) {
+		if(!m_dc) {
+			m_dc = drawdance::DrawContextPool::acquireRaw();
+		}
+		DP_project_worker_player_prepare(
+			m_pw, m_fileId, m_dc, timestampIndexInterval, maxDeltaSeconds);
+	} else {
+		Q_EMIT errorOccurred(int(Error::PreparePlayer), tr("Not initialized"));
 	}
 }
 
@@ -117,16 +135,26 @@ void ProjectWrangler::handleEvent(const DP_ProjectWorkerEvent *event)
 	DP_ProjectWorkerEventType type = event->type;
 	switch(type) {
 	case DP_PROJECT_WORKER_EVENT_OPEN_ERROR:
-		Q_EMIT openErrorOccurred(
-			tr("Error %d opening project file: %s")
+		Q_EMIT errorOccurred(
+			int(Error::Open),
+			tr("Error %1 opening project file: %2")
 				.arg(
 					QString::number(event->data.error.error),
 					QString::fromUtf8(event->data.error.message)));
 		deleteTemporaryFile(event->data.file_id);
 		return;
 	case DP_PROJECT_WORKER_EVENT_INFO_ERROR:
-		Q_EMIT overviewErrorOccurred(
-			tr("Error %d generating project overview: %s")
+		Q_EMIT errorOccurred(
+			int(Error::Overview),
+			tr("Error %1 generating project overview: %2")
+				.arg(
+					QString::number(event->data.error.error),
+					QString::fromUtf8(event->data.error.message)));
+		return;
+	case DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_ERROR:
+		Q_EMIT errorOccurred(
+			int(Error::PreparePlayer),
+			tr("Error %1 preparing player: %2")
 				.arg(
 					QString::number(event->data.error.error),
 					QString::fromUtf8(event->data.error.message)));
@@ -142,8 +170,9 @@ void ProjectWrangler::handleEvent(const DP_ProjectWorkerEvent *event)
 	case DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE_ERROR:
 	case DP_PROJECT_WORKER_EVENT_SAVE_ERROR:
 	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR:
-		Q_EMIT unhandledErrorOccurred(
-			tr("Unhandled error %d of type %d: %s")
+		Q_EMIT errorOccurred(
+			int(Error::Unhandled),
+			tr("Unhandled error %1 of type %2: %3")
 				.arg(
 					QString::number(event->data.error.error),
 					QString::number(type),
@@ -167,6 +196,9 @@ void ProjectWrangler::handleEvent(const DP_ProjectWorkerEvent *event)
 		DP_MUTEX_MUST_UNLOCK(m_mutex);
 		Q_EMIT overviewGenerated();
 		return;
+	case DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_DONE:
+		Q_EMIT playerPrepared(event->data.total_playback_seconds);
+		return;
 	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT:
 		return; // Don't care.
 	}
@@ -183,7 +215,8 @@ void ProjectWrangler::handleOpenSync(const QString &path)
 {
 	QFile sourceFile(path);
 	if(!sourceFile.open(QIODevice::ReadOnly)) {
-		Q_EMIT openErrorOccurred(
+		Q_EMIT errorOccurred(
+			int(Error::Open),
 			tr("Failed to open '%1': %2")
 				.arg(sourceFile.fileName(), sourceFile.errorString()));
 		return;
@@ -191,7 +224,8 @@ void ProjectWrangler::handleOpenSync(const QString &path)
 
 	QTemporaryFile *tempFile = new QTemporaryFile;
 	if(!tempFile->open()) {
-		Q_EMIT openErrorOccurred(
+		Q_EMIT errorOccurred(
+			int(Error::Open),
 			tr("Failed to open temporary '%1': %2")
 				.arg(tempFile->fileName(), tempFile->errorString()));
 		delete tempFile;
@@ -205,7 +239,8 @@ void ProjectWrangler::handleOpenSync(const QString &path)
 			"Error copying file contents from '%s' to '%s': %s",
 			qUtf8Printable(sourceFile.fileName()),
 			qUtf8Printable(tempFile->fileName()), qUtf8Printable(error));
-		Q_EMIT openErrorOccurred(
+		Q_EMIT errorOccurred(
+			int(Error::Open),
 			tr("Failed to copy '%1' to temporary file '%2'")
 				.arg(sourceFile.fileName(), tempFile->fileName()));
 		delete tempFile;

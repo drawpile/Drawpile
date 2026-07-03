@@ -852,6 +852,18 @@ QRectF moveRectToFitF(const QRectF &subjectRect, const QRectF &boundingRect)
 	return rect;
 }
 
+void centerOnParent(QWidget *widget)
+{
+	if(widget) {
+		QWidget *parentWidget = widget->parentWidget();
+		if(parentWidget) {
+			QRect geometry = widget->geometry();
+			geometry.moveCenter(parentWidget->geometry().center());
+			widget->move(geometry.topLeft());
+		}
+	}
+}
+
 void initSortingHeader(QHeaderView *header, int sortColumn, Qt::SortOrder order)
 {
 	header->setSortIndicator(sortColumn, order);

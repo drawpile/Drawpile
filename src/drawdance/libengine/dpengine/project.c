@@ -153,6 +153,13 @@ struct DP_ProjectPlayback {
     bool own_only;
 };
 
+struct DP_ProjectPlayer {
+    DP_Project *prj;
+    DP_DrawContext *dc;
+    double max_delta_seconds;
+    double total_playback_seconds;
+};
+
 static bool is_ok(int result)
 {
     return result == SQLITE_OK;
@@ -6334,8 +6341,10 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
         }
     }
 
-    // Only autosaves can have regular messages.
-    if (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE) {
+    // Only autosaves and conversions can have regular messages.
+    if (flags
+        & (DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE
+           | DP_PROJECT_SNAPSHOT_FLAG_CONVERTED)) {
         // Play back regular messages after the snapshot was taken. Should also
         // only exist for autosave snapshots.
         if (!playback_query_messages(c, session_id, first_sequence_id,
@@ -7228,6 +7237,28 @@ project_playback_measure_filter_resize(void *user,
     return project_playback_measure_filter_type(mc->type);
 }
 
+static void project_playback_update_recorded_at(
+    DP_ProjectPlaybackMessageContext *mc, double max_delta_seconds,
+    double *in_out_last_recorded_at, double *in_out_total_playback_seconds)
+{
+    double recorded_at = mc->recorded_at;
+    if (isfinite(recorded_at)) {
+        double last_recorded_at = *in_out_last_recorded_at;
+        if (last_recorded_at <= recorded_at) {
+            *in_out_total_playback_seconds += DP_min_double(
+                max_delta_seconds, recorded_at - last_recorded_at);
+        }
+        else {
+            DP_debug("Message recorded time went backwards from %f to %f",
+                     last_recorded_at, recorded_at);
+        }
+        *in_out_last_recorded_at = recorded_at;
+    }
+    else {
+        DP_debug("Got non-finite message record time");
+    }
+}
+
 static int
 project_playback_measure_filter_time(void *user,
                                      DP_ProjectPlaybackMessageContext *mc)
@@ -7238,22 +7269,9 @@ project_playback_measure_filter_time(void *user,
     playback_crop_update(&mftc->pbc, mc);
 
     if (project_playback_is_timing_relevant(pb, &mftc->pbc, mc)) {
-        double recorded_at = mc->recorded_at;
-        if (isfinite(recorded_at)) {
-            double last_recorded_at = mftc->last_recorded_at;
-            if (last_recorded_at <= recorded_at) {
-                pb->total_playback_seconds += DP_min_double(
-                    pb->max_delta_seconds, recorded_at - last_recorded_at);
-            }
-            else {
-                DP_debug("Message recorded time went backwards from %f to %f",
-                         mftc->last_recorded_at, recorded_at);
-            }
-            mftc->last_recorded_at = recorded_at;
-        }
-        else {
-            DP_debug("Got non-finite message record time");
-        }
+        project_playback_update_recorded_at(mc, pb->max_delta_seconds,
+                                            &mftc->last_recorded_at,
+                                            &pb->total_playback_seconds);
     }
 
     return project_playback_measure_filter_type(mc->type);
@@ -7657,4 +7675,220 @@ const DP_Rect *DP_project_playback_crop_or_null(DP_ProjectPlayback *pb)
     else {
         return NULL;
     }
+}
+
+
+struct DP_ProjectPlayerPrepareContext {
+    DP_ProjectPlaybackContext c;
+    long long last_session_id;
+    double max_delta_seconds;
+    double total_playback_seconds;
+    double last_recorded_at;
+    sqlite3_stmt *insert_timestamp_index_stmt;
+    int timestamp_index_interval;
+    int timestamp_index_fill;
+};
+
+static int player_prepare_timestamp_index_create(DP_Project *prj)
+{
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "create table temp.player_timestamp_index (\n"
+                                  "    session_id integer not null,\n"
+                                  "    sequence_id integer not null,\n"
+                                  "    timestamp real not null,\n"
+                                  "    primary key (session_id, sequence_id))\n"
+                                  "strict, without rowid");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int player_prepare_timestamp_index_drop(DP_Project *prj)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "drop table if exists temp.player_timestamp_index");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static DP_CanvasState *
+player_prepare_playback_load_snapshot(DP_UNUSED DP_Project *prj,
+                                      DP_UNUSED DP_DrawContext *dc,
+                                      DP_UNUSED long long snapshot_id)
+{
+    return DP_canvas_state_new();
+}
+
+static bool
+player_prepare_is_timing_relevant(DP_ProjectPlaybackMessageContext *mc)
+{
+    // Negative sequence ids are snapshot messages to be executed instantly.
+    if (mc->sequence_id > 0LL) {
+        // Only client meta and command messages have a visual effect, other
+        // stuff would seem like nothing is happening.
+        DP_MessageType type = (DP_MessageType)mc->type;
+        return DP_message_type_client_meta(type)
+            || DP_message_type_command(type);
+    }
+    else {
+        return false;
+    }
+}
+
+static int player_prepare_playback_filter(void *user,
+                                          DP_ProjectPlaybackMessageContext *mc)
+{
+    struct DP_ProjectPlayerPrepareContext *ppc = user;
+
+    long long session_id = mc->session_id;
+    if (ppc->last_session_id != session_id) {
+        ppc->last_session_id = session_id;
+        ppc->timestamp_index_fill = 0;
+
+        DP_Project *prj = ppc->c.prj;
+        sqlite3_stmt *stmt = ppc->insert_timestamp_index_stmt;
+        bool insert_ok =
+            ps_bind_int64(prj, stmt, 1, session_id)
+            && ps_bind_int64(prj, stmt, 2, 0LL)
+            && ps_bind_double(prj, stmt, 3, ppc->total_playback_seconds)
+            && ps_exec_write(prj, stmt, NULL);
+        if (!insert_ok) {
+            return FILTER_ABORT;
+        }
+    }
+
+    if (player_prepare_is_timing_relevant(mc)) {
+        project_playback_update_recorded_at(mc, ppc->max_delta_seconds,
+                                            &ppc->last_recorded_at,
+                                            &ppc->total_playback_seconds);
+
+        int timestamp_index_interval = ppc->timestamp_index_interval;
+        if (timestamp_index_interval > 0) {
+            int fill = ppc->timestamp_index_fill + 1;
+            if (fill < timestamp_index_interval) {
+                ppc->timestamp_index_fill = fill;
+            }
+            else {
+                ppc->timestamp_index_fill = 0;
+                DP_Project *prj = ppc->c.prj;
+                sqlite3_stmt *stmt = ppc->insert_timestamp_index_stmt;
+                bool insert_ok =
+                    ps_bind_int64(prj, stmt, 2, mc->sequence_id)
+                    && ps_bind_double(prj, stmt, 3, ppc->total_playback_seconds)
+                    && ps_exec_write(prj, stmt, NULL);
+                if (!insert_ok) {
+                    return FILTER_ABORT;
+                }
+            }
+        }
+    }
+
+    return FILTER_IGNORE;
+}
+
+DP_ProjectPlayer *DP_project_player_new(DP_Project *prj, DP_DrawContext *dc)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return NULL;
+    }
+
+    if (!dc) {
+        DP_error_set("No draw context given");
+        return NULL;
+    }
+
+    DP_ProjectPlayer *pp = DP_malloc(sizeof(*pp));
+    *pp = (DP_ProjectPlayer){prj, dc, 0.0, 0.0};
+    return pp;
+}
+
+int DP_project_player_free(DP_ProjectPlayer *pp)
+{
+    if (pp) {
+        DP_Project *prj = pp->prj;
+        DP_free(pp);
+        return player_prepare_timestamp_index_drop(prj);
+    }
+    else {
+        return 0;
+    }
+}
+
+int DP_project_player_prepare(DP_ProjectPlayer *pp,
+                              int timestamp_index_interval,
+                              double max_delta_seconds)
+{
+    if (!pp) {
+        DP_error_set("No project player given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!isfinite(max_delta_seconds) || max_delta_seconds <= 0.0) {
+        DP_error_set("Invalid max delta given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (pp->max_delta_seconds > 0.0) {
+        DP_error_set("Project palyer already prepared");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    DP_Project *prj = pp->prj;
+    int result = player_prepare_timestamp_index_create(prj);
+    if (result != 0) {
+        return result;
+    }
+
+    struct DP_ProjectPlayerPrepareContext ppc;
+    ppc.insert_timestamp_index_stmt = ps_prepare_ephemeral(
+        prj, "insert into temp.player_timestamp_index (session_id, "
+             "sequence_id, timestamp) values (?, ?, ?)");
+    if (!ppc.insert_timestamp_index_stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    playback_context_init(&ppc.c, prj, pp->dc,
+                          player_prepare_playback_load_snapshot,
+                          player_prepare_playback_filter, &ppc);
+    ppc.last_session_id = -1LL;
+    ppc.max_delta_seconds = max_delta_seconds;
+    ppc.total_playback_seconds = 0.0;
+    ppc.last_recorded_at = 0.0;
+    ppc.timestamp_index_interval = timestamp_index_interval;
+    ppc.timestamp_index_fill = 0;
+
+    result = project_playback_play(&ppc.c);
+    playback_context_dispose(&ppc.c);
+    sqlite3_finalize(ppc.insert_timestamp_index_stmt);
+
+    if (result == 0) {
+        pp->max_delta_seconds = max_delta_seconds;
+        pp->total_playback_seconds = ppc.total_playback_seconds;
+    }
+
+    return result;
+}
+
+double DP_project_player_total_playback_seconds(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    return pp->total_playback_seconds;
 }

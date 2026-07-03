@@ -4,6 +4,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
+typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
@@ -26,10 +27,12 @@ typedef enum DP_ProjectWorkerEventType {
     DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR,
     DP_PROJECT_WORKER_EVENT_SAVE_ERROR,
     DP_PROJECT_WORKER_EVENT_INFO_ERROR,
+    DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_ERROR,
     DP_PROJECT_WORKER_EVENT_OPEN,
     DP_PROJECT_WORKER_EVENT_CLOSE,
     DP_PROJECT_WORKER_EVENT_SESSION_TIMES_UPDATE,
     DP_PROJECT_WORKER_EVENT_INFO_DONE,
+    DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_DONE,
     DP_PROJECT_WORKER_EVENT_SIZE_REPORT,
 } DP_ProjectWorkerEventType;
 
@@ -46,6 +49,7 @@ typedef struct DP_ProjectWorkerEvent {
         long long session_id;
         long long own_work_minutes;
         size_t size_in_bytes;
+        double total_playback_seconds;
         DP_ProjectWorkerEventError error;
     } DP_ANONYMOUS(data);
 } DP_ProjectWorkerEvent;
@@ -152,6 +156,11 @@ void DP_project_worker_info(DP_ProjectWorker *pw, unsigned int file_id,
                             unsigned int flags,
                             void (*callback)(void *, const DP_ProjectInfo *),
                             void *user);
+
+void DP_project_worker_player_prepare(DP_ProjectWorker *pw,
+                                      unsigned int file_id, DP_DrawContext *dc,
+                                      int timestamp_index_interval,
+                                      double max_delta_seconds);
 
 // Attempts to cancel whatever the project is currently doing. Returns whether
 // the given file id matched the open project. This doesn't clear out the queue

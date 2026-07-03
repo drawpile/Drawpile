@@ -3,6 +3,7 @@
 #define DESKTOP_WIDGETS_NOSCROLL_H
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include <QComboBox>
+#include <QSlider>
 #include <QWheelEvent>
 
 // Widgets that don't react to wheel events so that you can put them inside a
@@ -26,6 +27,18 @@ class NoScrollComboBox : public QComboBox {
 public:
 	explicit NoScrollComboBox(QWidget *parent = nullptr)
 		: QComboBox(parent)
+	{
+	}
+
+protected:
+	void wheelEvent(QWheelEvent *event) override { event->ignore(); }
+};
+
+
+class NoScrollSlider : public QSlider {
+public:
+	explicit NoScrollSlider(QWidget *parent = nullptr)
+		: QSlider(parent)
 	{
 	}
 

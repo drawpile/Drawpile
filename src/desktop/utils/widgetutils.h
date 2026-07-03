@@ -195,6 +195,8 @@ bool sizeFitsOnScreen(QWidget *widget, const QSize &size);
 QRect moveRectToFit(const QRect &subjectRect, const QRect &boundingRect);
 QRectF moveRectToFitF(const QRectF &subjectRect, const QRectF &boundingRect);
 
+void centerOnParent(QWidget *widget);
+
 // Sets header to sort by no column (as opposed to the first one) and enables
 // clearing the sort indicator if the Qt version is >= 6.1.0.
 void initSortingHeader(

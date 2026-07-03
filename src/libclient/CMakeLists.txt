@@ -135,6 +135,8 @@ target_sources(dpclient PRIVATE
 	import/canvasloaderrunnable.h
 	import/loadresult.cpp
 	import/loadresult.h
+	import/recordingconverter.cpp
+	import/recordingconverter.h
 	net/announcementlist.cpp
 	net/announcementlist.h
 	net/authlistmodel.cpp
@@ -270,6 +272,10 @@ target_sources(dpclient PRIVATE
 	utils/shortcutdetector.h
 	utils/statedatabase.cpp
 	utils/statedatabase.h
+	utils/strings.cpp
+	utils/strings.h
+	utils/tempfile.cpp
+	utils/tempfile.h
 	utils/transformquad.h
 	utils/usernamevalidator.cpp
 	utils/usernamevalidator.h
