@@ -472,6 +472,8 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 			int(event->data.error.error), event->data.error.message);
 		return;
 	case DP_PROJECT_WORKER_EVENT_INFO_ERROR:
+	case DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_ERROR:
+	case DP_PROJECT_WORKER_EVENT_PLAYER_CONTROL_ERROR:
 		break; // Shouldn't occur.
 	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT_ERROR:
 		qCWarning(
@@ -489,6 +491,8 @@ void ProjectRecorder::handleEvent(const DP_ProjectWorkerEvent *event)
 			QStringLiteral("own_work_minutes"), event->data.own_work_minutes);
 		return;
 	case DP_PROJECT_WORKER_EVENT_INFO_DONE:
+	case DP_PROJECT_WORKER_EVENT_PLAYER_PREPARE_DONE:
+	case DP_PROJECT_WORKER_EVENT_PLAYER_CONTROL_DONE:
 		break; // Shouldn't occur.
 	case DP_PROJECT_WORKER_EVENT_SIZE_REPORT:
 		Q_EMIT sizeReported(event->data.size_in_bytes);

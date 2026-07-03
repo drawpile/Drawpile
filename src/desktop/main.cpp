@@ -729,6 +729,12 @@ void DrawpileApp::openPath(const QString &path, bool restoreWindowPosition)
 	acquireWindow(restoreWindowPosition, false)->openPath(path);
 }
 
+void DrawpileApp::openPlaybackPath(
+	const QString &path, bool restoreWindowPosition)
+{
+	acquireWindow(restoreWindowPosition, false)->openPlaybackPath(path);
+}
+
 void DrawpileApp::joinUrl(
 	const QUrl &url, const QString &autoRecordPath, int connectStrategy,
 	bool restoreWindowPosition, bool singleSession)
@@ -903,6 +909,7 @@ struct StartupOptions {
 	QString connectStrategy;
 	QString joinUrl;
 	QString openPath;
+	QString playPath;
 	bool blank = false;
 	int blankWidth = 0;
 	int blankHeight = 0;
@@ -957,6 +964,13 @@ static StartupOptions initApp(DrawpileApp &app)
 			"argument, but without guessing if it's a file or a session URL."),
 		QStringLiteral("path"));
 	parser.addOption(open);
+
+	QCommandLineOption play(
+		QStringLiteral("play"),
+		QStringLiteral(
+			"Start playback of the given project or recording file."),
+		QStringLiteral("path"));
+	parser.addOption(play);
 
 	QCommandLineOption blank(
 		QStringLiteral("blank"),
@@ -1145,6 +1159,7 @@ static StartupOptions initApp(DrawpileApp &app)
 	startupOptions.autoRecordPath = parser.value(autoRecord);
 	startupOptions.connectStrategy = parser.value(connectStrategy);
 	startupOptions.openPath = parser.value(open);
+	startupOptions.playPath = parser.value(play);
 	startupOptions.joinUrl = parser.value(join);
 	startupOptions.blank = parser.isSet(blank);
 	if(startupOptions.blank) {
@@ -1361,6 +1376,9 @@ static void startApplication(
 	} else if(!startupOptions.openPath.isEmpty()) {
 		app->openPath(
 			startupOptions.openPath, startupOptions.restoreWindowPosition);
+	} else if(!startupOptions.playPath.isEmpty()) {
+		app->openPlaybackPath(
+			startupOptions.playPath, startupOptions.restoreWindowPosition);
 	} else if(startupOptions.blank) {
 		app->openBlank(
 			startupOptions.blankWidth, startupOptions.blankHeight,

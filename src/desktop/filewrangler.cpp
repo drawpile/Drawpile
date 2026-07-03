@@ -56,6 +56,13 @@ void FileWrangler::openMain(const MainOpenFn &onOpen) const
 		onOpen);
 }
 
+void FileWrangler::openPlayback(const MainOpenFn &onOpen) const
+{
+	openMainContent(
+		tr("Open Playback"), LastPath::IMAGE,
+		utils::openPlaybackFormatFilterList(), onOpen);
+}
+
 QStringList FileWrangler::openAnimationFramesImport() const
 {
 	QStringList paths = QFileDialog::getOpenFileNames(

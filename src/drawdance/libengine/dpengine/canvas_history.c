@@ -1911,6 +1911,95 @@ void DP_canvas_history_project_recording_snapshot(DP_CanvasHistory *ch,
 }
 
 
+struct DP_CanvasHistoryProjectPlaybackParams {
+    DP_Project *prj;
+    double recorded_at;
+    long long session_id;
+    long long sequence_id;
+    long long snapshot_id;
+    int last_result;
+};
+static bool accept_project_playback_state(void *user, DP_CanvasState *cs)
+{
+    struct DP_CanvasHistoryProjectPlaybackParams *params = user;
+
+    DP_Project *prj = params->prj;
+    long long snapshot_id = DP_project_playback_snapshot_open(
+        prj, params->session_id, params->sequence_id);
+    if (snapshot_id <= 0LL) {
+        params->last_result = DP_llong_to_int(snapshot_id);
+        return false;
+    }
+
+    params->snapshot_id = snapshot_id;
+    int snapshot_result =
+        DP_project_snapshot_canvas(prj, snapshot_id, cs, NULL, NULL);
+    if (snapshot_result != 0) {
+        params->last_result = snapshot_result;
+        return false;
+    }
+
+    return true;
+}
+
+static bool accept_project_playback_message(void *user, DP_Message *msg)
+{
+    struct DP_CanvasHistoryProjectPlaybackParams *params = user;
+
+    int record_result = DP_project_snapshot_message_record(
+        params->prj, params->snapshot_id, params->recorded_at, msg, 0u);
+    DP_message_decref(msg);
+    if (record_result != 0) {
+        params->last_result = record_result;
+        return false;
+    }
+
+    return true;
+}
+
+static bool project_playback_finish_snapshot(
+    struct DP_CanvasHistoryProjectPlaybackParams *params)
+{
+    int finish_result =
+        DP_project_snapshot_finish(params->prj, params->snapshot_id);
+    if (finish_result != 0) {
+        params->last_result = finish_result;
+        return false;
+    }
+
+    return true;
+}
+
+long long DP_canvas_history_project_player_snapshot(
+    DP_CanvasHistory *ch, DP_Project *prj, DP_LocalState *ls,
+    long long session_id, long long sequence_id, double recorded_at)
+{
+    struct DP_CanvasHistoryProjectPlaybackParams params = {
+        prj, recorded_at, session_id, sequence_id, 0LL, 0};
+    bool snapshot_ok = DP_canvas_history_reset_image_new(
+                           ch, accept_project_playback_state,
+                           accept_project_playback_message, &params)
+                    && DP_local_state_project_snapshot_build(
+                           ls, accept_project_playback_message, &params)
+                    && project_playback_finish_snapshot(&params);
+    if (snapshot_ok) {
+        return params.snapshot_id;
+    }
+    else {
+        if (params.snapshot_id != 0) {
+            DP_project_snapshot_discard(prj, params.snapshot_id);
+        }
+
+        if (params.last_result < 0) {
+            return params.last_result;
+        }
+        else {
+            return DP_PROJECT_PLAYBACK_ERROR_UNKNOWN;
+        }
+    }
+}
+
+
 DP_CanvasHistoryReconnectState *
 DP_canvas_history_reconnect_state_new(DP_CanvasHistory *ch)
 {

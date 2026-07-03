@@ -105,6 +105,7 @@ public:
 	void receiveLocalFreehandCommand(const net::Message &msg);
 
 	void enqueueReset();
+	void enqueueResetToState(const drawdance::CanvasState &canvasState);
 
 	void enqueueLoadBlank(
 		int undoDepthLimit, const QSize &size, const QColor &backgroundColor,

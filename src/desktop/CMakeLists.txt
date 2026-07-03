@@ -137,6 +137,8 @@ target_sources(drawpile PRIVATE
 	dialogs/netstats.h
 	dialogs/playbackdialog.cpp
 	dialogs/playbackdialog.h
+	dialogs/projectplaybackdialog.cpp
+	dialogs/projectplaybackdialog.h
 	dialogs/projectrecordingsettingsdialog.cpp
 	dialogs/projectrecordingsettingsdialog.h
 	dialogs/resetdialog.cpp

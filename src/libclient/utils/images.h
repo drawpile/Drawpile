@@ -57,6 +57,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)
 
 QStringList fileFormatFilterList(FileFormatOptions formats);
 
+QStringList openPlaybackFormatFilterList();
+
 }
 
 #endif

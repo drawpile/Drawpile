@@ -120,6 +120,25 @@ void ProjectDialog::setTempPath(const QString &tempPath)
 	}
 }
 
+void ProjectDialog::showUnhandledProjectErrorMessageBoxOn(
+	QWidget *parent, const QString &errorMessage)
+{
+	QString objectName = QStringLiteral("unhandlederrorbox");
+	QMessageBox *box = parent->findChild<QMessageBox *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(box) {
+		qCWarning(
+			lcDpProjectDialog,
+			"Unhandled error while another one is being presented: %s",
+			qUtf8Printable(errorMessage));
+	} else {
+		box = utils::makeWarning(parent, tr("Unexpected Error"), errorMessage);
+		box->setInformativeText(tr("This is probably a bug in Drawpile."));
+		box->setObjectName(objectName);
+		box->show();
+	}
+}
+
 void ProjectDialog::openProject()
 {
 	if(!m_tempPath.isEmpty()) {
@@ -130,17 +149,8 @@ void ProjectDialog::openProject()
 		if(!m_projectWrangler) {
 			m_projectWrangler = new project::ProjectWrangler(this);
 			connect(
-				m_projectWrangler, &project::ProjectWrangler::openErrorOccurred,
-				this, &ProjectDialog::showErrorPage, Qt::QueuedConnection);
-			connect(
-				m_projectWrangler,
-				&project::ProjectWrangler::overviewErrorOccurred, this,
-				&ProjectDialog::showErrorPage, Qt::QueuedConnection);
-			connect(
-				m_projectWrangler,
-				&project::ProjectWrangler::unhandledErrorOccurred, this,
-				&ProjectDialog::showUnhandledErrorMessageBox,
-				Qt::QueuedConnection);
+				m_projectWrangler, &project::ProjectWrangler::errorOccurred,
+				this, &ProjectDialog::handleProjectError, Qt::QueuedConnection);
 			connect(
 				m_projectWrangler, &project::ProjectWrangler::syncReceived,
 				this, &ProjectDialog::handleSync, Qt::QueuedConnection);
@@ -171,30 +181,25 @@ void ProjectDialog::requestCancel()
 	}
 }
 
+void ProjectDialog::handleProjectError(int type, const QString &errorMessage)
+{
+	switch(type) {
+	case int(project::ProjectWrangler::Error::Open):
+	case int(project::ProjectWrangler::Error::Overview):
+		showErrorPage(errorMessage);
+		break;
+	default:
+		showUnhandledProjectErrorMessageBoxOn(this, errorMessage);
+		break;
+	}
+}
+
 void ProjectDialog::showErrorPage(const QString &errorMessage)
 {
 	utils::ScopedUpdateDisabler disabler(this);
 	m_stack->setCurrentWidget(m_errorPage);
 	m_errorLabel->setText(errorMessage);
 	m_buttons->setStandardButtons(QDialogButtonBox::Close);
-}
-
-void ProjectDialog::showUnhandledErrorMessageBox(const QString &errorMessage)
-{
-	QString objectName = QStringLiteral("unhandlederrorbox");
-	QMessageBox *box =
-		findChild<QMessageBox *>(objectName, Qt::FindDirectChildrenOnly);
-	if(box) {
-		qCWarning(
-			lcDpProjectDialog,
-			"Unhandled error while another one is being presented: %s",
-			qUtf8Printable(errorMessage));
-	} else {
-		box = utils::makeWarning(this, tr("Unexpected Error"), errorMessage);
-		box->setInformativeText(tr("This is probably a bug in Drawpile."));
-		box->setObjectName(objectName);
-		box->show();
-	}
 }
 
 void ProjectDialog::handleSync(unsigned int syncId)

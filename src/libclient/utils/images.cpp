@@ -168,4 +168,18 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 	return filter;
 }
 
+QStringList openPlaybackFormatFilterList()
+{
+	QString projects = QStringLiteral("*.dppr");
+	QString recordings =
+		QString::fromUtf8(cmake_config::file_group::recording());
+	return {
+		QGuiApplication::tr("All Supported Files (%1)")
+			.arg(projects + QStringLiteral(" ") + recordings),
+		QGuiApplication::tr("Projects (%1)").arg(projects),
+		QGuiApplication::tr("Recordings (%1)").arg(recordings),
+		QGuiApplication::tr("All Files (*)"),
+	};
+}
+
 }

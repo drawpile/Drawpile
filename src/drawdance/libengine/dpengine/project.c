@@ -114,7 +114,8 @@ typedef enum DP_ProjectSnapshotMetadata {
 
 typedef struct DP_ProjectSnapshot {
     long long id;
-    long long sequence_id;
+    long long current_sequence_id;
+    long long project_sequence_id;
     DP_ProjectSnapshotState state;
     bool attached;
     bool merge_sublayers;
@@ -1008,7 +1009,8 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
     prj->session_id = 0LL;
     prj->sequence_id = 0LL;
     prj->snapshot.id = 0LL;
-    prj->snapshot.sequence_id = 0LL;
+    prj->snapshot.current_sequence_id = 0LL;
+    prj->snapshot.project_sequence_id = 0LL;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_CLOSED;
     prj->snapshot.attached = false;
     prj->snapshot.merge_sublayers = false;
@@ -1825,7 +1827,8 @@ snapshot_prepare(DP_Project *prj, DP_ProjectSnapshotPersistentStatement psps)
 }
 
 static long long project_snapshot_open(DP_Project *prj, unsigned int flags,
-                                       long long session_id, bool attached)
+                                       long long session_id,
+                                       long long sequence_id, bool attached)
 {
     if (prj->snapshot.id != 0LL) {
         DP_error_set("Snapshot %lld already open", prj->snapshot.id);
@@ -1859,12 +1862,13 @@ static long long project_snapshot_open(DP_Project *prj, unsigned int flags,
 
     DP_ASSERT(snapshot_id > 0);
     prj->snapshot.id = snapshot_id;
-    prj->snapshot.sequence_id = 0LL;
+    prj->snapshot.current_sequence_id = 0LL;
+    prj->snapshot.project_sequence_id = sequence_id;
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_READY;
-    bool is_autosave = flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE;
+    bool is_history_snapshot = flags & DP_PROJECT_SNAPSHOT_FLAGS_WITH_HISTORY;
     prj->snapshot.attached = attached;
-    prj->snapshot.merge_sublayers = !is_autosave;
-    prj->snapshot.include_selections = is_autosave;
+    prj->snapshot.merge_sublayers = !is_history_snapshot;
+    prj->snapshot.include_selections = is_history_snapshot;
     prj->snapshot.has_sublayers = false;
     prj->snapshot.has_selections = false;
     prj->snapshot.mutex = mutex;
@@ -1881,7 +1885,23 @@ long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags)
         return DP_PROJECT_SNAPSHOT_OPEN_ERROR_NO_SESSION;
     }
 
-    return project_snapshot_open(prj, flags, prj->session_id, false);
+    return project_snapshot_open(prj, flags, prj->session_id, prj->sequence_id,
+                                 false);
+}
+
+long long DP_project_playback_snapshot_open(DP_Project *prj,
+                                            long long session_id,
+                                            long long sequence_id)
+{
+    DP_ASSERT(prj);
+
+    if (session_id <= 0LL) {
+        DP_error_set("Invalid session id %lld", session_id);
+        return DP_PROJECT_SNAPSHOT_OPEN_ERROR_NO_SESSION;
+    }
+
+    return project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_PLAYBACK,
+                                 session_id, sequence_id, false);
 }
 
 static int record_snapshot_message(DP_Project *prj, double recorded_at,
@@ -1895,13 +1915,14 @@ static int record_snapshot_message(DP_Project *prj, double recorded_at,
         return DP_PROJECT_MESSAGE_RECORD_ERROR_PREPARE;
     }
 
-    bool write_ok = ps_bind_int64(prj, stmt, 2, ++prj->snapshot.sequence_id)
-                 && ps_bind_double(prj, stmt, 3, recorded_at)
-                 && ps_bind_int64(prj, stmt, 4, DP_uint_to_llong(flags))
-                 && ps_bind_int(prj, stmt, 5, type)
-                 && ps_bind_int64(prj, stmt, 6, context_id)
-                 && ps_bind_blob_or_null(prj, stmt, 7, body_or_null, length)
-                 && ps_exec_write(prj, stmt, NULL);
+    bool write_ok =
+        ps_bind_int64(prj, stmt, 2, ++prj->snapshot.current_sequence_id)
+        && ps_bind_double(prj, stmt, 3, recorded_at)
+        && ps_bind_int64(prj, stmt, 4, DP_uint_to_llong(flags))
+        && ps_bind_int(prj, stmt, 5, type)
+        && ps_bind_int64(prj, stmt, 6, context_id)
+        && ps_bind_blob_or_null(prj, stmt, 7, body_or_null, length)
+        && ps_exec_write(prj, stmt, NULL);
 
     // Don't want to clear all bindings because parameter 1 always stays bound
     // to the snapshot id. We only clear the pointer binding to avoid staleness.
@@ -1987,7 +2008,7 @@ static int snapshot_finish(DP_Project *prj)
 
     unsigned int flags_to_set =
         DP_PROJECT_SNAPSHOT_FLAG_COMPLETE
-        | DP_flag_uint(prj->snapshot.sequence_id != 0LL,
+        | DP_flag_uint(prj->snapshot.current_sequence_id != 0LL,
                        DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES)
         | DP_flag_uint(prj->snapshot.has_sublayers,
                        DP_PROJECT_SNAPSHOT_FLAG_HAS_SUBLAYERS)
@@ -2630,7 +2651,7 @@ static int snapshot_canvas(DP_Project *prj, DP_CanvasState *cs,
 
     if (!snapshot_write_metadata_int_unless_default(
             prj, DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID,
-            prj->sequence_id + 1LL, 1LL)) {
+            prj->snapshot.project_sequence_id + 1LL, 1LL)) {
         return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE;
     }
 
@@ -3570,8 +3591,9 @@ project_save_snapshot(DP_Project *prj, DP_CanvasState *cs,
                       void *thumb_write_user, void (*pre_join_fn)(void *),
                       void *pre_join_user, long long *out_save_snapshot_id)
 {
-    long long save_snapshot_id = project_snapshot_open(
-        prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, save_session_id, true);
+    long long save_snapshot_id =
+        project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS,
+                              save_session_id, prj->sequence_id, true);
     if (save_snapshot_id < 1LL) {
         return DP_PROJECT_SAVE_ERROR_WRITE;
     }
@@ -3800,8 +3822,8 @@ static int project_save_state_to(DP_Project *prj, DP_CanvasState *cs,
         return DP_PROJECT_SAVE_ERROR_WRITE;
     }
 
-    long long snapshot_id =
-        project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, 0LL, false);
+    long long snapshot_id = project_snapshot_open(
+        prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, 0LL, prj->sequence_id, false);
     if (snapshot_id <= 0LL) {
         return DP_PROJECT_SAVE_ERROR_WRITE;
     }
@@ -5813,6 +5835,21 @@ static void playback_continue_dispose(void *element)
 typedef int (*DP_ProjectPlaybackFilterFn)(void *user,
                                           DP_ProjectPlaybackMessageContext *mc);
 
+#define PLAYBACK_STATE_STEP_ERROR (-1)
+#define PLAYBACK_STATE_STEP_OK    0
+#define PLAYBACK_STATE_STEP_DONE  1
+
+typedef enum DP_ProjectPlaybackStateId {
+    DP_PROJECT_PLAYBACK_STATE_ERROR = -1,
+    DP_PROJECT_PLAYBACK_STATE_NONE = 0,
+    DP_PROJECT_PLAYBACK_STATE_QUERY,
+    DP_PROJECT_PLAYBACK_STATE_MULTI,
+} DP_ProjectPlaybackStateId;
+
+struct DP_ProjectPlaybackState {
+    enum DP_ProjectPlaybackStateId state_id;
+};
+
 struct DP_ProjectPlaybackContext {
     DP_Project *prj;
     DP_CanvasHistory *ch;
@@ -5825,6 +5862,19 @@ struct DP_ProjectPlaybackContext {
     DP_ProjectPlaybackLoadSnapshotFn load_snapshot_fn;
     DP_ProjectPlaybackFilterFn filter_fn;
     void *filter_user;
+    struct {
+        DP_ProjectPlaybackStateId id;
+        bool snapshot;
+        sqlite3_stmt *stmt;
+        long long session_id;
+        long long sequence_id;
+    } state;
+    struct {
+        DP_ProjectMultiIterator it;
+        double first_recorded_at;
+        unsigned int flags;
+        unsigned int context_id;
+    } multi;
 };
 
 static void
@@ -5845,11 +5895,27 @@ playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
         load_snapshot_fn,
         filter_fn,
         filter_user,
+        {DP_PROJECT_PLAYBACK_STATE_NONE, false, NULL, 0LL, 0LL},
+        {{0, 0, 0, 0, 0.0, NULL}, 0.0, 0u, 0u},
     };
+}
+
+static void playback_context_reset_stmt(DP_ProjectPlaybackContext *c)
+{
+    sqlite3_stmt *stmt = c->state.stmt;
+    if (stmt) {
+        int reset_result = sqlite3_reset(stmt);
+        if (!is_ok(reset_result)) {
+            DP_error_set("Error %d resetting %s: %s", reset_result,
+                         sqlite3_sql(stmt), prj_db_error(c->prj));
+        }
+        c->state.stmt = NULL;
+    }
 }
 
 static void playback_context_dispose(DP_ProjectPlaybackContext *c)
 {
+    playback_context_reset_stmt(c);
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&c->continues, DP_ProjectPlaybackContinue,
                                  playback_continue_dispose);
     int count = c->multidab_count;
@@ -5923,6 +5989,15 @@ static void playback_flush_multidab(DP_ProjectPlaybackContext *c)
         DP_canvas_history_handle_multidab_dec(c->ch, c->dc, count,
                                               c->multidab_msgs);
         break;
+    }
+}
+
+static void playback_clear_multidab(DP_ProjectPlaybackContext *c)
+{
+    int count = c->multidab_count;
+    c->multidab_count = 0;
+    for (int i = 0; i < count; ++i) {
+        DP_message_decref(c->multidab_msgs[i]);
     }
 }
 
@@ -6031,31 +6106,34 @@ static bool playback_query_push_continues(DP_Project *prj,
     return !error;
 }
 
-static void playback_query_handle_continue(DP_Project *prj,
-                                           DP_ProjectPlaybackContext *c,
-                                           long long session_id,
-                                           long long sequence_id,
-                                           unsigned int flags)
+static void playback_state_step_handle_continue(DP_ProjectPlaybackContext *c,
+                                                unsigned int flags)
 {
     if (flags & DP_PROJECT_MESSAGE_FLAG_CONTINUE) {
-        if (!playback_query_push_continues(prj, c, session_id, sequence_id)) {
+        long long session_id = c->state.session_id;
+        long long sequence_id = c->state.sequence_id;
+        if (!playback_query_push_continues(c->prj, c, session_id,
+                                           sequence_id)) {
             DP_warn("Error handling continue %lld@%lld: %s", session_id,
                     sequence_id, DP_error());
         }
     }
 }
 
-static bool playback_query_handle_message(
-    DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
-    long long filter_sequence_id, int type, unsigned int context_id,
+static int playback_state_step_handle_message(
+    DP_ProjectPlaybackContext *c, int type, unsigned int context_id,
     size_t body_length, const unsigned char *body,
     long long message_sequence_id, unsigned int flags, double recorded_at)
 {
     DP_ProjectPlaybackMessageContext mc = {
-        session_id,  message_sequence_id,
-        recorded_at, {{body_length, body}},
-        type,        flags,
-        context_id,  false,
+        c->state.session_id,
+        message_sequence_id,
+        recorded_at,
+        {{body_length, body}},
+        type,
+        flags,
+        context_id,
+        false,
     };
 
     DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
@@ -6065,12 +6143,11 @@ static bool playback_query_handle_message(
             break;
         case FILTER_IGNORE:
             playback_message_context_dispose(&mc);
-            playback_query_handle_continue(prj, c, session_id,
-                                           filter_sequence_id, flags);
-            return true;
+            playback_state_step_handle_continue(c, flags);
+            return PLAYBACK_STATE_STEP_OK;
         case FILTER_ABORT:
             playback_message_context_dispose(&mc);
-            return false;
+            return PLAYBACK_STATE_STEP_DONE;
         default:
             DP_UNREACHABLE();
         }
@@ -6107,41 +6184,8 @@ static bool playback_query_handle_message(
         }
     }
 
-    playback_query_handle_continue(prj, c, session_id, filter_sequence_id,
-                                   flags);
-    return true;
-}
-
-static bool playback_query_handle_multi(
-    DP_Project *prj, DP_ProjectPlaybackContext *c, long long session_id,
-    long long last_sequence_id, unsigned int context_id, size_t body_length,
-    const unsigned char *body, unsigned int flags, double first_recorded_at)
-{
-    DP_ProjectMultiIterator mit;
-    if (multi_iterator_init(&mit, body_length, body)) {
-        unsigned int message_flags = flags & ~DP_PROJECT_MESSAGE_FLAG_CONTINUE;
-        long long first_sequence_id =
-            last_sequence_id - DP_int_to_llong(mit.message_count - 1);
-
-        while (multi_iterator_next(&mit)) {
-            long long current_sequence_id =
-                first_sequence_id + DP_int_to_llong(mit.index);
-            if (!playback_query_handle_message(
-                    prj, c, session_id, current_sequence_id, mit.type,
-                    context_id, mit.length, mit.body, current_sequence_id,
-                    message_flags, first_recorded_at + mit.recorded_at_delta)) {
-                return false;
-            }
-        }
-
-        playback_query_handle_continue(prj, c, session_id, last_sequence_id,
-                                       flags);
-    }
-    else {
-        DP_warn("Invalid multi message at sequence id %lld", last_sequence_id);
-    }
-
-    return true;
+    playback_state_step_handle_continue(c, flags);
+    return PLAYBACK_STATE_STEP_OK;
 }
 
 struct DP_ProjectPlaybackMultiZstdParams {
@@ -6154,27 +6198,43 @@ struct DP_ProjectPlaybackMultiZstdParams {
     double first_recorded_at;
 };
 
-static bool playback_query_handle_multi_zstd(void *user, size_t body_size,
-                                             const unsigned char *body)
+static void playback_state_step_handle_multi(
+    DP_ProjectPlaybackContext *c, size_t body_length, const unsigned char *body,
+    long long last_sequence_id, double first_recorded_at, unsigned int flags,
+    unsigned int context_id)
 {
-    struct DP_ProjectPlaybackMultiZstdParams *params = user;
-    return playback_query_handle_multi(
-        params->prj, params->c, params->session_id, params->last_sequence_id,
-        params->context_id, body_size, body, params->flags,
-        params->first_recorded_at);
+    if (multi_iterator_init(&c->multi.it, body_length, body)) {
+        c->state.id = DP_PROJECT_PLAYBACK_STATE_MULTI;
+        c->multi.first_recorded_at = first_recorded_at;
+        c->multi.flags = flags;
+        c->multi.context_id = context_id;
+    }
+    else {
+        DP_warn("Invalid multi message at sequence id %lld", last_sequence_id);
+    }
 }
 
-static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
-                           DP_ProjectPlaybackContext *c, long long session_id,
-                           bool snapshot_message, long long first_sequence_id,
-                           long long *out_last_sequence_id)
+static bool playback_state_step_handle_multi_zstd(void *user,
+                                                  size_t body_length,
+                                                  const unsigned char *body)
 {
-    // The first sequence id is the first one we're supposed to play back,
-    // meaning the current state is actually one before that.
-    long long sequence_id = first_sequence_id - 1LL;
+    struct DP_ProjectPlaybackMultiZstdParams *params = user;
+    playback_state_step_handle_multi(
+        params->c, body_length, body, params->last_sequence_id,
+        params->first_recorded_at, params->flags, params->context_id);
+    return true;
+}
+
+static int playback_state_step_query(DP_ProjectPlaybackContext *c)
+{
+    DP_ASSERT(c->state.id == DP_PROJECT_PLAYBACK_STATE_QUERY);
+
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt = c->state.stmt;
+    DP_ASSERT(stmt);
 
     bool error;
-    while (ps_exec_step(prj, stmt, &error) && !error) {
+    if (ps_exec_step(prj, stmt, &error)) {
         int type = sqlite3_column_int(stmt, 0);
         unsigned int context_id = DP_int_to_uint(sqlite3_column_int(stmt, 1));
         size_t body_length = DP_int_to_size(sqlite3_column_bytes(stmt, 2));
@@ -6186,55 +6246,247 @@ static bool playback_query(DP_Project *prj, sqlite3_stmt *stmt,
             body = sqlite3_column_blob(stmt, 2);
         }
 
-        if (!snapshot_message) {
-            sequence_id = sqlite3_column_int64(stmt, 3);
-        }
-
-        bool ok;
-        if (snapshot_message) {
-            ok = playback_query_handle_message(
-                prj, c, session_id, first_sequence_id, type, context_id,
-                body_length, body, -1LL, 0u, 0.0);
+        long long session_id = c->state.session_id;
+        if (c->state.snapshot) {
+            return playback_state_step_handle_message(
+                c, type, context_id, body_length, body, -1LL, 0u, 0.0);
         }
         else {
-            sequence_id = sqlite3_column_int64(stmt, 3);
+            long long sequence_id = sqlite3_column_int64(stmt, 3);
             unsigned int flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
             double recorded_at = sqlite3_column_double(stmt, 5);
+            c->state.sequence_id = sequence_id;
+
             switch (type) {
             case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI:
-                ok = playback_query_handle_multi(
-                    prj, c, session_id, sequence_id, context_id, body_length,
-                    body, flags, recorded_at);
-                break;
+                playback_state_step_handle_multi(c, body_length, body,
+                                                 sequence_id, recorded_at,
+                                                 flags, context_id);
+                return PLAYBACK_STATE_STEP_OK;
             case DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD: {
                 struct DP_ProjectPlaybackMultiZstdParams params = {
                     prj,        c,     session_id,  sequence_id,
                     context_id, flags, recorded_at,
                 };
-                ok = multi_zstd_handle(&c->mzc, body_length, body,
-                                       playback_query_handle_multi_zstd,
-                                       &params);
-                break;
+                multi_zstd_handle(&c->mzc, body_length, body,
+                                  playback_state_step_handle_multi_zstd,
+                                  &params);
+                return PLAYBACK_STATE_STEP_OK;
             }
             default:
-                ok = playback_query_handle_message(
-                    prj, c, session_id, sequence_id, type, context_id,
-                    body_length, body, sequence_id, flags, recorded_at);
-                break;
+                return playback_state_step_handle_message(
+                    c, type, context_id, body_length, body, sequence_id, flags,
+                    recorded_at);
             }
         }
-
-        if (!ok) {
-            break;
-        }
     }
+    else if (error) {
+        c->state.id = DP_PROJECT_PLAYBACK_STATE_ERROR;
+        c->state.stmt = NULL;
+        return PLAYBACK_STATE_STEP_ERROR;
+    }
+    else {
+        c->state.id = DP_PROJECT_PLAYBACK_STATE_NONE;
+        c->state.stmt = NULL;
+        return PLAYBACK_STATE_STEP_DONE;
+    }
+}
+
+static int playback_state_step_multi(DP_ProjectPlaybackContext *c)
+{
+    DP_ASSERT(c->state.id == DP_PROJECT_PLAYBACK_STATE_MULTI);
+
+    DP_ProjectMultiIterator *mit = &c->multi.it;
+    if (multi_iterator_next(mit)) {
+        unsigned int message_flags =
+            c->multi.flags & ~DP_PROJECT_MESSAGE_FLAG_CONTINUE;
+        long long sequence_id = c->state.sequence_id
+                              - DP_int_to_llong(mit->message_count - 1)
+                              + DP_int_to_llong(mit->index);
+        return playback_state_step_handle_message(
+            c, mit->type, c->multi.context_id, mit->length, mit->body,
+            sequence_id, message_flags,
+            c->multi.first_recorded_at + mit->recorded_at_delta);
+    }
+    else {
+        playback_state_step_handle_continue(c, c->multi.flags);
+        c->state.id = DP_PROJECT_PLAYBACK_STATE_QUERY;
+        return PLAYBACK_STATE_STEP_OK;
+    }
+}
+
+static void playback_state_init(DP_ProjectPlaybackContext *c,
+                                sqlite3_stmt *stmt, long long session_id,
+                                long long sequence_id, bool snapshot)
+{
+    c->state.id = DP_PROJECT_PLAYBACK_STATE_QUERY;
+    c->state.snapshot = snapshot;
+    c->state.stmt = stmt;
+    c->state.session_id = session_id;
+    c->state.sequence_id = sequence_id;
+}
+
+static int playback_state_step(DP_ProjectPlaybackContext *c)
+{
+    DP_ProjectPlaybackStateId state_id = c->state.id;
+    switch (state_id) {
+    case DP_PROJECT_PLAYBACK_STATE_QUERY:
+        return playback_state_step_query(c);
+    case DP_PROJECT_PLAYBACK_STATE_MULTI:
+        return playback_state_step_multi(c);
+    case DP_PROJECT_PLAYBACK_STATE_NONE:
+    case DP_PROJECT_PLAYBACK_STATE_ERROR:
+        break;
+    }
+    DP_error_set("Invalid playback state %d", (int)state_id);
+    return PLAYBACK_STATE_STEP_ERROR;
+}
+
+static bool playback_query(DP_ProjectPlaybackContext *c,
+                           long long *out_last_sequence_id)
+{
+    int step_result;
+    do {
+        step_result = playback_state_step(c);
+    } while (step_result == PLAYBACK_STATE_STEP_OK);
 
     if (out_last_sequence_id) {
-        *out_last_sequence_id = sequence_id;
+        *out_last_sequence_id = c->state.sequence_id;
     }
 
     playback_flush_multidab(c);
-    return !error;
+    return step_result != PLAYBACK_STATE_STEP_ERROR;
+}
+
+static bool playback_init_snapshot_messages(DP_ProjectPlaybackContext *c,
+                                            long long session_id,
+                                            long long snapshot_id)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt =
+        pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_SNAPSHOT_MESSAGES);
+    if (!stmt) {
+        return false;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
+    if (!bind_ok) {
+        return false;
+    }
+
+    playback_state_init(c, stmt, session_id, -1LL, true);
+    return true;
+}
+
+static bool playback_init_check_multi(DP_ProjectPlaybackContext *c,
+                                      long long session_id,
+                                      long long first_sequence_id,
+                                      long long *out_multi_sequence_id)
+{
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "select sequence_id, type from messages "
+                                  "where session_id = ? and sequence_id >= ? "
+                                  "order by sequence_id limit 1");
+    if (!stmt) {
+        return false;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                && ps_bind_int64(prj, stmt, 2, first_sequence_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
+    bool result, error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        result = true;
+        long long multi_sequence_id = sqlite3_column_int(stmt, 0);
+        int type = sqlite3_column_int(stmt, 1);
+
+        if (multi_sequence_id > 0LL && multi_sequence_id > first_sequence_id
+            && (type == DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI
+                || type == DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD)) {
+            *out_multi_sequence_id = multi_sequence_id;
+        }
+        else {
+            *out_multi_sequence_id = first_sequence_id;
+        }
+    }
+    else if (error) {
+        result = false;
+    }
+    else {
+        result = true;
+        *out_multi_sequence_id = first_sequence_id;
+    }
+
+    sqlite3_finalize(stmt);
+    return result;
+}
+
+static int playback_init_filter_step_multi(void *user,
+                                           DP_ProjectPlaybackMessageContext *mc)
+{
+    long long *last_sequence_id = user;
+    *last_sequence_id = mc->sequence_id;
+    return FILTER_IGNORE;
+}
+
+static bool playback_init_messages(DP_ProjectPlaybackContext *c,
+                                   long long session_id,
+                                   long long first_sequence_id)
+{
+    long long bind_sequence_id;
+    if (first_sequence_id <= 0LL) {
+        bind_sequence_id = first_sequence_id;
+    }
+    else {
+        bool check_multi_ok = playback_init_check_multi(
+            c, session_id, first_sequence_id, &bind_sequence_id);
+        if (!check_multi_ok) {
+            return false;
+        }
+    }
+
+    DP_Project *prj = c->prj;
+    sqlite3_stmt *stmt =
+        pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_MESSAGES);
+    if (!stmt) {
+        return false;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                && ps_bind_int64(prj, stmt, 2, bind_sequence_id);
+    if (!bind_ok) {
+        return false;
+    }
+
+    // The first sequence id is the first one we're supposed to play back,
+    // meaning the current state is actually one before that.
+    playback_state_init(c, stmt, session_id, bind_sequence_id - 1LL, false);
+
+    // If we're starting in the middle of a multi message, skip ahead.
+    if (bind_sequence_id > first_sequence_id) {
+        DP_ProjectPlaybackFilterFn filter_fn = c->filter_fn;
+        void *filter_user = c->filter_user;
+
+        long long last_sequence_id = -1LL;
+        c->filter_fn = playback_init_filter_step_multi;
+        c->filter_user = &last_sequence_id;
+
+        int step_result;
+        do {
+            step_result = playback_state_step(c);
+        } while (step_result == PLAYBACK_STATE_STEP_OK
+                 && last_sequence_id < first_sequence_id - 1LL);
+
+        c->filter_fn = filter_fn;
+        c->filter_user = filter_user;
+    }
+
+    return true;
 }
 
 static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
@@ -6245,23 +6497,12 @@ static bool playback_query_snapshot_messages(DP_ProjectPlaybackContext *c,
     // Don't touch the snapshot_messages table without this flag! Earlier dpcs
     // files don't have it.
     if (flags & DP_PROJECT_SNAPSHOT_FLAG_HAS_MESSAGES) {
-        DP_Project *prj = c->prj;
-        sqlite3_stmt *stmt =
-            pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_SNAPSHOT_MESSAGES);
-        if (!stmt) {
-            return false;
-        }
-
-        bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id);
-        if (!bind_ok) {
-            return false;
-        }
-
-        if (!playback_query(prj, stmt, c, session_id, true, -1L, NULL)) {
-            return false;
-        }
+        return playback_init_snapshot_messages(c, session_id, snapshot_id)
+            && playback_query(c, NULL);
     }
-    return true;
+    else {
+        return true;
+    }
 }
 
 static bool playback_query_messages(DP_ProjectPlaybackContext *c,
@@ -6269,25 +6510,8 @@ static bool playback_query_messages(DP_ProjectPlaybackContext *c,
                                     long long first_sequence_id,
                                     long long *out_last_sequence_id)
 {
-    DP_Project *prj = c->prj;
-    sqlite3_stmt *stmt =
-        pps_prepare(prj, DP_PROJECT_STATEMENT_PLAYBACK_MESSAGES);
-    if (!stmt) {
-        return false;
-    }
-
-    bool bind_ok = ps_bind_int64(prj, stmt, 1, session_id)
-                && ps_bind_int64(prj, stmt, 2, first_sequence_id);
-    if (!bind_ok) {
-        return false;
-    }
-
-    if (!playback_query(prj, stmt, c, session_id, false, first_sequence_id,
-                        out_last_sequence_id)) {
-        return false;
-    }
-
-    return true;
+    return playback_init_messages(c, session_id, first_sequence_id)
+        && playback_query(c, out_last_sequence_id);
 }
 
 static bool canvas_load_warn(DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
@@ -6334,8 +6558,9 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
         }
     }
 
-    // Only autosaves can have regular messages.
-    if (flags & DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE) {
+    // Only autosaves, conversions and playback snapshots can have regular
+    // messages.
+    if (flags & DP_PROJECT_SNAPSHOT_FLAGS_WITH_HISTORY) {
         // Play back regular messages after the snapshot was taken. Should also
         // only exist for autosave snapshots.
         if (!playback_query_messages(c, session_id, first_sequence_id,
@@ -6511,8 +6736,9 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
         return open_result.error;
     }
 
-    long long snapshot_id = project_snapshot_open(
-        prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, prj->session_id, false);
+    long long snapshot_id =
+        project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS,
+                              prj->session_id, prj->sequence_id, false);
     if (snapshot_id <= 0LL) {
         project_close(prj, true);
         return DP_PROJECT_CANVAS_SAVE_ERROR_OPEN_SNAPSHOT;
@@ -7228,6 +7454,28 @@ project_playback_measure_filter_resize(void *user,
     return project_playback_measure_filter_type(mc->type);
 }
 
+static void project_playback_update_recorded_at(
+    DP_ProjectPlaybackMessageContext *mc, double max_delta_seconds,
+    double *in_out_last_recorded_at, double *in_out_total_playback_seconds)
+{
+    double recorded_at = mc->recorded_at;
+    if (isfinite(recorded_at)) {
+        double last_recorded_at = *in_out_last_recorded_at;
+        if (last_recorded_at <= recorded_at) {
+            *in_out_total_playback_seconds += DP_min_double(
+                max_delta_seconds, recorded_at - last_recorded_at);
+        }
+        else {
+            DP_debug("Message recorded time went backwards from %f to %f",
+                     last_recorded_at, recorded_at);
+        }
+        *in_out_last_recorded_at = recorded_at;
+    }
+    else {
+        DP_debug("Got non-finite message record time");
+    }
+}
+
 static int
 project_playback_measure_filter_time(void *user,
                                      DP_ProjectPlaybackMessageContext *mc)
@@ -7238,22 +7486,9 @@ project_playback_measure_filter_time(void *user,
     playback_crop_update(&mftc->pbc, mc);
 
     if (project_playback_is_timing_relevant(pb, &mftc->pbc, mc)) {
-        double recorded_at = mc->recorded_at;
-        if (isfinite(recorded_at)) {
-            double last_recorded_at = mftc->last_recorded_at;
-            if (last_recorded_at <= recorded_at) {
-                pb->total_playback_seconds += DP_min_double(
-                    pb->max_delta_seconds, recorded_at - last_recorded_at);
-            }
-            else {
-                DP_debug("Message recorded time went backwards from %f to %f",
-                         mftc->last_recorded_at, recorded_at);
-            }
-            mftc->last_recorded_at = recorded_at;
-        }
-        else {
-            DP_debug("Got non-finite message record time");
-        }
+        project_playback_update_recorded_at(mc, pb->max_delta_seconds,
+                                            &mftc->last_recorded_at,
+                                            &pb->total_playback_seconds);
     }
 
     return project_playback_measure_filter_type(mc->type);
@@ -7349,16 +7584,11 @@ project_playback_play_initial_snapshot_id(DP_Project *prj, long long session_id,
     return !error;
 }
 
-static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
-                                          long long session_id)
+static bool project_playback_start_from_snapshot(DP_ProjectPlaybackContext *c,
+                                                 long long snapshot_id,
+                                                 unsigned int snapshot_flags,
+                                                 long long session_id)
 {
-    long long snapshot_id;
-    unsigned int snapshot_flags;
-    if (!project_playback_play_initial_snapshot_id(
-            c->prj, session_id, &snapshot_id, &snapshot_flags)) {
-        return false;
-    }
-
     if (snapshot_flags & DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION) {
         DP_CanvasState *cs = playback_context_continue_take(c, snapshot_id);
         if (cs) {
@@ -7390,8 +7620,29 @@ static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
         return false;
     }
 
-    if (!playback_query_messages(c, session_id, 1LL, NULL)) {
+    return true;
+}
+
+static bool project_playback_play_session(DP_ProjectPlaybackContext *c,
+                                          long long session_id,
+                                          bool snapshot_only)
+{
+    long long snapshot_id;
+    unsigned int snapshot_flags;
+    if (!project_playback_play_initial_snapshot_id(
+            c->prj, session_id, &snapshot_id, &snapshot_flags)) {
         return false;
+    }
+
+    if (!project_playback_start_from_snapshot(c, snapshot_id, snapshot_flags,
+                                              session_id)) {
+        return false;
+    }
+
+    if (!snapshot_only) {
+        if (!playback_query_messages(c, session_id, 1LL, NULL)) {
+            return false;
+        }
     }
 
     return true;
@@ -7424,7 +7675,7 @@ static int project_playback_play(DP_ProjectPlaybackContext *c)
             (const char *)sqlite3_column_text(session_stmt, 1);
 
         if (project_playback_is_compatible(protocol)) {
-            if (!project_playback_play_session(c, session_id)) {
+            if (!project_playback_play_session(c, session_id, false)) {
                 error = true;
                 break;
             }
@@ -7657,4 +7908,1198 @@ const DP_Rect *DP_project_playback_crop_or_null(DP_ProjectPlayback *pb)
     else {
         return NULL;
     }
+}
+
+
+typedef void (*DP_ProjectPlayerFilterFn)(DP_ProjectPlayer *pp,
+                                         DP_ProjectPlaybackMessageContext *mc);
+
+struct DP_ProjectPlayer {
+    DP_Project *prj;
+    DP_DrawContext *dc;
+    double max_delta_seconds;
+    double total_playback_seconds;
+    double current_playback_seconds;
+    double last_recorded_at;
+    DP_ProjectPlaybackContext *c;
+    DP_ProjectPlayerFilterFn filter_fn;
+    void *filter_user;
+    long long snapshot_interval;
+    long long session_id;
+    long long sequence_id;
+    DP_ProjectPlayerState state;
+};
+
+struct DP_ProjectPlayerPrepareContext {
+    DP_ProjectPlaybackContext c;
+    long long last_session_id;
+    double max_delta_seconds;
+    double total_playback_seconds;
+    double last_recorded_at;
+    sqlite3_stmt *update_snapshot_index_stmt;
+};
+
+static int player_prepare_exec(DP_Project *prj, const char *sql)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(prj, sql);
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static int player_prepare_exec_multiple(DP_Project *prj, const char **sqls,
+                                        int count)
+{
+    for (int i = 0; i < count; ++i) {
+        int result = player_prepare_exec(prj, sqls[i]);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+
+static int player_prepare_indexes_create(DP_Project *prj)
+{
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
+                  "snapshot complete flag matches query");
+    static_assert((DP_PROJECT_SNAPSHOT_FLAG_COMPLETE
+                   | DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION)
+                      == 257,
+                  "snapshot complete and continuation flags match query");
+    static_assert(DP_PROJECT_SNAPSHOT_FLAGS_WITH_HISTORY == 1544,
+                  "snapshot flag  with history match query");
+    static_assert(DP_PROJECT_SNAPSHOT_METADATA_SEQUENCE_ID == 11,
+                  "sequence id snapshot metadata matches query");
+
+    const char *sqls[] = {
+        // Seekable snapshots along with their timestamps.
+        ("create table temp.player_snapshots (\n"
+         "    snapshot_id integer primary key not null,\n"
+         "    session_id integer not null,\n"
+         "    sequence_id integer not null,\n"
+         "    flags integer not null,\n"
+         "    timestamp real not null default -1.0,\n"
+         "    last_recorded_at real not null default -1.0)\n"
+         "strict, without rowid"),
+
+        // This index gets used when updating the timestamps.
+        ("create index temp.player_snapshots_session_sequence_idx\n"
+         "on player_snapshots (session_id, sequence_id)"),
+
+        // Fill in the snapshots, no timestamps yet. We only grab stuff we can
+        // actually sensibly seek to: complete, non-continuation snapshots that
+        // either start at the beginning of a session, are at the very end of a
+        // session or have an undo history, which can be autosaves, conversions
+        // or playback snapshots.
+        ("insert into temp.player_snapshots (\n"
+         "    snapshot_id, session_id, sequence_id, flags)\n"
+         "select s.snapshot_id, s.session_id, coalesce(m.value, 1), s.flags\n"
+         "from snapshots s\n"
+         "left join snapshot_metadata m\n"
+         "    on s.snapshot_id = m.snapshot_id\n"
+         "    and m.metadata_id = 11\n" // SEQUENCE_ID
+         "where (s.flags & 257) == 1\n" // COMPLETE & !CONTINUATION
+         "and (m.value is null or m.value <= 1\n"
+         "     or (s.flags & 1544) <> 0\n" // AUTOSAVE | CONVERTED | PLAYBACK
+         "     or (m.value is not null and m.value >= coalesce(\n"
+         "         (select max(g.sequence_id) from messages g\n"
+         "          where g.session_id = s.session_id), -1)))"),
+    };
+
+    return player_prepare_exec_multiple(prj, sqls,
+                                        DP_size_to_int(DP_ARRAY_LENGTH(sqls)));
+}
+
+static int player_prepare_indexes_update(DP_Project *prj)
+{
+    const char *sqls[] = {
+        // Any snapshots without a timestamp are irrelevant.
+        ("delete from temp.player_snapshots where timestamp < 0.0"),
+
+        // Seeking is done by timestamp, so make an index for that.
+        ("create index temp.player_snapshots_timestamp_idx\n"
+         "on player_snapshots (timestamp desc)"),
+    };
+
+    return player_prepare_exec_multiple(prj, sqls,
+                                        DP_size_to_int(DP_ARRAY_LENGTH(sqls)));
+}
+
+static int player_prepare_indexes_drop(DP_Project *prj)
+{
+    return player_prepare_exec(prj,
+                               "drop table if exists temp.player_snapshots");
+}
+
+static DP_CanvasState *
+player_prepare_playback_load_snapshot(DP_UNUSED DP_Project *prj,
+                                      DP_UNUSED DP_DrawContext *dc,
+                                      DP_UNUSED long long snapshot_id)
+{
+    return DP_canvas_state_new();
+}
+
+static bool player_is_timing_relevant(DP_ProjectPlaybackMessageContext *mc)
+{
+    // Negative sequence ids are snapshot messages to be executed instantly.
+    if (mc->sequence_id > 0LL) {
+        // Only client meta and command messages have a visual effect, other
+        // stuff would seem like nothing is happening.
+        DP_MessageType type = (DP_MessageType)mc->type;
+        return DP_message_type_client_meta(type)
+            || DP_message_type_command(type);
+    }
+    else {
+        return false;
+    }
+}
+
+static bool
+player_prepare_update_snapshots(struct DP_ProjectPlayerPrepareContext *ppc,
+                                long long sequence_id)
+{
+    DP_Project *prj = ppc->c.prj;
+    sqlite3_stmt *stmt = ppc->update_snapshot_index_stmt;
+    return ps_bind_double(prj, stmt, 1, ppc->total_playback_seconds)
+        && ps_bind_double(prj, stmt, 2, ppc->last_recorded_at)
+        && ps_bind_int64(prj, stmt, 4, sequence_id)
+        && ps_exec_write(prj, stmt, NULL);
+}
+
+static int player_prepare_playback_filter(void *user,
+                                          DP_ProjectPlaybackMessageContext *mc)
+{
+    struct DP_ProjectPlayerPrepareContext *ppc = user;
+
+    long long session_id = mc->session_id;
+    if (session_id != ppc->last_session_id) {
+        ppc->last_session_id = session_id;
+        bool update_ok =
+            ps_bind_int64(ppc->c.prj, ppc->update_snapshot_index_stmt, 3,
+                          session_id)
+            && player_prepare_update_snapshots(ppc, 1LL);
+        if (!update_ok) {
+            return FILTER_ABORT;
+        }
+    }
+
+    if (player_is_timing_relevant(mc)) {
+        project_playback_update_recorded_at(mc, ppc->max_delta_seconds,
+                                            &ppc->last_recorded_at,
+                                            &ppc->total_playback_seconds);
+    }
+
+    if (!player_prepare_update_snapshots(ppc, mc->sequence_id + 1LL)) {
+        return FILTER_ABORT;
+    }
+
+    return FILTER_IGNORE;
+}
+
+DP_ProjectPlayer *DP_project_player_new(DP_Project *prj, DP_DrawContext *dc)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return NULL;
+    }
+
+    if (!dc) {
+        DP_error_set("No draw context given");
+        return NULL;
+    }
+
+    DP_ProjectPlayer *pp = DP_malloc(sizeof(*pp));
+    *pp = (DP_ProjectPlayer){
+        prj,
+        dc,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        NULL,
+        NULL,
+        NULL,
+        0LL,
+        0LL,
+        0LL,
+        DP_PROJECT_PLAYER_STATE_NOT_PREPARED,
+    };
+    return pp;
+}
+
+int DP_project_player_free(DP_ProjectPlayer *pp)
+{
+    if (pp) {
+        DP_ProjectPlaybackContext *c = pp->c;
+        if (c) {
+            playback_context_dispose(c);
+            DP_free(c);
+        }
+
+        DP_Project *prj = pp->prj;
+        DP_free(pp);
+        return player_prepare_indexes_drop(prj);
+    }
+    else {
+        return 0;
+    }
+}
+
+int DP_project_player_prepare(DP_ProjectPlayer *pp, double max_delta_seconds,
+                              long long snapshot_interval)
+{
+    if (!pp) {
+        DP_error_set("No project player given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (!isfinite(max_delta_seconds) || max_delta_seconds <= 0.0) {
+        DP_error_set("Invalid max delta given");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    if (pp->state != DP_PROJECT_PLAYER_STATE_NOT_PREPARED) {
+        DP_error_set("Project player already prepared");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    DP_Project *prj = pp->prj;
+    int result = player_prepare_indexes_create(prj);
+    if (result != 0) {
+        return result;
+    }
+
+    struct DP_ProjectPlayerPrepareContext ppc;
+    ppc.update_snapshot_index_stmt =
+        ps_prepare_ephemeral(prj, "update temp.player_snapshots "
+                                  "set timestamp = ?, last_recorded_at = ?"
+                                  "where session_id = ? and sequence_id = ?");
+    if (!ppc.update_snapshot_index_stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    playback_context_init(&ppc.c, prj, pp->dc,
+                          player_prepare_playback_load_snapshot,
+                          player_prepare_playback_filter, &ppc);
+    ppc.last_session_id = 0LL;
+    ppc.max_delta_seconds = max_delta_seconds;
+    ppc.total_playback_seconds = 0.0;
+    ppc.last_recorded_at = 0.0;
+
+    result = project_playback_play(&ppc.c);
+    playback_context_dispose(&ppc.c);
+    sqlite3_finalize(ppc.update_snapshot_index_stmt);
+    if (result != 0) {
+        return result;
+    }
+
+    result = player_prepare_indexes_update(prj);
+    if (result != 0) {
+        return result;
+    }
+
+    pp->snapshot_interval = snapshot_interval;
+    pp->max_delta_seconds = max_delta_seconds;
+    pp->total_playback_seconds = ppc.total_playback_seconds;
+    pp->state = DP_PROJECT_PLAYER_STATE_PREPARED;
+    return 0;
+}
+
+
+DP_ProjectPlayerState DP_project_player_state(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    return pp->state;
+}
+
+double DP_project_player_total_playback_seconds(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    return pp->total_playback_seconds;
+}
+
+double DP_project_player_current_playback_seconds(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    return pp->current_playback_seconds;
+}
+
+long long DP_project_player_current_session_id(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    return pp->session_id;
+}
+
+long long DP_project_player_current_sequence_id(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    return pp->sequence_id;
+}
+
+DP_CanvasState *DP_project_player_current_canvas_noinc(DP_ProjectPlayer *pp)
+{
+    DP_ASSERT(pp);
+    DP_ProjectPlaybackContext *c = pp->c;
+    if (c) {
+        return DP_canvas_history_get_noinc_nolock(c->ch);
+    }
+    else {
+        return NULL;
+    }
+}
+
+
+static int
+project_player_control_call(DP_ProjectPlayer *pp,
+                            const DP_ProjectPlayerControlParams *params,
+                            DP_ProjectPlayerControlCallbackType type)
+{
+    DP_ProjectPlayerControlCallbackFn fn = params->fn;
+    if (fn) {
+        return fn(params->user, pp, params, (int)type);
+    }
+    else {
+        return 0;
+    }
+}
+
+static int player_filter(void *user, DP_ProjectPlaybackMessageContext *mc)
+{
+    DP_ProjectPlayer *pp = user;
+    pp->sequence_id = mc->sequence_id;
+
+    if (player_is_timing_relevant(mc)) {
+        project_playback_update_recorded_at(mc, pp->max_delta_seconds,
+                                            &pp->last_recorded_at,
+                                            &pp->current_playback_seconds);
+    }
+
+    DP_ProjectPlayerFilterFn filter_fn = pp->filter_fn;
+    if (filter_fn) {
+        filter_fn(pp, mc);
+    }
+
+    return FILTER_PASS;
+}
+
+static void project_player_reset(DP_ProjectPlayer *pp)
+{
+    DP_ProjectPlaybackContext *c = pp->c;
+    if (c) {
+        DP_canvas_history_reset(c->ch);
+        DP_local_state_reset(c->ls);
+        playback_clear_multidab(c);
+        c->state.id = DP_PROJECT_PLAYBACK_STATE_NONE;
+        playback_context_reset_stmt(c);
+    }
+    else {
+        c = DP_malloc(sizeof(*c));
+        playback_context_init(c, pp->prj, pp->dc,
+                              DP_project_canvas_from_snapshot, player_filter,
+                              pp);
+        pp->c = c;
+    }
+    pp->filter_fn = NULL;
+    pp->filter_user = NULL;
+    pp->session_id = 0LL;
+    pp->sequence_id = 0LL;
+    pp->current_playback_seconds = 0.0;
+    pp->last_recorded_at = 0.0;
+    pp->state = DP_PROJECT_PLAYER_STATE_PREPARED;
+}
+
+static long long project_player_next_session_id(DP_ProjectPlayer *pp,
+                                                long long prev_session_id)
+{
+    DP_Project *prj = pp->prj;
+    sqlite3_stmt *session_stmt =
+        ps_prepare_ephemeral(prj, "select session_id, protocol from sessions "
+                                  "where session_id > ? order by session_id");
+    if (!session_stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, session_stmt, 1, prev_session_id)) {
+        sqlite3_finalize(session_stmt);
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool error;
+    long long session_id = 0LL;
+    while (ps_exec_step(prj, session_stmt, &error)) {
+        const char *protocol =
+            (const char *)sqlite3_column_text(session_stmt, 1);
+        if (project_playback_is_compatible(protocol)) {
+            session_id = sqlite3_column_int64(session_stmt, 0);
+            break;
+        }
+    }
+    sqlite3_finalize(session_stmt);
+
+    if (error) {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    return session_id;
+}
+
+static int project_player_start_session(DP_ProjectPlayer *pp,
+                                        long long session_id)
+{
+    bool ok = project_playback_play_session(pp->c, session_id, true)
+           && playback_init_messages(pp->c, session_id, 1LL);
+    if (ok) {
+        pp->session_id = session_id;
+        pp->sequence_id = 0LL;
+        pp->state = DP_PROJECT_PLAYER_STATE_IN_PROGRESS;
+        return 0;
+    }
+    else {
+        pp->session_id = 0LL;
+        pp->sequence_id = 0LL;
+        pp->state = DP_PROJECT_PLAYER_STATE_ERROR;
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+}
+
+static int project_player_rewind(DP_ProjectPlayer *pp)
+{
+    project_player_reset(pp);
+
+    long long session_id = project_player_next_session_id(pp, 0LL);
+    if (session_id < 0) {
+        return DP_llong_to_int(session_id);
+    }
+
+    if (session_id == 0LL) {
+        DP_error_set("Nothing to play back");
+        return DP_PROJECT_PLAYBACK_ERROR_EMPTY;
+    }
+
+    int start_result = project_player_start_session(pp, session_id);
+    if (start_result != 0) {
+        return start_result;
+    }
+
+    return 0;
+}
+
+static int
+project_player_control_rewind(DP_ProjectPlayer *pp,
+                              const DP_ProjectPlayerControlParams *params)
+{
+    int rewind_result = project_player_rewind(pp);
+    if (rewind_result != 0) {
+        return rewind_result;
+    }
+    return project_player_control_call(
+        pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+}
+
+static bool project_player_should_proceed(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params,
+    bool (*proceed_fn)(void *, DP_ProjectPlayer *,
+                       const DP_ProjectPlayerControlParams *),
+    void *user)
+{
+    return proceed_fn(user, pp, params)
+        && project_player_control_call(
+               pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_PROGRESS)
+               == DP_PROJECT_PLAYER_PROGRESS_CONTINUE;
+}
+
+
+static int project_player_search_indexed_snapshot_exec(
+    DP_Project *prj, sqlite3_stmt *stmt, long long *out_snapshot_id,
+    long long *out_session_id, long long *out_sequence_id,
+    unsigned int *out_flags, double *out_timestamp,
+    double *out_last_recorded_at)
+{
+    int result;
+    bool error;
+    if (ps_exec_step(prj, stmt, &error)) {
+        result = 0;
+        *out_snapshot_id = sqlite3_column_int64(stmt, 0);
+        *out_session_id = sqlite3_column_int64(stmt, 1);
+        *out_sequence_id = sqlite3_column_int64(stmt, 2);
+        *out_flags = DP_int_to_uint(sqlite3_column_int(stmt, 3));
+        *out_timestamp = sqlite3_column_double(stmt, 4);
+        *out_last_recorded_at = sqlite3_column_double(stmt, 5);
+    }
+    else if (error) {
+        result = DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+    else {
+        result = 0;
+        *out_snapshot_id = 0LL;
+        *out_session_id = 0LL;
+        *out_sequence_id = 0LL;
+        *out_flags = 0u;
+        *out_timestamp = 0.0;
+        *out_last_recorded_at = 0.0;
+    }
+
+    sqlite3_finalize(stmt);
+    return result;
+}
+
+static int project_player_search_last_indexed_snapshot(
+    DP_ProjectPlayer *pp, long long *out_snapshot_id, long long *out_session_id,
+    long long *out_sequence_id, unsigned int *out_flags, double *out_timestamp,
+    double *out_last_recorded_at)
+{
+    DP_Project *prj = pp->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select snapshot_id, session_id, sequence_id, flags,\n"
+             "       timestamp, last_recorded_at\n"
+             "from temp.player_snapshots\n"
+             "order by session_id desc, sequence_id desc\n"
+             "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    return project_player_search_indexed_snapshot_exec(
+        prj, stmt, out_snapshot_id, out_session_id, out_sequence_id, out_flags,
+        out_timestamp, out_last_recorded_at);
+}
+
+static int project_player_search_session_indexed_snapshot(
+    DP_ProjectPlayer *pp, long long session_id, long long *out_snapshot_id,
+    long long *out_session_id, long long *out_sequence_id,
+    unsigned int *out_flags, double *out_timestamp,
+    double *out_last_recorded_at)
+{
+    DP_Project *prj = pp->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select snapshot_id, session_id, sequence_id, flags,\n"
+             "       timestamp, last_recorded_at\n"
+             "from temp.player_snapshots\n"
+             "where session_id < ?1 or (session_id = ?1 and sequence_id <= 1)\n"
+             "order by session_id desc, sequence_id desc\n"
+             "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_int64(prj, stmt, 1, session_id)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    return project_player_search_indexed_snapshot_exec(
+        prj, stmt, out_snapshot_id, out_session_id, out_sequence_id, out_flags,
+        out_timestamp, out_last_recorded_at);
+}
+
+static int project_player_search_indexed_snapshot_by_timestamp(
+    DP_ProjectPlayer *pp, double seconds, long long *out_snapshot_id,
+    long long *out_session_id, long long *out_sequence_id,
+    unsigned int *out_flags, double *out_timestamp,
+    double *out_last_recorded_at)
+{
+    DP_Project *prj = pp->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select snapshot_id, session_id, sequence_id, flags,\n"
+             "       timestamp, last_recorded_at\n"
+             "from temp.player_snapshots\n"
+             "where timestamp <= ?\n"
+             "order by session_id desc, sequence_id desc\n"
+             "limit 1");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_double(prj, stmt, 1, seconds)) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    return project_player_search_indexed_snapshot_exec(
+        prj, stmt, out_snapshot_id, out_session_id, out_sequence_id, out_flags,
+        out_timestamp, out_last_recorded_at);
+}
+
+
+static int project_player_has_snapshot(DP_ProjectPlayer *pp,
+                                       bool *out_has_snapshot)
+{
+    DP_Project *prj = pp->prj;
+    sqlite3_stmt *stmt =
+        ps_prepare_ephemeral(prj, "select 1 from temp.player_snapshots "
+                                  "where session_id = ? and sequence_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, pp->session_id)
+                && ps_bind_int64(prj, stmt, 2, pp->sequence_id + 1);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool error;
+    bool step_ok = ps_exec_step(prj, stmt, &error);
+    sqlite3_finalize(stmt);
+    if (step_ok || !error) {
+        *out_has_snapshot = step_ok;
+        return 0;
+    }
+    else {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+}
+
+static int project_player_take_snapshot(DP_ProjectPlayer *pp)
+{
+    playback_flush_multidab(pp->c);
+
+    DP_Project *prj = pp->prj;
+    long long session_id = pp->session_id;
+    long long sequence_id = pp->sequence_id;
+    long long snapshot_id = DP_canvas_history_project_player_snapshot(
+        pp->c->ch, prj, pp->c->ls, session_id, sequence_id,
+        pp->last_recorded_at);
+    if (snapshot_id < 0LL) {
+        return DP_llong_to_int(snapshot_id);
+    }
+
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "insert into temp.player_snapshots (\n"
+             "    snapshot_id, session_id, sequence_id, flags,\n"
+             "    timestamp, last_recorded_at)\n"
+             "select ?1, ?2, ?3, flags, ?4, ?5\n"
+             "from snapshots where snapshot_id = ?1");
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, snapshot_id)
+                && ps_bind_int64(prj, stmt, 2, session_id)
+                && ps_bind_int64(prj, stmt, 3, sequence_id + 1LL)
+                && ps_bind_double(prj, stmt, 4, pp->current_playback_seconds)
+                && ps_bind_double(prj, stmt, 5, pp->last_recorded_at);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        DP_project_snapshot_discard(prj, snapshot_id);
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    return 0;
+}
+
+static void project_player_maybe_take_snapshot(DP_ProjectPlayer *pp)
+{
+    bool has_snapshot;
+    int has_snapshot_result = project_player_has_snapshot(pp, &has_snapshot);
+    if (has_snapshot_result != 0) {
+        DP_warn("Error %d checking for player snapshot: %s",
+                has_snapshot_result, DP_error());
+    }
+    else if (!has_snapshot) {
+        int take_snapshot_result = project_player_take_snapshot(pp);
+        if (take_snapshot_result != 0) {
+            DP_warn("Error %d taking player snapshot: %s", take_snapshot_result,
+                    DP_error());
+        }
+    }
+}
+
+static int project_player_control_proceed(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params,
+    DP_ProjectPlayerFilterFn filter_fn,
+    bool (*proceed_fn)(void *, DP_ProjectPlayer *,
+                       const DP_ProjectPlayerControlParams *),
+    void *user)
+{
+    pp->filter_fn = filter_fn;
+    pp->filter_user = user;
+
+    int result = 0;
+    while (project_player_should_proceed(pp, params, proceed_fn, user)) {
+        int step_result = playback_state_step(pp->c);
+        if (step_result == PLAYBACK_STATE_STEP_OK) {
+            long long snapshot_interval = pp->snapshot_interval;
+            long long sequence_id = pp->sequence_id;
+            bool should_take_snapshot = snapshot_interval > 0LL
+                                     && sequence_id > 0LL
+                                     && (sequence_id % snapshot_interval) == 0;
+            if (should_take_snapshot) {
+                project_player_maybe_take_snapshot(pp);
+            }
+        }
+        else if (step_result == PLAYBACK_STATE_STEP_DONE) {
+            long long session_id =
+                project_player_next_session_id(pp, pp->session_id);
+            if (session_id < 0LL) {
+                pp->state = DP_PROJECT_PLAYER_STATE_ERROR;
+                result = DP_llong_to_int(session_id);
+                break;
+            }
+            else if (session_id == 0LL) {
+                pp->state = DP_PROJECT_PLAYER_STATE_AT_END;
+                break;
+            }
+
+            int start_result = project_player_start_session(pp, session_id);
+            if (start_result != 0) {
+                result = start_result;
+                break;
+            }
+
+            project_player_maybe_take_snapshot(pp);
+        }
+        else {
+            pp->state = DP_PROJECT_PLAYER_STATE_ERROR;
+            result = DP_PROJECT_PLAYBACK_ERROR_QUERY;
+            break;
+        }
+    }
+
+    pp->filter_fn = NULL;
+    pp->filter_user = NULL;
+    return result;
+}
+
+
+static int project_player_proceed_from_snapshot(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params,
+    bool keep_going, long long snapshot_id, long long snapshot_session_id,
+    long long snapshot_sequence_id, unsigned int snapshot_flags,
+    double snapshot_timestamp, double snapshot_last_recorded_at,
+    bool (*proceed_fn)(void *, DP_ProjectPlayer *,
+                       const DP_ProjectPlayerControlParams *),
+    void *user)
+{
+    if (keep_going) {
+        // Our current state is a better spot than the nearest snapshot, so just
+        // keep playing back from here.
+    }
+    else if (snapshot_id <= 0LL) {
+        int rewind_result = project_player_rewind(pp);
+        if (rewind_result != 0) {
+            return rewind_result;
+        }
+    }
+    else {
+        // Loading the snapshot may take a moment, so show the user the position
+        // that we're gonna load it at so that they see something happening.
+        // It's not actually our position right now though, so revert it again.
+        double current_playback_seconds = pp->current_playback_seconds;
+        pp->current_playback_seconds = snapshot_timestamp;
+        int progress_result = project_player_control_call(
+            pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_PROGRESS);
+        pp->current_playback_seconds = current_playback_seconds;
+        if (progress_result != DP_PROJECT_PLAYER_PROGRESS_CONTINUE) {
+            return project_player_control_call(
+                pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+        }
+
+        project_player_reset(pp);
+
+        bool ok = project_playback_start_from_snapshot(
+                      pp->c, snapshot_id, snapshot_flags, snapshot_session_id)
+               && playback_init_messages(pp->c, snapshot_session_id,
+                                         snapshot_sequence_id);
+        if (!ok) {
+            pp->session_id = 0LL;
+            pp->sequence_id = 0LL;
+            pp->state = DP_PROJECT_PLAYER_STATE_ERROR;
+            return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+        }
+
+        pp->session_id = snapshot_session_id;
+        pp->sequence_id = snapshot_sequence_id;
+        pp->state = DP_PROJECT_PLAYER_STATE_IN_PROGRESS;
+        pp->current_playback_seconds = snapshot_timestamp;
+        pp->last_recorded_at = snapshot_last_recorded_at;
+    }
+
+    int proceed_result =
+        project_player_control_proceed(pp, params, NULL, proceed_fn, user);
+    if (proceed_result != 0) {
+        return proceed_result;
+    }
+
+    playback_flush_multidab(pp->c);
+    return project_player_control_call(
+        pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+}
+
+static bool project_player_control_should_proceed_fast_forward(
+    DP_UNUSED void *user, DP_UNUSED DP_ProjectPlayer *pp,
+    DP_UNUSED const DP_ProjectPlayerControlParams *params)
+{
+    return true;
+}
+
+static int
+project_player_control_fast_forward(DP_ProjectPlayer *pp,
+                                    const DP_ProjectPlayerControlParams *params)
+{
+    long long snapshot_id, snapshot_session_id, snapshot_sequence_id;
+    unsigned int snapshot_flags;
+    double snapshot_timestamp, snapshot_last_recorded_at;
+    int search_result = project_player_search_last_indexed_snapshot(
+        pp, &snapshot_id, &snapshot_session_id, &snapshot_sequence_id,
+        &snapshot_flags, &snapshot_timestamp, &snapshot_last_recorded_at);
+    if (search_result != 0) {
+        return search_result;
+    }
+
+    bool keep_going = pp->state == DP_PROJECT_PLAYER_STATE_IN_PROGRESS
+                   && (snapshot_id <= 0LL
+                       || snapshot_timestamp <= pp->current_playback_seconds);
+    return project_player_proceed_from_snapshot(
+        pp, params, keep_going, snapshot_id, snapshot_session_id,
+        snapshot_sequence_id, snapshot_flags, snapshot_timestamp,
+        snapshot_last_recorded_at,
+        project_player_control_should_proceed_fast_forward, NULL);
+}
+
+
+static void project_player_control_step_messages_filter(
+    DP_ProjectPlayer *pp, DP_ProjectPlaybackMessageContext *mc)
+{
+    DP_MessageType type = (DP_MessageType)mc->type;
+    if (DP_message_type_client_meta(type) || DP_message_type_command(type)) {
+        int *messages_processed = pp->filter_user;
+        ++*messages_processed;
+    }
+}
+
+static bool project_player_control_should_proceed_step_messages(
+    void *user, DP_UNUSED DP_ProjectPlayer *pp,
+    const DP_ProjectPlayerControlParams *params)
+{
+    int *messages_processed = user;
+    return *messages_processed < params->message_count;
+}
+
+static int project_player_control_step_messages(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params)
+{
+    if (pp->state == DP_PROJECT_PLAYER_STATE_PREPARED) {
+        int rewind_result = project_player_rewind(pp);
+        if (rewind_result != 0) {
+            return rewind_result;
+        }
+    }
+
+    if (pp->state != DP_PROJECT_PLAYER_STATE_IN_PROGRESS) {
+        return 0;
+    }
+
+    int messages_processed = 0;
+    int proceed_result = project_player_control_proceed(
+        pp, params, project_player_control_step_messages_filter,
+        project_player_control_should_proceed_step_messages,
+        &messages_processed);
+    if (proceed_result != 0) {
+        return proceed_result;
+    }
+
+    playback_flush_multidab(pp->c);
+    return project_player_control_call(
+        pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+}
+
+
+static void project_player_control_step_undo_points_filter(
+    DP_ProjectPlayer *pp, DP_ProjectPlaybackMessageContext *mc)
+{
+    if (mc->type == DP_MSG_UNDO_POINT) {
+        int *undo_points_processed = pp->filter_user;
+        ++*undo_points_processed;
+    }
+}
+
+static bool project_player_control_should_proceed_step_undo_points(
+    void *user, DP_UNUSED DP_ProjectPlayer *pp,
+    const DP_ProjectPlayerControlParams *params)
+{
+    int *undo_points_processed = user;
+    return *undo_points_processed < params->undo_point_count;
+}
+
+static int project_player_control_step_undo_points(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params)
+{
+    if (pp->state == DP_PROJECT_PLAYER_STATE_PREPARED) {
+        int rewind_result = project_player_rewind(pp);
+        if (rewind_result != 0) {
+            return rewind_result;
+        }
+    }
+
+    if (pp->state != DP_PROJECT_PLAYER_STATE_IN_PROGRESS) {
+        return 0;
+    }
+
+    int undo_points_processed = 0;
+    int proceed_result = project_player_control_proceed(
+        pp, params, project_player_control_step_undo_points_filter,
+        project_player_control_should_proceed_step_undo_points,
+        &undo_points_processed);
+    if (proceed_result != 0) {
+        return proceed_result;
+    }
+
+    playback_flush_multidab(pp->c);
+    return project_player_control_call(
+        pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+}
+
+
+static int project_player_control_skip_sessions_search_session(
+    DP_ProjectPlayer *pp, int session_delta, long long *out_session_id)
+{
+    DP_ASSERT(session_delta != 0);
+    int count;
+    const char *sql;
+    if (session_delta < 0) {
+        count = -session_delta;
+        if (pp->sequence_id <= 1LL) {
+            sql = "select session_id from sessions "
+                  "where session_id < ? "
+                  "order by session_id desc";
+        }
+        else {
+            sql = "select session_id from sessions "
+                  "where session_id <= ? "
+                  "order by session_id desc";
+        }
+    }
+    else {
+        count = session_delta;
+        sql = "select session_id from sessions "
+              "where session_id > ? "
+              "order by session_id";
+    }
+
+    DP_Project *prj = pp->prj;
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(prj, sql);
+    if (!stmt) {
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, pp->session_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_PLAYBACK_ERROR_PREPARE;
+    }
+
+    bool error;
+    int i = 0;
+    long long session_id = 0LL;
+    while (ps_exec_step(prj, stmt, &error)) {
+        if (++i == count) {
+            session_id = sqlite3_column_int64(stmt, 0);
+            break;
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    if (error) {
+        return DP_PROJECT_PLAYBACK_ERROR_QUERY;
+    }
+
+    *out_session_id = session_id;
+    return 0;
+}
+
+static bool project_player_control_should_proceed_skip_sessions(
+    void *user, DP_ProjectPlayer *pp,
+    DP_UNUSED const DP_ProjectPlayerControlParams *params)
+{
+    long long *target_session_id = user;
+    return pp->session_id < *target_session_id;
+}
+
+static int project_player_control_skip_sessions_seek(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params,
+    long long target_session_id)
+{
+    long long snapshot_id, snapshot_session_id, snapshot_sequence_id;
+    unsigned int snapshot_flags;
+    double snapshot_timestamp, snapshot_last_recorded_at;
+    int search_result = project_player_search_session_indexed_snapshot(
+        pp, target_session_id, &snapshot_id, &snapshot_session_id,
+        &snapshot_sequence_id, &snapshot_flags, &snapshot_timestamp,
+        &snapshot_last_recorded_at);
+    if (search_result != 0) {
+        return search_result;
+    }
+
+    bool keep_going =
+        pp->state == DP_PROJECT_PLAYER_STATE_IN_PROGRESS
+        && (pp->session_id < target_session_id
+            || (pp->session_id == target_session_id && pp->sequence_id <= 1LL))
+        && (snapshot_id <= 0LL
+            || snapshot_timestamp <= pp->current_playback_seconds);
+    return project_player_proceed_from_snapshot(
+        pp, params, keep_going, snapshot_id, snapshot_session_id,
+        snapshot_sequence_id, snapshot_flags, snapshot_timestamp,
+        snapshot_last_recorded_at,
+        project_player_control_should_proceed_skip_sessions,
+        &target_session_id);
+}
+
+static int project_player_control_skip_sessions(
+    DP_ProjectPlayer *pp, const DP_ProjectPlayerControlParams *params)
+{
+    int session_delta = params->session_delta;
+    if (session_delta == 0) {
+        return project_player_control_call(
+            pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+    }
+
+    long long target_session_id;
+    int search_result = project_player_control_skip_sessions_search_session(
+        pp, session_delta, &target_session_id);
+    if (search_result != 0) {
+        return search_result;
+    }
+
+    if (target_session_id > 0LL) {
+        return project_player_control_skip_sessions_seek(pp, params,
+                                                         target_session_id);
+    }
+    else if (session_delta < 0) {
+        return project_player_control_rewind(pp, params);
+    }
+    else {
+        return project_player_control_fast_forward(pp, params);
+    }
+}
+
+
+static bool project_player_control_should_proceed_play(
+    DP_UNUSED void *user, DP_ProjectPlayer *pp,
+    const DP_ProjectPlayerControlParams *params)
+{
+    int play_result = project_player_control_call(
+        pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_PLAY);
+    if (play_result == DP_PROJECT_PLAYER_PLAY_UPDATE) {
+        playback_flush_multidab(pp->c);
+        int update_result = project_player_control_call(
+            pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+        return update_result == 0;
+    }
+    else {
+        return play_result != DP_PROJECT_PLAYER_PLAY_PAUSE;
+    }
+}
+
+static int
+project_player_control_play(DP_ProjectPlayer *pp,
+                            const DP_ProjectPlayerControlParams *params)
+{
+    if (pp->state == DP_PROJECT_PLAYER_STATE_PREPARED) {
+        int rewind_result = project_player_rewind(pp);
+        if (rewind_result != 0) {
+            return rewind_result;
+        }
+    }
+
+    if (pp->state != DP_PROJECT_PLAYER_STATE_IN_PROGRESS) {
+        return 0;
+    }
+
+    int proceed_result = project_player_control_proceed(
+        pp, params, NULL, project_player_control_should_proceed_play, NULL);
+    if (proceed_result != 0) {
+        return proceed_result;
+    }
+
+    playback_flush_multidab(pp->c);
+    return project_player_control_call(
+        pp, params, DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE);
+}
+
+
+static bool project_player_control_should_proceed_seek(
+    DP_UNUSED void *user, DP_ProjectPlayer *pp,
+    const DP_ProjectPlayerControlParams *params)
+{
+    return pp->current_playback_seconds <= params->seek_seconds;
+}
+
+static int
+project_player_control_seek(DP_ProjectPlayer *pp,
+                            const DP_ProjectPlayerControlParams *params)
+{
+    double seconds = params->seek_seconds;
+    if (seconds <= 0) {
+        return project_player_control_rewind(pp, params);
+    }
+
+    long long snapshot_id, snapshot_session_id, snapshot_sequence_id;
+    unsigned int snapshot_flags;
+    double snapshot_timestamp, snapshot_last_recorded_at;
+    int search_result = project_player_search_indexed_snapshot_by_timestamp(
+        pp, seconds, &snapshot_id, &snapshot_session_id, &snapshot_sequence_id,
+        &snapshot_flags, &snapshot_timestamp, &snapshot_last_recorded_at);
+    if (search_result != 0) {
+        return search_result;
+    }
+
+    bool keep_going = pp->state == DP_PROJECT_PLAYER_STATE_IN_PROGRESS
+                   && pp->current_playback_seconds <= seconds
+                   && (snapshot_id <= 0LL
+                       || snapshot_timestamp <= pp->current_playback_seconds);
+    return project_player_proceed_from_snapshot(
+        pp, params, keep_going, snapshot_id, snapshot_session_id,
+        snapshot_sequence_id, snapshot_flags, snapshot_timestamp,
+        snapshot_last_recorded_at, project_player_control_should_proceed_seek,
+        NULL);
+}
+
+
+int DP_project_player_control(DP_ProjectPlayer *pp,
+                              const DP_ProjectPlayerControlParams *params)
+{
+    DP_ASSERT(pp);
+    DP_ASSERT(params);
+
+    if (pp->state == DP_PROJECT_PLAYER_STATE_NOT_PREPARED) {
+        DP_error_set("Project player not prepared");
+        return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
+    }
+
+    switch (params->type) {
+    case DP_PROJECT_PLAYER_CONTROL_REWIND:
+        return project_player_control_rewind(pp, params);
+    case DP_PROJECT_PLAYER_CONTROL_FAST_FORWARD:
+        return project_player_control_fast_forward(pp, params);
+    case DP_PROJECT_PLAYER_CONTROL_STEP_MESSAGES:
+        return project_player_control_step_messages(pp, params);
+    case DP_PROJECT_PLAYER_CONTROL_STEP_UNDO_POINTS:
+        return project_player_control_step_undo_points(pp, params);
+    case DP_PROJECT_PLAYER_CONTROL_SKIP_SESSIONS:
+        return project_player_control_skip_sessions(pp, params);
+    case DP_PROJECT_PLAYER_CONTROL_PLAY:
+        return project_player_control_play(pp, params);
+    case DP_PROJECT_PLAYER_CONTROL_SEEK:
+        return project_player_control_seek(pp, params);
+    }
+
+    DP_error_set("Unknown player control type %d", (int)params->type);
+    return DP_PROJECT_PLAYBACK_ERROR_MISUSE;
 }

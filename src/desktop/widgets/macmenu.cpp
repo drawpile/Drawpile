@@ -28,11 +28,14 @@ MacMenu::MacMenu()
 	QAction *open = makeAction(
 		filemenu, "opendocument", MainWindow::tr("&Open…"), QKeySequence::Open);
 	m_recent = filemenu->addMenu(MainWindow::tr("Open &Recent"));
+	QAction *openPlayback =
+		makeAction(filemenu, "openplayback", MainWindow::tr("Open &Playback…"));
 	filemenu->addSeparator();
 	QAction *start = makeAction(filemenu, "start", MainWindow::tr("&Start…"));
 
 	connect(newdocument, &QAction::triggered, this, &MacMenu::newDocument);
 	connect(open, &QAction::triggered, this, &MacMenu::openDocument);
+	connect(openPlayback, &QAction::triggered, this, &MacMenu::openPlayback);
 	connect(m_recent, &QMenu::triggered, this, &MacMenu::openRecent);
 	connect(start, &QAction::triggered, this, &MacMenu::startDocument);
 
@@ -160,6 +163,12 @@ void MacMenu::openDocument()
 {
 	MainWindow *mw = dpApp().openDefault(false);
 	mw->open();
+}
+
+void MacMenu::openPlayback()
+{
+	MainWindow *mw = dpApp().openDefault(false);
+	mw->openPlayback();
 }
 
 void MacMenu::openRecent(QAction *action)

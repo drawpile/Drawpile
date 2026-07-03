@@ -14,6 +14,7 @@ class QImage;
 class QJsonDocument;
 class QString;
 struct DP_CanvasHistoryReconnectState;
+struct DP_CanvasState;
 struct DP_LocalStateAction;
 struct DP_OnionSkins;
 

@@ -479,6 +479,50 @@ DP_Message *DP_message_deserialize_compat(const unsigned char *buf,
 }
 #endif
 
+long long DP_message_guess_msecs(DP_Message *msg, bool *out_next_has_time)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    // The recording format doesn't contain proper timing information, so we
+    // just make some wild guesses as to how long each message takes to try to
+    // get some vaguely okayly timed playback out of it.
+    switch (DP_message_type(msg)) {
+    case DP_MSG_INTERVAL:
+        return DP_msg_interval_msecs(DP_message_internal(msg));
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+        return 5;
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_MOVE_POINTER:
+        return 10;
+    case DP_MSG_LAYER_ATTRIBUTES:
+    case DP_MSG_LAYER_RETITLE:
+    case DP_MSG_ANNOTATION_RESHAPE:
+    case DP_MSG_ANNOTATION_EDIT:
+        return 20;
+    case DP_MSG_CANVAS_RESIZE:
+        return 60;
+    case DP_MSG_UNDO:
+        // An undo for user 0 means that the next message is actually an undone
+        // entry, which happens at the start of recordings. We treat those
+        // messages as having a length of 0, since they just get appended to the
+        // history and aren't visible.
+        if (DP_message_context_id(msg) == 0
+            && DP_msg_undo_override_user(DP_message_internal(msg)) == 0) {
+            *out_next_has_time = false;
+            return 0;
+        }
+        else {
+            return 20;
+        }
+    default:
+        return 0;
+    }
+}
+
 bool DP_message_type_is_draw_dabs(DP_MessageType type)
 {
     switch (type) {

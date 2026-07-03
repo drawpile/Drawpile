@@ -171,9 +171,11 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SOURCE_RESUME  4
 
 #define DP_PROJECT_SESSION_FLAG_PROJECT_CLOSED (1u << 0u)
+#define DP_PROJECT_SESSION_FLAG_CONVERTED      (1u << 1u)
 
-#define DP_PROJECT_MESSAGE_FLAG_OWN      (1u << 0u)
-#define DP_PROJECT_MESSAGE_FLAG_CONTINUE (1u << 1u)
+#define DP_PROJECT_MESSAGE_FLAG_OWN       (1u << 0u)
+#define DP_PROJECT_MESSAGE_FLAG_CONTINUE  (1u << 1u)
+#define DP_PROJECT_MESSAGE_FLAG_CONVERTED (1u << 2u)
 
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET      (-1)
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI      (-2)
@@ -189,6 +191,11 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SNAPSHOT_FLAG_HAS_SELECTIONS (1u << 6u)
 #define DP_PROJECT_SNAPSHOT_FLAG_NULL_CANVAS    (1u << 7u)
 #define DP_PROJECT_SNAPSHOT_FLAG_CONTINUATION   (1u << 8u)
+#define DP_PROJECT_SNAPSHOT_FLAG_CONVERTED      (1u << 9u)
+#define DP_PROJECT_SNAPSHOT_FLAG_PLAYBACK       (1u << 10u)
+#define DP_PROJECT_SNAPSHOT_FLAGS_WITH_HISTORY                              \
+    (DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE | DP_PROJECT_SNAPSHOT_FLAG_CONVERTED \
+     | DP_PROJECT_SNAPSHOT_FLAG_PLAYBACK)
 
 #define DP_PROJECT_SAVE_FLAG_NO_MESSAGES (1u << 0u)
 
@@ -200,9 +207,17 @@ typedef struct DP_Rect DP_Rect;
 
 #define DP_PROJECT_PLAYBACK_FLAG_MEASURE_OWN_ONLY (1u << 0u)
 
+#define DP_PROJECT_PLAYER_PROGRESS_CONTINUE 0
+#define DP_PROJECT_PLAYER_PROGRESS_CANCEL   1
+
+#define DP_PROJECT_PLAYER_PLAY_SKIP   0
+#define DP_PROJECT_PLAYER_PLAY_UPDATE 1
+#define DP_PROJECT_PLAYER_PLAY_PAUSE  2
+
 
 typedef struct DP_Project DP_Project;
 typedef struct DP_ProjectPlayback DP_ProjectPlayback;
+typedef struct DP_ProjectPlayer DP_ProjectPlayer;
 
 typedef enum DP_ProjectCheckType {
     DP_PROJECT_CHECK_NONE,    // Not a project file.
@@ -318,6 +333,49 @@ typedef struct DP_ProjectInfo {
     };
 } DP_ProjectInfo;
 
+typedef enum DP_ProjectPlayerState {
+    DP_PROJECT_PLAYER_STATE_NOT_PREPARED,
+    DP_PROJECT_PLAYER_STATE_PREPARED,
+    DP_PROJECT_PLAYER_STATE_IN_PROGRESS,
+    DP_PROJECT_PLAYER_STATE_AT_END,
+    DP_PROJECT_PLAYER_STATE_ERROR,
+} DP_ProjectPlayerState;
+
+typedef enum DP_ProjectPlayerControlType {
+    DP_PROJECT_PLAYER_CONTROL_REWIND,
+    DP_PROJECT_PLAYER_CONTROL_FAST_FORWARD,
+    DP_PROJECT_PLAYER_CONTROL_STEP_MESSAGES,
+    DP_PROJECT_PLAYER_CONTROL_STEP_UNDO_POINTS,
+    DP_PROJECT_PLAYER_CONTROL_SKIP_SESSIONS,
+    DP_PROJECT_PLAYER_CONTROL_PLAY,
+    DP_PROJECT_PLAYER_CONTROL_SEEK,
+} DP_ProjectPlayerControlType;
+
+typedef enum DP_ProjectPlayerControlCallbackType {
+    DP_PROJECT_PLAYER_CONTROL_CALLBACK_PROGRESS,
+    DP_PROJECT_PLAYER_CONTROL_CALLBACK_UPDATE,
+    DP_PROJECT_PLAYER_CONTROL_CALLBACK_PLAY,
+} DP_ProjectPlayerControlCallbackType;
+
+typedef struct DP_ProjectPlayerControlParams DP_ProjectPlayerControlParams;
+
+typedef int (*DP_ProjectPlayerControlCallbackFn)(
+    void *user, DP_ProjectPlayer *pp,
+    const DP_ProjectPlayerControlParams *params, int type);
+
+struct DP_ProjectPlayerControlParams {
+    DP_ProjectPlayerControlType type;
+    unsigned int control_id;
+    DP_ProjectPlayerControlCallbackFn fn;
+    void *user;
+    union {
+        int message_count;
+        int undo_point_count;
+        int session_delta;
+        double seek_seconds;
+    } DP_ANONYMOUS(data);
+};
+
 // Warning handler when loading a canvas. The warn parameter is one of the
 // DP_PROJECT_CANVAS_LOAD_WARN_* constants. Return true if loading should be
 // cancelled, false to keep going. If cancelling, you should call DP_error_set
@@ -413,6 +471,12 @@ int DP_project_session_times_update(DP_Project *prj,
 // success and a negative DP_PROJECT_SNAPSHOT_OPEN_ERROR_* value on failure.
 // A session must be open and no snapshot must be open yet.
 long long DP_project_snapshot_open(DP_Project *prj, unsigned int flags);
+
+// Like DP_project_snapshot_open, but opens the snapshot in the given session at
+// the given sequence id with the flag DP_PROJECT_SNAPSHOT_FLAG_PLAYBACK.
+long long DP_project_playback_snapshot_open(DP_Project *prj,
+                                            long long session_id,
+                                            long long sequence_id);
 
 // Records a message to the given snapshot. The snapshot id must match the
 // currently open snapshot. This will cause the snapshot to get the flag
@@ -521,6 +585,29 @@ int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
                              DP_ProjectPlaybackCallbackFn callback, void *user);
 
 const DP_Rect *DP_project_playback_crop_or_null(DP_ProjectPlayback *pb);
+
+
+DP_ProjectPlayer *DP_project_player_new(DP_Project *prj, DP_DrawContext *dc);
+
+int DP_project_player_free(DP_ProjectPlayer *pp);
+
+int DP_project_player_prepare(DP_ProjectPlayer *pp, double max_delta_seconds,
+                              long long snapshot_interval);
+
+DP_ProjectPlayerState DP_project_player_state(DP_ProjectPlayer *pp);
+
+double DP_project_player_total_playback_seconds(DP_ProjectPlayer *pp);
+
+double DP_project_player_current_playback_seconds(DP_ProjectPlayer *pp);
+
+long long DP_project_player_current_session_id(DP_ProjectPlayer *pp);
+
+long long DP_project_player_current_sequence_id(DP_ProjectPlayer *pp);
+
+DP_CanvasState *DP_project_player_current_canvas_noinc(DP_ProjectPlayer *pp);
+
+int DP_project_player_control(DP_ProjectPlayer *pp,
+                              const DP_ProjectPlayerControlParams *params);
 
 
 #endif

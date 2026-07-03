@@ -15,7 +15,7 @@ extern "C" {
 #include "desktop/dialogs/invitedialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
-#include "desktop/dialogs/playbackdialog.h"
+#include "desktop/dialogs/projectplaybackdialog.h"
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/dialogs/resizedialog.h"
@@ -198,7 +198,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_netstatus(nullptr),
 	  m_viewstatus(nullptr),
 	  m_statusChatButton(nullptr),
-	  m_playbackDialog(nullptr),
+	  m_projectPlaybackDialog(nullptr),
 	  m_dumpPlaybackDialog(nullptr),
 	  m_sessionSettings(nullptr),
 	  m_serverLogDialog(nullptr),
@@ -994,7 +994,7 @@ MainWindow::ReplacementCriteria MainWindow::getReplacementCriteria() const
 	if(m_doc->isRecording()) {
 		rc.setFlag(ReplacementCriterion::Recording);
 	}
-	if(m_playbackDialog || m_dumpPlaybackDialog) {
+	if(m_projectPlaybackDialog || m_dumpPlaybackDialog) {
 		rc.setFlag(ReplacementCriterion::Playback);
 	}
 	return rc;
@@ -2843,40 +2843,7 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 	if(QRegularExpression(QStringLiteral("\\.dp(rec|txt)$"), opt)
 		   .match(basename)
 		   .hasMatch()) {
-		bool isTemplate;
-		DP_LoadResult result =
-			m_doc->loadRecording(loadPath, false, &isTemplate);
-		showLoadResultMessage(result);
-		if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
-			m_playbackDialog =
-				new dialogs::PlaybackDialog(m_doc->canvas(), this);
-			m_playbackDialog->setWindowTitle(
-				QStringLiteral("%1 - %2")
-					.arg(utils::PathInfo::stripExtension(basename))
-					.arg(m_playbackDialog->windowTitle()));
-			m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
-			m_playbackDialog->show();
-			m_playbackDialog->centerOnParent();
-			if(tempFile) {
-				tempFile->setParent(m_playbackDialog);
-			}
-			connect(
-				m_playbackDialog, &dialogs::PlaybackDialog::playbackToggled,
-				this, &MainWindow::setRecorderStatus);
-			connect(
-				m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this,
-				[this, path](QObject *) {
-					m_playbackDialog = nullptr;
-					setRecorderStatus(false);
-					canvas::CanvasModel *canvas = m_doc->canvas();
-					if(canvas && dpAppConfig()->getAutoRecordHost()) {
-						canvas->startProjectRecording(
-							dpAppConfig(), DP_PROJECT_SOURCE_FILE);
-					}
-				});
-		} else {
-			delete tempFile;
-		}
+		showProjectPlaybackDialog(basename, loadPath, tempFile, false);
 
 	} else if(
 		QRegularExpression(QStringLiteral("\\.drawdancedump$"), opt)
@@ -2906,6 +2873,60 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 	addRecentFile(path, int(utils::Recents::Source::Open));
 }
 
+void MainWindow::openPlaybackPath(const QString &path, QTemporaryFile *tempFile)
+{
+	if(!canReplace()) {
+		prepareWindowReplacement();
+		bool newProcessStarted = dpApp().runInNewProcess(
+			{QStringLiteral("--no-restore-window-position"),
+			 QStringLiteral("--play"), path});
+		if(newProcessStarted) {
+			emit windowReplacementFailed(nullptr);
+			// The temporary file is only used in the browser, which will never
+			// start new processes, so it really should always be null here.
+			Q_ASSERT(!tempFile);
+			delete tempFile;
+		} else {
+			createNewWindow([path, tempFile](MainWindow *win) {
+				win->openPath(path, tempFile);
+			});
+		}
+		return;
+	}
+
+	QString basename = utils::PathInfo(path).basename();
+	QString loadPath = tempFile ? tempFile->fileName() : path;
+	bool looksLikeProject =
+		DP_project_check_path(loadPath.toUtf8().constData()).result !=
+		DP_PROJECT_CHECK_NONE;
+	showProjectPlaybackDialog(basename, loadPath, tempFile, looksLikeProject);
+}
+
+void MainWindow::showProjectPlaybackDialog(
+	const QString &basename, const QString &loadPath, QTemporaryFile *tempFile,
+	bool looksLikeProject)
+{
+	QAction *recordAction = getAction("recordsession");
+	recordAction->setEnabled(false);
+
+	m_doc->initCanvas(true);
+	m_projectPlaybackDialog = new dialogs::ProjectPlaybackDialog(this);
+	m_projectPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
+	if(looksLikeProject) {
+		m_projectPlaybackDialog->openProject(
+			m_doc->canvas()->paintEngine(), basename, loadPath, tempFile);
+	} else {
+		m_projectPlaybackDialog->openRecording(
+			m_doc->canvas()->paintEngine(), basename, loadPath, tempFile);
+	}
+	m_projectPlaybackDialog->show();
+	utils::centerOnParent(m_projectPlaybackDialog);
+
+	connect(
+		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
+		recordAction, std::bind(&QAction::setEnabled, recordAction, true));
+}
+
 void MainWindow::resumeAutosave(const QString &path)
 {
 	loadCanvasStateFromFile(path, nullptr, true);
@@ -2921,6 +2942,17 @@ void MainWindow::open()
 		if(ok) {
 			FileWrangler(getStartDialogOrThis())
 				.openMain(std::bind(&MainWindow::openPath, this, _1, _2));
+		}
+	});
+}
+
+void MainWindow::openPlayback()
+{
+	questionOpenFileWindowReplacement([this](bool ok) {
+		if(ok) {
+			FileWrangler(getStartDialogOrThis())
+				.openPlayback(
+					std::bind(&MainWindow::openPlaybackPath, this, _1, _2));
 		}
 	});
 }
@@ -3473,30 +3505,19 @@ void MainWindow::showFlipbook()
 	}
 }
 
+// clang-format on
 void MainWindow::setRecorderStatus(bool on)
 {
 #ifdef __EMSCRIPTEN__
 	Q_UNUSED(on);
 #else
 	QAction *recordAction = getAction("recordsession");
-
-	if(m_playbackDialog) {
-		if(m_playbackDialog->isPlaying()) {
-			recordAction->setIcon(QIcon::fromTheme("media-playback-pause"));
-			recordAction->setText(tr("Pause"));
-		} else {
-			recordAction->setIcon(QIcon::fromTheme("media-playback-start"));
-			recordAction->setText(tr("Play"));
-		}
-
+	if(on) {
+		recordAction->setText(tr("Stop Recording"));
+		recordAction->setIcon(QIcon::fromTheme("media-playback-stop"));
 	} else {
-		if(on) {
-			recordAction->setText(tr("Stop Recording"));
-			recordAction->setIcon(QIcon::fromTheme("media-playback-stop"));
-		} else {
-			recordAction->setText(tr("Record..."));
-			recordAction->setIcon(QIcon::fromTheme("media-record"));
-		}
+		recordAction->setText(tr("Record..."));
+		recordAction->setIcon(QIcon::fromTheme("media-record"));
 	}
 #endif
 }
@@ -3517,12 +3538,11 @@ void MainWindow::showSystemInfo()
 	dlg->raise();
 }
 
+// clang-format off
 void MainWindow::toggleRecording()
 {
-	if(m_playbackDialog) {
-		// If the playback dialog is visible, this action works as the play/pause button
-		m_playbackDialog->setPlaying(!m_playbackDialog->isPlaying());
-		return;
+	if(m_projectPlaybackDialog) {
+		return; // Can't record during playback.
 	}
 
 	if(m_doc->stopRecording()) {
@@ -6275,6 +6295,14 @@ void MainWindow::setupActions()
 	QAction *open = makeAction("opendocument", tr("&Open..."))
 						.icon("document-open")
 						.shortcut(QKeySequence::Open);
+	QAction *openPlayback;
+	if(m_singleSession) {
+		openPlayback = nullptr;
+	} else {
+		openPlayback = makeAction("openplayback", tr("Open &Player…"))
+						   .icon(QStringLiteral("media-playback-start"))
+						   .noDefaultShortcut();
+	}
 #ifdef Q_OS_MACOS
 	QAction *closefile =
 		makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
@@ -6342,14 +6370,14 @@ void MainWindow::setupActions()
 						  .icon("media-record")
 						  .noDefaultShortcut();
 #endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	QAction *makeTimelapse =
+		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
+#endif
 #ifdef DRAWPILE_PROJECT_DIALOG
 	QAction *projectOverview =
 		makeAction("projectoverview", tr("Project statistics…"))
 			.noDefaultShortcut();
-#endif
-#ifdef DRAWPILE_TIMELAPSE_DIALOG
-	QAction *makeTimelapse =
-		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
 #endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 	QAction *recover = makeAction("recover", tr("Recover…"))
@@ -6389,6 +6417,10 @@ void MainWindow::setupActions()
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
+	if(openPlayback) {
+		connect(
+			openPlayback, &QAction::triggered, this, &MainWindow::openPlayback);
+	}
 #ifdef __EMSCRIPTEN__
 	connect(download, &QAction::triggered, this, &MainWindow::download);
 	connect(
@@ -6439,15 +6471,15 @@ void MainWindow::setupActions()
 	connect(
 		exportBrushes, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::exportBrushes);
-#ifdef DRAWPILE_PROJECT_DIALOG
-	connect(
-		projectOverview, &QAction::triggered, this,
-		&MainWindow::requestProjectOverview);
-#endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	connect(
 		makeTimelapse, &QAction::triggered, this,
 		&MainWindow::requestTimelapseDialog);
+#endif
+#ifdef DRAWPILE_PROJECT_DIALOG
+	connect(
+		projectOverview, &QAction::triggered, this,
+		&MainWindow::requestProjectOverview);
 #endif
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 	connect(recover, &QAction::triggered, this, &MainWindow::showRecover);
@@ -6473,6 +6505,9 @@ void MainWindow::setupActions()
 		m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
 	}
 #endif
+	if(openPlayback) {
+		filemenu->addAction(openPlayback);
+	}
 	filemenu->addSeparator();
 
 #ifdef __EMSCRIPTEN__

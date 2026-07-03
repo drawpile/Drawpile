@@ -207,6 +207,17 @@ void PaintEngine::enqueueReset()
 	receiveMessages(false, 1, &msg);
 }
 
+void PaintEngine::enqueueResetToState(const drawdance::CanvasState &canvasState)
+{
+	if(canvasState.isNull()) {
+		enqueueReset();
+	} else {
+		net::Message msg = net::Message::noinc(
+			DP_msg_internal_reset_to_state_new(0u, canvasState.getInc()));
+		receiveMessages(false, 1, &msg);
+	}
+}
+
 void PaintEngine::enqueueLoadBlank(
 	int undoDepthLimit, const QSize &size, const QColor &backgroundColor,
 	const QString &initialLayerName, const QString &initialTrackName)

@@ -78,6 +78,7 @@ public:
 	void openReferenceImage(const ImageOpenFn &imageOpenCompleted);
 
 	void openMain(const MainOpenFn &onOpen) const;
+	void openPlayback(const MainOpenFn &onOpen) const;
 	QStringList openAnimationFramesImport() const;
 	void openAnimationLayersImport(const MainOpenFn &onOpen) const;
 	void openDebugDump(const MainOpenFn &onOpen) const;

@@ -115,6 +115,20 @@ void DP_local_state_free(DP_LocalState *ls)
     }
 }
 
+void DP_local_state_reset(DP_LocalState *ls)
+{
+    ls->layer_states.used = 0;
+    ls->track_states.used = 0;
+    DP_tile_decref_nullable(ls->background_tile);
+    ls->background_tile = NULL;
+    ls->background_opaque = false;
+    ls->view_mode = DP_VIEW_MODE_NORMAL;
+    ls->active_layer_id = 0;
+    ls->active_frame_index = 0;
+    DP_onion_skins_free(ls->onion_skins);
+    ls->onion_skins = NULL;
+}
+
 
 static void call_save_fn(DP_LocalStateActionSaveFn save_fn, void *user,
                          DP_LocalStateAction lsa)

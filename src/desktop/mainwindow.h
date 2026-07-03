@@ -66,7 +66,7 @@ namespace dialogs {
 class DumpPlaybackDialog;
 class HostDialog;
 class InputSettingsDialog;
-class PlaybackDialog;
+class ProjectPlaybackDialog;
 class ProjectRecordingSettingsDialog;
 class ServerLogDialog;
 class SessionSettingsDialog;
@@ -109,6 +109,8 @@ public:
 	void openRecent(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void openRecovery(const QString &path);
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
+	void
+	openPlaybackPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 
 	void resumeAutosave(const QString &path);
 
@@ -161,6 +163,7 @@ public slots:
 	void start();
 	void showNew();
 	void open();
+	void openPlayback();
 	void showRecover();
 #ifdef __EMSCRIPTEN__
 	void download();
@@ -302,6 +305,9 @@ private slots:
 	void toggleDebugDump();
 #endif
 	void openDebugDump();
+	void showProjectPlaybackDialog(
+		const QString &basename, const QString &loadPath,
+		QTemporaryFile *tempFile, bool looksLikeProject);
 #ifdef DRAWPILE_PROJECT_INFO_DIALOG
 	void openProjectInfo();
 #endif
@@ -574,7 +580,7 @@ private:
 	QToolButton *m_statusChatButton;
 	widgets::ProjectRecordingStatusButton *m_statusAutoRecordButton = nullptr;
 
-	QPointer<dialogs::PlaybackDialog> m_playbackDialog;
+	QPointer<dialogs::ProjectPlaybackDialog> m_projectPlaybackDialog;
 	QPointer<dialogs::DumpPlaybackDialog> m_dumpPlaybackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;

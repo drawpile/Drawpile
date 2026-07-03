@@ -56,6 +56,7 @@ public:
 	void initBrushPresets();
 
 	void openPath(const QString &path, bool restoreWindowPosition);
+	void openPlaybackPath(const QString &path, bool restoreWindowPosition);
 	void joinUrl(
 		const QUrl &url, const QString &autoRecordPath, int connectStrategy,
 		bool restoreWindowPosition, bool singleSession);

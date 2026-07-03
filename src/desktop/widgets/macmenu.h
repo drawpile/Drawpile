@@ -24,6 +24,7 @@ public:
 public slots:
 	void newDocument();
 	void openDocument();
+	void openPlayback();
 	void startDocument();
 	void hostSession();
 	void joinSession();
