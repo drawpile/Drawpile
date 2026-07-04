@@ -358,7 +358,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 
 	int selectedTagId = d->tagModel->getStateInt(SELECTED_TAG_ID_KEY, 0);
 	int selectedTagRow =
-		selectedTagId > 0 ? d->tagModel->getTagRowById(selectedTagId) : -1;
+		selectedTagId != 0 ? d->tagModel->getTagRowById(selectedTagId) : -1;
 	int initialTagRow = selectedTagRow > 0 ? selectedTagRow : 0;
 	d->tagComboBox->setCurrentIndex(initialTagRow);
 	tagIndexChanged(d->tagComboBox->currentIndex());
