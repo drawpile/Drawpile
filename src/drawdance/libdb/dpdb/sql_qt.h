@@ -240,6 +240,8 @@ class Database final {
     QByteArray readBlob(const QString &sql,
                         const QVector<Query::Param> &params);
 
+    static double currentTimeSubsec();
+
   private:
     int bindValue(sqlite3_stmt *stmt, int i, Query::Param::Type type,
                   const QVariant &value);

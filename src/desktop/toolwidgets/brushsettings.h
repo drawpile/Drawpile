@@ -82,6 +82,7 @@ public:
 	bool isCurrentPresetAttached() const;
 	bool isCurrentSlotUpdateInProgress() const;
 	void clearCurrentDetachedPresetChanges() const;
+	void addCurrentPresetToHistory();
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;

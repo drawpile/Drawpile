@@ -604,6 +604,10 @@ void ToolController::startDrawing(
 				Q_EMIT colorUsed(m_activebrush.qColor());
 			}
 		}
+
+		if(m_activeTool->updatesBrushHistory()) {
+			Q_EMIT currentBrushUsed();
+		}
 	}
 }
 

@@ -71,6 +71,7 @@ private slots:
 	void setSelectedPresetIdFromBrushSettings(int presetId, bool attached);
 	void setSelectedPresetId(int presetId);
 	void prepareTagAssignmentMenu();
+	void handlePrependedPreset(int presetId, bool inserted);
 	void presetsReset();
 	void presetCurrentIndexChanged(
 		const QModelIndex &current, const QModelIndex &previous);
@@ -79,6 +80,8 @@ private slots:
 	void deleteCurrentTag();
 	void resetCurrentPreset();
 	void deleteCurrentPreset();
+	void clearPresetHistory();
+	void deleteCurrentPresetHistory();
 	void exportCurrentTag();
 	void exportCurrentPreset();
 	void showPresetContextMenu(const QPoint &pos);

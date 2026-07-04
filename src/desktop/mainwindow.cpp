@@ -470,9 +470,18 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestUpdateAuthList, m_doc->client(), &net::Client::requestUpdateAuthList);
 
 	// Tool controller <-> UI connections
-	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
-	connect(m_doc->toolCtrl(), &tools::ToolController::actionCancelled, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::cancelPickFromScreen);
 	// clang-format on
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::colorUsed,
+		m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::currentBrushUsed,
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::addCurrentPresetToHistory);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::actionCancelled,
+		m_dockToolSettings->colorPickerSettings(),
+		&tools::ColorPickerSettings::cancelPickFromScreen);
 	connect(
 		m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged,
 		m_dockToolSettings->colorPickerSettings(),

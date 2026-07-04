@@ -24,6 +24,7 @@ public:
 	void undoMultipart() override;
 	bool isMultipart() const override { return !m_points.isEmpty(); }
 	bool usesBrushColor() const override { return true; }
+	bool updatesBrushHistory() const override { return true; }
 	void setBrushSizeLimit(int limit) override;
 	void setSelectionMaskingEnabled(bool selectionMaskingEnabled) override;
 

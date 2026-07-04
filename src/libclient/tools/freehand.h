@@ -50,6 +50,7 @@ public:
 	bool undoRedo(bool redo) override;
 
 	bool usesBrushColor() const override { return true; }
+	bool updatesBrushHistory() const override { return true; }
 
 	void offsetActiveTool(int x, int y) override;
 
@@ -104,6 +105,7 @@ public:
 	bool undoRedo(bool redo) override;
 
 	bool usesBrushColor() const override { return true; }
+	bool updatesBrushHistory() const override { return true; }
 
 	void offsetActiveTool(int x, int y) override;
 

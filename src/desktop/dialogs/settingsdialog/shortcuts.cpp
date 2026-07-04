@@ -225,9 +225,12 @@ QWidget *Shortcuts::initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate)
 {
 	int thumbnailSize = brushes::BrushPresetModel::THUMBNAIL_SIZE;
 	brushes::BrushPresetTagModel *tagModel = dpApp().brushPresets();
+	m_brushShortcutsTagModel = new BrushShortcutTagProxyModel(this);
+	m_brushShortcutsTagModel->setSourceModel(tagModel);
 	m_brushShortcutsModel = new BrushShortcutModel(
 		tagModel->presetModel(), QSize(thumbnailSize, thumbnailSize), this);
-	m_brushShortcutsFilterModel = new BrushShortcutFilterProxyModel(tagModel);
+	m_brushShortcutsFilterModel =
+		new BrushShortcutFilterProxyModel(tagModel, m_brushShortcutsTagModel);
 	connect(
 		m_filter, &ShortcutFilterInput::conflictBoxChecked,
 		m_brushShortcutsFilterModel,
@@ -238,7 +241,7 @@ QWidget *Shortcuts::initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate)
 
 	QComboBox *tagCombo = new QComboBox;
 	tagCombo->setEditable(false);
-	tagCombo->setModel(tagModel);
+	tagCombo->setModel(m_brushShortcutsTagModel);
 	layout->addWidget(tagCombo);
 	connect(
 		tagCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),

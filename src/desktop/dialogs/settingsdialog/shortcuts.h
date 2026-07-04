@@ -6,6 +6,7 @@
 #include <QWidget>
 
 class BrushShortcutFilterProxyModel;
+class BrushShortcutTagProxyModel;
 class BrushShortcutModel;
 class CanvasShortcutsModel;
 class CustomShortcutModel;
@@ -74,6 +75,7 @@ private:
 	CustomShortcutModel *m_actionShortcutsModel = nullptr;
 	CanvasShortcutsModel *m_canvasShortcutsModel = nullptr;
 	BrushShortcutModel *m_brushShortcutsModel = nullptr;
+	BrushShortcutTagProxyModel *m_brushShortcutsTagModel = nullptr;
 	BrushShortcutFilterProxyModel *m_brushShortcutsFilterModel = nullptr;
 	ProportionalTableView *m_actionsTable = nullptr;
 	ProportionalTableView *m_brushesTable = nullptr;

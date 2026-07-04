@@ -31,6 +31,7 @@ public:
 
 	void cancelMultipart() final override;
 	bool usesBrushColor() const final override { return true; }
+	bool updatesBrushHistory() const final override { return true; }
 	void setBrushSizeLimit(int limit) override;
 	void setSelectionMaskingEnabled(bool selectionMaskingEnabled) override;
 

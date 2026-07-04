@@ -4,6 +4,7 @@
 extern "C" {
 #include "sql.h"
 #include <dpcommon/threading.h>
+#include <dpcommon/timing.h>
 }
 
 Q_LOGGING_CATEGORY(lcDpDatabase, "net.drawpile.database", QtWarningMsg)
@@ -511,6 +512,11 @@ QByteArray Database::readBlob(const QString &sql,
     Query qry = query();
     return qry.exec(sql, params) && qry.next() ? qry.columnBlob(0)
                                                : QByteArray();
+}
+
+double Database::currentTimeSubsec()
+{
+    return double(DP_time_unix_msec()) / 1000.0;
 }
 
 int Database::bindValue(sqlite3_stmt *stmt, int i, Query::Param::Type type,

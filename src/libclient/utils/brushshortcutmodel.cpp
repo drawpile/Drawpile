@@ -233,15 +233,38 @@ void BrushShortcutModel::updateConflictRows(bool emitDataChanges)
 }
 
 
-BrushShortcutFilterProxyModel::BrushShortcutFilterProxyModel(
-	brushes::BrushPresetTagModel *tagModel, QObject *parent)
+BrushShortcutTagProxyModel::BrushShortcutTagProxyModel(QObject *parent)
 	: QSortFilterProxyModel(parent)
-	, m_tagModel(tagModel)
 {
 }
 
-void BrushShortcutFilterProxyModel::setCurrentTagRow(int tagRow)
+int BrushShortcutTagProxyModel::mapRowToSource(int proxyRow) const
 {
+	return mapToSource(index(proxyRow, 0)).row();
+}
+
+bool BrushShortcutTagProxyModel::filterAcceptsRow(
+	int sourceRow, const QModelIndex &sourceParent) const
+{
+	return sourceParent.isValid() ||
+		   !brushes::BrushPresetTagModel::isHistoryRow(sourceRow);
+}
+
+
+BrushShortcutFilterProxyModel::BrushShortcutFilterProxyModel(
+	brushes::BrushPresetTagModel *tagModel,
+	BrushShortcutTagProxyModel *tagProxyModel, QObject *parent)
+	: QSortFilterProxyModel(parent)
+	, m_tagModel(tagModel)
+	, m_tagProxyModel(tagProxyModel)
+{
+}
+
+void BrushShortcutFilterProxyModel::setCurrentTagRow(int tagProxyRow)
+{
+	int tagRow =
+		m_tagProxyModel->mapToSource(m_tagProxyModel->index(tagProxyRow, 0))
+			.row();
 	if(tagRow != m_tagRow) {
 		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_tagRow = tagRow;

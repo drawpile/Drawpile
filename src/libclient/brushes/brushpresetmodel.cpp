@@ -24,9 +24,11 @@ namespace brushes {
 
 static constexpr int ALL_ROW = 0;
 static constexpr int UNTAGGED_ROW = 1;
-static constexpr int TAG_OFFSET = 2;
+static constexpr int HISTORY_ROW = 2;
+static constexpr int TAG_OFFSET = 3;
 static constexpr int ALL_ID = -1;
 static constexpr int UNTAGGED_ID = -2;
+static constexpr int HISTORY_ID = -3;
 
 namespace {
 struct CachedTag {
@@ -43,6 +45,10 @@ struct PresetChange {
 	std::optional<QString> description;
 	std::optional<LazyThumbnail> thumbnail;
 	std::optional<LazyBrush> brush;
+};
+
+struct PresetHistoryChange {
+	double timestamp;
 };
 
 struct PresetShortcutEntry {
@@ -231,6 +237,13 @@ public:
 			"select 1 from preset_tag pt where pt.preset_id = p.id)");
 	}
 
+	int readPresetCountHistory()
+	{
+		return db.readInt(
+			"select count(*) from preset p "
+			"join preset_history ph on ph.preset_id = p.id");
+	}
+
 	int readPresetCountByTagId(int tagId)
 	{
 		return db.readInt(
@@ -399,9 +412,10 @@ public:
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		drawdance::Query query = db.query();
-		return query.exec("update preset set changed_description = null, "
-						  "changed_thumbnail = null, changed_type = null, "
-						  "changed_data = null");
+		return query.exec(
+			"update preset set changed_description = null, "
+			"changed_thumbnail = null, changed_type = null, "
+			"changed_data = null");
 	}
 
 	bool deletePresetById(int id)
@@ -414,6 +428,23 @@ public:
 		}
 	}
 
+	bool deletePresetHistoryById(int id)
+	{
+		drawdance::Query query = db.query();
+		if(query.exec("delete from preset_history where preset_id = ?", {id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	bool deleteAllPresetHistory()
+	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
+		drawdance::Query query = db.query();
+		return query.exec("delete from preset_history");
+	}
+
 	QList<TagAssignment> readTagAssignmentsByPresetId(int presetId)
 	{
 		QList<TagAssignment> tagAssignments;
@@ -424,9 +455,10 @@ public:
 			"on pt.tag_id = t.id and pt.preset_id = ? order by t.id";
 		if(query.exec(sql, {presetId})) {
 			while(query.next()) {
-				tagAssignments.append(TagAssignment{
-					query.columnInt(0), query.columnText16(1),
-					query.columnBool(2)});
+				tagAssignments.append(
+					TagAssignment{
+						query.columnInt(0), query.columnText16(1),
+						query.columnBool(2)});
 			}
 		}
 		return tagAssignments;
@@ -531,6 +563,8 @@ public:
 
 	void removeCachedPreset(int index) { m_presetCache.removeAt(index); }
 
+	void clearCachedPresets() { m_presetCache.clear(); }
+
 	int getCachedPresetIndexById(int presetId)
 	{
 		int count = m_presetCache.size();
@@ -542,65 +576,134 @@ public:
 		return -1;
 	}
 
+	void prependCachedIndex(int index) { m_presetCache.move(index, 0); }
+
+	void prependCachedPreset(CachedPreset &&cp)
+	{
+		m_presetCache.prepend(std::move(cp));
+	}
+
+	bool loadCachedPresetById(int presetId, CachedPreset &outCp)
+	{
+		drawdance::Query query = db.query();
+		const char *sql =
+			"select p.id, p.name, p.description, p.changed_name, "
+			"p.changed_description, p.changed_thumbnail is not null, "
+			"p.changed_data is not null, group_concat(t.tag_id) tags "
+			"from preset p left join preset_tag t on t.preset_id = p.id "
+			"where p.id = ?";
+		if(query.prepare(sql) && query.bind(0, presetId) &&
+		   query.execPrepared() && query.next()) {
+			readPreset(outCp, query);
+			parseGroupedTagIds(query.columnText16(7), outCp.tagIds);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	void enqueuePresetChange(int presetId, const PresetChange &presetChange)
 	{
 		m_presetChanges.insert(presetId, presetChange);
 		m_presetChangeTimer.start();
 	}
 
+	void enqueuePresetHistoryChange(
+		int presetId, const PresetHistoryChange &presetHistoryChange)
+	{
+		m_presetHistoryChanges.insert(presetId, presetHistoryChange);
+		m_presetChangeTimer.start();
+	}
+
 	void removePresetChange(int presetId) { m_presetChanges.remove(presetId); }
+
+	void removePresetHistoryChange(int presetId)
+	{
+		m_presetHistoryChanges.remove(presetId);
+	}
+
+	void clearPresetHistoryChanges() { m_presetHistoryChanges.clear(); }
 
 	void writePresetChanges()
 	{
 		m_presetChangeTimer.stop();
-		if(!m_presetChanges.isEmpty()) {
+		bool havePresetChanges = !m_presetChanges.isEmpty();
+		bool havePresetHistoryChanges = !m_presetHistoryChanges.isEmpty();
+		if(havePresetChanges || havePresetHistoryChanges) {
 			DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 			drawdance::Query query = db.query();
-			const char *sql =
-				"update preset set changed_name = ?, changed_description = ?, "
-				"changed_thumbnail = ?, changed_type = ?, changed_data = ? "
-				"where id = ?";
-			if(query.prepare(sql)) {
-				QVector<drawdance::Query::Param> params;
-				params.reserve(6);
-				for(QHash<int, PresetChange>::const_iterator
-						it = m_presetChanges.constBegin(),
-						end = m_presetChanges.constEnd();
-					it != end; ++it) {
-					params.clear();
-					int presetId = it.key();
-					params.append(
-						drawdance::Query::Param::fromOptional(it->name));
-					params.append(
-						drawdance::Query::Param::fromOptional(it->description));
-					if(it->thumbnail.has_value()) {
-						params.append(it->thumbnail->bytes());
-					} else {
-						params.append(std::nullopt);
-					}
-					if(it->brush.has_value()) {
-						const ActiveBrush &brush =
-							it->brush.value().constBrush(presetId);
-						params.append(brush.presetType());
-						params.append(brush.presetData());
-					} else {
-						params.append(std::nullopt);
-						params.append(std::nullopt);
-					}
-					params.append(presetId);
-					if(query.bindAll(params)) {
-						query.execPrepared();
+			if(havePresetChanges) {
+				const char *sql = "update preset set changed_name = ?, "
+								  "changed_description = ?, "
+								  "changed_thumbnail = ?, "
+								  "changed_type = ?, "
+								  "changed_data = ? "
+								  "where id = ?";
+				if(query.prepare(sql)) {
+					QVector<drawdance::Query::Param> params;
+					params.reserve(6);
+					for(QHash<int, PresetChange>::const_iterator
+							it = m_presetChanges.constBegin(),
+							end = m_presetChanges.constEnd();
+						it != end; ++it) {
+						params.clear();
+						int presetId = it.key();
+						params.append(
+							drawdance::Query::Param::fromOptional(it->name));
+						params.append(
+							drawdance::Query::Param::fromOptional(
+								it->description));
+						if(it->thumbnail.has_value()) {
+							params.append(it->thumbnail->bytes());
+						} else {
+							params.append(std::nullopt);
+						}
+						if(it->brush.has_value()) {
+							const ActiveBrush &brush =
+								it->brush.value().constBrush(presetId);
+							params.append(brush.presetType());
+							params.append(brush.presetData());
+						} else {
+							params.append(std::nullopt);
+							params.append(std::nullopt);
+						}
+						params.append(presetId);
+						if(query.bindAll(params)) {
+							query.execPrepared();
+						}
 					}
 				}
+				m_presetChanges.clear();
+				refreshShortcutsInternal(query);
 			}
-			m_presetChanges.clear();
-			refreshShortcutsInternal(query);
+			if(havePresetHistoryChanges) {
+				const char *sql =
+					"insert into preset_history (preset_id, last_used_at) "
+					"values (?, ?) "
+					"on conflict (preset_id) do update "
+					"set last_used_at = excluded.last_used_at";
+				if(query.prepare(sql)) {
+					for(QHash<int, PresetHistoryChange>::const_iterator
+							it = m_presetHistoryChanges.constBegin(),
+							end = m_presetHistoryChanges.constEnd();
+						it != end; ++it) {
+						int presetId = it.key();
+						if(query.bind(0, presetId) &&
+						   query.bind(1, it->timestamp)) {
+							query.execPrepared();
+						}
+					}
+				}
+				m_presetHistoryChanges.clear();
+			}
 		}
 	}
 
 	void discardPresetChanges()
 	{
-		m_presetChangeTimer.stop();
+		if(m_presetHistoryChanges.isEmpty()) {
+			m_presetChangeTimer.stop();
+		}
 		m_presetChanges.clear();
 	}
 
@@ -792,16 +895,30 @@ private:
 		case ALL_ID:
 			break;
 		case UNTAGGED_ID:
-			sql += QStringLiteral(" where not exists(select 1 from preset_tag "
-								  "pt where pt.preset_id = p.id)");
+			sql += QStringLiteral(
+				" where not exists(select 1 from preset_tag "
+				"pt where pt.preset_id = p.id)");
+			break;
+		case HISTORY_ID:
+			sql += QStringLiteral(
+				" join preset_history ph on ph.preset_id = p.id");
 			break;
 		default:
-			sql += QStringLiteral(" join preset_tag pt on pt.preset_id = p.id "
-								  "where pt.tag_id = ?");
+			sql += QStringLiteral(
+				" join preset_tag pt on pt.preset_id = p.id "
+				"where pt.tag_id = ?");
 			params.append(m_tagIdToFilter);
 			break;
 		}
-		sql += QStringLiteral(" group by p.id order by lower(p.name)");
+		sql += QStringLiteral(" group by p.id order by ");
+		switch(m_tagIdToFilter) {
+		case HISTORY_ID:
+			sql += QStringLiteral("ph.last_used_at desc");
+			break;
+		default:
+			sql += QStringLiteral("lower(p.name)");
+			break;
+		}
 
 		if(query.exec(sql, params)) {
 			while(query.next()) {
@@ -965,18 +1082,20 @@ private:
 	void cleanupDb(drawdance::Query &query)
 	{
 		// Purge any orphaned tag assignments.
-		query.exec("delete from preset_tag "
-				   "where not exists(select 1 from tag t "
-				   "where t.id = preset_tag.tag_id) "
-				   "or not exists(select 1 from preset p "
-				   "where p.id = preset_tag.preset_id)");
+		query.exec(
+			"delete from preset_tag "
+			"where not exists(select 1 from tag t "
+			"where t.id = preset_tag.tag_id) "
+			"or not exists(select 1 from preset p "
+			"where p.id = preset_tag.preset_id)");
 		query.exec("vacuum");
 	}
 
 	bool createStateTable(drawdance::Query &query)
 	{
-		return query.exec("create table if not exists state ("
-						  "key text primary key not null, value)");
+		return query.exec(
+			"create table if not exists state ("
+			"key text primary key not null, value)");
 	}
 
 	bool executeMigrations(drawdance::Query &query)
@@ -993,6 +1112,7 @@ private:
 				&Private::migrateChangedPreset,
 				&Private::migratePresetShortcuts,
 				&Private::migrateMarkerBlendMode,
+				&Private::migratePresetHistory,
 			};
 
 		int originalMigrationVersion = migrationVersionVariant.toInt();
@@ -1013,26 +1133,31 @@ private:
 
 	bool migrateInitial(drawdance::Query &query)
 	{
-		return query.exec("create table if not exists preset ("
-						  "id integer primary key not null, "
-						  "type text not null, "
-						  "name text not null, "
-						  "description text not null, "
-						  "thumbnail blob, "
-						  "data blob not null)") &&
-			   query.exec("create table if not exists tag ("
-						  "id integer primary key not null, "
-						  "name text not null)") &&
-			   query.exec("create table if not exists preset_tag ("
-						  "preset_id integer not null "
-						  "references preset (id) on delete cascade,"
-						  "tag_id integer not null "
-						  "references tag (id) on delete cascade, "
-						  "primary key (preset_id, tag_id))") &&
-			   query.exec("create index if not exists preset_name_idx "
-						  "on preset(lower(name))") &&
-			   query.exec("create index if not exists tag_name_idx "
-						  "on tag(lower(name))");
+		return query.exec(
+				   "create table if not exists preset ("
+				   "id integer primary key not null, "
+				   "type text not null, "
+				   "name text not null, "
+				   "description text not null, "
+				   "thumbnail blob, "
+				   "data blob not null)") &&
+			   query.exec(
+				   "create table if not exists tag ("
+				   "id integer primary key not null, "
+				   "name text not null)") &&
+			   query.exec(
+				   "create table if not exists preset_tag ("
+				   "preset_id integer not null "
+				   "references preset (id) on delete cascade,"
+				   "tag_id integer not null "
+				   "references tag (id) on delete cascade, "
+				   "primary key (preset_id, tag_id))") &&
+			   query.exec(
+				   "create index if not exists preset_name_idx "
+				   "on preset(lower(name))") &&
+			   query.exec(
+				   "create index if not exists tag_name_idx "
+				   "on tag(lower(name))");
 	}
 
 	bool migrateChangedPreset(drawdance::Query &query)
@@ -1066,6 +1191,15 @@ private:
 		}
 		// This migration isn't critical, just carry on if it fails.
 		return true;
+	}
+
+	bool migratePresetHistory(drawdance::Query &query)
+	{
+		return query.exec(
+			"create table if not exists preset_history ("
+			"    preset_id integer primary key not null "
+			"        references preset (id) on delete cascade,"
+			"    last_used_at real not null)");
 	}
 
 	void migratePresets()
@@ -1187,6 +1321,7 @@ private:
 	static Queries *queries;
 	QTimer m_presetChangeTimer;
 	QHash<int, PresetChange> m_presetChanges;
+	QHash<int, PresetHistoryChange> m_presetHistoryChanges;
 	QVector<CachedTag> m_tagCache;
 	QVector<CachedPreset> m_presetCache;
 	PresetShortcutMap m_presetShortcuts;
@@ -1198,6 +1333,11 @@ private:
 drawdance::Database BrushPresetTagModel::Private::db;
 BrushPresetTagModel::Private::Queries *BrushPresetTagModel::Private::queries;
 
+bool Tag::isHistory() const
+{
+	return id == HISTORY_ID;
+}
+
 bool Tag::accepts(const QSet<int> &tagIds) const
 {
 	switch(id) {
@@ -1205,6 +1345,8 @@ bool Tag::accepts(const QSet<int> &tagIds) const
 		return true;
 	case UNTAGGED_ID:
 		return tagIds.isEmpty();
+	case HISTORY_ID:
+		return false;
 	default:
 		return tagIds.contains(id);
 	}
@@ -1328,6 +1470,8 @@ QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 			return QIcon::fromTheme("folder");
 		case UNTAGGED_ROW:
 			return QIcon::fromTheme("folder-new");
+		case HISTORY_ROW:
+			return QIcon::fromTheme("backup");
 		default:
 			return QVariant();
 		}
@@ -1338,6 +1482,8 @@ QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 			return tr("All");
 		case UNTAGGED_ROW:
 			return tr("Untagged");
+		case HISTORY_ROW:
+			return tr("History");
 		default:
 			return d->getCachedTag(index.row() - TAG_OFFSET).name;
 		}
@@ -1347,6 +1493,8 @@ QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 			return tr("Show all brushes, regardless of tagging.");
 		case UNTAGGED_ROW:
 			return tr("Show brushes not assigned to any tag.");
+		case HISTORY_ROW:
+			return tr("Show a history of brushes used.");
 		default:
 			return d->getCachedTag(index.row() - TAG_OFFSET).name;
 		}
@@ -1357,7 +1505,18 @@ QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 
 bool BrushPresetTagModel::isExportableRow(int row)
 {
-	return row != ALL_ROW;
+	switch(row) {
+	case ALL_ROW:
+	case HISTORY_ROW:
+		return false;
+	default:
+		return true;
+	}
+}
+
+bool BrushPresetTagModel::isHistoryRow(int row)
+{
+	return row == HISTORY_ROW;
 }
 
 Tag BrushPresetTagModel::getTagAt(int row) const
@@ -1367,6 +1526,8 @@ Tag BrushPresetTagModel::getTagAt(int row) const
 		return Tag{ALL_ID, data(createIndex(row, 0)).toString()};
 	case UNTAGGED_ROW:
 		return Tag{UNTAGGED_ID, data(createIndex(row, 0)).toString()};
+	case HISTORY_ROW:
+		return Tag{HISTORY_ID, data(createIndex(row, 0)).toString()};
 	default:
 		if(isTagRowInBounds(row)) {
 			const CachedTag &ct = d->getCachedTag(row - TAG_OFFSET);
@@ -1384,6 +1545,8 @@ int BrushPresetTagModel::getTagRowById(int tagId) const
 		return ALL_ROW;
 	case UNTAGGED_ID:
 		return UNTAGGED_ROW;
+	case HISTORY_ID:
+		return HISTORY_ROW;
 	default: {
 		int count = d->tagCacheSize();
 		for(int i = 0; i < count; ++i) {
@@ -1434,7 +1597,7 @@ bool BrushPresetTagModel::setStateInt(const QString &key, int value)
 
 bool BrushPresetTagModel::isBuiltInTag(int row)
 {
-	return row == ALL_ROW || row == UNTAGGED_ROW;
+	return row == ALL_ROW || row == UNTAGGED_ROW || row == HISTORY_ROW;
 }
 
 bool BrushPresetTagModel::isTagRowInBounds(int row) const
@@ -1856,8 +2019,9 @@ QJsonValue BrushPresetTagModel::readImportBrushOld(
 										QStringLiteral(", "),
 										compat::SkipEmptyParts)) {
 								static QRegularExpression pointRe(
-									QStringLiteral("\\A\\s*\\((\\S+)\\s+(\\S+)"
-												   "\\)\\s*\\z"));
+									QStringLiteral(
+										"\\A\\s*\\((\\S+)\\s+(\\S+)"
+										"\\)\\s*\\z"));
 								QRegularExpressionMatch match =
 									pointRe.match(rawPoint);
 								if(match.hasMatch()) {
@@ -2075,6 +2239,8 @@ int BrushPresetModel::rowCountForTagId(int tagId) const
 		return d->readPresetCountAll();
 	case UNTAGGED_ID:
 		return d->readPresetCountByUntagged();
+	case HISTORY_ID:
+		return d->readPresetCountHistory();
 	default:
 		return d->readPresetCountByTagId(tagId);
 	}
@@ -2219,6 +2385,9 @@ int BrushPresetModel::getIdFromIndex(const QModelIndex &index)
 void BrushPresetModel::setTagIdToFilter(int tagId)
 {
 	beginResetModel();
+	if(tagId == HISTORY_ID) {
+		d->writePresetChanges();
+	}
 	d->setTagIdToFilter(tagId);
 	endResetModel();
 }
@@ -2275,6 +2444,7 @@ bool BrushPresetModel::changeTagAssignment(
 	int tagIdToFilter = d->tagIdToFilter();
 	switch(tagIdToFilter) {
 	case ALL_ID:
+	case HISTORY_ID:
 		if(int i = d->getCachedPresetIndexById(presetId); i != -1) {
 			CachedPreset &cp = d->getCachedPreset(i);
 			if(assigned) {
@@ -2434,6 +2604,58 @@ void BrushPresetModel::resetAllPresetChanges()
 void BrushPresetModel::writePresetChanges()
 {
 	d->writePresetChanges();
+}
+
+void BrushPresetModel::addPresetIdToHistory(int presetId)
+{
+	if(d->tagIdToFilter() == HISTORY_ID) {
+		int cachedIndex = d->getCachedPresetIndexById(presetId);
+		if(cachedIndex == -1) {
+			CachedPreset cp;
+			if(d->loadCachedPresetById(presetId, cp)) {
+				beginInsertRows(QModelIndex(), 0, 0);
+				d->prependCachedPreset(std::move(cp));
+				endInsertRows();
+				Q_EMIT presetPrepended(presetId, true);
+			}
+		} else if(cachedIndex != 0) {
+			beginMoveRows(
+				QModelIndex(), cachedIndex, cachedIndex, QModelIndex(), 0);
+			d->prependCachedIndex(cachedIndex);
+			endMoveRows();
+			Q_EMIT presetPrepended(presetId, false);
+		}
+	}
+	d->enqueuePresetHistoryChange(
+		presetId, {drawdance::Database::currentTimeSubsec()});
+}
+
+void BrushPresetModel::removePresetFromHistory(int presetId)
+{
+	if(d->tagIdToFilter() == HISTORY_ID) {
+		int cachedIndex = d->getCachedPresetIndexById(presetId);
+		if(cachedIndex != -1) {
+			beginRemoveRows(QModelIndex(), cachedIndex, cachedIndex);
+			d->removeCachedPreset(cachedIndex);
+			endRemoveRows();
+		}
+	}
+	d->removePresetHistoryChange(presetId);
+	d->deletePresetHistoryById(presetId);
+}
+
+void BrushPresetModel::clearHistory()
+{
+	if(d->tagIdToFilter() == HISTORY_ID) {
+		int cacheSize = d->presetCacheSize();
+		if(cacheSize != 0) {
+			beginRemoveRows(QModelIndex(), 0, cacheSize - 1);
+			d->clearCachedPresets();
+			endRemoveRows();
+		}
+	}
+	d->clearPresetHistoryChanges();
+	d->deleteAllPresetHistory();
 }
 
 int BrushPresetModel::countNames(const QString &name) const

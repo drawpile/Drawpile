@@ -601,8 +601,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->useBrushSampleCountAction->setCheckable(true);
 	stabilizerMenu->addSeparator();
 	d->stabilizerSettingsAction = stabilizerMenu->addAction(
-		QIcon::fromTheme(QStringLiteral("pathshape")),
-		tr("Input Settings…"));
+		QIcon::fromTheme(QStringLiteral("pathshape")), tr("Input Settings…"));
 	d->stabilizerSettingsAction->setStatusTip(
 		tr("Show the input settings dialog for more stabilizer settings."));
 	d->ui.stabilizerButton->setMenu(stabilizerMenu);
@@ -1041,6 +1040,15 @@ void BrushSettings::clearCurrentDetachedPresetChanges() const
 		preset.changedName = {};
 		preset.changedDescription = {};
 		preset.changedThumbnail = {};
+	}
+}
+
+void BrushSettings::addCurrentPresetToHistory()
+{
+	Preset &preset = d->currentPreset();
+	if(d->brushPresets && preset.valid &&
+	   (preset.attached || preset.reattach)) {
+		d->brushPresets->addPresetIdToHistory(preset.id);
 	}
 }
 

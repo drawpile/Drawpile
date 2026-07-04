@@ -149,6 +149,9 @@ public:
 	//! Does this tool update the color swatch when used?
 	virtual bool usesBrushColor() const { return false; }
 
+	//! Does this tool update the brush history when used?
+	virtual bool updatesBrushHistory() const { return false; }
+
 	//! Add an offset to this tool's current position (if active)
 	virtual void offsetActiveTool(int x, int y)
 	{

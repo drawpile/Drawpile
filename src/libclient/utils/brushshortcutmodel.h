@@ -58,15 +58,28 @@ private:
 	QVector<brushes::ShortcutPreset> m_presets;
 };
 
+class BrushShortcutTagProxyModel : public QSortFilterProxyModel {
+	Q_OBJECT
+public:
+	explicit BrushShortcutTagProxyModel(QObject *parent = nullptr);
+
+	int mapRowToSource(int proxyRow) const;
+
+protected:
+	bool filterAcceptsRow(
+		int sourceRow, const QModelIndex &sourceParent) const override;
+};
+
 // Note: Do not use setFilterFixedString with this model, use setSearchString
 // instead. QSortFilterProxyModel does not expose the filter string properly.
 class BrushShortcutFilterProxyModel : public QSortFilterProxyModel {
 	Q_OBJECT
 public:
 	BrushShortcutFilterProxyModel(
-		brushes::BrushPresetTagModel *tagModel, QObject *parent = nullptr);
+		brushes::BrushPresetTagModel *tagModel,
+		BrushShortcutTagProxyModel *tagProxyModel, QObject *parent = nullptr);
 
-	void setCurrentTagRow(int tagRow);
+	void setCurrentTagRow(int tagProxyRow);
 	void setSearchAllTags(bool searchAllTags);
 	void setSearchString(const QString &searchString);
 
@@ -76,6 +89,7 @@ protected:
 
 private:
 	brushes::BrushPresetTagModel *m_tagModel;
+	BrushShortcutTagProxyModel *m_tagProxyModel;
 	int m_tagRow = 0;
 	bool m_searchAllTags = false;
 	bool m_haveSearch = false;

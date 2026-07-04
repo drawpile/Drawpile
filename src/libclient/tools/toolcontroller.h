@@ -310,6 +310,7 @@ signals:
 
 	void foregroundColorChanged(const QColor &color);
 	void colorUsed(const QColor &color);
+	void currentBrushUsed();
 	void showColorPickRequested(int source, const QPointF &pos);
 	void hideColorPickRequested();
 	void panRequested(int x, int y);
