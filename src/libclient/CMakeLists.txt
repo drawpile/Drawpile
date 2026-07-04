@@ -223,6 +223,8 @@ target_sources(dpclient PRIVATE
 	utils/clickeventfilter.h
 	utils/colorscheme.cpp
 	utils/colorscheme.h
+	utils/compressedtimer.cpp
+	utils/compressedtimer.h
 	utils/cursors.cpp
 	utils/cursors.h
 	utils/customshortcutmodel.cpp

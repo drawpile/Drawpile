@@ -2,6 +2,7 @@
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/drawdance/compress.h"
 #include "libclient/drawdance/ziparchive.h"
+#include "libclient/utils/compressedtimer.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/database.h"
 #include "libshared/util/paths.h"
@@ -14,7 +15,6 @@
 #include <QLocale>
 #include <QRegularExpression>
 #include <QTextStream>
-#include <QTimer>
 #include <QVector>
 #include <algorithm>
 #include <cctype>
@@ -111,13 +111,11 @@ using PresetShortcutMap = QHash<QKeySequence, PresetShortcut>;
 class BrushPresetTagModel::Private {
 public:
 	Private()
+		: m_presetChangeTimer(Qt::VeryCoarseTimer, 4000)
 	{
 		initDb();
-		m_presetChangeTimer.setTimerType(Qt::VeryCoarseTimer);
-		m_presetChangeTimer.setSingleShot(true);
-		m_presetChangeTimer.setInterval(4000);
 		connect(
-			&m_presetChangeTimer, &QTimer::timeout,
+			&m_presetChangeTimer, &CompressedTimer::timeout,
 			std::bind(&Private::writePresetChanges, this));
 	}
 
@@ -1319,7 +1317,7 @@ private:
 
 	static drawdance::Database db;
 	static Queries *queries;
-	QTimer m_presetChangeTimer;
+	CompressedTimer m_presetChangeTimer;
 	QHash<int, PresetChange> m_presetChanges;
 	QHash<int, PresetHistoryChange> m_presetHistoryChanges;
 	QVector<CachedTag> m_tagCache;
