@@ -46,6 +46,7 @@ public:
 
 	void newPreset();
 	void overwriteCurrentPreset(QWidget *parent);
+	void undeleteCurrentPreset();
 	void setSelectedPresetIdsFromShortcut(const QKeySequence &shortcut);
 
 	void importBrushesFrom(const QString &path) { onOpen(path, nullptr); }
@@ -72,6 +73,7 @@ private slots:
 	void setSelectedPresetId(int presetId);
 	void prepareTagAssignmentMenu();
 	void handlePrependedPreset(int presetId, bool inserted);
+	void handlePresetStateChanged(int presetId, int state);
 	void presetsReset();
 	void presetCurrentIndexChanged(
 		const QModelIndex &current, const QModelIndex &previous);
@@ -106,6 +108,9 @@ private:
 	QModelIndex presetIndexToProxy(const QModelIndex &sourceIndex);
 	int presetProxyIndexToId(const QModelIndex &proxyIndex);
 	void updateSelectedPreset();
+	void updatePresetActions();
+
+	int getTargetPresetId();
 
 	void onOpen(const QString &path, QTemporaryFile *tempFile);
 	dialogs::BrushExportDialog *showExportDialog();

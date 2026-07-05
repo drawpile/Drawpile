@@ -3675,6 +3675,7 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 			[brushSettings, presetModel, dlg](int presetId, bool attached) {
 				QSignalBlocker blocker(dlg);
 				dlg->setPresetAttached(attached, presetId);
+				dlg->setPresetState(brushSettings->currentPresetState());
 				dlg->setPresetName(brushSettings->currentPresetName());
 				dlg->setPresetDescription(
 					brushSettings->currentPresetDescription());
@@ -3687,6 +3688,9 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 		connect(
 			brushSettings, &tools::BrushSettings::presetIdChanged, dlg,
 			updatePreset);
+		connect(
+			brushSettings, &tools::BrushSettings::presetStateChanged, dlg,
+			&dialogs::BrushSettingsDialog::setPresetState);
 		connect(
 			dlg, &dialogs::BrushSettingsDialog::presetNameChanged,
 			brushSettings, &tools::BrushSettings::changeCurrentPresetName);
@@ -3733,6 +3737,9 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 			std::bind(
 				&docks::BrushPalette::overwriteCurrentPreset,
 				m_dockBrushPalette, dlg));
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::undeleteBrushRequested,
+			m_dockBrushPalette, &docks::BrushPalette::undeleteCurrentPreset);
 		connect(
 			presetModel, &brushes::BrushPresetModel::presetShortcutChanged, dlg,
 			[dlg](int presetId, const QKeySequence &shortcut) {

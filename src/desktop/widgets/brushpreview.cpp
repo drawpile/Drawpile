@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/brushpreview.h"
 #include "desktop/main.h"
+#include "libclient/brushes/enums.h"
 #include "libclient/config/config.h"
 #include <QEvent>
 #include <QFontMetrics>
@@ -13,6 +14,7 @@ namespace widgets {
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent, f)
+	, m_presetState(int(brushes::PresetState::Normal))
 	, m_debounce(1000 / 60, this)
 {
 	setMinimumSize(32, 32);
@@ -90,12 +92,13 @@ void BrushPreview::clearPreset()
 }
 
 void BrushPreview::setPreset(
-	const QString &title, const QPixmap &thumbnail, bool changed)
+	int state, const QString &title, const QPixmap &thumbnail, bool changed)
 {
-	if(!m_presetEnabled || m_presetTitle != title ||
+	if(!m_presetEnabled || m_presetState != state || m_presetTitle != title ||
 	   thumbnail.cacheKey() != m_presetThumbnail.cacheKey() ||
 	   changed != m_presetChanged) {
 		m_presetEnabled = true;
+		m_presetState = state;
 		m_presetTitle = title;
 		m_presetThumbnail = thumbnail;
 		m_presetChanged = changed;
@@ -105,6 +108,16 @@ void BrushPreview::setPreset(
 			update();
 		} else {
 			triggerPreviewUpdate();
+		}
+	}
+}
+
+void BrushPreview::setPresetState(int state)
+{
+	if(state != m_presetState) {
+		m_presetState = state;
+		if(m_presetEnabled) {
+			update();
 		}
 	}
 }
@@ -217,15 +230,18 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 			textRect, Qt::AlignCenter | Qt::TextDontClip, m_presetTitle);
 	}
 
-	if(m_presetEnabled && m_presetChanged) {
-		QRect changeRect = changeIconRect();
-		QSize changeSize = changeRect.size();
-		if(m_changeIconCache.size() != changeSize) {
-			m_changeIconCache =
-				QIcon::fromTheme(QStringLiteral("drawpile_presetchanged"))
-					.pixmap(changeSize);
+	if(m_presetEnabled &&
+	   (m_presetChanged ||
+		m_presetState != int(brushes::PresetState::Normal))) {
+
+		QRect changeRect, stateRect;
+		iconRects(changeRect, stateRect);
+		if(m_presetChanged) {
+			painter.drawPixmap(changeRect, changeIconPixmap(changeRect.size()));
 		}
-		painter.drawPixmap(changeRect, m_changeIconCache);
+		if(m_presetState != int(brushes::PresetState::Normal)) {
+			painter.drawPixmap(stateRect, stateIconPixmap(stateRect.size()));
+		}
 	}
 
 	if(!isEnabled()) {
@@ -305,20 +321,41 @@ QRect BrushPreview::presetRect() const
 	return r;
 }
 
-QRect BrushPreview::changeIconRect() const
+void BrushPreview::iconRects(QRect &outChangeRect, QRect &outStateRect) const
 {
-	QRect r;
-	if(m_showThumbnail) {
-		r = presetRect();
-	} else {
-		r = previewRect();
-	}
-
+	QRect r = contentsRect();
 	int minDimension = qMin(r.width(), r.height());
-	int editDimension = qMax(minDimension / 4, qMin(8, minDimension));
-	int editOffset = editDimension / 8;
-	QSize editSize(editDimension, editDimension);
-	return QRect(QPoint(r.x() + editOffset, r.y() + editOffset), editSize);
+	int iconDimension = qMax(minDimension / 4, qMin(8, minDimension));
+	int iconOffset = iconDimension / 8;
+	QSize iconSize(iconDimension, iconDimension);
+
+	outChangeRect =
+		QRect(QPoint(r.left() + iconOffset, r.top() + iconOffset), iconSize);
+
+	outStateRect = QRect(
+		QPoint(r.right() - iconOffset - iconDimension, r.top() + iconOffset),
+		iconSize);
+}
+
+const QPixmap &BrushPreview::changeIconPixmap(const QSize &size)
+{
+	return getIconPixmap(
+		m_changeIconCache, size, QStringLiteral("drawpile_presetchanged"));
+}
+
+const QPixmap &BrushPreview::stateIconPixmap(const QSize &size)
+{
+	return getIconPixmap(
+		m_deletedIconCache, size, QStringLiteral("drawpile_presetdeleted"));
+}
+
+QPixmap &BrushPreview::getIconPixmap(
+	QPixmap &inOutPixmap, const QSize &size, const QString &iconName)
+{
+	if(inOutPixmap.size() != size) {
+		inOutPixmap = QIcon::fromTheme(iconName).pixmap(size);
+	}
+	return inOutPixmap;
 }
 
 }

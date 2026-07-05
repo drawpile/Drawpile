@@ -43,6 +43,7 @@ struct TagAssignment {
 
 struct Preset {
 	int id = 0;
+	int state = 0;
 	QString originalName;
 	QString originalDescription;
 	LazyThumbnail originalThumbnail;
@@ -256,6 +257,7 @@ public:
 		EffectiveDescriptionRole,
 		HasChangesRole,
 		PresetRole,
+		StateRole,
 	};
 
 	explicit BrushPresetModel(BrushPresetTagModel *tagModel);
@@ -303,6 +305,7 @@ public:
 	bool updatePresetShortcut(int presetId, QKeySequence shortcut);
 
 	bool deletePreset(int presetId);
+	bool undeletePreset(int presetId);
 
 	void changePreset(
 		int presetId, const std::optional<QString> &name = {},
@@ -315,6 +318,8 @@ public:
 	void addPresetIdToHistory(int presetId);
 	void removePresetFromHistory(int presetId);
 	void clearHistory();
+	int countHistoryPresetsPendingRemoval();
+	int getPresetState(int presetId);
 
 	int countNames(const QString &name) const;
 
@@ -341,6 +346,7 @@ signals:
 		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail, const ActiveBrush &brush);
 	void presetShortcutChanged(int presetId, const QKeySequence &shortcut);
+	void presetStateChanged(int presetId, int state);
 	void presetRemoved(int presetId);
 	void presetPrepended(int presetId, bool inserted);
 	void shortcutActionAdded(

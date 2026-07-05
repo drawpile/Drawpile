@@ -89,10 +89,12 @@ signals:
 	void brushSettingsChanged(const brushes::ActiveBrush &brush);
 	void newBrushRequested();
 	void overwriteBrushRequested();
+	void undeleteBrushRequested();
 	void shortcutChangeRequested(int presetId);
 
 public slots:
 	void setPresetAttached(bool presetAttached, int presetId);
+	void setPresetState(int state);
 	void setPresetName(const QString &presetName);
 	void setPresetDescription(const QString &presetDescription);
 	void setPresetThumbnail(const QPixmap &presetThumbnail);
@@ -157,6 +159,7 @@ private:
 	void addClassicCategories(bool withHardness);
 	void addMyPaintCategories();
 
+	void updatePresetActions();
 	void updateUiFromClassicBrush();
 	bool updateClassicBrushDynamics(
 		Dynamics &dynamics, const DP_ClassicBrushDynamic &brush);

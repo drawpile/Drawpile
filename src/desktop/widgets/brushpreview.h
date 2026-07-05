@@ -29,8 +29,10 @@ public:
 	void setBrushSizeLimit(int brushSizeLimit);
 
 	void clearPreset();
-	void
-	setPreset(const QString &title, const QPixmap &thumbnail, bool changed);
+	void setPreset(
+		int state, const QString &title, const QPixmap &thumbnail,
+		bool changed);
+	void setPresetState(int state);
 	void setPresetTitle(const QString &title);
 	void setPresetThumbnail(const QPixmap &thumbnail);
 	void setPresetChanged(bool changed);
@@ -55,18 +57,25 @@ private:
 
 	QRect previewRect() const;
 	QRect presetRect() const;
-	QRect changeIconRect() const;
+	void iconRects(QRect &outChangeRect, QRect &outStateRect) const;
+	const QPixmap &changeIconPixmap(const QSize &size);
+	const QPixmap &stateIconPixmap(const QSize &size);
+	static QPixmap &getIconPixmap(
+		QPixmap &inOutPixmap, const QSize &size, const QString &iconName);
 
 	CheckerBackground m_strokeBackground;
 	brushes::ActiveBrush m_brush;
 	drawdance::BrushPreview m_brushPreview;
-	DP_BrushPreviewStyle m_style = DP_BRUSH_PREVIEW_STYLE_PLAIN;
-	DP_BrushPreviewShape m_shape = DP_BRUSH_PREVIEW_STROKE;
+	qreal m_lastDpr = 1.0;
 	QString m_presetTitle;
 	QPixmap m_presetThumbnail;
 	QPixmap m_presetCache;
 	QPixmap m_changeIconCache;
+	QPixmap m_deletedIconCache;
 	QRect m_textBounds;
+	DP_BrushPreviewStyle m_style = DP_BRUSH_PREVIEW_STYLE_PLAIN;
+	DP_BrushPreviewShape m_shape = DP_BRUSH_PREVIEW_STROKE;
+	int m_presetState;
 	bool m_showTitle = true;
 	bool m_showThumbnail = false;
 	bool m_presetChanged = false;
@@ -74,7 +83,6 @@ private:
 	bool m_needPalette = true;
 	bool m_needTextBounds = true;
 	bool m_needUpdate = false;
-	int m_lastDpr = 1.0;
 	DebounceTimer m_debounce;
 };
 

@@ -76,6 +76,7 @@ public:
 	void setBrushPresetInSlot(const brushes::Preset &p, int i);
 	brushes::ActiveBrush currentBrush() const;
 	int currentPresetId() const;
+	int currentPresetState() const;
 	const QString &currentPresetName() const;
 	const QString &currentPresetDescription() const;
 	const QPixmap &currentPresetThumbnail() const;
@@ -122,6 +123,7 @@ public:
 
 signals:
 	void presetIdChanged(int presetId, bool attached);
+	void presetStateChanged(int state);
 	void colorChanged(const QColor &color);
 	void backgroundColorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
@@ -135,6 +137,8 @@ signals:
 	void editBrushRequested();
 	void overwriteBrushRequested();
 	void deleteBrushRequested();
+	void undeleteBrushRequested();
+	void deleteBrushHistoryRequested();
 	void stabilizerSettingsRequested();
 
 protected:
@@ -157,6 +161,7 @@ private:
 	void handlePresetChanged(
 		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail, const brushes::ActiveBrush &brush);
+	void handlePresetStateChanged(int presetId, int state);
 	void handlePresetRemoved(int presetId);
 	void detachCurrentSlot();
 

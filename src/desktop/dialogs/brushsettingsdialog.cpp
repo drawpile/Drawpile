@@ -9,6 +9,7 @@
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
+#include "libclient/brushes/enums.h"
 #include "libclient/config/config.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -286,6 +287,7 @@ struct BrushSettingsDialog::Private {
 
 	QPushButton *newBrushButton;
 	QPushButton *overwriteBrushButton;
+	QPushButton *undeleteBrushButton;
 	QTreeWidget *categoryWidget;
 	QStackedWidget *stackedWidget;
 	BrushPresetForm *brushPresetForm;
@@ -352,6 +354,7 @@ struct BrushSettingsDialog::Private {
 	brushes::ActiveBrush brush;
 	int globalSmoothing;
 	int presetId = 0;
+	int presetState = int(brushes::PresetState::Normal);
 	bool useBrushSampleCount;
 	bool presetAttached = true;
 	bool compatibilityMode = false;
@@ -402,11 +405,15 @@ int BrushSettingsDialog::presetId() const
 
 void BrushSettingsDialog::setPresetAttached(bool presetAttached, int presetId)
 {
-	utils::ScopedUpdateDisabler disabler(this);
 	d->presetId = presetId;
 	d->presetAttached = presetAttached;
-	d->overwriteBrushButton->setEnabled(presetId > 0);
-	d->brushPresetForm->setChangeShortcutEnabled(presetId > 0);
+	updatePresetActions();
+}
+
+void BrushSettingsDialog::setPresetState(int state)
+{
+	d->presetState = state;
+	updatePresetActions();
 }
 
 void BrushSettingsDialog::setPresetName(const QString &presetName)
@@ -586,6 +593,15 @@ void BrushSettingsDialog::buildDialogUi()
 	connect(
 		d->overwriteBrushButton, &QPushButton::clicked, this,
 		&BrushSettingsDialog::overwriteBrushRequested);
+
+	d->undeleteBrushButton = new QPushButton(
+		QIcon::fromTheme(QStringLiteral("document-save-as")),
+		tr("Undelete Brush"));
+	d->undeleteBrushButton->hide();
+	buttonLayout->addWidget(d->undeleteBrushButton);
+	connect(
+		d->undeleteBrushButton, &QPushButton::clicked, this,
+		&BrushSettingsDialog::undeleteBrushRequested);
 
 	QDialogButtonBox *buttonBox =
 		new QDialogButtonBox{QDialogButtonBox::Close, this};
@@ -1789,6 +1805,28 @@ void BrushSettingsDialog::addMyPaintCategories()
 	}
 }
 
+
+void BrushSettingsDialog::updatePresetActions()
+{
+	utils::ScopedUpdateDisabler disabler(this);
+	if(d->presetState == int(brushes::PresetState::Normal)) {
+		d->undeleteBrushButton->hide();
+		d->undeleteBrushButton->setEnabled(false);
+		d->newBrushButton->show();
+		d->newBrushButton->setEnabled(true);
+		d->overwriteBrushButton->show();
+		d->overwriteBrushButton->setEnabled(d->presetId > 0);
+		d->brushPresetForm->setChangeShortcutEnabled(d->presetId > 0);
+	} else {
+		d->newBrushButton->hide();
+		d->newBrushButton->setEnabled(false);
+		d->overwriteBrushButton->hide();
+		d->overwriteBrushButton->setEnabled(false);
+		d->undeleteBrushButton->show();
+		d->undeleteBrushButton->setEnabled(d->presetId > 0);
+		d->brushPresetForm->setChangeShortcutEnabled(false);
+	}
+}
 
 void BrushSettingsDialog::updateUiFromClassicBrush()
 {

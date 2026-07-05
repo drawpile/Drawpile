@@ -1,6 +1,7 @@
 #include "desktop/docks/brushpalettedelegate.h"
 #include "desktop/docks/brushpalettedock.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/brushes/enums.h"
 #include <QFontMetrics>
 #include <QIcon>
 #include <QPainter>
@@ -128,14 +129,31 @@ void BrushPaletteDelegate::paint(
 		}
 	}
 
-	if(index.data(brushes::BrushPresetModel::HasChangesRole).toBool()) {
+	bool hasChanges =
+		index.data(brushes::BrushPresetModel::HasChangesRole).toBool();
+	int state = index.data(brushes::BrushPresetModel::StateRole).toInt();
+	bool hasAbnormalState = state != int(brushes::PresetState::Normal);
+	if(hasChanges || hasAbnormalState) {
 		int minDimension = qMin(rect.width(), rect.height());
-		int editDimension = qMax(minDimension / 4, qMin(8, minDimension));
-		int editOffset = editDimension / 8;
-		QSize editSize(editDimension, editDimension);
-		QRect editRect = QRect(
-			QPoint(rect.x() + editOffset, rect.y() + editOffset), editSize);
-		painter->drawPixmap(editRect, getEditIcon(editSize));
+		int iconDimension = qMax(minDimension / 4, qMin(8, minDimension));
+		int iconOffset = iconDimension / 8;
+		QSize iconSize(iconDimension, iconDimension);
+
+		if(hasChanges) {
+			QRect editRect = QRect(
+				QPoint(rect.left() + iconOffset, rect.top() + iconOffset),
+				iconSize);
+			painter->drawPixmap(editRect, getEditIcon(iconSize));
+		}
+
+		if(hasAbnormalState) {
+			QRect stateRect = QRect(
+				QPoint(
+					rect.right() - iconOffset - iconDimension,
+					rect.top() + iconOffset),
+				iconSize);
+			painter->drawPixmap(stateRect, getDeletedIcon(iconSize));
+		}
 	}
 }
 
@@ -294,11 +312,22 @@ BrushPaletteDelegate::Preview BrushPaletteDelegate::renderPreview(
 
 const QPixmap &BrushPaletteDelegate::getEditIcon(const QSize &size) const
 {
-	if(m_editIcon.size() != size) {
-		m_editIcon = QIcon::fromTheme(QStringLiteral("drawpile_presetchanged"))
-						 .pixmap(size);
+	return getIcon(m_editIcon, size, QStringLiteral("drawpile_presetchanged"));
+}
+
+const QPixmap &BrushPaletteDelegate::getDeletedIcon(const QSize &size) const
+{
+	return getIcon(
+		m_deletedIcon, size, QStringLiteral("drawpile_presetdeleted"));
+}
+
+const QPixmap &BrushPaletteDelegate::getIcon(
+	QPixmap &inOutPixmap, const QSize &size, const QString &iconName)
+{
+	if(inOutPixmap.size() != size) {
+		inOutPixmap = QIcon::fromTheme(iconName).pixmap(size);
 	}
-	return m_editIcon;
+	return inOutPixmap;
 }
 
 }

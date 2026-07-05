@@ -11,6 +11,7 @@
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/brushes/brush.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/brushes/enums.h"
 #include "libclient/config/config.h"
 #include "libclient/utils/debouncetimer.h"
 #include <QActionGroup>
@@ -76,6 +77,10 @@ struct BrushPalette::Private {
 	tools::BrushSettings *brushSettings;
 	brushes::Tag currentTag;
 
+	QIcon removeFromHistoryIcon =
+		QIcon::fromTheme(QStringLiteral("drawpile_backup_off"));
+	QIcon deletePermanentlyIcon =
+		QIcon::fromTheme(QStringLiteral("edit-delete"));
 	QComboBox *tagComboBox;
 	QLineEdit *searchLineEdit;
 	widgets::GroupedToolButton *menuButton;
@@ -87,8 +92,10 @@ struct BrushPalette::Private {
 	QAction *resetAllAction;
 	QAction *deleteBrushAction;
 	QAction *historySeparator;
-	QAction *clearPresetHistoryAction;
+	QAction *saveSeparator;
+	QAction *undeleteBrushAction;
 	QAction *deletePresetHistoryAction;
+	QAction *clearPresetHistoryAction;
 	QMenu *tagMenu;
 	QMenu *brushMenu;
 	QAction *newTagAction;
@@ -158,6 +165,8 @@ BrushPalette::BrushPalette(QWidget *parent)
 		QIcon::fromTheme("view-refresh"), tr("&Reset Brush"));
 	d->resetAllAction = d->tagMenu->addAction(tr("Reset All &Brushes"));
 	d->historySeparator = d->tagMenu->addSeparator();
+	d->undeleteBrushAction = d->tagMenu->addAction(
+		QIcon::fromTheme("document-save-as"), tr("Undelete Brush"));
 	d->deletePresetHistoryAction =
 		d->tagMenu->addAction(tr("Remove Brush from History"));
 	d->clearPresetHistoryAction = d->tagMenu->addAction(
@@ -171,7 +180,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->deleteBrushAction = d->tagMenu->addAction(
 		QIcon::fromTheme("trash-empty"), tr("&Delete Brush"));
 	d->assignmentMenu = d->tagMenu->addMenu(tr("Brush &Tags"));
-	d->tagMenu->addSeparator();
+	d->saveSeparator = d->tagMenu->addSeparator();
 	d->newTagAction =
 		d->tagMenu->addAction(QIcon::fromTheme("folder-new"), tr("Ne&w Tag"));
 	d->editTagAction = d->tagMenu->addAction(
@@ -209,6 +218,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->brushMenu->addAction(d->resetBrushAction);
 	d->brushMenu->addAction(d->resetAllAction);
 	d->brushMenu->addAction(d->historySeparator);
+	d->brushMenu->addAction(d->undeleteBrushAction);
 	d->brushMenu->addAction(d->deletePresetHistoryAction);
 	d->brushMenu->addAction(d->clearPresetHistoryAction);
 	d->brushMenu->addSeparator();
@@ -216,7 +226,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->brushMenu->addAction(d->overwriteBrushAction);
 	d->brushMenu->addAction(d->deleteBrushAction);
 	d->brushMenu->addMenu(d->assignmentMenu);
-	d->brushMenu->addSeparator();
+	d->brushMenu->addAction(d->saveSeparator);
 	d->brushMenu->addAction(d->importBrushesAction);
 	d->exportPresetAction = d->brushMenu->addAction(tr("Export Brush…"));
 	d->brushMenu->addSection(displayTitle);
@@ -295,6 +305,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->presetModel, &brushes::BrushPresetModel::presetPrepended, this,
 		&BrushPalette::handlePrependedPreset);
 	connect(
+		d->presetModel, &brushes::BrushPresetModel::presetStateChanged, this,
+		&BrushPalette::handlePresetStateChanged);
+	connect(
 		d->presetModel, &QAbstractItemModel::modelReset, d->delegate,
 		&BrushPaletteDelegate::clearCache);
 	connect(
@@ -337,6 +350,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 	connect(
 		d->overwriteBrushAction, &QAction::triggered, this,
 		std::bind(&BrushPalette::overwriteCurrentPreset, this, this));
+	connect(
+		d->undeleteBrushAction, &QAction::triggered, this,
+		&BrushPalette::undeleteCurrentPreset);
 	connect(
 		d->editBrushAction, &QAction::triggered, this,
 		&BrushPalette::editBrushRequested);
@@ -407,6 +423,12 @@ void BrushPalette::connectBrushSettings(tools::BrushSettings *brushSettings)
 	connect(
 		brushSettings, &tools::BrushSettings::deleteBrushRequested, this,
 		&BrushPalette::deleteCurrentPreset);
+	connect(
+		brushSettings, &tools::BrushSettings::undeleteBrushRequested, this,
+		&BrushPalette::undeleteCurrentPreset);
+	connect(
+		brushSettings, &tools::BrushSettings::deleteBrushHistoryRequested, this,
+		&BrushPalette::deleteCurrentPresetHistory);
 	brushSettings->connectBrushPresets(d->presetModel);
 }
 
@@ -491,8 +513,7 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 		return;
 	}
 
-	int presetId = d->selectedPresetId <= 0 ? d->lastSelectedPresetId
-											: d->selectedPresetId;
+	int presetId = getTargetPresetId();
 	if(presetId <= 0) {
 		return;
 	}
@@ -524,6 +545,18 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 		}
 	});
 	utils::showMessageBox(box);
+}
+
+void BrushPalette::undeleteCurrentPreset()
+{
+	int presetId = getTargetPresetId();
+	if(presetId <= 0) {
+		return;
+	}
+
+	if(!d->presetModel->undeletePreset(presetId)) {
+		updatePresetActions();
+	}
 }
 
 void BrushPalette::setSelectedPresetIdsFromShortcut(
@@ -735,6 +768,7 @@ void BrushPalette::setSelectedPresetId(int presetId)
 			d->lastSelectedPresetId = presetId;
 		}
 		updateSelectedPreset();
+		updatePresetActions();
 	}
 }
 
@@ -790,6 +824,16 @@ void BrushPalette::handlePrependedPreset(int presetId, bool inserted)
 	} else if(d->selectedPresetId == presetId) {
 		d->presetListView->scrollToTop();
 	}
+
+	updatePresetActions();
+}
+
+void BrushPalette::handlePresetStateChanged(int presetId, int state)
+{
+	Q_UNUSED(state);
+	if(getTargetPresetId() == presetId) {
+		updatePresetActions();
+	}
 }
 
 void BrushPalette::presetsReset()
@@ -822,11 +866,10 @@ void BrushPalette::presetCurrentIndexChanged(
 			applyToBrushSettings(current);
 		}
 	}
+
 	d->assignmentMenu->clear();
 	d->assignmentMenu->setEnabled(selected);
-	d->overwriteBrushAction->setEnabled(selected);
-	d->editBrushAction->setEnabled(selected);
-	d->deleteBrushAction->setEnabled(selected);
+	updatePresetActions();
 }
 
 void BrushPalette::newTag()
@@ -912,7 +955,8 @@ void BrushPalette::deleteCurrentPreset()
 
 	QMessageBox *box = utils::makeQuestion(
 		this, tr("Delete Brush"),
-		tr("Really delete brush '%1'?").arg(opt->effectiveName()));
+		tr("Really delete brush '%1'?").arg(opt->effectiveName()),
+		tr("You can still recover it from the brush history."));
 	box->setIconPixmap(opt->effectiveThumbnailPixmap());
 	box->button(QMessageBox::Yes)->setText(tr("Delete"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
@@ -926,10 +970,19 @@ void BrushPalette::deleteCurrentPreset()
 
 void BrushPalette::clearPresetHistory()
 {
+	QString informativeText;
+	int pendingRemovalCount =
+		d->presetModel->countHistoryPresetsPendingRemoval();
+	if(pendingRemovalCount > 0) {
+		informativeText =
+			tr("%n deleted brush(es) will be erased irrecoverably.", nullptr,
+			   pendingRemovalCount);
+	}
+
 	QMessageBox *box = utils::makeQuestion(
 		this, tr("Clear Brush History"),
-		tr("Do you really want to clear the contents of the history tag? It "
-		   "cannot be recovered."));
+		tr("Do you really want to clear the contents of the history tag?"),
+		informativeText);
 	box->button(QMessageBox::Yes)->setText(tr("Clear"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
 	connect(
@@ -951,10 +1004,17 @@ void BrushPalette::deleteCurrentPresetHistory()
 		return;
 	}
 
+	QString informativeText;
+	if(opt->state != int(brushes::PresetState::Normal)) {
+		informativeText = tr(
+			"The brush will be deleted permanently and cannot be recovered.");
+	}
+
 	QMessageBox *box = utils::makeQuestion(
 		this, tr("Remove Brush History"),
 		tr("Really remove brush '%1' from the history tag?")
-			.arg(opt->effectiveName()));
+			.arg(opt->effectiveName()),
+		informativeText);
 	box->setIconPixmap(opt->effectiveThumbnailPixmap());
 	box->button(QMessageBox::Yes)->setText(tr("Remove"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
@@ -1098,6 +1158,51 @@ void BrushPalette::updateSelectedPreset()
 			presetIndexToProxy(idx), QItemSelectionModel::ClearAndSelect);
 	} else {
 		d->presetListView->selectionModel()->clear();
+	}
+}
+
+void BrushPalette::updatePresetActions()
+{
+	int presetId = getTargetPresetId();
+	bool isSelected = presetId > 0;
+
+	int state;
+	if(isSelected) {
+		state = d->presetModel->getPresetState(presetId);
+	} else {
+		state = int(brushes::PresetState::Normal);
+	}
+
+	bool isNormal = state == int(brushes::PresetState::Normal);
+	bool isDeleted = state == int(brushes::PresetState::Deleted);
+
+	d->newBrushAction->setEnabled(isSelected && isNormal);
+	d->newBrushAction->setVisible(isNormal);
+	d->overwriteBrushAction->setEnabled(isSelected && isNormal);
+	d->overwriteBrushAction->setVisible(isNormal);
+	d->undeleteBrushAction->setEnabled(isDeleted);
+	d->undeleteBrushAction->setVisible(isDeleted);
+	d->deleteBrushAction->setEnabled(isNormal);
+	d->deleteBrushAction->setVisible(isNormal);
+	d->exportPresetAction->setEnabled(isNormal);
+	d->exportPresetAction->setVisible(isNormal);
+	d->saveSeparator->setVisible(isNormal);
+	d->deletePresetHistoryAction->setIcon(
+		isDeleted ? d->deletePermanentlyIcon : d->removeFromHistoryIcon);
+
+	QAction *assignmentMenuAction = d->assignmentMenu->menuAction();
+	if(assignmentMenuAction) {
+		assignmentMenuAction->setEnabled(isNormal);
+		assignmentMenuAction->setVisible(isNormal);
+	}
+}
+
+int BrushPalette::getTargetPresetId()
+{
+	if(d->selectedPresetId > 0) {
+		return d->selectedPresetId;
+	} else {
+		return d->lastSelectedPresetId;
 	}
 }
 

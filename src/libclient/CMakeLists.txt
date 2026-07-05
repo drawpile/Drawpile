@@ -17,6 +17,7 @@ target_sources(dpclient PRIVATE
 	brushes/brush.h
 	brushes/brushpresetmodel.cpp
 	brushes/brushpresetmodel.h
+	brushes/enums.h
 	brushes/lazybrush.cpp
 	brushes/lazybrush.h
 	brushes/lazythumbnail.cpp
