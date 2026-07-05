@@ -510,7 +510,6 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 	box->setIconPixmap(opt->originalThumbnailPixmap());
 	box->button(QMessageBox::Yes)->setText(tr("Overwrite"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
-	box->setDefaultButton(QMessageBox::No);
 	connect(box, &QMessageBox::finished, this, [this, presetId](int result) {
 		if(result == QMessageBox::Yes) {
 			if(d->brushSettings->currentPresetId() == presetId) {
@@ -873,7 +872,6 @@ void BrushPalette::deleteCurrentTag()
 				.arg(d->currentTag.name));
 		box->button(QMessageBox::Yes)->setText(tr("Delete"));
 		box->button(QMessageBox::No)->setText(tr("Keep"));
-		box->setDefaultButton(QMessageBox::No);
 		connect(
 			box, &QMessageBox::finished, this,
 			[this, tagId = d->currentTag.id](int result) {
@@ -918,7 +916,6 @@ void BrushPalette::deleteCurrentPreset()
 	box->setIconPixmap(opt->effectiveThumbnailPixmap());
 	box->button(QMessageBox::Yes)->setText(tr("Delete"));
 	box->button(QMessageBox::No)->setText(tr("Keep"));
-	box->setDefaultButton(QMessageBox::No);
 	connect(box, &QMessageBox::finished, this, [this, presetId](int result) {
 		if(result == QMessageBox::Yes && d->selectedPresetId == presetId) {
 			d->presetModel->deletePreset(presetId);
