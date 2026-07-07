@@ -2144,14 +2144,55 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 		m_brushRequestTime.invalidate();
 		QJsonValue v = info[QStringLiteral("brush")];
 		if(v.isObject()) {
+			canvas::User user;
+			getUserById(userId, user);
+			brushes::ActiveBrush brush =
+				brushes::ActiveBrush::fromJson(v.toObject());
+
+			brushes::BrushPresetModel *presetModel =
+				dpApp().brushPresets()->presetModel();
+			int presetId = presetModel->handleReceivedBrush(user.name, brush);
+
 			tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
-			bs->setCurrentBrushDetached(
-				brushes::ActiveBrush::fromJson(v.toObject()));
+			std::optional<brushes::Preset> preset;
+			if(presetId > 0) {
+				preset = presetModel->searchPresetBrushData(presetId);
+			}
+
+			if(preset.has_value()) {
+				bs->setCurrentBrushPreset(preset.value());
+			} else {
+				bs->setCurrentBrushDetached(brush);
+			}
+
 		} else if(info.value(QStringLiteral("confidential")).toBool()) {
 			m_chatbox->receiveSystemMessage(
 				tr("The requested brush does not allow others to use it."));
 		}
 	}
+}
+
+bool MainWindow::getUserById(int userId, canvas::User &outUser)
+{
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas) {
+		std::optional<canvas::User> u =
+			canvas->userlist()->getOptionalUserById(userId);
+		if(u.has_value()) {
+			outUser = u.value();
+			return true;
+		}
+	}
+	outUser = canvas::User{
+		userId, tr("User #%1").arg(userId),
+		{},		false,
+		false,	false,
+		false,	false,
+		false,	false,
+		false,	false,
+		false,
+	};
+	return false;
 }
 
 void MainWindow::fillArea(const QColor &color, int blendMode, float opacity)
@@ -3689,6 +3730,17 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 			brushSettings, &tools::BrushSettings::presetIdChanged, dlg,
 			updatePreset);
 		connect(
+			brushSettings, &tools::BrushSettings::transientPresetChanged, dlg,
+			[brushSettings, dlg] {
+				QSignalBlocker blocker(dlg);
+				dlg->setPresetState(brushSettings->currentPresetState());
+				dlg->setPresetName(brushSettings->currentPresetName());
+				dlg->setPresetDescription(
+					brushSettings->currentPresetDescription());
+				dlg->setPresetThumbnail(
+					brushSettings->currentPresetThumbnail());
+			});
+		connect(
 			brushSettings, &tools::BrushSettings::presetStateChanged, dlg,
 			&dialogs::BrushSettingsDialog::setPresetState);
 		connect(
@@ -3740,6 +3792,12 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 		connect(
 			dlg, &dialogs::BrushSettingsDialog::undeleteBrushRequested,
 			m_dockBrushPalette, &docks::BrushPalette::undeleteCurrentPreset);
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::saveTransientBrushRequested,
+			m_dockBrushPalette,
+			std::bind(
+				&docks::BrushPalette::saveCurrentTransientPreset,
+				m_dockBrushPalette, dlg));
 		connect(
 			presetModel, &brushes::BrushPresetModel::presetShortcutChanged, dlg,
 			[dlg](int presetId, const QKeySequence &shortcut) {
@@ -5725,10 +5783,8 @@ void MainWindow::showUserInfoDialog(int userId)
 		}
 	}
 
-	canvas::User user = m_doc->canvas()->userlist()->getOptionalUserById(userId)
-		.value_or(canvas::User{
-			userId, tr("User #%1").arg(userId), {}, false, false, false, false,
-			false, false, false, false, false, false});
+	canvas::User user;
+	getUserById(userId, user);
 	dialogs::UserInfoDialog *dlg = new dialogs::UserInfoDialog{user, this};
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(dlg, &dialogs::UserInfoDialog::requestUserInfo, this,

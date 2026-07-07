@@ -10,12 +10,13 @@
 class KisSliderSpinBox;
 class QCheckBox;
 class QComboBox;
+class QFormLayout;
 class QGraphicsView;
 class QKeySequence;
 class QLineEdit;
-class QTreeWidgetItem;
 class QPlainTextEdit;
 class QPushButton;
+class QTreeWidgetItem;
 class QVBoxLayout;
 
 namespace utils {
@@ -27,7 +28,10 @@ namespace dialogs {
 class BrushPresetForm final : public QWidget {
 	Q_OBJECT
 public:
-	explicit BrushPresetForm(QWidget *parent = nullptr);
+	explicit BrushPresetForm(
+		bool shortcut, bool take, QWidget *parent = nullptr);
+
+	QFormLayout *form();
 
 	QString presetName() const;
 	void setPresetName(const QString &presetName);
@@ -90,6 +94,7 @@ signals:
 	void newBrushRequested();
 	void overwriteBrushRequested();
 	void undeleteBrushRequested();
+	void saveTransientBrushRequested();
 	void shortcutChangeRequested(int presetId);
 
 public slots:

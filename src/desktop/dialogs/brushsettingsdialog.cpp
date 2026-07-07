@@ -65,29 +65,34 @@ private:
 }
 
 
-BrushPresetForm::BrushPresetForm(QWidget *parent)
+BrushPresetForm::BrushPresetForm(bool shortcut, bool take, QWidget *parent)
 	: QWidget(parent)
 {
 	QFormLayout *attachedLayout = new QFormLayout;
 	setLayout(attachedLayout);
 
-	m_presetShortcutButton = new QPushButton(tr("Change…"));
-	connect(
-		m_presetShortcutButton, &QPushButton::clicked, this,
-		&BrushPresetForm::requestShortcutChange);
+	if(shortcut) {
+		m_presetShortcutButton = new QPushButton(tr("Change…"));
+		connect(
+			m_presetShortcutButton, &QPushButton::clicked, this,
+			&BrushPresetForm::requestShortcutChange);
 
-	m_presetShortcutEdit = new ShortcutLineEdit(m_presetShortcutButton);
-	m_presetShortcutEdit->setAlignment(Qt::AlignCenter);
-	m_presetShortcutEdit->setReadOnly(true);
-	m_presetShortcutEdit->setEnabled(false);
+		m_presetShortcutEdit = new ShortcutLineEdit(m_presetShortcutButton);
+		m_presetShortcutEdit->setAlignment(Qt::AlignCenter);
+		m_presetShortcutEdit->setReadOnly(true);
+		m_presetShortcutEdit->setEnabled(false);
 
-	QHBoxLayout *shortcutLayout = new QHBoxLayout;
-	shortcutLayout->setContentsMargins(0, 0, 0, 0);
-	shortcutLayout->addWidget(m_presetShortcutEdit);
-	shortcutLayout->addWidget(m_presetShortcutButton);
-	attachedLayout->addRow(tr("Shortcut:"), shortcutLayout);
+		QHBoxLayout *shortcutLayout = new QHBoxLayout;
+		shortcutLayout->setContentsMargins(0, 0, 0, 0);
+		shortcutLayout->addWidget(m_presetShortcutEdit);
+		shortcutLayout->addWidget(m_presetShortcutButton);
+		attachedLayout->addRow(tr("Shortcut:"), shortcutLayout);
 
-	utils::addFormSpacer(attachedLayout);
+		utils::addFormSpacer(attachedLayout);
+	} else {
+		m_presetShortcutButton = nullptr;
+		m_presetShortcutEdit = nullptr;
+	}
 
 	QGridLayout *thumbnailLayout = new QGridLayout;
 
@@ -138,12 +143,21 @@ BrushPresetForm::BrushPresetForm(QWidget *parent)
 
 	utils::addFormSpacer(attachedLayout);
 
-	m_takeableCheckBox =
-		new QCheckBox(tr("Allow others in a session to use this brush"));
-	attachedLayout->addRow(tr("Sharing:"), m_takeableCheckBox);
-	connect(
-		m_takeableCheckBox, &QCheckBox::clicked, this,
-		&BrushPresetForm::takeableChanged);
+	if(take) {
+		m_takeableCheckBox =
+			new QCheckBox(tr("Allow others in a session to use this brush"));
+		attachedLayout->addRow(tr("Sharing:"), m_takeableCheckBox);
+		connect(
+			m_takeableCheckBox, &QCheckBox::clicked, this,
+			&BrushPresetForm::takeableChanged);
+	} else {
+		m_takeableCheckBox = nullptr;
+	}
+}
+
+QFormLayout *BrushPresetForm::form()
+{
+	return qobject_cast<QFormLayout *>(layout());
 }
 
 QString BrushPresetForm::presetName() const
@@ -198,19 +212,25 @@ void BrushPresetForm::setPresetThumbnail(const QPixmap &presetThumbnail)
 
 void BrushPresetForm::setPresetShortcut(const QKeySequence &presetShortcut)
 {
-	QString text = presetShortcut.toString(QKeySequence::NativeText);
-	m_presetShortcutEdit->setText(
-		text.isEmpty() ? tr("No shortcut assigned") : text);
+	if(m_presetShortcutEdit) {
+		QString text = presetShortcut.toString(QKeySequence::NativeText);
+		m_presetShortcutEdit->setText(
+			text.isEmpty() ? tr("No shortcut assigned") : text);
+	}
 }
 
 void BrushPresetForm::setChangeShortcutEnabled(bool enabled)
 {
-	m_presetShortcutButton->setEnabled(enabled);
+	if(m_presetShortcutButton) {
+		m_presetShortcutButton->setEnabled(enabled);
+	}
 }
 
 void BrushPresetForm::setTakeable(bool takeable)
 {
-	m_takeableCheckBox->setChecked(takeable);
+	if(m_takeableCheckBox) {
+		m_takeableCheckBox->setChecked(takeable);
+	}
 }
 
 void BrushPresetForm::choosePresetThumbnailFile()
@@ -288,6 +308,7 @@ struct BrushSettingsDialog::Private {
 	QPushButton *newBrushButton;
 	QPushButton *overwriteBrushButton;
 	QPushButton *undeleteBrushButton;
+	QPushButton *saveTransientBrushButton;
 	QTreeWidget *categoryWidget;
 	QStackedWidget *stackedWidget;
 	BrushPresetForm *brushPresetForm;
@@ -603,6 +624,15 @@ void BrushSettingsDialog::buildDialogUi()
 		d->undeleteBrushButton, &QPushButton::clicked, this,
 		&BrushSettingsDialog::undeleteBrushRequested);
 
+	d->saveTransientBrushButton = new QPushButton(
+		QIcon::fromTheme(QStringLiteral("document-save-as")),
+		tr("Save Brush…"));
+	d->saveTransientBrushButton->hide();
+	buttonLayout->addWidget(d->saveTransientBrushButton);
+	connect(
+		d->saveTransientBrushButton, &QPushButton::clicked, this,
+		&BrushSettingsDialog::saveTransientBrushRequested);
+
 	QDialogButtonBox *buttonBox =
 		new QDialogButtonBox{QDialogButtonBox::Close, this};
 	buttonLayout->addWidget(buttonBox);
@@ -652,7 +682,7 @@ void BrushSettingsDialog::buildDialogUi()
 
 QWidget *BrushSettingsDialog::buildPresetPageUi()
 {
-	d->brushPresetForm = new BrushPresetForm;
+	d->brushPresetForm = new BrushPresetForm(true, true);
 	connect(
 		d->brushPresetForm, &BrushPresetForm::requestShortcutChange, this,
 		&BrushSettingsDialog::requestShortcutChange);
@@ -1812,6 +1842,8 @@ void BrushSettingsDialog::updatePresetActions()
 	if(d->presetState == int(brushes::PresetState::Normal)) {
 		d->undeleteBrushButton->hide();
 		d->undeleteBrushButton->setEnabled(false);
+		d->saveTransientBrushButton->hide();
+		d->saveTransientBrushButton->setEnabled(false);
 		d->newBrushButton->show();
 		d->newBrushButton->setEnabled(true);
 		d->overwriteBrushButton->show();
@@ -1822,8 +1854,17 @@ void BrushSettingsDialog::updatePresetActions()
 		d->newBrushButton->setEnabled(false);
 		d->overwriteBrushButton->hide();
 		d->overwriteBrushButton->setEnabled(false);
-		d->undeleteBrushButton->show();
-		d->undeleteBrushButton->setEnabled(d->presetId > 0);
+		if(d->presetState == int(brushes::PresetState::Transient)) {
+			d->undeleteBrushButton->hide();
+			d->undeleteBrushButton->setEnabled(false);
+			d->saveTransientBrushButton->show();
+			d->saveTransientBrushButton->setEnabled(d->presetId > 0);
+		} else {
+			d->saveTransientBrushButton->hide();
+			d->saveTransientBrushButton->setEnabled(false);
+			d->undeleteBrushButton->show();
+			d->undeleteBrushButton->setEnabled(d->presetId > 0);
+		}
 		d->brushPresetForm->setChangeShortcutEnabled(false);
 	}
 }

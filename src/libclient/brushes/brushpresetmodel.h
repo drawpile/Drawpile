@@ -8,6 +8,7 @@
 #include <QJsonValue>
 #include <QKeySequence>
 #include <QPixmap>
+#include <QSet>
 #include <functional>
 #include <optional>
 
@@ -315,6 +316,10 @@ public:
 	void resetAllPresetChanges();
 	void writePresetChanges();
 
+	bool saveTransientPreset(
+		int presetId, const QString &name, const QString &description,
+		const QPixmap &thumbnail, const QSet<int> &tagIds);
+
 	void addPresetIdToHistory(int presetId);
 	void removePresetFromHistory(int presetId);
 	void clearHistory();
@@ -322,6 +327,8 @@ public:
 	int getPresetState(int presetId);
 
 	int countNames(const QString &name) const;
+
+	int handleReceivedBrush(const QString &username, const ActiveBrush &brush);
 
 	void getShortcutActions(
 		const std::function<void(
@@ -345,6 +352,9 @@ signals:
 	void presetChanged(
 		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail, const ActiveBrush &brush);
+	void transientPresetChanged(
+		int presetId, int state, const QString &name,
+		const QString &description, const QPixmap &thumbnail);
 	void presetShortcutChanged(int presetId, const QKeySequence &shortcut);
 	void presetStateChanged(int presetId, int state);
 	void presetRemoved(int presetId);

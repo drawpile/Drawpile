@@ -79,6 +79,7 @@ class TouchTestDialog;
 namespace canvas {
 class CanvasModel;
 class SelectionModel;
+struct User;
 }
 
 namespace config {
@@ -454,6 +455,7 @@ private:
 	void requestCurrentBrush(int userId);
 	void sendCurrentBrush(int userId, const QString &correlator);
 	void receiveCurrentBrush(int userId, const QJsonObject &info);
+	bool getUserById(int userId, canvas::User &outUser);
 
 	void fillArea(const QColor &color, int blendMode, float opacity);
 	void fillAreaWithBlendMode(int blendMode);

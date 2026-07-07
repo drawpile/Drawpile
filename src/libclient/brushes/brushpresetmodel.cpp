@@ -9,6 +9,7 @@
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QIcon>
 #include <QJsonArray>
@@ -209,16 +210,15 @@ public:
 	}
 
 	int createPreset(
-		const QString &name, const QString &description,
+		int state, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QString &type,
 		const QByteArray &data)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		drawdance::Query query = db.query();
-		const char *sql =
-			"insert into preset (name, description, thumbnail, type, data) "
-			"values (?, ?, ?, ?, ?)";
-		if(query.exec(sql, {name, description, thumbnail, type, data})) {
+		const char *sql = "insert into preset (state, name, description, "
+						  "thumbnail, type, data) values (?, ?, ?, ?, ?, ?)";
+		if(query.exec(sql, {state, name, description, thumbnail, type, data})) {
 			return query.lastInsertId();
 		} else {
 			return 0;
@@ -380,6 +380,19 @@ public:
 		}
 	}
 
+	int readPresetIdByContent(const QString &type, const QByteArray &data)
+	{
+		drawdance::Query query = db.query();
+		const char *sql =
+			"select id from preset where type = ? and "
+			"coalesce(changed_data, data) = ? order by id limit 1";
+		if(query.exec(sql, {type, data}) && query.next()) {
+			return query.columnInt(0);
+		} else {
+			return 0;
+		}
+	}
+
 	bool updatePreset(
 		int id, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QString &type,
@@ -397,6 +410,40 @@ public:
 		} else {
 			return false;
 		}
+	}
+
+	bool updateTransientPreset(
+		int id, int state, const QString &name, const QString &description,
+		const QByteArray &thumbnail, const QSet<int> &tagIds)
+	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
+		drawdance::Query query = db.query();
+
+		if(!query.exec(
+			   "update preset set state = ?, name = ?, description = ?, "
+			   "thumbnail = ?, changed_name = null, "
+			   "changed_description = null, changed_thumbnail = null "
+			   "where id = ?",
+			   {state, name, description, thumbnail, id})) {
+			return false;
+		}
+
+		// Just keep going if something about the tag replacement fails.
+		if(query.exec("delete from preset_tag where preset_id = ?", {id}) &&
+		   !tagIds.isEmpty()) {
+			if(query.prepare(
+				   "insert into preset_tag (preset_id, tag_id) "
+				   "values (?, ?)") &&
+			   query.bind(0, id)) {
+				for(int tagId : tagIds) {
+					if(query.bind(1, tagId)) {
+						query.execPrepared();
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 	bool updatePresetState(int id, int state)
@@ -667,6 +714,11 @@ public:
 	{
 		m_presetHistoryChanges.insert(presetId, presetHistoryChange);
 		m_presetChangeTimer.start();
+	}
+
+	bool hasPresetChange(int presetId)
+	{
+		return m_presetChanges.contains(presetId);
 	}
 
 	void removePresetChange(int presetId) { m_presetChanges.remove(presetId); }
@@ -1353,6 +1405,7 @@ private:
 
 		QJsonObject object = doc.object();
 		int presetId = createPreset(
+			int(PresetState::Normal),
 			object.value(QStringLiteral("name")).toString(),
 			object.value(QStringLiteral("description")).toString(),
 			QByteArray::fromBase64(
@@ -1436,6 +1489,11 @@ QString Preset::effectivePreviewTitle() const
 		title.append(
 			QCoreApplication::translate(
 				"brushes::BrushPresetTagModel", " (deleted)"));
+		break;
+	case int(PresetState::Transient):
+		title.append(
+			QCoreApplication::translate(
+				"brushes::BrushPresetTagModel", " (unsaved)"));
 		break;
 	default:
 		break;
@@ -1833,8 +1891,9 @@ void BrushPresetTagModel::readImportBrushes(
 					.arg(slashIndex < 0 ? prefix : prefix.mid(slashIndex + 1));
 
 			int presetId = d->createPreset(
-				name, description, LazyThumbnail::toPng(thumbnail),
-				brush.presetType(), brush.presetData());
+				int(PresetState::Normal), name, description,
+				LazyThumbnail::toPng(thumbnail), brush.presetType(),
+				brush.presetData());
 			if(presetId < 1) {
 				result.errors.append(
 					tr("Could not create brush preset '%1'.").arg(name));
@@ -2593,7 +2652,8 @@ std::optional<Preset> BrushPresetModel::newPreset(
 	beginResetModel();
 	LazyThumbnail lt = LazyThumbnail::fromPixmap(thumbnail);
 	int presetId = d->createPreset(
-		name, description, lt.bytes(), brush.presetType(), brush.presetData());
+		int(PresetState::Normal), name, description, lt.bytes(),
+		brush.presetType(), brush.presetData());
 	if(presetId > 0 && tagId > 0) {
 		d->createPresetTag(presetId, tagId);
 	}
@@ -2759,6 +2819,34 @@ void BrushPresetModel::writePresetChanges()
 	d->writePresetChanges();
 }
 
+bool BrushPresetModel::saveTransientPreset(
+	int presetId, const QString &name, const QString &description,
+	const QPixmap &thumbnail, const QSet<int> &tagIds)
+{
+	int state = getPresetState(presetId);
+	if(state != int(PresetState::Transient)) {
+		qWarning("Can't save transient preset %d in state %d", presetId, state);
+		return false;
+	}
+
+	if(d->hasPresetChange(presetId)) {
+		writePresetChanges();
+	}
+
+	bool ok = d->updateTransientPreset(
+		presetId, int(PresetState::Normal), name, description,
+		LazyThumbnail::fromPixmap(thumbnail).bytes(), tagIds);
+
+	beginResetModel();
+	d->refreshPresetCache();
+	endResetModel();
+
+	Q_EMIT transientPresetChanged(
+		presetId, int(PresetState::Normal), name, description, thumbnail);
+
+	return ok;
+}
+
 void BrushPresetModel::addPresetIdToHistory(int presetId)
 {
 	if(d->tagIdToFilter() == HISTORY_ID) {
@@ -2840,6 +2928,43 @@ int BrushPresetModel::getPresetState(int presetId)
 int BrushPresetModel::countNames(const QString &name) const
 {
 	return d->readPresetCountByName(name);
+}
+
+int BrushPresetModel::handleReceivedBrush(
+	const QString &username, const ActiveBrush &brush)
+{
+	d->writePresetChanges();
+
+	int presetId =
+		d->readPresetIdByContent(brush.presetType(), brush.presetData());
+	if(presetId > 0) {
+		return presetId;
+	}
+
+	{
+		QLocale locale;
+		QDateTime now = QDateTime::currentDateTime();
+		QString name =
+			QStringLiteral("Request %1").arg(now.toString("yyyyMMddhhmm"));
+		QString description =
+			//: %1 is a username, %2 is a date, %3 is a time.
+			tr("Brush requested from user \"%1\" on %2 at %3.")
+				.arg(
+					username, now.toString(locale.dateFormat()),
+					now.toString(locale.timeFormat()));
+		LazyThumbnail lt = LazyThumbnail::fromPixmap(
+			QIcon::fromTheme(QStringLiteral("draw-brush"))
+				.pixmap(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
+		presetId = d->createPreset(
+			int(PresetState::Transient), name, description, lt.bytes(),
+			brush.presetType(), brush.presetData());
+	}
+
+	if(presetId > 0) {
+		addPresetIdToHistory(presetId);
+	}
+
+	return presetId;
 }
 
 void BrushPresetModel::getShortcutActions(

@@ -152,7 +152,7 @@ void BrushPaletteDelegate::paint(
 					rect.right() - iconOffset - iconDimension,
 					rect.top() + iconOffset),
 				iconSize);
-			painter->drawPixmap(stateRect, getDeletedIcon(iconSize));
+			painter->drawPixmap(stateRect, getStateIcon(iconSize, state));
 		}
 	}
 }
@@ -315,10 +315,17 @@ const QPixmap &BrushPaletteDelegate::getEditIcon(const QSize &size) const
 	return getIcon(m_editIcon, size, QStringLiteral("drawpile_presetchanged"));
 }
 
-const QPixmap &BrushPaletteDelegate::getDeletedIcon(const QSize &size) const
+const QPixmap &
+BrushPaletteDelegate::getStateIcon(const QSize &size, int state) const
 {
-	return getIcon(
-		m_deletedIcon, size, QStringLiteral("drawpile_presetdeleted"));
+	switch(state) {
+	case int(brushes::PresetState::Transient):
+		return getIcon(
+			m_unsavedIcon, size, QStringLiteral("drawpile_presetunsaved"));
+	default:
+		return getIcon(
+			m_deletedIcon, size, QStringLiteral("drawpile_presetdeleted"));
+	}
 }
 
 const QPixmap &BrushPaletteDelegate::getIcon(

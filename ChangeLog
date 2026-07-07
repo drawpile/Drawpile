@@ -29,7 +29,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Show the current layer title on the cursor when using the layer pick canvas shortcut (Ctrl+Shift+Left Click by default.) Thanks Gabr for suggesting.
  * Fix: Take the canvas rotation into account when constraining the angle (Shift by default) in the line and gradient tools. Thanks Ben for reporting.
  * Fix: Properly remember the selection of built-in brush tags like All or Untagged.
- * Feature: A history of used brushes, selectable as as a new "History" tag. Deleted brushes will be retained here and can be undeleted until the history is cleared or they are explicitly removed. Thanks Ausjamcian, Geese and Phoneme for suggesting.
+ * Feature: A history of used brushes, selectable as as a new "History" tag. Deleted brushes and brushes requested from other users will be retained here and can be undeleted or saved respectively until the history is cleared or they are explicitly removed. Thanks Ausjamcian, Geese and Phoneme for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

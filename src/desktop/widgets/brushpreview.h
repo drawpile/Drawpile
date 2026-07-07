@@ -72,6 +72,7 @@ private:
 	QPixmap m_presetCache;
 	QPixmap m_changeIconCache;
 	QPixmap m_deletedIconCache;
+	QPixmap m_unsavedIconCache;
 	QRect m_textBounds;
 	DP_BrushPreviewStyle m_style = DP_BRUSH_PREVIEW_STYLE_PLAIN;
 	DP_BrushPreviewShape m_shape = DP_BRUSH_PREVIEW_STROKE;

@@ -7,6 +7,7 @@ namespace brushes {
 enum class PresetState {
 	Normal = 0,
 	Deleted = 1,
+	Transient = 2,
 };
 
 }

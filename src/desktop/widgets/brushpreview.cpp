@@ -345,8 +345,14 @@ const QPixmap &BrushPreview::changeIconPixmap(const QSize &size)
 
 const QPixmap &BrushPreview::stateIconPixmap(const QSize &size)
 {
-	return getIconPixmap(
-		m_deletedIconCache, size, QStringLiteral("drawpile_presetdeleted"));
+	switch(m_presetState) {
+	case int(brushes::PresetState::Transient):
+		return getIconPixmap(
+			m_unsavedIconCache, size, QStringLiteral("drawpile_presetunsaved"));
+	default:
+		return getIconPixmap(
+			m_deletedIconCache, size, QStringLiteral("drawpile_presetdeleted"));
+	}
 }
 
 QPixmap &BrushPreview::getIconPixmap(

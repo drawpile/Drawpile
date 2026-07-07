@@ -47,6 +47,7 @@ public:
 	void newPreset();
 	void overwriteCurrentPreset(QWidget *parent);
 	void undeleteCurrentPreset();
+	void saveCurrentTransientPreset(QWidget *parent);
 	void setSelectedPresetIdsFromShortcut(const QKeySequence &shortcut);
 
 	void importBrushesFrom(const QString &path) { onOpen(path, nullptr); }
