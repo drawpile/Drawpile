@@ -154,6 +154,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	titleWidget->addSpace(4);
 
 	d->searchLineEdit = new QLineEdit(this);
+	d->searchLineEdit->setClearButtonEnabled(true);
 	d->searchLineEdit->setPlaceholderText(tr("Search"));
 	d->searchLineEdit->setMinimumWidth(24);
 	titleWidget->addCustomWidget(d->searchLineEdit, 1);
