@@ -323,7 +323,7 @@ void Touch::initTouchActions(config::Config *cfg, QFormLayout *form)
 
 	KisSliderSpinBox *touchSmoothing = new KisSliderSpinBox;
 	touchSmoothing->setRange(0, 100);
-	touchSmoothing->setPrefix(tr("Smoothing:"));
+	touchSmoothing->setPrefix(tr("Smoothing: "));
 	touchSmoothing->setSuffix(tr("%"));
 	touchSmoothing->setBlockUpdateSignalOnDrag(true);
 	disableKineticScrollingOnWidget(touchSmoothing);
