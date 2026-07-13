@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/filetypedialog.h"
-#include "libshared/util/paths.h"
+#include "libclient/utils/pathinfo.h"
 #include <QPushButton>
 #include <QRegularExpression>
 
@@ -13,7 +13,7 @@ FileTypeDialog::FileTypeDialog(
 {
 	m_ui.setupUi(this);
 	if(name.contains('/') || name.contains('\\')) {
-		name = utils::paths::extractBasename(name);
+		name = utils::PathInfo(name).basename();
 	}
 	name.replace(
 		QRegularExpression(QStringLiteral("\\.[^/\\.\\\\]*\\z")), QString());

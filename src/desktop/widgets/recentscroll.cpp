@@ -3,7 +3,7 @@
 #include "cmake-config/config.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
-#include "libshared/util/paths.h"
+#include "libclient/utils/pathinfo.h"
 #include <QColor>
 #include <QFileInfo>
 #include <QGraphicsOpacityEffect>
@@ -38,10 +38,9 @@ RecentScrollEntry *RecentScrollEntry::ofFile(const utils::Recents::File &file)
 		(s->pixelMetric(QStyle::PM_SmallIconSize) +
 		 s->pixelMetric(QStyle::PM_LargeIconSize)) /
 		2);
-	entry->setText(
-		QStringLiteral("<u style=\"font-size:large;\">%1</u>")
-			.arg(makeWrappable(utils::paths::extractBasename(file.path))
-					 .toHtmlEscaped()));
+	entry->setText(QStringLiteral("<u style=\"font-size:large;\">%1</u>")
+					   .arg(makeWrappable(utils::PathInfo(file.path).basename())
+								.toHtmlEscaped()));
 	entry->setToolTip(QFileInfo{file.path}.absoluteFilePath());
 	entry->setCursor(Qt::PointingHandCursor);
 	return entry;

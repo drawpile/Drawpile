@@ -2,8 +2,11 @@
 package net.drawpile.android;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.ViewConfiguration;
 
@@ -185,5 +188,26 @@ public class MainActivity extends QtActivity {
             }
         }
         return false;
+    }
+
+    public String getContentUriBasename(String input) {
+        Uri uri = Uri.parse(input);
+        String displayName = null;
+        try (Cursor cursor = getContentResolver().query(uri, null, null, null)) {
+            if (cursor != null) {
+                int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (cursor.moveToFirst()) {
+                    displayName = cursor.getString(index);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception retrieving display name from '" + input + "'", e);
+        }
+
+        if (displayName == null || displayName.isEmpty()) {
+            return uri.getLastPathSegment();
+        } else {
+            return displayName;
+        }
     }
 }

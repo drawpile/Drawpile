@@ -51,15 +51,6 @@ inline QString autosaveWritablePath(const QString &fileName = QString())
 	return writablePath(QStringLiteral("autosave"), fileName);
 }
 
-/**
- * @brief Gets the name of the file without any directories.
- *
- * On normal platforms, this is just the basename of the file. On Android, the
- * basename is extracted from the content URI that it uses. The returned path
- * could conceivably be empty, consider checking for it.
- */
-QString extractBasename(QString filename);
-
 bool looksLikeCanvasReplacingSuffix(const QString &suffix);
 
 bool slurp(const QString &path, QByteArray &outBytes, QString &outError);

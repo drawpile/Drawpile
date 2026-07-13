@@ -2,6 +2,7 @@
 #include "libclient/utils/androidutils.h"
 #include <QCoreApplication>
 #include <QLoggingCategory>
+#include <QRegularExpression>
 #include <QString>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #	include <QtAndroid>
@@ -574,6 +575,61 @@ AndroidExitInfo androidGetLastApplicationExitInfo()
 
 	return AndroidExitInfo(
 		reasonCode, exitOrSignalCode, importanceCode, description);
+}
+
+static QString getFallbackContentUriBasename(const QString &contentUri)
+{
+	// Find the last colon (%3A) or slash (%2F) and grab whatever comes after.
+	static QRegularExpression re(
+		QStringLiteral("(?<=:|/|%3a|%2f)"),
+		QRegularExpression::CaseInsensitiveOption);
+	int i = contentUri.lastIndexOf(re);
+	if(i != -1 && i < contentUri.length() - 1) {
+		return contentUri.mid(i);
+	} else {
+		return contentUri;
+	}
+}
+
+static QString getContentUriDisplayName(const QString &contentUri)
+{
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+	if(clearException(env) || !checkValid("activity", activity)) {
+		return QString();
+	}
+
+	QJniObject contentUriObj = QJniObject::fromString(contentUri);
+	if(clearException(env) || !checkValid("contentUriObj", contentUriObj)) {
+		return QString();
+	}
+
+	QJniObject basenameObj = activity.callObjectMethod(
+		"getContentUriBasename", "(Ljava/lang/String;)Ljava/lang/String;",
+		contentUriObj.object<jstring>());
+	if(clearException(env) || !checkValid("basenameObj", basenameObj)) {
+		return QString();
+	}
+
+	QString basename = basenameObj.toString();
+	clearException(env);
+	return basename;
+}
+
+QString androidGetContentUriBasename(const QString &contentUri)
+{
+	if(contentUri.isEmpty()) {
+		return QString();
+	}
+
+	QString displayName = getContentUriDisplayName(contentUri);
+	if(!displayName.isEmpty()) {
+		return displayName;
+	}
+
+	return getFallbackContentUriBasename(contentUri);
 }
 
 }

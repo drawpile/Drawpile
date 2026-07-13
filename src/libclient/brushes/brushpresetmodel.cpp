@@ -3026,16 +3026,4 @@ void BrushPresetModel::tagsReset()
 	endResetModel();
 }
 
-QPixmap BrushPresetModel::loadBrushPreview(const QFileInfo &fileInfo)
-{
-	QString file = fileInfo.path() + QDir::separator() +
-				   fileInfo.completeBaseName() + "_prev.png";
-	QPixmap pixmap;
-	if(pixmap.load(file)) {
-		return pixmap;
-	} else {
-		return QPixmap();
-	}
-}
-
 }

@@ -4,11 +4,11 @@ extern "C" {
 }
 #include "libclient/project/metadata.h"
 #include "libclient/project/recoverymodel.h"
+#include "libclient/utils/pathinfo.h"
 #include "libclient/utils/wasmpersistence.h"
 #include <QDir>
 #include <QHash>
 #include <algorithm>
-#include <libshared/util/paths.h>
 
 namespace project {
 
@@ -92,7 +92,7 @@ QString RecoveryEntry::mostDescriptiveBaseName() const
 	loadMetadata();
 
 	if(!m_lastSave.isEmpty()) {
-		QString lastSaveBaseName = utils::paths::extractBasename(m_lastSave);
+		QString lastSaveBaseName = utils::PathInfo(m_lastSave).basename();
 		stripExtension(lastSaveBaseName);
 		if(!lastSaveBaseName.isEmpty()) {
 			return lastSaveBaseName;
@@ -100,8 +100,7 @@ QString RecoveryEntry::mostDescriptiveBaseName() const
 	}
 
 	if(!m_lastExport.isEmpty()) {
-		QString lastExportBaseName =
-			utils::paths::extractBasename(m_lastExport);
+		QString lastExportBaseName = utils::PathInfo(m_lastExport).basename();
 		stripExtension(lastExportBaseName);
 		if(!lastExportBaseName.isEmpty()) {
 			return lastExportBaseName;

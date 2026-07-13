@@ -365,8 +365,6 @@ signals:
 	void shortcutActionRemoved(const QString &name);
 
 private:
-	static QPixmap loadBrushPreview(const QFileInfo &fileInfo);
-
 	BrushPresetTagModel::Private *d;
 };
 

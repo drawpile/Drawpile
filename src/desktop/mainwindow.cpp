@@ -96,6 +96,7 @@ extern "C" {
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/images.h"
 #include "libclient/utils/logging.h"
+#include "libclient/utils/pathinfo.h"
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
@@ -1160,8 +1161,7 @@ void MainWindow::updateTitle()
 {
 	QString name;
 	if(m_doc->haveCurrentPath()) {
-		QFileInfo info(m_doc->currentPath());
-		name = info.completeBaseName();
+		name = utils::PathInfo(m_doc->currentPath()).basenameWithoutExtension();
 	} else {
 		name = tr("Untitled");
 	}
@@ -1218,8 +1218,8 @@ void MainWindow::updateExportPath(const QString &path)
 		action->setText(tr("Export Again"));
 		action->setEnabled(false);
 	} else {
-		QFileInfo info(path);
-		action->setText(tr("Export Again to %1").arg(info.fileName()));
+		action->setText(
+			tr("Export Again to %1").arg(utils::PathInfo(path).basename()));
 		action->setEnabled(!path.isEmpty() && !m_doc->isSaveInProgress());
 	}
 }
@@ -2839,18 +2839,21 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 		}
 	}
 
-	if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(path).hasMatch()) {
+	QString basename = utils::PathInfo(path).basename();
+	if(QRegularExpression(QStringLiteral("\\.dp(rec|txt)$"), opt)
+		   .match(basename)
+		   .hasMatch()) {
 		bool isTemplate;
 		DP_LoadResult result =
 			m_doc->loadRecording(loadPath, false, &isTemplate);
 		showLoadResultMessage(result);
 		if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
-			QFileInfo fileinfo(path);
 			m_playbackDialog =
 				new dialogs::PlaybackDialog(m_doc->canvas(), this);
 			m_playbackDialog->setWindowTitle(
-				fileinfo.completeBaseName() + " - " +
-				m_playbackDialog->windowTitle());
+				QStringLiteral("%1 - %2")
+					.arg(utils::PathInfo::stripExtension(basename))
+					.arg(m_playbackDialog->windowTitle()));
 			m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 			m_playbackDialog->show();
 			m_playbackDialog->centerOnParent();
@@ -2876,15 +2879,16 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 		}
 
 	} else if(
-		QRegularExpression{"\\.drawdancedump$", opt}.match(path).hasMatch()) {
+		QRegularExpression(QStringLiteral("\\.drawdancedump$"), opt)
+			.match(basename)
+			.hasMatch()) {
 		DP_LoadResult result = m_doc->loadRecording(loadPath, true);
 		if(result == DP_LOAD_RESULT_SUCCESS) {
-			QFileInfo fileinfo{path};
 			m_dumpPlaybackDialog =
 				new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
 			m_dumpPlaybackDialog->setWindowTitle(
 				QStringLiteral("%1 - %2")
-					.arg(fileinfo.completeBaseName())
+					.arg(utils::PathInfo::stripExtension(basename))
 					.arg(m_dumpPlaybackDialog->windowTitle()));
 			m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
 			m_dumpPlaybackDialog->show();
@@ -5560,7 +5564,7 @@ void MainWindow::dropUrl(const QUrl &url)
 {
 	if(url.isLocalFile()) {
 		QString path = url.toLocalFile();
-		QString suffix = QFileInfo(path).suffix();
+		QString suffix = utils::PathInfo(path).extension();
 		if(suffix.compare(QStringLiteral("zip"), Qt::CaseInsensitive) == 0) {
 			m_dockBrushPalette->importBrushesFrom(path);
 		} else if(

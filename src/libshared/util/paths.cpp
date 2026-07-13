@@ -7,9 +7,6 @@
 #include <QFile>
 #include <QLocale>
 #include <cmake-config/config.h>
-#ifdef Q_OS_ANDROID
-#	include <QRegularExpression>
-#endif
 
 namespace utils {
 namespace paths {
@@ -117,23 +114,6 @@ QString writablePath(
 	}
 
 	return path;
-}
-
-QString extractBasename(QString filename)
-{
-	const QFileInfo file(filename);
-	QString title = file.fileName();
-#ifdef Q_OS_ANDROID
-	// On Android, the file "name" is a URI-encoded path thing. We find the
-	// last : (%3A) or / (%2F) and chop off anything that comes before that.
-	// That appears to consistently give just the actual file name.
-	int i = title.lastIndexOf(QRegularExpression{
-		"(?<=%3a|%2f)", QRegularExpression::CaseInsensitiveOption});
-	if(i != -1) {
-		title.remove(0, i);
-	}
-#endif
-	return title;
 }
 
 bool looksLikeCanvasReplacingSuffix(const QString &suffix)

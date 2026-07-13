@@ -129,6 +129,8 @@ void stopConnectService();
 
 AndroidExitInfo androidGetLastApplicationExitInfo();
 
+QString androidGetContentUriBasename(const QString &contentUri);
+
 }
 
 #endif

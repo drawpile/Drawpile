@@ -8,6 +8,7 @@
 #include "libclient/config/config.h"
 #include "libclient/document.h"
 #include "libclient/import/canvasloaderrunnable.h"
+#include "libclient/utils/pathinfo.h"
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libshared/util/paths.h"
 #include <QBuffer>
@@ -987,7 +988,7 @@ void FileWrangler::updateLastPath(LastPath type, const QString &path)
 	// file, since paths are weird content URIs that don't interact
 	// with the native Android file picker in any kind of sensible
 	// way.
-	QString basename = utils::paths::extractBasename(path);
+	QString basename = utils::PathInfo(path).basename();
 	if(!basename.isEmpty()) {
 		setLastPath(type, basename);
 	}
@@ -1243,7 +1244,7 @@ QString FileWrangler::showOpenFileDialogFilters(
 		// On Android, the last path is really just the name of the last file,
 		// since paths are weird content URIs that don't interact with the
 		// native Android file picker in any kind of sensible way.
-		QString basename = utils::paths::extractBasename(filename);
+		QString basename = utils::PathInfo(filename).basename();
 		if(!basename.isEmpty()) {
 			setLastPath(type, basename);
 		}
