@@ -2091,22 +2091,22 @@ static void create_sublayer(DP_TransientLayerContent *tlc, int sublayer_id,
 #define PUT_IMAGE_PIXEL_PUT  1
 #define PUT_IMAGE_PIXEL_SET  2
 
-static int put_image_handle_pixel(int blend_mode, DP_Pixel8 pixel,
-                                  DP_Pixel15 *out_dst_pixel)
+static int put_image_handle_pixel(bool tile_was_present, int blend_mode,
+                                  DP_Pixel8 pixel, DP_Pixel15 *out_dst_pixel)
 {
     switch (blend_mode) {
     case DP_BLEND_MODE_ERASE:
-        if (pixel.a == 255) {
+        if (!tile_was_present || pixel.a == 0) {
+            return PUT_IMAGE_PIXEL_SKIP;
+        }
+        else if (pixel.a == 255) {
             *out_dst_pixel = DP_pixel15_zero();
             return PUT_IMAGE_PIXEL_SET;
         }
-        else if (pixel.a != 0) {
+        else {
             uint16_t a = DP_channel8_to_15(pixel.a);
             *out_dst_pixel = (DP_Pixel15){a, a, a, a};
             return PUT_IMAGE_PIXEL_PUT;
-        }
-        else {
-            return PUT_IMAGE_PIXEL_SKIP;
         }
     case DP_BLEND_MODE_NORMAL:
         if (pixel.a == 255) {
@@ -2124,8 +2124,13 @@ static int put_image_handle_pixel(int blend_mode, DP_Pixel8 pixel,
         *out_dst_pixel = DP_pixel8_to_15(pixel);
         return pixel.a == 255 ? PUT_IMAGE_PIXEL_SET : PUT_IMAGE_PIXEL_PUT;
     case DP_BLEND_MODE_REPLACE:
-        *out_dst_pixel = DP_pixel8_to_15(pixel);
-        return PUT_IMAGE_PIXEL_SET;
+        if (tile_was_present || pixel.a != 0) {
+            *out_dst_pixel = DP_pixel8_to_15(pixel);
+            return PUT_IMAGE_PIXEL_SET;
+        }
+        else {
+            return PUT_IMAGE_PIXEL_SKIP;
+        }
     default:
         if (pixel.a != 0) {
             *out_dst_pixel = DP_pixel8_to_15(pixel);
@@ -2155,13 +2160,15 @@ void DP_transient_layer_content_put_pixels(DP_TransientLayerContent *tlc,
 
     while (DP_tile_iterator_next(&ti)) {
         int i = ti.row * wt + ti.col;
-        if (tlc->elements[i].tile || DP_blend_mode_blend_blank(blend_mode)) {
+        bool tile_present = tlc->elements[i].tile;
+        if (tile_present || DP_blend_mode_blend_blank(blend_mode)) {
             DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
             DP_TransientTile *tt = NULL;
             while (DP_tile_into_dst_iterator_next(&tidi)) {
                 DP_Pixel8 pixel = pixels[tidi.dst_y * width + tidi.dst_x];
                 DP_Pixel15 dst_pixel;
-                switch (put_image_handle_pixel(blend_mode, pixel, &dst_pixel)) {
+                switch (put_image_handle_pixel(tile_present, blend_mode, pixel,
+                                               &dst_pixel)) {
                 case PUT_IMAGE_PIXEL_SKIP:
                     break;
                 case PUT_IMAGE_PIXEL_PUT:
