@@ -2096,6 +2096,7 @@ static int put_image_handle_pixel(bool tile_was_present, int blend_mode,
 {
     switch (blend_mode) {
     case DP_BLEND_MODE_ERASE:
+    case DP_BLEND_MODE_ERASE_PRESERVE:
         if (!tile_was_present || pixel.a == 0) {
             return PUT_IMAGE_PIXEL_SKIP;
         }
