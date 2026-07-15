@@ -6647,7 +6647,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+25"/>
         <source>Dabs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toques</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6657,17 +6657,17 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+11"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Directional Offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamientos</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Tracking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguimiento/Trazado</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6677,12 +6677,12 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+8"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Grid Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa de Cuadrícula</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8217,7 +8217,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Choose an action to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige una acción para continuar.</translation>
     </message>
 </context>
 <context>
@@ -8334,19 +8334,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+6"/>
         <source>Xiaomi Stylus</source>
         <extracomment>Xiaomi is a brand of Android devices.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Xiaomi Stylus</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Apple Pencil</source>
         <extracomment>Apple is referring to the brand, not the fruit.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Apple Pencil</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Anti-Strain</source>
         <extracomment>This refers to a stylus pressure curve that is steeper than the default so that you don&apos;t have to strain to press the stylus down.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Presión Suave/Anti-Fatiga</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8364,12 +8364,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/ffmpegdialog.cpp" line="+22"/>
         <source>FFmpeg Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de FFmpeg</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>FFmpeg path or command:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruta o comando de FFmpeg:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8379,7 +8379,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+36"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprobando…</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -8400,52 +8400,52 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+109"/>
         <source>Successfully detected ffmpeg version %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se ha detectado correctamente la versión %1 de ffmpeg.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Error: the given program could not be started.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: No se pudo iniciar el programa especificado.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program did not finish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: el programa proporcionado no finalizó.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program exited with an error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: el programa especificado finalizó con un error.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program does not appear to be ffmpeg.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: el programa proporcionado no parece ser ffmpeg.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>You can download a Windows version of ffmpeg from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes descargar una versión de ffmpeg para Windows desde %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>After downloading and unpacking everything, click on Choose and locate the %1 file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Después de descargar y descomprimir todo, haga clic en Elegir y localice el archivo %1.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes instalar ffmpeg a través de Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Probablemente puedas instalar ffmpeg a través de tu gestor de paquetes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Once it is installed, just using %1 in the field above should work. Otherwise, click on Choose and locate the executable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Una vez instalado, bastará con escribir %1 en el campo de arriba. De lo contrario, haga clic en Elegir y localice el archivo ejecutable.</translation>
     </message>
 </context>
 <context>
@@ -8453,7 +8453,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+74"/>
         <source>Set speed from FPS…</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer velocidad según FPS…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8463,12 +8463,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Reset range</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer rango</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer Velocidad</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8488,7 +8488,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+61"/>
         <source>FPS:</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS:</translation>
     </message>
 </context>
 <context>
@@ -8496,12 +8496,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/inputsettingsdialog.cpp" line="-35"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de entrada</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Stabilization</source>
-        <translation type="unfinished"></translation>
+        <translation>Estabilización</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8511,32 +8511,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Finish strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalizar Trazos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Adjust with velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar con la velocidad</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Maximum adjustment: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste máximo: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Maximum velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad máxima: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Adjustment</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste</translation>
     </message>
 </context>
 <context>
@@ -8544,7 +8544,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="-559"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Descartar</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -8568,7 +8568,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+27"/>
         <source>This session is hosted on a server that &lt;strong&gt;does not support the web browser version of Drawpile&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión se aloja en un servidor que &lt;strong&gt;no admite la versión de Drawpile para navegador web&lt;/strong&gt;.</translation>
     </message>
     <message>
         <location line="+3"/>
