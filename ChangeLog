@@ -33,6 +33,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add a clear button for the search field in the brushes dock. Thanks Bluestrings for suggesting.
  * Fix: Optimize non-tile-aligned canvas resizes. They should now be faster and use less memory. Thanks Bluestrings for reporting.
  * Fix: Retrieve file display names properly on Android. They could sometimes end up with wonky names when using file providers with ugly paths.
+ * Fix: Use the proper input minimum and input maximum ranges in the MyPaint brush settings. Thanks Pine for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

@@ -149,7 +149,7 @@ void MyPaintInput::constructCurveWidgets()
 	m_xMinSpinner = new KisDoubleSliderSpinBox{this};
 	wrapperLayout->addWidget(m_xMinSpinner);
 	m_xMinSpinner->setPrefix(tr("Input Minimum: "));
-	m_xMinSpinner->setRange(m_yHardMin, m_yHardMax - 0.01, 2);
+	m_xMinSpinner->setRange(m_xHardMin, m_xHardMax - 0.01, 2);
 	connect(
 		m_xMinSpinner,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
@@ -165,7 +165,7 @@ void MyPaintInput::constructCurveWidgets()
 	m_xMaxSpinner = new KisDoubleSliderSpinBox{this};
 	wrapperLayout->addWidget(m_xMaxSpinner);
 	m_xMaxSpinner->setPrefix(tr("Input Maximum: "));
-	m_xMaxSpinner->setRange(m_yHardMin + 0.01, m_yHardMax, 2);
+	m_xMaxSpinner->setRange(m_xHardMin + 0.01, m_xHardMax, 2);
 	connect(
 		m_xMaxSpinner,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
