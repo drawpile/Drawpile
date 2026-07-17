@@ -133,6 +133,11 @@ typedef max_align_t DP_max_align_t;
 #    define DP_ANONYMOUS(NAME) NAME
 #    define DP_NULLPTR         nullptr
 #    define DP_CAST(T, X)      static_cast<T>(X)
+#    define DP_CXX_DISABLE_COPY_MOVE(X)   \
+        X(const X &) = delete;            \
+        X &operator=(const X &) = delete; \
+        X(X &&) = delete;                 \
+        X &operator=(X &&) = delete;
 #else
 #    define DP_RESTRICT        restrict
 #    define DP_NORETURN        _Noreturn

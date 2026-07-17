@@ -842,6 +842,10 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 				encoderNameBytes.constData(),
 			};
 
+		} else if(encoderType.startsWith(QStringLiteral("windows"))) {
+			destination = DP_SAVE_VIDEO_DESTINATION_WINDOWS;
+			destinationParam = outputPathBytes.data();
+
 		} else {
 			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
 			destinationParam = outputPathBytes.data();

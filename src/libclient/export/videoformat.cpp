@@ -176,6 +176,11 @@ static void addVideoEncoderOption(
 				{QStringLiteral("androidhardware:") + name,
 				 QStringLiteral("Hardware") + suffix, type});
 			return;
+		case DP_SAVE_VIDEO_ENCODER_TYPE_WINDOWS:
+			options.append(
+				{QStringLiteral("windows:") + name,
+				 QStringLiteral("Windows") + suffix, type});
+			return;
 		}
 		DP_warn("Unhandled encoder type %d", type);
 	}
@@ -228,6 +233,7 @@ int getAutomaticVideoEncoderOptionIndex(
 		DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG,
 		DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE,
 		DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_HARDWARE,
+		DP_SAVE_VIDEO_ENCODER_TYPE_WINDOWS,
 		DP_SAVE_VIDEO_ENCODER_TYPE_LIBAV,
 	};
 	int count = options.size();

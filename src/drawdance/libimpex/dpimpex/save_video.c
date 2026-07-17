@@ -19,6 +19,11 @@
 #include <libswscale/swscale.h>
 #ifdef DP_ANDROID_VIDEO_ENCODER
 #    include "android_video_encoder.h"
+#endif
+#ifdef DP_WINDOWS_VIDEO_ENCODER
+#    include "windows_video_encoder.h"
+#endif
+#if defined(DP_ANDROID_VIDEO_ENCODER) || defined(DP_WINDOWS_VIDEO_ENCODER)
 #    include <libavutil/imgutils.h>
 #endif
 
@@ -46,7 +51,8 @@ static bool is_destination_ok(DP_SaveVideoDestination destination,
                               void *destination_param)
 {
     switch (destination) {
-    case DP_SAVE_VIDEO_DESTINATION_PATH: {
+    case DP_SAVE_VIDEO_DESTINATION_PATH:
+    case DP_SAVE_VIDEO_DESTINATION_WINDOWS: {
         const char *path = destination_param;
         return path && path[0] != '\0';
     }
@@ -1214,6 +1220,17 @@ static void get_save_video_format_support_android(int format, DP_Vector *vec)
 }
 #endif
 
+#ifdef DP_WINDOWS_VIDEO_ENCODER
+static void get_save_video_format_support_windows(int format, DP_Vector *vec)
+{
+    if (DP_windows_video_encoder_format_support(format)) {
+        DP_SaveVideoSupportEntry entry = {DP_SAVE_VIDEO_ENCODER_TYPE_WINDOWS,
+                                          "MediaFoundation"};
+        DP_VECTOR_PUSH_TYPE(vec, DP_SaveVideoSupportEntry, entry);
+    }
+}
+#endif
+
 static DP_SaveVideoSupport *get_save_video_format_support(int format)
 {
     DP_Vector vec;
@@ -1223,6 +1240,9 @@ static DP_SaveVideoSupport *get_save_video_format_support(int format)
     get_save_video_format_support_ffmpeg(format, &vec);
 #ifdef DP_ANDROID_VIDEO_ENCODER
     get_save_video_format_support_android(format, &vec);
+#endif
+#ifdef DP_WINDOWS_VIDEO_ENCODER
+    get_save_video_format_support_windows(format, &vec);
 #endif
 
     DP_SaveVideoSupport *support =
@@ -1452,22 +1472,25 @@ cleanup:
     return result;
 }
 
-#ifdef DP_ANDROID_VIDEO_ENCODER
-#    define ANDROID_PREPARE_OK          0
-#    define ANDROID_DRAIN_END_OF_STREAM (-1)
-#    define ANDROID_DRAIN_ERROR         (-2)
-#    define ANDROID_PREPARE_ERROR       (-3)
-
-typedef struct DP_SaveVideoAndroidProgress {
+#if defined(DP_ANDROID_VIDEO_ENCODER) || defined(DP_WINDOWS_VIDEO_ENCODER)
+typedef struct DP_SaveVideoProgress {
     double progress;
     DP_SaveProgressFn progress_fn;
     void *user;
-} DP_SaveVideoAndroidProgress;
+} DP_SaveVideoProgress;
 
-static bool android_report_progress(DP_SaveVideoAndroidProgress *ap,
-                                    DP_SaveResult *out_save_result)
+static void save_video_progress_frame(DP_SaveVideoProgress *vp, double progress,
+                                      double max_progress)
 {
-    if (report_progress(ap->progress_fn, ap->user, ap->progress)) {
+    if (isfinite(progress) && progress >= vp->progress) {
+        vp->progress = DP_min_double(progress, 1.0) * max_progress;
+    }
+}
+
+static bool save_video_progress_report(DP_SaveVideoProgress *vp,
+                                       DP_SaveResult *out_save_result)
+{
+    if (report_progress(vp->progress_fn, vp->user, vp->progress)) {
         return true;
     }
     else {
@@ -1475,15 +1498,22 @@ static bool android_report_progress(DP_SaveVideoAndroidProgress *ap,
         return false;
     }
 }
+#endif
+
+#ifdef DP_ANDROID_VIDEO_ENCODER
+#    define ANDROID_PREPARE_OK          0
+#    define ANDROID_DRAIN_END_OF_STREAM (-1)
+#    define ANDROID_DRAIN_ERROR         (-2)
+#    define ANDROID_PREPARE_ERROR       (-3)
 
 static int android_drain(DP_AndroidVideoEncoder *ave, long long initial_timeout,
-                         DP_SaveVideoAndroidProgress *ap,
+                         DP_SaveVideoProgress *vp,
                          DP_SaveResult *out_save_result)
 {
     int count = 0;
     long long timeout = initial_timeout;
     while (true) {
-        if (!android_report_progress(ap, out_save_result)) {
+        if (!save_video_progress_report(vp, out_save_result)) {
             return ANDROID_DRAIN_ERROR;
         }
 
@@ -1507,11 +1537,11 @@ static int android_drain(DP_AndroidVideoEncoder *ave, long long initial_timeout,
 }
 
 static int android_prepare(DP_AndroidVideoEncoder *ave,
-                           DP_SaveVideoAndroidProgress *ap,
+                           DP_SaveVideoProgress *vp,
                            DP_SaveResult *out_save_result)
 {
     while (true) {
-        if (!android_report_progress(ap, out_save_result)) {
+        if (!save_video_progress_report(vp, out_save_result)) {
             return ANDROID_PREPARE_ERROR;
         }
 
@@ -1520,7 +1550,7 @@ static int android_prepare(DP_AndroidVideoEncoder *ave,
             break;
         }
         else if (prepare_result == DP_ANDROID_VIDEO_ENCODER_STATUS_TIMEOUT) {
-            int drain_result = android_drain(ave, 0LL, ap, out_save_result);
+            int drain_result = android_drain(ave, 0LL, vp, out_save_result);
             if (drain_result == ANDROID_DRAIN_END_OF_STREAM) {
                 DP_error_set("Unexpected end of stream");
                 *out_save_result = DP_SAVE_RESULT_INTERNAL_ERROR;
@@ -1574,7 +1604,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
     int output_width = get_format_dimension(params.format, params.width);
     int output_height = get_format_dimension(params.format, params.height);
 
-    DP_SaveVideoAndroidProgress ap = {0.0, params.progress_fn, params.user};
+    DP_SaveVideoProgress vp = {0.0, params.progress_fn, params.user};
     DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
     while (params.next_frame_fn(params.user, &f)) {
         int input_width = f.width;
@@ -1592,12 +1622,10 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
             goto cleanup;
         }
 
-        if (isfinite(f.progress) && f.progress >= ap.progress) {
-            ap.progress = DP_min_double(f.progress, 1.0) * 0.97;
-        }
+        save_video_progress_frame(&vp, f.progress, 0.97);
 
         for (int i = 0; i < f.instances; ++i) {
-            if (android_prepare(ave, &ap, &result) != ANDROID_PREPARE_OK) {
+            if (android_prepare(ave, &vp, &result) != ANDROID_PREPARE_OK) {
                 goto cleanup;
             }
 
@@ -1712,7 +1740,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
                 goto cleanup;
             }
 
-            if (!android_report_progress(&ap, &result)) {
+            if (!save_video_progress_report(&vp, &result)) {
                 goto cleanup;
             }
         }
@@ -1723,8 +1751,8 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    ap.progress = 0.98;
-    if (!android_report_progress(&ap, &result)) {
+    vp.progress = 0.98;
+    if (!save_video_progress_report(&vp, &result)) {
         goto cleanup;
     }
 
@@ -1735,7 +1763,7 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
     sws_freeContext(sws_context);
     sws_context = NULL;
 
-    if (android_prepare(ave, &ap, &result) != ANDROID_PREPARE_OK) {
+    if (android_prepare(ave, &vp, &result) != ANDROID_PREPARE_OK) {
         goto cleanup;
     }
 
@@ -1745,9 +1773,9 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    ap.progress = 0.99;
+    vp.progress = 0.99;
     while (true) {
-        int drain_result = android_drain(ave, 1000000LL, &ap, &result);
+        int drain_result = android_drain(ave, 1000000LL, &vp, &result);
         if (drain_result == ANDROID_DRAIN_END_OF_STREAM) {
             break;
         }
@@ -1756,8 +1784,8 @@ static DP_SaveResult save_video_android(DP_SaveVideoParams params)
         }
     }
 
-    ap.progress = 1.0;
-    if (!android_report_progress(&ap, &result)) {
+    vp.progress = 1.0;
+    if (!save_video_progress_report(&vp, &result)) {
         goto cleanup;
     }
 
@@ -1777,6 +1805,173 @@ cleanup:
 #else
     (void)params;
     DP_error_set("Android video encoder not supported");
+    return DP_SAVE_RESULT_BAD_ARGUMENTS;
+#endif
+}
+
+static DP_SaveResult save_video_windows(DP_SaveVideoParams params)
+{
+#ifdef DP_WINDOWS_VIDEO_ENCODER
+    DP_SaveResult result = DP_SAVE_RESULT_SUCCESS;
+    DP_WindowsVideoEncoder *wve = NULL;
+    struct SwsContext *sws_context = NULL;
+    uint8_t *img_buffers[4];
+    int img_linesizes[4];
+    bool img_allocated = false;
+
+    int output_width = get_format_dimension(params.format, params.width);
+    int output_height = get_format_dimension(params.format, params.height);
+
+    int frame_size = av_image_get_buffer_size(AV_PIX_FMT_NV12, output_width,
+                                              output_height, 1);
+    if (frame_size <= 0) {
+        DP_error_set("Error %d getting frame size", frame_size);
+        return DP_SAVE_RESULT_INTERNAL_ERROR;
+    }
+
+    {
+        AVRational framerate = av_d2q(params.framerate, 1000000000);
+        wve = DP_windows_video_encoder_new((DP_WindowsVideoEncoderParams){
+            params.destination_param,
+            framerate.num,
+            framerate.den,
+            output_width,
+            output_height,
+            frame_size,
+        });
+    }
+    if (!wve) {
+        result = DP_SAVE_RESULT_OPEN_ERROR;
+        goto cleanup;
+    }
+
+    if (!DP_windows_video_encoder_start(wve)) {
+        result = DP_SAVE_RESULT_INTERNAL_ERROR;
+        goto cleanup;
+    }
+
+    DP_SaveVideoProgress vp = {0.0, params.progress_fn, params.user};
+    DP_SaveVideoNextFrame f = {DP_SAVE_RESULT_SUCCESS, 0, 0, NULL, 0.0, 0};
+    while (params.next_frame_fn(params.user, &f)) {
+        int input_width = f.width;
+        int input_height = f.height;
+        if (input_width <= 0 || input_height <= 0 || !f.pixels) {
+            DP_error_set("Frame has no image");
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        if (f.instances < 1) {
+            DP_error_set("Frame has %d instances (should be >= 1)",
+                         f.instances);
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+            goto cleanup;
+        }
+
+        save_video_progress_frame(&vp, f.progress, 0.98);
+
+        for (int i = 0; i < f.instances; ++i) {
+            DP_WindowsVideoEncoderFrame dst;
+            if (!DP_windows_video_encoder_prepare(wve, &dst)) {
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
+            sws_context = sws_getCachedContext(
+                sws_context, input_width, input_height, AV_PIX_FMT_BGRA,
+                output_width, output_height, AV_PIX_FMT_NV12,
+                get_scaling_flags(params.flags, input_width, input_height,
+                                  output_width, output_height),
+                NULL, NULL, NULL);
+            if (!sws_context) {
+                DP_error_set("Failed to allocate scaling context");
+                result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                goto cleanup;
+            }
+
+            if (f.instances == 1) {
+                // Just a single frame, scale it into the native buffer.
+                const uint8_t *src_buffers[] = {f.pixels, NULL, NULL, NULL};
+                const int src_linesizes[] = {f.width * 4, 0, 0, 0};
+                sws_scale(sws_context, src_buffers, src_linesizes, 0, f.height,
+                          dst.buffers, dst.linesizes);
+            }
+            else {
+                // Repeated frame, scale it into an intermediate buffer, then
+                // copy it over to the native one for each instance.
+                if (i == 0) {
+                    if (!img_allocated) {
+                        int img_result = av_image_alloc(
+                            img_buffers, img_linesizes, output_width,
+                            output_height, AV_PIX_FMT_NV12, 32);
+                        if (img_result < 0) {
+                            DP_error_set("Error %d allocating image buffer",
+                                         img_result);
+                            result = DP_SAVE_RESULT_INTERNAL_ERROR;
+                            goto cleanup;
+                        }
+                        img_allocated = true;
+                    }
+
+                    const uint8_t *src_slice[] = {f.pixels, NULL, NULL, NULL};
+                    const int src_stride[] = {f.width * 4, 0, 0, 0};
+                    sws_scale(sws_context, src_slice, src_stride, 0, f.height,
+                              img_buffers, img_linesizes);
+                }
+
+                av_image_copy2(dst.buffers, dst.linesizes, img_buffers,
+                               img_linesizes, AV_PIX_FMT_NV12, output_width,
+                               output_height);
+            }
+
+            if (!DP_windows_video_encoder_commit(wve)) {
+                result = DP_SAVE_RESULT_WRITE_ERROR;
+                goto cleanup;
+            }
+
+            if (!save_video_progress_report(&vp, &result)) {
+                goto cleanup;
+            }
+        }
+    }
+
+    if (f.result != DP_SAVE_RESULT_SUCCESS) {
+        result = f.result;
+        goto cleanup;
+    }
+
+    vp.progress = 0.99;
+    if (!save_video_progress_report(&vp, &result)) {
+        goto cleanup;
+    }
+
+    if (img_allocated) {
+        img_allocated = false;
+        av_freep(&img_buffers[0]);
+    }
+    sws_freeContext(sws_context);
+    sws_context = NULL;
+
+    if (!DP_windows_video_encoder_finish(wve)) {
+        result = DP_SAVE_RESULT_WRITE_ERROR;
+        goto cleanup;
+    }
+
+    vp.progress = 1.0;
+    if (!save_video_progress_report(&vp, &result)) {
+        goto cleanup;
+    }
+
+cleanup:
+    if (img_allocated) {
+        av_freep(&img_buffers[0]);
+    }
+    sws_freeContext(sws_context);
+    DP_windows_video_encoder_free(wve);
+    return result;
+#else
+    (void)params;
+    DP_error_set("Windows video encoder not supported");
     return DP_SAVE_RESULT_BAD_ARGUMENTS;
 #endif
 }
@@ -1811,6 +2006,8 @@ DP_SaveResult DP_save_video(DP_SaveVideoParams params)
         return save_video_ffmpeg(params);
     case DP_SAVE_VIDEO_DESTINATION_ANDROID:
         return save_video_android(params);
+    case DP_SAVE_VIDEO_DESTINATION_WINDOWS:
+        return save_video_windows(params);
     default:
         return save_video_libav(params);
     }

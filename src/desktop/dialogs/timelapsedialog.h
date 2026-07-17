@@ -3,6 +3,7 @@
 #define DESKTOP_DIALOGS_TIMELAPSEDIALOG_H
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/drawdance/viewmode.h"
+#include "libclient/export/videoexporthandle.h"
 #include <QDialog>
 #include <QImage>
 #include <QRect>
@@ -41,6 +42,7 @@ namespace dialogs {
 
 class TimelapseDialog final : public QDialog {
 	Q_OBJECT
+	Q_DISABLE_COPY_MOVE(TimelapseDialog)
 public:
 	explicit TimelapseDialog(
 		canvas::PaintEngine *paintEngine, const QRect &crop, bool inFrameView,
@@ -201,6 +203,7 @@ private:
 	double m_flipbookFramerate = 24.0;
 	bool m_inFrameView;
 	bool m_cancelling = false;
+	DP_DECLARE_VIDEO_EXPORT_HANDLE(m_videoExportHandle)
 };
 
 }

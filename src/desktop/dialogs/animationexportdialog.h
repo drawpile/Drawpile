@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_DIALOGS_ANIMATIONEXPORTDIALOG
 #define DESKTOP_DIALOGS_ANIMATIONEXPORTDIALOG
+#include "libclient/export/videoexporthandle.h"
 #include <QDialog>
 #include <QVariantHash>
 #include <QVector>
@@ -26,6 +27,7 @@ namespace dialogs {
 
 class AnimationExportDialog final : public QDialog {
 	Q_OBJECT
+	Q_DISABLE_COPY_MOVE(AnimationExportDialog)
 public:
 	explicit AnimationExportDialog(
 		int loops, double scalePercent, bool scaleSmooth,
@@ -126,6 +128,7 @@ private:
 	double m_flipbookFramerate = -1.0;
 	QRect m_flipbookCrop;
 	QString m_ffmpegPath;
+	DP_DECLARE_VIDEO_EXPORT_HANDLE(m_videoExportHandle)
 };
 
 }

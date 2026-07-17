@@ -87,6 +87,12 @@ if(TARGET LIBAV::LIBAV)
             target_link_libraries(dpimpex PUBLIC "Qt${QT_VERSION_MAJOR}::AndroidExtras")
         endif()
         target_compile_definitions(dpimpex PUBLIC DP_ANDROID_VIDEO_ENCODER=1)
+    elseif(WIN32)
+        target_sources(dpimpex PRIVATE
+            dpimpex/windows_video_encoder.cpp
+            dpimpex/windows_video_encoder.h
+        )
+	target_compile_definitions(dpimpex PUBLIC DP_WINDOWS_VIDEO_ENCODER=1)
     endif()
 endif()
 

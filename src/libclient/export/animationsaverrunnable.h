@@ -5,6 +5,7 @@ extern "C" {
 #include <dpengine/save_enums.h>
 }
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/export/videoexporthandle.h"
 #include <QObject>
 #include <QRunnable>
 #include <QVector>
@@ -15,6 +16,7 @@ extern "C" {
  */
 class AnimationSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
+	Q_DISABLE_COPY_MOVE(AnimationSaverRunnable)
 public:
 	AnimationSaverRunnable(
 #ifndef __EMSCRIPTEN__
@@ -66,6 +68,7 @@ private:
 	const QString m_encoderKey;
 	const bool m_scaleSmooth;
 	bool m_cancelled;
+	DP_DECLARE_VIDEO_EXPORT_HANDLE(m_videoExportHandle)
 };
 
 #endif

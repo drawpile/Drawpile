@@ -35,6 +35,7 @@ typedef enum DP_SaveVideoDestination {
     DP_SAVE_VIDEO_DESTINATION_OUTPUT,
     DP_SAVE_VIDEO_DESTINATION_FFMPEG,
     DP_SAVE_VIDEO_DESTINATION_ANDROID,
+    DP_SAVE_VIDEO_DESTINATION_WINDOWS,
 } DP_SaveVideoDestination;
 
 typedef enum DP_SaveVideoEncoderType {
@@ -42,6 +43,7 @@ typedef enum DP_SaveVideoEncoderType {
     DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG,
     DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE,
     DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_HARDWARE,
+    DP_SAVE_VIDEO_ENCODER_TYPE_WINDOWS,
 } DP_SaveVideoEncoderType;
 
 typedef struct DP_SaveVideoSupportEntry {

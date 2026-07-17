@@ -163,6 +163,10 @@ void AnimationSaverRunnable::run()
 				encoderNameBytes.constData(),
 			};
 
+		} else if(encoderType.startsWith(QStringLiteral("windows"))) {
+			destination = DP_SAVE_VIDEO_DESTINATION_WINDOWS;
+			destinationParam = pathBytes.data();
+
 		} else {
 			destination = DP_SAVE_VIDEO_DESTINATION_PATH;
 			destinationParam = pathBytes.data();

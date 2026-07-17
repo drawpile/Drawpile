@@ -127,6 +127,7 @@ target_sources(dpclient PRIVATE
 	export/projectsaver.h
 	export/thumbnailerrunnable.cpp
 	export/thumbnailerrunnable.h
+	export/videoexporthandle.h
 	export/videoformat.cpp
 	export/videoformat.h
 	import/animationimporter.cpp

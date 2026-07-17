@@ -4,6 +4,7 @@
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/drawdance/tile.h"
 #include "libclient/drawdance/viewmode.h"
+#include "libclient/export/videoexporthandle.h"
 #include <QAtomicInt>
 #include <QBrush>
 #include <QColor>
@@ -207,6 +208,7 @@ private:
 	QImage m_lastImage;
 	bool m_playbackFinished = false;
 	QAtomicInt m_cancelled;
+	DP_DECLARE_VIDEO_EXPORT_HANDLE(m_videoExportHandle)
 };
 
 #endif
