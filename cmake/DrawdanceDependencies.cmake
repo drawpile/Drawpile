@@ -16,23 +16,25 @@ else()
     # zstd is supposed to provide a cmake config, but at least Fedora can't
     # manage to actually ship it, so there's a fallback for PkgConfig.
     dp_find_package(zstd CONFIG)
-    if(NOT TARGET zstd::libzstd AND PKGCONFIG_FOUND)
-        pkg_check_modules(LIBZSTD IMPORTED_TARGET GLOBAL libzstd)
-        if(TARGET PkgConfig::LIBZSTD)
-            message(STATUS "libzstd found via PkgConfig")
-            add_library(zstd::libzstd ALIAS PkgConfig::LIBZSTD)
+    if(NOT TARGET zstd::libzstd)
+        if(PKGCONFIG_FOUND)
+            pkg_check_modules(LIBZSTD IMPORTED_TARGET GLOBAL libzstd)
+            if(TARGET PkgConfig::LIBZSTD)
+                message(STATUS "libzstd found via PkgConfig")
+                add_library(zstd::libzstd ALIAS PkgConfig::LIBZSTD)
+            else()
+                message(SEND_ERROR
+                    "libzstd NOT FOUND (tried CMake config and PkgConfig)"
+                )
+            endif()
         else()
-            message(SEND_ERROR
-                "libzstd NOT FOUND (tried CMake config and PkgConfig)"
-            )
-        endif()
-    else()
-        message(WARNING "PkgConfig NOT FOUND")
-        if(NOT TARGET zstd::libzstd)
-            message(SEND_ERROR
-                "libzstd NOT FOUND via CMake config and can't fall back to "
-                "PkgConfig because that wasn't found either"
-            )
+            message(WARNING "PkgConfig NOT FOUND")
+            if(NOT TARGET zstd::libzstd)
+                message(SEND_ERROR
+                    "libzstd NOT FOUND via CMake config and can't fall back to "
+                    "PkgConfig because that wasn't found either"
+                )
+            endif()
         endif()
     endif()
 endif()
