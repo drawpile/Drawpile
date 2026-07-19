@@ -1685,7 +1685,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation>ليس لديك إذن لتغييرخلفية الجَلسة.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
