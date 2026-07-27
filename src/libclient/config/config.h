@@ -648,6 +648,10 @@ public:
 	virtual void setIgnoreCarrierGradeNat(bool value) = 0;
 	static bool defaultIgnoreCarrierGradeNat();
 
+	virtual bool getIgnoreZeroPressure() const = 0;
+	virtual void setIgnoreZeroPressure(bool value) = 0;
+	static bool defaultIgnoreZeroPressure();
+
 	virtual QVector<QVariantMap> getInputPresets() const = 0;
 	virtual void setInputPresets(const QVector<QVariantMap> &value) = 0;
 	static QVector<QVariantMap> defaultInputPresets();
@@ -1494,6 +1498,7 @@ Q_SIGNALS:
 	void changeHostEnableAdvanced(bool value);
 	void changeIgnoreBlotches(bool value);
 	void changeIgnoreCarrierGradeNat(bool value);
+	void changeIgnoreZeroPressure(bool value);
 	void changeInputPresets(const QVector<QVariantMap> &value);
 	void changeInsecurePasswordStorage(bool value);
 	void changeInterfaceMode(int value);

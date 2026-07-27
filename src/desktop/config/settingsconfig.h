@@ -316,6 +316,9 @@ public:
 	bool getIgnoreCarrierGradeNat() const override;
 	void setIgnoreCarrierGradeNat(bool value) override;
 
+	bool getIgnoreZeroPressure() const override;
+	void setIgnoreZeroPressure(bool value) override;
+
 	QVector<QVariantMap> getInputPresets() const override;
 	void setInputPresets(const QVector<QVariantMap> &value) override;
 

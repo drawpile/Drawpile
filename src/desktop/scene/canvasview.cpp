@@ -254,6 +254,9 @@ CanvasView::CanvasView(QWidget *parent)
 		widgets::CanvasView::setBrushOutlineWidth);
 	CFG_BIND_SET(
 		cfg, TabletPressTimerDelay, this, CanvasView::setTabletEventTimerDelay);
+	CFG_BIND_SET(
+		cfg, IgnoreZeroPressure, this,
+		CanvasView::setIgnoreZeroPressureMovements);
 	CFG_BIND_SET(cfg, IgnoreBlotches, this, CanvasView::setIgnoreBlotches);
 
 	CFG_BIND_SET_FN(
@@ -1316,6 +1319,12 @@ void CanvasView::resetTabletDriver()
 {
 	m_eraserTipActive = false;
 	m_tabletFilter.reset();
+}
+
+void CanvasView::setIgnoreZeroPressureMovements(
+	bool ignoreZeroPressureMovements)
+{
+	m_ignoreZeroPressureMovements = ignoreZeroPressureMovements;
 }
 
 void CanvasView::setEraserTipActive(bool eraserTipActive)
@@ -2381,9 +2390,11 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		// Buttons other than the left button (the pen tip) are expected to have
-		// zero pressure, so we do handle those.
-		if(!m_pendown || tabev->pressure() != 0.0 ||
-		   buttons != Qt::LeftButton) {
+		// zero pressure, so we do handle those. Some tablets do input zero-
+		// pressure movements "legitimately" though, the user can toggle the
+		// workaround.
+		if(!m_pendown || !m_ignoreZeroPressureMovements ||
+		   tabev->pressure() != 0.0 || buttons != Qt::LeftButton) {
 			startTabletEventTimer();
 			updateCursorPos(tabPos.toPoint());
 			penMoveEvent(

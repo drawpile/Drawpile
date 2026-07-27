@@ -143,6 +143,13 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 	CFG_BIND_CHECKBOX(cfg, DelayInitialDab, delayInitialDab);
 	form->addRow(nullptr, delayInitialDab);
 
+	QCheckBox *ignoreZeroPressure =
+		//: Gaomon is a brand that makes pen tablets. This is a setting for a
+		//: workaround that ignores zero-pressure movements from those.
+		new QCheckBox(tr("Ignore inputs with no pressure (Gaomon)"));
+	CFG_BIND_CHECKBOX(cfg, IgnoreZeroPressure, ignoreZeroPressure);
+	form->addRow(nullptr, ignoreZeroPressure);
+
 	QCheckBox *ignoreBlotches =
 		//: Ugee is a brand that makes pen tablets. This is a setting for a
 		//: workaround that ignores full-pressure blotches from those.

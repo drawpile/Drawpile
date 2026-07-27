@@ -63,6 +63,9 @@ CanvasController::CanvasController(CanvasScene *scene, QObject *parent)
 		cfg, TabletPressTimerDelay, this,
 		CanvasController::setTabletEventTimerDelay);
 	CFG_BIND_SET(
+		cfg, IgnoreZeroPressure, this,
+		CanvasController::setIgnoreZeroPressureMovements);
+	CFG_BIND_SET(
 		cfg, IgnoreBlotches, this, CanvasController::setIgnoreBlotches);
 
 	connect(

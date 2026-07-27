@@ -700,9 +700,11 @@ void CanvasControllerBase::handleTabletMove(QTabletEvent *event)
 		// We accept them so that they don't result in synthesized mouse events,
 		// but don't actually act on them. Getting zero-pressure inputs for
 		// buttons other than the left button (i.e. the actual pen) is expected
-		// though, so we do handle those.
-		if(m_penState == PenState::Up || pressure != 0.0 ||
-		   buttons != Qt::LeftButton) {
+		// though, so we do handle those. Some tablets do input zero-pressure
+		// movements "legitimately" though, so the user can toggle the
+		// workaround.
+		if(m_penState == PenState::Up || !m_ignoreZeroPressureMovements ||
+		   pressure != 0.0 || buttons != Qt::LeftButton) {
 			startTabletEventTimer();
 			penMoveEvent(
 				QDateTime::currentMSecsSinceEpoch(), posf,
@@ -1518,6 +1520,12 @@ void CanvasControllerBase::resetTabletDriver()
 {
 	m_eraserTipActive = false;
 	resetTabletFilter();
+}
+
+void CanvasControllerBase::setIgnoreZeroPressureMovements(
+	bool ignoreZeroPressureMovements)
+{
+	m_ignoreZeroPressureMovements = ignoreZeroPressureMovements;
 }
 
 void CanvasControllerBase::setEraserTipActive(bool eraserTipActive)

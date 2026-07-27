@@ -186,6 +186,12 @@ settings:
     qsettings: 'settings/input/ignoreblotches'
     legacy_package: 'libclient'
 
+  - id: ignoreZeroPressure
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/input/ignorezeropressure'
+    legacy_package: 'libclient'
+
   - id: interpolateInputs
     type: 'bool'
     default: 'true'

@@ -530,6 +530,11 @@ bool Config::defaultIgnoreCarrierGradeNat()
 	return false;
 }
 
+bool Config::defaultIgnoreZeroPressure()
+{
+	return true;
+}
+
 QVector<QVariantMap> Config::defaultInputPresets()
 {
 	return QVector<QVariantMap>();

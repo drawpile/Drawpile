@@ -359,6 +359,9 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeIgnoreCarrierGradeNat,
 		Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::ignoreZeroPressureChanged,
+		this, &SettingsConfig::changeIgnoreZeroPressure, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::inputPresetsChanged, this,
 		&SettingsConfig::changeInputPresets, Qt::DirectConnection);
 	connect(
@@ -1930,6 +1933,16 @@ bool SettingsConfig::getIgnoreCarrierGradeNat() const
 void SettingsConfig::setIgnoreCarrierGradeNat(bool value)
 {
 	m_settings->setIgnoreCarrierGradeNat(value);
+}
+
+bool SettingsConfig::getIgnoreZeroPressure() const
+{
+	return m_settings->ignoreZeroPressure();
+}
+
+void SettingsConfig::setIgnoreZeroPressure(bool value)
+{
+	m_settings->setIgnoreZeroPressure(value);
 }
 
 QVector<QVariantMap> SettingsConfig::getInputPresets() const

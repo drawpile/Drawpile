@@ -98,6 +98,9 @@ SETTING(
 	ignoreBlotches, IgnoreBlotches, "settings/input/ignoreblotches",
 	config::Config::defaultIgnoreBlotches())
 SETTING(
+	ignoreZeroPressure, IgnoreZeroPressure, "settings/input/ignorezeropressure",
+	config::Config::defaultIgnoreZeroPressure())
+SETTING(
 	interpolateInputs, InterpolateInputs, "settings/input/interpolate",
 	config::Config::defaultInterpolateInputs())
 SETTING(

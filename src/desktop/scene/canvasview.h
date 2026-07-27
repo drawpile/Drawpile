@@ -308,6 +308,7 @@ private:
 
 	void startTabletEventTimer();
 	void resetTabletDriver();
+	void setIgnoreZeroPressureMovements(bool ignoreZeroPressureMovements);
 	void setEraserTipActive(bool eraserTipActive);
 
 	// unified mouse/stylus event handlers
@@ -524,6 +525,7 @@ private:
 	KisCubicCurve m_pressureCurve;
 	KisCubicCurve m_pressureCurveEraser;
 	int m_pressureCurveMode = 0;
+	bool m_ignoreZeroPressureMovements = false;
 	bool m_eraserTipActive = false;
 
 	qreal m_dpi;

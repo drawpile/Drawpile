@@ -268,6 +268,7 @@ protected:
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
 	void onTabletEventReceived();
 	void resetTabletDriver();
+	void setIgnoreZeroPressureMovements(bool ignoreZeroPressureMovements);
 	void setEraserTipActive(bool eraserTipActive);
 
 	void setBrushCursorStyle(int brushCursorStyle);
@@ -450,6 +451,7 @@ private:
 	KisCubicCurve m_pressureCurve;
 	KisCubicCurve m_pressureCurveEraser;
 	int m_pressureCurveMode = 0;
+	bool m_ignoreZeroPressureMovements = false;
 	bool m_eraserTipActive = false;
 	bool m_pixelGrid = true;
 	bool m_pointerTracking = false;

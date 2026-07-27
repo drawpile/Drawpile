@@ -1230,6 +1230,19 @@ void MemoryConfig::setIgnoreCarrierGradeNat(bool value)
 	}
 }
 
+bool MemoryConfig::getIgnoreZeroPressure() const
+{
+	return m_ignoreZeroPressure;
+}
+
+void MemoryConfig::setIgnoreZeroPressure(bool value)
+{
+	if(value != m_ignoreZeroPressure) {
+		m_ignoreZeroPressure = value;
+		Q_EMIT changeIgnoreZeroPressure(m_ignoreZeroPressure);
+	}
+}
+
 QVector<QVariantMap> MemoryConfig::getInputPresets() const
 {
 	return m_inputPresets;
