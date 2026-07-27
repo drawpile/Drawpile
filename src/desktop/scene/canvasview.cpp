@@ -2350,12 +2350,6 @@ bool CanvasView::viewportEvent(QEvent *event)
 			tabev->accept();
 		}
 
-		// Some tablets report bogus zero-pressure inputs along the way under
-		// Windows Ink, which we need to ignore. Other tablets start their
-		// stroke with a bunch of zero-pressure inputs, which we must not
-		// ignore. This distinguishes those.
-		m_initialZeroPressurePress = tabev->pressure() == 0.0;
-
 		penPressEvent(
 			event, QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 			compat::tabGlobalPos(*tabev), tabev->pressure(), tabev->xTilt(),
@@ -2387,10 +2381,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		// Buttons other than the left button (the pen tip) are expected to have
-		// zero pressure, so we do handle those. Also, if the initial press had
-		// zero pressure, we do handle these inputs, since some tablets do that.
+		// zero pressure, so we do handle those.
 		if(!m_pendown || tabev->pressure() != 0.0 ||
-		   m_initialZeroPressurePress || buttons != Qt::LeftButton) {
+		   buttons != Qt::LeftButton) {
 			startTabletEventTimer();
 			updateCursorPos(tabPos.toPoint());
 			penMoveEvent(

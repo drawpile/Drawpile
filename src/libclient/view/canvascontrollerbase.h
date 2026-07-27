@@ -518,7 +518,6 @@ private:
 	qreal m_rotationToolSnapRotation = 0.0;
 	int m_zoomWheelDelta = 0;
 
-	bool m_initialZeroPressurePress = false;
 	bool m_pickingColor = false;
 	bool m_canvasSizeChanging = false;
 	bool m_blockNotices = false;

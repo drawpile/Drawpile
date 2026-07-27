@@ -700,10 +700,9 @@ void CanvasControllerBase::handleTabletMove(QTabletEvent *event)
 		// We accept them so that they don't result in synthesized mouse events,
 		// but don't actually act on them. Getting zero-pressure inputs for
 		// buttons other than the left button (i.e. the actual pen) is expected
-		// though, so we do handle those. Also, if the initial press had zero
-		// pressure, we do handle these inputs, since some tablets do that.
+		// though, so we do handle those.
 		if(m_penState == PenState::Up || pressure != 0.0 ||
-		   m_initialZeroPressurePress || buttons != Qt::LeftButton) {
+		   buttons != Qt::LeftButton) {
 			startTabletEventTimer();
 			penMoveEvent(
 				QDateTime::currentMSecsSinceEpoch(), posf,
@@ -755,12 +754,6 @@ void CanvasControllerBase::handleTabletPress(QTabletEvent *event)
 			eraserOverride = m_enableEraserOverride;
 		}
 #endif
-
-		// Some tablets report bogus zero-pressure inputs along the way under
-		// Windows Ink, which we need to ignore. Other tablets start their
-		// stroke with a bunch of zero-pressure inputs, which we must not
-		// ignore. This distinguishes those.
-		m_initialZeroPressurePress = pressure == 0.0;
 
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf,
