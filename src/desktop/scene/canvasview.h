@@ -536,6 +536,7 @@ private:
 	int m_hudActionDeviceType = 0;
 	QPoint m_hudActionGlobalPos;
 
+	bool m_initialZeroPressurePress = false;
 	bool m_pickingColor = false;
 	bool m_scrollBarsAdjusting;
 	bool m_blockNotices;
