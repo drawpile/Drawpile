@@ -876,7 +876,8 @@ bool TimelapseSaverRunnable::saveVideo(QString &outErrorMessage)
 	if(result != DP_SAVE_RESULT_SUCCESS) {
 		qCWarning(
 			lcDpTimelapseSaverRunnable, "Error %d saving timelapse: %s",
-			int(result), DP_error());
+			int(result),
+			result == DP_SAVE_RESULT_CANCEL ? "cancelled" : DP_error());
 	}
 
 	finishPlaybackThread(pr);
