@@ -505,6 +505,8 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
         preview_disable_mypaint_setting(bp, MYPAINT_BRUSH_SETTING_POSTERIZE,
                                         0.0f);
         preview_disable_mypaint_setting(
+            bp, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY, 0.0f);
+        preview_disable_mypaint_setting(
             bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H, 0.0f);
         preview_disable_mypaint_setting(
             bp, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S, 0.0f);
