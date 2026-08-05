@@ -18,6 +18,7 @@
 #include <QMessageBox>
 #include <QProgressBar>
 #include <QTimer>
+#include <QUrlQuery>
 #include <QVBoxLayout>
 
 namespace widgets {
@@ -345,9 +346,27 @@ void NetStatus::copyAddress()
 
 void NetStatus::copyUrl()
 {
-	QString url = m_sessionUrl.toString(QUrl::FullyEncoded);
-	QApplication::clipboard()->setText(url);
-	QApplication::clipboard()->setText(url, QClipboard::Selection);
+	QUrl url = m_sessionUrl;
+	url.setUserInfo(QString());
+
+	QSet<QString> allowedQueryKeys = {
+		QStringLiteral("nsfm"),
+		QStringLiteral("p"),
+		QStringLiteral("w"),
+		QStringLiteral("web"),
+	};
+
+	QUrlQuery query(url);
+	for(QPair<QString, QString> &p : query.queryItems()) {
+		if(!allowedQueryKeys.contains(p.first)) {
+			query.removeAllQueryItems(p.first);
+		}
+	}
+	url.setQuery(query);
+
+	QString s = url.toString(QUrl::FullyEncoded);
+	QApplication::clipboard()->setText(s);
+	QApplication::clipboard()->setText(s, QClipboard::Selection);
 }
 
 void NetStatus::discoverAddress()
