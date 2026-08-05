@@ -345,7 +345,7 @@ void NetStatus::copyAddress()
 
 void NetStatus::copyUrl()
 {
-	QString url = m_sessionUrl.toString();
+	QString url = m_sessionUrl.toString(QUrl::FullyEncoded);
 	QApplication::clipboard()->setText(url);
 	QApplication::clipboard()->setText(url, QClipboard::Selection);
 }
