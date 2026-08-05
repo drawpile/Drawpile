@@ -36,6 +36,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Use the proper input minimum and input maximum ranges in the MyPaint brush settings. Thanks Pine for reporting.
  * Feature: Allow exporting animations and timelapses on Windows using the OS-supplied media encoder.
  * Fix: Allow toggling the workaround that ignores zero-pressure tablet inputs, in case you have a tablet that reports no pressure despite you pressing the stylus down. SuperDisplay is known to do this. Thanks Tenzin for reporting.
+ * Fix: Encode special characters in invite links so that they don't cause trouble when copying them around. Thanks Bluestrings for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

@@ -321,7 +321,7 @@ QString InviteDialog::buildWebInviteLink(
 	if(includePassword) {
 		inviteUrl.setFragment(d->joinPassword);
 	}
-	return inviteUrl.toString();
+	return inviteUrl.toString(QUrl::FullyEncoded);
 }
 
 QString InviteDialog::buildPath(QString path, const QString &secret)

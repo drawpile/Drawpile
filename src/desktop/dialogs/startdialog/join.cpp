@@ -137,7 +137,7 @@ QString Join::fixUpInviteOrWebAddress(const QString &address)
 			url.setFragment(QString());
 		}
 
-		return url.toString();
+		return url.toString(QUrl::FullyEncoded);
 	}
 
 	QUrlQuery query(url);
@@ -155,7 +155,7 @@ QString Join::fixUpInviteOrWebAddress(const QString &address)
 		}
 
 		url.setQuery(query);
-		return url.toString();
+		return url.toString(QUrl::FullyEncoded);
 	}
 
 	return QString();
