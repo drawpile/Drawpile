@@ -45,12 +45,14 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 {
 }
 
+#ifdef DP_LIBAV
 namespace {
 union VideoParams {
 	DP_SaveVideoFfmpegParams ffmpeg;
 	DP_SaveVideoAndroidParams android;
 };
 }
+#endif
 
 void AnimationSaverRunnable::run()
 {
