@@ -2356,7 +2356,7 @@ static bool snapshot_insert_layer(DP_Project *prj,
 static bool snapshot_insert_sublayer(DP_Project *prj,
                                      const DP_ResetEntryLayer *rel)
 {
-    DP_ASSERT(prj->snapshot.merge_sublayers);
+    DP_ASSERT(!prj->snapshot.merge_sublayers);
     prj->snapshot.has_sublayers = true;
     sqlite3_stmt *stmt =
         snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_SUBLAYER);
