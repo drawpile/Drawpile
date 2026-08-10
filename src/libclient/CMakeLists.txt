@@ -32,8 +32,6 @@ target_sources(dpclient PRIVATE
 	canvas/canvasshortcuts.h
 	canvas/documentmetadata.cpp
 	canvas/documentmetadata.h
-	canvas/indexbuilderrunnable.cpp
-	canvas/indexbuilderrunnable.h
 	canvas/layerlist.cpp
 	canvas/layerlist.h
 	canvas/paintengine.cpp
@@ -309,15 +307,6 @@ if(ANDROID OR EMSCRIPTEN)
 	# Android doesn't allow images to be placed on the system clipboard.
 	# Emscripten can't freely access it. Emulate it via an internal buffer.
 	target_compile_definitions(dpclient PUBLIC HAVE_CLIPBOARD_EMULATION=1)
-else()
-	target_sources(dpclient PRIVATE
-		export/ffmpegexporter.cpp
-		export/ffmpegexporter.h
-		export/imageseriesexporter.cpp
-		export/imageseriesexporter.h
-		export/videoexporter.cpp
-		export/videoexporter.h
-	)
 endif()
 
 if(EMSCRIPTEN)

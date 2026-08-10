@@ -1715,48 +1715,6 @@ settings:
     qsettings: 'settings/usermarkerpersistence'
     legacy_package: 'desktop'
 
-  - id: videoExportCustomFfmpeg
-    type: 'QString'
-    default: 'QString()'
-    qsettings: 'videoexport/customffmpeg'
-    legacy_package: 'desktop'
-
-  - id: videoExportFfmpegPath
-    type: 'QString'
-    default: 'QString("ffmpeg")'
-    qsettings: 'videoexport/ffmpegpath'
-    legacy_package: 'desktop'
-
-  - id: videoExportFormat
-    type: 'int'
-    default: '0 /* VideoExporter::Format::IMAGE_SERIES */'
-    qsettings: 'videoexport/format'
-    legacy_package: 'desktop'
-
-  - id: videoExportFrameHeight
-    type: 'int'
-    default: '720'
-    qsettings: 'videoexport/frameheight'
-    legacy_package: 'desktop'
-
-  - id: videoExportFrameRate
-    type: 'int'
-    default: '30'
-    qsettings: 'videoexport/fps'
-    legacy_package: 'desktop'
-
-  - id: videoExportFrameWidth
-    type: 'int'
-    default: '1280'
-    qsettings: 'videoexport/framewidth'
-    legacy_package: 'desktop'
-
-  - id: videoExportSizeChoice
-    type: 'int'
-    default: '0'
-    qsettings: 'videoexport/sizeChoice'
-    legacy_package: 'desktop'
-
   - id: welcomePageShown
     type: 'bool'
     default: 'false'

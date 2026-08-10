@@ -120,12 +120,6 @@ public:
 	QString getSaveAnimationApngPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
-#ifdef HAVE_VIDEO_EXPORT
-	QString getSaveFfmpegMp4Path() const;
-	QString getSaveFfmpegWebmPath() const;
-	QString getSaveFfmpegCustomPath() const;
-	QString getSaveImageSeriesPath() const;
-#endif
 
 #ifdef __EMSCRIPTEN__
 	void downloadImage(Document *doc) const;

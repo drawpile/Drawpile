@@ -28,8 +28,6 @@ enum RecordStartResult {
 
 class PaintEngine {
 public:
-	using BuildIndexProgressFn = std::function<void(int)>;
-
 	PaintEngine(
 		AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
 		bool rendererChecker, const QColor &checkerColor1,
@@ -115,18 +113,6 @@ public:
 	bool isProjectRecording() const;
 
 	bool hasPlayback() const;
-	DP_PlayerResult stepPlayback(long long steps, net::MessageList &outMsgs);
-	DP_PlayerResult skipPlaybackBy(
-		long long steps, bool bySnapshots, net::MessageList &outMsgs);
-	DP_PlayerResult
-	jumpPlaybackTo(long long position, net::MessageList &outMsgs);
-	DP_PlayerResult beginPlayback();
-	DP_PlayerResult playPlayback(long long msecs, net::MessageList &outMsgs);
-	bool buildPlaybackIndex(BuildIndexProgressFn progressFn);
-	bool loadPlaybackIndex();
-	unsigned int playbackIndexMessageCount();
-	size_t playbackIndexEntryCount();
-	QImage playbackIndexThumbnailAt(size_t index);
 	DP_PlayerResult stepDumpPlayback(net::MessageList &outMsgs);
 	DP_PlayerResult jumpDumpPlaybackToPreviousReset(net::MessageList &outMsgs);
 	DP_PlayerResult jumpDumpPlaybackToNextReset(net::MessageList &outMsgs);
@@ -164,8 +150,6 @@ private:
 	static long long getTimeMs(void *);
 	static void pushMessage(void *user, DP_Message *msg);
 	static bool pushResetMessage(void *user, DP_Message *msg);
-	static bool shouldSnapshot(void *user);
-	static void indexProgress(void *user, int percent);
 	static void addLayerVisibleInFrame(void *user, int layerId, bool visible);
 
 	static const DP_Pixel8 *getTransformPreviewPixels(void *user);

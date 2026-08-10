@@ -957,33 +957,6 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeUserMarkerPersistence,
 		Qt::DirectConnection);
 	connect(
-		m_settings,
-		&desktop::settings::Settings::videoExportCustomFfmpegChanged, this,
-		&SettingsConfig::changeVideoExportCustomFfmpeg, Qt::DirectConnection);
-	connect(
-		m_settings, &desktop::settings::Settings::videoExportFfmpegPathChanged,
-		this, &SettingsConfig::changeVideoExportFfmpegPath,
-		Qt::DirectConnection);
-	connect(
-		m_settings, &desktop::settings::Settings::videoExportFormatChanged,
-		this, &SettingsConfig::changeVideoExportFormat, Qt::DirectConnection);
-	connect(
-		m_settings, &desktop::settings::Settings::videoExportFrameHeightChanged,
-		this, &SettingsConfig::changeVideoExportFrameHeight,
-		Qt::DirectConnection);
-	connect(
-		m_settings, &desktop::settings::Settings::videoExportFrameRateChanged,
-		this, &SettingsConfig::changeVideoExportFrameRate,
-		Qt::DirectConnection);
-	connect(
-		m_settings, &desktop::settings::Settings::videoExportFrameWidthChanged,
-		this, &SettingsConfig::changeVideoExportFrameWidth,
-		Qt::DirectConnection);
-	connect(
-		m_settings, &desktop::settings::Settings::videoExportSizeChoiceChanged,
-		this, &SettingsConfig::changeVideoExportSizeChoice,
-		Qt::DirectConnection);
-	connect(
 		m_settings, &desktop::settings::Settings::welcomePageShownChanged, this,
 		&SettingsConfig::changeWelcomePageShown, Qt::DirectConnection);
 	connect(
@@ -3687,76 +3660,6 @@ int SettingsConfig::getUserMarkerPersistence() const
 void SettingsConfig::setUserMarkerPersistence(int value)
 {
 	m_settings->setUserMarkerPersistence(value);
-}
-
-QString SettingsConfig::getVideoExportCustomFfmpeg() const
-{
-	return m_settings->videoExportCustomFfmpeg();
-}
-
-void SettingsConfig::setVideoExportCustomFfmpeg(const QString &value)
-{
-	m_settings->setVideoExportCustomFfmpeg(value);
-}
-
-QString SettingsConfig::getVideoExportFfmpegPath() const
-{
-	return m_settings->videoExportFfmpegPath();
-}
-
-void SettingsConfig::setVideoExportFfmpegPath(const QString &value)
-{
-	m_settings->setVideoExportFfmpegPath(value);
-}
-
-int SettingsConfig::getVideoExportFormat() const
-{
-	return m_settings->videoExportFormat();
-}
-
-void SettingsConfig::setVideoExportFormat(int value)
-{
-	m_settings->setVideoExportFormat(value);
-}
-
-int SettingsConfig::getVideoExportFrameHeight() const
-{
-	return m_settings->videoExportFrameHeight();
-}
-
-void SettingsConfig::setVideoExportFrameHeight(int value)
-{
-	m_settings->setVideoExportFrameHeight(value);
-}
-
-int SettingsConfig::getVideoExportFrameRate() const
-{
-	return m_settings->videoExportFrameRate();
-}
-
-void SettingsConfig::setVideoExportFrameRate(int value)
-{
-	m_settings->setVideoExportFrameRate(value);
-}
-
-int SettingsConfig::getVideoExportFrameWidth() const
-{
-	return m_settings->videoExportFrameWidth();
-}
-
-void SettingsConfig::setVideoExportFrameWidth(int value)
-{
-	m_settings->setVideoExportFrameWidth(value);
-}
-
-int SettingsConfig::getVideoExportSizeChoice() const
-{
-	return m_settings->videoExportSizeChoice();
-}
-
-void SettingsConfig::setVideoExportSizeChoice(int value)
-{
-	m_settings->setVideoExportSizeChoice(value);
 }
 
 bool SettingsConfig::getWelcomePageShown() const

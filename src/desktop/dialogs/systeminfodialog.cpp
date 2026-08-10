@@ -375,9 +375,6 @@ QString SystemInfoDialog::getCompileFeatures()
 #ifdef HAVE_CLIPBOARD_EMULATION
 	features.append(QStringLiteral("HAVE_CLIPBOARD_EMULATION"));
 #endif
-#ifdef HAVE_VIDEO_EXPORT
-	features.append(QStringLiteral("HAVE_VIDEO_EXPORT"));
-#endif
 #ifdef HAVE_QTKEYCHAIN
 	features.append(QStringLiteral("HAVE_QTKEYCHAIN"));
 #endif

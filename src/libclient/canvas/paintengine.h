@@ -246,17 +246,6 @@ public:
 	void enqueueProjectSnapshotRequest();
 
 	bool hasPlayback() const;
-	DP_PlayerResult stepPlayback(long long steps);
-	DP_PlayerResult skipPlaybackBy(long long steps, bool bySnapshots);
-	DP_PlayerResult jumpPlaybackTo(long long position);
-	DP_PlayerResult beginPlayback();
-	DP_PlayerResult playPlayback(long long msecs);
-	bool
-	buildPlaybackIndex(drawdance::PaintEngine::BuildIndexProgressFn progressFn);
-	bool loadPlaybackIndex();
-	unsigned int playbackIndexMessageCount();
-	size_t playbackIndexEntryCount();
-	QImage playbackIndexThumbnailAt(size_t index);
 	DP_PlayerResult stepDumpPlayback();
 	DP_PlayerResult jumpDumpPlaybackToPreviousReset();
 	DP_PlayerResult jumpDumpPlaybackToNextReset();

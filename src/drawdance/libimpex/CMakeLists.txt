@@ -17,8 +17,6 @@ dp_target_sources(dpimpex
     dpimpex/load_psd.cpp
     dpimpex/paint_engine_playback.c
     dpimpex/paint_engine_playback.h
-    dpimpex/player_index.c
-    dpimpex/player_index.h
     dpimpex/process.h
     dpimpex/save.c
     dpimpex/save.h

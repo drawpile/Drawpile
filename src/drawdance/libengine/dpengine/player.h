@@ -67,20 +67,6 @@ typedef enum DP_PlayerPass {
     DP_PLAYER_PASS_ALL,
 } DP_PlayerPass;
 
-typedef struct DP_PlayerIndexEntry {
-    long long message_index;
-    size_t message_offset;
-    size_t snapshot_offset;
-    size_t thumbnail_offset;
-} DP_PlayerIndexEntry;
-
-typedef struct DP_PlayerIndex {
-    DP_BufferedInput input;
-    unsigned int message_count;
-    DP_PlayerIndexEntry *entries;
-    size_t entry_count;
-} DP_PlayerIndex;
-
 
 DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
                          DP_Input *input, DP_LoadResult *out_result);
@@ -102,14 +88,6 @@ void DP_player_acl_override_set(DP_Player *player, bool override);
 void DP_player_pass_set(DP_Player *player, DP_PlayerPass pass);
 
 const char *DP_player_recording_path(DP_Player *player);
-
-const char *DP_player_index_path(DP_Player *player);
-
-bool DP_player_index_loaded(DP_Player *player);
-
-DP_PlayerIndex *DP_player_index(DP_Player *player);
-
-void DP_player_index_set(DP_Player *player, DP_PlayerIndex index);
 
 size_t DP_player_tell(DP_Player *player);
 

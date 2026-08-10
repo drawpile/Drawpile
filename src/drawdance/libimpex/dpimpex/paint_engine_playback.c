@@ -2,7 +2,6 @@
 #ifndef DPIMPEX_PAINT_ENGINE_PLAYBACK_H
 #define DPIMPEX_PAINT_ENGINE_PLAYBACK_H
 #include "paint_engine_playback.h"
-#include "player_index.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpengine/paint_engine.h>
@@ -113,12 +112,8 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
         DP_paint_engine_playback(pe)->msecs = done - steps;
     }
 
-    // If we don't have an index, report the position as a percentage
-    // completion based on the amount of bytes read from the recording.
     long long position =
-        DP_player_index_loaded(player)
-            ? DP_player_position(player)
-            : DP_double_to_llong(DP_player_progress(player) * 100.0 + 0.5);
+        DP_double_to_llong(DP_player_progress(player) * 100.0 + 0.5);
     push_playback(push_message, user, position);
     return DP_PLAYER_SUCCESS;
 }
@@ -157,111 +152,17 @@ static DP_PlayerResult rewind_playback(DP_PaintEngine *pe,
     }
 }
 
-static DP_PlayerResult
-jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
-                 bool relative, bool exact,
-                 DP_PaintEnginePushMessageFn push_message, void *user)
-{
-    DP_Player *player = DP_paint_engine_playback(pe)->player;
-    if (!player) {
-        DP_error_set("No player set");
-        push_playback(push_message, user, -1);
-        return DP_PLAYER_ERROR_OPERATION;
-    }
-
-    if (!DP_player_index_loaded(player)) {
-        DP_error_set("No index loaded");
-        push_playback(push_message, user, -1);
-        return DP_PLAYER_ERROR_OPERATION;
-    }
-
-    long long player_position = DP_player_position(player);
-    long long target_position = relative ? player_position + to : to;
-    DP_debug("Jump playback from %lld to %s %lld", player_position,
-             exact ? "exactly" : "snapshot nearest", target_position);
-
-    long long message_count =
-        DP_uint_to_llong(DP_player_index_message_count(player));
-    if (message_count == 0) {
-        DP_error_set("Recording contains no messages");
-        push_playback(push_message, user, player_position);
-        return DP_PLAYER_ERROR_INPUT;
-    }
-    else if (target_position < 0) {
-        target_position = 0;
-    }
-    else if (target_position >= message_count) {
-        target_position = message_count - 1;
-    }
-    DP_debug("Clamped position to %lld (message count %lld)", target_position,
-             message_count);
-
-    DP_PlayerIndexEntry entry = DP_player_index_entry_search(
-        player, target_position, relative && !exact && to > 0);
-    DP_debug("Loaded entry with message index %lld, message offset %zu, "
-             "snapshot offset %zu, thumbnail offset %zu",
-             entry.message_index, entry.message_offset, entry.snapshot_offset,
-             entry.thumbnail_offset);
-
-    bool inside_snapshot = player_position >= entry.message_index
-                        && player_position < target_position;
-    if (inside_snapshot) {
-        long long steps = target_position - player_position;
-        DP_debug("Already inside snapshot, stepping forward by %lld", steps);
-        DP_PlayerResult result = skip_playback_forward(
-            pe, steps, PLAYBACK_STEP_MESSAGES, NULL, push_message, user);
-        // If skipping playback forward doesn't work, e.g. because we're
-        // in an input error state, punt to reloading the snapshot.
-        if (result == DP_PLAYER_SUCCESS) {
-            return result;
-        }
-        else {
-            DP_warn("Skipping inside snapshot failed with result %d: %s",
-                    (int)result, DP_error());
-        }
-    }
-
-    DP_PlayerIndexEntrySnapshot *snapshot =
-        DP_player_index_entry_load(player, dc, entry);
-    if (!snapshot) {
-        DP_debug("Reading snapshot failed: %s", DP_error());
-        push_playback(push_message, user, player_position);
-        return DP_PLAYER_ERROR_INPUT;
-    }
-
-    if (!DP_player_seek(player, entry.message_index, entry.message_offset)) {
-        DP_player_index_entry_snapshot_free(snapshot);
-        push_playback(push_message, user, player_position);
-        return DP_PLAYER_ERROR_INPUT;
-    }
-
-    DP_CanvasState *cs =
-        DP_player_index_entry_snapshot_canvas_state_inc(snapshot);
-    push_message(user, DP_msg_internal_reset_to_state_new(0, cs));
-
-    int count = DP_player_index_entry_snapshot_message_count(snapshot);
-    for (int i = 0; i < count; ++i) {
-        DP_Message *msg =
-            DP_player_index_entry_snapshot_message_at_inc(snapshot, i);
-        if (msg) {
-            push_message(user, msg);
-        }
-    }
-
-    DP_player_index_entry_snapshot_free(snapshot);
-    return skip_playback_forward(
-        pe, exact ? target_position - entry.message_index : 0,
-        PLAYBACK_STEP_MESSAGES, NULL, push_message, user);
-}
-
 DP_PlayerResult DP_paint_engine_playback_skip_by(
-    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps, bool by_snapshots,
-    DP_PaintEnginePushMessageFn push_message, void *user)
+    DP_PaintEngine *pe, DP_UNUSED DP_DrawContext *dc, long long steps,
+    bool by_snapshots, DP_PaintEnginePushMessageFn push_message, void *user)
 {
     DP_ASSERT(pe);
     if (steps < 0 || by_snapshots) {
-        return jump_playback_to(pe, dc, steps, true, !by_snapshots,
-                                push_message, user);
+        // This used to be possible in the past with recording indexes, but
+        // those have been replaced with dppr files.
+        DP_error_set("Invalid skip parameters");
+        push_playback(push_message, user, -1);
+        return DP_PLAYER_ERROR_OPERATION;
     }
     else {
         return skip_playback_forward(pe, steps, PLAYBACK_STEP_UNDO_POINTS, NULL,
@@ -270,7 +171,7 @@ DP_PlayerResult DP_paint_engine_playback_skip_by(
 }
 
 DP_PlayerResult DP_paint_engine_playback_jump_to(
-    DP_PaintEngine *pe, DP_DrawContext *dc, long long position,
+    DP_PaintEngine *pe, DP_UNUSED DP_DrawContext *dc, long long position,
     DP_PaintEnginePushMessageFn push_message, void *user)
 {
     DP_ASSERT(pe);
@@ -278,8 +179,11 @@ DP_PlayerResult DP_paint_engine_playback_jump_to(
         return rewind_playback(pe, push_message, user);
     }
     else {
-        return jump_playback_to(pe, dc, position, false, true, push_message,
-                                user);
+        // This used to be possible in the past with recording indexes, but
+        // those have been replaced with dppr files.
+        DP_error_set("Invalid jump parameters");
+        push_playback(push_message, user, -1);
+        return DP_PLAYER_ERROR_OPERATION;
     }
 }
 
@@ -305,81 +209,6 @@ DP_PlayerResult DP_paint_engine_playback_play(
     DP_ASSERT(pe);
     return skip_playback_forward(pe, msecs, PLAYBACK_STEP_MSECS,
                                  filter_message_or_null, push_message, user);
-}
-
-bool DP_paint_engine_playback_index_build(
-    DP_PaintEngine *pe, DP_DrawContext *dc,
-    DP_PlayerIndexShouldSnapshotFn should_snapshot_fn,
-    DP_PlayerIndexProgressFn progress_fn, void *user)
-{
-    DP_ASSERT(pe);
-    DP_ASSERT(dc);
-    DP_Player *player = DP_paint_engine_playback(pe)->player;
-    if (player) {
-        return DP_player_index_build(player, dc, should_snapshot_fn,
-                                     progress_fn, user);
-    }
-    else {
-        DP_error_set("No player set");
-        return false;
-    }
-}
-
-bool DP_paint_engine_playback_index_load(DP_PaintEngine *pe)
-{
-    DP_ASSERT(pe);
-    DP_Player *player = DP_paint_engine_playback(pe)->player;
-    if (player) {
-        return DP_player_index_load(player);
-    }
-    else {
-        DP_error_set("No player set");
-        return false;
-    }
-}
-
-unsigned int DP_paint_engine_playback_index_message_count(DP_PaintEngine *pe)
-{
-    DP_ASSERT(pe);
-    DP_Player *player = DP_paint_engine_playback(pe)->player;
-    if (player) {
-        return DP_player_index_message_count(player);
-    }
-    else {
-        DP_error_set("No player set");
-        return 0;
-    }
-}
-
-size_t DP_paint_engine_playback_index_entry_count(DP_PaintEngine *pe)
-{
-    DP_ASSERT(pe);
-    DP_Player *player = DP_paint_engine_playback(pe)->player;
-    if (player) {
-        return DP_player_index_entry_count(player);
-    }
-    else {
-        DP_error_set("No player set");
-        return 0;
-    }
-}
-
-DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
-                                                      size_t index,
-                                                      bool *out_error)
-{
-    DP_ASSERT(pe);
-    DP_Player *player = DP_paint_engine_playback(pe)->player;
-    if (player) {
-        return DP_player_index_thumbnail_at(player, index, out_error);
-    }
-    else {
-        DP_error_set("No player set");
-        if (out_error) {
-            *out_error = true;
-        }
-        return NULL;
-    }
 }
 
 static DP_PlayerResult step_dump(DP_Player *player,

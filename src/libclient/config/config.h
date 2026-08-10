@@ -1352,34 +1352,6 @@ public:
 	virtual void setUserMarkerPersistence(int value) = 0;
 	static int defaultUserMarkerPersistence();
 
-	virtual QString getVideoExportCustomFfmpeg() const = 0;
-	virtual void setVideoExportCustomFfmpeg(const QString &value) = 0;
-	static QString defaultVideoExportCustomFfmpeg();
-
-	virtual QString getVideoExportFfmpegPath() const = 0;
-	virtual void setVideoExportFfmpegPath(const QString &value) = 0;
-	static QString defaultVideoExportFfmpegPath();
-
-	virtual int getVideoExportFormat() const = 0;
-	virtual void setVideoExportFormat(int value) = 0;
-	static int defaultVideoExportFormat();
-
-	virtual int getVideoExportFrameHeight() const = 0;
-	virtual void setVideoExportFrameHeight(int value) = 0;
-	static int defaultVideoExportFrameHeight();
-
-	virtual int getVideoExportFrameRate() const = 0;
-	virtual void setVideoExportFrameRate(int value) = 0;
-	static int defaultVideoExportFrameRate();
-
-	virtual int getVideoExportFrameWidth() const = 0;
-	virtual void setVideoExportFrameWidth(int value) = 0;
-	static int defaultVideoExportFrameWidth();
-
-	virtual int getVideoExportSizeChoice() const = 0;
-	virtual void setVideoExportSizeChoice(int value) = 0;
-	static int defaultVideoExportSizeChoice();
-
 	virtual bool getWelcomePageShown() const = 0;
 	virtual void setWelcomePageShown(bool value) = 0;
 	static bool defaultWelcomePageShown();
@@ -1677,13 +1649,6 @@ Q_SIGNALS:
 	void changeUpdateCheckEnabled(bool value);
 	void changeUseMipmaps(bool value);
 	void changeUserMarkerPersistence(int value);
-	void changeVideoExportCustomFfmpeg(const QString &value);
-	void changeVideoExportFfmpegPath(const QString &value);
-	void changeVideoExportFormat(int value);
-	void changeVideoExportFrameHeight(int value);
-	void changeVideoExportFrameRate(int value);
-	void changeVideoExportFrameWidth(int value);
-	void changeVideoExportSizeChoice(int value);
 	void changeWelcomePageShown(bool value);
 	void changeWriteLogFile(bool value);
 };

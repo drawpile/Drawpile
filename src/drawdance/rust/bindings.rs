@@ -187,7 +187,8 @@ pub const DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN: u32 = 7;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH: u32 = 8;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_ALPHA_LOCK: u32 = 9;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_CENSORED: u32 = 10;
-pub const DP_MSG_LOCAL_CHANGE_NUM_TYPE: u32 = 11;
+pub const DP_MSG_LOCAL_CHANGE_TYPE_TRACK_MOVE_LOCK: u32 = 11;
+pub const DP_MSG_LOCAL_CHANGE_NUM_TYPE: u32 = 12;
 pub const DP_MSG_LOCAL_CHANGE_BODY_MIN_SIZE: u32 = 0;
 pub const DP_MSG_LOCAL_CHANGE_BODY_MAX_SIZE: u32 = 65534;
 pub const DP_MSG_FEATURE_LIMITS_STATIC_LENGTH: u32 = 0;
@@ -1985,11 +1986,30 @@ extern "C" {
     ) -> *mut DP_Image;
 }
 extern "C" {
+    pub fn DP_canvas_state_to_flat_image_with_background(
+        cs: *mut DP_CanvasState,
+        flags: ::std::os::raw::c_uint,
+        area_or_null: *const DP_Rect,
+        vmf_or_null: *const DP_ViewModeFilter,
+        background_or_null: *mut DP_Tile,
+    ) -> *mut DP_Image;
+}
+extern "C" {
     pub fn DP_canvas_state_into_flat_image(
         cs: *mut DP_CanvasState,
         flags: ::std::os::raw::c_uint,
         area_or_null: *const DP_Rect,
         vmf_or_null: *const DP_ViewModeFilter,
+        inout_img_or_null: *mut *mut DP_Image,
+    ) -> *mut DP_Image;
+}
+extern "C" {
+    pub fn DP_canvas_state_into_flat_image_with_background(
+        cs: *mut DP_CanvasState,
+        flags: ::std::os::raw::c_uint,
+        area_or_null: *const DP_Rect,
+        vmf_or_null: *const DP_ViewModeFilter,
+        background_or_null: *mut DP_Tile,
         inout_img_or_null: *mut *mut DP_Image,
     ) -> *mut DP_Image;
 }
@@ -3073,6 +3093,25 @@ extern "C" {
         y: ::std::os::raw::c_int,
         out_context_id: *mut ::std::os::raw::c_uint,
     ) -> bool;
+}
+extern "C" {
+    pub fn DP_layer_content_sample_color_at_sync(
+        stamp_buffer: *mut u16,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        diameter: ::std::os::raw::c_int,
+        opaque: bool,
+        pigment: bool,
+        in_out_last_diameter: *mut ::std::os::raw::c_int,
+        out_in_bounds: *mut bool,
+        get_layer_content: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: *const DP_Rect,
+            ) -> *mut DP_LayerContent,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> DP_UPixelFloat;
 }
 extern "C" {
     pub fn DP_layer_content_sample_color_at(
@@ -4773,6 +4812,12 @@ fn bindgen_test_layout_DP_AffectedIndirectAreas() {
     );
 }
 extern "C" {
+    pub fn DP_affected_area_pixel_dab_area(dab_x: i32, dab_y: i32, dab_size: u16) -> DP_Rect;
+}
+extern "C" {
+    pub fn DP_affected_area_subpixel_dab_area(dab_x: i32, dab_y: i32, dab_size: u32) -> DP_Rect;
+}
+extern "C" {
     pub fn DP_affected_area_make(
         msg: *mut DP_Message,
         aia_or_null: *mut DP_AffectedIndirectAreas,
@@ -5169,6 +5214,11 @@ pub struct DP_LocalState {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_Project {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_ProjectWorker {
     _unused: [u8; 0],
 }
@@ -5471,6 +5521,16 @@ extern "C" {
         file_id: ::std::os::raw::c_uint,
         local_user_id: ::std::os::raw::c_uint,
     );
+}
+extern "C" {
+    pub fn DP_canvas_history_project_player_snapshot(
+        ch: *mut DP_CanvasHistory,
+        prj: *mut DP_Project,
+        ls: *mut DP_LocalState,
+        session_id: ::std::os::raw::c_longlong,
+        sequence_id: ::std::os::raw::c_longlong,
+        recorded_at: f64,
+    ) -> ::std::os::raw::c_longlong;
 }
 extern "C" {
     pub fn DP_canvas_history_reconnect_state_new(
@@ -6202,6 +6262,7 @@ pub struct DP_LocalTrackState {
     pub track_id: ::std::os::raw::c_int,
     pub hidden: bool,
     pub onion_skin: bool,
+    pub move_lock: bool,
 }
 #[test]
 fn bindgen_test_layout_DP_LocalTrackState() {
@@ -6232,6 +6293,11 @@ fn bindgen_test_layout_DP_LocalTrackState() {
         5usize,
         "Offset of field: DP_LocalTrackState::onion_skin"
     );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).move_lock) as usize - ptr as usize },
+        6usize,
+        "Offset of field: DP_LocalTrackState::move_lock"
+    );
 }
 pub type DP_LocalStateViewInvalidatedFn = ::std::option::Option<
     unsafe extern "C" fn(
@@ -6258,6 +6324,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_local_state_free(ls: *mut DP_LocalState);
+}
+extern "C" {
+    pub fn DP_local_state_reset(ls: *mut DP_LocalState);
 }
 extern "C" {
     pub fn DP_local_state_save(
@@ -6423,6 +6492,12 @@ extern "C" {
         censored: bool,
     ) -> *mut DP_Message;
 }
+extern "C" {
+    pub fn DP_local_state_msg_track_move_lock_new(
+        track_id: ::std::os::raw::c_int,
+        move_lock: bool,
+    ) -> *mut DP_Message;
+}
 pub const DP_LOAD_RESULT_SUCCESS: DP_LoadResult = 0;
 pub const DP_LOAD_RESULT_BAD_ARGUMENTS: DP_LoadResult = 1;
 pub const DP_LOAD_RESULT_UNKNOWN_FORMAT: DP_LoadResult = 2;
@@ -6466,92 +6541,6 @@ pub const DP_PLAYER_PASS_CLIENT_PLAYBACK: DP_PlayerPass = 0;
 pub const DP_PLAYER_PASS_FEATURE_ACCESS: DP_PlayerPass = 1;
 pub const DP_PLAYER_PASS_ALL: DP_PlayerPass = 2;
 pub type DP_PlayerPass = ::std::os::raw::c_uint;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_PlayerIndexEntry {
-    pub message_index: ::std::os::raw::c_longlong,
-    pub message_offset: usize,
-    pub snapshot_offset: usize,
-    pub thumbnail_offset: usize,
-}
-#[test]
-fn bindgen_test_layout_DP_PlayerIndexEntry() {
-    const UNINIT: ::std::mem::MaybeUninit<DP_PlayerIndexEntry> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<DP_PlayerIndexEntry>(),
-        32usize,
-        "Size of DP_PlayerIndexEntry"
-    );
-    assert_eq!(
-        ::std::mem::align_of::<DP_PlayerIndexEntry>(),
-        8usize,
-        "Alignment of DP_PlayerIndexEntry"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).message_index) as usize - ptr as usize },
-        0usize,
-        "Offset of field: DP_PlayerIndexEntry::message_index"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).message_offset) as usize - ptr as usize },
-        8usize,
-        "Offset of field: DP_PlayerIndexEntry::message_offset"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).snapshot_offset) as usize - ptr as usize },
-        16usize,
-        "Offset of field: DP_PlayerIndexEntry::snapshot_offset"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).thumbnail_offset) as usize - ptr as usize },
-        24usize,
-        "Offset of field: DP_PlayerIndexEntry::thumbnail_offset"
-    );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_PlayerIndex {
-    pub input: DP_BufferedInput,
-    pub message_count: ::std::os::raw::c_uint,
-    pub entries: *mut DP_PlayerIndexEntry,
-    pub entry_count: usize,
-}
-#[test]
-fn bindgen_test_layout_DP_PlayerIndex() {
-    const UNINIT: ::std::mem::MaybeUninit<DP_PlayerIndex> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<DP_PlayerIndex>(),
-        48usize,
-        "Size of DP_PlayerIndex"
-    );
-    assert_eq!(
-        ::std::mem::align_of::<DP_PlayerIndex>(),
-        8usize,
-        "Alignment of DP_PlayerIndex"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).input) as usize - ptr as usize },
-        0usize,
-        "Offset of field: DP_PlayerIndex::input"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).message_count) as usize - ptr as usize },
-        24usize,
-        "Offset of field: DP_PlayerIndex::message_count"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).entries) as usize - ptr as usize },
-        32usize,
-        "Offset of field: DP_PlayerIndex::entries"
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).entry_count) as usize - ptr as usize },
-        40usize,
-        "Offset of field: DP_PlayerIndex::entry_count"
-    );
-}
 extern "C" {
     pub fn DP_player_new(
         type_: DP_PlayerType,
@@ -6586,18 +6575,6 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_player_recording_path(player: *mut DP_Player) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn DP_player_index_path(player: *mut DP_Player) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn DP_player_index_loaded(player: *mut DP_Player) -> bool;
-}
-extern "C" {
-    pub fn DP_player_index(player: *mut DP_Player) -> *mut DP_PlayerIndex;
-}
-extern "C" {
-    pub fn DP_player_index_set(player: *mut DP_Player, index: DP_PlayerIndex);
 }
 extern "C" {
     pub fn DP_player_tell(player: *mut DP_Player) -> usize;
@@ -7171,6 +7148,13 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_paint_engine_project_recording_resume(
+        pe: *mut DP_PaintEngine,
+        pw: *mut DP_ProjectWorker,
+        file_id: ::std::os::raw::c_uint,
+    );
+}
+extern "C" {
     pub fn DP_paint_engine_project_recording_stop(pe: *mut DP_PaintEngine) -> bool;
 }
 extern "C" {
@@ -7191,6 +7175,12 @@ extern "C" {
         move_pointer: DP_PaintEngineMovePointerFn,
         user: *mut ::std::os::raw::c_void,
     ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_paint_engine_handle_local_freehand_command_inc(
+        pe: *mut DP_PaintEngine,
+        msg: *mut DP_Message,
+    );
 }
 extern "C" {
     pub fn DP_paint_engine_tick(
@@ -8131,6 +8121,9 @@ extern "C" {
     pub fn DP_track_onion_skin(t: *mut DP_Track) -> bool;
 }
 extern "C" {
+    pub fn DP_track_move_lock(t: *mut DP_Track) -> bool;
+}
+extern "C" {
     pub fn DP_track_key_frame_count(t: *mut DP_Track) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -8231,6 +8224,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_transient_track_onion_skin_set(tt: *mut DP_TransientTrack, onion_skin: bool);
+}
+extern "C" {
+    pub fn DP_transient_track_move_lock_set(tt: *mut DP_TransientTrack, move_lock: bool);
 }
 extern "C" {
     pub fn DP_transient_track_truncate(tt: *mut DP_TransientTrack, to_count: ::std::os::raw::c_int);
@@ -8337,6 +8333,7 @@ pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
 pub const DP_SAVE_IMAGE_PROJECT_CANVAS: DP_SaveImageType = 6;
 pub const DP_SAVE_IMAGE_QOI: DP_SaveImageType = 7;
 pub const DP_SAVE_IMAGE_PROJECT: DP_SaveImageType = 8;
+pub const DP_SAVE_IMAGE_LAST: DP_SaveImageType = 8;
 pub type DP_SaveImageType = ::std::os::raw::c_uint;
 pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
 pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
@@ -8461,6 +8458,7 @@ pub struct DP_LoadContextOut {
     pub cs: *mut DP_CanvasState,
     pub session_source_param: *mut ::std::os::raw::c_char,
     pub session_sequence_id: ::std::os::raw::c_longlong,
+    pub resume_session_id: ::std::os::raw::c_longlong,
     pub result: DP_LoadResult,
     pub type_: DP_SaveImageType,
 }
@@ -8470,7 +8468,7 @@ fn bindgen_test_layout_DP_LoadContextOut() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_LoadContextOut>(),
-        32usize,
+        40usize,
         "Size of DP_LoadContextOut"
     );
     assert_eq!(
@@ -8494,13 +8492,18 @@ fn bindgen_test_layout_DP_LoadContextOut() {
         "Offset of field: DP_LoadContextOut::session_sequence_id"
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).resume_session_id) as usize - ptr as usize },
         24usize,
+        "Offset of field: DP_LoadContextOut::resume_session_id"
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
+        32usize,
         "Offset of field: DP_LoadContextOut::result"
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        28usize,
+        36usize,
         "Offset of field: DP_LoadContextOut::type_"
     );
 }
@@ -8516,7 +8519,7 @@ fn bindgen_test_layout_DP_LoadContext() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_LoadContext>(),
-        88usize,
+        96usize,
         "Size of DP_LoadContext"
     );
     assert_eq!(
@@ -8572,74 +8575,6 @@ extern "C" {
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_Player;
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_PlayerIndexEntrySnapshot {
-    _unused: [u8; 0],
-}
-pub type DP_PlayerIndexShouldSnapshotFn =
-    ::std::option::Option<unsafe extern "C" fn(user: *mut ::std::os::raw::c_void) -> bool>;
-pub type DP_PlayerIndexProgressFn = ::std::option::Option<
-    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, percent: ::std::os::raw::c_int),
->;
-extern "C" {
-    pub fn DP_player_index_build(
-        player: *mut DP_Player,
-        dc: *mut DP_DrawContext,
-        should_snapshot_fn: DP_PlayerIndexShouldSnapshotFn,
-        progress_fn: DP_PlayerIndexProgressFn,
-        user: *mut ::std::os::raw::c_void,
-    ) -> bool;
-}
-extern "C" {
-    pub fn DP_player_index_load(player: *mut DP_Player) -> bool;
-}
-extern "C" {
-    pub fn DP_player_index_message_count(player: *mut DP_Player) -> ::std::os::raw::c_uint;
-}
-extern "C" {
-    pub fn DP_player_index_entry_count(player: *mut DP_Player) -> usize;
-}
-extern "C" {
-    pub fn DP_player_index_entry_search(
-        player: *mut DP_Player,
-        position: ::std::os::raw::c_longlong,
-        after: bool,
-    ) -> DP_PlayerIndexEntry;
-}
-extern "C" {
-    pub fn DP_player_index_entry_load(
-        player: *mut DP_Player,
-        dc: *mut DP_DrawContext,
-        entry: DP_PlayerIndexEntry,
-    ) -> *mut DP_PlayerIndexEntrySnapshot;
-}
-extern "C" {
-    pub fn DP_player_index_entry_snapshot_canvas_state_inc(
-        snapshot: *mut DP_PlayerIndexEntrySnapshot,
-    ) -> *mut DP_CanvasState;
-}
-extern "C" {
-    pub fn DP_player_index_entry_snapshot_message_count(
-        snapshot: *mut DP_PlayerIndexEntrySnapshot,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn DP_player_index_entry_snapshot_message_at_inc(
-        snapshot: *mut DP_PlayerIndexEntrySnapshot,
-        i: ::std::os::raw::c_int,
-    ) -> *mut DP_Message;
-}
-extern "C" {
-    pub fn DP_player_index_entry_snapshot_free(snapshot: *mut DP_PlayerIndexEntrySnapshot);
-}
-extern "C" {
-    pub fn DP_player_index_thumbnail_at(
-        player: *mut DP_Player,
-        index: usize,
-        out_error: *mut bool,
-    ) -> *mut DP_Image;
-}
 extern "C" {
     pub fn DP_paint_engine_playback_step(
         pe: *mut DP_PaintEngine,
@@ -8678,33 +8613,6 @@ extern "C" {
         push_message: DP_PaintEnginePushMessageFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_PlayerResult;
-}
-extern "C" {
-    pub fn DP_paint_engine_playback_index_build(
-        pe: *mut DP_PaintEngine,
-        dc: *mut DP_DrawContext,
-        should_snapshot_fn: DP_PlayerIndexShouldSnapshotFn,
-        progress_fn: DP_PlayerIndexProgressFn,
-        user: *mut ::std::os::raw::c_void,
-    ) -> bool;
-}
-extern "C" {
-    pub fn DP_paint_engine_playback_index_load(pe: *mut DP_PaintEngine) -> bool;
-}
-extern "C" {
-    pub fn DP_paint_engine_playback_index_message_count(
-        pe: *mut DP_PaintEngine,
-    ) -> ::std::os::raw::c_uint;
-}
-extern "C" {
-    pub fn DP_paint_engine_playback_index_entry_count(pe: *mut DP_PaintEngine) -> usize;
-}
-extern "C" {
-    pub fn DP_paint_engine_playback_index_thumbnail_at(
-        pe: *mut DP_PaintEngine,
-        index: usize,
-        out_error: *mut bool,
-    ) -> *mut DP_Image;
 }
 extern "C" {
     pub fn DP_paint_engine_playback_dump_step(
@@ -8842,8 +8750,8 @@ extern "C" {
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
         interpolation: ::std::os::raw::c_int,
-        start: ::std::os::raw::c_int,
-        end_inclusive: ::std::os::raw::c_int,
+        frame_indexes: *const ::std::os::raw::c_int,
+        frame_index_count: ::std::os::raw::c_int,
         progress_fn: DP_SaveProgressFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
@@ -8857,8 +8765,8 @@ extern "C" {
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
         interpolation: ::std::os::raw::c_int,
-        start: ::std::os::raw::c_int,
-        end_inclusive: ::std::os::raw::c_int,
+        frame_indexes: *const ::std::os::raw::c_int,
+        frame_index_count: ::std::os::raw::c_int,
         progress_fn: DP_SaveProgressFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
@@ -13455,6 +13363,9 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_void;
 }
 extern "C" {
+    pub fn DP_message_length_with(msg: *mut DP_Message, header: usize) -> usize;
+}
+extern "C" {
     pub fn DP_message_length(msg: *mut DP_Message) -> usize;
 }
 extern "C" {
@@ -13522,6 +13433,12 @@ extern "C" {
         bufsize: usize,
         decode_opaque: bool,
     ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_message_guess_msecs(
+        msg: *mut DP_Message,
+        out_next_has_time: *mut bool,
+    ) -> ::std::os::raw::c_longlong;
 }
 extern "C" {
     pub fn DP_message_type_is_draw_dabs(type_: DP_MessageType) -> bool;

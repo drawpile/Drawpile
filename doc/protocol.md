@@ -66,14 +66,9 @@ Since most Drawpile users will likely run drawpile-srv on their home computers o
 A session recording starts with a header that identifies the file type,
 followed by messages in the same format as transmitted over the network.
 
-There are two meta message types that are relevant only to recordings:
+There are is a meta message types that is relevant only to recordings:
 
 * Interval: this message is used to save timing information. Upon encountering an interval message, the client should pause for the given number of milliseconds.
-* Marker: these are markers created by the user to annotate interesting points in the session. They can be used like bookmarks during playback.
-
-A recording can be accompanied by an *index file*. The index file must have the same name as the recording file, except for the file extension, which must be "dpidx".
-
-The format of the index file is not documented and it can change from version to version. However, the index can always be regenerated from the main recording. The index contains a map of message offsets and snapshots of drawingboard state to enable quick jumping in the recording.
 
 
 ## Protocol revision history

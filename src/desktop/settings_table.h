@@ -21,9 +21,6 @@ SETTING(
 	_themePaletteDummy, _ThemePaletteDummy, "_themepalettedummy",
 	desktop::settings::ThemePalette::System)
 SETTING(
-	_videoExporterFormatDummy, _VideoExporterFormatDummy,
-	"_videoexporterformatdummy", VideoExporter::Format::IMAGE_SERIES)
-SETTING(
 	actionBar, ActionBar, "settings/actionbar",
 	config::Config::defaultActionBar())
 SETTING(
@@ -752,28 +749,6 @@ SETTING(
 	userMarkerPersistence, UserMarkerPersistence,
 	"settings/usermarkerpersistence",
 	config::Config::defaultUserMarkerPersistence())
-SETTING(
-	videoExportCustomFfmpeg, VideoExportCustomFfmpeg,
-	"videoexport/customffmpeg",
-	config::Config::defaultVideoExportCustomFfmpeg())
-SETTING(
-	videoExportFfmpegPath, VideoExportFfmpegPath, "videoexport/ffmpegpath",
-	config::Config::defaultVideoExportFfmpegPath())
-SETTING(
-	videoExportFormat, VideoExportFormat, "videoexport/format",
-	config::Config::defaultVideoExportFormat())
-SETTING(
-	videoExportFrameHeight, VideoExportFrameHeight, "videoexport/frameheight",
-	config::Config::defaultVideoExportFrameHeight())
-SETTING(
-	videoExportFrameRate, VideoExportFrameRate, "videoexport/fps",
-	config::Config::defaultVideoExportFrameRate())
-SETTING(
-	videoExportFrameWidth, VideoExportFrameWidth, "videoexport/framewidth",
-	config::Config::defaultVideoExportFrameWidth())
-SETTING(
-	videoExportSizeChoice, VideoExportSizeChoice, "videoexport/sizeChoice",
-	config::Config::defaultVideoExportSizeChoice())
 SETTING(
 	welcomePageShown, WelcomePageShown, "history/welcomepageshown",
 	config::Config::defaultWelcomePageShown())

@@ -293,88 +293,6 @@ bool PaintEngine::hasPlayback() const
 	return DP_paint_engine_playback(m_data)->player != nullptr;
 }
 
-DP_PlayerResult
-PaintEngine::stepPlayback(long long steps, net::MessageList &outMsgs)
-{
-	return DP_paint_engine_playback_step(
-		m_data, steps, PaintEngine::pushMessage, &outMsgs);
-}
-
-DP_PlayerResult PaintEngine::skipPlaybackBy(
-	long long steps, bool bySnapshots, net::MessageList &outMsgs)
-{
-	DrawContext drawContext = DrawContextPool::acquire();
-	return DP_paint_engine_playback_skip_by(
-		m_data, drawContext.get(), steps, bySnapshots, PaintEngine::pushMessage,
-		&outMsgs);
-}
-
-DP_PlayerResult
-PaintEngine::jumpPlaybackTo(long long position, net::MessageList &outMsgs)
-{
-
-	DrawContext drawContext = DrawContextPool::acquire();
-	return DP_paint_engine_playback_jump_to(
-		m_data, drawContext.get(), position, PaintEngine::pushMessage,
-		&outMsgs);
-}
-
-DP_PlayerResult PaintEngine::beginPlayback()
-{
-	return DP_paint_engine_playback_begin(m_data);
-}
-
-DP_PlayerResult
-PaintEngine::playPlayback(long long msecs, net::MessageList &outMsgs)
-{
-	return DP_paint_engine_playback_play(
-		m_data, msecs, nullptr, PaintEngine::pushMessage, &outMsgs);
-}
-
-namespace {
-
-struct BuildIndexParams {
-	PaintEngine::BuildIndexProgressFn progressFn;
-	long long messagesSinceLastSnapshot;
-};
-
-}
-
-bool PaintEngine::buildPlaybackIndex(BuildIndexProgressFn progressFn)
-{
-	DrawContext drawContext = DrawContextPool::acquire();
-	BuildIndexParams params = {progressFn, 0};
-	return DP_paint_engine_playback_index_build(
-		m_data, drawContext.get(), PaintEngine::shouldSnapshot,
-		PaintEngine::indexProgress, &params);
-}
-
-bool PaintEngine::loadPlaybackIndex()
-{
-	return DP_paint_engine_playback_index_load(m_data);
-}
-
-unsigned int PaintEngine::playbackIndexMessageCount()
-{
-	return DP_paint_engine_playback_index_message_count(m_data);
-}
-
-size_t PaintEngine::playbackIndexEntryCount()
-{
-	return DP_paint_engine_playback_index_entry_count(m_data);
-}
-
-QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
-{
-	bool error;
-	QImage img = wrapImage(
-		DP_paint_engine_playback_index_thumbnail_at(m_data, index, &error));
-	if(error) {
-		qWarning("Error in thumbnail at index %zu: %s", index, DP_error());
-	}
-	return img;
-}
-
 DP_PlayerResult PaintEngine::stepDumpPlayback(net::MessageList &outMsgs)
 {
 	return DP_paint_engine_playback_dump_step(
@@ -533,30 +451,12 @@ bool PaintEngine::pushResetMessage(void *user, DP_Message *msg)
 	return true;
 }
 
-bool PaintEngine::shouldSnapshot(void *user)
-{
-	static constexpr long long MESSAGE_INDEX_INTERVAL = 10000;
-	BuildIndexParams *params = static_cast<BuildIndexParams *>(user);
-	if(params->messagesSinceLastSnapshot++ > MESSAGE_INDEX_INTERVAL) {
-		params->messagesSinceLastSnapshot = 0;
-		return true;
-	} else {
-		return false;
-	}
-}
-
 void PaintEngine::addLayerVisibleInFrame(void *user, int layerId, bool visible)
 {
 	if(visible) {
 		QSet<int> *layersVisibleInFrame = static_cast<QSet<int> *>(user);
 		layersVisibleInFrame->insert(layerId);
 	}
-}
-
-void PaintEngine::indexProgress(void *user, int percent)
-{
-	BuildIndexParams *params = static_cast<BuildIndexParams *>(user);
-	params->progressFn(percent);
 }
 
 const DP_Pixel8 *PaintEngine::getTransformPreviewPixels(void *user)

@@ -1429,41 +1429,6 @@ int Config::defaultUserMarkerPersistence()
 	return 1000;
 }
 
-QString Config::defaultVideoExportCustomFfmpeg()
-{
-	return QString();
-}
-
-QString Config::defaultVideoExportFfmpegPath()
-{
-	return QString("ffmpeg");
-}
-
-int Config::defaultVideoExportFormat()
-{
-	return 0 /* VideoExporter::Format::IMAGE_SERIES */;
-}
-
-int Config::defaultVideoExportFrameHeight()
-{
-	return 720;
-}
-
-int Config::defaultVideoExportFrameRate()
-{
-	return 30;
-}
-
-int Config::defaultVideoExportFrameWidth()
-{
-	return 1280;
-}
-
-int Config::defaultVideoExportSizeChoice()
-{
-	return 0;
-}
-
 bool Config::defaultWelcomePageShown()
 {
 	return false;

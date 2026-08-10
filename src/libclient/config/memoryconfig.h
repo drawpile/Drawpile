@@ -838,27 +838,6 @@ public:
 	int getUserMarkerPersistence() const override;
 	void setUserMarkerPersistence(int value) override;
 
-	QString getVideoExportCustomFfmpeg() const override;
-	void setVideoExportCustomFfmpeg(const QString &value) override;
-
-	QString getVideoExportFfmpegPath() const override;
-	void setVideoExportFfmpegPath(const QString &value) override;
-
-	int getVideoExportFormat() const override;
-	void setVideoExportFormat(int value) override;
-
-	int getVideoExportFrameHeight() const override;
-	void setVideoExportFrameHeight(int value) override;
-
-	int getVideoExportFrameRate() const override;
-	void setVideoExportFrameRate(int value) override;
-
-	int getVideoExportFrameWidth() const override;
-	void setVideoExportFrameWidth(int value) override;
-
-	int getVideoExportSizeChoice() const override;
-	void setVideoExportSizeChoice(int value) override;
-
 	bool getWelcomePageShown() const override;
 	void setWelcomePageShown(bool value) override;
 
@@ -1162,13 +1141,6 @@ private:
 	bool m_updateCheckEnabled = defaultUpdateCheckEnabled();
 	bool m_useMipmaps = defaultUseMipmaps();
 	int m_userMarkerPersistence = defaultUserMarkerPersistence();
-	QString m_videoExportCustomFfmpeg = defaultVideoExportCustomFfmpeg();
-	QString m_videoExportFfmpegPath = defaultVideoExportFfmpegPath();
-	int m_videoExportFormat = defaultVideoExportFormat();
-	int m_videoExportFrameHeight = defaultVideoExportFrameHeight();
-	int m_videoExportFrameRate = defaultVideoExportFrameRate();
-	int m_videoExportFrameWidth = defaultVideoExportFrameWidth();
-	int m_videoExportSizeChoice = defaultVideoExportSizeChoice();
 	bool m_welcomePageShown = defaultWelcomePageShown();
 	bool m_writeLogFile = defaultWriteLogFile();
 };

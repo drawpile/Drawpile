@@ -845,27 +845,6 @@ public:
 	int getUserMarkerPersistence() const override;
 	void setUserMarkerPersistence(int value) override;
 
-	QString getVideoExportCustomFfmpeg() const override;
-	void setVideoExportCustomFfmpeg(const QString &value) override;
-
-	QString getVideoExportFfmpegPath() const override;
-	void setVideoExportFfmpegPath(const QString &value) override;
-
-	int getVideoExportFormat() const override;
-	void setVideoExportFormat(int value) override;
-
-	int getVideoExportFrameHeight() const override;
-	void setVideoExportFrameHeight(int value) override;
-
-	int getVideoExportFrameRate() const override;
-	void setVideoExportFrameRate(int value) override;
-
-	int getVideoExportFrameWidth() const override;
-	void setVideoExportFrameWidth(int value) override;
-
-	int getVideoExportSizeChoice() const override;
-	void setVideoExportSizeChoice(int value) override;
-
 	bool getWelcomePageShown() const override;
 	void setWelcomePageShown(bool value) override;
 

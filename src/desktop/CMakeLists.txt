@@ -135,8 +135,6 @@ target_sources(drawpile PRIVATE
 	dialogs/logindialog.h
 	dialogs/netstats.cpp
 	dialogs/netstats.h
-	dialogs/playbackdialog.cpp
-	dialogs/playbackdialog.h
 	dialogs/projectplaybackdialog.cpp
 	dialogs/projectplaybackdialog.h
 	dialogs/projectrecordingsettingsdialog.cpp
@@ -359,7 +357,6 @@ target_sources(drawpile PRIVATE
 	ui/layoutsdialog.ui
 	ui/logindialog.ui
 	ui/netstats.ui
-	ui/playback.ui
 	ui/resetsession.ui
 	ui/resizedialog.ui
 	ui/serverlog.ui
@@ -653,13 +650,9 @@ elseif(EMSCRIPTEN)
 		scene/cursoritem.h
 	)
 else()
-	target_compile_definitions(drawpile PRIVATE HAVE_VIDEO_EXPORT=1)
 	target_sources(drawpile PRIVATE
 		chat/chatlineedit.cpp
 		chat/chatlineedit.h
-		dialogs/videoexportdialog.cpp
-		dialogs/videoexportdialog.h
-		ui/videoexport.ui
 	)
 	# On Windows and Linux, we want to start a new process when opening a new
 	# window, since that's more resilient against crashes. Pretty sure this

@@ -21,8 +21,6 @@ Settings::Settings(QObject *parent)
 	qRegisterMetaTypeStreamOperators<ThemePalette>(
 		"desktop::settings::ThemePalette");
 	qRegisterMetaTypeStreamOperators<tools::Tool::Type>("tools::Tool::Type");
-	qRegisterMetaTypeStreamOperators<VideoExporter::Format>(
-		"VideoExporter::Format");
 #endif
 }
 

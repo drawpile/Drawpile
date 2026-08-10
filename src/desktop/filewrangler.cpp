@@ -423,42 +423,6 @@ QString FileWrangler::getSaveTabletEventLogPath() const
 		utils::FileFormatOption::SaveEventLog);
 }
 
-#ifdef HAVE_VIDEO_EXPORT
-QString FileWrangler::getSaveFfmpegMp4Path() const
-{
-	return showSaveFileDialog(
-		tr("Export MP4 Video"), LastPath::IMAGE, ".mp4",
-		utils::FileFormatOption::SaveMp4);
-}
-
-QString FileWrangler::getSaveFfmpegWebmPath() const
-{
-	return showSaveFileDialog(
-		tr("Export WebM Video"), LastPath::IMAGE, ".webm",
-		utils::FileFormatOption::SaveWebm);
-}
-
-QString FileWrangler::getSaveFfmpegCustomPath() const
-{
-	return showSaveFileDialog(
-		tr("Export Custom FFmpeg Video"), LastPath::IMAGE, ".mp4",
-		utils::FileFormatOption::SaveAllFiles);
-}
-
-QString FileWrangler::getSaveImageSeriesPath() const
-{
-	QString dirname = QFileDialog::getExistingDirectory(
-		parentWidget(), tr("Save Image Series"),
-		getLastPath(LastPath::ANIMATION_FRAMES));
-	if(dirname.isEmpty()) {
-		return QString{};
-	} else {
-		setLastPath(LastPath::ANIMATION_FRAMES, dirname);
-		return dirname;
-	}
-}
-#endif
-
 #ifdef __EMSCRIPTEN__
 void FileWrangler::downloadImage(Document *doc) const
 {

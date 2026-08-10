@@ -39,8 +39,6 @@
 #include <ctype.h>
 #include <parson.h>
 
-#define INDEX_EXTENSION "dpidx"
-
 typedef union DP_PlayerReader {
     DP_BinaryReader *binary;
     DP_TextReader *text;
@@ -49,7 +47,6 @@ typedef union DP_PlayerReader {
 
 struct DP_Player {
     char *recording_path;
-    char *index_path;
     DP_PlayerType type;
     DP_PlayerReader reader;
     DP_AclState *acls;
@@ -63,17 +60,7 @@ struct DP_Player {
     unsigned char pass;
     bool input_error;
     bool end;
-    DP_PlayerIndex index;
 };
-
-
-static void player_index_dispose(DP_PlayerIndex *pi)
-{
-    DP_ASSERT(pi);
-    DP_free(pi->entries);
-    DP_buffered_input_dispose(&pi->input);
-    *pi = (DP_PlayerIndex){DP_BUFFERED_INPUT_NULL, 0, NULL, 0};
-}
 
 
 static void assign_load_result(DP_LoadResult *out_result, DP_LoadResult result)
@@ -132,50 +119,34 @@ static DP_LoadResult guess_type(DP_Input *input, DP_PlayerType *out_type)
     return DP_LOAD_RESULT_BAD_MIMETYPE;
 }
 
-static char *make_index_path(const char *path)
-{
-    const char *dot = strrchr(path, '.');
-    size_t prefix_len = dot ? (size_t)(dot - path) : strlen(path);
-    size_t extension_len = strlen(INDEX_EXTENSION);
-    size_t total_len = prefix_len + extension_len + 1;
-    char *index_path = DP_malloc(total_len + 1);
-    memcpy(index_path, path, prefix_len);
-    index_path[prefix_len] = '.';
-    memcpy(index_path + prefix_len + 1, INDEX_EXTENSION, extension_len);
-    index_path[total_len] = '\0';
-    return index_path;
-}
-
 static DP_Player *make_player(DP_PlayerType type, char *recording_path,
-                              char *index_path, DP_PlayerReader reader,
-                              char *version, JSON_Value *header_value)
+                              DP_PlayerReader reader, char *version,
+                              JSON_Value *header_value)
 {
     DP_ProtocolVersion *protover = DP_protocol_version_parse(version);
     DP_free(version);
     DP_Player *player = DP_malloc(sizeof(*player));
-    *player =
-        (DP_Player){recording_path,
-                    index_path,
-                    type,
-                    reader,
-                    DP_acl_state_new_playback(),
-                    header_value,
-                    0,
-                    protover,
+    *player = (DP_Player){
+        recording_path,
+        type,
+        reader,
+        DP_acl_state_new_playback(),
+        header_value,
+        0,
+        protover,
 #ifdef DP_PROTOCOL_COMPAT_VERSION
-                    type == DP_PLAYER_TYPE_BINARY
-                        && DP_protocol_version_is_past_compatible(protover),
+        type == DP_PLAYER_TYPE_BINARY
+            && DP_protocol_version_is_past_compatible(protover),
 #endif
-                    false,
-                    DP_PLAYER_PASS_CLIENT_PLAYBACK,
-                    false,
-                    false,
-                    {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
+        false,
+        DP_PLAYER_PASS_CLIENT_PLAYBACK,
+        false,
+        false,
+    };
     return player;
 }
 
-static DP_Player *new_binary_player(char *recording_path, char *index_path,
-                                    DP_Input *input)
+static DP_Player *new_binary_player(char *recording_path, DP_Input *input)
 {
     DP_BinaryReader *binary_reader = DP_binary_reader_new(input, 0);
     if (!binary_reader) {
@@ -185,13 +156,12 @@ static DP_Player *new_binary_player(char *recording_path, char *index_path,
     JSON_Object *header =
         json_value_get_object(DP_binary_reader_header(binary_reader));
     char *version = DP_strdup(json_object_get_string(header, "version"));
-    return make_player(DP_PLAYER_TYPE_BINARY, recording_path, index_path,
+    return make_player(DP_PLAYER_TYPE_BINARY, recording_path,
                        (DP_PlayerReader){.binary = binary_reader}, version,
                        NULL);
 }
 
-static DP_Player *new_text_player(char *recording_path, char *index_path,
-                                  DP_Input *input)
+static DP_Player *new_text_player(char *recording_path, DP_Input *input)
 {
     DP_TextReader *text_reader = DP_text_reader_new(input);
     if (!text_reader) {
@@ -234,7 +204,7 @@ static DP_Player *new_text_player(char *recording_path, char *index_path,
         }
     }
 
-    return make_player(DP_PLAYER_TYPE_TEXT, recording_path, index_path,
+    return make_player(DP_PLAYER_TYPE_TEXT, recording_path,
                        (DP_PlayerReader){.text = text_reader}, version,
                        header_value);
 }
@@ -242,22 +212,22 @@ static DP_Player *new_text_player(char *recording_path, char *index_path,
 static DP_Player *new_debug_dump_player(DP_Input *input)
 {
     DP_Player *player = DP_malloc(sizeof(*player));
-    *player = (DP_Player){NULL,
-                          NULL,
-                          DP_PLAYER_TYPE_DEBUG_DUMP,
-                          {.dump = DP_dump_reader_new(input)},
-                          NULL,
-                          NULL,
-                          0,
-                          NULL,
+    *player = (DP_Player){
+        NULL,
+        DP_PLAYER_TYPE_DEBUG_DUMP,
+        {.dump = DP_dump_reader_new(input)},
+        NULL,
+        NULL,
+        0,
+        NULL,
 #ifdef DP_PROTOCOL_COMPAT_VERSION
-                          false,
+        false,
 #endif
-                          false,
-                          DP_PLAYER_PASS_CLIENT_PLAYBACK,
-                          false,
-                          false,
-                          {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
+        false,
+        DP_PLAYER_PASS_CLIENT_PLAYBACK,
+        false,
+        false,
+    };
     return player;
 }
 
@@ -273,29 +243,26 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
         }
     }
 
-    char *recording_path, *index_path;
+    char *recording_path;
     if (path_or_null && type != DP_PLAYER_TYPE_DEBUG_DUMP) {
         recording_path = DP_strdup(path_or_null);
-        index_path = make_index_path(path_or_null);
     }
     else {
         recording_path = NULL;
-        index_path = NULL;
     }
 
     DP_Player *player;
     switch (type) {
     case DP_PLAYER_TYPE_BINARY:
-        player = new_binary_player(recording_path, index_path, input);
+        player = new_binary_player(recording_path, input);
         break;
     case DP_PLAYER_TYPE_TEXT:
-        player = new_text_player(recording_path, index_path, input);
+        player = new_text_player(recording_path, input);
         break;
     case DP_PLAYER_TYPE_DEBUG_DUMP:
         player = new_debug_dump_player(input);
         break;
     default:
-        DP_free(index_path);
         DP_free(recording_path);
         DP_input_free(input);
         DP_error_set("Unknown player format");
@@ -304,7 +271,6 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
     }
 
     if (!player) {
-        DP_free(index_path);
         DP_free(recording_path);
         assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
         return NULL;
@@ -317,7 +283,6 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
 void DP_player_free(DP_Player *player)
 {
     if (player) {
-        player_index_dispose(&player->index);
         DP_acl_state_free(player->acls);
         switch (player->type) {
         case DP_PLAYER_TYPE_BINARY:
@@ -334,7 +299,6 @@ void DP_player_free(DP_Player *player)
             break;
         }
         DP_protocol_version_free(player->protover);
-        DP_free(player->index_path);
         DP_free(player->recording_path);
         DP_free(player);
     }
@@ -429,31 +393,6 @@ const char *DP_player_recording_path(DP_Player *player)
 {
     DP_ASSERT(player);
     return player->recording_path;
-}
-
-const char *DP_player_index_path(DP_Player *player)
-{
-    DP_ASSERT(player);
-    return player->index_path;
-}
-
-bool DP_player_index_loaded(DP_Player *player)
-{
-    DP_ASSERT(player);
-    return player->index.entries;
-}
-
-DP_PlayerIndex *DP_player_index(DP_Player *player)
-{
-    DP_ASSERT(player);
-    return &player->index;
-}
-
-void DP_player_index_set(DP_Player *player, DP_PlayerIndex index)
-{
-    DP_ASSERT(player);
-    player_index_dispose(&player->index);
-    player->index = index;
 }
 
 size_t DP_player_tell(DP_Player *player)
