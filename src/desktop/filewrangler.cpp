@@ -189,6 +189,20 @@ void FileWrangler::openReferenceImage(const ImageOpenFn &imageOpenCompleted)
 
 
 #ifndef __EMSCRIPTEN__
+QStringList FileWrangler::getProjectEditImportPaths()
+{
+	return showOpenFileListDialogFilters(
+		tr("Recordings"), LastPath::IMAGE,
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenRecordings));
+}
+
+QString FileWrangler::getProjectEditExportPath()
+{
+	return showSaveFileDialogFilters(
+		tr("Save Project"), LastPath::IMAGE, QStringLiteral(".dppr"),
+		utils::saveProjectFormatFilterList());
+}
+
 QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 {
 	QString nameFilter = getEffectiveFilter({
@@ -1206,23 +1220,37 @@ QString FileWrangler::showOpenFileDialog(
 QString FileWrangler::showOpenFileDialogFilters(
 	const QString &title, LastPath type, const QStringList &filters) const
 {
-	QString filename = QFileDialog::getOpenFileName(
+	QString path = QFileDialog::getOpenFileName(
 		parentWidget(), title, getLastPath(type), getEffectiveFilter(filters));
-	if(filename.isEmpty()) {
-		return QString{};
-	} else {
+	setLastOpenPath(type, path);
+	return path;
+}
+
+QStringList FileWrangler::showOpenFileListDialogFilters(
+	const QString &title, LastPath type, const QStringList &filters) const
+{
+	QStringList paths = QFileDialog::getOpenFileNames(
+		parentWidget(), title, getLastPath(type), getEffectiveFilter(filters));
+	if(!paths.isEmpty()) {
+		setLastOpenPath(type, paths.constFirst());
+	}
+	return paths;
+}
+
+void FileWrangler::setLastOpenPath(LastPath type, const QString &path) const
+{
+	if(!path.isEmpty()) {
 #ifdef Q_OS_ANDROID
 		// On Android, the last path is really just the name of the last file,
 		// since paths are weird content URIs that don't interact with the
 		// native Android file picker in any kind of sensible way.
-		QString basename = utils::PathInfo(filename).basename();
+		QString basename = utils::PathInfo(path).basename();
 		if(!basename.isEmpty()) {
 			setLastPath(type, basename);
 		}
 #else
-		setLastPath(type, filename);
+		setLastPath(type, path);
 #endif
-		return filename;
 	}
 }
 

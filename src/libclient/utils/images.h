@@ -36,6 +36,7 @@ enum FileFormatOption {
 #endif
 
 	OpenImages = Images | AllFiles,
+	OpenRecordings = Recordings | AllFiles,
 	OpenEverything = Images | Recordings | AllFiles,
 	OpenDebugDumps = DebugDumps,
 	OpenBrushPack = BrushPack,
@@ -58,6 +59,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)
 QStringList fileFormatFilterList(FileFormatOptions formats);
 
 QStringList openPlaybackFormatFilterList();
+QStringList saveProjectFormatFilterList();
 
 }
 

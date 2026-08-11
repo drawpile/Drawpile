@@ -305,6 +305,10 @@ private slots:
 	void toggleDebugDump();
 #endif
 	void openDebugDump();
+#ifndef __EMSCRIPTEN__
+	void showProjectEditDialog();
+	void openEditedProject(const QString &path);
+#endif
 	void showProjectPlaybackDialog(
 		const QString &basename, const QString &loadPath,
 		QTemporaryFile *tempFile, bool looksLikeProject);

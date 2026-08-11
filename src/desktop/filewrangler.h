@@ -98,6 +98,9 @@ public:
 #endif
 
 #ifndef __EMSCRIPTEN_
+	QStringList getProjectEditImportPaths();
+	QString getProjectEditExportPath();
+
 	// The browser handles our certificates in Emscripten.
 	QStringList getImportCertificatePaths(const QString &title) const;
 
@@ -214,6 +217,11 @@ private:
 
 	QString showOpenFileDialogFilters(
 		const QString &title, LastPath type, const QStringList &filters) const;
+
+	QStringList showOpenFileListDialogFilters(
+		const QString &title, LastPath type, const QStringList &filters) const;
+
+	void setLastOpenPath(LastPath type, const QString &path) const;
 
 	QString showSaveFileDialog(
 		const QString &title, LastPath type, const QString &ext,

@@ -242,12 +242,14 @@ void ProjectDialog::handleOverviewGenerated()
 			long long totalSessionMinutes = 0LL;
 			long long totalOwnWorkMinutes = 0LL;
 			for(const project::OverviewEntry &oe : overviewEntries) {
-				if(oe.openedAt.isValid() && oe.closedAt.isValid()) {
-					totalSessionMinutes +=
-						qRound(double(oe.openedAt.secsTo(oe.closedAt)) / 60.0);
-				}
-				if(oe.ownWorkMinutes > 0LL) {
-					totalOwnWorkMinutes += oe.ownWorkMinutes;
+				if(!oe.converted) {
+					if(oe.openedAt.isValid() && oe.closedAt.isValid()) {
+						totalSessionMinutes += qRound(
+							double(oe.openedAt.secsTo(oe.closedAt)) / 60.0);
+					}
+					if(oe.ownWorkMinutes > 0LL) {
+						totalOwnWorkMinutes += oe.ownWorkMinutes;
+					}
 				}
 			}
 
@@ -300,35 +302,45 @@ void ProjectDialog::handleOverviewGenerated()
 				sessionTitleLabel->setWordWrap(true);
 				sessionForm->addRow(sessionTitleLabel);
 
-				QLabel *sessionOpenLabel = new QLabel(oe.openedAt.toString(
-					locale.dateTimeFormat(QLocale::ShortFormat)));
-				sessionOpenLabel->setWordWrap(true);
-				//: Refers to the date and time a session was opened (started.)
-				sessionForm->addRow(tr("Opened at:"), sessionOpenLabel);
-
-				QLabel *sessionCloseLabel = new QLabel(oe.closedAt.toString(
-					locale.dateTimeFormat(QLocale::ShortFormat)));
-				sessionCloseLabel->setWordWrap(true);
-				//: Refers to the date and time a session was closed (ended.)
-				sessionForm->addRow(tr("Closed at:"), sessionCloseLabel);
-
-				QString sessionTime;
-				if(oe.openedAt.isValid() && oe.closedAt.isValid()) {
-					sessionTime = utils::formatWorkMinutes(
-						qRound(double(oe.openedAt.secsTo(oe.closedAt)) / 60.0));
+				if(oe.converted) {
+					QLabel *sessionConvertedLabel = new QLabel(
+						tr("Converted from a recording file, no timing "
+						   "information available."));
+					sessionConvertedLabel->setWordWrap(true);
+					sessionForm->addRow(sessionConvertedLabel);
 				} else {
-					//: Part of "Session time: unknown".
-					sessionTime = tr("unknown");
-				}
-				QLabel *sessionTimeLabel = new QLabel(sessionTime);
-				sessionTimeLabel->setWordWrap(true);
-				sessionForm->addRow(tr("Session time:"), sessionTimeLabel);
+					QLabel *sessionOpenLabel = new QLabel(oe.openedAt.toString(
+						locale.dateTimeFormat(QLocale::ShortFormat)));
+					sessionOpenLabel->setWordWrap(true);
+					//: Refers to the date and time a session was opened
+					//: (started.)
+					sessionForm->addRow(tr("Opened at:"), sessionOpenLabel);
 
-				QLabel *sessionWorkTimeLabel =
-					new QLabel(utils::formatWorkMinutes(oe.ownWorkMinutes));
-				sessionWorkTimeLabel->setWordWrap(true);
-				sessionForm->addRow(
-					tr("Your work time:"), sessionWorkTimeLabel);
+					QLabel *sessionCloseLabel = new QLabel(oe.closedAt.toString(
+						locale.dateTimeFormat(QLocale::ShortFormat)));
+					sessionCloseLabel->setWordWrap(true);
+					//: Refers to the date and time a session was closed
+					//: (ended.)
+					sessionForm->addRow(tr("Closed at:"), sessionCloseLabel);
+
+					QString sessionTime;
+					if(oe.openedAt.isValid() && oe.closedAt.isValid()) {
+						sessionTime = utils::formatWorkMinutes(qRound(
+							double(oe.openedAt.secsTo(oe.closedAt)) / 60.0));
+					} else {
+						//: Part of "Session time: unknown".
+						sessionTime = tr("unknown");
+					}
+					QLabel *sessionTimeLabel = new QLabel(sessionTime);
+					sessionTimeLabel->setWordWrap(true);
+					sessionForm->addRow(tr("Session time:"), sessionTimeLabel);
+
+					QLabel *sessionWorkTimeLabel =
+						new QLabel(utils::formatWorkMinutes(oe.ownWorkMinutes));
+					sessionWorkTimeLabel->setWordWrap(true);
+					sessionForm->addRow(
+						tr("Your work time:"), sessionWorkTimeLabel);
+				}
 
 				protocol::ProtocolVersion protover =
 					protocol::ProtocolVersion::fromString(oe.protocol);

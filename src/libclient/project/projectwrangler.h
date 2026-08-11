@@ -34,6 +34,7 @@ struct OverviewEntry {
 	QDateTime openedAt;
 	QDateTime closedAt;
 	QString protocol;
+	bool converted = false;
 };
 
 class ProjectWrangler final : public QObject {

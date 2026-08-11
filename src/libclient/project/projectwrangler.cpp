@@ -676,6 +676,7 @@ void ProjectWrangler::handleInfoOverview(const DP_ProjectInfoOverview &info)
 	}
 
 	oe.protocol = QString::fromUtf8(info.protocol);
+	oe.converted = (info.flags & DP_PROJECT_SESSION_FLAG_CONVERTED) != 0;
 }
 
 void ProjectWrangler::handleInfoWorkTimes(const DP_ProjectInfoWorkTimes &info)

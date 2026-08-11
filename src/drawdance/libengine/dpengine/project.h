@@ -158,6 +158,13 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_SESSION_RESUME_ERROR_PROTOCOL     (-1906)
 #define DP_PROJECT_SESSION_RESUME_ERROR_NOT_FOUND    (-1907)
 
+#define DP_PROJECT_SESSION_THUMBNAIL_ERROR_UNKNOWN  (-2000)
+#define DP_PROJECT_SESSION_THUMBNAIL_ERROR_MISUSE   (-2001)
+#define DP_PROJECT_SESSION_THUMBNAIL_ERROR_NOT_OPEN (-2002)
+#define DP_PROJECT_SESSION_THUMBNAIL_ERROR_PREPARE  (-2003)
+#define DP_PROJECT_SESSION_THUMBNAIL_ERROR_QUERY    (-2004)
+#define DP_PROJECT_SESSION_THUMBNAIL_ERROR_GENERATE (-2005)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -216,6 +223,7 @@ typedef struct DP_Rect DP_Rect;
 
 
 typedef struct DP_Project DP_Project;
+typedef struct DP_ProjectMessageCompressor DP_ProjectMessageCompressor;
 typedef struct DP_ProjectPlayback DP_ProjectPlayback;
 typedef struct DP_ProjectPlayer DP_ProjectPlayer;
 
@@ -315,6 +323,7 @@ typedef struct DP_ProjectInfoOverview {
     double closed_at;
     const unsigned char *thumbnail_data;
     size_t thumbnail_size;
+    unsigned int flags;
 } DP_ProjectInfoOverview;
 
 typedef struct DP_ProjectInfoWorkTimes {
@@ -440,6 +449,12 @@ int DP_project_session_open(DP_Project *prj, int source_type,
 int DP_project_session_resume(DP_Project *prj, long long session_id,
                               const char *protocol);
 
+int DP_project_session_thumbnail_set(DP_Project *prj, DP_CanvasState *cs,
+                                     DP_DrawContext *dc_or_null,
+                                     bool (*thumb_write_fn)(void *, DP_Image *,
+                                                            DP_Output *),
+                                     void *thumb_write_user);
+
 // Closes the currently open session, ORing in the given flags to set. Returns 0
 // on success, a negative DP_PROJECT_SESSION_CLOSE_ERROR_* value on failure and
 // DP_PROJECT_SESSION_CLOSE_NOT_OPEN if there's not session to close.
@@ -531,6 +546,13 @@ int DP_project_save_state(DP_CanvasState *cs, const char *path,
                                                  DP_Output *),
                           void *thumb_write_user);
 
+// Like DP_project_save, but just saves to the current session. Also updates the
+// session's thumbnail.
+int DP_project_session_save(DP_Project *prj, DP_CanvasState *cs,
+                            bool (*thumb_write_fn)(void *, DP_Image *,
+                                                   DP_Output *),
+                            void *thumb_write_user);
+
 
 DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
                                                 DP_DrawContext *dc,
@@ -569,6 +591,22 @@ int DP_project_info(DP_Project *prj, unsigned int flags,
                     void *user);
 
 bool DP_project_dump(DP_Project *prj, DP_Output *output);
+
+
+// The message compressor is for recording messages with multi compression. You
+// must not intermix recording messages with and without the compressor!
+DP_ProjectMessageCompressor *DP_project_message_compressor_new(DP_Project *prj);
+
+void DP_project_message_compressor_free(DP_ProjectMessageCompressor *pmc);
+
+bool DP_project_message_compressor_session_id_set(
+    DP_ProjectMessageCompressor *pmc, long long session_id);
+
+int DP_project_message_compressor_message_record(
+    DP_ProjectMessageCompressor *pmc, double recorded_at, DP_Message *msg,
+    unsigned int flags);
+
+bool DP_project_message_compressor_flush(DP_ProjectMessageCompressor *pmc);
 
 
 DP_ProjectPlayback *DP_project_playback_new(DP_Project *prj);

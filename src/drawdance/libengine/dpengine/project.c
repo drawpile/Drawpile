@@ -8,6 +8,7 @@
 #include "compress.h"
 #include "document_metadata.h"
 #include "draw_context.h"
+#include "image.h"
 #include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
@@ -1514,6 +1515,63 @@ int DP_project_session_resume(DP_Project *prj, long long session_id,
 
     sqlite3_finalize(stmt);
     return result;
+}
+
+int DP_project_session_thumbnail_set(DP_Project *prj, DP_CanvasState *cs,
+                                     DP_DrawContext *dc_or_null,
+                                     bool (*thumb_write_fn)(void *, DP_Image *,
+                                                            DP_Output *),
+                                     void *thumb_write_user)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SESSION_THUMBNAIL_ERROR_MISUSE;
+    }
+
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_SESSION_THUMBNAIL_ERROR_NOT_OPEN;
+    }
+
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "update sessions set thumbnail = ? where session_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SESSION_THUMBNAIL_ERROR_PREPARE;
+    }
+
+    void *data;
+    size_t size;
+    if (cs && thumb_write_fn && DP_canvas_state_width(cs) > 0
+        && DP_canvas_state_height(cs) > 0) {
+        if (!DP_image_thumbnail_from_canvas_write(
+                cs, dc_or_null, DP_PROJECT_THUMBNAIL_SIZE,
+                DP_PROJECT_THUMBNAIL_SIZE, thumb_write_fn, thumb_write_user,
+                &data, &size)) {
+            return DP_PROJECT_SESSION_THUMBNAIL_ERROR_GENERATE;
+        }
+    }
+    else {
+        data = NULL;
+        size = 0;
+    }
+
+    bool bind_ok = ps_bind_blob_or_null(prj, stmt, 1, data, size)
+                && ps_bind_int64(prj, stmt, 2, session_id);
+    if (!bind_ok) {
+        DP_free(data);
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SESSION_THUMBNAIL_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    DP_free(data);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SESSION_THUMBNAIL_ERROR_QUERY;
+    }
+
+    return 0;
 }
 
 int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set)
@@ -3383,7 +3441,9 @@ static bool project_save_copy_messages_insert(
     DP_Project *prj = c->prj;
     sqlite3_stmt *stmt = c->insert_stmt;
     DP_Mutex *mutex = prj->snapshot.mutex;
-    DP_MUTEX_MUST_LOCK(mutex);
+    if (mutex) {
+        DP_MUTEX_MUST_LOCK(mutex);
+    }
     bool ok = ps_bind_int64(prj, stmt, 2, sequence_id)
            && ps_bind_double(prj, stmt, 3,
                              DP_llong_to_double(recorded_at_msec) / 1000.0)
@@ -3392,7 +3452,9 @@ static bool project_save_copy_messages_insert(
            && ps_bind_int64(prj, stmt, 6, context_id)
            && ps_bind_blob_or_null(prj, stmt, 7, body, body_length)
            && ps_exec_write(prj, stmt, NULL);
-    DP_MUTEX_MUST_UNLOCK(mutex);
+    if (mutex) {
+        DP_MUTEX_MUST_UNLOCK(mutex);
+    }
     return ok;
 }
 
@@ -3888,6 +3950,63 @@ int DP_project_save_state(DP_CanvasState *cs, const char *path,
     else {
         return save_result;
     }
+}
+
+int DP_project_session_save(DP_Project *prj, DP_CanvasState *cs,
+                            bool (*thumb_write_fn)(void *, DP_Image *,
+                                                   DP_Output *),
+                            void *thumb_write_user)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_SAVE_ERROR_NO_SESSION;
+    }
+
+    long long save_snapshot_id =
+        project_snapshot_open(prj, DP_PROJECT_SNAPSHOT_FLAG_CANVAS, session_id,
+                              prj->sequence_id, false);
+    if (save_snapshot_id < 1LL) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    int snapshot_canvas_result =
+        snapshot_canvas(prj, cs, thumb_write_fn, thumb_write_user, NULL, NULL);
+    if (snapshot_canvas_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    if (snapshot_finish(prj) != 0) {
+        return DP_PROJECT_SAVE_ERROR_WRITE;
+    }
+
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "update sessions set thumbnail = (\n"
+             "    select thumbnail from snapshots where snapshot_id = ?)\n"
+             "where session_id = ?");
+    if (!stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool bind_ok = ps_bind_int64(prj, stmt, 1, save_snapshot_id)
+                && ps_bind_int64(prj, stmt, 2, session_id);
+    if (!bind_ok) {
+        sqlite3_finalize(stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    bool write_ok = ps_exec_write(prj, stmt, NULL);
+    sqlite3_finalize(stmt);
+    if (!write_ok) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+
+    return 0;
 }
 
 
@@ -6842,8 +6961,9 @@ static int project_info_overview(DP_Project *prj,
                                  void *user)
 {
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj, "select session_id, protocol, opened_at, closed_at, thumbnail\n"
-             "from sessions order by session_id");
+        prj,
+        "select session_id, protocol, flags, opened_at, closed_at, thumbnail\n"
+        "from sessions order by session_id");
     if (!stmt) {
         return DP_PROJECT_INFO_ERROR_PREPARE;
     }
@@ -6852,14 +6972,15 @@ static int project_info_overview(DP_Project *prj,
     while (ps_exec_step(prj, stmt, &error)) {
         long long session_id = sqlite3_column_int64(stmt, 0);
         const char *protocol = (const char *)sqlite3_column_text(stmt, 1);
-        double opened_at = sqlite3_column_double(stmt, 2);
-        double closed_at = sqlite3_column_double(stmt, 3);
-        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 4);
-        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 4);
+        unsigned int flags = DP_int_to_uint(sqlite3_column_int(stmt, 2));
+        double opened_at = sqlite3_column_double(stmt, 3);
+        double closed_at = sqlite3_column_double(stmt, 4);
+        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 5);
+        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 5);
         DP_ProjectInfo info = {
             DP_PROJECT_INFO_TYPE_OVERVIEW,
             {.overview = {session_id, protocol, opened_at, closed_at,
-                          thumbnail_data, thumbnail_size}}};
+                          thumbnail_data, thumbnail_size, flags}}};
         callback(user, &info);
     }
     sqlite3_finalize(stmt);
@@ -7118,6 +7239,97 @@ bool DP_project_dump(DP_Project *prj, DP_Output *output)
                "case when closed_at is null then 'open' else 'closed' end "
                "as status from sessions order by session_id")
         && DP_OUTPUT_PRINT_LITERAL(output, "\nend project dump\n");
+}
+
+
+struct DP_ProjectMessageCompressor {
+    DP_ProjectSaveCopyMessagesContext c;
+    long long session_id;
+};
+
+DP_ProjectMessageCompressor *DP_project_message_compressor_new(DP_Project *prj)
+{
+    DP_ASSERT(prj);
+
+    sqlite3_stmt *insert_stmt = ps_prepare_ephemeral(
+        prj, "insert into messages (session_id, sequence_id,\n"
+             "recorded_at, flags, type, context_id, body)\n"
+             "values (?, ?, ?, ?, ?, ? ,?)");
+    if (!insert_stmt) {
+        return NULL;
+    }
+
+    DP_ProjectMessageCompressor *pmc = DP_malloc(sizeof(*pmc));
+    project_save_copy_messages_context_init(&pmc->c, prj, insert_stmt);
+    pmc->session_id = 0LL;
+    return pmc;
+}
+
+void DP_project_message_compressor_free(DP_ProjectMessageCompressor *pmc)
+{
+    if (pmc) {
+        project_save_copy_messages_context_dispose(&pmc->c);
+        sqlite3_finalize(pmc->c.insert_stmt);
+        DP_free(pmc);
+    }
+}
+
+bool DP_project_message_compressor_session_id_set(
+    DP_ProjectMessageCompressor *pmc, long long session_id)
+{
+    DP_ASSERT(pmc);
+    DP_ASSERT(pmc->c.message_count == 0);
+    if (pmc->session_id == session_id) {
+        return true;
+    }
+    else if (ps_bind_int64(pmc->c.prj, pmc->c.insert_stmt, 1, session_id)) {
+        pmc->session_id = session_id;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int DP_project_message_compressor_message_record(
+    DP_ProjectMessageCompressor *pmc, double recorded_at, DP_Message *msg,
+    unsigned int flags)
+{
+    DP_ASSERT(pmc);
+    DP_ASSERT(msg);
+
+    DP_Project *prj = pmc->c.prj;
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    if (session_id != pmc->session_id) {
+        DP_error_set(
+            "Compressor session %lld does not match project session %lld",
+            pmc->session_id, session_id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    size_t length;
+    if (!DP_message_serialize_body(msg, get_serialize_buffer, prj, &length)) {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE;
+    }
+
+    if (!project_save_copy_messages_handle(
+            &pmc->c, ++prj->sequence_id, recorded_at, flags,
+            (int)DP_message_type(msg), DP_message_context_id(msg),
+            prj->serialize_buffer, length)) {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE;
+    }
+
+    return 0;
+}
+
+bool DP_project_message_compressor_flush(DP_ProjectMessageCompressor *pmc)
+{
+    return project_save_copy_messages_flush_buffer(&pmc->c);
 }
 
 

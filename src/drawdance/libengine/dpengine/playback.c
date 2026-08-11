@@ -234,6 +234,17 @@ void DP_playback_handle_message_dec(DP_Playback *pb, DP_Message *msg,
     fn(pb, msg);
 }
 
+void DP_playback_push_message_inc(DP_Playback *pb, DP_Message *msg)
+{
+    DP_ASSERT(pb);
+    DP_ASSERT(msg);
+    DP_PlaybackHandleFn fn =
+        DP_playback_get_handle_fn((int)DP_message_type(msg));
+    if (fn) {
+        fn(pb, DP_message_incref(msg));
+    }
+}
+
 bool DP_playback_local_state_get_reset(DP_Playback *pb,
                                        bool (*fn)(void *, DP_Message *),
                                        void *user)

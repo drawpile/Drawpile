@@ -771,6 +771,8 @@ if(NOT EMSCRIPTEN)
 	target_sources(drawpile PRIVATE
 		dialogs/projectdialog.cpp
 		dialogs/projectdialog.h
+		dialogs/projecteditdialog.cpp
+		dialogs/projecteditdialog.h
 		dialogs/startdialog/recent.cpp
 		dialogs/startdialog/recent.h
 		dialogs/startdialog/updatenotice.cpp

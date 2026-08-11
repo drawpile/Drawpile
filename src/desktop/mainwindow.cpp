@@ -157,6 +157,8 @@ extern "C" {
 #endif
 #ifdef __EMSCRIPTEN__
 #	include "libclient/wasmsupport.h"
+#else
+#	include "desktop/dialogs/projecteditdialog.h"
 #endif
 #ifdef DP_HAVE_BUILTIN_SERVER
 #	include "libclient/server/builtinserver.h"
@@ -2901,6 +2903,40 @@ void MainWindow::openPlaybackPath(const QString &path, QTemporaryFile *tempFile)
 		DP_PROJECT_CHECK_NONE;
 	showProjectPlaybackDialog(basename, loadPath, tempFile, looksLikeProject);
 }
+
+#ifndef __EMSCRIPTEN__
+void MainWindow::showProjectEditDialog()
+{
+	QString objectName = QStringLiteral("projecteditdialog");
+	dialogs::ProjectEditDialog *dlg = findChild<dialogs::ProjectEditDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::ProjectEditDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
+		connect(
+			dlg, &dialogs::ProjectEditDialog::openOutputFileRequested, this,
+			&MainWindow::openEditedProject);
+		utils::showWindow(dlg);
+		dlg->addInputFiles();
+	}
+}
+
+void MainWindow::openEditedProject(const QString &path)
+{
+	questionWindowReplacement(
+		tr("Open Project"),
+		tr("You're about to open the project file and close this window."),
+		[this, path](bool ok) {
+			if(ok) {
+				openPath(path);
+			}
+		});
+}
+#endif
 
 void MainWindow::showProjectPlaybackDialog(
 	const QString &basename, const QString &loadPath, QTemporaryFile *tempFile,
@@ -6387,6 +6423,11 @@ void MainWindow::setupActions()
 	QAction *importBrushes =
 		makeAction("importbrushes", tr("Import &Brushes..."))
 			.noDefaultShortcut();
+#ifndef __EMSCRIPTEN__
+	QAction *importRecordings =
+		makeAction("importrecordings", tr("Convert &Recordings to Project…"))
+			.noDefaultShortcut();
+#endif
 	QAction *exportBrushes =
 		makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
 
@@ -6493,6 +6534,11 @@ void MainWindow::setupActions()
 	connect(
 		importBrushes, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::importBrushes);
+#ifndef __EMSCRIPTEN__
+	connect(
+		importRecordings, &QAction::triggered, this,
+		&MainWindow::showProjectEditDialog);
+#endif
 	connect(
 		exportBrushes, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::exportBrushes);
@@ -6561,6 +6607,9 @@ void MainWindow::setupActions()
 #endif
 	importMenu->addAction(importAnimationLayers);
 	importMenu->addAction(importBrushes);
+#ifndef __EMSCRIPTEN__
+	importMenu->addAction(importRecordings);
+#endif
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(QIcon::fromTheme("document-export"));

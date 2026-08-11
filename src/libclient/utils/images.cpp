@@ -182,4 +182,14 @@ QStringList openPlaybackFormatFilterList()
 	};
 }
 
+QStringList saveProjectFormatFilterList()
+{
+	QString projects = QStringLiteral("*.dppr");
+	return {
+		QGuiApplication::tr("All Supported Files (%1)").arg(projects),
+		QGuiApplication::tr("Projects (%1)").arg(projects),
+		QGuiApplication::tr("All Files (*)"),
+	};
+}
+
 }

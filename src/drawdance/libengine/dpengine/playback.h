@@ -49,6 +49,8 @@ DP_PlaybackHandleFn DP_playback_get_handle_fn(int type);
 void DP_playback_handle_message_dec(DP_Playback *pb, DP_Message *msg,
                                     DP_PlaybackHandleFn fn);
 
+void DP_playback_push_message_inc(DP_Playback *pb, DP_Message *msg);
+
 bool DP_playback_local_state_get_reset(DP_Playback *pb,
                                        bool (*fn)(void *, DP_Message *),
                                        void *user);

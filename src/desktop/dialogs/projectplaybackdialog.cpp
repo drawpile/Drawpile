@@ -395,7 +395,7 @@ void ProjectPlaybackDialog::openRecording(
 		setMessage(tr("Converting recording %1…").arg(basename));
 
 		impex::RecordingConverter *converter = new impex::RecordingConverter(
-			path, m_tempFileHolder->sharedPointer());
+			{path}, m_tempFileHolder->sharedPointer(), false);
 
 		connect(
 			this, &ProjectPlaybackDialog::destroyed, converter,
