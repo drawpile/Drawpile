@@ -31,6 +31,7 @@ dp_target_sources(dpengine
     dpengine/paint.c
     dpengine/paint_engine.c
     dpengine/pixels.c
+    dpengine/playback.c
     dpengine/player.c
     dpengine/preview.c
     dpengine/project.c
@@ -79,6 +80,7 @@ dp_target_sources(dpengine
     dpengine/paint.h
     dpengine/paint_engine.h
     dpengine/pixels.h
+    dpengine/playback.h
     dpengine/player.h
     dpengine/preview.h
     dpengine/project.h
