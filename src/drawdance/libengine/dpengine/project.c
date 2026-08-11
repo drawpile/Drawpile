@@ -1653,10 +1653,21 @@ DP_ProjectSessionTimes DP_project_session_times_null(void)
     return (DP_ProjectSessionTimes){0LL, 0LL, 0.0};
 }
 
+static bool is_infinitesimal_backwards_time(double last_recorded_at,
+                                            double recorded_at)
+{
+    // Anything less than a millisecond of backward step is probably just a
+    // rounding error, we'll ignore those.
+    return last_recorded_at - recorded_at < 0.001;
+}
+
 static bool has_minute_passed(double last_recorded_at, double recorded_at)
 {
     if (last_recorded_at <= recorded_at) {
         return (recorded_at - last_recorded_at) >= 60.0;
+    }
+    else if (is_infinitesimal_backwards_time(last_recorded_at, recorded_at)) {
+        return false;
     }
     else {
         DP_warn("Recorded time went backwards, from %f to %f", last_recorded_at,
@@ -7347,10 +7358,13 @@ static void project_playback_update_recorded_at(
             *in_out_total_playback_seconds += DP_min_double(
                 max_delta_seconds, recorded_at - last_recorded_at);
         }
-        else {
+#ifndef NDEBUG
+        else if (!is_infinitesimal_backwards_time(last_recorded_at,
+                                                  recorded_at)) {
             DP_debug("Message recorded time went backwards from %f to %f",
                      last_recorded_at, recorded_at);
         }
+#endif
         *in_out_last_recorded_at = recorded_at;
     }
     else {
@@ -7388,7 +7402,8 @@ static int project_playback_play_filter(void *user,
     if (project_playback_is_timing_relevant(pfc->pb, &pfc->pbc, mc)) {
         double recorded_at = mc->recorded_at;
         if (isfinite(recorded_at)) {
-            if (pfc->last_recorded_at <= recorded_at) {
+            double last_recorded_at = pfc->last_recorded_at;
+            if (last_recorded_at <= recorded_at) {
 
                 double next_playback_seconds =
                     pfc->current_playback_seconds
@@ -7414,10 +7429,13 @@ static int project_playback_play_filter(void *user,
                     pfc->current_frame = next_frame;
                 }
             }
-            else {
+#ifndef NDEBUG
+            else if (!is_infinitesimal_backwards_time(last_recorded_at,
+                                                      recorded_at)) {
                 DP_debug("Message recorded time went backwards from %f to %f",
-                         pfc->last_recorded_at, recorded_at);
+                         last_recorded_at, recorded_at);
             }
+#endif
             pfc->last_recorded_at = recorded_at;
         }
         else {
