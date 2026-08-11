@@ -453,11 +453,15 @@ int ProjectWrangler::handlePlayerUpdate(
 
 		DP_CanvasState *cs = DP_project_player_current_canvas_noinc(pp);
 		if(cs) {
+			net::MessageList localStateMsgs;
+			bool localStateChanged = DP_project_player_local_state_get_reset(
+				pp, &ProjectWrangler::acceptLocalStateMessage, &localStateMsgs);
 			Q_EMIT playerUpdated(
 				controlId, int(getPlayerState(pp)),
 				drawdance::CanvasState::inc(cs), playbackSeconds,
 				DP_project_player_current_session_id(pp),
-				DP_project_player_current_sequence_id(pp));
+				DP_project_player_current_sequence_id(pp), localStateChanged,
+				localStateMsgs);
 		} else {
 			qCWarning(
 				lcDpProjectWrangler,
@@ -741,4 +745,12 @@ bool ProjectWrangler::overviewEntryLessThan(
 {
 	return a.sessionId < b.sessionId;
 }
+
+bool ProjectWrangler::acceptLocalStateMessage(void *user, DP_Message *msg)
+{
+	net::MessageList *localStateMsgs = static_cast<net::MessageList *>(user);
+	localStateMsgs->append(net::Message::noinc(msg));
+	return true;
+}
+
 }

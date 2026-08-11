@@ -357,6 +357,12 @@ DP_Message *DP_msg_internal_project_save_request_new(
     return msg;
 }
 
+DP_Message *DP_msg_internal_local_state_reset_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_LOCAL_STATE_RESET,
+                            sizeof(DP_MsgInternal));
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {

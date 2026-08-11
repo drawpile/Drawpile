@@ -606,6 +606,10 @@ long long DP_project_player_current_sequence_id(DP_ProjectPlayer *pp);
 
 DP_CanvasState *DP_project_player_current_canvas_noinc(DP_ProjectPlayer *pp);
 
+bool DP_project_player_local_state_get_reset(DP_ProjectPlayer *pp,
+                                             bool (*fn)(void *, DP_Message *),
+                                             void *user);
+
 int DP_project_player_control(DP_ProjectPlayer *pp,
                               const DP_ProjectPlayerControlParams *params);
 

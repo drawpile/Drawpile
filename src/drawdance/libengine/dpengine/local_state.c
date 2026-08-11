@@ -346,7 +346,7 @@ static bool local_layer_state_is_removable(DP_LocalLayerState *lls)
         && lls->sketch_opacity == 0;
 }
 
-static void handle_layer_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_layer_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int layer_id;
     bool hidden;
@@ -360,6 +360,7 @@ static void handle_layer_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 DP_LocalLayerState lls = {layer_id, hidden, false, false, 0, 0};
                 DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
                 notify_view_invalidated(ls, false, layer_id);
+                return true;
             }
             else {
                 DP_LocalLayerState *lls =
@@ -367,6 +368,7 @@ static void handle_layer_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 if (!lls->hidden) {
                     lls->hidden = true;
                     notify_view_invalidated(ls, false, layer_id);
+                    return true;
                 }
             }
         }
@@ -378,11 +380,13 @@ static void handle_layer_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
             }
             notify_view_invalidated(ls, false, layer_id);
+            return true;
         }
     }
+    return false;
 }
 
-static void set_background_tile(DP_LocalState *ls, DP_Tile *tile_or_null)
+static bool set_background_tile(DP_LocalState *ls, DP_Tile *tile_or_null)
 {
     DP_Tile *prev = ls->background_tile;
     if (prev != tile_or_null) {
@@ -390,24 +394,30 @@ static void set_background_tile(DP_LocalState *ls, DP_Tile *tile_or_null)
         ls->background_opaque = DP_tile_opaque(tile_or_null);
         DP_tile_decref_nullable(prev);
         notify_view_invalidated(ls, false, 0);
+        return true;
+    }
+    else {
+        DP_tile_decref_nullable(tile_or_null);
+        return false;
     }
 }
 
-static void handle_background_tile(DP_LocalState *ls, DP_DrawContext *dc,
+static bool handle_background_tile(DP_LocalState *ls, DP_DrawContext *dc,
                                    DP_MsgLocalChange *mlc)
 {
     size_t size;
     const unsigned char *body = DP_msg_local_change_body(mlc, &size);
     if (size == 0) {
-        set_background_tile(ls, NULL);
+        return set_background_tile(ls, NULL);
     }
     else {
         DP_Tile *t = DP_tile_new_from_deflate(dc, 0, body, size);
         if (t) {
-            set_background_tile(ls, t);
+            return set_background_tile(ls, t);
         }
         else {
             DP_warn("Error decompressing background tile: %s", DP_error());
+            return false;
         }
     }
 }
@@ -428,7 +438,7 @@ static bool read_int_message(DP_MsgLocalChange *mlc, const char *title,
     }
 }
 
-static void handle_view_mode(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_view_mode(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int value;
     if (read_int_message(mlc, "view mode", &value)) {
@@ -441,6 +451,7 @@ static void handle_view_mode(DP_LocalState *ls, DP_MsgLocalChange *mlc)
             if (view_mode != ls->view_mode) {
                 ls->view_mode = view_mode;
                 notify_view_invalidated(ls, true, 0);
+                return true;
             }
             break;
         }
@@ -449,9 +460,10 @@ static void handle_view_mode(DP_LocalState *ls, DP_MsgLocalChange *mlc)
             break;
         }
     }
+    return false;
 }
 
-static void handle_active_layer(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_active_layer(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int layer_id;
     if (read_int_message(mlc, "active layer", &layer_id)) {
@@ -465,11 +477,13 @@ static void handle_active_layer(DP_LocalState *ls, DP_MsgLocalChange *mlc)
             default:
                 break;
             }
+            return true;
         }
     }
+    return false;
 }
 
-static void handle_active_frame(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_active_frame(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int frame_index;
     if (read_int_message(mlc, "active frame", &frame_index)) {
@@ -478,8 +492,10 @@ static void handle_active_frame(DP_LocalState *ls, DP_MsgLocalChange *mlc)
             if (ls->view_mode == DP_VIEW_MODE_FRAME) {
                 notify_view_invalidated(ls, true, 0);
             }
+            return true;
         }
     }
+    return false;
 }
 
 static bool read_bool(const unsigned char *body, size_t *in_out_read)
@@ -517,7 +533,7 @@ static DP_UPixel8 read_upixel(const unsigned char *body, size_t *in_out_read)
     return (DP_UPixel8){value};
 }
 
-static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     size_t size;
     const unsigned char *body = DP_msg_local_change_body(mlc, &size);
@@ -526,7 +542,7 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
         DP_warn("Wrong size for local onion skins change: wanted at least %zu, "
                 "got %zu",
                 minimum_size, size);
-        return;
+        return false;
     }
 
     size_t read = 0;
@@ -540,7 +556,7 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     if (size != expected_size) {
         DP_warn("Wrong size for local onion skins change: wanted %zu, got %zu",
                 expected_size, size);
-        return;
+        return false;
     }
 
     DP_OnionSkins *oss;
@@ -567,6 +583,7 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     if (ls->view_mode == DP_VIEW_MODE_FRAME) {
         notify_view_invalidated(ls, true, 0);
     }
+    return true;
 }
 
 static bool is_track_state(void *element, void *user)
@@ -596,7 +613,7 @@ static void set_track_state_all(DP_LocalTrackState *lts, bool value)
     set_track_state_move_lock(lts, value);
 }
 
-static void update_track_state(DP_LocalState *ls, int track_id,
+static bool update_track_state(DP_LocalState *ls, int track_id,
                                void (*update)(DP_LocalTrackState *, bool),
                                bool value)
 {
@@ -629,38 +646,46 @@ static void update_track_state(DP_LocalState *ls, int track_id,
         }
 
         notify_view_invalidated(ls, ls->view_mode == DP_VIEW_MODE_FRAME, 0);
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
-static void handle_track_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_track_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int track_id;
     bool hidden;
     if (read_id_bool_message(mlc, "track visibility", &track_id, &hidden)) {
-        update_track_state(ls, track_id, set_track_state_hidden, hidden);
+        return update_track_state(ls, track_id, set_track_state_hidden, hidden);
     }
+    return false;
 }
 
-static void handle_track_onion_skin(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_track_onion_skin(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int track_id;
     bool onion_skin;
     if (read_id_bool_message(mlc, "track onion skin", &track_id, &onion_skin)) {
-        update_track_state(ls, track_id, set_track_state_onion_skin,
-                           onion_skin);
+        return update_track_state(ls, track_id, set_track_state_onion_skin,
+                                  onion_skin);
     }
+    return false;
 }
 
-static void handle_track_move_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_track_move_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int track_id;
     bool move_lock;
     if (read_id_bool_message(mlc, "track move_lock", &track_id, &move_lock)) {
-        update_track_state(ls, track_id, set_track_state_move_lock, move_lock);
+        return update_track_state(ls, track_id, set_track_state_move_lock,
+                                  move_lock);
     }
+    return false;
 }
 
-static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
+static bool set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
                              uint32_t tint)
 {
     DP_Vector *layer_states = &ls->layer_states;
@@ -673,6 +698,7 @@ static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
                                       false,    opacity, tint};
             DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
             notify_view_invalidated(ls, false, layer_id);
+            return true;
         }
         else {
             DP_LocalLayerState *lls =
@@ -681,6 +707,7 @@ static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
                 lls->sketch_opacity = opacity;
                 lls->sketch_tint = tint;
                 notify_view_invalidated(ls, false, layer_id);
+                return true;
             }
         }
     }
@@ -693,10 +720,13 @@ static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
             DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
         }
         notify_view_invalidated(ls, false, layer_id);
+        return true;
     }
+
+    return false;
 }
 
-static void handle_layer_sketch(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_layer_sketch(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     size_t size;
     const unsigned char *body = DP_msg_local_change_body(mlc, &size);
@@ -705,7 +735,7 @@ static void handle_layer_sketch(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     if (size != required_size) {
         DP_warn("Wrong size for local layer sketch change: wanted %zu, got %zu",
                 required_size, size);
-        return;
+        return false;
     }
 
     size_t read = 0;
@@ -713,10 +743,10 @@ static void handle_layer_sketch(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     uint16_t opacity = read_uint16(body, &read);
     uint32_t tint = read_uint32(body, &read);
     DP_ASSERT(read == required_size);
-    set_layer_sketch(ls, layer_id, opacity, tint);
+    return set_layer_sketch(ls, layer_id, opacity, tint);
 }
 
-static void handle_layer_alpha_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_layer_alpha_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int layer_id;
     bool alpha_lock;
@@ -731,6 +761,7 @@ static void handle_layer_alpha_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                                           false,    0,     0};
                 DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
                 notify_view_invalidated(ls, false, layer_id);
+                return true;
             }
             else {
                 DP_LocalLayerState *lls =
@@ -738,6 +769,7 @@ static void handle_layer_alpha_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 if (!lls->alpha_lock) {
                     lls->alpha_lock = true;
                     notify_view_invalidated(ls, false, layer_id);
+                    return true;
                 }
             }
         }
@@ -749,11 +781,13 @@ static void handle_layer_alpha_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
             }
             notify_view_invalidated(ls, false, layer_id);
+            return true;
         }
     }
+    return false;
 }
 
-static void handle_layer_censored(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+static bool handle_layer_censored(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     int layer_id;
     bool censored;
@@ -768,6 +802,7 @@ static void handle_layer_censored(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                                           censored, 0,     0};
                 DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
                 notify_view_invalidated(ls, false, layer_id);
+                return true;
             }
             else {
                 DP_LocalLayerState *lls =
@@ -775,6 +810,7 @@ static void handle_layer_censored(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 if (!lls->censored) {
                     lls->censored = true;
                     notify_view_invalidated(ls, false, layer_id);
+                    return true;
                 }
             }
         }
@@ -786,78 +822,80 @@ static void handle_layer_censored(DP_LocalState *ls, DP_MsgLocalChange *mlc)
                 DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
             }
             notify_view_invalidated(ls, false, layer_id);
+            return true;
         }
     }
+    return false;
 }
 
-static void handle_internal(DP_LocalState *ls, DP_MsgInternal *mi)
+static bool handle_internal(DP_LocalState *ls, DP_MsgInternal *mi)
 {
-    if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET_TO_STATE) {
+    switch (DP_msg_internal_type(mi)) {
+    case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
         set_background_tile(ls, NULL);
         ls->layer_states.used = 0;
         ls->track_states.used = 0;
         notify_view_invalidated(ls, true, 0);
+        return true;
+    case DP_MSG_INTERNAL_TYPE_LOCAL_STATE_RESET:
+        DP_local_state_reset(ls);
+        notify_view_invalidated(ls, true, 0);
+        return true;
+    default:
+        return false;
     }
 }
 
-static void handle_local_change(DP_LocalState *ls, DP_DrawContext *dc,
+static bool handle_local_change(DP_LocalState *ls, DP_DrawContext *dc,
                                 DP_MsgLocalChange *mlc)
 {
     int type = DP_msg_local_change_type(mlc);
     switch (type) {
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_VISIBILITY:
-        handle_layer_visibility(ls, mlc);
-        break;
+        return handle_layer_visibility(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE:
-        handle_background_tile(ls, dc, mlc);
-        break;
+        return handle_background_tile(ls, dc, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_VIEW_MODE:
-        handle_view_mode(ls, mlc);
-        break;
+        return handle_view_mode(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_LAYER:
-        handle_active_layer(ls, mlc);
-        break;
+        return handle_active_layer(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_FRAME:
-        handle_active_frame(ls, mlc);
-        break;
+        return handle_active_frame(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_ONION_SKINS:
-        handle_onion_skins(ls, mlc);
-        break;
+        return handle_onion_skins(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY:
-        handle_track_visibility(ls, mlc);
-        break;
+        return handle_track_visibility(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN:
-        handle_track_onion_skin(ls, mlc);
-        break;
+        return handle_track_onion_skin(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH:
-        handle_layer_sketch(ls, mlc);
-        break;
+        return handle_layer_sketch(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_ALPHA_LOCK:
-        handle_layer_alpha_lock(ls, mlc);
-        break;
+        return handle_layer_alpha_lock(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_CENSORED:
-        handle_layer_censored(ls, mlc);
-        break;
+        return handle_layer_censored(ls, mlc);
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_MOVE_LOCK:
-        handle_track_move_lock(ls, mlc);
-        break;
+        return handle_track_move_lock(ls, mlc);
     default:
         DP_warn("Unknown local change type %d", type);
-        break;
+        return false;
     }
 }
 
-static void clear_layer_state(DP_LocalState *ls, int layer_id)
+static bool clear_layer_state(DP_LocalState *ls, int layer_id)
 {
     DP_Vector *layer_states = &ls->layer_states;
     int index = DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
                                        is_layer_state, &layer_id);
     if (index != -1) {
         DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
-void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
+bool DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
                            DP_Message *msg, bool local)
 {
     DP_ASSERT(ls);
@@ -865,41 +903,42 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
     DP_ASSERT(msg);
     switch (DP_message_type(msg)) {
     case DP_MSG_INTERNAL:
-        if (!local) {
-            handle_internal(ls, DP_message_internal(msg));
-        }
-        break;
+        return !local && handle_internal(ls, DP_message_internal(msg));
     case DP_MSG_LOCAL_CHANGE:
-        if (!local) {
-            handle_local_change(ls, dc, DP_message_internal(msg));
-        }
-        break;
+        return !local && handle_local_change(ls, dc, DP_message_internal(msg));
     case DP_MSG_LAYER_TREE_CREATE:
         // TODO: Handle group duplication properly. They may create more than
         // one layer, but only the top level id has its state properly cleared.
-        clear_layer_state(
+        return clear_layer_state(
             ls, DP_protocol_to_layer_id(
                     DP_msg_layer_tree_create_id(DP_message_internal(msg))));
-        break;
     case DP_MSG_TRACK_CREATE:
-        update_track_state(ls, DP_msg_track_create_id(DP_message_internal(msg)),
-                           set_track_state_all, false);
-        break;
+        return update_track_state(
+            ls, DP_msg_track_create_id(DP_message_internal(msg)),
+            set_track_state_all, false);
     default:
-        break;
+        return false;
     }
 }
 
-#define RESET_IMAGE_INCLUDE_LAYER_STATES (1u << 0u)
-#define RESET_IMAGE_INCLUDE_BACKGROUND   (1u << 1u)
-#define RESET_IMAGE_INCLUDE_ACTIVE_VIEW  (1u << 2u)
-#define RESET_IMAGE_INCLUDE_ONION_SKINS  (1u << 3u)
-#define RESET_IMAGE_INCLUDE_TRACK_STATES (1u << 4u)
+#define RESET_IMAGE_INCLUDE_STATE_RESET  (1u << 0u)
+#define RESET_IMAGE_INCLUDE_LAYER_STATES (1u << 1u)
+#define RESET_IMAGE_INCLUDE_BACKGROUND   (1u << 2u)
+#define RESET_IMAGE_INCLUDE_ACTIVE_VIEW  (1u << 3u)
+#define RESET_IMAGE_INCLUDE_ONION_SKINS  (1u << 4u)
+#define RESET_IMAGE_INCLUDE_TRACK_STATES (1u << 5u)
 
 static bool reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                               unsigned int flags,
                               DP_LocalStateAcceptResetMessageFn fn, void *user)
 {
+    if (flags & RESET_IMAGE_INCLUDE_STATE_RESET) {
+        DP_Message *msg = DP_msg_internal_local_state_reset_new(0u);
+        if (!fn(user, msg)) {
+            return false;
+        }
+    }
+
     if (flags & RESET_IMAGE_INCLUDE_LAYER_STATES) {
         int lls_count;
         const DP_LocalLayerState *llss =
@@ -994,6 +1033,19 @@ static bool reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
 bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                                       DP_LocalStateAcceptResetMessageFn fn,
                                       void *user)
+{
+    DP_ASSERT(ls);
+    DP_ASSERT(fn);
+    unsigned int flags =
+        RESET_IMAGE_INCLUDE_LAYER_STATES | RESET_IMAGE_INCLUDE_BACKGROUND
+        | RESET_IMAGE_INCLUDE_ACTIVE_VIEW | RESET_IMAGE_INCLUDE_ONION_SKINS
+        | RESET_IMAGE_INCLUDE_TRACK_STATES;
+    return reset_image_build(ls, dc, flags, fn, user);
+}
+
+bool DP_local_state_playback_image_build(DP_LocalState *ls, DP_DrawContext *dc,
+                                         DP_LocalStateAcceptResetMessageFn fn,
+                                         void *user)
 {
     DP_ASSERT(ls);
     DP_ASSERT(fn);

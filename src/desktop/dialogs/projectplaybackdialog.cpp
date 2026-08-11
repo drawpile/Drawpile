@@ -590,10 +590,15 @@ void ProjectPlaybackDialog::onProjectPlayerProgressed(
 void ProjectPlaybackDialog::onProjectPlayerUpdated(
 	unsigned int controlId, int playerState,
 	const drawdance::CanvasState &canvasState, double playbackSeconds,
-	long long sessionId, long long sequenceId)
+	long long sessionId, long long sequenceId, bool localStateChanged,
+	const net::MessageList &localStateMsgs)
 {
 	if(controlId == m_controlId) {
 		m_paintEngine->enqueueResetToState(canvasState);
+		if(localStateChanged) {
+			m_paintEngine->receiveMessages(
+				false, localStateMsgs.size(), localStateMsgs.constData());
+		}
 		updatePlayer(playerState, playbackSeconds, sessionId, sequenceId);
 	} else {
 		qWarning(

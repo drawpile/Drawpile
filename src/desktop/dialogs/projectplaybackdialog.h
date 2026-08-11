@@ -2,6 +2,7 @@
 #ifndef DESKTOP_DIALOGS_PROJECTPLAYBACKDIALOG_H
 #define DESKTOP_DIALOGS_PROJECTPLAYBACKDIALOG_H
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/net/message.h"
 #include <QDialog>
 #include <QIcon>
 
@@ -88,7 +89,8 @@ private:
 	void onProjectPlayerUpdated(
 		unsigned int controlId, int playerState,
 		const drawdance::CanvasState &canvasState, double playbackSeconds,
-		long long sessionId, long long sequenceId);
+		long long sessionId, long long sequenceId, bool localStateChanged,
+		const net::MessageList &localStateMsgs);
 	void updatePlayer(
 		int playerState, double playbackSeconds, long long sessionId,
 		long long sequenceId);

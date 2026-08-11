@@ -5865,6 +5865,7 @@ struct DP_ProjectPlaybackContext {
     struct {
         DP_ProjectPlaybackStateId id;
         bool snapshot;
+        bool local_state_dirty;
         sqlite3_stmt *stmt;
         long long session_id;
         long long sequence_id;
@@ -5895,7 +5896,7 @@ playback_context_init(DP_ProjectPlaybackContext *c, DP_Project *prj,
         load_snapshot_fn,
         filter_fn,
         filter_user,
-        {DP_PROJECT_PLAYBACK_STATE_NONE, false, NULL, 0LL, 0LL},
+        {DP_PROJECT_PLAYBACK_STATE_NONE, false, true, NULL, 0LL, 0LL},
         {{0, 0, 0, 0, 0.0, NULL}, 0.0, 0u, 0u},
     };
 }
@@ -6014,7 +6015,9 @@ static void playback_handle_command(DP_ProjectPlaybackContext *c,
     }
     else {
         playback_flush_multidab(c);
-        DP_local_state_handle(c->ls, c->dc, msg, false);
+        if (DP_local_state_handle(c->ls, c->dc, msg, false)) {
+            c->state.local_state_dirty = true;
+        }
         playback_handle_single_dec(c, msg);
     }
 }
@@ -6043,7 +6046,9 @@ static void playback_handle_undo_depth(DP_ProjectPlaybackContext *c,
 static void playback_handle_local_change(DP_ProjectPlaybackContext *c,
                                          DP_Message *msg)
 {
-    DP_local_state_handle(c->ls, c->dc, msg, false);
+    if (DP_local_state_handle(c->ls, c->dc, msg, false)) {
+        c->state.local_state_dirty = true;
+    }
     DP_message_decref(msg);
 }
 
@@ -8257,6 +8262,22 @@ DP_CanvasState *DP_project_player_current_canvas_noinc(DP_ProjectPlayer *pp)
     }
 }
 
+bool DP_project_player_local_state_get_reset(DP_ProjectPlayer *pp,
+                                             bool (*fn)(void *, DP_Message *),
+                                             void *user)
+{
+    DP_ASSERT(pp);
+    DP_ProjectPlaybackContext *c = pp->c;
+    if (c && c->state.local_state_dirty) {
+        c->state.local_state_dirty = false;
+        DP_local_state_playback_image_build(c->ls, c->dc, fn, user);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 
 static int
 project_player_control_call(DP_ProjectPlayer *pp,
@@ -8299,6 +8320,7 @@ static void project_player_reset(DP_ProjectPlayer *pp)
         DP_local_state_reset(c->ls);
         playback_clear_multidab(c);
         c->state.id = DP_PROJECT_PLAYBACK_STATE_NONE;
+        c->state.local_state_dirty = true;
         playback_context_reset_stmt(c);
     }
     else {
