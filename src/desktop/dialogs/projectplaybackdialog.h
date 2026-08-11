@@ -30,7 +30,7 @@ class GroupedToolButton;
 
 namespace dialogs {
 
-class ProjectPlaybackDialog : public QDialog {
+class ProjectPlaybackDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit ProjectPlaybackDialog(QWidget *parent = nullptr);
