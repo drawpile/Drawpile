@@ -38,6 +38,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Allow toggling the workaround that ignores zero-pressure tablet inputs, in case you have a tablet that reports no pressure despite you pressing the stylus down. SuperDisplay is known to do this. Thanks Tenzin for reporting.
  * Fix: Encode special characters in invite links so that they don't cause trouble when copying them around. Thanks Bluestrings for reporting.
  * Feature: Project playback, via File > Open Player. Can play back dppr files. This replaces the previous player, dprec and dptxt files will be converted on the fly.
+ * Feature: Drawpile will now ask you if you start a recording while autorecovery is enabled, to avoid accidentally recording double for no reason. Thanks tiar for reporting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

@@ -3538,18 +3538,41 @@ void MainWindow::showSystemInfo()
 	dlg->raise();
 }
 
-// clang-format off
 void MainWindow::toggleRecording()
 {
 	if(m_projectPlaybackDialog) {
-		return; // Can't record during playback.
+		return; // Can't record during playback or without a canvas.
 	}
 
 	if(m_doc->stopRecording()) {
 		return; // There was a recording and we just stopped it.
 	}
 
-	QString filename = FileWrangler{this}.getSaveRecordingPath();
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(!canvas) {
+		return; // Can't record without a canvas.
+	}
+
+	if(canvas->isProjectRecording()) {
+		QMessageBox *box = utils::showQuestion(
+			this, tr("Record"),
+			QStringLiteral("<p>%1</p><p>%2</p>")
+				.arg(
+					tr("You are already recording this session because "
+					   "autorecovery is enabled. If you save to a project "
+					   "file (.dppr), it will save the recording as well.")
+						.toHtmlEscaped(),
+					tr("Do you want to start another recording anyway?")
+						.toHtmlEscaped()));
+		connect(box, &QMessageBox::accepted, this, &MainWindow::startRecording);
+	} else {
+		startRecording();
+	}
+}
+
+void MainWindow::startRecording()
+{
+	QString filename = FileWrangler(this).getSaveRecordingPath();
 	if(!filename.isEmpty()) {
 		drawdance::RecordStartResult result = m_doc->startRecording(filename);
 		switch(result) {
@@ -3559,7 +3582,8 @@ void MainWindow::toggleRecording()
 			showErrorMessage(tr("Unsupported format."));
 			break;
 		case drawdance::RECORD_START_OPEN_ERROR:
-			showErrorMessageWithDetails(tr("Couldn't start recording."), DP_error());
+			showErrorMessageWithDetails(
+				tr("Couldn't start recording."), DP_error());
 			break;
 		default:
 			showErrorMessageWithDetails(tr("Unknown error."), DP_error());
@@ -3568,6 +3592,7 @@ void MainWindow::toggleRecording()
 	}
 }
 
+// clang-format off
 void MainWindow::toggleProfile()
 {
 #ifdef __EMSCRIPTEN__

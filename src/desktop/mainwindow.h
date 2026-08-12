@@ -427,6 +427,7 @@ private:
 	void showResetImageTooLargeErrorMessage(int maxSize, bool autoReset);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 
+	void startRecording();
 	void stopProjectRecording();
 	void toggleProjectRecording(bool enabled);
 	void onProjectRecordingStarted();
