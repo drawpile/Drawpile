@@ -159,6 +159,7 @@ extern "C" {
 #	include "libclient/wasmsupport.h"
 #else
 #	include "desktop/dialogs/projecteditdialog.h"
+#	include "desktop/dialogs/choicedialog.h"
 #endif
 #ifdef DP_HAVE_BUILTIN_SERVER
 #	include "libclient/server/builtinserver.h"
@@ -2845,7 +2846,43 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 	if(QRegularExpression(QStringLiteral("\\.dp(rec|txt)$"), opt)
 		   .match(basename)
 		   .hasMatch()) {
+#ifdef __EMSCRIPTEN__
 		showProjectPlaybackDialog(basename, loadPath, tempFile, false);
+#else
+		dialogs::ChoiceDialog *choiceDlg = new dialogs::ChoiceDialog(
+			tr("Open Recording"),
+			tr("What do you want to do with this recording?"),
+			{
+				{1, QIcon::fromTheme(QStringLiteral("document-import")),
+				 tr("Convert"),
+				 tr("Turn this recording into a project (dppr) file. Lets you "
+					"make a timelapse of it afterwards.")},
+				{2, QIcon::fromTheme(QStringLiteral("media-playback-start")),
+				 tr("Play"),
+				 tr("Directly opens this recording to let you play it back.")},
+			},
+			this);
+		choiceDlg->setAttribute(Qt::WA_DeleteOnClose);
+		if(tempFile) {
+			tempFile->setParent(choiceDlg);
+		}
+		connect(
+			choiceDlg, &dialogs::ChoiceDialog::choiceSelected, this,
+			[this, basename, loadPath, tempFile](int id) {
+				if(tempFile) {
+					tempFile->setParent(nullptr);
+				}
+
+				if(id == 1) {
+					showProjectEditDialog()->addInputPaths({loadPath});
+				} else {
+					showProjectPlaybackDialog(
+						basename, loadPath, tempFile, false);
+				}
+			},
+			Qt::DirectConnection);
+		choiceDlg->show();
+#endif
 
 	} else if(
 		QRegularExpression(QStringLiteral("\\.drawdancedump$"), opt)
@@ -2905,7 +2942,12 @@ void MainWindow::openPlaybackPath(const QString &path, QTemporaryFile *tempFile)
 }
 
 #ifndef __EMSCRIPTEN__
-void MainWindow::showProjectEditDialog()
+void MainWindow::convertRecordings()
+{
+	showProjectEditDialog()->promptForInputFiles();
+}
+
+dialogs::ProjectEditDialog *MainWindow::showProjectEditDialog()
 {
 	QString objectName = QStringLiteral("projecteditdialog");
 	dialogs::ProjectEditDialog *dlg = findChild<dialogs::ProjectEditDialog *>(
@@ -2920,9 +2962,9 @@ void MainWindow::showProjectEditDialog()
 		connect(
 			dlg, &dialogs::ProjectEditDialog::openOutputFileRequested, this,
 			&MainWindow::openEditedProject);
-		utils::showWindow(dlg);
-		dlg->addInputFiles();
+		dlg->show();
 	}
+	return dlg;
 }
 
 void MainWindow::openEditedProject(const QString &path)
@@ -6537,7 +6579,7 @@ void MainWindow::setupActions()
 #ifndef __EMSCRIPTEN__
 	connect(
 		importRecordings, &QAction::triggered, this,
-		&MainWindow::showProjectEditDialog);
+		&MainWindow::convertRecordings);
 #endif
 	connect(
 		exportBrushes, &QAction::triggered, m_dockBrushPalette,

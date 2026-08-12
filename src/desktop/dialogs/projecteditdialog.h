@@ -23,7 +23,8 @@ class ProjectEditDialog final : public QDialog {
 public:
 	explicit ProjectEditDialog(QWidget *parent = nullptr);
 
-	void addInputFiles();
+	void promptForInputFiles();
+	void addInputPaths(const QStringList &paths);
 
 	void accept() override;
 	void reject() override;

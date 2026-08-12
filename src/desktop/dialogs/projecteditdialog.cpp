@@ -74,7 +74,7 @@ ProjectEditDialog::ProjectEditDialog(QWidget *parent)
 	buttonLayout->addWidget(m_addButton);
 	connect(
 		m_addButton, &widgets::GroupedToolButton::clicked, this,
-		&ProjectEditDialog::addInputFiles);
+		&ProjectEditDialog::promptForInputFiles);
 
 	m_removeButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
@@ -199,9 +199,13 @@ ProjectEditDialog::ProjectEditDialog(QWidget *parent)
 	updateButtons();
 }
 
-void ProjectEditDialog::addInputFiles()
+void ProjectEditDialog::promptForInputFiles()
 {
-	QStringList paths = FileWrangler(this).getProjectEditImportPaths();
+	addInputPaths(FileWrangler(this).getProjectEditImportPaths());
+}
+
+void ProjectEditDialog::addInputPaths(const QStringList &paths)
+{
 	if(!paths.isEmpty()) {
 		QVector<int> indexesToSelect;
 		for(const QString &path : paths) {

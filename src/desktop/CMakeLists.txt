@@ -109,6 +109,8 @@ target_sources(drawpile PRIVATE
 	dialogs/canvasshortcutsdialog.h
 	dialogs/certificateview.cpp
 	dialogs/certificateview.h
+	dialogs/choicedialog.cpp
+	dialogs/choicedialog.h
 	dialogs/colordialog.cpp
 	dialogs/colordialog.h
 	dialogs/curvepresetdialog.cpp

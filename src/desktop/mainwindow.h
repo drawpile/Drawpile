@@ -66,6 +66,7 @@ namespace dialogs {
 class DumpPlaybackDialog;
 class HostDialog;
 class InputSettingsDialog;
+class ProjectEditDialog;
 class ProjectPlaybackDialog;
 class ProjectRecordingSettingsDialog;
 class ServerLogDialog;
@@ -306,7 +307,8 @@ private slots:
 #endif
 	void openDebugDump();
 #ifndef __EMSCRIPTEN__
-	void showProjectEditDialog();
+	void convertRecordings();
+	dialogs::ProjectEditDialog *showProjectEditDialog();
 	void openEditedProject(const QString &path);
 #endif
 	void showProjectPlaybackDialog(
