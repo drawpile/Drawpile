@@ -388,7 +388,7 @@ void ProjectPlaybackDialog::openRecording(
 	m_basename = basename;
 	updateTitle();
 
-	m_tempFileHolder = new utils::TempFileHolder(new utils::TempFile);
+	m_tempFileHolder = new utils::TempFileHolder(new utils::TempFile, this);
 	if(m_tempFileHolder->setTemporaryPath()) {
 		m_messageBar->setRange(0, 100);
 		m_messageBar->setValue(0);
