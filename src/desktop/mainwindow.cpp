@@ -2914,7 +2914,7 @@ void MainWindow::openPlaybackPath(const QString &path, QTemporaryFile *tempFile)
 			delete tempFile;
 		} else {
 			createNewWindow([path, tempFile](MainWindow *win) {
-				win->openPath(path, tempFile);
+				win->openPlaybackPath(path, tempFile);
 			});
 		}
 		return;
