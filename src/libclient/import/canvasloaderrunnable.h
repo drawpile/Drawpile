@@ -13,7 +13,7 @@ class CanvasLoaderRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
 	explicit CanvasLoaderRunnable(
-		const QString &path, QObject *parent = nullptr);
+		const QString &path, bool guessPlayer, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -24,6 +24,8 @@ public:
 	const QString &sessionSourceParam() const { return m_sessionSourceParam; }
 	long long sessionSequenceId() const { return m_sessionSequenceId; }
 	long long resumeSessionId() const { return m_resumeSessionId; }
+	unsigned int playerFlags() const { return m_playerFlags; }
+	bool looksLikeRecording() const { return m_playerFlags != 0u; }
 
 signals:
 	void loadComplete(
@@ -31,12 +33,14 @@ signals:
 
 private:
 	const QString m_path;
+	const bool m_guessPlayer;
 	DP_LoadResult m_result = DP_LOAD_RESULT_BAD_ARGUMENTS;
 	DP_SaveImageType m_type = DP_SAVE_IMAGE_UNKNOWN;
 	drawdance::CanvasState m_canvasState;
 	QString m_sessionSourceParam;
 	long long m_sessionSequenceId = -1LL;
 	long long m_resumeSessionId = 0LL;
+	unsigned int m_playerFlags = 0u;
 };
 
 #endif

@@ -119,7 +119,7 @@ private:
 CanvasState CanvasState::load(
 	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType,
 	QString *outSessionSourceParam, long long *outSessionSequenceId,
-	long long *outResumeSessionId)
+	long long *outResumeSessionId, unsigned int *outPlayerFlags)
 {
 	QByteArray pathBytes = path.toUtf8();
 	QByteArray flatImageLayerTitleBytes =
@@ -128,7 +128,7 @@ CanvasState CanvasState::load(
 
 	DP_LoadContext lc = DP_load_context_make(pathBytes.constData(), dc.get());
 	lc.in.flat_image_layer_title = flatImageLayerTitleBytes.constData();
-	lc.in.flags = loadFlags();
+	lc.in.flags = loadFlags(outPlayerFlags != nullptr);
 
 	// Android needs to copy content:// URLs to a "real" file so that SQLite can
 	// actually open them.
@@ -156,6 +156,9 @@ CanvasState CanvasState::load(
 	}
 	if(outResumeSessionId) {
 		*outResumeSessionId = lc.out.resume_session_id;
+	}
+	if(outPlayerFlags) {
+		*outPlayerFlags = lc.out.player_flags;
 	}
 	return CanvasState::noinc(DP_load_context_dispose_take(&lc));
 }
@@ -511,17 +514,19 @@ DP_FloodFillResult CanvasState::selectionFill(
 	return result;
 }
 
-unsigned int CanvasState::loadFlags()
+unsigned int CanvasState::loadFlags(bool guessPlayer)
 {
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 	// Android just kills the application if it uses too much memory for its
 	// taste, so it's not safe to use multiple threads to load image data. On
 	// Emscripten, "threads" are web workers, which have a lot of overhead. And
 	// it may also be running on a mobile device, so the above applies here too.
-	return DP_LOAD_FLAG_SINGLE_THREAD;
+	bool singleThread = true;
 #else
-	return DP_LOAD_FLAG_NONE;
+	bool singleThread = false;
 #endif
+	return DP_flag_uint(singleThread, DP_LOAD_FLAG_SINGLE_THREAD) |
+		   DP_flag_uint(guessPlayer, DP_LOAD_FLAG_GUESS_PLAYER);
 }
 
 CanvasState::CanvasState(DP_CanvasState *cs)

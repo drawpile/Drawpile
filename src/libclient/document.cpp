@@ -388,23 +388,13 @@ void Document::resumeState(
 	}
 }
 
-static bool isSessionTemplate(DP_Player *player)
-{
-	JSON_Value *header = DP_player_header(player);
-	return header &&
-		   DP_str_equal(
-			   json_object_get_string(json_value_get_object(header), "type"),
-			   "template");
-}
-
-DP_LoadResult Document::loadRecording(
-	const QString &path, bool debugDump, bool *outIsTemplate)
+DP_LoadResult Document::loadPlayer(
+	const QString &path, bool debugDump, bool sessionTemplate)
 {
 	DP_LoadResult result;
 	DP_Player *player =
 		debugDump ? DP_load_debug_dump(path.toUtf8().constData(), &result)
 				  : DP_load_recording(path.toUtf8().constData(), &result);
-	bool isTemplate;
 	switch(result) {
 	case DP_LOAD_RESULT_SUCCESS:
 		m_client->resetMyId();
@@ -413,8 +403,7 @@ DP_LoadResult Document::loadRecording(
 		m_canvas->loadPlayer(player);
 		// Session templates are played back to the end instantly. They're only
 		// supposed to contain a reset snapshot, so should be very quick.
-		isTemplate = isSessionTemplate(player);
-		if(isTemplate) {
+		if(sessionTemplate) {
 			m_canvas->paintEngine()->flushPlayback();
 			m_canvas->paintEngine()->closePlayback();
 		}
@@ -422,11 +411,7 @@ DP_LoadResult Document::loadRecording(
 		break;
 	default:
 		Q_ASSERT(!player);
-		isTemplate = false;
 		break;
-	}
-	if(outIsTemplate) {
-		*outIsTemplate = isTemplate;
 	}
 	return result;
 }

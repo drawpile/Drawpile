@@ -87,8 +87,16 @@ public:
 	void resumeState(
 		const drawdance::CanvasState &canvasState, const QString &path,
 		bool autoRecord, long long resumeSessionId);
-	DP_LoadResult loadRecording(
-		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
+
+	DP_LoadResult loadDebugDump(const QString &path)
+	{
+		return loadPlayer(path, true, false);
+	}
+
+	DP_LoadResult loadSessionTemplateRecording(const QString &path)
+	{
+		return loadPlayer(path, false, true);
+	}
 
 	void saveCanvasAs(
 		const QString &path, DP_SaveImageType type, bool exported, bool append);
@@ -361,6 +369,9 @@ private slots:
 
 private:
 	void clearConfig();
+
+	DP_LoadResult
+	loadPlayer(const QString &path, bool debugDump, bool sessionTemplate);
 
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,

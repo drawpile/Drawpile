@@ -35,13 +35,6 @@ typedef struct json_object_t JSON_Object;
 
 typedef struct DP_Player DP_Player;
 
-typedef enum DP_PlayerType {
-    DP_PLAYER_TYPE_GUESS,
-    DP_PLAYER_TYPE_BINARY,
-    DP_PLAYER_TYPE_TEXT,
-    DP_PLAYER_TYPE_DEBUG_DUMP,
-} DP_PlayerType;
-
 typedef enum DP_PlayerResult {
     DP_PLAYER_SUCCESS,
     DP_PLAYER_RECORDING_END,
@@ -82,6 +75,8 @@ DP_PlayerCompatibility DP_player_compatibility(DP_Player *player);
 bool DP_player_compatible(DP_Player *player);
 
 bool DP_player_compatible_opaque(DP_Player *player);
+
+bool DP_player_session_template(DP_Player *player);
 
 void DP_player_acl_override_set(DP_Player *player, bool override);
 

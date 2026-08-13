@@ -16,4 +16,11 @@ typedef enum DP_LoadResult {
     DP_LOAD_RESULT_INTERNAL_ERROR,
 } DP_LoadResult;
 
+typedef enum DP_PlayerType {
+    DP_PLAYER_TYPE_GUESS,
+    DP_PLAYER_TYPE_BINARY,
+    DP_PLAYER_TYPE_TEXT,
+    DP_PLAYER_TYPE_DEBUG_DUMP,
+} DP_PlayerType;
+
 #endif

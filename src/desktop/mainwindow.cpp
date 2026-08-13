@@ -2586,7 +2586,8 @@ void MainWindow::showPermissionDeniedMessage(int feature)
 }
 
 void MainWindow::loadCanvasStateFromFile(
-	const QString &path, QTemporaryFile *tempFile, bool resume)
+	const QString &loadPath, const QString &basename, QTemporaryFile *tempFile,
+	bool resume, bool guessPlayer)
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QProgressDialog *progressDialog = new QProgressDialog(this);
@@ -2602,21 +2603,29 @@ void MainWindow::loadCanvasStateFromFile(
 
 	setEnabled(false);
 
-	CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(path, this);
+	CanvasLoaderRunnable *loader =
+		new CanvasLoaderRunnable(loadPath, guessPlayer, this);
 	loader->setAutoDelete(false);
 	connect(
 		loader, &CanvasLoaderRunnable::loadComplete, this,
-		[this, tempFile, resume, loader, progressDialog](
+		[this, basename, tempFile, resume, loader, progressDialog](
 			const QString &error, const QString &detail, qint64 elapsedMsec) {
-			delete tempFile;
 			setEnabled(true);
 			delete progressDialog;
 			QApplication::restoreOverrideCursor();
 
 			const drawdance::CanvasState &canvasState = loader->canvasState();
 			if(canvasState.isNull()) {
-				showErrorMessageWithDetails(error, detail);
+				if(loader->looksLikeRecording()) {
+					loadRecordingFromFile(
+						loader->path(), basename, tempFile,
+						loader->playerFlags());
+				} else {
+					delete tempFile;
+					showErrorMessageWithDetails(error, detail);
+				}
 			} else {
+				delete tempFile;
 				showElapsedStatusMessage(
 					//: %1 is minutes, %2 is seconds, %3 is milliseconds.
 					tr("Canvas loaded in %1:%2.%3"), elapsedMsec);
@@ -2639,6 +2648,61 @@ void MainWindow::loadCanvasStateFromFile(
 		Qt::QueuedConnection);
 
 	QThreadPool::globalInstance()->start(loader);
+}
+
+void MainWindow::loadRecordingFromFile(
+	const QString &loadPath, const QString &basename, QTemporaryFile *tempFile,
+	unsigned int playerFlags)
+{
+	if(playerFlags & DP_LOAD_PLAYER_FLAG_INCOMPATIBLE) {
+		utils::showCritical(
+			this, tr("Incompatible Recording"),
+			tr("This recording is incompatible, it cannot be opened with this "
+			   "version of Drawpile."));
+
+	} else if(playerFlags & DP_LOAD_PLAYER_FLAG_SESSION_TEMPLATE) {
+		m_doc->loadSessionTemplateRecording(loadPath);
+		delete tempFile;
+
+	} else {
+#ifdef __EMSCRIPTEN__
+		showProjectPlaybackDialog(basename, loadPath, tempFile, false);
+#else
+		dialogs::ChoiceDialog *choiceDlg = new dialogs::ChoiceDialog(
+			tr("Open Recording"),
+			tr("What do you want to do with this recording?"),
+			{
+				{1, QIcon::fromTheme(QStringLiteral("document-import")),
+				 tr("Convert"),
+				 tr("Turn this recording into a project (dppr) file. Lets you "
+					"make a timelapse of it afterwards.")},
+				{2, QIcon::fromTheme(QStringLiteral("media-playback-start")),
+				 tr("Play"),
+				 tr("Directly opens this recording to let you play it back.")},
+			},
+			this);
+		choiceDlg->setAttribute(Qt::WA_DeleteOnClose);
+		if(tempFile) {
+			tempFile->setParent(choiceDlg);
+		}
+		connect(
+			choiceDlg, &dialogs::ChoiceDialog::choiceSelected, this,
+			[this, basename, loadPath, tempFile](int id) {
+				if(tempFile) {
+					tempFile->setParent(nullptr);
+				}
+
+				if(id == 1) {
+					showProjectEditDialog()->addInputPaths({loadPath});
+				} else {
+					showProjectPlaybackDialog(
+						basename, loadPath, tempFile, false);
+				}
+			},
+			Qt::DirectConnection);
+		choiceDlg->show();
+#endif
+	}
 }
 
 // clang-format off
@@ -2829,86 +2893,9 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 		return;
 	}
 
-	QString loadPath = tempFile ? tempFile->fileName() : path;
-
-	constexpr QRegularExpression::PatternOption opt =
-		QRegularExpression::CaseInsensitiveOption;
-	if(QRegularExpression(QStringLiteral("\\Afile://"), opt)
-		   .match(loadPath)
-		   .hasMatch()) {
-		QUrl url = QUrl::fromUserInput(loadPath);
-		if(url.isValid() && url.isLocalFile()) {
-			loadPath = url.toLocalFile();
-		}
-	}
-
-	QString basename = utils::PathInfo(path).basename();
-	if(QRegularExpression(QStringLiteral("\\.dp(rec|txt)$"), opt)
-		   .match(basename)
-		   .hasMatch()) {
-#ifdef __EMSCRIPTEN__
-		showProjectPlaybackDialog(basename, loadPath, tempFile, false);
-#else
-		dialogs::ChoiceDialog *choiceDlg = new dialogs::ChoiceDialog(
-			tr("Open Recording"),
-			tr("What do you want to do with this recording?"),
-			{
-				{1, QIcon::fromTheme(QStringLiteral("document-import")),
-				 tr("Convert"),
-				 tr("Turn this recording into a project (dppr) file. Lets you "
-					"make a timelapse of it afterwards.")},
-				{2, QIcon::fromTheme(QStringLiteral("media-playback-start")),
-				 tr("Play"),
-				 tr("Directly opens this recording to let you play it back.")},
-			},
-			this);
-		choiceDlg->setAttribute(Qt::WA_DeleteOnClose);
-		if(tempFile) {
-			tempFile->setParent(choiceDlg);
-		}
-		connect(
-			choiceDlg, &dialogs::ChoiceDialog::choiceSelected, this,
-			[this, basename, loadPath, tempFile](int id) {
-				if(tempFile) {
-					tempFile->setParent(nullptr);
-				}
-
-				if(id == 1) {
-					showProjectEditDialog()->addInputPaths({loadPath});
-				} else {
-					showProjectPlaybackDialog(
-						basename, loadPath, tempFile, false);
-				}
-			},
-			Qt::DirectConnection);
-		choiceDlg->show();
-#endif
-
-	} else if(
-		QRegularExpression(QStringLiteral("\\.drawdancedump$"), opt)
-			.match(basename)
-			.hasMatch()) {
-		DP_LoadResult result = m_doc->loadRecording(loadPath, true);
-		if(result == DP_LOAD_RESULT_SUCCESS) {
-			m_dumpPlaybackDialog =
-				new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
-			m_dumpPlaybackDialog->setWindowTitle(
-				QStringLiteral("%1 - %2")
-					.arg(utils::PathInfo::stripExtension(basename))
-					.arg(m_dumpPlaybackDialog->windowTitle()));
-			m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
-			m_dumpPlaybackDialog->show();
-			if(tempFile) {
-				tempFile->setParent(m_dumpPlaybackDialog);
-			}
-		} else {
-			delete tempFile;
-		}
-
-	} else {
-		loadCanvasStateFromFile(loadPath, tempFile, false);
-	}
-
+	QString basename;
+	QString loadPath = extractLoadPath(path, tempFile, &basename);
+	loadCanvasStateFromFile(loadPath, basename, tempFile, false, true);
 	addRecentFile(path, int(utils::Recents::Source::Open));
 }
 
@@ -2933,12 +2920,43 @@ void MainWindow::openPlaybackPath(const QString &path, QTemporaryFile *tempFile)
 		return;
 	}
 
-	QString basename = utils::PathInfo(path).basename();
-	QString loadPath = tempFile ? tempFile->fileName() : path;
+	QString basename;
+	QString loadPath = extractLoadPath(path, tempFile, &basename);
 	bool looksLikeProject =
 		DP_project_check_path(loadPath.toUtf8().constData()).result !=
 		DP_PROJECT_CHECK_NONE;
 	showProjectPlaybackDialog(basename, loadPath, tempFile, looksLikeProject);
+}
+
+void MainWindow::openDebugDumpPath(
+	const QString &path, QTemporaryFile *tempFile)
+{
+	if(!canReplace()) {
+		prepareWindowReplacement();
+		createNewWindow([path, tempFile](MainWindow *win) {
+			win->openDebugDumpPath(path, tempFile);
+		});
+		return;
+	}
+
+	QString basename;
+	QString loadPath = extractLoadPath(path, tempFile, &basename);
+	DP_LoadResult result = m_doc->loadDebugDump(loadPath);
+	if(result == DP_LOAD_RESULT_SUCCESS) {
+		m_dumpPlaybackDialog =
+			new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
+		m_dumpPlaybackDialog->setWindowTitle(
+			QStringLiteral("%1 - %2")
+				.arg(utils::PathInfo::stripExtension(basename))
+				.arg(m_dumpPlaybackDialog->windowTitle()));
+		m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
+		m_dumpPlaybackDialog->show();
+		if(tempFile) {
+			tempFile->setParent(m_dumpPlaybackDialog);
+		}
+	} else {
+		delete tempFile;
+	}
 }
 
 #ifndef __EMSCRIPTEN__
@@ -3007,7 +3025,7 @@ void MainWindow::showProjectPlaybackDialog(
 
 void MainWindow::resumeAutosave(const QString &path)
 {
-	loadCanvasStateFromFile(path, nullptr, true);
+	loadCanvasStateFromFile(path, QString(), nullptr, true, false);
 }
 
 /**
@@ -6087,7 +6105,7 @@ void MainWindow::openDebugDump()
 		[this](bool ok) {
 			if(ok) {
 				FileWrangler(this).openDebugDump(
-					std::bind(&MainWindow::openPath, this, _1, _2));
+					std::bind(&MainWindow::openDebugDumpPath, this, _1, _2));
 			}
 		});
 }
@@ -9759,4 +9777,21 @@ QString MainWindow::makeContributionInfoText()
 
 	return QStringLiteral("<p%1>%2</p><p%1>%3<br></p>")
 		.arg(attrs, donationText, helpText);
+}
+
+QString MainWindow::extractLoadPath(
+	const QString &path, const QTemporaryFile *tempFile, QString *outBasename)
+{
+	QString loadPath = tempFile ? tempFile->fileName() : path;
+	if(path.startsWith(QStringLiteral("file://"), Qt::CaseInsensitive)) {
+		QUrl url = QUrl::fromUserInput(loadPath);
+		if(url.isValid() && url.isLocalFile()) {
+			loadPath = url.toLocalFile();
+		}
+	}
+
+	if(outBasename) {
+		*outBasename = utils::PathInfo(path).basename();
+	}
+	return loadPath;
 }

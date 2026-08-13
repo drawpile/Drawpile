@@ -3,9 +3,11 @@
 #include "libclient/import/loadresult.h"
 #include <QElapsedTimer>
 
-CanvasLoaderRunnable::CanvasLoaderRunnable(const QString &path, QObject *parent)
+CanvasLoaderRunnable::CanvasLoaderRunnable(
+	const QString &path, bool guessPlayer, QObject *parent)
 	: QObject(parent)
 	, m_path(path)
+	, m_guessPlayer(guessPlayer)
 {
 }
 
@@ -14,8 +16,8 @@ void CanvasLoaderRunnable::run()
 	QElapsedTimer timer;
 	timer.start();
 	m_canvasState = drawdance::CanvasState::load(
-		m_path, &m_result, &m_type, &m_sessionSourceParam,
-		&m_sessionSequenceId, &m_resumeSessionId);
+		m_path, &m_result, &m_type, &m_sessionSourceParam, &m_sessionSequenceId,
+		&m_resumeSessionId, &m_playerFlags);
 	QString error, detail;
 	if(m_result != DP_LOAD_RESULT_SUCCESS) {
 		error = impex::getLoadResultMessage(m_result);

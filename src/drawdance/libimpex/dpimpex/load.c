@@ -1373,7 +1373,7 @@ DP_LoadContext DP_load_context_make(const char *path, DP_DrawContext *dc)
     return (DP_LoadContext){
         {path, "Layer 1", dc, 0u, DP_SAVE_IMAGE_UNKNOWN, NULL, NULL, NULL},
         {NULL, NULL, 0LL, 0LL, DP_LOAD_RESULT_BAD_ARGUMENTS,
-         DP_SAVE_IMAGE_UNKNOWN},
+         DP_SAVE_IMAGE_UNKNOWN, 0u},
     };
 }
 
@@ -1586,6 +1586,57 @@ static bool load_flat_image(DP_LoadContext *lc, DP_ImageFileType type)
     }
 }
 
+static bool load_canvas_guess_player_try_rewind_input(DP_Input *input)
+{
+    if (DP_input_rewind(input)) {
+        return true;
+    }
+    else {
+        DP_warn("Failed to rewind input when guessing player: %s", DP_error());
+        return false;
+    }
+}
+
+static unsigned int load_canvas_guess_player(DP_LoadContext *lc,
+                                             DP_Input *input)
+{
+    unsigned int player_flags = 0u;
+
+    if ((lc->in.flags & DP_LOAD_FLAG_GUESS_PLAYER)
+        && load_canvas_guess_player_try_rewind_input(input)) {
+
+        DP_Player *player =
+            DP_player_new(DP_PLAYER_TYPE_GUESS, lc->in.path, input, NULL);
+        if (player) {
+            switch (DP_player_compatibility(player)) {
+            case DP_PLAYER_COMPATIBLE:
+                player_flags |= DP_LOAD_PLAYER_FLAG_COMPATIBLE;
+                break;
+            case DP_PLAYER_MINOR_INCOMPATIBILITY:
+                player_flags |= DP_LOAD_PLAYER_FLAG_MINOR_INCOMPATIBILITY;
+                break;
+            case DP_PLAYER_BACKWARD_COMPATIBLE:
+                player_flags |= DP_LOAD_PLAYER_FLAG_BACKWARD_COMPATIBLE;
+                break;
+            case DP_PLAYER_INCOMPATIBLE:
+                player_flags |= DP_LOAD_PLAYER_FLAG_INCOMPATIBLE;
+                break;
+            }
+
+            if (DP_player_session_template(player)) {
+                player_flags |= DP_LOAD_PLAYER_FLAG_SESSION_TEMPLATE;
+            }
+
+            DP_player_free(player);
+        }
+    }
+    else {
+        DP_input_free(input);
+    }
+
+    return player_flags;
+}
+
 static bool load_canvas_guess(DP_LoadContext *lc)
 {
     DP_Input *input = DP_file_input_new_from_path(lc->in.path);
@@ -1606,8 +1657,8 @@ static bool load_canvas_guess(DP_LoadContext *lc)
     DP_SaveImageType type = DP_load_guess(buf, read);
     lc->out.type = type;
     if (type == DP_SAVE_IMAGE_UNKNOWN) {
-        DP_input_free(input);
         lc->out.result = DP_LOAD_RESULT_UNKNOWN_FORMAT;
+        lc->out.player_flags = load_canvas_guess_player(lc, input);
         return false;
     }
 

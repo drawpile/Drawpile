@@ -10,9 +10,6 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Input DP_Input;
 typedef struct DP_Player DP_Player;
 
-#define DP_LOAD_FLAG_NONE          0u
-#define DP_LOAD_FLAG_SINGLE_THREAD (1u << 0u)
-
 
 typedef struct DP_LoadFormat {
     const char *title;
@@ -44,6 +41,7 @@ typedef struct DP_LoadContextOut {
     long long resume_session_id;
     DP_LoadResult result;
     DP_SaveImageType type;
+    unsigned int player_flags;
 } DP_LoadContextOut;
 
 typedef struct DP_LoadContext {

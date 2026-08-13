@@ -112,6 +112,8 @@ public:
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void
 	openPlaybackPath(const QString &path, QTemporaryFile *tempFile = nullptr);
+	void
+	openDebugDumpPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 
 	void resumeAutosave(const QString &path);
 
@@ -379,7 +381,12 @@ private:
 	void loadBlankDocument(const QSize &size, const QColor &background);
 
 	void loadCanvasStateFromFile(
-		const QString &path, QTemporaryFile *tempFile, bool resume);
+		const QString &loadPath, const QString &basename,
+		QTemporaryFile *tempFile, bool resume, bool guessPlayer);
+
+	void loadRecordingFromFile(
+		const QString &loadPath, const QString &basename,
+		QTemporaryFile *tempFile, unsigned int playerFlags);
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);
@@ -528,6 +535,10 @@ private:
 
 	void setDonationLinkEnabled(bool enabled);
 	QString makeContributionInfoText();
+
+	static QString extractLoadPath(
+		const QString &path, const QTemporaryFile *tempFile,
+		QString *outBasename = nullptr);
 
 	bool m_singleSession;
 	bool m_smallScreenMode;

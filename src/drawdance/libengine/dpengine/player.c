@@ -377,6 +377,17 @@ bool DP_player_compatible_opaque(DP_Player *player)
     }
 }
 
+bool DP_player_session_template(DP_Player *player)
+{
+    DP_ASSERT(player);
+    DP_ASSERT(player->type != DP_PLAYER_TYPE_DEBUG_DUMP);
+    JSON_Value *header = DP_player_header(player);
+    return header
+        && DP_str_equal(
+               json_object_get_string(json_value_get_object(header), "type"),
+               "template");
+}
+
 void DP_player_acl_override_set(DP_Player *player, bool override)
 {
     DP_ASSERT(player);

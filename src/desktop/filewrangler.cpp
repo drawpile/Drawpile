@@ -1125,7 +1125,7 @@ void FileWrangler::loadCanvasState(
 	const CanvasStateOpenSuccessFn &onSuccess,
 	const CanvasStateOpenErrorFn &onError)
 {
-	CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(path);
+	CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(path, false);
 	loader->setAutoDelete(false);
 	parent->connect(
 		loader, &CanvasLoaderRunnable::loadComplete, parent,

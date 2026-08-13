@@ -45,7 +45,8 @@ public:
 		DP_SaveImageType *outType = nullptr,
 		QString *outSessionSourceParam = nullptr,
 		long long *outSessionSequenceId = nullptr,
-		long long *outResumeSessionId = nullptr);
+		long long *outResumeSessionId = nullptr,
+		unsigned int *outPlayerFlags = nullptr);
 
 	CanvasState();
 	CanvasState(const CanvasState &other);
@@ -125,7 +126,7 @@ public:
 		int expand, DP_FloodFillKernel kernel, int featherRadius, bool fromEdge,
 		const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
 
-	static unsigned int loadFlags();
+	static unsigned int loadFlags(bool guessPlayer = false);
 
 private:
 	explicit CanvasState(DP_CanvasState *cs);
