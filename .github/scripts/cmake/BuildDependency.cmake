@@ -200,10 +200,10 @@ function(_build_automake build_type target_arch source_dir)
 				# ffmpeg's build system looks like autoconf, but isn't actually
 				list(APPEND configure_flags ${android_ffmpeg_flags})
 				list(APPEND env "AS_FLAGS=--target=${abi}")
-			elseif(ARG_QUIRKS STREQUAL libvpx)
-				# Dito for libvpx, but a different kind of weird. We don't need
-				# to pass anything extra, it's alread taken care of by
-				# specifying a target platform in the caller.
+			elseif(ARG_QUIRKS STREQUAL libvpx OR ARG_QUIRKS STREQUAL openssl)
+				# Dito for libvpx and openssl, but a different kind of weird.
+				# We don't need to pass anything extra, it's alread taken care
+				# of by specifying a target platform in the caller.
 			else()
 				message(FATAL_ERROR "Unknown QUIRKS: '${ARG_QUIRKS}'")
 			endif()
@@ -402,6 +402,7 @@ function(_build_cmake build_type target_arch source_dir)
 		get_android_page_alignment_flags(page_align_ldflags "${CMAKE_ANDROID_ARCH_ABI}")
 		if(page_align_ldflags)
 			list(APPEND env "LDFLAGS=${page_align_ldflags}")
+			list(APPEND build_flag "-DCMAKE_PROJECT_INCLUDE=${CMAKE_CURRENT_LIST_DIR}/cmake/Android16KAlignFlagsOverride.cmake")
 		endif()
 	endif()
 
