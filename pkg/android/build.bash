@@ -358,8 +358,62 @@ configure() {
     echo "*** Configuration for Android complete. ***"
     echo
     echo "To build Drawpile now, run:"
-    echo "    cmake --build $build_dir"
+    echo "    $0 build"
     echo
+}
+
+build() {
+    if [[ $# -ne 0 ]]; then
+        croak 'build does not take any arguments'
+    fi
+
+    if [[ ! -d "$build_dir" ]]; then
+        croak "Build directory '$build_dir' does not exist, run configure first"
+    fi
+
+    set -xe
+
+    # Clean up previous APKs, otherwise they might get rebuilt with a different
+    # name and then we won't know which is the correct one.
+    find "$build_dir/bin" -name '*.apk' -exec rm -v '{}' ';'
+    rm -vf "$build_dir/drawpile.apk" "$build_dir/drawpile.apk.idsig"
+
+    # Build the APK.
+    cmake --build "$build_dir"
+
+    # Align it to 16K.
+   "$ANDROID_SDK_DIR/build-tools/$ANDROID_BUILD_TOOLS_VERSION/zipalign" \
+       -f -v -P 16 4 "$build_dir/bin/"*.apk "$build_dir/drawpile.apk"
+
+   # Re-sign it with the debug signature, since zipalign strips that.
+   "$ANDROID_SDK_DIR/build-tools/$ANDROID_BUILD_TOOLS_VERSION/apksigner" sign \
+       --ks ~/.android/debug.keystore \
+       --ks-pass pass:android \
+       --key-pass pass:android \
+       "$build_dir/drawpile.apk"
+
+    set +xe
+
+    echo
+    echo "*** Build finished. ***"
+    echo
+    echo "To install the APK on a device, run:"
+    echo "    $0 install"
+    echo
+}
+
+adb() {
+    set -xe
+    "$ANDROID_SDK_DIR/platform-tools/adb" "$@"
+    set +xe
+}
+
+install() {
+    if [[ ! -f "$build_dir/drawpile.apk" ]]; then
+        croak "APK $build_dir/drawpile.apk does not exist, run build first"
+    fi
+
+    adb install "$@" "$build_dir/drawpile.apk"
 }
 
 SCRIPT_DIR="$(readlink -f "$(dirname "$0")")"
@@ -466,6 +520,15 @@ case $1 in
         ;;
     'configure')
         configure "${@:2}"
+        ;;
+    'build')
+        build "${@:2}"
+        ;;
+    'install')
+        install "${@:2}"
+        ;;
+    'adb')
+        adb "${@:2}"
         ;;
     *)
         croak_with_usage
