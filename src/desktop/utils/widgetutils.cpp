@@ -668,7 +668,14 @@ void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 	// show it always in full screen, since there's no point in ever moving it.
 #ifdef SINGLE_MAIN_WINDOW
 	if(isMainWindow) {
+#ifdef Q_OS_ANDROID
+		// On Android, full-screening is handled on the application level
+		// instead. Qt kind of tries to fake it through the window, but that
+		// just screws everything up.
+		widget->showMaximized();
+#else
 		widget->showFullScreen();
+#endif
 		return;
 	}
 #else
