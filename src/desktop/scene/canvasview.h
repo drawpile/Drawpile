@@ -120,6 +120,7 @@ public:
 
 	//! Is this point (scene coordinates) inside the viewport?
 	bool isPointVisible(const QPointF &point) const;
+	QRectF screenRect() const;
 
 	//! Scroll view by the given number of pixels
 	void scrollBy(int x, int y);
