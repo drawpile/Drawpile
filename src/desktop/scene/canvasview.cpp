@@ -2502,13 +2502,18 @@ void CanvasView::updateCursorPos(const QPoint &pos)
 
 QPoint CanvasView::viewCenterPoint() const
 {
-	return mapToCanvas(rect().center()).toPoint();
+	return mapToCanvas(viewport()->rect().center()).toPoint();
 }
 
 bool CanvasView::isPointVisible(const QPointF &point) const
 {
 	return mapToCanvas(viewport()->rect())
 		.containsPoint(point, Qt::OddEvenFill);
+}
+
+QRectF CanvasView::screenRect() const
+{
+	return mapToCanvas(viewport()->rect()).boundingRect();
 }
 
 void CanvasView::scrollTo(const QPointF &point)

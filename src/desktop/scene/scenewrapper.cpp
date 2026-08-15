@@ -91,7 +91,7 @@ bool SceneWrapper::isPointVisible(const QPointF &point) const
 
 QRectF SceneWrapper::screenRect() const
 {
-	return m_view->mapToCanvas(m_view->rect()).boundingRect();
+	return m_view->screenRect();
 }
 
 canvas::CanvasModel *SceneWrapper::canvas() const
