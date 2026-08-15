@@ -23,6 +23,7 @@
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
+#include "view_state.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
@@ -61,6 +62,9 @@
 #define DP_PROJECT_SNAPSHOT_TRACK_FLAG_MOVE_LOCK       (1u << 2u)
 
 #define DP_PROJECT_SQL_MAIN_SAV(A, B, COND) ((COND) ? A "sav." B : A "" B)
+
+#define DP_PROJECT_VIEW_STATE_FLAG_MIRROR (1u << 0u)
+#define DP_PROJECT_VIEW_STATE_FLAG_FLIP   (1u << 1u)
 
 
 typedef enum DP_ProjectPersistentStatement {
@@ -1705,6 +1709,100 @@ int DP_project_message_internal_record(DP_Project *prj, double recorded_at,
                           body_or_null, size);
 }
 
+static void view_state_serialize(const DP_ViewState *vs, unsigned char *body)
+{
+    DP_write_littleendian_uint16(
+        DP_int_to_uint16(DP_clamp_int(vs->viewport_width, 0, (int)UINT16_MAX)),
+        body);
+    DP_write_littleendian_uint16(
+        DP_int_to_uint16(DP_clamp_int(vs->viewport_height, 0, (int)UINT16_MAX)),
+        body + 2);
+    DP_write_littleendian_int48(
+        DP_double_to_int64(DP_clamp_double(round(vs->x * 65536.0),
+                                           (double)DP_INT48_MIN,
+                                           (double)DP_INT48_MAX)),
+        body + 4);
+    DP_write_littleendian_int48(
+        DP_double_to_int64(DP_clamp_double(round(vs->y * 65536.0),
+                                           (double)DP_INT48_MIN,
+                                           (double)DP_INT48_MAX)),
+        body + 10);
+    DP_write_littleendian_uint16(
+        DP_double_to_uint16(
+            DP_clamp_double(round(vs->zoom * 100.0), 0, (double)UINT16_MAX)),
+        body + 16);
+    DP_write_littleendian_uint16(
+        DP_double_to_uint16(DP_clamp_double(round(vs->rotation * 100.0), 0,
+                                            (double)UINT16_MAX)),
+        body + 18);
+    DP_write_littleendian_uint8(
+        DP_flag_uint8(vs->mirror, (uint8_t)DP_PROJECT_VIEW_STATE_FLAG_MIRROR)
+            | DP_flag_uint8(vs->flip, (uint8_t)DP_PROJECT_VIEW_STATE_FLAG_FLIP),
+        body + 20);
+}
+
+static bool view_state_deserialize(size_t body_length,
+                                   const unsigned char *body,
+                                   DP_ViewState *out_vs)
+{
+    DP_ASSERT(body);
+    DP_ASSERT(out_vs);
+
+    if (body_length == DP_PROJECT_MESSAGE_INTERNAL_VIEW_STATE_BODY_LENGTH) {
+        DP_ViewState vs = {
+            DP_read_littleendian_uint16(body),
+            DP_read_littleendian_uint16(body + 2),
+            DP_int64_to_double(DP_read_littleendian_int48(body + 4)) / 65536.0,
+            DP_int64_to_double(DP_read_littleendian_int48(body + 10)) / 65536.0,
+            DP_uint16_to_double(DP_read_littleendian_uint16(body + 16)) / 100.0,
+            DP_uint16_to_double(DP_read_littleendian_uint16(body + 18)) / 100.0,
+            (body[20] & DP_PROJECT_VIEW_STATE_FLAG_MIRROR) != 0,
+            (body[20] & DP_PROJECT_VIEW_STATE_FLAG_FLIP) != 0,
+        };
+        if (DP_view_state_valid(vs)) {
+            *out_vs = vs;
+            return true;
+        }
+        else {
+            DP_warn("Deserialized invalid view state");
+            return false;
+        }
+    }
+    else {
+        DP_warn("Invalid view state message length %zu", body_length);
+        return false;
+    }
+}
+
+int DP_project_message_view_state_record(DP_Project *prj, double recorded_at,
+                                         unsigned int context_id,
+                                         const DP_ViewState *vs,
+                                         unsigned int flags)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    if (!vs || !DP_view_state_valid(*vs)) {
+        DP_error_set("Invalid view state given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    view_state_serialize(vs, prj->serialize_buffer);
+
+    return record_message(prj, session_id, recorded_at, flags,
+                          DP_PROJECT_MESSAGE_INTERNAL_TYPE_VIEW_STATE,
+                          context_id, prj->serialize_buffer,
+                          DP_PROJECT_MESSAGE_INTERNAL_VIEW_STATE_BODY_LENGTH);
+}
+
 
 DP_ProjectSessionTimes DP_project_session_times_null(void)
 {
@@ -2047,6 +2145,45 @@ int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
     return record_snapshot_message(
         prj, recorded_at, flags, (int)DP_message_type(msg),
         DP_message_context_id(msg), prj->serialize_buffer, (size_t)length);
+}
+
+int DP_project_snapshot_view_state_record(
+    DP_Project *prj, long long snapshot_id, double recorded_at,
+    unsigned int context_id, const DP_ViewState *vs, unsigned int flags)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    if (!vs || !DP_view_state_valid(*vs)) {
+        DP_error_set("Invalid view state given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    if (prj->snapshot.id == 0LL) {
+        DP_error_set("Snapshot %lld is not open (none is)", snapshot_id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.attached) {
+        DP_error_set("Snapshot %lld is not open, (attached snapshot %lld is)",
+                     snapshot_id, prj->snapshot.id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    if (prj->snapshot.id != snapshot_id) {
+        DP_error_set("Snapshot %lld is not open, (%lld is)", snapshot_id,
+                     prj->snapshot.id);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NOT_OPEN;
+    }
+
+    view_state_serialize(vs, prj->serialize_buffer);
+
+    return record_snapshot_message(
+        prj, recorded_at, flags, DP_PROJECT_MESSAGE_INTERNAL_TYPE_VIEW_STATE,
+        context_id, prj->serialize_buffer,
+        DP_PROJECT_MESSAGE_INTERNAL_VIEW_STATE_BODY_LENGTH);
 }
 
 static void snapshot_close(DP_Project *prj)
@@ -6173,6 +6310,12 @@ static int playback_state_step_handle_message(
             // cut off the undo history, since it's not available anymore.
             DP_playback_canvas_history_soft_reset(c->pb);
             break;
+        case DP_PROJECT_MESSAGE_INTERNAL_TYPE_VIEW_STATE:
+            if (view_state_deserialize(body_length, body,
+                                       DP_playback_view_state(c->pb))) {
+                DP_playback_view_state_dirty_set(c->pb, true);
+            }
+            break;
         default:
             DP_debug("Unhandled internal project message type %d", type);
             break;
@@ -6531,12 +6674,11 @@ static bool canvas_load_warn(DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
     return warn_fn && warn_fn(user, warn);
 }
 
-static DP_CanvasState *
-canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
-                              long long snapshot_id, long long session_id,
-                              long long first_sequence_id, unsigned int flags,
-                              DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
-                              long long *out_last_sequence_id)
+static DP_CanvasState *canvas_from_snapshot_playback(
+    DP_ProjectPlaybackContext *c, long long snapshot_id, long long session_id,
+    long long first_sequence_id, unsigned int flags,
+    DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
+    long long *out_last_sequence_id, DP_ViewState *out_vs)
 {
     DP_ASSERT(c);
     DP_ASSERT(snapshot_id > 0LL);
@@ -6584,6 +6726,10 @@ canvas_from_snapshot_playback(DP_ProjectPlaybackContext *c,
         }
     }
 
+    if (out_vs) {
+        DP_playback_view_state_get_reset(c->pb, out_vs);
+    }
+
     return playback_current_canvas(c);
 }
 
@@ -6591,7 +6737,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
     DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
     char **out_session_source_param, long long *out_session_sequence_id,
-    long long *out_resume_session_id)
+    long long *out_resume_session_id, DP_ViewState *out_vs)
 {
     DP_ASSERT(prj);
     static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1,
@@ -6705,7 +6851,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
         long long last_sequence_id = sequence_id - 1LL;
         DP_CanvasState *cs = canvas_from_snapshot_playback(
             &c, snapshot_id, session_id, sequence_id, flags, warn_fn, user,
-            out_session_sequence_id ? &last_sequence_id : NULL);
+            out_session_sequence_id ? &last_sequence_id : NULL, out_vs);
         playback_context_dispose(&c);
 
         if (cs) {
@@ -6776,8 +6922,10 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
     return 0;
 }
 
-DP_ProjectCanvasLoad
-DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
+DP_ProjectCanvasLoad DP_project_canvas_load(DP_DrawContext *dc,
+                                            const char *path,
+                                            bool snapshot_only,
+                                            DP_ViewState *out_vs)
 {
     DP_ASSERT(dc);
     DP_ASSERT(path);
@@ -6794,7 +6942,7 @@ DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
 
     pcl.cs = DP_project_canvas_from_latest_snapshot(
         prj, dc, snapshot_only, NULL, NULL, &pcl.session_source_param,
-        &pcl.session_sequence_id, &pcl.resume_session_id);
+        &pcl.session_sequence_id, &pcl.resume_session_id, out_vs);
     project_close(prj, true);
 
     if (!pcl.cs) {
@@ -8378,6 +8526,13 @@ bool DP_project_player_local_state_get_reset(DP_ProjectPlayer *pp,
     DP_ASSERT(pp);
     DP_ProjectPlaybackContext *c = pp->c;
     return c && DP_playback_local_state_get_reset(c->pb, fn, user);
+}
+
+bool DP_project_player_view_state_get_reset(DP_ProjectPlayer *pp,
+                                            DP_ViewState *out_vs)
+{
+    DP_ProjectPlaybackContext *c = pp->c;
+    return c && DP_playback_view_state_get_reset(c->pb, out_vs);
 }
 
 

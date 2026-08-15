@@ -4,6 +4,7 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/eventlog.h"
+#include "libclient/drawdance/viewstate.h"
 #include "libclient/utils/cursors.h"
 #include "libclient/utils/qtguicompat.h"
 #include "libclient/view/enums.h"
@@ -163,11 +164,25 @@ void CanvasControllerBase::setCanvasModel(canvas::CanvasModel *canvasModel)
 	updateCanvasSize(0, 0, 0, 0);
 	if(canvasModel) {
 		canvas::PaintEngine *pe = canvasModel->paintEngine();
-		connect(
-			pe, &canvas::PaintEngine::tileCacheDirtyCheckNeeded, this,
-			&CanvasControllerBase::tileCacheDirtyCheckNeeded,
-			pe->isTileCacheDirtyCheckOnTick() ? Qt::DirectConnection
-											  : Qt::QueuedConnection);
+		// Hardware and software canvas have different ways of updating.
+		if(pe->isTileCacheDirtyCheckOnTick()) {
+			connect(
+				pe, &canvas::PaintEngine::tileCacheDirtyCheckNeeded, this,
+				&CanvasControllerBase::tileCacheDirtyCheckNeeded,
+				Qt::DirectConnection);
+			connect(
+				pe, &canvas::PaintEngine::viewStateSet, this,
+				&CanvasControllerBase::setViewState, Qt::QueuedConnection);
+		} else {
+			connect(
+				pe, &canvas::PaintEngine::tileCacheDirtyCheckNeeded, this,
+				&CanvasControllerBase::tileCacheDirtyCheckNeeded,
+				Qt::QueuedConnection);
+			connect(
+				pe, &canvas::PaintEngine::viewStateSet, this,
+				&CanvasControllerBase::viewStateSetNeeded,
+				Qt::DirectConnection);
+		}
 	}
 }
 
@@ -344,20 +359,13 @@ void CanvasControllerBase::zoomStepsAt(int steps, const QPointF &point)
 
 void CanvasControllerBase::setRotation(qreal degrees)
 {
-	degrees = std::fmod(degrees, 360.0);
-	if(degrees < 0.0) {
-		degrees += 360.0;
-	}
-
 	bool inverted = isRotationInverted();
-	if(inverted) {
-		degrees = 360.0 - degrees;
-	}
+	qreal effectiveDegrees = toEffectiveRotation(degrees, inverted);
 
-	if(degrees != m_rotation) {
+	if(effectiveDegrees != m_rotation) {
 		QTransform prev, cur;
 		prev.rotate(m_rotation);
-		cur.rotate(degrees);
+		cur.rotate(effectiveDegrees);
 		translateByViewTransformOffset(prev, cur);
 
 		updateCanvasTransform([&] {
@@ -366,7 +374,7 @@ void CanvasControllerBase::setRotation(qreal degrees)
 			} else {
 				m_pos = prev.inverted().map(cur.map(m_pos));
 			}
-			m_rotation = degrees;
+			m_rotation = effectiveDegrees;
 		});
 
 		showTransformNotice(getRotationNoticeText());
@@ -459,9 +467,38 @@ void CanvasControllerBase::setMirror(bool mirror)
 	}
 }
 
+void CanvasControllerBase::setViewState(
+	QSize viewportSize, QPointF pos, qreal zoom, qreal rotation, bool mirror,
+	bool flip)
+{
+	// Update the state of the view
+	if(mirror != m_mirror) {
+		Q_EMIT viewStateMirrorSet(mirror);
+	}
+	if(flip != m_flip) {
+		Q_EMIT viewStateFlipSet(flip);
+	}
+
+	updateCanvasTransform([&] {
+		m_zoom = zoom;
+		m_mirror = mirror;
+		m_flip = flip;
+		m_rotation = toEffectiveRotation(rotation, isRotationInverted());
+	});
+
+	QPointF delta =
+		mapPointFromCanvasF(pos) - viewCenterF() - viewToCanvasOffset();
+	scrollByF(delta.x(), delta.y());
+}
+
 QPoint CanvasControllerBase::viewCenterPoint() const
 {
-	return mapPointToCanvasF(viewCenterF()).toPoint();
+	return viewCenterPointF().toPoint();
+}
+
+QPointF CanvasControllerBase::viewCenterPointF() const
+{
+	return mapPointToCanvasF(viewCenterF());
 }
 
 bool CanvasControllerBase::isPointVisible(const QPointF &point) const
@@ -2503,6 +2540,12 @@ void CanvasControllerBase::resetCanvasTransform()
 	emitTransformChanged();
 	emitViewRectChanged();
 	updatePixelGridScale();
+	if(m_canvasModel) {
+		m_canvasModel->paintEngine()->setViewState(
+			drawdance::ViewState(
+				viewSize(), viewCenterPointF(), m_zoom, rotation(), m_mirror,
+				m_flip));
+	}
 }
 
 void CanvasControllerBase::updatePosBounds()
@@ -2544,6 +2587,21 @@ void CanvasControllerBase::mirrorFlip(
 	QTransform &matrix, bool mirror, bool flip)
 {
 	matrix.scale(mirror ? -1.0 : 1.0, flip ? -1.0 : 1.0);
+}
+
+qreal CanvasControllerBase::toEffectiveRotation(
+	const qreal degrees, bool inverted)
+{
+	qreal n = std::fmod(degrees, 360.0);
+	if(n < 0.0) {
+		n += 360.0;
+	}
+
+	if(inverted) {
+		return 360.0 - n;
+	} else {
+		return n;
+	}
 }
 
 void CanvasControllerBase::setZoomToFit(Qt::Orientations orientations)

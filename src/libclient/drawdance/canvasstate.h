@@ -26,6 +26,7 @@ extern "C" {
 
 struct DP_CanvasState;
 struct DP_ViewModeFilter;
+struct DP_ViewState;
 
 namespace drawdance {
 
@@ -46,7 +47,8 @@ public:
 		QString *outSessionSourceParam = nullptr,
 		long long *outSessionSequenceId = nullptr,
 		long long *outResumeSessionId = nullptr,
-		unsigned int *outPlayerFlags = nullptr);
+		unsigned int *outPlayerFlags = nullptr,
+		DP_ViewState *outViewState = nullptr);
 
 	CanvasState();
 	CanvasState(const CanvasState &other);

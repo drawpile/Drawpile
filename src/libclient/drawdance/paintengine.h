@@ -17,6 +17,7 @@ namespace drawdance {
 
 class AclState;
 class SnapshotQueue;
+class ViewState;
 
 enum RecordStartResult {
 	RECORD_START_SUCCESS,
@@ -79,6 +80,8 @@ public:
 
 	bool revealCensored() const;
 	void setRevealCensored(bool revealCensored);
+
+	void setViewState(const drawdance::ViewState &vs);
 
 	DP_ViewModePick pick(int x, int y);
 

@@ -143,6 +143,9 @@ signals:
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
 	void annotationResized(int id);
 	void annotationDeleted(int id);
+	void viewStateSet(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 
 private slots:
 	void onUserJoined(int id, const QString &name);

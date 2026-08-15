@@ -5,6 +5,7 @@ extern "C" {
 #include <dpengine/load_enums.h>
 }
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/viewstate.h"
 #include <QObject>
 #include <QRunnable>
 #include <QString>
@@ -21,6 +22,7 @@ public:
 	DP_LoadResult result() const { return m_result; }
 	DP_SaveImageType type() const { return m_type; }
 	const drawdance::CanvasState &canvasState() const { return m_canvasState; }
+	const drawdance::ViewState &viewState() const { return m_viewState; }
 	const QString &sessionSourceParam() const { return m_sessionSourceParam; }
 	long long sessionSequenceId() const { return m_sessionSequenceId; }
 	long long resumeSessionId() const { return m_resumeSessionId; }
@@ -37,6 +39,7 @@ private:
 	DP_LoadResult m_result = DP_LOAD_RESULT_BAD_ARGUMENTS;
 	DP_SaveImageType m_type = DP_SAVE_IMAGE_UNKNOWN;
 	drawdance::CanvasState m_canvasState;
+	drawdance::ViewState m_viewState;
 	QString m_sessionSourceParam;
 	long long m_sessionSequenceId = -1LL;
 	long long m_resumeSessionId = 0LL;

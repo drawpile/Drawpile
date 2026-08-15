@@ -3,6 +3,7 @@
 #include "canvas_history.h"
 #include "draw_context.h"
 #include "local_state.h"
+#include "view_state.h"
 #include <dpcommon/common.h>
 #include <dpmsg/message.h>
 
@@ -15,9 +16,11 @@ struct DP_Playback {
     DP_DrawContext *dc;
     DP_CanvasHistory *ch;
     DP_LocalState *ls;
+    DP_ViewState vs;
     DP_Message **multidab_msgs;
     int multidab_count;
     bool local_state_dirty;
+    bool view_state_dirty;
 };
 
 DP_Playback *DP_playback_new(DP_DrawContext *dc)
@@ -27,9 +30,11 @@ DP_Playback *DP_playback_new(DP_DrawContext *dc)
         dc,
         DP_canvas_history_new_no_mutex(),
         DP_local_state_new(NULL, NULL, NULL),
+        DP_VIEW_STATE_INVALID_INIT,
         DP_malloc(sizeof(*pb->multidab_msgs) * (size_t)MAX_MULTIDAB_COUNT),
         0,
         true,
+        false,
     };
     return pb;
 }
@@ -50,8 +55,10 @@ void DP_playback_reset(DP_Playback *pb)
     DP_ASSERT(pb);
     DP_canvas_history_reset(pb->ch);
     DP_local_state_reset(pb->ls);
+    pb->vs = (DP_ViewState)DP_VIEW_STATE_INVALID_INIT;
     DP_playback_clear_multidab(pb);
     pb->local_state_dirty = true;
+    pb->view_state_dirty = false;
 }
 
 DP_DrawContext *DP_playback_draw_context(DP_Playback *pb)
@@ -70,6 +77,12 @@ DP_LocalState *DP_playback_local_state(DP_Playback *pb)
 {
     DP_ASSERT(pb);
     return pb->ls;
+}
+
+DP_ViewState *DP_playback_view_state(DP_Playback *pb)
+{
+    DP_ASSERT(pb);
+    return &pb->vs;
 }
 
 DP_CanvasState *DP_playback_local_canvas_inc(DP_Playback *pb)
@@ -94,6 +107,18 @@ void DP_playback_local_state_dirty_set(DP_Playback *pb, bool local_state_dirty)
 {
     DP_ASSERT(pb);
     pb->local_state_dirty = local_state_dirty;
+}
+
+bool DP_playback_view_state_dirty(DP_Playback *pb)
+{
+    DP_ASSERT(pb);
+    return pb->view_state_dirty;
+}
+
+void DP_playback_view_state_dirty_set(DP_Playback *pb, bool view_state_dirty)
+{
+    DP_ASSERT(pb);
+    pb->view_state_dirty = view_state_dirty;
 }
 
 void DP_playback_canvas_history_reset(DP_Playback *pb)
@@ -122,7 +147,7 @@ long long DP_playback_canvas_history_project_player_snapshot(
     DP_ASSERT(pb);
     DP_ASSERT(prj);
     return DP_canvas_history_project_player_snapshot(
-        pb->ch, prj, pb->ls, session_id, sequence_id, recorded_at);
+        pb->ch, prj, pb->ls, &pb->vs, session_id, sequence_id, recorded_at);
 }
 
 static void playback_handle_single_dec(DP_Playback *pb, DP_Message *msg)
@@ -254,6 +279,20 @@ bool DP_playback_local_state_get_reset(DP_Playback *pb,
     if (pb->local_state_dirty) {
         pb->local_state_dirty = false;
         DP_local_state_playback_image_build(pb->ls, pb->dc, fn, user);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool DP_playback_view_state_get_reset(DP_Playback *pb, DP_ViewState *out_vs)
+{
+    DP_ASSERT(pb);
+    DP_ASSERT(out_vs);
+    if (pb->view_state_dirty) {
+        pb->view_state_dirty = false;
+        *out_vs = pb->vs;
         return true;
     }
     else {

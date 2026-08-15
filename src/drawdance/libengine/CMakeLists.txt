@@ -99,6 +99,7 @@ dp_target_sources(dpengine
     dpengine/track.h
     dpengine/user_cursors.h
     dpengine/view_mode.h
+    dpengine/view_state.h
 )
 
 target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})

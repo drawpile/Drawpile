@@ -119,7 +119,8 @@ private:
 CanvasState CanvasState::load(
 	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType,
 	QString *outSessionSourceParam, long long *outSessionSequenceId,
-	long long *outResumeSessionId, unsigned int *outPlayerFlags)
+	long long *outResumeSessionId, unsigned int *outPlayerFlags,
+	DP_ViewState *outViewState)
 {
 	QByteArray pathBytes = path.toUtf8();
 	QByteArray flatImageLayerTitleBytes =
@@ -159,6 +160,9 @@ CanvasState CanvasState::load(
 	}
 	if(outPlayerFlags) {
 		*outPlayerFlags = lc.out.player_flags;
+	}
+	if(outViewState) {
+		*outViewState = lc.out.vs;
 	}
 	return CanvasState::noinc(DP_load_context_dispose_take(&lc));
 }

@@ -94,6 +94,7 @@ public:
 
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
+	QPointF viewCenterPointF() const;
 
 	void clearKeys();
 
@@ -124,6 +125,10 @@ public:
 	//! Scroll view by the given number of pixels
 	void scrollBy(int x, int y);
 	void scrollByF(qreal x, qreal y);
+
+	void setViewState(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 
 	//! Show the notification bar with the "reconnect" button visible
 	void showDisconnectedWarning(const QString &message, bool singleSession);
@@ -169,6 +174,8 @@ signals:
 	void penUp(bool constrain, bool center);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void coordinatesChanged(const QPointF &coordinates);
+	void viewStateMirrorSet(bool mirror);
+	void viewStateFlipSet(bool flip);
 
 	void viewRectChange(const QPolygonF &viewport);
 
@@ -365,6 +372,7 @@ private:
 		bool flip) const;
 
 	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
+	static qreal toEffectiveRotation(qreal degrees, bool inverted);
 
 	void emitViewTransformed();
 	void emitPenModify(Qt::KeyboardModifiers modifiers);

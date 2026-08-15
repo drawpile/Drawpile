@@ -338,8 +338,8 @@ void Document::loadState(
 }
 
 void Document::resumeState(
-	const drawdance::CanvasState &canvasState, const QString &path,
-	bool autoRecord, long long resumeSessionId)
+	const drawdance::CanvasState &canvasState, const drawdance::ViewState &vs,
+	const QString &path, bool autoRecord, long long resumeSessionId)
 {
 	m_client->resetMyId();
 	initCanvas();
@@ -369,7 +369,7 @@ void Document::resumeState(
 	}
 
 	markDirty();
-	m_canvas->loadCanvasState(m_cfg->getEngineUndoDepth(), canvasState);
+	m_canvas->loadCanvasState(m_cfg->getEngineUndoDepth(), canvasState, &vs);
 	if(m_canvas->resumeProjectRecording(
 		   m_cfg, path, resumeSessionId, rm.continueSourceParam,
 		   rm.continueSequenceId)) {
@@ -388,8 +388,8 @@ void Document::resumeState(
 	}
 }
 
-DP_LoadResult Document::loadPlayer(
-	const QString &path, bool debugDump, bool sessionTemplate)
+DP_LoadResult
+Document::loadPlayer(const QString &path, bool debugDump, bool sessionTemplate)
 {
 	DP_LoadResult result;
 	DP_Player *player =

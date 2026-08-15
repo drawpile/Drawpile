@@ -26,6 +26,7 @@
 #include "project_worker.h"
 #include "recorder.h"
 #include "snapshots.h"
+#include "view_state.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
 #include <dpcommon/conversions.h>
@@ -1871,7 +1872,8 @@ static bool accept_project_recording_message(void *user, DP_Message *msg)
 }
 
 static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
-                                  DP_LocalState *ls, unsigned int file_id,
+                                  DP_LocalState *ls, const DP_ViewState *vs,
+                                  unsigned int file_id,
                                   unsigned int local_user_id,
                                   unsigned int snapshot_flags,
                                   bool discard_other_snapshots)
@@ -1885,28 +1887,27 @@ static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
                                       &params);
     DP_local_state_project_snapshot_build(ls, accept_project_recording_message,
                                           &params);
+    if (vs && DP_view_state_valid(*vs)) {
+        DP_project_worker_snapshot_view_state_record(pw, file_id, 0u, vs, 0u);
+    }
     DP_project_worker_snapshot_finish(pw, file_id, discard_other_snapshots);
 }
 
-void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
-                                               DP_ProjectWorker *pw,
-                                               DP_LocalState *ls,
-                                               unsigned int file_id,
-                                               unsigned int local_user_id)
+void DP_canvas_history_project_recording_start(
+    DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
+    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id)
 {
-    make_project_snapshot(ch, pw, ls, file_id, local_user_id,
+    make_project_snapshot(ch, pw, ls, vs, file_id, local_user_id,
                           DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT
                               | DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE,
                           false);
 }
 
-void DP_canvas_history_project_recording_snapshot(DP_CanvasHistory *ch,
-                                                  DP_ProjectWorker *pw,
-                                                  DP_LocalState *ls,
-                                                  unsigned int file_id,
-                                                  unsigned int local_user_id)
+void DP_canvas_history_project_recording_snapshot(
+    DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
+    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id)
 {
-    make_project_snapshot(ch, pw, ls, file_id, local_user_id,
+    make_project_snapshot(ch, pw, ls, vs, file_id, local_user_id,
                           DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE, true);
 }
 
@@ -1957,6 +1958,21 @@ static bool accept_project_playback_message(void *user, DP_Message *msg)
     return true;
 }
 
+static bool project_playback_snapshot_view_state(
+    struct DP_CanvasHistoryProjectPlaybackParams *params,
+    const DP_ViewState *vs)
+{
+    if (vs && DP_view_state_valid(*vs)) {
+        int record_result = DP_project_snapshot_view_state_record(
+            params->prj, params->snapshot_id, params->recorded_at, 0u, vs, 0u);
+        if (record_result != 0) {
+            params->last_result = record_result;
+            return false;
+        }
+    }
+    return true;
+}
+
 static bool project_playback_finish_snapshot(
     struct DP_CanvasHistoryProjectPlaybackParams *params)
 {
@@ -1972,7 +1988,8 @@ static bool project_playback_finish_snapshot(
 
 long long DP_canvas_history_project_player_snapshot(
     DP_CanvasHistory *ch, DP_Project *prj, DP_LocalState *ls,
-    long long session_id, long long sequence_id, double recorded_at)
+    const DP_ViewState *vs, long long session_id, long long sequence_id,
+    double recorded_at)
 {
     struct DP_CanvasHistoryProjectPlaybackParams params = {
         prj, recorded_at, session_id, sequence_id, 0LL, 0};
@@ -1981,6 +1998,7 @@ long long DP_canvas_history_project_player_snapshot(
                            accept_project_playback_message, &params)
                     && DP_local_state_project_snapshot_build(
                            ls, accept_project_playback_message, &params)
+                    && project_playback_snapshot_view_state(&params, vs)
                     && project_playback_finish_snapshot(&params);
     if (snapshot_ok) {
         return params.snapshot_id;

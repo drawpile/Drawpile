@@ -96,6 +96,9 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	connect(
 		m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this,
 		&CanvasScene::userCursorMoved);
+	connect(
+		m_model->paintEngine(), &canvas::PaintEngine::viewStateSet, this,
+		&CanvasScene::viewStateSet, Qt::QueuedConnection);
 
 	connect(
 		m_model, &canvas::CanvasModel::previewAnnotationRequested, this,

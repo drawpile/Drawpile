@@ -24,6 +24,7 @@ struct DP_Semaphore;
 namespace drawdance {
 class LayerPropsList;
 class ViewModeBuffer;
+class ViewState;
 }
 
 namespace server {
@@ -186,6 +187,8 @@ public:
 		bool wrap, const QVector<QPair<float, QColor>> &skinsBelow,
 		const QVector<QPair<float, QColor>> &skinsAbove);
 
+	void setViewState(const drawdance::ViewState &vs);
+
 	int pickLayer(int x, int y);
 	unsigned int pickContextId(int x, int y);
 
@@ -284,6 +287,9 @@ signals:
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void cursorMoved(unsigned int flags, int userId, int layerId, int x, int y);
+	void viewStateSet(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 	void playbackAt(long long pos);
 	void
 	dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
@@ -339,6 +345,7 @@ private:
 	static void onCursorMoved(
 		void *user, unsigned int flags, unsigned int contextId, int layerId,
 		int x, int y);
+	static void onViewStateSet(void *user, const DP_ViewState *vs);
 
 	static void
 	onRenderTileToPixmap(void *user, int tileX, int tileY, DP_Pixel8 *pixels);

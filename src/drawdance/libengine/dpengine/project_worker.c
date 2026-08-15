@@ -4,6 +4,7 @@
 #include "image.h"
 #include "project.h"
 #include "save_enums.h"
+#include "view_state.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
@@ -62,8 +63,10 @@ typedef enum DP_ProjectWorkerCommandType {
     DP_PROJECT_WORKER_COMMAND_SESSION_CLOSE,
     DP_PROJECT_WORKER_COMMAND_MESSAGE_RECORD,
     DP_PROJECT_WORKER_COMMAND_MESSAGE_INTERNAL_RECORD,
+    DP_PROJECT_WORKER_COMMAND_MESSAGE_VIEW_STATE_RECORD,
     DP_PROJECT_WORKER_COMMAND_SNAPSHOT_OPEN,
     DP_PROJECT_WORKER_COMMAND_SNAPSHOT_MESSAGE_RECORD,
+    DP_PROJECT_WORKER_COMMAND_SNAPSHOT_VIEW_STATE_RECORD,
     DP_PROJECT_WORKER_COMMAND_SNAPSHOT_FINISH,
     DP_PROJECT_WORKER_COMMAND_THUMBNAIL_MAKE,
     DP_PROJECT_WORKER_COMMAND_SESSION_TIMES_UPDATE,
@@ -122,6 +125,13 @@ typedef struct DP_ProjectWorkerCommand {
             unsigned int file_id;
         } message_internal_record;
         struct {
+            DP_ViewState vs;
+            long long recorded_at_msec;
+            unsigned int context_id;
+            unsigned int flags;
+            unsigned int file_id;
+        } message_view_state_record;
+        struct {
             DP_CanvasState *cs;
             unsigned int flags;
             unsigned int file_id;
@@ -132,6 +142,13 @@ typedef struct DP_ProjectWorkerCommand {
             unsigned int flags;
             unsigned int file_id;
         } snapshot_message_record;
+        struct {
+            DP_ViewState vs;
+            long long recorded_at_msec;
+            unsigned int context_id;
+            unsigned int flags;
+            unsigned int file_id;
+        } snapshot_view_state_record;
         struct {
             unsigned int file_id;
             bool discard_other_snapshots;
@@ -452,6 +469,32 @@ static void handle_message_internal_record(DP_ProjectWorker *pw,
     }
 }
 
+static void handle_message_view_state_record(
+    DP_ProjectWorker *pw, unsigned int file_id, unsigned int context_id,
+    const DP_ViewState *vs, long long recorded_at_msec, unsigned int flags)
+{
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_warn("Not recording view state message on file id %u, currently "
+                "open is %u",
+                file_id, open_file_id);
+        return;
+    }
+
+    int result = DP_project_message_view_state_record(
+        pw->prj, DP_llong_to_double(recorded_at_msec) / 1000.0, context_id, vs,
+        flags);
+    if (result == 0) {
+        check_message_size_limit(
+            pw, DP_PROJECT_MESSAGE_INTERNAL_VIEW_STATE_BODY_LENGTH);
+    }
+    else {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_MESSAGE_RECORD_ERROR,
+                           .error = {file_id, result, DP_error()}});
+    }
+}
+
 static void try_discard_snapshot(DP_Project *prj, long long snapshot_id)
 {
     DP_PROJECT_WORKER_DEBUG("discarding failed snapshot %lld", snapshot_id);
@@ -534,6 +577,36 @@ static void handle_snapshot_message_record(DP_ProjectWorker *pw,
         pw->prj, snapshot_id, DP_llong_to_double(recorded_at_msec) / 1000.0,
         msg, flags);
     DP_message_decref(msg);
+    if (result != 0) {
+        emit_event(pw, (DP_ProjectWorkerEvent){
+                           DP_PROJECT_WORKER_EVENT_SNAPSHOT_ERROR,
+                           .error = {file_id, result, DP_error()}});
+    }
+}
+
+static void handle_snapshot_view_state_record(
+    DP_ProjectWorker *pw, unsigned int file_id, unsigned int context_id,
+    const DP_ViewState *vs, long long recorded_at_msec, unsigned int flags)
+{
+    unsigned int open_file_id = pw->open_file_id;
+    if (file_id != open_file_id) {
+        DP_warn("Not recording snapshot view state on file id %u, currently "
+                "open is %u",
+                file_id, open_file_id);
+        return;
+    }
+
+    long long snapshot_id = pw->open_snapshot_id;
+    if (snapshot_id == 0LL) {
+        DP_PROJECT_WORKER_DEBUG(
+            "not recording snapshot view state file id %u because none is open",
+            file_id);
+        return;
+    }
+
+    int result = DP_project_snapshot_view_state_record(
+        pw->prj, snapshot_id, DP_llong_to_double(recorded_at_msec) / 1000.0,
+        context_id, vs, flags);
     if (result != 0) {
         emit_event(pw, (DP_ProjectWorkerEvent){
                            DP_PROJECT_WORKER_EVENT_SNAPSHOT_ERROR,
@@ -886,6 +959,19 @@ static void handle_command(DP_ProjectWorker *pw,
             command->message_internal_record.recorded_at_msec,
             command->message_internal_record.flags);
         return;
+    case DP_PROJECT_WORKER_COMMAND_MESSAGE_VIEW_STATE_RECORD:
+        DP_PROJECT_WORKER_DEBUG(
+            "handle message view state record %u context_id %u flags 0x%x",
+            command->message_view_state_record.file_id,
+            command->message_view_state_record.context_id,
+            command->message_view_state_record.flags);
+        handle_message_view_state_record(
+            pw, command->message_view_state_record.file_id,
+            command->message_view_state_record.context_id,
+            &command->message_view_state_record.vs,
+            command->message_view_state_record.recorded_at_msec,
+            command->message_view_state_record.flags);
+        return;
     case DP_PROJECT_WORKER_COMMAND_SNAPSHOT_OPEN:
         DP_PROJECT_WORKER_DEBUG("handle snapshot open %u flags 0x%x",
                                 command->snapshot_open.file_id,
@@ -908,6 +994,19 @@ static void handle_command(DP_ProjectWorker *pw,
             command->snapshot_message_record.msg,
             command->snapshot_message_record.recorded_at_msec,
             command->snapshot_message_record.flags);
+        return;
+    case DP_PROJECT_WORKER_COMMAND_SNAPSHOT_VIEW_STATE_RECORD:
+        DP_PROJECT_WORKER_DEBUG(
+            "handle snapshot view_tate record %u context_id %u flags 0x%x",
+            command->snapshot_view_state_record.file_id,
+            command->snapshot_view_state_record.context_id,
+            command->snapshot_view_state_record.flags);
+        handle_snapshot_view_state_record(
+            pw, command->snapshot_view_state_record.file_id,
+            command->snapshot_view_state_record.context_id,
+            &command->snapshot_view_state_record.vs,
+            command->snapshot_view_state_record.recorded_at_msec,
+            command->snapshot_view_state_record.flags);
         return;
     case DP_PROJECT_WORKER_COMMAND_SNAPSHOT_FINISH:
         DP_PROJECT_WORKER_DEBUG("handle snapshot finish %u",
@@ -1178,6 +1277,21 @@ void DP_project_worker_message_internal_record(DP_ProjectWorker *pw,
                              context_id, flags, file_id}});
 }
 
+void DP_project_worker_message_view_state_record(DP_ProjectWorker *pw,
+                                                 unsigned int file_id,
+                                                 unsigned int context_id,
+                                                 const DP_ViewState *vs,
+                                                 unsigned int flags)
+{
+    DP_ASSERT(pw);
+    DP_ASSERT(vs);
+    push_command(
+        pw, (DP_ProjectWorkerCommand){
+                DP_PROJECT_WORKER_COMMAND_MESSAGE_VIEW_STATE_RECORD,
+                .message_view_state_record = {*vs, DP_time_unix_msec(),
+                                              context_id, flags, file_id}});
+}
+
 void DP_project_worker_snapshot_open_noinc(DP_ProjectWorker *pw,
                                            unsigned int file_id,
                                            DP_CanvasState *cs,
@@ -1211,6 +1325,21 @@ void DP_project_worker_snapshot_message_record_noinc(DP_ProjectWorker *pw,
                          DP_PROJECT_WORKER_COMMAND_SNAPSHOT_MESSAGE_RECORD,
                          .snapshot_message_record = {msg, DP_time_unix_msec(),
                                                      flags, file_id}});
+}
+
+void DP_project_worker_snapshot_view_state_record(DP_ProjectWorker *pw,
+                                                  unsigned int file_id,
+                                                  unsigned int context_id,
+                                                  const DP_ViewState *vs,
+                                                  unsigned int flags)
+{
+    DP_ASSERT(pw);
+    DP_ASSERT(vs);
+    push_command(
+        pw, (DP_ProjectWorkerCommand){
+                DP_PROJECT_WORKER_COMMAND_SNAPSHOT_VIEW_STATE_RECORD,
+                .snapshot_view_state_record = {*vs, DP_time_unix_msec(),
+                                               context_id, flags, file_id}});
 }
 
 void DP_project_worker_snapshot_finish(DP_ProjectWorker *pw,

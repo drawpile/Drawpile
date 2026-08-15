@@ -90,7 +90,9 @@ private:
 		unsigned int controlId, int playerState,
 		const drawdance::CanvasState &canvasState, double playbackSeconds,
 		long long sessionId, long long sequenceId, bool localStateChanged,
-		const net::MessageList &localStateMsgs);
+		const net::MessageList &localStateMsgs, bool viewStateChanged,
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 	void updatePlayer(
 		int playerState, double playbackSeconds, long long sessionId,
 		long long sequenceId);

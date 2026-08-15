@@ -15,6 +15,7 @@ extern "C" {
 #include "libclient/drawdance/layerpropslist.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
+#include "libclient/drawdance/viewstate.h"
 #include "libclient/net/message.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libclient/view/enums.h"
@@ -170,7 +171,8 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onTimelineChanged, &PaintEngine::onSelectionsChanged,
 		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer,
 		&PaintEngine::onUndoDepthLimitSet,
-		&PaintEngine::onCensoredLayerRevealed, this);
+		&PaintEngine::onCensoredLayerRevealed, &PaintEngine::onViewStateSet,
+		this);
 	if(m_tileCacheDirtyCheckOnTick && m_cache.tile->needsDirtyCheck()) {
 		emit tileCacheDirtyCheckNeeded();
 	}
@@ -455,6 +457,11 @@ void PaintEngine::setOnionSkins(
 	net::Message msg = net::makeLocalChangeOnionSkinsMessage(oss);
 	receiveMessages(false, 1, &msg);
 	DP_onion_skins_free(oss);
+}
+
+void PaintEngine::setViewState(const drawdance::ViewState &vs)
+{
+	m_paintEngine.setViewState(vs);
 }
 
 void PaintEngine::setViewLayer(int id)
@@ -1023,6 +1030,14 @@ void PaintEngine::onCursorMoved(
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->cursorMoved(flags, contextId, layerId, x, y);
+}
+
+void PaintEngine::onViewStateSet(void *user, const DP_ViewState *vs)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	Q_EMIT pe->viewStateSet(
+		QSize(vs->viewport_width, vs->viewport_height), QPointF(vs->x, vs->y),
+		vs->zoom, vs->rotation, vs->mirror, vs->flip);
 }
 
 void PaintEngine::onRenderTileToPixmap(

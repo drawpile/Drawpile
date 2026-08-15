@@ -8,6 +8,7 @@ extern "C" {
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/drawdance/tile.h"
+#include "libclient/drawdance/viewstate.h"
 #include "libclient/net/message.h"
 #include "libshared/util/qtcompat.h"
 #include <QByteArray>
@@ -159,6 +160,15 @@ Message makeInternalStreamResetStartMessage(
 Message makeInternalSnapshotMessage(uint8_t contextId)
 {
 	return Message::noinc(DP_msg_internal_snapshot_new(contextId));
+}
+
+Message makeInternalViewStateApplyMessage(
+	uint8_t contextId, QSize viewportSize, QPointF pos, qreal zoom,
+	qreal rotation, bool mirror, bool flip)
+{
+	drawdance::ViewState vs(viewportSize, pos, zoom, rotation, mirror, flip);
+	return Message::noinc(DP_msg_internal_view_state_apply_new(
+		contextId, sizeof(vs.constViewState()), &vs.constViewState()));
 }
 
 Message makeKeyFrameLayerAttributesMessage(

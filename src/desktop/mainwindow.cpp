@@ -2633,8 +2633,8 @@ void MainWindow::loadCanvasStateFromFile(
 				if(resume) {
 					long long resumeSessionId = loader->resumeSessionId();
 					m_doc->resumeState(
-						canvasState, loader->path(), autoRecord,
-						resumeSessionId);
+						canvasState, loader->viewState(), loader->path(),
+						autoRecord, resumeSessionId);
 				} else {
 					m_doc->loadState(
 						canvasState, loader->path(), loader->type(), false,
@@ -3008,6 +3008,7 @@ void MainWindow::showProjectPlaybackDialog(
 	m_doc->initCanvas(true);
 	m_projectPlaybackDialog = new dialogs::ProjectPlaybackDialog(this);
 	m_projectPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
+
 	if(looksLikeProject) {
 		m_projectPlaybackDialog->openProject(
 			m_doc->canvas()->paintEngine(), basename, loadPath, tempFile);
@@ -3017,7 +3018,6 @@ void MainWindow::showProjectPlaybackDialog(
 	}
 	m_projectPlaybackDialog->show();
 	utils::centerOnParent(m_projectPlaybackDialog);
-
 	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
 		recordAction, std::bind(&QAction::setEnabled, recordAction, true));

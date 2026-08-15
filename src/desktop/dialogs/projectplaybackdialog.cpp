@@ -591,15 +591,26 @@ void ProjectPlaybackDialog::onProjectPlayerUpdated(
 	unsigned int controlId, int playerState,
 	const drawdance::CanvasState &canvasState, double playbackSeconds,
 	long long sessionId, long long sequenceId, bool localStateChanged,
-	const net::MessageList &localStateMsgs)
+	const net::MessageList &localStateMsgs, bool viewStateChanged,
+	QSize viewportSize, QPointF pos, qreal zoom, qreal rotation, bool mirror,
+	bool flip)
 {
 	if(controlId == m_controlId) {
 		m_paintEngine->enqueueResetToState(canvasState);
+
 		if(localStateChanged) {
 			m_paintEngine->receiveMessages(
 				false, localStateMsgs.size(), localStateMsgs.constData());
 		}
+
+		if(viewStateChanged) {
+			net::Message msg = net::makeInternalViewStateApplyMessage(
+				0, viewportSize, pos, zoom, rotation, mirror, flip);
+			m_paintEngine->receiveMessages(false, 1, &msg);
+		}
+
 		updatePlayer(playerState, playbackSeconds, sessionId, sequenceId);
+
 	} else {
 		qWarning(
 			"Got project player update for control id %u when expecting %u",

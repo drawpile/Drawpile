@@ -21,6 +21,7 @@ class Config;
 namespace drawdance {
 class CanvasState;
 class SelectionSet;
+class ViewState;
 }
 
 namespace project {
@@ -72,7 +73,8 @@ public:
 		const QString &initialLayerName, const QString &initialTrackName);
 
 	void loadCanvasState(
-		int undoDepthLimit, const drawdance::CanvasState &canvasState);
+		int undoDepthLimit, const drawdance::CanvasState &canvasState,
+		const drawdance::ViewState *vs = nullptr);
 
 	//! Prepare to start playback, takes ownership of the given player
 	void loadPlayer(DP_Player *player);

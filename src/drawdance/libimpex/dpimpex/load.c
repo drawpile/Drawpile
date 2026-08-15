@@ -31,6 +31,7 @@
 #include <dpengine/tile.h>
 #include <dpengine/timeline.h>
 #include <dpengine/track.h>
+#include <dpengine/view_state.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/ids.h>
@@ -1372,8 +1373,8 @@ DP_LoadContext DP_load_context_make(const char *path, DP_DrawContext *dc)
     DP_ASSERT(dc);
     return (DP_LoadContext){
         {path, "Layer 1", dc, 0u, DP_SAVE_IMAGE_UNKNOWN, NULL, NULL, NULL},
-        {NULL, NULL, 0LL, 0LL, DP_LOAD_RESULT_BAD_ARGUMENTS,
-         DP_SAVE_IMAGE_UNKNOWN, 0u},
+        {NULL, DP_VIEW_STATE_INVALID_INIT, NULL, 0LL, 0LL,
+         DP_LOAD_RESULT_BAD_ARGUMENTS, DP_SAVE_IMAGE_UNKNOWN, 0u},
     };
 }
 
@@ -1496,7 +1497,7 @@ static bool load_project(DP_LoadContext *lc, bool snapshot_only)
 
     DP_DrawContext *dc = lc->in.dc;
     DP_ProjectCanvasLoad pcl =
-        DP_project_canvas_load(dc, project_path, snapshot_only);
+        DP_project_canvas_load(dc, project_path, snapshot_only, &lc->out.vs);
     switch (pcl.result) {
     case 0:
         lc->out.result = DP_LOAD_RESULT_SUCCESS;
