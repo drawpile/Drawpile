@@ -1399,8 +1399,9 @@ static void startApplication(
 			app->openPath(arg, startupOptions.restoreWindowPosition);
 		}
 	} else {
-		app->openStart(
-			startupOptions.startPage, startupOptions.restoreWindowPosition);
+		app->openStartOrResume(
+			startupOptions.startPage, startupOptions.restoreWindowPosition,
+			true);
 	}
 
 #ifdef Q_OS_ANDROID
