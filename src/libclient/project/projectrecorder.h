@@ -80,7 +80,7 @@ public:
 #ifdef Q_OS_ANDROID
 		return true;
 #else
-		return true; // FIXME
+		return false;
 #endif
 	}
 
