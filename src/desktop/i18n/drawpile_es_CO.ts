@@ -8574,37 +8574,37 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+3"/>
         <location line="+26"/>
         <source> Only the desktop or mobile application will work.</source>
-        <translation type="unfinished"></translation>
+        <translation> Solo funcionará la aplicación de escritorio o la aplicación móvil.</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>This session &lt;strong&gt;restricts joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión &lt;strong&gt;restringe la conexión con la versión web de Drawpile.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Utilice &lt;a href=&quot;#&quot;&gt;códigos de invitación&lt;/a&gt; para permitir que las personas se unan a través del navegador web.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Operators and server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Los operadores y administradores de servidores pueden usar &lt;a href=&quot;#&quot;&gt;códigos de invitación&lt;/a&gt; para permitir que las personas se unan a través del navegador web.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> Server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Los administradores de servidores pueden usar &lt;a href=&quot;#&quot;&gt;códigos de invitación&lt;/a&gt; para permitir que las personas se unan a través del navegador web.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> The desktop or mobile application will work normally.</source>
-        <translation type="unfinished"></translation>
+        <translation> La aplicación de escritorio o móvil funcionará normalmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session &lt;strong&gt;does not allow joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión &lt;strong&gt;no permite unirse a la versión del navegador web de drawpile.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8625,17 +8625,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+23"/>
         <source>To make it invite-only, [set a session password].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Para que sea solo invitación, [Establecer una contraseña de sesión].</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>To make it invite-only, a session operator can set a password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Para que sea solo invitación, un operador de sesión puede establecer una contraseña.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session is &lt;strong&gt;public&lt;/strong&gt;, strangers can join it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión es &lt;strong&gt;pública&lt;/strong&gt;, ¡cualquiera puede unirse!</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -8835,19 +8835,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+9"/>
         <source>Floofderg</source>
         <extracomment>The name of a layout, the person who made the layout has a character whose species is a furred dragon.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Floofderg</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kerfluff</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kerfluff</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lambda</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lambda</translation>
     </message>
 </context>
 <context>
@@ -8964,7 +8964,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>This username doesn&apos;t belong to an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este nombre de usuario no pertenece a una cuenta en %1.</translation>
     </message>
     <message>
         <location line="+628"/>
@@ -9073,75 +9073,75 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/projectdialog.cpp" line="+30"/>
         <source>Project Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Estadísticas del proyecto</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>The canvas has changes not saved in the project!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El lienzo tiene cambios que no se han guardado en el proyecto!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estas estadísticas solo reflejan las sesiones guardadas en el proyecto. Las sesiones en las que se deshabilitó la recuperación automática o se cerró sin guardar, así como los cambios no guardados, no aparecerán.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Despedir</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Unexpected Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error Inesperado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto problemente sea un bug de Drawpile.</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Total session time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo total de la sesión:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Your total work time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tu tiempo total de trabajo:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Session %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opened at:</source>
         <extracomment>Refers to the date and time a session was opened (started.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Inaugurado en:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Closed at:</source>
         <extracomment>Refers to the date and time a session was closed (ended.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cerrado a las:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>unknown</source>
         <extracomment>Part of &quot;Session time: unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración de la sesión:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your work time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tu tiempo de trabajo:</translation>
     </message>
     <message>
         <location line="+10"/>
