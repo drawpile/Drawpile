@@ -20,9 +20,6 @@ SETTING(
 SETTING(
 	_themePaletteDummy, _ThemePaletteDummy, "_themepalettedummy",
 	desktop::settings::ThemePalette::System)
-SETTING(
-	_videoExporterFormatDummy, _VideoExporterFormatDummy,
-	"_videoexporterformatdummy", VideoExporter::Format::IMAGE_SERIES)
 {% for setting in settings %}
 	{% if setting.legacy_package == 'desktop' %}
 		{% if setting.condition %}
