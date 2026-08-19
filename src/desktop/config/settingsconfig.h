@@ -758,6 +758,9 @@ public:
 	int getTimelapseFlashSeconds() const override;
 	void setTimelapseFlashSeconds(int value) override;
 
+	bool getTimelapseFollowView() const override;
+	void setTimelapseFollowView(bool value) override;
+
 	double getTimelapseFramerate() const override;
 	void setTimelapseFramerate(double value) override;
 

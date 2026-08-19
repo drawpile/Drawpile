@@ -1236,6 +1236,10 @@ public:
 	virtual void setTimelapseFlashSeconds(int value) = 0;
 	static int defaultTimelapseFlashSeconds();
 
+	virtual bool getTimelapseFollowView() const = 0;
+	virtual void setTimelapseFollowView(bool value) = 0;
+	static bool defaultTimelapseFollowView();
+
 	virtual double getTimelapseFramerate() const = 0;
 	virtual void setTimelapseFramerate(double value) = 0;
 	static double defaultTimelapseFramerate();
@@ -1620,6 +1624,7 @@ Q_SIGNALS:
 	void changeTimelapseExportFormat(int value);
 	void changeTimelapseFlashColor(const QColor &value);
 	void changeTimelapseFlashSeconds(int value);
+	void changeTimelapseFollowView(bool value);
 	void changeTimelapseFramerate(double value);
 	void changeTimelapseInterpolation(int value);
 	void changeTimelapseLingerAfterLoops(int value);

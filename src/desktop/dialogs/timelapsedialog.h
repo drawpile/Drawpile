@@ -157,6 +157,7 @@ private:
 	KisSliderSpinBox *m_widthSpinner;
 	KisSliderSpinBox *m_heightSpinner;
 	QCheckBox *m_keepAspectCheckBox;
+	QCheckBox *m_followViewCheckBox;
 	QCheckBox *m_cropCheckBox;
 	QCheckBox *m_animationResultCheckBox = nullptr;
 	QCheckBox *m_animationFlipbookCheckBox = nullptr;

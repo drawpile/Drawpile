@@ -3133,6 +3133,19 @@ void MemoryConfig::setTimelapseFlashSeconds(int value)
 	}
 }
 
+bool MemoryConfig::getTimelapseFollowView() const
+{
+	return m_timelapseFollowView;
+}
+
+void MemoryConfig::setTimelapseFollowView(bool value)
+{
+	if(value != m_timelapseFollowView) {
+		m_timelapseFollowView = value;
+		Q_EMIT changeTimelapseFollowView(m_timelapseFollowView);
+	}
+}
+
 double MemoryConfig::getTimelapseFramerate() const
 {
 	return m_timelapseFramerate;

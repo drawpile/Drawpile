@@ -471,7 +471,6 @@ void CanvasControllerBase::setViewState(
 	QSize viewportSize, QPointF pos, qreal zoom, qreal rotation, bool mirror,
 	bool flip)
 {
-	// Update the state of the view
 	if(mirror != m_mirror) {
 		Q_EMIT viewStateMirrorSet(mirror);
 	}

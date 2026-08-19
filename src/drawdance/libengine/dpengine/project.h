@@ -401,6 +401,7 @@ typedef bool (*DP_ProjectCanvasLoadWarnFn)(void *user, int warn);
 typedef bool (*DP_ProjectPlaybackCallbackFn)(void *user, int current_frame,
                                              DP_CanvasState *cs,
                                              DP_LocalState *ls,
+                                             const DP_ViewState *vs,
                                              const DP_Rect *crop_or_null);
 
 

@@ -656,6 +656,9 @@ SETTING(
 	timelapseFlashSeconds, TimelapseFlashSeconds, "timelapse/flashseconds",
 	config::Config::defaultTimelapseFlashSeconds())
 SETTING(
+	timelapseFollowView, TimelapseFollowView, "timelapse/followview",
+	config::Config::defaultTimelapseFollowView())
+SETTING(
 	timelapseFramerate, TimelapseFramerate, "timelapse/framerate",
 	config::Config::defaultTimelapseFramerate())
 SETTING(

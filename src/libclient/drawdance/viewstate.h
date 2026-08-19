@@ -28,6 +28,16 @@ public:
 	{
 	}
 
+	ViewState(const DP_ViewState &viewState)
+		: m_viewState(viewState)
+	{
+	}
+
+	static ViewState fromViewState(const DP_ViewState *viewStateOrNull)
+	{
+		return viewStateOrNull ? ViewState(*viewStateOrNull) : ViewState();
+	}
+
 	int viewportWidth() const { return m_viewState.viewport_width; }
 	int viewportHeight() const { return m_viewState.viewport_height; }
 	qreal x() const { return m_viewState.x; }

@@ -851,6 +851,9 @@ SettingsConfig::SettingsConfig(
 		this, &SettingsConfig::changeTimelapseFlashSeconds,
 		Qt::DirectConnection);
 	connect(
+		m_settings, &desktop::settings::Settings::timelapseFollowViewChanged,
+		this, &SettingsConfig::changeTimelapseFollowView, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::timelapseFramerateChanged,
 		this, &SettingsConfig::changeTimelapseFramerate, Qt::DirectConnection);
 	connect(
@@ -3370,6 +3373,16 @@ int SettingsConfig::getTimelapseFlashSeconds() const
 void SettingsConfig::setTimelapseFlashSeconds(int value)
 {
 	m_settings->setTimelapseFlashSeconds(value);
+}
+
+bool SettingsConfig::getTimelapseFollowView() const
+{
+	return m_settings->timelapseFollowView();
+}
+
+void SettingsConfig::setTimelapseFollowView(bool value)
+{
+	m_settings->setTimelapseFollowView(value);
 }
 
 double SettingsConfig::getTimelapseFramerate() const

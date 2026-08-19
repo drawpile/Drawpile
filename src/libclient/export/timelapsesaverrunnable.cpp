@@ -12,6 +12,7 @@ extern "C" {
 #include "libclient/drawdance/geom.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/drawdance/image.h"
+#include "libclient/drawdance/viewstate.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/timelapsesaverrunnable.h"
 #include "libclient/export/videoformat.h"
@@ -35,15 +36,15 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
 	const QString &outputPath, const QString &inputPath,
 	const QString &encoderKey, int format, int width, int height,
-	int interpolation, const QRect &crop, const QColor &overrideBackgroundColor,
-	const QColor &backdropColor, const QColor &checkerColor1,
-	const QColor &checkerColor2, const QColor &flashColor,
-	const QRect &logoRect, double logoOpacity, const QImage &logoImage,
-	double framerate, double lingerBeforeSeconds, double playbackSeconds,
-	double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
-	int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
-	int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
-	double animationFramerate, QObject *parent)
+	int interpolation, bool followView, const QRect &crop,
+	const QColor &overrideBackgroundColor, const QColor &backdropColor,
+	const QColor &checkerColor1, const QColor &checkerColor2,
+	const QColor &flashColor, const QRect &logoRect, double logoOpacity,
+	const QImage &logoImage, double framerate, double lingerBeforeSeconds,
+	double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
+	double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
+	int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
+	int frameRangeLast, double animationFramerate, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_ffmpegPath(ffmpegPath)
@@ -54,6 +55,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	, m_width(width)
 	, m_height(height)
 	, m_interpolation(interpolation)
+	, m_followView(followView)
 	, m_crop(crop)
 	, m_overrideBackgroundColor(overrideBackgroundColor)
 	, m_backdropColor(backdropColor)
@@ -565,7 +567,7 @@ QColor TimelapseSaverRunnable::PlaybackRunnable::mixBackgroundColors(
 
 bool TimelapseSaverRunnable::PlaybackRunnable::handle(
 	int instances, const drawdance::CanvasState &canvasState, DP_LocalState *ls,
-	const DP_Rect *cropOrNull)
+	const drawdance::ViewState &vs, const DP_Rect *cropOrNull)
 {
 	if(shouldStop()) {
 		qCDebug(lcDpTimelapseSaverRunnable, "Playback thread cancelled");
@@ -578,7 +580,27 @@ bool TimelapseSaverRunnable::PlaybackRunnable::handle(
 			canvasState.get(), DP_local_state_active_layer_id(ls),
 			DP_local_state_active_frame_index(ls),
 			DP_local_state_onion_skins(ls));
-		QImage img = toOutputImage(canvasState, cropOrNull, &vmf);
+
+		QImage img;
+		if(m_parent->m_followView) {
+			if(vs.isValid()) {
+				QRect viewRect = canvasState.timelapseRectForViewState(
+					QSize(m_parent->m_width, m_parent->m_height),
+					vs.viewportSize(), vs.pos(), vs.zoom(), vs.rotation(),
+					vs.mirror(), vs.flip());
+				DP_Rect viewRectDp;
+				img = toOutputImage(
+					canvasState,
+					drawdance::rectQtToDp(viewRect, viewRectDp) ? &viewRectDp
+																: nullptr,
+					&vmf);
+			} else {
+				img = toOutputImage(canvasState, nullptr, &vmf);
+			}
+		} else {
+			img = toOutputImage(canvasState, cropOrNull, &vmf);
+		}
+
 		if(img.isNull()) {
 			qCWarning(
 				lcDpTimelapseSaverRunnable, "Failed to create output image: %s",
@@ -597,10 +619,12 @@ bool TimelapseSaverRunnable::PlaybackRunnable::handle(
 
 bool TimelapseSaverRunnable::PlaybackRunnable::handleCallback(
 	void *user, int instances, DP_CanvasState *cs, DP_LocalState *ls,
-	const DP_Rect *cropOrNull)
+	const DP_ViewState *vs, const DP_Rect *cropOrNull)
 {
 	return static_cast<TimelapseSaverRunnable::PlaybackRunnable *>(user)
-		->handle(instances, drawdance::CanvasState::noinc(cs), ls, cropOrNull);
+		->handle(
+			instances, drawdance::CanvasState::noinc(cs), ls,
+			drawdance::ViewState::fromViewState(vs), cropOrNull);
 }
 
 void TimelapseSaverRunnable::PlaybackRunnable::enqueueLastImage(int instances)

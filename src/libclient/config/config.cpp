@@ -1280,6 +1280,11 @@ int Config::defaultTimelapseFlashSeconds()
 	return 1;
 }
 
+bool Config::defaultTimelapseFollowView()
+{
+	return false;
+}
+
 double Config::defaultTimelapseFramerate()
 {
 	return 24.0;

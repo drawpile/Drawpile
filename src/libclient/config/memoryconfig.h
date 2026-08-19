@@ -751,6 +751,9 @@ public:
 	int getTimelapseFlashSeconds() const override;
 	void setTimelapseFlashSeconds(int value) override;
 
+	bool getTimelapseFollowView() const override;
+	void setTimelapseFollowView(bool value) override;
+
 	double getTimelapseFramerate() const override;
 	void setTimelapseFramerate(double value) override;
 
@@ -1111,6 +1114,7 @@ private:
 	int m_timelapseExportFormat = defaultTimelapseExportFormat();
 	QColor m_timelapseFlashColor = defaultTimelapseFlashColor();
 	int m_timelapseFlashSeconds = defaultTimelapseFlashSeconds();
+	bool m_timelapseFollowView = defaultTimelapseFollowView();
 	double m_timelapseFramerate = defaultTimelapseFramerate();
 	int m_timelapseInterpolation = defaultTimelapseInterpolation();
 	int m_timelapseLingerAfterLoops = defaultTimelapseLingerAfterLoops();

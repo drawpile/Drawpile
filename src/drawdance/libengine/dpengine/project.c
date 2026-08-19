@@ -7783,6 +7783,7 @@ static int project_playback_play_filter(void *user,
                     if (!pfc->callback(pfc->user, next_frame - current_frame,
                                        playback_current_canvas(c),
                                        DP_playback_local_state(pb),
+                                       DP_playback_view_state(pb),
                                        playback_crop_current(pbc))) {
                         filter_result = FILTER_ABORT;
                     }

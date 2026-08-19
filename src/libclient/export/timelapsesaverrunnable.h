@@ -25,7 +25,12 @@ struct DP_SaveVideoNextFrame;
 struct DP_Semaphore;
 struct DP_Thread;
 struct DP_ViewModeFilter;
+struct DP_ViewState;
 class QTemporaryFile;
+
+namespace drawdance {
+class ViewState;
+}
 
 class TimelapseSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
@@ -35,7 +40,7 @@ public:
 		const DP_ViewModeFilter *vmfOrNull, const QString &ffmpegPath,
 		const QString &outputPath, const QString &inputPath,
 		const QString &encoderKey, int format, int width, int height,
-		int interpolation, const QRect &crop,
+		int interpolation, bool followView, const QRect &crop,
 		const QColor &overrideBackgroundColor, const QColor &backdropColor,
 		const QColor &checkerColor1, const QColor &checkerColor2,
 		const QColor &flashColor, const QRect &logoRect, double logoOpacity,
@@ -108,11 +113,12 @@ private:
 
 		bool handle(
 			int instances, const drawdance::CanvasState &canvasState,
-			DP_LocalState *ls, const DP_Rect *cropOrNull);
+			DP_LocalState *ls, const drawdance::ViewState &vs,
+			const DP_Rect *cropOrNull);
 
 		static bool handleCallback(
 			void *user, int instances, DP_CanvasState *cs, DP_LocalState *ls,
-			const DP_Rect *cropOrNull);
+			const DP_ViewState *vs, const DP_Rect *cropOrNull);
 
 		void enqueueLastImage(int instances);
 		void enqueueFlashImage(double brightness);
@@ -171,6 +177,7 @@ private:
 	const int m_width;
 	const int m_height;
 	const int m_interpolation;
+	const bool m_followView;
 	const QRect m_crop;
 	const QColor m_overrideBackgroundColor;
 	const QColor m_backdropColor;

@@ -1241,55 +1241,61 @@ void DP_project_worker_session_close(DP_ProjectWorker *pw, unsigned int file_id,
                          .session_close = {flags_to_set, file_id}});
 }
 
+long long DP_project_worker_time_msec(void)
+{
+    return DP_time_unix_msec();
+}
+
 void DP_project_worker_message_record_noinc(DP_ProjectWorker *pw,
                                             unsigned int file_id,
-                                            DP_Message *msg, unsigned int flags)
+                                            DP_Message *msg, unsigned int flags,
+                                            long long recorded_at_msec)
 {
     DP_ASSERT(pw);
     DP_ASSERT(msg);
     push_command(
         pw, (DP_ProjectWorkerCommand){
                 DP_PROJECT_WORKER_COMMAND_MESSAGE_RECORD,
-                .message_record = {msg, DP_time_unix_msec(), flags, file_id}});
+                .message_record = {msg, recorded_at_msec, flags, file_id}});
 }
 
 void DP_project_worker_message_record_inc(DP_ProjectWorker *pw,
                                           unsigned int file_id, DP_Message *msg,
-                                          unsigned int flags)
+                                          unsigned int flags,
+                                          long long recorded_at_msec)
 {
     DP_ASSERT(pw);
     DP_ASSERT(msg);
     DP_project_worker_message_record_noinc(pw, file_id, DP_message_incref(msg),
-                                           flags);
+                                           flags, recorded_at_msec);
 }
 
 void DP_project_worker_message_internal_record(DP_ProjectWorker *pw,
                                                unsigned int file_id, int type,
                                                unsigned int context_id,
                                                void *body_or_null, size_t size,
-                                               unsigned int flags)
+                                               unsigned int flags,
+                                               long long recorded_at_msec)
 {
     DP_ASSERT(pw);
     push_command(pw, (DP_ProjectWorkerCommand){
                          DP_PROJECT_WORKER_COMMAND_MESSAGE_INTERNAL_RECORD,
                          .message_internal_record = {
-                             body_or_null, size, DP_time_unix_msec(), type,
+                             body_or_null, size, recorded_at_msec, type,
                              context_id, flags, file_id}});
 }
 
-void DP_project_worker_message_view_state_record(DP_ProjectWorker *pw,
-                                                 unsigned int file_id,
-                                                 unsigned int context_id,
-                                                 const DP_ViewState *vs,
-                                                 unsigned int flags)
+void DP_project_worker_message_view_state_record(
+    DP_ProjectWorker *pw, unsigned int file_id, unsigned int context_id,
+    const DP_ViewState *vs, unsigned int flags, long long recorded_at_msec)
 {
     DP_ASSERT(pw);
     DP_ASSERT(vs);
     push_command(
         pw, (DP_ProjectWorkerCommand){
                 DP_PROJECT_WORKER_COMMAND_MESSAGE_VIEW_STATE_RECORD,
-                .message_view_state_record = {*vs, DP_time_unix_msec(),
-                                              context_id, flags, file_id}});
+                .message_view_state_record = {*vs, recorded_at_msec, context_id,
+                                              flags, file_id}});
 }
 
 void DP_project_worker_snapshot_open_noinc(DP_ProjectWorker *pw,

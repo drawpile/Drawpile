@@ -1511,16 +1511,22 @@ settings:
     qsettings: 'timelapse/backdropcolor'
     legacy_package: 'desktop'
 
+  - id: timelapseDurationSeconds
+    type: 'int'
+    default: '120'
+    qsettings: 'timelapse/durationseconds'
+    legacy_package: 'desktop'
+
   - id: timelapseExportFormat
     type: 'int'
     default: '-1'
     qsettings: 'timelapse/exportformat'
     legacy_package: 'desktop'
 
-  - id: timelapseDurationSeconds
-    type: 'int'
-    default: '120'
-    qsettings: 'timelapse/durationseconds'
+  - id: timelapseFollowView
+    type: 'bool'
+    default: 'false'
+    qsettings: 'timelapse/followview'
     legacy_package: 'desktop'
 
   - id: timelapseLingerAfterLoops

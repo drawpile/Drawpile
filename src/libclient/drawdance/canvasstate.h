@@ -106,6 +106,10 @@ public:
 		net::MessageList &msgs, uint8_t contextId,
 		bool compatibilityMode) const;
 
+	QRect timelapseRectForViewState(
+		QSize outputSize, QSize viewportSize, QPointF pos, qreal zoom,
+		qreal rotation, bool mirror, bool flip) const;
+
 	net::Message makeLayerTreeMove(
 		uint8_t contextId, int sourceId, int targetId, bool intoGroup,
 		bool below) const;

@@ -1291,7 +1291,8 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe)
 }
 
 
-static void project_record_view_state(DP_PaintEngine *pe)
+static void project_record_view_state(DP_PaintEngine *pe,
+                                      long long recorded_at_msec)
 {
     if (pe->record.current_view_state_updated) {
         DP_ASSERT(DP_view_state_valid(pe->record.current_view_state));
@@ -1304,7 +1305,7 @@ static void project_record_view_state(DP_PaintEngine *pe)
             pe->record.recorded_view_state = pe->record.current_view_state;
             DP_project_worker_message_view_state_record(
                 pe->record.pw, pe->record.file_id, 0u,
-                &pe->record.recorded_view_state, 0u);
+                &pe->record.recorded_view_state, 0u, recorded_at_msec);
         }
     }
 }
@@ -1335,7 +1336,7 @@ void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
 
     pe->record.current_view_state_updated =
         DP_view_state_valid(pe->record.current_view_state);
-    project_record_view_state(pe);
+    project_record_view_state(pe, DP_project_worker_time_msec());
 }
 
 void DP_paint_engine_project_recording_resume(DP_PaintEngine *pe,
@@ -1359,7 +1360,7 @@ void DP_paint_engine_project_recording_resume(DP_PaintEngine *pe,
     pe->record.recorded_view_state_valid = false;
     DP_project_worker_message_internal_record(
         pw, file_id, DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESUMED, 0u, NULL,
-        (size_t)0, 0u);
+        (size_t)0, 0u, DP_project_worker_time_msec());
 }
 
 bool DP_paint_engine_project_recording_stop(DP_PaintEngine *pe)
@@ -1466,10 +1467,12 @@ static void project_record_message(DP_PaintEngine *pe, DP_Message *msg,
         if (type == DP_MSG_INTERNAL) {
             DP_MsgInternal *mi = DP_message_internal(msg);
             if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+                long long recorded_at_msec = DP_project_worker_time_msec();
                 DP_project_worker_message_internal_record(
                     pw, pe->record.file_id,
-                    DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET, 0u, NULL, 0, 0u);
-                project_record_view_state(pe);
+                    DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET, 0u, NULL, 0, 0u,
+                    recorded_at_msec);
+                project_record_view_state(pe, recorded_at_msec);
             }
         }
         else if (!DP_message_type_control(type)
@@ -1478,9 +1481,10 @@ static void project_record_message(DP_PaintEngine *pe, DP_Message *msg,
             unsigned int flags = DP_message_context_id(msg) == local_user_id
                                    ? DP_PROJECT_MESSAGE_FLAG_OWN
                                    : 0u;
+            long long recorded_at_msec = DP_project_worker_time_msec();
             DP_project_worker_message_record_inc(pw, pe->record.file_id, msg,
-                                                 flags);
-            project_record_view_state(pe);
+                                                 flags, recorded_at_msec);
+            project_record_view_state(pe, recorded_at_msec);
         }
     }
 }

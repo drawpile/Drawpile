@@ -24,6 +24,10 @@ extern "C" {
 #include "libclient/drawdance/layergroup.h"
 #include "libclient/drawdance/layerprops.h"
 #include <QObject>
+#include <QPolygonF>
+#include <QRect>
+#include <QRectF>
+#include <QTransform>
 #ifdef Q_OS_ANDROID
 #	include "libshared/util/paths.h"
 #	include <QFile>
@@ -431,6 +435,64 @@ void CanvasState::toResetImage(
 {
 	DP_reset_image_build(
 		m_data, contextId, compatibilityMode, &CanvasState::pushMessage, &msgs);
+}
+
+QRect CanvasState::timelapseRectForViewState(
+	QSize outputSize, QSize viewportSize, QPointF pos, qreal zoom,
+	qreal rotation, bool mirror, bool flip) const
+{
+	QRect canvasRect(0, 0, width(), height());
+	if(canvasRect.isEmpty()) {
+		return QRect();
+	}
+
+	// Transform the viewport size into image coordinates.
+	QTransform matrix;
+	matrix.translate(
+		qreal(viewportSize.width()) / 2.0, qreal(viewportSize.height()) / 2.0);
+	matrix.scale(mirror ? -1.0 : 1.0, flip ? -1.0 : 1.0);
+	matrix.scale(zoom, zoom);
+	matrix.rotate(rotation);
+	matrix.translate(-pos.x(), -pos.y());
+	QPolygonF quad =
+		matrix.inverted().map(QRectF(QPointF(0.0, 0.0), QSizeF(viewportSize)));
+
+	// Wrap the output area around it.
+	QRectF bounds = quad.boundingRect().intersected(QRectF(canvasRect));
+	QRectF scaledRect(
+		QPointF(0.0, 0.0),
+		QSizeF(outputSize)
+			.scaled(bounds.size(), Qt::KeepAspectRatioByExpanding));
+	scaledRect.moveCenter(bounds.center());
+	QRect cropRect = scaledRect.toAlignedRect();
+
+	// If the crop area encompasses the entire canvas, just use that.
+	if(cropRect.contains(canvasRect)) {
+		return canvasRect;
+	}
+
+	// Keep as much of the cropped area on the canvas as possible.
+	QRect outputRect = cropRect;
+
+	if(cropRect.width() > canvasRect.width()) {
+		outputRect.setX(qRound(
+			(qreal(canvasRect.width()) - qreal(cropRect.width())) / 2.0));
+	} else if(cropRect.left() < canvasRect.left()) {
+		outputRect.moveLeft(canvasRect.left());
+	} else if(cropRect.right() > canvasRect.right()) {
+		outputRect.moveRight(canvasRect.right());
+	}
+
+	if(cropRect.height() > canvasRect.height()) {
+		outputRect.setY(qRound(
+			(qreal(canvasRect.height()) - qreal(cropRect.height())) / 2.0));
+	} else if(cropRect.top() < canvasRect.top()) {
+		outputRect.moveTop(canvasRect.top());
+	} else if(cropRect.bottom() > canvasRect.bottom()) {
+		outputRect.moveBottom(canvasRect.bottom());
+	}
+
+	return outputRect.intersected(canvasRect);
 }
 
 net::Message CanvasState::makeLayerTreeMove(

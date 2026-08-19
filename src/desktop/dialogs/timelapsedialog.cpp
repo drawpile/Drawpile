@@ -268,6 +268,9 @@ TimelapseDialog::TimelapseDialog(
 	m_keepAspectCheckBox->setChecked(true);
 	settingsForm->addRow(nullptr, m_keepAspectCheckBox);
 
+	m_followViewCheckBox = new QCheckBox(tr("Follow view area"));
+	settingsForm->addRow(nullptr, m_followViewCheckBox);
+
 	bool haveCrop = !m_crop.isEmpty();
 	m_cropCheckBox = new QCheckBox(tr("Crop to selection area"));
 	m_cropCheckBox->setEnabled(haveCrop);
@@ -903,6 +906,8 @@ void TimelapseDialog::resetToDefaultSettings()
 	if(!checkLogoLocation(config::Config::defaultTimelapseLogoLocation())) {
 		checkLogoLocation(int(LogoLocation::Default));
 	}
+	m_followViewCheckBox->setChecked(
+		config::Config::defaultTimelapseFollowView());
 	if(!selectInterpolation(config::Config::defaultTimelapseInterpolation())) {
 		m_interpolationCombo->setCurrentIndex(0);
 	}
@@ -987,6 +992,7 @@ void TimelapseDialog::loadSettings()
 	if(!checkLogoLocation(cfg->getTimelapseLogoLocation())) {
 		checkLogoLocation(int(LogoLocation::Default));
 	}
+	m_followViewCheckBox->setChecked(cfg->getTimelapseFollowView());
 	updateAdvanced(cfg->getTimelapseShowAdvanced());
 	if(!selectInterpolation(cfg->getTimelapseInterpolation())) {
 		m_interpolationCombo->setCurrentIndex(0);
@@ -1031,6 +1037,7 @@ void TimelapseDialog::saveSettings()
 	cfg->setTimelapseExportFormat(m_formatCombo->currentData().toInt());
 	cfg->setTimelapseDurationSeconds(getDurationSeconds());
 	cfg->setTimelapseLogoLocation(m_logoLocationGroup->checkedId());
+	cfg->setTimelapseFollowView(m_followViewCheckBox->isChecked());
 	cfg->setTimelapseShowAdvanced(m_advancedWidget->isEnabled());
 	cfg->setTimelapseInterpolation(m_interpolationCombo->currentData().toInt());
 	cfg->setTimelapseTimeOwnOnly(m_ownCheckBox->isChecked());
