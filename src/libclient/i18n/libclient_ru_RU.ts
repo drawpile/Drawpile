@@ -2691,42 +2691,42 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Отражение по вертикали: ВКЛ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Отражение по вертикали: ВЫКЛ</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальное зеркало: ВКЛ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальное зеркало: ВЫКЛ</translation>
     </message>
     <message>
         <location line="+2220"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Поворот: %1°</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Скачивание…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранение…</translation>
     </message>
 </context>
 </TS>
