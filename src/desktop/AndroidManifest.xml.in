@@ -42,7 +42,6 @@
         android:fullBackupOnly="false"
         android:resizeableActivity="true"
         android:hasFragileUserData="true"
-        android:extractNativeLibs="true"
         android:theme="@style/DefaultTheme"
         ${ANDROID_APPLICATION_ATTRIBUTES}>
 

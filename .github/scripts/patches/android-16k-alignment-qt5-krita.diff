@@ -15,29 +15,6 @@ bit builds. Based on a patch to Krita by Dmitry Kazakov.
  QMAKE_LFLAGS_NOUNDEF    = -Wl,--no-undefined
  QMAKE_LFLAGS_RPATH      = -Wl,-rpath=
 
---- a/src/android/templates/build.gradle
-+++ b/src/android/templates/build.gradle
-@@ -41,7 +41,11 @@ android {
-     ndkVersion androidNdkVersion
- 
-     // Extract native libraries from the APK
--    packagingOptions.jniLibs.useLegacyPackaging true
-+    packagingOptions {
-+        jniLibs {
-+            useLegacyPackaging = true
-+        }
-+    }
- 
-     sourceSets {
-         main {
-@@ -71,6 +75,7 @@ android {
- 
-     // Do not compress Qt binary resources file
-     aaptOptions {
-+        noCompress 'so'
-         noCompress 'rcc'
-     }
- 
 --- a/src/tools/androiddeployqt/main.cpp
 +++ b/src/tools/androiddeployqt/main.cpp
 @@ -2785,7 +2785,7 @@ bool signPackage(const Options &options)
