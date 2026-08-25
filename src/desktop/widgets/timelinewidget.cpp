@@ -3480,7 +3480,6 @@ TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
 	QItemSelectionModel::SelectionFlags selectionFlags;
 	switch(selectionAction) {
 	case SelectionAction::Retain:
-		d->selectionRangeStartIndex = idx;
 		if(isSelected || d->itemSelectionModel->hasSelection()) {
 			selectionFlags = QItemSelectionModel::NoUpdate;
 			int deltaTrackIndex =

@@ -41,6 +41,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Drawpile will now ask you if you start a recording while autorecovery is enabled, to avoid accidentally recording double for no reason. Thanks tiar for reporting.
  * Feature: Allow converting dprec and dptxt recordings to dppr files via File > Import > Convert Recordings to Project. You'll also be prompted about it when you use File > Open on these files.
  * Feature: Support for Android 16. Older versions continue to be supported, same as before.
+ * Fix: Make timeline selection tool work properly while dragging over a track with onion skins enabled.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
