@@ -375,7 +375,9 @@ build() {
 
     # Clean up previous APKs, otherwise they might get rebuilt with a different
     # name and then we won't know which is the correct one.
-    find "$build_dir/bin" -name '*.apk' -exec rm -v '{}' ';'
+    if [[ -d "$build_dir/bin" ]]; then
+        find "$build_dir/bin" -name '*.apk' -exec rm -v '{}' ';'
+    fi
     rm -vf "$build_dir/drawpile.apk" "$build_dir/drawpile.apk.idsig"
 
     # Build the APK.
