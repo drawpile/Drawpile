@@ -295,6 +295,7 @@ public slots:
 	void flushPreviewedActions();
 
 signals:
+	void activeToolChanged(int type);
 	void toolCapabilitiesChanged(unsigned int capabilities);
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);

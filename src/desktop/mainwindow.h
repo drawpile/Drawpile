@@ -536,6 +536,10 @@ private:
 	void setDonationLinkEnabled(bool enabled);
 	QString makeContributionInfoText();
 
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	void showActivityBroadcastDialog();
+#endif
+
 	static QString extractLoadPath(
 		const QString &path, const QTemporaryFile *tempFile,
 		QString *outBasename = nullptr);

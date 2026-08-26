@@ -69,6 +69,11 @@ public:
 
 	void connectActions(const Actions &actions) override;
 
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	void connectActivityBroadcast(
+		net::ActivityBroadcast *activityBroadcast) override;
+#endif
+
 	void connectCanvasFrame(widgets::CanvasFrame *canvasFrame) override;
 
 	void connectDocument(Document *doc) override;

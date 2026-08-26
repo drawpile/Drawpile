@@ -164,6 +164,10 @@ extern "C" {
 #ifdef DP_HAVE_BUILTIN_SERVER
 #	include "libclient/server/builtinserver.h"
 #endif
+#if DP_HAVE_ACTIVITYBROADCAST
+#	include "desktop/dialogs/activitybroadcastdialog.h"
+#	include "libclient/net/activitybroadcast.h"
+#endif
 #ifdef Q_OS_MACOS
 static constexpr auto CTRL_KEY = Qt::META;
 #	include "desktop/widgets/macmenu.h"
@@ -8379,6 +8383,12 @@ void MainWindow::setupActions()
 			.checkable()
 			.noDefaultShortcut();
 #endif
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	QAction *activityBroadcast =
+		// "UDP" is a technical term, don't attempt to translate it.
+		makeAction("activitybroadcast", tr("UDP Activity Stream…"))
+			.noDefaultShortcut();
+#endif
 	// clang-format off
 	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
 	devtoolsmenu->addAction(systeminfo);
@@ -8395,6 +8405,9 @@ void MainWindow::setupActions()
 	devtoolsmenu->addAction(inputDebug);
 #ifdef Q_OS_ANDROID
 	devtoolsmenu->addAction(androidTextDebug);
+#endif
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	devtoolsmenu->addAction(activityBroadcast);
 #endif
 	devtoolsmenu->addAction(showNetStats);
 	// clang-format off
@@ -8422,6 +8435,11 @@ void MainWindow::setupActions()
 			qunsetenv("KRITA_ANDROID_EDIT_TEXT_DEBUG_DRAW");
 		}
 	});
+#endif
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	connect(
+		activityBroadcast, &QAction::triggered, this,
+		&MainWindow::showActivityBroadcastDialog);
 #endif
 	// clang-format off
 	connect(showNetStats, &QAction::triggered, m_netstatus, &widgets::NetStatus::showNetStats);
@@ -9778,6 +9796,63 @@ QString MainWindow::makeContributionInfoText()
 	return QStringLiteral("<p%1>%2</p><p%1>%3<br></p>")
 		.arg(attrs, donationText, helpText);
 }
+
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+void MainWindow::showActivityBroadcastDialog()
+{
+	QString objectName = QStringLiteral("activitybroadcastdialog");
+	dialogs::ActivityBroadcastDialog *dlg =
+		findChild<dialogs::ActivityBroadcastDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::ActivityBroadcastDialog(this);
+		dlg->setObjectName(objectName);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+
+		connect(
+			dlg, &dialogs::ActivityBroadcastDialog::activityBroadcastStarted,
+			this, [this, dlg] {
+				net::ActivityBroadcast *activityBroadcast =
+					dlg->activityBroadcast();
+				activityBroadcast->setParent(this);
+				activityBroadcast->setObjectName(
+					QStringLiteral("activitybroadcast"));
+
+				tools::ToolController *toolCtrl = m_doc->toolCtrl();
+				connect(
+					toolCtrl, &tools::ToolController::activeBrushChanged,
+					activityBroadcast,
+					&net::ActivityBroadcast::sendActiveBrush);
+				connect(
+					toolCtrl, &tools::ToolController::activeToolChanged,
+					activityBroadcast, &net::ActivityBroadcast::sendActiveTool);
+				connect(
+					toolCtrl, &tools::ToolController::foregroundColorChanged,
+					activityBroadcast,
+					&net::ActivityBroadcast::sendForegroundColor);
+				m_canvasView->connectActivityBroadcast(activityBroadcast);
+
+				activityBroadcast->sendActiveBrush(toolCtrl->activeBrush());
+				activityBroadcast->sendActiveTool(int(toolCtrl->activeTool()));
+				activityBroadcast->sendForegroundColor(
+					toolCtrl->foregroundColor());
+			});
+
+		net::ActivityBroadcast *activityBroadcast =
+			findChild<net::ActivityBroadcast *>(
+				QStringLiteral("activitybroadcast"),
+				Qt::FindDirectChildrenOnly);
+		if(activityBroadcast) {
+			dlg->setActivityBroadcast(activityBroadcast);
+		}
+
+		utils::showWindow(dlg);
+	}
+}
+#endif
 
 QString MainWindow::extractLoadPath(
 	const QString &path, const QTemporaryFile *tempFile, QString *outBasename)

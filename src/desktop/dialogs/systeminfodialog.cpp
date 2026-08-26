@@ -363,6 +363,9 @@ QString SystemInfoDialog::getCompileFeatures()
 #ifdef DP_HAVE_BUILTIN_SERVER
 	features.append(QStringLiteral("HAVE_BUILTIN_SERVER"));
 #endif
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	features.append(QStringLiteral("HAVE_ACTIVITYBROADCAST"));
+#endif
 #ifdef HAVE_CHAT_LINE_EDIT_MOBILE
 	features.append(QStringLiteral("HAVE_CHAT_LINE_EDIT_MOBILE"));
 #endif

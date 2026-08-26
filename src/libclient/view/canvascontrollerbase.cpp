@@ -1595,7 +1595,8 @@ void CanvasControllerBase::penMoveEvent(
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				emit penHover(
 					point, m_rotation, m_zoom / devicePixelRatioF(), m_mirror,
-					m_flip, match.toolConstraint1(), match.toolConstraint2());
+					m_flip, match.toolConstraint1(), match.toolConstraint2(),
+					posf);
 				if(m_pointerTracking && m_canvasModel) {
 					emit pointerMove(point);
 				}

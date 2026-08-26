@@ -27,6 +27,13 @@ else()
 endif()
 add_feature_info("TCP socket support" HAVE_TCPSOCKETS "")
 
+if(ANDROID OR EMSCRIPTEN)
+	set(HAVE_UDPSOCKETS OFF)
+else()
+	set(HAVE_UDPSOCKETS ON)
+endif()
+add_feature_info("UDP socket support for activity broadcast" HAVE_UDPSOCKETS "")
+
 if(NOT ANDROID AND NOT EMSCRIPTEN)
 	cmake_dependent_option(SERVER "Compile dedicated server" OFF "HAVE_TCPSOCKETS" OFF)
 	add_feature_info("Drawpile server (SERVER)" SERVER "")

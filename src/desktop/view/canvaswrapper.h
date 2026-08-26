@@ -30,6 +30,12 @@ namespace drawingboard {
 class AnnotationItem;
 }
 
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+namespace net {
+class ActivityBroadcast;
+}
+#endif
+
 namespace tools {
 class ToolController;
 }
@@ -131,6 +137,11 @@ public:
 	virtual void disposeScene() = 0;
 
 	virtual void connectActions(const Actions &actions) = 0;
+
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+	virtual void
+	connectActivityBroadcast(net::ActivityBroadcast *activityBroadcast) = 0;
+#endif
 
 	virtual void connectCanvasFrame(widgets::CanvasFrame *canvasFrame) = 0;
 

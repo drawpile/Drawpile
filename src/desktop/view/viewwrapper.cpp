@@ -25,6 +25,9 @@
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
 #include <functional>
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+#	include "libclient/net/activitybroadcast.h"
+#endif
 
 using std::placeholders::_6;
 
@@ -287,6 +290,44 @@ void ViewWrapper::connectActions(const Actions &actions)
 		actions.evadeusercursors, &QAction::toggled, m_scene,
 		&CanvasScene::setEvadeUserCursors);
 }
+
+#ifdef DP_HAVE_ACTIVITYBROADCAST
+void ViewWrapper::connectActivityBroadcast(
+	net::ActivityBroadcast *activityBroadcast)
+{
+	connect(
+		m_controller, &CanvasController::penDown, activityBroadcast,
+		[this, activityBroadcast](
+			long long, const QPointF &, qreal pressure, qreal xtilt,
+			qreal ytilt, qreal rotation, bool, qreal, qreal, bool, bool, bool,
+			bool, const QPointF &viewPos) {
+			activityBroadcast->sendPenDown(
+				viewPos, m_controller->viewArea(), pressure, xtilt, ytilt,
+				rotation);
+		});
+	connect(
+		m_controller, &CanvasController::penMove, activityBroadcast,
+		[this, activityBroadcast](
+			long long, const QPointF &, qreal pressure, qreal xtilt,
+			qreal ytilt, qreal rotation, bool, bool, const QPointF &viewPos) {
+			activityBroadcast->sendPenMove(
+				viewPos, m_controller->viewArea(), pressure, xtilt, ytilt,
+				rotation);
+		});
+	connect(
+		m_controller, &CanvasController::penHover, activityBroadcast,
+		[this, activityBroadcast](
+			const QPointF &, qreal, qreal, bool, bool, bool, bool,
+			const QPointF &viewPos) {
+			activityBroadcast->sendPenHover(viewPos, m_controller->viewArea());
+		});
+	connect(
+		m_controller, &CanvasController::penUp, activityBroadcast,
+		[this, activityBroadcast]() {
+			activityBroadcast->sendPenUp(m_controller->viewArea());
+		});
+}
+#endif
 
 void ViewWrapper::connectCanvasFrame(widgets::CanvasFrame *canvasFrame)
 {

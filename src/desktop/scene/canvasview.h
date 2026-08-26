@@ -94,6 +94,7 @@ public:
 
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
+	QRectF viewArea() const { return QRectF(viewport()->rect()); }
 
 	void clearKeys();
 
@@ -164,7 +165,7 @@ signals:
 	void penModify(bool constrain, bool center);
 	void penHover(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,
-		bool constrain, bool center);
+		bool constrain, bool center, const QPointF &viewPos);
 	void penUp(bool constrain, bool center);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void coordinatesChanged(const QPointF &coordinates);

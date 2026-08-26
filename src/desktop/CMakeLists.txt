@@ -606,6 +606,13 @@ if(PROXY_STYLE)
 	dp_qt_private_headers(drawpile Widgets)
 endif()
 
+if(HAVE_UDPSOCKETS)
+	target_sources(drawpile PRIVATE
+		dialogs/activitybroadcastdialog.cpp
+		dialogs/activitybroadcastdialog.h
+	)
+endif()
+
 # Some special handling for Android:
 # * It can't deal with multiple main windows properly, trying to open a second
 #	one hides the first with no way to switch between them.

@@ -108,6 +108,7 @@ public:
 	void setMirror(bool mirror);
 
 	QPoint viewCenterPoint() const;
+	QRectF viewArea() const { return viewRectF(); }
 	bool isPointVisible(const QPointF &point) const;
 	QRectF screenRect() const;
 
@@ -200,7 +201,7 @@ signals:
 	void penModify(bool constrain, bool center);
 	void penHover(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,
-		bool constrain, bool center);
+		bool constrain, bool center, const QPointF &viewPos);
 	void penUp(bool constrain, bool center);
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(int type, qreal value, bool wheel);

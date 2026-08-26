@@ -352,6 +352,14 @@ if(HAVE_TCPSOCKETS)
 	endif()
 endif()
 
+if(HAVE_UDPSOCKETS)
+	target_compile_definitions(dpclient PUBLIC DP_HAVE_ACTIVITYBROADCAST=1)
+	target_sources(dpclient PRIVATE
+		net/activitybroadcast.cpp
+		net/activitybroadcast.h
+	)
+endif()
+
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
 if(WIN32)
 	target_sources(dpclient PRIVATE

@@ -169,9 +169,10 @@ void ToolController::setActiveTool(Tool::Type tool)
 	if(activeTool() != tool) {
 		finishActiveTool();
 		m_activeTool = getTool(tool);
-		emit toolCapabilitiesChanged(activeToolCapabilities());
-		emit toolCursorChanged(activeToolCursor());
-		emit toolNoticeRequested(QString());
+		Q_EMIT activeToolChanged(int(tool));
+		Q_EMIT toolCapabilitiesChanged(activeToolCapabilities());
+		Q_EMIT toolCursorChanged(activeToolCursor());
+		Q_EMIT toolNoticeRequested(QString());
 	}
 }
 

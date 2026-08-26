@@ -1575,7 +1575,8 @@ void CanvasView::penMoveEvent(
 			} else {
 				emit penHover(
 					point, m_rotate, m_zoom / devicePixelRatioF(), m_mirror,
-					m_flip, match.toolConstraint1(), match.toolConstraint2());
+					m_flip, match.toolConstraint1(), match.toolConstraint2(),
+					pos);
 				if(m_pointertracking && m_scene->hasImage()) {
 					emit pointerMoved(point);
 				}
