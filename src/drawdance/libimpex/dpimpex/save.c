@@ -1175,13 +1175,18 @@ struct DP_SaveFrameJobParams {
     int frames[];
 };
 
-static void set_error_result(struct DP_SaveFrameContext *c,
-                             DP_SaveResult result)
+static void set_error_result(DP_Atomic *in_out_result, DP_SaveResult result)
 {
     if (result != DP_SAVE_RESULT_SUCCESS) {
-        DP_atomic_compare_exchange(&c->result, DP_SAVE_RESULT_SUCCESS,
+        DP_atomic_compare_exchange(in_out_result, DP_SAVE_RESULT_SUCCESS,
                                    (int)result);
     }
+}
+
+static void save_frame_set_error_result(struct DP_SaveFrameContext *c,
+                                        DP_SaveResult result)
+{
+    set_error_result(&c->result, result);
 }
 
 static DP_Image *generate_frame_image(DP_CanvasState *cs, DP_DrawContext *dc,
@@ -1231,7 +1236,7 @@ static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
         generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
                              c->interpolation, vmb, frame_index, c->mutex);
     if (!img) {
-        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        save_frame_set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
     }
 
@@ -1246,13 +1251,13 @@ static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
     if (!ok) {
         DP_output_free_discard(output);
         DP_warn("Write PNG %d: %s", frame_index, DP_error());
-        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        save_frame_set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
     }
 
     if (!buffer || size == 0) {
         DP_warn("Output %d is null", frame_index);
-        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        save_frame_set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
     }
 
@@ -1280,8 +1285,30 @@ static void write_frame_to_zip(struct DP_SaveFrameContext *c, int frame_index,
     DP_free(path);
     if (!ok) {
         DP_warn("Error zipping frame %d: %s", frame_index, DP_error());
-        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
+        save_frame_set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
     }
+}
+
+static DP_SaveResult save_frame_image_free(DP_Image *img, const char *path)
+{
+    DP_Output *output = DP_file_output_new_from_path(path);
+    if (!output) {
+        DP_image_free(img);
+        return DP_SAVE_RESULT_OPEN_ERROR;
+    }
+
+    bool write_ok = DP_image_write_png(img, output);
+    DP_image_free(img);
+    if (!write_ok) {
+        DP_output_free_discard(output);
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    if (!DP_output_free(output)) {
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    return DP_SAVE_RESULT_SUCCESS;
 }
 
 static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
@@ -1291,31 +1318,15 @@ static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
         generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
                              c->interpolation, vmb, frame_index, c->mutex);
     if (!img) {
-        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        save_frame_set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
     }
 
     char *path = format_frame_path(c, frame_index);
-    DP_Output *output = DP_file_output_new_from_path(path);
-    if (!output) {
+    DP_SaveResult result = save_frame_image_free(img, path);
+    if (result != DP_SAVE_RESULT_SUCCESS) {
+        save_frame_set_error_result(c, result);
         DP_free(path);
-        DP_image_free(img);
-        set_error_result(c, DP_SAVE_RESULT_OPEN_ERROR);
-        return NULL;
-    }
-
-    bool write_ok = DP_image_write_png(img, output);
-    DP_image_free(img);
-    if (!write_ok) {
-        DP_output_free_discard(output);
-        DP_free(path);
-        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
-        return NULL;
-    }
-
-    if (!DP_output_free(output)) {
-        DP_free(path);
-        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
         return NULL;
     }
 
@@ -1329,25 +1340,31 @@ static void copy_frame(struct DP_SaveFrameContext *c, char *source_path,
     if (!DP_file_copy(source_path, target_path)) {
         DP_warn("Error copying frame from '%s' to '%s': %s", source_path,
                 target_path, DP_error());
-        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
+        save_frame_set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
     }
     DP_free(target_path);
 }
 
-static void report_progress(struct DP_SaveFrameContext *c)
+static void report_progress(int *frames_done, int frame_count,
+                            DP_Atomic *result, DP_Mutex *mutex,
+                            DP_SaveProgressFn progress_fn, void *user)
 {
-    DP_SaveProgressFn progress_fn = c->progress_fn;
-    if (progress_fn && DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
-        DP_Mutex *mutex = c->mutex;
+    if (progress_fn && DP_atomic_get(result) == DP_SAVE_RESULT_SUCCESS) {
         DP_MUTEX_MUST_LOCK(mutex);
-        int done = ++c->frames_done;
+        int done = ++*frames_done;
         bool keep_going = progress_fn(
-            c->user, DP_int_to_double(done) / DP_int_to_double(c->frame_count));
+            user, DP_int_to_double(done) / DP_int_to_double(frame_count));
         DP_MUTEX_MUST_UNLOCK(mutex);
         if (!keep_going) {
-            set_error_result(c, DP_SAVE_RESULT_CANCEL);
+            set_error_result(result, DP_SAVE_RESULT_CANCEL);
         }
     }
+}
+
+static void save_frame_report_progress(struct DP_SaveFrameContext *c)
+{
+    report_progress(&c->frames_done, c->frame_count, &c->result, c->mutex,
+                    c->progress_fn, c->user);
 }
 
 static void save_frame_job(void *element, int thread_index)
@@ -1376,7 +1393,7 @@ static void save_frame_job(void *element, int thread_index)
                         }
                         write_frame_to_zip(c, params->frames[i], frame_buffer,
                                            size);
-                        report_progress(c);
+                        save_frame_report_progress(c);
                     }
                 }
                 DP_free(buffer);
@@ -1385,14 +1402,14 @@ static void save_frame_job(void *element, int thread_index)
         else {
             // Render and save the first frame given.
             char *path = save_frame(c, vmb, first_frame);
-            report_progress(c);
+            save_frame_report_progress(c);
             if (path) {
                 // Subsequent frames are the same, so just copy the files.
                 int count = params->count;
                 for (int i = 1; i < count; ++i) {
                     if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
                         copy_frame(c, path, params->frames[i]);
-                        report_progress(c);
+                        save_frame_report_progress(c);
                     }
                 }
                 DP_free(path);
@@ -1549,6 +1566,331 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
         DP_SaveResult result = save_animation_frames(
             cs, dc, path, progress_fn, user, crop, width, height, interpolation,
             frame_indexes, frame_index_count, true);
+        DP_PERF_END(fn);
+        return result;
+    }
+    else {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+}
+
+
+struct DP_WriteSpritesheetContext {
+    DP_CanvasState *cs;
+    DP_DrawContext *dc;
+    DP_ViewModeBuffer *vmbs;
+    DP_Rect *crop;
+    int width;
+    int height;
+    int interpolation;
+    int frame_count;
+    int cols;
+    int rows;
+    DP_SaveProgressFn progress_fn;
+    void *user;
+    DP_Mutex *mutex;
+    DP_Image *sheet;
+    DP_Atomic result;
+    int frames_done;
+};
+
+struct DP_WriteSpritesheetJobParams {
+    struct DP_WriteSpritesheetContext *c;
+    int count;
+    int frames[];
+};
+
+static void
+write_spritesheet_report_progress(struct DP_WriteSpritesheetContext *c)
+{
+    report_progress(&c->frames_done, c->frame_count, &c->result, c->mutex,
+                    c->progress_fn, c->user);
+}
+
+static void
+write_spritesheet_set_error_result(struct DP_WriteSpritesheetContext *c,
+                                   DP_SaveResult result)
+{
+    set_error_result(&c->result, result);
+}
+
+static DP_Pixel8 *
+prepare_spritesheet_write(struct DP_WriteSpritesheetContext *c, int frame_index,
+                          int *out_width, int *out_height, int *out_sheet_width)
+{
+    int width = c->width;
+    int height = c->height;
+    int cols = c->cols;
+    int col0 = frame_index % cols;
+    int row0 = frame_index / cols;
+    int sheet_width = DP_image_width(c->sheet);
+    *out_width = width;
+    *out_height = height;
+    *out_sheet_width = sheet_width;
+    return DP_image_pixels(c->sheet) + (row0 * sheet_width * height)
+         + (col0 * width);
+}
+
+static void write_spritesheet_frame(struct DP_WriteSpritesheetContext *c,
+                                    DP_Image *img, int frame_index)
+{
+    int width, height, sheet_width;
+    DP_Pixel8 *dst = prepare_spritesheet_write(c, frame_index, &width, &height,
+                                               &sheet_width);
+    const DP_Pixel8 *src = DP_image_pixels(img);
+    size_t stride = DP_int_to_size(width) * sizeof(*src);
+    for (int y = 0; y < height; ++y) {
+        memcpy(dst, src, stride);
+        src += width;
+        dst += sheet_width;
+    }
+}
+
+static void write_spritesheet_background(struct DP_WriteSpritesheetContext *c,
+                                         DP_Pixel8 pixel, int frame_index)
+{
+    int width, height, sheet_width;
+    DP_Pixel8 *dst = prepare_spritesheet_write(c, frame_index, &width, &height,
+                                               &sheet_width);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            dst[x] = pixel;
+        }
+        dst += sheet_width;
+    }
+}
+
+static void write_spritesheet_job(void *element, int thread_index)
+{
+    struct DP_WriteSpritesheetJobParams *params =
+        *(struct DP_WriteSpritesheetJobParams **)element;
+    struct DP_WriteSpritesheetContext *c = params->c;
+    if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+        DP_ViewModeBuffer *vmb = &c->vmbs[thread_index];
+        DP_Image *img = generate_frame_image(c->cs, c->dc, c->crop, c->width,
+                                             c->height, c->interpolation, vmb,
+                                             params->frames[0], c->mutex);
+        if (img) {
+            int count = params->count;
+            for (int i = 0; i < count; ++i) {
+                write_spritesheet_report_progress(c);
+                if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+                    write_spritesheet_frame(c, img, params->frames[i]);
+                }
+            }
+            DP_image_free(img);
+        }
+        else {
+            write_spritesheet_set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        }
+    }
+    DP_free(params);
+}
+
+void DP_save_animation_spritesheet_dimensions(int width, int height,
+                                              int frame_index_count,
+                                              long long *out_cols,
+                                              long long *out_rows,
+                                              long long *out_sheet_width,
+                                              long long *out_sheet_height)
+{
+    double n = DP_int_to_double(frame_index_count);
+    double a = DP_max_double(1.0, ceil(sqrt(n)));
+    double b = DP_max_double(1.0, ceil(n / a));
+
+    long long lc, lr;
+    if (width <= height) {
+        lc = DP_double_to_llong(DP_max_double(a, b));
+        lr = DP_double_to_llong(DP_min_double(a, b));
+    }
+    else {
+        lc = DP_double_to_llong(DP_min_double(a, b));
+        lr = DP_double_to_llong(DP_max_double(a, b));
+    }
+
+    if (out_cols) {
+        *out_cols = DP_llong_to_int(lc);
+    }
+    if (out_rows) {
+        *out_rows = DP_llong_to_int(lr);
+    }
+    if (out_sheet_width) {
+        *out_sheet_width = lc * DP_int_to_llong(width);
+    }
+    if (out_sheet_height) {
+        *out_sheet_height = lr * DP_int_to_llong(height);
+    }
+}
+
+static bool calculate_spritesheet_dimensions(int width, int height,
+                                             int frame_index_count,
+                                             int *out_cols, int *out_rows,
+                                             int *out_sheet_width,
+                                             int *out_sheet_height)
+{
+    long long cols, rows, sheet_width, sheet_height;
+    DP_save_animation_spritesheet_dimensions(width, height, frame_index_count,
+                                             &cols, &rows, &sheet_width,
+                                             &sheet_height);
+
+    if (sheet_width > (long long)INT_MAX || sheet_height > (long long)INT_MAX) {
+        return false;
+    }
+
+    long long max_dimension =
+        DP_int_to_llong(DP_save_image_type_max_dimension(DP_SAVE_IMAGE_PNG));
+    if (sheet_width > max_dimension || sheet_height > max_dimension) {
+        return false;
+    }
+
+    *out_cols = DP_llong_to_int(cols);
+    *out_rows = DP_llong_to_int(rows);
+    *out_sheet_width = DP_llong_to_int(sheet_width);
+    *out_sheet_height = DP_llong_to_int(sheet_height);
+    return true;
+}
+
+static DP_Pixel8 spritesheet_background_pixel(DP_CanvasState *cs)
+{
+    DP_Tile *t = DP_canvas_state_background_tile_noinc(cs);
+    DP_Pixel15 p;
+    if (DP_tile_same_pixel(t, &p)) {
+        return DP_pixel15_to_8(p);
+    }
+    else {
+        return (DP_Pixel8){0};
+    }
+}
+
+static DP_SaveResult
+save_animation_spritesheet(DP_CanvasState *cs, DP_DrawContext *dc,
+                           const char *path, DP_SaveProgressFn progress_fn,
+                           void *user, DP_Rect *crop, int width, int height,
+                           int interpolation, const int *frame_indexes,
+                           int frame_index_count)
+{
+    int cols, rows, sheet_width, sheet_height;
+    if (!calculate_spritesheet_dimensions(width, height, frame_index_count,
+                                          &cols, &rows, &sheet_width,
+                                          &sheet_height)) {
+        DP_error_set("Sprite sheet is too large");
+        return DP_SAVE_RESULT_BAD_DIMENSIONS;
+    }
+
+    DP_Mutex *mutex = DP_mutex_new();
+    if (!mutex) {
+        return DP_SAVE_RESULT_INTERNAL_ERROR;
+    }
+
+    DP_Worker *worker =
+        DP_worker_new(DP_int_to_size(frame_index_count),
+                      sizeof(struct DP_WriteSpritesheetJobParams *),
+                      DP_worker_cpu_count(128), write_spritesheet_job);
+    if (!worker) {
+        DP_mutex_free(mutex);
+        return DP_SAVE_RESULT_INTERNAL_ERROR;
+    }
+
+    DP_Image *sheet = DP_image_new(sheet_width, sheet_height);
+    int thread_count = DP_worker_thread_count(worker);
+    struct DP_WriteSpritesheetContext c = {
+        cs,
+        dc,
+        DP_malloc(sizeof(*c.vmbs) * DP_int_to_size(thread_count)),
+        crop,
+        width,
+        height,
+        interpolation,
+        frame_index_count,
+        cols,
+        rows,
+        progress_fn,
+        user,
+        mutex,
+        sheet,
+        DP_ATOMIC_INIT(DP_SAVE_RESULT_SUCCESS),
+        0,
+    };
+
+    for (int i = 0; i < thread_count; ++i) {
+        DP_view_mode_buffer_init(&c.vmbs[i]);
+    }
+
+    int *frames =
+        DP_memdup(frame_indexes,
+                  sizeof(*frame_indexes) * DP_int_to_size(frame_index_count));
+
+    int frames_left = frame_index_count;
+    while (frames_left != 0) {
+        // Collect same frames into a single job by swapping them to the front.
+        int first_frame = frames[0];
+        int count = 1;
+        for (int i = 1; i < frames_left; ++i) {
+            int frame = frames[i];
+            if (DP_canvas_state_same_frame(cs, first_frame, frame)) {
+                frames[i] = frames[count];
+                frames[count] = frame;
+                ++count;
+            }
+        }
+
+        size_t scount = DP_int_to_size(count);
+        size_t size = scount * sizeof(*frames);
+        struct DP_WriteSpritesheetJobParams *params = DP_malloc(DP_FLEX_SIZEOF(
+            struct DP_WriteSpritesheetJobParams, frames, scount));
+        params->c = &c;
+        params->count = count;
+        memcpy(params->frames, frames, size);
+        DP_worker_push(worker, &params);
+
+        frames_left -= count;
+        memmove(frames, frames + count,
+                DP_int_to_size(frames_left) * sizeof(*frames));
+    }
+
+    DP_free(frames);
+
+    // Fill the blank slots with the background color if we got either one.
+    int slots_available = cols * rows;
+    if (slots_available > frame_index_count) {
+        DP_Pixel8 background_pixel = spritesheet_background_pixel(cs);
+        if (background_pixel.a != 0) {
+            for (int i = frame_index_count; i < slots_available; ++i) {
+                write_spritesheet_background(&c, background_pixel, i);
+            }
+        }
+    }
+
+    DP_worker_free_join(worker);
+    DP_mutex_free(mutex);
+
+    for (int i = 0; i < thread_count; ++i) {
+        DP_view_mode_buffer_dispose(&c.vmbs[i]);
+    }
+    DP_free(c.vmbs);
+
+    DP_SaveResult worker_result = (DP_SaveResult)DP_atomic_get(&c.result);
+    if (worker_result != DP_SAVE_RESULT_SUCCESS) {
+        DP_free(sheet);
+        return worker_result;
+    }
+
+    return save_frame_image_free(sheet, path);
+}
+
+DP_SaveResult DP_save_animation_spritesheet(
+    DP_CanvasState *cs, DP_DrawContext *dc, const char *path, DP_Rect *crop,
+    int width, int height, int interpolation, const int *frame_indexes,
+    int frame_index_count, DP_SaveProgressFn progress_fn, void *user)
+{
+    if (cs && path && width > 0 && height > 0 && frame_indexes
+        && frame_index_count > 0) {
+        DP_PERF_BEGIN_DETAIL(fn, "animation_spritesheet",
+                             "frame_index_count=%d,path=%s", frame_index_count,
+                             path);
+        DP_SaveResult result = save_animation_spritesheet(
+            cs, dc, path, progress_fn, user, crop, width, height, interpolation,
+            frame_indexes, frame_index_count);
         DP_PERF_END(fn);
         return result;
     }

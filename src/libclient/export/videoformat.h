@@ -14,7 +14,8 @@ enum class VideoFormat {
 	Mp4H264,
 	Mp4Av1,
 	Apng,
-	Last = Apng,
+	SpriteSheet,
+	Last = SpriteSheet,
 };
 
 enum class VideoFormatApplication {
@@ -40,6 +41,15 @@ struct VideoEncoderOption {
 	int internalType;
 };
 
+struct SpritesheetDimensions {
+	long long cols;
+	long long rows;
+	long long spriteWidth;
+	long long spriteHeight;
+	long long sheetWidth;
+	long long sheetHeight;
+};
+
 bool isVideoFormatSupportedFfmpeg(VideoFormat format);
 
 bool isVideoFormatSupportedNonFfmpeg(VideoFormat format);
@@ -51,5 +61,8 @@ QVector<VideoEncoderOption> getVideoEncoderOptions(VideoFormat format);
 
 int getAutomaticVideoEncoderOptionIndex(
 	const QVector<VideoEncoderOption> &options, bool haveFfmpeg);
+
+SpritesheetDimensions
+getSpritesheetDimensions(int width, int height, int frameCount);
 
 #endif

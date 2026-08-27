@@ -104,6 +104,17 @@ void AnimationSaverRunnable::run()
 			this);
 		break;
 	}
+	case int(VideoFormat::SpriteSheet): {
+		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
+		result = DP_save_animation_spritesheet(
+			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
+			m_height,
+			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
+						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
+			m_frameIndexes.constData(), int(m_frameIndexes.size()), &onProgress,
+			this);
+		break;
+	}
 #ifdef DP_LIBAV
 	case int(VideoFormat::Gif): {
 		DP_SaveAnimationGifParams params = {

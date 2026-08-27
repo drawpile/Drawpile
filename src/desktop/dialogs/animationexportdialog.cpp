@@ -117,6 +117,7 @@ AnimationExportDialog::AnimationExportDialog(
 	outputForm->addRow(tr("Scaling:"), scaleLayout);
 
 	m_scaleLabel = new QLabel;
+	m_scaleLabel->setWordWrap(true);
 	outputForm->addRow(m_scaleLabel);
 
 	utils::addFormSpacer(outputLayout);
@@ -268,6 +269,12 @@ AnimationExportDialog::AnimationExportDialog(
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateScalingUi);
 	connect(
+		m_startSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &AnimationExportDialog::updateScalingUi);
+	connect(
+		m_endSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
+	connect(
 		m_x1Spinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX2Range);
 	connect(
@@ -310,7 +317,6 @@ AnimationExportDialog::AnimationExportDialog(
 	m_ffmpegPath = cfg->getFfmpegPath();
 	m_preferredEncoders = cfg->getAnimationExportPreferredEncoders();
 	updateFormat();
-	updateScalingUi();
 	updateFfmpegFormatIcons();
 	updateAdvanced(cfg->getAnimationExportShowAdvanced());
 }
@@ -400,9 +406,23 @@ void AnimationExportDialog::updateScalingUi()
 {
 	double scalePercent = m_scaleSpinner->value();
 	QSize size = getScaledSizeFor(scalePercent, getCropRect());
-	m_scaleLabel->setText(tr("Output resolution will be %1x%2 pixels.")
-							  .arg(size.width())
-							  .arg(size.height()));
+
+	if(m_formatCombo->currentData().toInt() == int(VideoFormat::SpriteSheet)) {
+		SpritesheetDimensions sd = getSpritesheetDimensions(
+			size.width(), size.height(), buildFrameIndexes().size());
+		m_scaleLabel->setText(
+			tr("%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.")
+				.arg(sd.cols)
+				.arg(sd.rows)
+				.arg(sd.spriteWidth)
+				.arg(sd.spriteHeight)
+				.arg(sd.sheetWidth)
+				.arg(sd.sheetHeight));
+	} else {
+		m_scaleLabel->setText(tr("Output resolution will be %1x%2 pixels.")
+								  .arg(size.width())
+								  .arg(size.height()));
+	}
 }
 
 void AnimationExportDialog::toggleAdvanced()
@@ -476,6 +496,7 @@ void AnimationExportDialog::updateFormat()
 	}
 
 	updateFfmpegUi();
+	updateScalingUi();
 }
 
 void AnimationExportDialog::updateEncoder()
@@ -624,6 +645,8 @@ QString AnimationExportDialog::choosePath()
 		return FileWrangler(this).getSaveAnimationWebpPath();
 	case VideoFormat::Apng:
 		return FileWrangler(this).getSaveAnimationApngPath();
+	case VideoFormat::SpriteSheet:
+		return FileWrangler(this).getSaveAnimationSpritesheetPath();
 	case VideoFormat::Mp4Vp9:
 	case VideoFormat::Mp4H264:
 	case VideoFormat::Mp4Av1:
@@ -673,6 +696,7 @@ void AnimationExportDialog::resetInputs()
 	m_endSpinner->setRange(1, m_canvasFrameCount);
 	m_startSpinner->setValue(m_canvasFrameRangeFirst + 1);
 	m_endSpinner->setValue(m_canvasFrameRangeLast + 1);
+	updateScalingUi();
 }
 
 void AnimationExportDialog::setInputsFromFlipbook()
@@ -693,6 +717,7 @@ void AnimationExportDialog::setInputsFromFlipbook()
 		m_y1Spinner->setValue(m_flipbookCrop.top());
 		m_y2Spinner->setValue(m_flipbookCrop.bottom());
 	}
+	updateScalingUi();
 }
 
 void AnimationExportDialog::setCanvasSize(const QSize &size)
@@ -736,6 +761,7 @@ void AnimationExportDialog::setCanvasFrameRange(
 	}
 	m_canvasFrameRangeFirst = frameRangeFirst;
 	m_canvasFrameRangeLast = frameRangeLast;
+	updateScalingUi();
 }
 
 void AnimationExportDialog::setCanvasFrameCount(int frameCount)
@@ -747,6 +773,7 @@ void AnimationExportDialog::setCanvasFrameCount(int frameCount)
 		m_endSpinner->setValue(frameCount);
 	}
 	m_canvasFrameCount = frameCount;
+	updateScalingUi();
 }
 
 void AnimationExportDialog::setCanvasFramerate(double framerate)

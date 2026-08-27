@@ -56,5 +56,17 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
                                     int frame_index_count,
                                     DP_SaveProgressFn progress_fn, void *user);
 
+void DP_save_animation_spritesheet_dimensions(int width, int height,
+                                              int frame_index_count,
+                                              long long *out_cols,
+                                              long long *out_rows,
+                                              long long *out_sheet_width,
+                                              long long *out_sheet_height);
+
+DP_SaveResult DP_save_animation_spritesheet(
+    DP_CanvasState *cs, DP_DrawContext *dc, const char *path, DP_Rect *crop,
+    int width, int height, int interpolation, const int *frame_indexes,
+    int frame_index_count, DP_SaveProgressFn progress_fn, void *user);
+
 
 #endif

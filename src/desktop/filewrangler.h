@@ -121,6 +121,7 @@ public:
 	QString getSaveAnimationWebmPath() const;
 	QString getSaveAnimationWebpPath() const;
 	QString getSaveAnimationApngPath() const;
+	QString getSaveAnimationSpritesheetPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
 

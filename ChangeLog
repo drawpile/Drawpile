@@ -43,6 +43,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Support for Android 16. Older versions continue to be supported, same as before.
  * Fix: Make timeline selection tool work properly while dragging over a track with onion skins enabled.
  * Feature: Add Tools > Developer Tools > UDP Activity Stream. This emits the cursor position over the canvas view and some other activity over a UDP socket, which can be consumed by stream avatars, brush sound makers and similar programs. Thanks Maniko for suggesting.
+ * Feature: PNG spritesheet export for animations. Thanks greendyno and ULTRA TECH for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

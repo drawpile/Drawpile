@@ -1546,6 +1546,7 @@ QString TimelapseDialog::choosePath(int format)
 	case VideoFormat::Webp:
 	case VideoFormat::Gif:
 	case VideoFormat::Apng:
+	case VideoFormat::SpriteSheet:
 		break;
 	}
 	qWarning("choosePath: unhandled format %d", format);

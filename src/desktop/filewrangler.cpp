@@ -423,6 +423,13 @@ QString FileWrangler::getSaveAnimationApngPath() const
 		{QStringLiteral("APNG (*.png, *.apng)")});
 }
 
+QString FileWrangler::getSaveAnimationSpritesheetPath() const
+{
+	return showSaveFileDialogFilters(
+		tr("Export PNG Spritesheet"), LastPath::IMAGE, ".png",
+		{QStringLiteral("PNG (*.png)")});
+}
+
 QString FileWrangler::getSavePerformanceProfilePath() const
 {
 	return showSaveFileDialog(

@@ -5,6 +5,7 @@
 #ifdef DP_LIBAV
 extern "C" {
 #	include <dpimpex/save_video.h>
+#	include <dpimpex/save.h>
 }
 #endif
 
@@ -71,6 +72,7 @@ bool isVideoFormatSupportedNonFfmpeg(VideoFormat format)
 		return false;
 #endif
 	case VideoFormat::Zip:
+	case VideoFormat::SpriteSheet:
 		return true;
 	default:
 		return isSaveVideoFormatSupported(
@@ -92,6 +94,11 @@ QVector<VideoFormatOption> getVideoFormatOptions(
 		options, application, VideoFormat::Zip,
 		QCoreApplication::translate(
 			"dialogs::AnimationExportDialog", "Frames as PNGs in ZIP"),
+		true, false);
+	appendFormatOption(
+		options, application, VideoFormat::SpriteSheet,
+		QCoreApplication::translate(
+			"dialogs::AnimationExportDialog", "PNG Spritesheet"),
 		true, false);
 	appendFormatOption(
 		options, application, VideoFormat::Gif,
@@ -247,4 +254,16 @@ int getAutomaticVideoEncoderOptionIndex(
 		}
 	}
 	return 0;
+}
+
+SpritesheetDimensions
+getSpritesheetDimensions(int width, int height, int frameCount)
+{
+	SpritesheetDimensions sd;
+	sd.spriteWidth = width;
+	sd.spriteHeight = height;
+	DP_save_animation_spritesheet_dimensions(
+		width, height, frameCount, &sd.cols, &sd.rows, &sd.sheetWidth,
+		&sd.sheetHeight);
+	return sd;
 }
