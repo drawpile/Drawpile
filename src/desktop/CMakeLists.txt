@@ -882,41 +882,83 @@ elseif(ANDROID)
 		set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-debug-${ANDROID_ABI}.apk")
 	endif()
 
-	# The namespace gets baked into the resource code, so we have to wrap it.
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/cfg/DrawpileResources.java.in"
-		"${CMAKE_BINARY_DIR}/DrawpileResources.java"
-		@ONLY
-	)
-
 	include(GetSharedLibs)
 	get_shared_libs(android_extra_libs drawpile)
 
 	if(QT_VERSION VERSION_GREATER_EQUAL 6)
-		# CMake before 3.26 doesn't have copy_directory_if_different. If this
-		# is required for a Qt6 build, try using the workaround for Qt5 below.
-		cmake_minimum_required(VERSION 3.26)
+		# The namespace gets baked into the resource code, so we have to wrap it.
+		configure_file(
+			"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/cfg/DrawpileResources.java.in"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/cfg/DrawpileResources.java"
+			@ONLY
+		)
 
-		# TODO: The Java code references the "qt5" package, which probably
-		# changed in Qt6. So we probably have to split the Java code into a Qt5
-		# and a Qt6 directory or something.
-		cmake_language(DEFER CALL add_custom_command
-			TARGET drawpile_make_apk PRE_BUILD
+		add_custom_command(
+			OUTPUT
+				"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/ConnectService.java"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/DrawpileNative.java"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/MainActivity.java"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/ScalingDialog.java"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/VideoEncoder.java"
 			COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
 				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android"
-				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android"
+			DEPENDS
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android/DrawpileNative.java"
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android/MainActivity.java"
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android/ScalingDialog.java"
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android/ConnectService.java"
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android/VideoEncoder.java"
 			COMMAND_EXPAND_LISTS
 			COMMENT "Copying Java sources"
 			VERBATIM
 		)
-		cmake_language(DEFER CALL add_custom_command
-			TARGET drawpile_make_apk PRE_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy
-				"${CMAKE_BINARY_DIR}/DrawpileResources.java"
-				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/cfg/DrawpileResources.java"
+
+		add_custom_command(
+			OUTPUT
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi-v26/ic_launcher.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi/ic_launcher.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi/ic_launcher_foreground.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi/ic_launcher_monochrome.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/layout/scaling_dialog_layout.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/values/strings.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/values/styles.xml"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res/xml/remote_action.xml"
+			COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android"
+				"${CMAKE_CURRENT_BINARY_DIR}/android/res"
+			DEPENDS
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/drawable-anydpi-v26/ic_launcher.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/drawable-anydpi/ic_launcher.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/drawable-anydpi/ic_launcher_foreground.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/drawable-anydpi/ic_launcher_monochrome.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/layout/scaling_dialog_layout.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/values/strings.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/values/styles.xml"
+				"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/xml/remote_action.xml"
 			COMMAND_EXPAND_LISTS
-			COMMENT "Copying resources wrapper"
+			COMMENT "Copying Java resources"
 			VERBATIM
+		)
+
+		set_property(TARGET drawpile PROPERTY
+			QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/android"
+		)
+		target_sources(drawpile PRIVATE
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi-v26/ic_launcher.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi/ic_launcher.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi/ic_launcher_foreground.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/drawable-anydpi/ic_launcher_monochrome.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/layout/scaling_dialog_layout.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/values/strings.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/values/styles.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/res/xml/remote_action.xml"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/ConnectService.java"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/DrawpileNative.java"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/MainActivity.java"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/ScalingDialog.java"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/VideoEncoder.java"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/src/net/drawpile/android/cfg/DrawpileResources.java"
 		)
 
 		set_property(TARGET drawpile APPEND PROPERTY
@@ -934,6 +976,13 @@ elseif(ANDROID)
 			VERBATIM
 		)
 	else()
+		# The namespace gets baked into the resource code, so we have to wrap it.
+		configure_file(
+			"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/cfg/DrawpileResources.java.in"
+			"${CMAKE_BINARY_DIR}/DrawpileResources.java"
+			@ONLY
+		)
+
 		# CMake before 3.26 doesn't have copy_directory_if_different.
 		# Work around it by deleting and copying the directory instead.
 		if(CMAKE_VERSION VERSION_LESS "3.26.0")

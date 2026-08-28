@@ -43,11 +43,12 @@ if(NOT QT_VERSION)
 	message(FATAL_ERROR "-DQT_VERSION is required")
 endif()
 
-if(QT_VERSION MATCHES "^5.K([0-9a-f]+)$")
-	set(krita_qt_commit "${CMAKE_MATCH_1}")
-	message(STATUS "Using Krita patched Qt5 at ${krita_qt_commit}")
+if(QT_VERSION MATCHES "^(.+)\\.K([0-9a-f]+)$")
+	set(krita_qt_version "${CMAKE_MATCH_1}")
+	set(krita_qt_commit "${CMAKE_MATCH_2}")
+	message(STATUS "Using Krita patched Qt${krita_qt_version} at ${krita_qt_commit}")
 	set(KRITA_QT ON)
-	set(QT_VERSION "5.15.7")
+	set(QT_VERSION "${krita_qt_version}")
 else()
 	set(KRITA_QT OFF)
 endif()
@@ -82,9 +83,15 @@ if(ANDROID)
 			-platform android-clang
 			-qt-host-path "${ANDROID_HOST_PATH}"
 			-android-ndk-platform "${ANDROID_PLATFORM}"
-			# This gets detected incorrectly, it's not available on all devices.
-			-no-feature-copy_file_range
+			-no-feature-zstd
 		)
+		if(QT_VERSION VERSION_GREATER_EQUAL 6.9)
+			list(APPEND BASE_FLAGS -force-bundled-libs)
+		endif()
+		if(QT_VERSION VERSION_GREATER_EQUAL 6.10)
+			# This gets detected incorrectly, it's not available on all devices.
+			list(APPEND BASE_FLAGS -no-feature-copy_file_range)
+		endif()
 	else()
 		list(APPEND BASE_FLAGS
 			-xplatform android-clang
@@ -207,10 +214,12 @@ if(QT_VERSION VERSION_GREATER_EQUAL 6)
 		list(APPEND BASE_FLAGS "-DOPENSSL_ROOT_DIR=${CMAKE_INSTALL_PREFIX}")
 	endif()
 
-	if(QT_VERSION VERSION_LESS 6.10)
-		set(TOOLS_FLAGS -no-feature-clang -no-feature-clangcpp)
-	else()
-		set(TOOLS_FLAGS -no-feature-clang)
+	if(NOT KRITA_QT)
+		if(QT_VERSION VERSION_LESS 6.10)
+			set(TOOLS_FLAGS -no-feature-clang -no-feature-clangcpp)
+		else()
+			set(TOOLS_FLAGS -no-feature-clang)
+		endif()
 	endif()
 else()
 	set(URL_LICENSE opensource-)
@@ -272,24 +281,71 @@ if(OPENSSL)
 endif()
 
 if(KRITA_QT)
-	set(krita_qt_commit 4b3b2a81b7a285e5705e70d11e5535fddc89b3e1)
+	unset(krita_qt_submodules)
+	if(BASE)
+		list(APPEND krita_qt_submodules qtbase)
+	endif()
+	if(MULTIMEDIA)
+		list(APPEND krita_qt_submodules qtmultimedia)
+	endif()
+	if(IMAGEFORMATS)
+		list(APPEND krita_qt_submodules qtimageformats)
+	endif()
+	if(SVG)
+		list(APPEND krita_qt_submodules qtsvg)
+	endif()
+	if(TOOLS)
+		list(APPEND krita_qt_submodules qttools)
+	endif()
+	if(TRANSLATIONS)
+		list(APPEND krita_qt_submodules qttranslations)
+	endif()
+	if(WEBSOCKETS)
+		list(APPEND krita_qt_submodules qtwebsockets)
+	endif()
+
+	set(krita_qt_more_flags
+		-DFEATURE_clang=OFF
+		-DFEATURE_clangcpp=OFF
+	)
+	if(QT_VERSION VERSION_LESS 6)
+		list(APPEND BASE_FLAGS
+			 -make libs
+		)
+		if(ANDROID_EXTRAS)
+			list(APPEND krita_qt_submodules qtandroidextras)
+		endif()
+	else()
+		list(APPEND krita_qt_more_flags
+			-DHAVE_close_range=OFF
+			-DFEATURE_accessibility=OFF
+			-DFEATURE_close_range=OFF
+			-DFEATURE_cups=OFF
+			-DFEATURE_system_doubleconversion=OFF
+			-DFEATURE_system_freetype=OFF
+			-DFEATURE_system_harfbuzz=OFF
+			-DFEATURE_system_jpeg=OFF
+			-DFEATURE_system_pcre2=OFF
+			-DFEATURE_system_png=OFF
+			-DFEATURE_system_sqlite=OFF
+			-DFEATURE_system_zlib=OFF
+			-DCMAKE_DISABLE_FIND_PACKAGE_md4c=ON
+		)
+		if(SHADERTOOLS)
+			list(APPEND krita_qt_submodules qtshadertools)
+		endif()
+	endif()
+
 	build_dependency(qt ${krita_qt_commit} ${BUILD_TYPE}
 		URL "https://invent.kde.org/dkazakov/qt5.git"
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "qt"
 		USE_GIT ON
-		GIT_SUBMODULES
-			qtandroidextras
-			qtbase
-			qtimageformats
-			qtsvg
-			qttools
-			qttranslations
-			qtwebsockets
+		GIT_SUBMODULES ${krita_qt_submodules}
 		ALL_PLATFORMS
 			${BASE_GENERATOR}
 				ALL
-					-opensource -confirm-license -make libs -nomake tests
+					-verbose -opensource -confirm-license -nomake tests
 					-nomake examples -no-sql-mysql -no-sql-odbc
 					-no-sql-sqlite -no-sql-psql -qt-libjpeg -qt-libpng
 					-qt-harfbuzz -qt-webp -no-feature-jasper
@@ -342,6 +398,7 @@ if(KRITA_QT)
 					-skip qtx11extras
 					-skip qtxmlpatterns
 					${BASE_FLAGS} ${TOOLS_FLAGS}
+					${krita_qt_more_flags}
 				DEBUG
 					${BASE_DEBUG_FLAGS} ${BASE_DEBUG_INFO_FLAGS}
 				RELWITHDEBINFO
@@ -350,7 +407,7 @@ if(KRITA_QT)
 				RELEASE
 					-release ${BASE_RELEASE_FLAGS}
 		PATCHES
-			${krita_qt_commit}
+			4b3b2a81b7a285e5705e70d11e5535fddc89b3e1
 				qtbase:patches/qtbug-111538.diff
 				qtbase:patches/android_update_krita.diff
 				qtbase:patches/androiddeployqt_keystore_env.diff
@@ -401,10 +458,10 @@ else()
 			ALL_PLATFORMS
 				${BASE_GENERATOR}
 					ALL
-						-opensource -confirm-license
+						-verbose -opensource -confirm-license
 						-nomake tests -nomake examples
 						-no-sql-mysql -no-sql-odbc -no-sql-sqlite -no-sql-psql
-						-no-feature-accessibility
+						-no-feature-accessibility -no-feature-cups
 						-qt-libjpeg -qt-libpng -qt-harfbuzz
 						${BASE_FLAGS}
 					DEBUG
@@ -465,6 +522,7 @@ else()
 					patches/macostabs-qt6.diff
 					patches/qt6androidmacros_build_tools_revision.diff
 					patches/findeglemscripten.diff
+					patches/qandroidassetsfileenginehandler_dot_slash-qt6.diff
 					# TODO: make these patches work.
 					# patches/noasyncify.diff
 					# patches/browser_keyboard_input.diff

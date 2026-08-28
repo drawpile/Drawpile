@@ -16,9 +16,10 @@ import android.app.ApplicationExitInfo;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
-import org.qtproject.qt5.android.QtNative;
-import org.qtproject.qt5.android.bindings.QtActivity;
-import org.qtproject.qt5.android.bindings.QtApplication;
+import org.qtproject.qt.android.QtNative;
+import org.qtproject.qt.android.QtWindowInsetsController;
+import org.qtproject.qt.android.bindings.QtActivity;
+import org.qtproject.qt.android.bindings.QtApplication;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class MainActivity extends QtActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.QT_ANDROID_DEFAULT_THEME = "DefaultTheme";
+        // super.QT_ANDROID_DEFAULT_THEME = "DefaultTheme";
         super.onCreate(savedInstanceState);
     }
 
@@ -45,7 +46,7 @@ public class MainActivity extends QtActivity {
         if (!started) {
             started = true;
             try {
-                setFullScreen(true);
+                // QtWindowInsetsController.showFullScreen(this);
             } catch (Exception | UnsatisfiedLinkError e) {
                 Log.e(TAG, "Failed to enter fullscreen", e);
             }
