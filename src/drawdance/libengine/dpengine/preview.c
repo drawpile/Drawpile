@@ -335,8 +335,8 @@ static void preview_cut_render(DP_Preview *pv, DP_UNUSED DP_CanvasState *cs,
         DP_min_int(DP_transient_layer_content_height(tlc), top + height);
     const uint8_t *mask = preview_cut_mask(pvc);
     if (mask) {
-        for (int y = top; y < bottom; ++y) {
-            for (int x = left; x < right; ++x) {
+        for (int y = DP_max_int(0, top); y < bottom; ++y) {
+            for (int x = DP_max_int(0, left); x < right; ++x) {
                 uint8_t a = mask[(y - top) * width + (x - left)];
                 if (a != 0) {
                     DP_transient_layer_content_pixel_at_set(
