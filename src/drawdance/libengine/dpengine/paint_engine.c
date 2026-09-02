@@ -43,6 +43,7 @@
 #include "tile.h"
 #include "timeline.h"
 #include "view_mode.h"
+#include "view_state.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -123,6 +124,7 @@ struct DP_PaintEngine {
     } local_view;
     DP_DrawContext *paint_dc;
     DP_DrawContext *main_dc;
+    DP_AtomicPtr view_state;
     DP_Preview *previews[DP_PREVIEW_COUNT];
     DP_AtomicPtr next_previews[DP_PREVIEW_COUNT];
     DP_Atomic preview_rerendered;
@@ -154,6 +156,10 @@ struct DP_PaintEngine {
         void *get_time_ms_user;
         DP_ProjectWorker *pw;
         unsigned int file_id;
+        bool current_view_state_updated;
+        bool recorded_view_state_valid;
+        DP_ViewState current_view_state;
+        DP_ViewState recorded_view_state;
     } record;
     DP_PaintEnginePlayback playback;
     struct {
@@ -277,8 +283,8 @@ static void handle_internal_project_worker_metadata_request(DP_PaintEngine *pe)
 static void handle_internal_project_worker_snapshot_request(DP_PaintEngine *pe)
 {
     DP_canvas_history_project_recording_snapshot(
-        pe->ch, pe->record.pw, pe->local_state, pe->record.file_id,
-        DP_acl_state_local_user_id(pe->acls));
+        pe->ch, pe->record.pw, pe->local_state, &pe->record.current_view_state,
+        pe->record.file_id, DP_acl_state_local_user_id(pe->acls));
 }
 
 static void handle_internal_project_worker_save_request(
@@ -465,6 +471,12 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
             pe, handle_internal_project_worker_save_request(pe, mi, true),
             handle_internal_project_worker_save_request(pe, mi, false));
         break;
+    case DP_MSG_INTERNAL_TYPE_VIEW_STATE_APPLY: {
+        DP_ViewState *vs = DP_malloc(sizeof(*vs));
+        DP_msg_internal_view_state_apply_data(mi, sizeof(*vs), vs);
+        DP_free(DP_atomic_ptr_xch(&pe->view_state, vs));
+        break;
+    }
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -849,6 +861,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.tracks.tl = NULL;
     pe->paint_dc = paint_dc;
     pe->main_dc = main_dc;
+    DP_atomic_ptr_set(&pe->view_state, NULL);
     for (int i = 0; i < DP_PREVIEW_COUNT; ++i) {
         pe->previews[i] = NULL;
         DP_atomic_ptr_set(&pe->next_previews[i], NULL);
@@ -884,6 +897,10 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->record.get_time_ms_fn = get_time_ms_fn;
     pe->record.get_time_ms_user = get_time_ms_user;
     pe->record.pw = NULL;
+    pe->record.current_view_state_updated = false;
+    pe->record.recorded_view_state_valid = false;
+    pe->record.current_view_state = (DP_ViewState)DP_VIEW_STATE_INVALID_INIT;
+    pe->record.recorded_view_state = (DP_ViewState)DP_VIEW_STATE_INVALID_INIT;
     pe->record.file_id = 0u;
     pe->playback.player = player_or_null;
     pe->playback.msecs = 0;
@@ -960,6 +977,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
             free_preview(DP_atomic_ptr_xch(&pe->next_previews[i], NULL));
             DP_preview_decref_nullable(pe->previews[i]);
         }
+        DP_free(DP_atomic_ptr_xch(&pe->view_state, NULL));
         DP_timeline_decref_nullable(pe->local_view.tracks.tl);
         DP_timeline_decref_nullable(pe->local_view.tracks.prev_tl);
         DP_layer_props_list_decref_nullable(pe->local_view.layers.lpl);
@@ -1064,6 +1082,16 @@ void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
     if (pe->local_view.reveal_censored != reveal_censored) {
         pe->local_view.reveal_censored = reveal_censored;
         invalidate_local_view(pe, false);
+    }
+}
+
+void DP_paint_engine_view_state_set(DP_PaintEngine *pe, DP_ViewState vs)
+{
+    DP_ASSERT(pe);
+    bool valid = DP_view_state_valid(vs);
+    pe->record.current_view_state_updated = valid;
+    if (valid) {
+        pe->record.current_view_state = vs;
     }
 }
 
@@ -1263,6 +1291,25 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe)
 }
 
 
+static void project_record_view_state(DP_PaintEngine *pe,
+                                      long long recorded_at_msec)
+{
+    if (pe->record.current_view_state_updated) {
+        DP_ASSERT(DP_view_state_valid(pe->record.current_view_state));
+        pe->record.current_view_state_updated = false;
+        bool should_update =
+            !pe->record.recorded_view_state_valid
+            || !DP_view_state_equal(pe->record.current_view_state,
+                                    pe->record.recorded_view_state);
+        if (should_update) {
+            pe->record.recorded_view_state = pe->record.current_view_state;
+            DP_project_worker_message_view_state_record(
+                pe->record.pw, pe->record.file_id, 0u,
+                &pe->record.recorded_view_state, 0u, recorded_at_msec);
+        }
+    }
+}
+
 void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
                                              DP_ProjectWorker *pw,
                                              unsigned int file_id)
@@ -1281,10 +1328,15 @@ void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
     DP_ASSERT(pe->remote_queue.used == 0);
 
     DP_canvas_history_project_recording_start(
-        pe->ch, pw, pe->local_state, file_id,
+        pe->ch, pw, pe->local_state, &pe->record.current_view_state, file_id,
         DP_acl_state_local_user_id(pe->acls));
     pe->record.pw = pw;
     pe->record.file_id = file_id;
+    pe->record.recorded_view_state_valid = false;
+
+    pe->record.current_view_state_updated =
+        DP_view_state_valid(pe->record.current_view_state);
+    project_record_view_state(pe, DP_project_worker_time_msec());
 }
 
 void DP_paint_engine_project_recording_resume(DP_PaintEngine *pe,
@@ -1305,9 +1357,10 @@ void DP_paint_engine_project_recording_resume(DP_PaintEngine *pe,
 
     pe->record.pw = pw;
     pe->record.file_id = file_id;
+    pe->record.recorded_view_state_valid = false;
     DP_project_worker_message_internal_record(
         pw, file_id, DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESUMED, 0u, NULL,
-        (size_t)0, 0u);
+        (size_t)0, 0u, DP_project_worker_time_msec());
 }
 
 bool DP_paint_engine_project_recording_stop(DP_PaintEngine *pe)
@@ -1414,9 +1467,12 @@ static void project_record_message(DP_PaintEngine *pe, DP_Message *msg,
         if (type == DP_MSG_INTERNAL) {
             DP_MsgInternal *mi = DP_message_internal(msg);
             if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+                long long recorded_at_msec = DP_project_worker_time_msec();
                 DP_project_worker_message_internal_record(
                     pw, pe->record.file_id,
-                    DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET, 0u, NULL, 0, 0u);
+                    DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET, 0u, NULL, 0, 0u,
+                    recorded_at_msec);
+                project_record_view_state(pe, recorded_at_msec);
             }
         }
         else if (!DP_message_type_control(type)
@@ -1425,8 +1481,10 @@ static void project_record_message(DP_PaintEngine *pe, DP_Message *msg,
             unsigned int flags = DP_message_context_id(msg) == local_user_id
                                    ? DP_PROJECT_MESSAGE_FLAG_OWN
                                    : 0u;
+            long long recorded_at_msec = DP_project_worker_time_msec();
             DP_project_worker_message_record_inc(pw, pe->record.file_id, msg,
-                                                 flags);
+                                                 flags, recorded_at_msec);
+            project_record_view_state(pe, recorded_at_msec);
         }
     }
 }
@@ -2009,7 +2067,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineCursorMovedFn cursor_moved,
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
-    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed,
+    DP_PaintEngineViewStateSetFn view_state_set, void *user)
 {
     DP_ASSERT(pe);
     DP_ASSERT(catchup);
@@ -2148,6 +2207,12 @@ void DP_paint_engine_tick(
     int undo_depth_limit = DP_atomic_xch(&pe->undo_depth_limit, -1);
     if (undo_depth_limit != -1) {
         undo_depth_limit_set(user, undo_depth_limit);
+    }
+
+    DP_ViewState *vs = DP_atomic_ptr_xch(&pe->view_state, NULL);
+    if (vs) {
+        view_state_set(user, vs);
+        DP_free(vs);
     }
 
     DP_PERF_END(fn);

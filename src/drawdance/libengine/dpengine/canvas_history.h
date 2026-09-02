@@ -32,6 +32,7 @@ typedef struct DP_LocalState DP_LocalState;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Project DP_Project;
 typedef struct DP_ProjectWorker DP_ProjectWorker;
+typedef struct DP_ViewState DP_ViewState;
 typedef struct json_value_t JSON_Value;
 
 
@@ -178,21 +179,18 @@ DP_Recorder *DP_canvas_history_recorder_new(
     DP_CanvasHistory *ch, DP_RecorderType type, JSON_Value *header,
     DP_RecorderGetTimeMsFn get_time_fn, void *get_time_user, DP_Output *output);
 
-void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
-                                               DP_ProjectWorker *pw,
-                                               DP_LocalState *ls,
-                                               unsigned int file_id,
-                                               unsigned int local_user_id);
+void DP_canvas_history_project_recording_start(
+    DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
+    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id);
 
-void DP_canvas_history_project_recording_snapshot(DP_CanvasHistory *ch,
-                                                  DP_ProjectWorker *pw,
-                                                  DP_LocalState *ls,
-                                                  unsigned int file_id,
-                                                  unsigned int local_user_id);
+void DP_canvas_history_project_recording_snapshot(
+    DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
+    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id);
 
 long long DP_canvas_history_project_player_snapshot(
     DP_CanvasHistory *ch, DP_Project *prj, DP_LocalState *ls,
-    long long session_id, long long sequence_id, double recorded_at);
+    const DP_ViewState *vs, long long session_id, long long sequence_id,
+    double recorded_at);
 
 
 DP_CanvasHistoryReconnectState *

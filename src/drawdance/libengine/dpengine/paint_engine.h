@@ -28,6 +28,7 @@
 #include "recorder.h"
 #include "renderer.h"
 #include "view_mode.h"
+#include "view_state.h"
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
 
@@ -84,6 +85,7 @@ typedef void (*DP_PaintEngineSelectionsChangedFn)(void *user,
 typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int flags,
                                             unsigned int context_id,
                                             int layer_id, int x, int y);
+typedef void (*DP_PaintEngineViewStateSetFn)(void *user, const DP_ViewState *vs);
 typedef unsigned int (*DP_PaintEngineFilterMessageFn)(void *user,
                                                       DP_Message *msg);
 typedef void (*DP_PaintEnginePushMessageFn)(void *user, DP_Message *msg);
@@ -150,6 +152,8 @@ bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe);
 void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
                                          bool reveal_censored);
 
+void DP_paint_engine_view_state_set(DP_PaintEngine *pe, DP_ViewState vs);
+
 DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y);
 
 void DP_paint_engine_inspect_set(DP_PaintEngine *pe, unsigned int context_id,
@@ -213,7 +217,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineCursorMovedFn cursor_moved,
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
-    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user);
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed,
+    DP_PaintEngineViewStateSetFn view_state_set, void *user);
 
 void DP_paint_engine_render_continuous(DP_PaintEngine *pe, DP_Rect tile_bounds,
                                        bool render_outside_tile_bounds);

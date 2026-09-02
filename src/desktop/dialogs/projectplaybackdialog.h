@@ -90,7 +90,9 @@ private:
 		unsigned int controlId, int playerState,
 		const drawdance::CanvasState &canvasState, double playbackSeconds,
 		long long sessionId, long long sequenceId, bool localStateChanged,
-		const net::MessageList &localStateMsgs);
+		const net::MessageList &localStateMsgs, bool viewStateChanged,
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 	void updatePlayer(
 		int playerState, double playbackSeconds, long long sessionId,
 		long long sequenceId);
@@ -118,6 +120,9 @@ private:
 	void triggerSeek(double seconds);
 	void triggerCancel();
 
+	void showPage(QWidget *page);
+	void setApplyViewState(bool applyViewState);
+
 	QString formatProgressTime(double seconds) const;
 
 	canvas::PaintEngine *m_paintEngine = nullptr;
@@ -141,6 +146,7 @@ private:
 	widgets::GroupedToolButton *m_playPauseButton;
 	widgets::GroupedToolButton *m_nextStrokeButton;
 	widgets::GroupedToolButton *m_nextSessionButton;
+	widgets::GroupedToolButton *m_optionsButton;
 	KisSliderSpinBox *m_playbackSpeedSlider;
 	PlaybackSlider *m_progressSlider;
 	QStackedWidget *m_progressStack;
@@ -149,6 +155,7 @@ private:
 	State m_state = State::NotPrepared;
 	int m_playerState;
 	unsigned int m_controlId = 0u;
+	bool m_applyViewState = false;
 };
 
 }

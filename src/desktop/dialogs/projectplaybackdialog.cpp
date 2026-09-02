@@ -11,10 +11,12 @@
 #include "libclient/utils/qtguicompat.h"
 #include "libclient/utils/strings.h"
 #include "libclient/utils/tempfile.h"
+#include <QAction>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
 #include <QPainter>
 #include <QProgressBar>
 #include <QPushButton>
@@ -328,8 +330,31 @@ ProjectPlaybackDialog::ProjectPlaybackDialog(QWidget *parent)
 
 	playbackLayout->addStretch(1);
 
+	QHBoxLayout *bottomLayout = new QHBoxLayout;
+	bottomLayout->setSpacing(0);
+	dlgLayout->addLayout(bottomLayout);
+
+	m_optionsButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_optionsButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	m_optionsButton->setPopupMode(QToolButton::InstantPopup);
+	m_optionsButton->setIcon(QIcon::fromTheme(QStringLiteral("configure")));
+	m_optionsButton->setToolTip(tr("Options"));
+	m_optionsButton->setAutoRaise(true);
+	m_optionsButton->hide();
+	bottomLayout->addWidget(m_optionsButton);
+
+	QMenu *optionsMenu = new QMenu(m_optionsButton);
+	m_optionsButton->setMenu(optionsMenu);
+
+	QAction *applyViewStateAction = optionsMenu->addAction(tr("Follow view"));
+	applyViewStateAction->setCheckable(true);
+	connect(
+		applyViewStateAction, &QAction::triggered, this,
+		&ProjectPlaybackDialog::setApplyViewState);
+
 	QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Close);
-	dlgLayout->addWidget(buttons);
+	bottomLayout->addWidget(buttons);
 	connect(
 		buttons, &QDialogButtonBox::accepted, this,
 		&ProjectPlaybackDialog::accept);
@@ -337,7 +362,7 @@ ProjectPlaybackDialog::ProjectPlaybackDialog(QWidget *parent)
 		buttons, &QDialogButtonBox::rejected, this,
 		&ProjectPlaybackDialog::reject);
 
-	m_stack->setCurrentWidget(m_messagePage);
+	showPage(m_messagePage);
 	updatePlayState();
 }
 
@@ -479,7 +504,7 @@ void ProjectPlaybackDialog::showErrorPage(const QString &errorMessage)
 {
 	m_messageBar->hide();
 	setMessage(errorMessage);
-	m_stack->setCurrentWidget(m_messagePage);
+	showPage(m_messagePage);
 }
 
 void ProjectPlaybackDialog::onConversionSucceeded()
@@ -566,7 +591,7 @@ void ProjectPlaybackDialog::onProjectPlayerPrepared(double totalPlaybackSeconds)
 	} else {
 		m_totalPlaybackSeconds = totalPlaybackSeconds;
 		m_state = State::Paused;
-		m_stack->setCurrentWidget(m_playbackPage);
+		showPage(m_playbackPage);
 		m_progressSlider->updateValues(m_progressSlider->minimum());
 		updatePlayState();
 		updateProgressLabelText();
@@ -591,15 +616,26 @@ void ProjectPlaybackDialog::onProjectPlayerUpdated(
 	unsigned int controlId, int playerState,
 	const drawdance::CanvasState &canvasState, double playbackSeconds,
 	long long sessionId, long long sequenceId, bool localStateChanged,
-	const net::MessageList &localStateMsgs)
+	const net::MessageList &localStateMsgs, bool viewStateChanged,
+	QSize viewportSize, QPointF pos, qreal zoom, qreal rotation, bool mirror,
+	bool flip)
 {
 	if(controlId == m_controlId) {
 		m_paintEngine->enqueueResetToState(canvasState);
+
 		if(localStateChanged) {
 			m_paintEngine->receiveMessages(
 				false, localStateMsgs.size(), localStateMsgs.constData());
 		}
+
+		if(viewStateChanged && m_applyViewState) {
+			net::Message msg = net::makeInternalViewStateApplyMessage(
+				0, viewportSize, pos, zoom, rotation, mirror, flip);
+			m_paintEngine->receiveMessages(false, 1, &msg);
+		}
+
 		updatePlayer(playerState, playbackSeconds, sessionId, sequenceId);
+
 	} else {
 		qWarning(
 			"Got project player update for control id %u when expecting %u",
@@ -875,6 +911,17 @@ void ProjectPlaybackDialog::triggerCancel()
 	if(m_projectWrangler) {
 		m_projectWrangler->cancelPlayer();
 	}
+}
+
+void ProjectPlaybackDialog::showPage(QWidget *page)
+{
+	m_stack->setCurrentWidget(page);
+	m_optionsButton->setVisible(page == m_playbackPage);
+}
+
+void ProjectPlaybackDialog::setApplyViewState(bool applyViewState)
+{
+	m_applyViewState = applyViewState;
 }
 
 QString ProjectPlaybackDialog::formatProgressTime(double seconds) const

@@ -42,6 +42,17 @@ static int32_t uint24_to_int24(uint32_t value)
                                   : value);
 }
 
+static int64_t uint48_to_int48(uint64_t value)
+{
+    static_assert(
+        (int64_t)((uint64_t)(1ULL << 47ULL) | (uint64_t)0xffff000000000000ULL)
+            == (int64_t)-140737488355328LL,
+        "Numbers are two's complement");
+    return DP_uint64_to_int64(value & (uint64_t)(1ULL << 47ULL)
+                                  ? (value | (uint64_t)0xffff000000000000ULL)
+                                  : value);
+}
+
 int8_t DP_read_littleendian_int8(const unsigned char *d)
 {
     return DP_uint8_to_int8(DP_read_littleendian_uint8(d));
@@ -60,6 +71,16 @@ int32_t DP_read_littleendian_int24(const unsigned char *d)
 int32_t DP_read_littleendian_int32(const unsigned char *d)
 {
     return DP_uint32_to_int32(DP_read_littleendian_uint32(d));
+}
+
+int64_t DP_read_littleendian_int48(const unsigned char *d)
+{
+    return uint48_to_int48(DP_read_littleendian_uint48(d));
+}
+
+int64_t DP_read_littleendian_int64(const unsigned char *d)
+{
+    return DP_uint64_to_int64(DP_read_littleendian_uint32(d));
 }
 
 uint8_t DP_read_littleendian_uint8(const unsigned char *d)
@@ -89,6 +110,17 @@ uint32_t DP_read_littleendian_uint32(const unsigned char *d)
     return DP_uint_to_uint32(
         DP_uchar_to_uint(d[0]) + (DP_uchar_to_uint(d[1]) << 8u)
         + (DP_uchar_to_uint(d[2]) << 16u) + (DP_uchar_to_uint(d[3]) << 24u));
+}
+
+uint64_t DP_read_littleendian_uint48(const unsigned char *d)
+{
+    DP_ASSERT(d);
+    return (DP_uchar_to_uint64(d[0]) << (uint64_t)0)
+         + (DP_uchar_to_uint64(d[1]) << (uint64_t)8)
+         + (DP_uchar_to_uint64(d[2]) << (uint64_t)16)
+         + (DP_uchar_to_uint64(d[3]) << (uint64_t)24)
+         + (DP_uchar_to_uint64(d[4]) << (uint64_t)32)
+         + (DP_uchar_to_uint64(d[5]) << (uint64_t)40);
 }
 
 uint64_t DP_read_littleendian_uint64(const unsigned char *d)
@@ -175,6 +207,11 @@ size_t DP_write_littleendian_int32(int32_t x, unsigned char *out)
     return DP_write_littleendian_uint32((uint32_t)x, out);
 }
 
+size_t DP_write_littleendian_int48(int64_t x, unsigned char *out)
+{
+    return DP_write_littleendian_uint48((uint64_t)x, out);
+}
+
 size_t DP_write_littleendian_int64(int64_t x, unsigned char *out)
 {
     return DP_write_littleendian_uint64((uint64_t)x, out);
@@ -208,6 +245,15 @@ size_t DP_write_littleendian_uint32(uint32_t x, unsigned char *out)
     out[2] = DP_uint_to_uchar((x >> 16u) & 0xffu);
     out[3] = DP_uint_to_uchar((x >> 24u) & 0xffu);
     return 4;
+}
+
+size_t DP_write_littleendian_uint48(uint64_t x, unsigned char *out)
+{
+    for (int i = 0; i < 6; ++i) {
+        out[i] = DP_uint64_to_uchar(x & (uint64_t)0xff);
+        x >>= (uint64_t)8;
+    }
+    return 6;
 }
 
 size_t DP_write_littleendian_uint64(uint64_t x, unsigned char *out)

@@ -220,7 +220,7 @@ static void project_lock(TEST_PARAMS)
 
     DP_DrawContext *dc = DP_draw_context_new();
 
-    DP_ProjectCanvasLoad pcl = DP_project_canvas_load(dc, path, true);
+    DP_ProjectCanvasLoad pcl = DP_project_canvas_load(dc, path, true, NULL);
     INT_EQ_OK(pcl.result, DP_PROJECT_OPEN_ERROR_LOCKED,
               "Attempting to load canvas from open project gives LOCKED error");
     DP_canvas_state_decref_nullable(pcl.cs);

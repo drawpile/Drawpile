@@ -10,6 +10,7 @@ typedef struct DP_LocalState DP_LocalState;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
 typedef struct DP_Rect DP_Rect;
+typedef struct DP_ViewState DP_ViewState;
 
 
 #define DP_PROJECT_APPLICATION_ID 520585024
@@ -188,6 +189,9 @@ typedef struct DP_Rect DP_Rect;
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI      (-2)
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_MULTI_ZSTD (-3)
 #define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESUMED    (-4)
+#define DP_PROJECT_MESSAGE_INTERNAL_TYPE_VIEW_STATE (-5)
+
+#define DP_PROJECT_MESSAGE_INTERNAL_VIEW_STATE_BODY_LENGTH 21
 
 #define DP_PROJECT_SNAPSHOT_FLAG_COMPLETE       (1u << 0u)
 #define DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT     (1u << 1u)
@@ -478,6 +482,12 @@ int DP_project_message_internal_record(DP_Project *prj, double recorded_at,
                                        const void *body_or_null, size_t size,
                                        unsigned int flags);
 
+// Records the given view state as an internal message.
+int DP_project_message_view_state_record(DP_Project *prj, double recorded_at,
+                                         unsigned int context_id,
+                                         const DP_ViewState *vs,
+                                         unsigned int flags);
+
 
 DP_ProjectSessionTimes DP_project_session_times_null(void);
 
@@ -502,6 +512,10 @@ long long DP_project_playback_snapshot_open(DP_Project *prj,
 int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
                                        double recorded_at, DP_Message *msg,
                                        unsigned int flags);
+
+int DP_project_snapshot_view_state_record(
+    DP_Project *prj, long long snapshot_id, double recorded_at,
+    unsigned int context_id, const DP_ViewState *vs, unsigned int flags);
 
 // Marks the given snapshot completed. Returns 0 on success and a negative
 // DP_PROJECT_SNAPSHOT_FINISH_ERROR_* value on failure. The snapshot id must
@@ -565,7 +579,7 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(
     DP_Project *prj, DP_DrawContext *dc, bool snapshot_only,
     DP_ProjectCanvasLoadWarnFn warn_fn, void *user,
     char **out_session_source_param, long long *out_session_sequence_id,
-    long long *out_resume_session_id);
+    long long *out_resume_session_id, DP_ViewState *out_vs);
 
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_*,
@@ -584,7 +598,8 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
 // and DP_free the source param.
 DP_ProjectCanvasLoad DP_project_canvas_load(DP_DrawContext *dc,
                                             const char *path,
-                                            bool snapshot_only);
+                                            bool snapshot_only,
+                                            DP_ViewState *out_vs);
 
 // [cancelable] Queries project information according to the given flags, calls
 // back the given function accordingly. Returns 0 on success and a negative
@@ -650,6 +665,9 @@ DP_CanvasState *DP_project_player_current_canvas_noinc(DP_ProjectPlayer *pp);
 bool DP_project_player_local_state_get_reset(DP_ProjectPlayer *pp,
                                              bool (*fn)(void *, DP_Message *),
                                              void *user);
+
+bool DP_project_player_view_state_get_reset(DP_ProjectPlayer *pp,
+                                            DP_ViewState *out_vs);
 
 int DP_project_player_control(DP_ProjectPlayer *pp,
                               const DP_ProjectPlayerControlParams *params);

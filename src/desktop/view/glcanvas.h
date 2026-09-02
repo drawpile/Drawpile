@@ -28,6 +28,11 @@ public:
 
 	static const QStringList &getSystemInfo();
 
+Q_SIGNALS:
+	void viewStateSet(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
+
 protected:
 	void initializeGL() override;
 	void paintGL() override;
@@ -41,6 +46,9 @@ private:
 	void onControllerCanvasSizeChanged();
 	void onControllerTransformChanged();
 	void onControllerTileCacheDirtyCheckNeeded();
+	void onControllerViewStateSetNeeded(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 
 	static QStringList systemInfo;
 

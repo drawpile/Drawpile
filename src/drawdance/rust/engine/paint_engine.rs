@@ -3,11 +3,11 @@ use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
     DP_ImageScaleInterpolation, DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel15,
     DP_Pixel8, DP_PlayerResult, DP_Rect, DP_SaveImageType, DP_SelectionSet, DP_Timeline,
-    DP_affected_area_in_bounds, DP_affected_area_make, DP_canvas_state_background_tile_noinc,
-    DP_canvas_state_decref, DP_message_decref, DP_message_type, DP_msg_local_change_new,
-    DP_paint_engine_free_join, DP_paint_engine_handle_inc, DP_paint_engine_new_inc,
-    DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
-    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_ViewState, DP_affected_area_in_bounds, DP_affected_area_make,
+    DP_canvas_state_background_tile_noinc, DP_canvas_state_decref, DP_message_decref,
+    DP_message_type, DP_msg_local_change_new, DP_paint_engine_free_join,
+    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
+    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
     DP_paint_engine_view_canvas_state_inc, DP_pixel15_unpremultiply, DP_save, DP_tile_same_pixel,
     DP_upixel15_to_8, DP_write_bigendian_uint32, DP_MSG_INTERVAL,
@@ -375,6 +375,7 @@ impl PaintEngine {
                 Some(Self::on_default_layer_set),
                 Some(Self::on_undo_depth_limit_set),
                 Some(Self::on_censored_layer_revealed),
+                Some(Self::on_view_state_set),
                 user.cast(),
             );
             DP_paint_engine_render_everything(self.paint_engine);
@@ -402,6 +403,7 @@ impl PaintEngine {
     extern "C" fn on_default_layer_set(_user: *mut c_void, _layer_id: c_int) {}
     extern "C" fn on_undo_depth_limit_set(_user: *mut c_void, _undo_depth_limit: c_int) {}
     extern "C" fn on_censored_layer_revealed(_user: *mut c_void, _layer_id: c_int) {}
+    extern "C" fn on_view_state_set(user: *mut c_void, vs: *const DP_ViewState) {}
 
     pub fn save(&mut self, path: &str, save_type: DP_SaveImageType) -> Result<()> {
         let cpath = CString::new(path)?;

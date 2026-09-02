@@ -34,6 +34,8 @@
 
 #define DP_UINT24_MIN (0)
 #define DP_UINT24_MAX (0xffffff)
+#define DP_INT48_MIN (-140737488355328LL)
+#define DP_INT48_MAX (140737488355327LL)
 
 #ifndef RUST_BINDGEN
 #    if defined(__EMSCRIPTEN__)

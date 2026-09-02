@@ -102,6 +102,11 @@ typedef struct DP_MsgInternalProjectSaveRequest {
     void *user;
 } DP_MsgInternalProjectSaveRequest;
 
+typedef struct DP_MsgInternaViewStateApply {
+    DP_MsgInternal parent;
+    unsigned char data[];
+} DP_MsgInternalViewStateApply;
+
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
     DP_warn("DP_MsgInternal: payload_length called on internal message");
@@ -363,6 +368,19 @@ DP_Message *DP_msg_internal_local_state_reset_new(unsigned int context_id)
                             sizeof(DP_MsgInternal));
 }
 
+DP_Message *DP_msg_internal_view_state_apply_new(unsigned int context_id,
+                                                 size_t size, const void *data)
+{
+    DP_ASSERT(size != 0);
+    DP_ASSERT(data);
+    DP_Message *msg = msg_internal_new(
+        context_id, DP_MSG_INTERNAL_TYPE_VIEW_STATE_APPLY,
+        DP_FLEX_SIZEOF(DP_MsgInternalViewStateApply, data, size));
+    DP_MsgInternalViewStateApply *mivs = DP_message_internal(msg);
+    memcpy(mivs->data, data, size);
+    return msg;
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {
@@ -499,4 +517,13 @@ void *DP_msg_internal_project_save_request_user(DP_MsgInternal *mi)
     DP_MsgInternalProjectSaveRequest *mipsr =
         (DP_MsgInternalProjectSaveRequest *)mi;
     return mipsr->user;
+}
+
+void DP_msg_internal_view_state_apply_data(DP_MsgInternal *mi, size_t size,
+                                           void *out_data)
+{
+    DP_ASSERT(size != 0);
+    DP_ASSERT(out_data);
+    DP_MsgInternalViewStateApply *mivs = (DP_MsgInternalViewStateApply *)mi;
+    memcpy(out_data, mivs->data, size);
 }

@@ -51,6 +51,7 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_PROJECT_SNAPSHOT_REQUEST,
     DP_MSG_INTERNAL_TYPE_PROJECT_SAVE_REQUEST,
     DP_MSG_INTERNAL_TYPE_LOCAL_STATE_RESET,
+    DP_MSG_INTERNAL_TYPE_VIEW_STATE_APPLY,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
@@ -125,6 +126,9 @@ DP_msg_internal_project_save_request_new(unsigned int context_id,
 
 DP_Message *DP_msg_internal_local_state_reset_new(unsigned int context_id);
 
+DP_Message *DP_msg_internal_view_state_apply_new(unsigned int context_id,
+                                                 size_t size, const void *data);
+
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
 
 
@@ -167,6 +171,9 @@ DP_ProjectSaveRequestCallback
 DP_msg_internal_project_save_request_callback(DP_MsgInternal *mi);
 
 void *DP_msg_internal_project_save_request_user(DP_MsgInternal *mi);
+
+void DP_msg_internal_view_state_apply_data(DP_MsgInternal *mi, size_t size,
+                                           void *out_data);
 
 
 #endif

@@ -39,6 +39,16 @@ struct GlCanvas::Private {
 		int lastOutlineSize = -1;
 	};
 
+	struct ViewState {
+		QSize viewportSize;
+		QPointF pos;
+		qreal zoom;
+		qreal rotation;
+		bool mirror;
+		bool flip;
+		bool changed = false;
+	};
+
 	struct CanvasShader {
 		GLuint program = 0;
 		GLuint vao = 0;
@@ -979,6 +989,7 @@ void main()
 	QColor checkerColor1;
 	QColor checkerColor2;
 	Dirty dirty;
+	ViewState viewState;
 	bool initialized = false;
 	bool haveGles2 = false;
 	bool haveFragmentHighp;
@@ -1042,6 +1053,12 @@ GlCanvas::GlCanvas(CanvasController *controller, QWidget *parent)
 	connect(
 		controller->scene(), &CanvasScene::changed, this,
 		QOverload<>::of(&GlCanvas::update));
+	connect(
+		controller, &CanvasController::viewStateSetNeeded, this,
+		&GlCanvas::onControllerViewStateSetNeeded, Qt::QueuedConnection);
+	connect(
+		this, &GlCanvas::viewStateSet, controller,
+		&CanvasController::setViewState, Qt::QueuedConnection);
 }
 
 GlCanvas::~GlCanvas()
@@ -1281,6 +1298,13 @@ void GlCanvas::paintGL()
 
 		d->renderScene(painter);
 	}
+
+	if(d->viewState.changed) {
+		d->viewState.changed = false;
+		Q_EMIT viewStateSet(
+			d->viewState.viewportSize, d->viewState.pos, d->viewState.zoom,
+			d->viewState.rotation, d->viewState.mirror, d->viewState.flip);
+	}
 }
 
 void GlCanvas::resizeGL(int w, int h)
@@ -1331,6 +1355,14 @@ void GlCanvas::onControllerTransformChanged()
 void GlCanvas::onControllerTileCacheDirtyCheckNeeded()
 {
 	d->dirty.texture = true;
+	update();
+}
+
+void GlCanvas::onControllerViewStateSetNeeded(
+	QSize viewportSize, QPointF pos, qreal zoom, qreal rotation, bool mirror,
+	bool flip)
+{
+	d->viewState = {viewportSize, pos, zoom, rotation, mirror, flip, true};
 	update();
 }
 

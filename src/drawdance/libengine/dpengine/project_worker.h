@@ -10,6 +10,7 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
 typedef struct DP_ProjectInfo DP_ProjectInfo;
 typedef struct DP_ProjectPlayerControlParams DP_ProjectPlayerControlParams;
+typedef struct DP_ViewState DP_ViewState;
 
 
 typedef struct DP_ProjectWorker DP_ProjectWorker;
@@ -108,21 +109,29 @@ void DP_project_worker_session_resume(DP_ProjectWorker *pw,
 void DP_project_worker_session_close(DP_ProjectWorker *pw, unsigned int file_id,
                                      unsigned int flags_to_set);
 
+long long DP_project_worker_time_msec(void);
+
 void DP_project_worker_message_record_noinc(DP_ProjectWorker *pw,
                                             unsigned int file_id,
-                                            DP_Message *msg,
-                                            unsigned int flags);
+                                            DP_Message *msg, unsigned int flags,
+                                            long long recorded_at_msec);
 
 void DP_project_worker_message_record_inc(DP_ProjectWorker *pw,
                                           unsigned int file_id, DP_Message *msg,
-                                          unsigned int flags);
+                                          unsigned int flags,
+                                          long long recorded_at_msec);
 
 // Takes ownership of body and DP_frees it later.
 void DP_project_worker_message_internal_record(DP_ProjectWorker *pw,
                                                unsigned int file_id, int type,
                                                unsigned int context_id,
                                                void *body_or_null, size_t size,
-                                               unsigned int flags);
+                                               unsigned int flags,
+                                               long long recorded_at_msec);
+
+void DP_project_worker_message_view_state_record(
+    DP_ProjectWorker *pw, unsigned int file_id, unsigned int context_id,
+    const DP_ViewState *vs, unsigned int flags, long long recorded_at_msec);
 
 void DP_project_worker_snapshot_open_noinc(DP_ProjectWorker *pw,
                                            unsigned int file_id,
@@ -138,6 +147,12 @@ void DP_project_worker_snapshot_message_record_noinc(DP_ProjectWorker *pw,
                                                      unsigned int file_id,
                                                      DP_Message *msg,
                                                      unsigned int flags);
+
+void DP_project_worker_snapshot_view_state_record(DP_ProjectWorker *pw,
+                                                  unsigned int file_id,
+                                                  unsigned int context_id,
+                                                  const DP_ViewState *vs,
+                                                  unsigned int flags);
 
 void DP_project_worker_snapshot_finish(DP_ProjectWorker *pw,
                                        unsigned int file_id,

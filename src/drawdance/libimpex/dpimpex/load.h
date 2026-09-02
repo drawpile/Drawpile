@@ -4,6 +4,7 @@
 #include <dpcommon/common.h>
 #include <dpengine/load_enums.h>
 #include <dpengine/save_enums.h>
+#include <dpengine/view_state.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
@@ -36,6 +37,7 @@ typedef struct DP_LoadContextIn {
 
 typedef struct DP_LoadContextOut {
     DP_CanvasState *cs;
+    DP_ViewState vs;
     char *session_source_param;
     long long session_sequence_id;
     long long resume_session_id;

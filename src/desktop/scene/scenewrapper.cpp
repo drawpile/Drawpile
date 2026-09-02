@@ -303,6 +303,12 @@ void SceneWrapper::connectActions(const Actions &actions)
 	connect(
 		actions.evadeusercursors, &QAction::toggled, m_scene,
 		&drawingboard::CanvasScene::setEvadeUserCursors);
+	connect(
+		m_view, &CanvasView::viewStateMirrorSet, actions.viewmirror,
+		&QAction::setChecked);
+	connect(
+		m_view, &CanvasView::viewStateFlipSet, actions.viewflip,
+		&QAction::setChecked);
 }
 
 #ifdef DP_HAVE_ACTIVITYBROADCAST

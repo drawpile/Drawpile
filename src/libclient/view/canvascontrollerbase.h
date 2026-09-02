@@ -106,9 +106,13 @@ public:
 	moveRotationTool(const QPoint &point, const QPoint &lastPoint, bool invert);
 	void setFlip(bool flip);
 	void setMirror(bool mirror);
+	void setViewState(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 
-	QPoint viewCenterPoint() const;
 	QRectF viewArea() const { return viewRectF(); }
+	QPoint viewCenterPoint() const;
+	QPointF viewCenterPointF() const;
 	bool isPointVisible(const QPointF &point) const;
 	QRectF screenRect() const;
 
@@ -181,6 +185,9 @@ signals:
 		int minH, int maxH, int valueH, int pageStepH, int singleStepH,
 		int minV, int maxV, int valueV, int pageStepV, int singleStepV);
 	void tileCacheDirtyCheckNeeded();
+	void viewStateSetNeeded(
+		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
+		bool mirror, bool flip);
 	void outlineChanged();
 	void transformNoticeChanged();
 	void lockNoticeChanged();
@@ -204,6 +211,8 @@ signals:
 		bool constrain, bool center, const QPointF &viewPos);
 	void penUp(bool constrain, bool center);
 	void coordinatesChanged(const QPointF &coordinates);
+	void viewStateMirrorSet(bool mirror);
+	void viewStateFlipSet(bool flip);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void cursorChanged(const QCursor &cursor);
 	void canvasShortcutActionActivated(const QString &name);
@@ -381,6 +390,7 @@ private:
 		bool flip) const;
 
 	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
+	static qreal toEffectiveRotation(qreal degrees, bool inverted);
 
 	bool isRotationInverted() const { return m_mirror ^ m_flip; }
 

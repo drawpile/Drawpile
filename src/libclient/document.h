@@ -37,6 +37,10 @@ namespace config {
 class Config;
 }
 
+namespace drawdance {
+class ViewState;
+}
+
 namespace net {
 class AnnouncementListModel;
 class BanlistModel;
@@ -85,8 +89,9 @@ public:
 		DP_SaveImageType type, bool dirty, bool autoRecord,
 		const QString &continueSourceParam, long long continueSequenceId);
 	void resumeState(
-		const drawdance::CanvasState &canvasState, const QString &path,
-		bool autoRecord, long long resumeSessionId);
+		const drawdance::CanvasState &canvasState,
+		const drawdance::ViewState &vs, const QString &path, bool autoRecord,
+		long long resumeSessionId);
 
 	DP_LoadResult loadDebugDump(const QString &path)
 	{

@@ -2681,8 +2681,8 @@ void MainWindow::loadCanvasStateFromFile(
 				if(resume) {
 					long long resumeSessionId = loader->resumeSessionId();
 					m_doc->resumeState(
-						canvasState, loader->path(), autoRecord,
-						resumeSessionId);
+						canvasState, loader->viewState(), loader->path(),
+						autoRecord, resumeSessionId);
 				} else {
 					m_doc->loadState(
 						canvasState, loader->path(), loader->type(), false,

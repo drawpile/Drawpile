@@ -14,6 +14,7 @@ extern "C" {
 #include "libclient/canvas/userlist.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/viewmode.h"
+#include "libclient/drawdance/viewstate.h"
 #include "libclient/project/projectrecorder.h"
 #include "libclient/utils/identicon.h"
 #include "libshared/net/protover.h"
@@ -135,12 +136,23 @@ void CanvasModel::loadBlank(
 }
 
 void CanvasModel::loadCanvasState(
-	int undoDepthLimit, const drawdance::CanvasState &canvasState)
+	int undoDepthLimit, const drawdance::CanvasState &canvasState,
+	const drawdance::ViewState *vs)
 {
 	m_paintengine->reset(m_localUserId, canvasState);
-	net::Message undoDepthMessage =
-		net::makeUndoDepthMessage(0, undoDepthLimit);
-	m_paintengine->receiveMessages(false, 1, &undoDepthMessage);
+	if(vs && vs->isValid()) {
+		net::Message msgs[] = {
+			net::makeUndoDepthMessage(0, undoDepthLimit),
+			net::makeInternalViewStateApplyMessage(
+				0, vs->viewportSize(), vs->pos(), vs->zoom(), vs->rotation(),
+				vs->mirror(), vs->flip()),
+		};
+		m_paintengine->receiveMessages(false, int(DP_ARRAY_LENGTH(msgs)), msgs);
+	} else {
+		net::Message undoDepthMessage =
+			net::makeUndoDepthMessage(0, undoDepthLimit);
+		m_paintengine->receiveMessages(false, 1, &undoDepthMessage);
+	}
 }
 
 void CanvasModel::loadPlayer(DP_Player *player)
