@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QFile>
 #include <QLocale>
+#include <QSaveFile>
 #include <cmake-config/config.h>
 
 namespace utils {
@@ -163,6 +164,60 @@ bool slurp(const QString &path, QByteArray &outBytes, QString &outError)
 		file.close();
 		return true;
 	}
+}
+
+namespace {
+static bool copyFileWith(
+	const QString &sourcePath, const QString &targetPath,
+	QFileDevice &targetFile, QString &outError)
+{
+	QFile sourceFile(sourcePath);
+	if(!sourceFile.open(QIODevice::ReadOnly)) {
+		outError = QStringLiteral("Error opening source file '%1': %2")
+					   .arg(sourcePath, sourceFile.errorString());
+		return false;
+	}
+
+#ifdef Q_OS_ANDROID
+	QIODevice::OpenModeFlag writeOpenFlags =
+		QIODevice::WriteOnly | QIODevice::Truncate;
+#else
+	QIODevice::OpenModeFlag writeOpenFlags = QIODevice::WriteOnly;
+#endif
+	if(!targetFile.open(writeOpenFlags)) {
+		outError = QStringLiteral("Error opening target file '%1': %2")
+					   .arg(targetPath, targetFile.errorString());
+		return false;
+	}
+
+	return copyFileContents(sourceFile, targetFile, outError);
+}
+}
+
+bool copyFile(
+	const QString &sourcePath, const QString &targetPath, QString &outError)
+{
+	QFile targetFile(targetPath);
+	return copyFileWith(sourcePath, targetPath, targetFile, outError);
+}
+
+bool copySaveFile(
+	const QString &sourcePath, const QString &targetPath, QString &outError)
+{
+	QSaveFile targetFile(targetPath);
+	targetFile.setDirectWriteFallback(true);
+
+	if(!copyFileWith(sourcePath, targetPath, targetFile, outError)) {
+		return false;
+	}
+
+	if(!targetFile.commit()) {
+		outError = QStringLiteral("Failed to commit target file: %1")
+					   .arg(targetFile.errorString());
+		return false;
+	}
+
+	return true;
 }
 
 bool copyFileContents(

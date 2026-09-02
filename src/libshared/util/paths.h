@@ -55,6 +55,12 @@ bool looksLikeCanvasReplacingSuffix(const QString &suffix);
 
 bool slurp(const QString &path, QByteArray &outBytes, QString &outError);
 
+bool copyFile(
+	const QString &sourcePath, const QString &targetPath, QString &outError);
+
+bool copySaveFile(
+	const QString &sourcePath, const QString &targetPath, QString &outError);
+
 bool copyFileContents(
 	QFileDevice &sourceFile, QFileDevice &targetFile, QString &outError);
 

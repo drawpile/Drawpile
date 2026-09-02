@@ -245,53 +245,7 @@ bool RecoveryEntryWidget::saveTo(const QString &savePath, QString &outError)
 {
 	// We don't use QFile::copy here because that doesn't work on Android.
 	utils::ScopedOverrideCursor overrideCursor;
-
-	QFile inputFile(m_path);
-	if(!inputFile.open(QIODevice::ReadOnly)) {
-		outError = tr("Failed to open autorecovery file: %1")
-					   .arg(inputFile.errorString());
-		return false;
-	}
-
-	QSaveFile saveFile(savePath);
-	saveFile.setDirectWriteFallback(true);
-	if(!saveFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		outError =
-			tr("Failed to open target file: %1").arg(saveFile.errorString());
-		return false;
-	}
-
-	QByteArray buffer;
-	buffer.resize(BUFSIZ);
-	while(true) {
-		qint64 read = inputFile.read(buffer.data(), BUFSIZ);
-		if(read < 0) {
-			outError = tr("Failed to read from autorecovery file: %1")
-						   .arg(inputFile.errorString());
-			return false;
-		} else if(read == 0) {
-			break;
-		} else {
-			qint64 written = saveFile.write(buffer.constData(), read);
-			if(written < 0) {
-				outError = tr("Failed to write to target file: %1")
-							   .arg(saveFile.errorString());
-				return false;
-			} else if(written != read) {
-				outError =
-					tr("Failed to write to target file: read/write mismatch");
-				return false;
-			}
-		}
-	}
-
-	if(!saveFile.commit()) {
-		outError =
-			tr("Failed to commit target file: %1").arg(saveFile.errorString());
-		return false;
-	}
-
-	return true;
+	return utils::paths::copySaveFile(m_path, savePath, outError);
 }
 
 bool RecoveryEntryWidget::compareSaved(
