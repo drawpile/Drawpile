@@ -70,15 +70,18 @@ static bool recovery_set_config(sqlite3_recover *recover)
         return false;
     }
 
+    int true_value = 1;
     result = sqlite3_recover_config(recover, SQLITE_RECOVER_FREELIST_CORRUPT,
-                                    (void *)1);
+                                    &true_value);
     if (result != SQLITE_OK) {
         DP_error_set("Error setting freelist corrupt recovery option: %s",
                      sqlite3_errstr(result));
         return false;
     }
 
-    result = sqlite3_recover_config(recover, SQLITE_RECOVER_ROWIDS, (void *)0);
+    int false_value = 0;
+    result =
+        sqlite3_recover_config(recover, SQLITE_RECOVER_ROWIDS, &false_value);
     if (result != SQLITE_OK) {
         DP_error_set("Error setting recover rowids recovery option: %s",
                      sqlite3_errstr(result));
@@ -97,7 +100,11 @@ DP_SqlRecover *DP_sql_recover_new(const char *src_path, const char *dst_path)
     }
 
     sqlite3 *db;
-    int open_result = sqlite3_open_v2(src_path, &db, 0, NULL);
+    int open_result =
+        sqlite3_open_v2(src_path, &db,
+                        SQLITE_OPEN_READWRITE | SQLITE_OPEN_NOMUTEX
+                            | SQLITE_OPEN_PRIVATECACHE | SQLITE_OPEN_EXRESCODE,
+                        NULL);
     if (open_result != SQLITE_OK) {
         DP_error_set("Error %d opening database '%s' for recovery: %s",
                      open_result, src_path, sqlite3_errstr(open_result));
@@ -155,5 +162,5 @@ bool DP_sql_recover_step(DP_SqlRecover *r, bool *out_error)
     if (out_error) {
         *out_error = error;
     }
-    return done;
+    return !done;
 }
