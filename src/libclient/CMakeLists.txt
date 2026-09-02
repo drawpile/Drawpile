@@ -160,6 +160,8 @@ target_sources(dpclient PRIVATE
 	project/metadata.h
 	project/projectrecorder.cpp
 	project/projectrecorder.h
+	project/projectwrangler.cpp
+	project/projectwrangler.h
 	project/recoverymodel.cpp
 	project/recoverymodel.h
 	project/resume.cpp
@@ -317,8 +319,6 @@ if(EMSCRIPTEN)
 	)
 else()
 	target_sources(dpclient PRIVATE
-		project/projectwrangler.cpp
-		project/projectwrangler.h
 		utils/news.cpp
 		utils/news.h
 	)
