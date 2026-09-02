@@ -64,6 +64,7 @@ target_compile_definitions(bundled_sqlite3 PUBLIC
     SQLITE_STRICT_SUBTYPE=1
     SQLITE_TRUSTED_SCHEMA=0
     SQLITE_OMIT_LOAD_EXTENSION=1
+    SQLITE_ENABLE_DBPAGE_VTAB=1
 )
 target_include_directories(
     bundled_sqlite3 SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/sqlite3)
