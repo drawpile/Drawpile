@@ -25,6 +25,8 @@ public:
 	// m_autoRemove is true, it will remove the current path.
 	void setPath(const QString &path);
 
+	void clear() { setPath(QString()); }
+
 	bool autoRemove() const { return m_autoRemove; }
 	void setAutoRemove(bool autoRemove) { m_autoRemove = autoRemove; }
 
@@ -41,6 +43,11 @@ public:
 	TempFileHolder(TempFile *tempFile, QObject *parent = nullptr);
 
 	QSharedPointer<TempFile> &sharedPointer() { return m_tempFile; }
+
+	void setSharedPointer(QSharedPointer<TempFile> &sharedPointer)
+	{
+		m_tempFile = sharedPointer;
+	}
 
 	TempFile *tempFile() const { return m_tempFile.data(); }
 

@@ -203,6 +203,13 @@ QString FileWrangler::getProjectEditExportPath()
 		utils::saveProjectFormatFilterList());
 }
 
+QString FileWrangler::getRepairOpenPath()
+{
+	return showOpenFileDialogFilters(
+		tr("Repairable Files"), LastPath::IMAGE,
+		utils::openRepairFormatFilterList());
+}
+
 QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 {
 	QString nameFilter = getEffectiveFilter({
@@ -527,6 +534,22 @@ QString FileWrangler::getAutosaveExportPath(
 	QString path = showSaveFileDialogFilters(
 		tr("Export Autorecovery File"), LastPath::AUTOSAVE, ext,
 		{QStringLiteral("%1 (*.dppr)").arg(tr("Drawpile Project"))});
+	if(!path.isEmpty()) {
+		updateLastPath(LastPath::IMAGE, path);
+	}
+	return path;
+}
+
+QString FileWrangler::getRepairExportPath(
+	const QString &defaultName, const QString &ext) const
+{
+	updateLastPath(
+		LastPath::REPAIR, QFileInfo(getLastPath(LastPath::IMAGE, ext)).path() +
+							  QDir::separator() + defaultName);
+
+	QString path = showSaveFileDialogFilters(
+		tr("Save Repaired File"), LastPath::REPAIR, ext,
+		{QStringLiteral("%1 (*%2)").arg(tr("Repaired File"), ext)});
 	if(!path.isEmpty()) {
 		updateLastPath(LastPath::IMAGE, path);
 	}
@@ -1014,6 +1037,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("sessionsettings");
 	case LastPath::AUTOSAVE:
 		return QStringLiteral("autosave");
+	case LastPath::REPAIR:
+		return QStringLiteral("repair");
 	}
 	return QStringLiteral("unknown");
 }

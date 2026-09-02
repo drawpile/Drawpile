@@ -456,6 +456,10 @@ private:
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 	void requestTimelapseDialog();
 #endif
+#ifdef DRAWPILE_REPAIR_DIALOG
+	void repairProject();
+	void repairProjectPath(const QString &path);
+#endif
 
 	void showSelectionMaskColorPicker();
 

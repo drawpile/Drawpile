@@ -74,6 +74,7 @@ public slots:
 signals:
 	void openFile();
 	void openRecent(const QString &path);
+	void repairRecovery(const QString &path);
 	void openRecovery(const QString &path);
 	void layouts();
 	void preferences();

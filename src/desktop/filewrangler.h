@@ -63,6 +63,7 @@ public:
 		LOG_FILE,
 		SESSION_SETTINGS,
 		AUTOSAVE,
+		REPAIR,
 	};
 
 	FileWrangler(QWidget *parent);
@@ -100,6 +101,7 @@ public:
 #ifndef __EMSCRIPTEN_
 	QStringList getProjectEditImportPaths();
 	QString getProjectEditExportPath();
+	QString getRepairOpenPath();
 
 	// The browser handles our certificates in Emscripten.
 	QStringList getImportCertificatePaths(const QString &title) const;
@@ -135,6 +137,8 @@ public:
 #else
 	QString getAutosaveExportPath(
 		const QString &defaultDirectory, const QString &defaultName) const;
+	QString
+	getRepairExportPath(const QString &defaultName, const QString &ext) const;
 #endif
 
 	void saveBrushPack(const PathSaveFn &onSave) const;

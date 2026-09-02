@@ -192,4 +192,17 @@ QStringList saveProjectFormatFilterList()
 	};
 }
 
+QStringList openRepairFormatFilterList()
+{
+	QString projects = QStringLiteral("*.dppr");
+	QString canvases = QStringLiteral("*.dpcs");
+	return {
+		QGuiApplication::tr("All Supported Files (%1)")
+			.arg(projects + QStringLiteral(" ") + canvases),
+		QGuiApplication::tr("Projects (%1)").arg(projects),
+		QGuiApplication::tr("Canvases (%1)").arg(canvases),
+		QGuiApplication::tr("All Files (*)"),
+	};
+}
+
 }

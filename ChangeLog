@@ -45,6 +45,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add Tools > Developer Tools > UDP Activity Stream. This emits the cursor position over the canvas view and some other activity over a UDP socket, which can be consumed by stream avatars, brush sound makers and similar programs. Thanks Maniko for suggesting.
  * Feature: PNG spritesheet export for animations. Thanks greendyno and ULTRA TECH for suggesting.
  * Fix: A crash when resizing the canvas smaller while a lasso selection is being transformed. Thanks greendyno for reporting.
+ * Feature: Repairing dppr and dpcs files via File > Repair File. If the file is detected to be corrupted, you will also be prompted to repair it when opening or recovering the file.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

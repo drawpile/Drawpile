@@ -152,6 +152,9 @@ extern "C" {
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
 #	include "desktop/dialogs/timelapsedialog.h"
 #endif
+#ifdef DRAWPILE_REPAIR_DIALOG
+#	include "desktop/dialogs/projectrepairdialog.h"
+#endif
 #ifdef Q_OS_WIN
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -1958,6 +1961,29 @@ void MainWindow::requestTimelapseDialog()
 }
 #endif
 
+#ifdef DRAWPILE_REPAIR_DIALOG
+void MainWindow::repairProject()
+{
+	QString path = FileWrangler(getStartDialogOrThis()).getRepairOpenPath();
+	if(!path.isEmpty()) {
+		repairProjectPath(path);
+	}
+}
+
+void MainWindow::repairProjectPath(const QString &path)
+{
+	dialogs::ProjectRepairDialog *dlg =
+		new dialogs::ProjectRepairDialog(path, getStartDialogOrThis());
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		dlg, &dialogs::ProjectRepairDialog::openRequested, this,
+		[this](const QString &pathToOpen) {
+			openPath(pathToOpen);
+		});
+	dlg->show();
+}
+#endif
+
 void MainWindow::showSelectionMaskColorPicker()
 {
 	QString objectName = QStringLiteral("selectionmaskcolordialog");
@@ -2626,6 +2652,24 @@ void MainWindow::loadCanvasStateFromFile(
 						loader->playerFlags());
 				} else {
 					delete tempFile;
+#ifdef DRAWPILE_REPAIR_DIALOG
+					if(loader->result() == DP_LOAD_RESULT_CORRUPTED) {
+						QMessageBox *box = utils::makeMessage(
+							this, tr("Error"), error,
+							//: "It" refers to a corrupted file.
+							tr("It may be possible to repair it."),
+							QMessageBox::Warning,
+							QMessageBox::Ok | QMessageBox::Cancel);
+						box->button(QMessageBox::Ok)->setText(tr("Repair"));
+						connect(
+							box, &QMessageBox::accepted, this,
+							std::bind(
+								&MainWindow::repairProjectPath, this,
+								loader->path()));
+						box->show();
+						return;
+					}
+#endif
 					showErrorMessageWithDetails(error, detail);
 				}
 			} else {
@@ -2724,6 +2768,9 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	utils::Connections *connections = new utils::Connections(key, dlg);
 	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, &MainWindow::open));
 	connections->add(connect(dlg, &dialogs::StartDialog::openRecent, this, std::bind(&MainWindow::openRecent, this, _1, nullptr)));
+#ifdef DRAWPILE_REPAIR_DIALOG
+	connections->add(connect(dlg, &dialogs::StartDialog::repairRecovery, this, &MainWindow::repairProjectPath));
+#endif
 	connections->add(connect(dlg, &dialogs::StartDialog::openRecovery, this, &MainWindow::openRecovery));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
@@ -6509,6 +6556,10 @@ void MainWindow::setupActions()
 		makeAction("projectoverview", tr("Project statistics…"))
 			.noDefaultShortcut();
 #endif
+#ifdef DRAWPILE_REPAIR_DIALOG
+	QAction *repairFile =
+		makeAction("repairfile", tr("Repair file…")).noDefaultShortcut();
+#endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 	QAction *recover = makeAction("recover", tr("Recover…"))
 						   .icon(QStringLiteral("backup"))
@@ -6616,6 +6667,9 @@ void MainWindow::setupActions()
 		projectOverview, &QAction::triggered, this,
 		&MainWindow::requestProjectOverview);
 #endif
+#ifdef DRAWPILE_REPAIR_DIALOG
+	connect(repairFile, &QAction::triggered, this, &MainWindow::repairProject);
+#endif
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 	connect(recover, &QAction::triggered, this, &MainWindow::showRecover);
 
@@ -6688,14 +6742,18 @@ void MainWindow::setupActions()
 #endif
 	filemenu->addAction(autoRecord);
 	filemenu->addAction(autoRecordSettings);
-#if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG)
+#if defined(DRAWPILE_PROJECT_DIALOG) || defined(DRAWPILE_TIMELAPSE_DIALOG) ||  \
+	defined(DRAWPILE_REPAIR_DIALOG)
 	filemenu->addSeparator();
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+	filemenu->addAction(makeTimelapse);
 #endif
 #ifdef DRAWPILE_PROJECT_DIALOG
 	filemenu->addAction(projectOverview);
 #endif
-#ifdef DRAWPILE_TIMELAPSE_DIALOG
-	filemenu->addAction(makeTimelapse);
+#ifdef DRAWPILE_REPAIR_DIALOG
+	filemenu->addAction(repairFile);
 #endif
 	filemenu->addSeparator();
 	filemenu->addAction(start);

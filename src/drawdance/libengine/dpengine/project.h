@@ -255,6 +255,7 @@ typedef struct DP_ProjectOpenResult {
 
 typedef struct DP_ProjectCanvasLoad {
     int result;
+    int sql_result;
     DP_CanvasState *cs;
     char *session_source_param;
     long long session_sequence_id;
@@ -417,6 +418,8 @@ DP_ProjectAppendStatus DP_project_append_status(const char *path);
 DP_ProjectOpenResult DP_project_open(const char *path, unsigned int flags);
 
 bool DP_project_close(DP_Project *prj);
+
+bool DP_project_sql_result_corrupt(int sql_result);
 
 
 // Set the cancel flag on the project, issue an interrupt to the SQLite

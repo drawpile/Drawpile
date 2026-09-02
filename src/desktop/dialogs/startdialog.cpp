@@ -445,6 +445,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		recoverPage, &startdialog::Recover::hideRecoveryNotice, m_recoverNotice,
 		&startdialog::RecoverNotice::hide);
 	connect(
+		recoverPage, &startdialog::Recover::repairPath, this,
+		&StartDialog::repairRecovery);
+	connect(
 		recoverPage, &startdialog::Recover::openPath, this,
 		&StartDialog::openRecovery);
 

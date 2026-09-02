@@ -180,10 +180,10 @@ static bool copyFileWith(
 	}
 
 #ifdef Q_OS_ANDROID
-	QIODevice::OpenModeFlag writeOpenFlags =
+	QIODevice::OpenMode writeOpenFlags =
 		QIODevice::WriteOnly | QIODevice::Truncate;
 #else
-	QIODevice::OpenModeFlag writeOpenFlags = QIODevice::WriteOnly;
+	QIODevice::OpenMode writeOpenFlags = QIODevice::WriteOnly;
 #endif
 	if(!targetFile.open(writeOpenFlags)) {
 		outError = QCoreApplication::translate(

@@ -319,6 +319,8 @@ if(EMSCRIPTEN)
 	)
 else()
 	target_sources(dpclient PRIVATE
+		project/projectrepair.cpp
+		project/projectrepair.h
 		utils/news.cpp
 		utils/news.h
 	)

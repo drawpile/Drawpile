@@ -60,6 +60,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats);
 
 QStringList openPlaybackFormatFilterList();
 QStringList saveProjectFormatFilterList();
+QStringList openRepairFormatFilterList();
 
 }
 

@@ -19,13 +19,16 @@ public:
 		const project::RecoveryEntry &entry, QWidget *parent = nullptr);
 
 Q_SIGNALS:
+	void repairRequested(const QString &path);
 	void removalRequested(const QString &path);
 	void openRequested(const QString &savePath);
 
 private:
 	void promptRemoval();
 	void requestRemoval();
-
+	void checkRecover();
+	void requestRepair();
+	void recover();
 #ifdef __EMSCRIPTEN__
 	void download();
 #else
@@ -38,6 +41,7 @@ private:
 
 	QString m_path;
 	bool m_locked;
+	bool m_corrupted;
 };
 
 class Recover final : public Page {
@@ -52,6 +56,7 @@ public:
 Q_SIGNALS:
 	void hideLinks();
 	void hideRecoveryNotice();
+	void repairPath(const QString &path);
 	void openPath(const QString &path);
 
 private:

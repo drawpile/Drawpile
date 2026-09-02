@@ -1510,7 +1510,12 @@ static bool load_project(DP_LoadContext *lc, bool snapshot_only)
         return false;
     default:
         if (DP_PROJECT_ERROR_IN(pcl.result, DP_PROJECT_OPEN_ERROR)) {
-            lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+            if (DP_project_sql_result_corrupt(pcl.sql_result)) {
+                lc->out.result = DP_LOAD_RESULT_CORRUPTED;
+            }
+            else {
+                lc->out.result = DP_LOAD_RESULT_OPEN_ERROR;
+            }
         }
         else if (DP_PROJECT_ERROR_IN(pcl.result,
                                      DP_PROJECT_CANVAS_LOAD_ERROR)) {

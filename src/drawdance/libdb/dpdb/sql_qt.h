@@ -9,6 +9,7 @@
 #include <optional>
 
 struct DP_Mutex;
+struct DP_SqlRecover;
 struct sqlite3;
 struct sqlite3_stmt;
 
@@ -218,6 +219,7 @@ class Database final {
     sqlite3_stmt *prepare(const QString &sql, unsigned int flags = 0);
     bool bind(sqlite3_stmt *stmt, int pos, const Query::Param &param);
     int step(sqlite3_stmt *stmt);
+    void cancel();
 
     qlonglong lastInsertId() const;
     qlonglong numRowsAffected() const;
@@ -270,6 +272,36 @@ class DatabaseLocker final {
 
   private:
     Database &m_db;
+};
+
+class SqlRecover {
+  public:
+    SqlRecover() = default;
+    ~SqlRecover();
+
+    SqlRecover(const Database &) = delete;
+    SqlRecover(Database &&) = delete;
+    SqlRecover &operator=(const Database &) = delete;
+    SqlRecover &operator=(Database &&) = delete;
+
+    bool open(const QString &srcPath, const QString &dstPath);
+
+    bool step();
+
+    bool hasError() const
+    {
+        return m_error;
+    }
+
+    const QString &errorMessage() const
+    {
+        return m_errorMessage;
+    }
+
+  private:
+    DP_SqlRecover *m_recover = nullptr;
+    bool m_error = false;
+    QString m_errorMessage;
 };
 
 }

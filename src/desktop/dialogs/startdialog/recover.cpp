@@ -33,6 +33,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 	: QFrame(parent)
 	, m_path(entry.path())
 	, m_locked(entry.status() == project::RecoveryStatus::Locked)
+	, m_corrupted(entry.status() == project::RecoveryStatus::Corrupted)
 {
 	setFrameShape(QFrame::Box);
 	setFrameShadow(QFrame::Raised);
@@ -116,6 +117,9 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 		statusLabel->setText(tr("Locked by another process"));
 		canRemove = false;
 		break;
+	case project::RecoveryStatus::Corrupted:
+		statusLabel->setText(tr("Corrupted, may be possible to repair"));
+		break;
 	case project::RecoveryStatus::Error:
 		statusLabel->setText(tr("Error: %1").arg(entry.errorMessage()));
 		break;
@@ -135,12 +139,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 	infoLayout->addWidget(recoverButton);
 	connect(
 		recoverButton, &QPushButton::clicked, this,
-#ifdef __EMSCRIPTEN__
-		&RecoveryEntryWidget::download
-#else
-		&RecoveryEntryWidget::save
-#endif
-	);
+		&RecoveryEntryWidget::checkRecover);
 
 	QPushButton *removeButton = new QPushButton;
 	removeButton->setIcon(QIcon::fromTheme(QStringLiteral("trash-empty")));
@@ -172,6 +171,48 @@ void RecoveryEntryWidget::promptRemoval()
 void RecoveryEntryWidget::requestRemoval()
 {
 	Q_EMIT removalRequested(m_path);
+}
+
+void RecoveryEntryWidget::checkRecover()
+{
+#if DRAWPILE_REPAIR_DIALOG
+	if(m_corrupted) {
+		QMessageBox *box = utils::makeMessage(
+			this, tr("Corrupted File"),
+			tr("This file is corrupted. Do you want to attempt to repair it or "
+			   "save it as-is?"),
+			tr("You can also attempt to repair it after saving."),
+			QMessageBox::Question,
+			QMessageBox::Save | QMessageBox::SaveAll | QMessageBox::Cancel);
+		box->button(QMessageBox::SaveAll)->setText(tr("Repair"));
+		box->button(QMessageBox::Save)->setText(tr("Save as-is"));
+		connect(box, &QMessageBox::finished, this, [this, box] {
+			QAbstractButton *button = box->clickedButton();
+			if(button == box->button(QMessageBox::SaveAll)) {
+				requestRepair();
+			} else if(button == box->button(QMessageBox::Save)) {
+				recover();
+			}
+		});
+		box->show();
+		return;
+	}
+#endif
+	recover();
+}
+
+void RecoveryEntryWidget::requestRepair()
+{
+	Q_EMIT repairRequested(m_path);
+}
+
+void RecoveryEntryWidget::recover()
+{
+#ifdef __EMSCRIPTEN__
+	download();
+#else
+	save();
+#endif
 }
 
 #ifdef __EMSCRIPTEN__
@@ -395,6 +436,9 @@ void Recover::updateRecoveryEntries()
 			const project::RecoveryEntry &entry = entries[i];
 			RecoveryEntryWidget *widget = new RecoveryEntryWidget(entry);
 			m_contentLayout->addWidget(widget);
+			connect(
+				widget, &RecoveryEntryWidget::repairRequested, this,
+				&Recover::repairPath);
 			connect(
 				widget, &RecoveryEntryWidget::removalRequested, this,
 				&Recover::removePath);

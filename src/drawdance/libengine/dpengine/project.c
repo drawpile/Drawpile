@@ -1096,6 +1096,11 @@ bool DP_project_close(DP_Project *prj)
     return project_close(prj, false);
 }
 
+bool DP_project_sql_result_corrupt(int sql_result)
+{
+    return (sql_result & 0xff) == SQLITE_CORRUPT;
+}
+
 
 void DP_project_cancel(DP_Project *prj)
 {
@@ -6782,13 +6787,14 @@ DP_project_canvas_load(DP_DrawContext *dc, const char *path, bool snapshot_only)
     DP_ASSERT(dc);
     DP_ASSERT(path);
 
-    DP_ProjectCanvasLoad pcl = {0, NULL, NULL, 0LL, 0LL};
+    DP_ProjectCanvasLoad pcl = {0, 0, NULL, NULL, 0LL, 0LL};
     DP_ProjectOpenResult open_result =
         project_open(path, DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY,
                      snapshot_only);
     DP_Project *prj = open_result.project;
     if (!prj) {
         pcl.result = open_result.error;
+        pcl.sql_result = open_result.sql_result;
         return pcl;
     }
 

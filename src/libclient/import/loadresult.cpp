@@ -46,6 +46,8 @@ QString getLoadResultMessage(DP_LoadResult result)
 	case DP_LOAD_RESULT_INTERNAL_ERROR:
 		return QCoreApplication::translate(
 			CONTEXT, "Internal error, this is probably a bug.");
+	case DP_LOAD_RESULT_CORRUPTED:
+		return QCoreApplication::translate(CONTEXT, "Corrupted file.");
 	}
 	qWarning("Unhandled load result %d in %s", int(result), __func__);
 	return QCoreApplication::translate(CONTEXT, "Unknown error.");
@@ -63,6 +65,7 @@ bool shouldIncludeLoadResultDpError(DP_LoadResult result)
 	case DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE:
 	case DP_LOAD_RESULT_BAD_DIMENSIONS:
 	case DP_LOAD_RESULT_INTERNAL_ERROR:
+	case DP_LOAD_RESULT_CORRUPTED:
 		return false;
 	case DP_LOAD_RESULT_OPEN_ERROR:
 	case DP_LOAD_RESULT_READ_ERROR:

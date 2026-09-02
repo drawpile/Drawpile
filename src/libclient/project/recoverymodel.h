@@ -15,6 +15,7 @@ namespace project {
 enum class RecoveryStatus {
 	Available,
 	Locked,
+	Corrupted,
 	Error,
 };
 

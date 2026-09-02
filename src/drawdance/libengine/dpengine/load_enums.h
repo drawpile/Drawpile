@@ -14,6 +14,7 @@ typedef enum DP_LoadResult {
     DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE,
     DP_LOAD_RESULT_BAD_DIMENSIONS,
     DP_LOAD_RESULT_INTERNAL_ERROR,
+    DP_LOAD_RESULT_CORRUPTED,
 } DP_LoadResult;
 
 typedef enum DP_PlayerType {

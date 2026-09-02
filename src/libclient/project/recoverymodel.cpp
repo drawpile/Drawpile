@@ -315,6 +315,10 @@ RecoveryStatus RecoveryModel::checkRecoveryStatus(
 		}
 		if(result.error == DP_PROJECT_OPEN_ERROR_LOCKED) {
 			return RecoveryStatus::Locked;
+		} else if(
+			DP_PROJECT_ERROR_IN(result.error, DP_PROJECT_OPEN_ERROR) &&
+			DP_project_sql_result_corrupt(result.sql_result)) {
+			return RecoveryStatus::Corrupted;
 		} else {
 			return RecoveryStatus::Error;
 		}

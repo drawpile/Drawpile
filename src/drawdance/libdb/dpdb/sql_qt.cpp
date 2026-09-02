@@ -420,6 +420,14 @@ int Database::step(sqlite3_stmt *stmt)
     return result;
 }
 
+void Database::cancel()
+{
+    DatabaseLocker locker(*this);
+    if (m_db) {
+        sqlite3_interrupt(m_db);
+    }
+}
+
 qlonglong Database::lastInsertId() const
 {
     return sqlite3_last_insert_rowid(m_db);
@@ -560,6 +568,56 @@ const char *Database::getError(int result)
         }
     }
     return sqlite3_errstr(result);
+}
+
+
+SqlRecover::~SqlRecover()
+{
+    DP_sql_recover_free(m_recover);
+}
+
+bool SqlRecover::open(const QString &srcPath, const QString &dstPath)
+{
+    if (m_recover) {
+        qWarning("SQL recovery already open, reopening");
+        DP_sql_recover_free(m_recover);
+    }
+
+    QByteArray srcPathBytes = srcPath.toUtf8();
+    QByteArray dstPathBytes = dstPath.toUtf8();
+    m_recover =
+        DP_sql_recover_new(srcPathBytes.constData(), dstPathBytes.constData());
+    if (m_recover) {
+        m_error = false;
+        return true;
+    }
+    else {
+        m_error = true;
+        m_errorMessage = QString::fromUtf8(DP_error());
+        return false;
+    }
+}
+
+bool SqlRecover::step()
+{
+    if (m_recover) {
+        if (DP_sql_recover_step(m_recover, &m_error)) {
+            return true;
+        }
+        else {
+            if (m_error) {
+                m_errorMessage = QString::fromUtf8(DP_error());
+            }
+            DP_sql_recover_free(m_recover);
+            m_recover = nullptr;
+            return false;
+        }
+    }
+    else {
+        m_error = true;
+        m_errorMessage = QStringLiteral("Recovery not open");
+        return false;
+    }
 }
 
 
