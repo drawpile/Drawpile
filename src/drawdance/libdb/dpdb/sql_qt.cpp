@@ -312,8 +312,8 @@ bool Database::open(const QString &path, const QString &humaneName)
 
 bool Database::close()
 {
+    DatabaseLocker locker(*this);
     if (m_db) {
-        DatabaseLocker locker(*this);
         if (m_onCloseFn) {
             m_onCloseFn(m_onCloseUser);
             m_onCloseFn = nullptr;
