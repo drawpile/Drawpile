@@ -173,7 +173,8 @@ static bool copyFileWith(
 {
 	QFile sourceFile(sourcePath);
 	if(!sourceFile.open(QIODevice::ReadOnly)) {
-		outError = QStringLiteral("Error opening source file '%1': %2")
+		outError = QCoreApplication::translate(
+					   "utils::paths", "Error opening source file '%1': %2")
 					   .arg(sourcePath, sourceFile.errorString());
 		return false;
 	}
@@ -185,7 +186,8 @@ static bool copyFileWith(
 	QIODevice::OpenModeFlag writeOpenFlags = QIODevice::WriteOnly;
 #endif
 	if(!targetFile.open(writeOpenFlags)) {
-		outError = QStringLiteral("Error opening target file '%1': %2")
+		outError = QCoreApplication::translate(
+					   "utils::paths", "Error opening target file '%1': %2")
 					   .arg(targetPath, targetFile.errorString());
 		return false;
 	}
@@ -212,7 +214,8 @@ bool copySaveFile(
 	}
 
 	if(!targetFile.commit()) {
-		outError = QStringLiteral("Failed to commit target file: %1")
+		outError = QCoreApplication::translate(
+					   "utils::paths", "Failed to commit target file: %1")
 					   .arg(targetFile.errorString());
 		return false;
 	}
@@ -229,26 +232,29 @@ bool copyFileContents(
 		qint64 read = sourceFile.read(buffer.data(), BUFSIZ);
 		if(read < 0) {
 			outError =
-				QStringLiteral("Error reading from source file '%1': %2")
+				QCoreApplication::translate(
+					"utils::paths", "Error reading from source file '%1': %2")
 					.arg(sourceFile.fileName(), sourceFile.errorString());
 			return false;
 		} else if(read > 0) {
 			qint64 written = targetFile.write(buffer, read);
 			if(written < 0) {
 				outError =
-					QStringLiteral(
+					QCoreApplication::translate(
+						"utils::paths",
 						"Error writing %1 byte(s) to target file '%2': %3")
 						.arg(
 							QString::number(read), targetFile.fileName(),
 							targetFile.errorString());
 				return false;
 			} else if(written != read) {
-				outError = QStringLiteral(
-							   "Tried to write %1 byte(s) to target file '%2', "
-							   "but only wrote %3")
-							   .arg(
-								   QString::number(read), targetFile.fileName(),
-								   QString::number(written));
+				outError =
+					QCoreApplication::translate(
+						"utils::paths", "Tried to write %1 byte(s) to target "
+										"file '%2', but only wrote %3")
+						.arg(
+							QString::number(read), targetFile.fileName(),
+							QString::number(written));
 				return false;
 			}
 		} else {
@@ -256,7 +262,8 @@ bool copyFileContents(
 				return true;
 			} else {
 				outError =
-					QStringLiteral("Error flushing target file '%1': %2")
+					QCoreApplication::translate(
+						"utils::paths", "Error flushing target file '%1': %2")
 						.arg(targetFile.fileName(), targetFile.errorString());
 				return false;
 			}
