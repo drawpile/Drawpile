@@ -64,6 +64,9 @@ typedef enum DP_PlayerPass {
 DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
                          DP_Input *input, DP_LoadResult *out_result);
 
+DP_Player *DP_player_new_from_path(DP_PlayerType type, const char *path,
+                                   DP_LoadResult *out_result);
+
 void DP_player_free(DP_Player *player);
 
 DP_PlayerType DP_player_type(DP_Player *player);

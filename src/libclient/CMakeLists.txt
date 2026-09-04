@@ -99,6 +99,8 @@ target_sources(dpclient PRIVATE
 	drawdance/perf.h
 	drawdance/pixels.cpp
 	drawdance/pixels.h
+	drawdance/player.cpp
+	drawdance/player.h
 	drawdance/selection.cpp
 	drawdance/selection.h
 	drawdance/selectionset.cpp
