@@ -323,6 +323,8 @@ typedef struct DP_ProjectInfoSnapshot {
 
 typedef struct DP_ProjectInfoOverview {
     long long session_id;
+    int source_type;
+    const char *source_param;
     const char *protocol;
     double opened_at;
     double closed_at;

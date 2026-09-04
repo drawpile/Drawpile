@@ -7115,9 +7115,9 @@ static int project_info_overview(DP_Project *prj,
                                  void *user)
 {
     sqlite3_stmt *stmt = ps_prepare_ephemeral(
-        prj,
-        "select session_id, protocol, flags, opened_at, closed_at, thumbnail\n"
-        "from sessions order by session_id");
+        prj, "select session_id, source_type, source_param, protocol, flags,\n"
+             "       opened_at, closed_at, thumbnail\n"
+             "from sessions order by session_id");
     if (!stmt) {
         return DP_PROJECT_INFO_ERROR_PREPARE;
     }
@@ -7125,16 +7125,19 @@ static int project_info_overview(DP_Project *prj,
     bool error;
     while (ps_exec_step(prj, stmt, &error)) {
         long long session_id = sqlite3_column_int64(stmt, 0);
-        const char *protocol = (const char *)sqlite3_column_text(stmt, 1);
-        unsigned int flags = DP_int_to_uint(sqlite3_column_int(stmt, 2));
-        double opened_at = sqlite3_column_double(stmt, 3);
-        double closed_at = sqlite3_column_double(stmt, 4);
-        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 5);
-        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 5);
+        int source_type = sqlite3_column_int(stmt, 1);
+        const char *source_param = (const char *)sqlite3_column_text(stmt, 2);
+        const char *protocol = (const char *)sqlite3_column_text(stmt, 3);
+        unsigned int flags = DP_int_to_uint(sqlite3_column_int(stmt, 4));
+        double opened_at = sqlite3_column_double(stmt, 5);
+        double closed_at = sqlite3_column_double(stmt, 6);
+        const unsigned char *thumbnail_data = sqlite3_column_blob(stmt, 7);
+        size_t thumbnail_size = (size_t)sqlite3_column_bytes(stmt, 7);
         DP_ProjectInfo info = {
             DP_PROJECT_INFO_TYPE_OVERVIEW,
-            {.overview = {session_id, protocol, opened_at, closed_at,
-                          thumbnail_data, thumbnail_size, flags}}};
+            {.overview = {session_id, source_type, source_param, protocol,
+                          opened_at, closed_at, thumbnail_data, thumbnail_size,
+                          flags}}};
         callback(user, &info);
     }
     sqlite3_finalize(stmt);

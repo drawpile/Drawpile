@@ -3,20 +3,28 @@
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/drawdance/player.h"
+#include "libclient/drawdance/project.h"
 #include "libclient/import/recordingconverter.h"
 #include "libclient/io/files.h"
 #include "libclient/io/pathinfo.h"
+#include "libclient/utils/asynctaskrunnable.h"
 #include "libclient/utils/scopedoverridecursor.h"
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFile>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QItemDelegate>
 #include <QLabel>
 #include <QListWidget>
+#include <QPixmap>
+#include <QPointer>
 #include <QProgressBar>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QStackedWidget>
+#include <QTemporaryFile>
 #include <QThreadPool>
 #include <QVBoxLayout>
 #include <algorithm>
@@ -26,12 +34,249 @@
 
 namespace dialogs {
 
+namespace {
+class LoadTask : public AsyncTask {
+public:
+	explicit LoadTask(const QString &path)
+		: m_path(path)
+	{
+	}
+
+	const QString &path() const { return m_path; }
+
+	const QVector<ProjectEditDialog::Entry> &entries() { return m_entries; }
+
+	AsyncTaskResult run() override
+	{
+		if(isCancelled()) {
+			return AsyncTaskResult::cancelled();
+		}
+
+		QFile inputFile(m_path);
+		if(!inputFile.open(QIODevice::ReadOnly)) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog",
+					"Error %1 opening input file: %2")
+					.arg(int(inputFile.error()))
+					.arg(inputFile.errorString()));
+		}
+
+		if(isCancelled()) {
+			return AsyncTaskResult::cancelled();
+		}
+
+		QTemporaryFile tempFile;
+		if(!tempFile.open()) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog",
+					"Error %1 opening temporary file: %2")
+					.arg(int(tempFile.error()))
+					.arg(tempFile.errorString()));
+		}
+
+		if(isCancelled()) {
+			return AsyncTaskResult::cancelled();
+		}
+
+		QString copyError;
+		if(!io::copyFileContents(inputFile, tempFile, copyError)) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog",
+					"Error copying to temporary file: %1")
+					.arg(copyError));
+		}
+		tempFile.close();
+
+		if(isCancelled()) {
+			return AsyncTaskResult::cancelled();
+		}
+
+		QString tempPath = tempFile.fileName();
+		DP_ProjectCheckResult projectCheck =
+			drawdance::Project::checkPath(tempPath);
+
+		if(isCancelled()) {
+			return AsyncTaskResult::cancelled();
+		}
+
+		switch(projectCheck.result) {
+		case DP_PROJECT_CHECK_PROJECT:
+			return loadProject(tempPath);
+		case DP_PROJECT_CHECK_CANVAS:
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog",
+					"No recording in dpcs file."));
+		case DP_PROJECT_CHECK_NONE:
+			break;
+		}
+		return loadRecording(tempPath);
+	}
+
+private:
+	void loadProjectSession(const DP_ProjectInfoOverview &overview)
+	{
+		QString sourceParam;
+		if(overview.source_param) {
+			sourceParam = QString::fromUtf8(overview.source_param);
+		}
+
+		QImage thumbnail;
+		if(overview.thumbnail_data && overview.thumbnail_size > 0) {
+			if(!thumbnail.loadFromData(
+				   overview.thumbnail_data, int(overview.thumbnail_size))) {
+				qWarning("Failed to load project session thumbnail");
+			}
+		}
+
+		m_entries.append(
+			{m_path, sourceParam, thumbnail, overview.session_id,
+			 overview.source_type, true});
+	}
+
+	AsyncTaskResult loadProject(const QString &tempPath)
+	{
+		drawdance::Project project;
+		if(!project.open(
+			   tempPath,
+			   DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY)) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog", "Failed to open project: %1")
+					.arg(DP_error()));
+		}
+
+		int infoResult = project.info(
+			DP_PROJECT_INFO_FLAG_OVERVIEW, [&](const DP_ProjectInfo &info) {
+				if(info.type == DP_PROJECT_INFO_TYPE_OVERVIEW) {
+					loadProjectSession(info.overview);
+				} else {
+					qWarning("Unexpected project info type %d", int(info.type));
+				}
+			});
+		if(infoResult != 0) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog", "Failed to read project: %1")
+					.arg(DP_error()));
+		}
+
+		if(m_entries.isEmpty()) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog",
+					"Project contains no sessions."));
+		}
+
+		return AsyncTaskResult::ok();
+	}
+
+	AsyncTaskResult loadRecording(const QString &tempPath)
+	{
+		drawdance::Player player;
+		DP_LoadResult loadResult;
+		if(!player.open(DP_PLAYER_TYPE_GUESS, tempPath, &loadResult)) {
+			if(loadResult == DP_LOAD_RESULT_UNKNOWN_FORMAT) {
+				return AsyncTaskResult::errorProceed(
+					QCoreApplication::translate(
+						"dialogs::ProjectEditDialog", "Unknown file format."));
+			} else {
+				return AsyncTaskResult::errorProceed(
+					QCoreApplication::translate(
+						"dialogs::ProjectEditDialog",
+						"Failed to open recording: %1")
+						.arg(DP_error()));
+			}
+		}
+
+		if(!player.isCompatible()) {
+			return AsyncTaskResult::errorProceed(
+				QCoreApplication::translate(
+					"dialogs::ProjectEditDialog", "Incompatible recording."));
+		}
+
+		m_entries.append({m_path, QString(), QImage(), 0LL, 0, false});
+		return AsyncTaskResult::ok();
+	}
+
+	const QString m_path;
+	QVector<ProjectEditDialog::Entry> m_entries;
+};
+
+class EntryDelegate final : public QItemDelegate {
+public:
+	static constexpr int ICON_SIZE = 100;
+
+	explicit EntryDelegate(QObject *parent = nullptr)
+		: QItemDelegate(parent)
+	{
+	}
+
+	void paint(
+		QPainter *painter, const QStyleOptionViewItem &option,
+		const QModelIndex &index) const override
+	{
+		QStyleOptionViewItem opt = setOptions(index, option);
+		opt.decorationSize = QSize(ICON_SIZE, ICON_SIZE);
+		QItemDelegate::paint(painter, opt, index);
+	}
+
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index)
+		const override
+	{
+		QSize size = QItemDelegate::sizeHint(option, index);
+		int minHeight = ICON_SIZE + 8;
+		if(size.height() < minHeight) {
+			size.setHeight(minHeight);
+		}
+		return size;
+	}
+};
+}
+
+QString ProjectEditDialog::Entry::id() const
+{
+	if(project) {
+		return QStringLiteral("%1:%2").arg(sessionId).arg(path);
+	} else {
+		return QStringLiteral(":%1").arg(path);
+	}
+}
+
+QString ProjectEditDialog::Entry::text() const
+{
+	QString basename = io::PathInfo(path).basename();
+	if(project) {
+		return QStringLiteral("%1\n%2").arg(
+			basename, QCoreApplication::translate(
+						  "dialogs::ProjectEditDialog", "Project session %1")
+						  .arg(sessionId));
+	} else {
+		return QStringLiteral("%1\n%2").arg(
+			basename, QCoreApplication::translate(
+						  "dialogs::ProjectEditDialog", "Recording"));
+	}
+}
+
+QString ProjectEditDialog::Entry::toolTip() const
+{
+	if(project) {
+		return QStringLiteral("%1\n%2:%3")
+			.arg(path, QString::number(sourceType), sourceParam);
+	} else {
+		return path;
+	}
+}
+
 ProjectEditDialog::ProjectEditDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	setWindowTitle(tr("Convert Recordings"));
+	setWindowTitle(tr("Edit Project"));
 	utils::makeModal(this);
-	resize(400, 300);
+	resize(500, 600);
 
 	QVBoxLayout *dlgLayout = new QVBoxLayout(this);
 
@@ -46,6 +291,7 @@ ProjectEditDialog::ProjectEditDialog(QWidget *parent)
 	inputLayout->setContentsMargins(0, 0, 0, 0);
 
 	m_inputList = new QListWidget;
+	m_inputList->setItemDelegate(new EntryDelegate(m_inputList));
 	m_inputList->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_inputList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	m_inputList->setDragEnabled(true);
@@ -207,18 +453,42 @@ void ProjectEditDialog::promptForInputFiles()
 void ProjectEditDialog::addInputPaths(const QStringList &paths)
 {
 	if(!paths.isEmpty()) {
-		QVector<int> indexesToSelect;
+		QVector<AsyncTask *> tasks;
+		tasks.reserve(paths.size());
 		for(const QString &path : paths) {
-			handleInputPath(path, indexesToSelect);
+			tasks.append(new LoadTask(path));
 		}
 
-		if(!indexesToSelect.isEmpty()) {
-			std::sort(indexesToSelect.begin(), indexesToSelect.end());
-			m_inputList->setCurrentRow(indexesToSelect.constLast());
-			setSelectedIndexes(indexesToSelect);
-		}
+		AsyncTaskRunnable *runnable = new AsyncTaskRunnable(tasks);
+		QProgressDialog *progressDlg = new QProgressDialog(this);
+		progressDlg->setLabelText(tr("Loading…"));
+
+		connect(
+			progressDlg, &QProgressDialog::canceled, runnable,
+			&AsyncTaskRunnable::cancel, Qt::DirectConnection);
+		connect(
+			this, &ProjectEditDialog::destroyed, runnable,
+			&AsyncTaskRunnable::cancel, Qt::DirectConnection);
+		connect(
+			runnable, &AsyncTaskRunnable::progress, progressDlg,
+			&QProgressDialog::setValue, Qt::QueuedConnection);
+		connect(
+			runnable, &AsyncTaskRunnable::destroyed, progressDlg,
+			&QProgressDialog::deleteLater, Qt::QueuedConnection);
+		connect(
+			runnable, &AsyncTaskRunnable::runFinished, runnable,
+			[runnable, dlg = QPointer<ProjectEditDialog>(this)](int taskCount) {
+				if(!dlg.isNull() && !runnable->isCancelled()) {
+					dlg->handleLoadFinished(runnable, taskCount);
+				}
+				runnable->deleteLater();
+			},
+			Qt::QueuedConnection);
+
+		progressDlg->show();
+		runnable->setAutoDelete(false);
+		QThreadPool::globalInstance()->start(runnable);
 	}
-	updateButtons();
 }
 
 void ProjectEditDialog::accept()
@@ -311,25 +581,82 @@ void ProjectEditDialog::updateButtons()
 	m_saveButton->setEnabled(count != 0);
 }
 
-void ProjectEditDialog::handleInputPath(
-	const QString &path, QVector<int> &outIndexesToSelect)
+void ProjectEditDialog::handleLoadFinished(
+	AsyncTaskRunnable *runnable, int taskCount)
 {
+	QVector<int> indexesToSelect;
+	QStringList errors;
+
+	for(int i = 0; i < taskCount; ++i) {
+		LoadTask *task = static_cast<LoadTask *>(runnable->taskAt(i));
+		switch(task->result().status()) {
+		case AsyncTaskStatus::Ok:
+			for(const Entry &entry : task->entries()) {
+				handleInputEntry(entry, indexesToSelect);
+			}
+			break;
+		case AsyncTaskStatus::Error:
+			errors.append(
+				QStringLiteral("<li><strong>%1</strong>: %2</li>")
+					.arg(
+						io::PathInfo(task->path()).basename().toHtmlEscaped(),
+						task->result().errorMessage().toHtmlEscaped()));
+			break;
+		case AsyncTaskStatus::Ready:
+		case AsyncTaskStatus::Cancelled:
+			break;
+		}
+	}
+
+	if(!indexesToSelect.isEmpty()) {
+		std::sort(indexesToSelect.begin(), indexesToSelect.end());
+		m_inputList->setCurrentRow(indexesToSelect.constLast());
+		setSelectedIndexes(indexesToSelect);
+	}
+
+	updateButtons();
+
+	if(!errors.isEmpty()) {
+		utils::showWarning(
+			this, tr("Error"),
+			tr("Failed to load %n file(s).", nullptr, errors.size()),
+			QStringLiteral("<ul>%1</ul>").arg(errors.join(QString())));
+	}
+}
+
+void ProjectEditDialog::handleInputEntry(
+	const Entry &entry, QVector<int> &outIndexesToSelect)
+{
+	QString id = entry.id();
+
 	int count = m_inputList->count();
 	for(int i = 0; i < count; ++i) {
 		QListWidgetItem *item = m_inputList->item(i);
-		if(item->data(PathRole).toString() == path) {
+		if(item->data(IdRole).toString() == id) {
 			outIndexesToSelect.append(i);
 			return;
 		}
 	}
 
 	QListWidgetItem *item = new QListWidgetItem;
-	item->setText(io::PathInfo(path).basename());
-	item->setToolTip(path);
-	item->setData(PathRole, path);
+	item->setText(entry.text());
+	item->setToolTip(entry.toolTip());
+	item->setData(PathRole, entry.path);
+	item->setData(IdRole, id);
 	item->setFlags(
 		item->flags() | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled |
 		Qt::ItemNeverHasChildren);
+
+	QPixmap thumbnail;
+	if(!entry.thumbnail.isNull() &&
+	   thumbnail.convertFromImage(entry.thumbnail) && !thumbnail.isNull()) {
+		item->setIcon(QIcon(thumbnail));
+	} else if(entry.project) {
+		item->setIcon(QIcon::fromTheme(QStringLiteral("tools")));
+	} else {
+		item->setIcon(QIcon::fromTheme(QStringLiteral("media-playback-start")));
+	}
+
 	m_inputList->addItem(item);
 	outIndexesToSelect.append(count);
 }

@@ -3,9 +3,12 @@
 #define DESKTOP_DIALOGS_PROJECTEDITDIALOG_H
 #include "libclient/io/tempfile.h"
 #include <QDialog>
+#include <QImage>
 #include <QSharedPointer>
+#include <QString>
 #include <QVector>
 
+class AsyncTaskRunnable;
 class QLabel;
 class QProgressBar;
 class QListWidget;
@@ -21,6 +24,19 @@ namespace dialogs {
 class ProjectEditDialog final : public QDialog {
 	Q_OBJECT
 public:
+	struct Entry {
+		QString path;
+		QString sourceParam;
+		QImage thumbnail;
+		long long sessionId;
+		int sourceType;
+		bool project;
+
+		QString id() const;
+		QString text() const;
+		QString toolTip() const;
+	};
+
 	explicit ProjectEditDialog(QWidget *parent = nullptr);
 
 	void promptForInputFiles();
@@ -39,11 +55,13 @@ protected:
 private:
 	enum Roles {
 		PathRole = Qt::UserRole,
+		IdRole,
 	};
 
 	void updateButtons();
 
-	void handleInputPath(const QString &path, QVector<int> &outIndexesToSelect);
+	void handleLoadFinished(AsyncTaskRunnable *runnable, int taskCount);
+	void handleInputEntry(const Entry &entry, QVector<int> &outIndexesToSelect);
 
 	void removeSelected();
 	void moveUpSelected();
