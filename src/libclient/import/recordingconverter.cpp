@@ -3,23 +3,18 @@ extern "C" {
 #include <dpcommon/input.h>
 #include <dpcommon/timing.h>
 #include <dpengine/playback.h>
-#include <dpengine/player.h>
 #include <dpengine/project.h>
 #include <dpimpex/image_impex.h>
 #include <dpmsg/message.h>
 }
 #include "libclient/drawdance/global.h"
-#include "libclient/import/loadresult.h"
+#include "libclient/drawdance/player.h"
 #include "libclient/import/recordingconverter.h"
 #include "libclient/net/message.h"
 #include <QUuid>
 #include <memory>
 
 namespace {
-
-struct PlayerCleanup {
-	void operator()(DP_Player *player) const { DP_player_free(player); }
-};
 
 struct ProjectCleanup {
 	void operator()(DP_Project *project) const { DP_project_close(project); }
@@ -108,32 +103,15 @@ void RecordingConverter::run()
 
 	for(int i = 0; i < pathCount; ++i) {
 		const QString &path = m_paths[i];
-		QByteArray pathBytes = path.toUtf8();
-		DP_Input *input = DP_file_input_new_from_path(pathBytes.constData());
-		if(!input) {
+		drawdance::Player player;
+		if(!player.open(DP_PLAYER_TYPE_GUESS, path)) {
 			Q_EMIT conversionFailed(
-				tr("Failed to open input file %1.").arg(path),
+				tr("Failed to open recording %1.").arg(path),
 				QString::fromUtf8(DP_error()));
 			return;
 		}
 
-		if(isCancelled()) {
-			Q_EMIT conversionCancelled();
-			return;
-		}
-
-		DP_LoadResult loadResult;
-		std::unique_ptr<DP_Player, PlayerCleanup> player(DP_player_new(
-			DP_PLAYER_TYPE_GUESS, pathBytes.constData(), input, &loadResult));
-		if(!player) {
-			Q_EMIT conversionFailed(
-				tr("Failed to open recording %1: %2")
-					.arg(path, getLoadResultMessage(loadResult)),
-				QString::fromUtf8(DP_error()));
-			return;
-		}
-
-		if(!DP_player_compatible(player.get())) {
+		if(!player.isCompatible()) {
 			Q_EMIT conversionFailed(tr("Incompatible recording."));
 			return;
 		}
@@ -195,15 +173,7 @@ void RecordingConverter::run()
 			}
 
 			net::Message msg;
-			DP_PlayerResult playerResult;
-			{
-				DP_Message *rawMsg = nullptr;
-				playerResult = DP_player_step(player.get(), true, &rawMsg);
-				if(rawMsg) {
-					msg = net::Message::noinc(rawMsg);
-				}
-			}
-
+			DP_PlayerResult playerResult = player.step(true, msg);
 			if(playerResult == DP_PLAYER_SUCCESS) {
 				if(nextHasTime) {
 					timeMsec += DP_message_guess_msecs(msg.get(), &nextHasTime);
@@ -248,7 +218,7 @@ void RecordingConverter::run()
 			int percent = qBound(
 				0,
 				int((double(i) * percentPerFile) +
-					(DP_player_progress(player.get()) * percentPerFile) + 0.5),
+					(player.progress() * percentPerFile) + 0.5),
 				100);
 			if(percent != lastPercent) {
 				lastPercent = percent;
@@ -278,7 +248,7 @@ void RecordingConverter::run()
 				if(thumbnailResult != 0) {
 					qWarning(
 						"Error %d saving session thumbnail for %s",
-						thumbnailResult, pathBytes.constData());
+						thumbnailResult, qUtf8Printable(path));
 				}
 			} else {
 				int saveResult = DP_project_session_save(

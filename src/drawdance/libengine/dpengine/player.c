@@ -280,6 +280,20 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
     return player;
 }
 
+DP_Player *DP_player_new_from_path(DP_PlayerType type, const char *path,
+                                   DP_LoadResult *out_result)
+{
+    DP_ASSERT(path);
+    DP_Input *input = DP_file_input_new_from_path(path);
+    if (input) {
+        return DP_player_new(type, path, input, out_result);
+    }
+    else {
+        assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
+        return NULL;
+    }
+}
+
 void DP_player_free(DP_Player *player)
 {
     if (player) {
