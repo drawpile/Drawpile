@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "desktop/filewrangler.h"
+extern "C" {
+#include <dpengine/project.h>
+}
 #include "cmake-config/config.h"
+#include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -29,10 +32,6 @@
 #include <dpcommon/platform_qt.h>
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #	include "desktop/dialogs/filetypedialog.h"
-#else
-extern "C" {
-#	include <dpengine/project.h>
-}
 #endif
 
 Q_LOGGING_CATEGORY(lcDpFileWrangler, "net.drawpile.filewrangler", QtWarningMsg)
@@ -693,22 +692,14 @@ bool FileWrangler::confirmFlatten(
 FileWrangler::OverwriteAction
 FileWrangler::confirmOverwrite(const QString &path, DP_SaveImageType type) const
 {
-	// On Android, the operating system creates the file for us, so it
-	// will always exist at this point. In practice, it will always be a
-	// new file, because the OS refuses to overwrite files.
-#	ifdef Q_OS_ANDROID
-	Q_UNUSED(path);
-	Q_UNUSED(type);
-	return OverwriteAction::Replace;
-#	else
-	QFileInfo fileInfo(path);
-	if(fileInfo.exists()) {
+	io::PathInfo pathInfo(path);
+	if(pathInfo.hasContent()) {
 		if(canAppend(path, type)) {
 			QMessageBox box(
 				QMessageBox::Question, tr("Replace Project"),
 				tr("The project file %1 already exists. Do you want to append "
 				   "to it or replace it?")
-					.arg(fileInfo.fileName()),
+					.arg(pathInfo.basename()),
 				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
 				parentWidget());
 			box.setInformativeText(
@@ -730,7 +721,7 @@ FileWrangler::confirmOverwrite(const QString &path, DP_SaveImageType type) const
 			QMessageBox box(
 				QMessageBox::Question, tr("Replace Image"),
 				tr("The file %1 already exists, do you want to replace it?")
-					.arg(fileInfo.fileName()),
+					.arg(pathInfo.basename()),
 				QMessageBox::Yes | QMessageBox::No, parentWidget());
 			box.button(QMessageBox::Yes)->setText(tr("Yes, replace"));
 			box.button(QMessageBox::No)->setText(tr("No, keep"));
@@ -744,10 +735,8 @@ FileWrangler::confirmOverwrite(const QString &path, DP_SaveImageType type) const
 	} else {
 		return OverwriteAction::Replace;
 	}
-#	endif
 }
 
-#	ifndef Q_OS_ANDROID
 bool FileWrangler::canAppend(const QString &path, DP_SaveImageType type) const
 {
 	if(type == DP_SAVE_IMAGE_PROJECT) {
@@ -783,7 +772,6 @@ bool FileWrangler::canAppend(const QString &path, DP_SaveImageType type) const
 		return false;
 	}
 }
-#	endif
 #endif
 
 QString FileWrangler::guessExtension(

@@ -159,9 +159,7 @@ private:
 	OverwriteAction
 	confirmOverwrite(const QString &path, DP_SaveImageType type) const;
 
-#	ifndef Q_OS_ANDROID
 	bool canAppend(const QString &path, DP_SaveImageType type) const;
-#	endif
 #endif
 
 	static QString

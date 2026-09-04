@@ -46,6 +46,8 @@ public:
 
 	static QString extractExtension(const QString &s);
 
+	bool hasContent() const;
+
 private:
 	static constexpr unsigned int TYPE_EMPTY = 0u;
 	static constexpr unsigned int TYPE_PATH = 1u;
