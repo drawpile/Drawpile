@@ -244,7 +244,9 @@ QString FileWrangler::saveImage(Document *doc, bool exported) const
 	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
 		return saveImageAs(doc, exported, DP_SAVE_IMAGE_UNKNOWN, false);
 	} else if(exported || confirmFlatten(doc, path, type)) {
-		doc->saveCanvasAs(path, type, exported, true);
+		doc->saveCanvasAs(
+			path, type, exported, true,
+			canCopyPrevious(path, doc->projectPath(), type));
 		return path;
 	} else {
 		return QString();
@@ -303,13 +305,15 @@ QString FileWrangler::saveImageAs(
 				qCDebug(
 					lcDpFileWrangler, "Saving canvas as '%s'",
 					qUtf8Printable(filename));
-				doc->saveCanvasAs(filename, type, exported, false);
+				doc->saveCanvasAs(
+					filename, type, exported, false,
+					canCopyPrevious(filename, doc->projectPath(), type));
 				return filename;
 			case OverwriteAction::Append:
 				qCDebug(
 					lcDpFileWrangler, "Appending canvas to '%s'",
 					qUtf8Printable(filename));
-				doc->saveCanvasAs(filename, type, exported, true);
+				doc->saveCanvasAs(filename, type, exported, true, false);
 				return filename;
 			}
 		} else {
@@ -332,7 +336,8 @@ QString FileWrangler::savePreResetImageAs(
 	DP_SaveImageType type = guessType(intendedName);
 
 	if(!path.isEmpty() && confirmFlatten(doc, path, type)) {
-		doc->saveCanvasStateAs(path, type, canvasState, false, false, false);
+		doc->saveCanvasStateAs(
+			path, type, canvasState, false, false, false, false);
 		return path;
 	} else {
 		return QString{};
@@ -769,6 +774,22 @@ bool FileWrangler::canAppend(const QString &path, DP_SaveImageType type) const
 
 	} else {
 		// Other file types are always overwritten.
+		return false;
+	}
+}
+
+bool FileWrangler::canCopyPrevious(
+	const QString &path, const QString &prevPath, DP_SaveImageType type) const
+{
+	if(type == DP_SAVE_IMAGE_PROJECT && !prevPath.isEmpty()) {
+		// With project files it makes sense that if the user saves to a new
+		// file, they want to carry over the entire project, not just the
+		// current session.
+		io::PathInfo prevPathInfo(prevPath);
+		return !prevPathInfo.isSamePath(path) &&
+			   prevPathInfo.looksLikeProjectFile();
+	} else {
+		// Other file types just save the current session anyway.
 		return false;
 	}
 }

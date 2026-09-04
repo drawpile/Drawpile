@@ -47,6 +47,7 @@ Unreleased Version 2.3.1-pre
  * Fix: A crash when resizing the canvas smaller while a lasso selection is being transformed. Thanks greendyno for reporting.
  * Feature: Repairing dppr and dpcs files via File > Repair File. If the file is detected to be corrupted, you will also be prompted to repair it when opening or recovering the file.
  * Feature: The the position, zoom, rotation, mirror and flip state of the view is now saved in dppr files. This state is restored when resuming a session on Android and following it can be toggled in the playback dialog.
+ * Feature: When using Save As to save to a new dppr file, the current dppr file will be used as the basis for it, rather than an empty file. Thanks tiar for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

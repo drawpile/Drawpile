@@ -1182,33 +1182,38 @@ void Document::clearConfig()
 }
 
 void Document::saveCanvasAs(
-	const QString &filename, DP_SaveImageType type, bool exported, bool append)
+	const QString &filename, DP_SaveImageType type, bool exported, bool append,
+	bool copyPrevious)
 {
 	saveCanvasStateAs(
 		filename, type, m_canvas->paintEngine()->viewCanvasState(), true,
-		exported, append);
+		exported, append, copyPrevious);
 }
 
 void Document::saveCanvasStateAs(
 	const QString &path, DP_SaveImageType type,
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
-	bool exported, bool append)
+	bool exported, bool append, bool copyPrevious)
 {
 	if(exported) {
 		setExportPath(path, type);
 	} else {
 		setCurrentPath(path, type);
 	}
-	saveCanvasState(canvasState, isCurrentState, exported, append, path, type);
+	saveCanvasState(
+		canvasState, isCurrentState, exported, append, copyPrevious, path,
+		type);
 }
 
 void Document::saveCanvasState(
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
-	bool exported, bool append, const QString &path, DP_SaveImageType type)
+	bool exported, bool append, bool copyPrevious, const QString &path,
+	DP_SaveImageType type)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
+	QString prevProjectPath;
 	if(isCurrentState) {
 		if(!exported || type == DP_SAVE_IMAGE_ORA ||
 		   type == DP_SAVE_IMAGE_PROJECT_CANVAS ||
@@ -1217,6 +1222,9 @@ void Document::saveCanvasState(
 		}
 
 		if(type == DP_SAVE_IMAGE_PROJECT) {
+			if(copyPrevious) {
+				prevProjectPath = m_projectPath;
+			}
 			setProjectPath(path);
 			m_projectDirty = false;
 		}
@@ -1225,7 +1233,8 @@ void Document::saveCanvasState(
 	Q_EMIT canvasSaveStarted();
 
 	if(type == DP_SAVE_IMAGE_PROJECT) {
-		ProjectSaver *projectSaver = new ProjectSaver(append, false, path);
+		ProjectSaver *projectSaver =
+			new ProjectSaver(append, false, path, prevProjectPath);
 		connect(
 			projectSaver, &ProjectSaver::saveSucceeded, this,
 			&Document::onSaveSucceeded);
@@ -2003,7 +2012,8 @@ void Document::downloadCanvasState(
 	QString path = tempDir->filePath(fileName);
 
 	if(type == DP_SAVE_IMAGE_PROJECT) {
-		ProjectSaver *projectSaver = new ProjectSaver(false, false, path);
+		ProjectSaver *projectSaver =
+			new ProjectSaver(false, false, path, QString());
 		projectSaver->setAutoDelete(false);
 		connect(
 			projectSaver, &ProjectSaver::saveSucceeded, this,
@@ -2134,7 +2144,7 @@ void Document::saveToTemporaryProjectFile(
 {
 	bool haveProjectPath = !m_projectPath.isEmpty();
 	ProjectSaver *projectSaver =
-		new ProjectSaver(haveProjectPath, true, m_projectPath);
+		new ProjectSaver(haveProjectPath, true, m_projectPath, QString());
 
 	connect(
 		projectSaver, &ProjectSaver::saveSucceeded, this,

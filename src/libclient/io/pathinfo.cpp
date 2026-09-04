@@ -88,6 +88,18 @@ bool PathInfo::hasContent() const
 	return type() != TYPE_EMPTY && QFile(m_path).size() > 0;
 }
 
+bool PathInfo::isSamePath(const QString &path) const
+{
+	return path == m_path || QFileInfo(path) == fileInfo();
+}
+
+bool PathInfo::looksLikeProjectFile() const
+{
+	return type() != TYPE_EMPTY &&
+		   DP_project_check_path(m_path.toUtf8().constData()).result ==
+			   DP_PROJECT_CHECK_PROJECT;
+}
+
 void PathInfo::initFlags()
 {
 	if(m_path.isEmpty()) {

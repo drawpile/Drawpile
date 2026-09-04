@@ -10,6 +10,7 @@ extern "C" {
 }
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/projectsaver.h"
+#include "libclient/io/files.h"
 #include <QFile>
 #include <QLoggingCategory>
 #include <QTemporaryFile>
@@ -18,9 +19,11 @@ Q_LOGGING_CATEGORY(
 	lcDpProjectSaver, "net.drawpile.export.projectsaver", QtWarningMsg)
 
 ProjectSaver::ProjectSaver(
-	bool append, bool saveToTemporaryFile, const QString &path, QObject *parent)
+	bool append, bool saveToTemporaryFile, const QString &path,
+	const QString &copyFromPath, QObject *parent)
 	: QObject(parent)
 	, m_path(path)
+	, m_copyFromPath(copyFromPath)
 	, m_append(append)
 	, m_saveToTemporaryFile(saveToTemporaryFile)
 {
@@ -71,6 +74,12 @@ int ProjectSaver::handleSaveStart()
 {
 	m_saveTimer.start();
 
+	// Appending to an existing
+	if(m_append && !m_copyFromPath.isEmpty()) {
+		DP_error_set("Both append and copy from path passed");
+		return int(DP_SAVE_RESULT_BAD_ARGUMENTS);
+	}
+
 	QTemporaryFile tempFile;
 #ifndef Q_OS_ANDROID
 	if(!m_saveToTemporaryFile) {
@@ -104,6 +113,7 @@ int ProjectSaver::handleSaveStart()
 			return int(DP_SAVE_RESULT_OPEN_ERROR);
 		}
 
+		QString copyError;
 		bool copyOk = CanvasSaverRunnable::copyFileContents(saveFile, tempFile);
 		saveFile.close();
 		if(copyOk) {
@@ -111,6 +121,35 @@ int ProjectSaver::handleSaveStart()
 		} else {
 			result = int(DP_SAVE_RESULT_WRITE_ERROR);
 		}
+
+	} else if(!m_copyFromPath.isEmpty()) {
+		QFile fromFile(m_copyFromPath);
+		if(fromFile.open(QIODevice::ReadOnly)) {
+			QString copyError;
+			if(!io::copyFileContents(fromFile, tempFile, copyError)) {
+				qCWarning(
+					lcDpProjectSaver, "Error copying from existing file: %s",
+					qUtf8Printable(copyError));
+				if(!tempFile.resize(0)) {
+					qCWarning(
+						lcDpProjectSaver,
+						"Error %d truncating temporary file: %s",
+						int(tempFile.error()),
+						qUtf8Printable(tempFile.errorString()));
+				}
+			}
+			fromFile.close();
+		} else {
+			qCWarning(
+				lcDpProjectSaver, "Error %d opening copy from file '%s': %s",
+				int(fromFile.error()), qUtf8Printable(m_copyFromPath),
+				qUtf8Printable(fromFile.errorString()));
+		}
+		// Failing to copy the existing file still lets us save the current
+		// session, so just keep going instead of leaving the user unable to
+		// save altogether.
+		result = int(DP_SAVE_RESULT_SUCCESS);
+
 	} else {
 		qCDebug(
 			lcDpProjectSaver, "Target file '%s' does not exist",

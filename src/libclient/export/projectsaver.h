@@ -20,7 +20,7 @@ class ProjectSaver final : public QObject, public QRunnable {
 public:
 	explicit ProjectSaver(
 		bool append, bool saveToTemporaryFile, const QString &path,
-		QObject *parent = nullptr);
+		const QString &copyFromPath, QObject *parent = nullptr);
 
 	net::Message getProjectSaveRequestMessage();
 
@@ -58,6 +58,7 @@ private:
 	bool shouldAppend(QFile &saveFile) const;
 
 	const QString m_path;
+	const QString m_copyFromPath;
 	drawdance::CanvasState m_canvasState;
 	QElapsedTimer m_saveTimer;
 	QString m_tempPath;

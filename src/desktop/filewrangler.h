@@ -160,6 +160,9 @@ private:
 	confirmOverwrite(const QString &path, DP_SaveImageType type) const;
 
 	bool canAppend(const QString &path, DP_SaveImageType type) const;
+	bool canCopyPrevious(
+		const QString &path, const QString &prevPath,
+		DP_SaveImageType type) const;
 #endif
 
 	static QString

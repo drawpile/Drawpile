@@ -48,6 +48,10 @@ public:
 
 	bool hasContent() const;
 
+	bool isSamePath(const QString &path) const;
+
+	bool looksLikeProjectFile() const;
+
 private:
 	static constexpr unsigned int TYPE_EMPTY = 0u;
 	static constexpr unsigned int TYPE_PATH = 1u;
