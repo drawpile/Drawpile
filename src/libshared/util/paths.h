@@ -5,8 +5,6 @@
 
 #include <QStandardPaths>
 
-class QFileDevice;
-
 namespace utils {
 namespace paths {
 
@@ -50,25 +48,6 @@ inline QString autosaveWritablePath(const QString &fileName = QString())
 {
 	return writablePath(QStringLiteral("autosave"), fileName);
 }
-
-bool looksLikeCanvasReplacingSuffix(const QString &suffix);
-
-bool slurp(const QString &path, QByteArray &outBytes, QString &outError);
-
-bool copyFile(
-	const QString &sourcePath, const QString &targetPath, QString &outError);
-
-bool copySaveFile(
-	const QString &sourcePath, const QString &targetPath, QString &outError);
-
-bool copyFileContents(
-	QFileDevice &sourceFile, QFileDevice &targetFile, QString &outError);
-
-// Gives a reasonable format for a project file, either in MiB or GiB (presented
-// without the overly correct i), avoiding smaller units because at best it's
-// useless to know just how tiny a tiny file is. Worse, users may not know the
-// more unusual smaller units or misread them, thinking that they're huge.
-QString formatFileSize(qint64 sizeInBytes);
 
 }
 }

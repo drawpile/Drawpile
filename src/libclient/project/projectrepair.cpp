@@ -3,8 +3,8 @@ extern "C" {
 #include <dpcommon/threading.h>
 #include <dpengine/project.h>
 }
+#include "libclient/io/files.h"
 #include "libclient/project/projectrepair.h"
-#include "libshared/util/paths.h"
 #include <QFileInfo>
 
 namespace project {
@@ -33,14 +33,14 @@ ProjectRepair::Status ProjectRepair::runRepair()
 		return Status::Cancelled;
 	}
 
-	utils::TempFile inputFile;
+	io::TempFile inputFile;
 	if(!inputFile.setTemporaryPath()) {
 		m_errorMessage = tr("Failed to set temporary input path.");
 		return Status::ErrorInputPath;
 	}
 
 	QString inputPath = inputFile.path();
-	if(!utils::paths::copyFile(m_path, inputPath, m_errorMessage)) {
+	if(!io::copyFile(m_path, inputPath, m_errorMessage)) {
 		return Status::ErrorInputFile;
 	}
 
@@ -83,7 +83,7 @@ ProjectRepair::Status ProjectRepair::runRepair()
 		return Status::Cancelled;
 	}
 
-	m_repairedFile.setTempFile(new utils::TempFile);
+	m_repairedFile.setTempFile(new io::TempFile);
 	if(!m_repairedFile.setTemporaryPath()) {
 		m_errorMessage = tr("Failed to set temporary output path.");
 		return Status::ErrorOutputPath;

@@ -6,11 +6,11 @@
 #include "desktop/widgets/noscroll.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/import/recordingconverter.h"
+#include "libclient/io/pathinfo.h"
+#include "libclient/io/tempfile.h"
 #include "libclient/project/projectwrangler.h"
-#include "libclient/utils/pathinfo.h"
 #include "libclient/utils/qtguicompat.h"
 #include "libclient/utils/strings.h"
-#include "libclient/utils/tempfile.h"
 #include <QAction>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
@@ -413,7 +413,7 @@ void ProjectPlaybackDialog::openRecording(
 	m_basename = basename;
 	updateTitle();
 
-	m_tempFileHolder = new utils::TempFileHolder(new utils::TempFile, this);
+	m_tempFileHolder = new io::TempFileHolder(new io::TempFile, this);
 	if(m_tempFileHolder->setTemporaryPath()) {
 		m_messageBar->setRange(0, 100);
 		m_messageBar->setValue(0);
@@ -484,7 +484,7 @@ widgets::GroupedToolButton *ProjectPlaybackDialog::makePlaybackButton(
 void ProjectPlaybackDialog::updateTitle()
 {
 	setWindowTitle(QStringLiteral("%1 - %2").arg(
-		utils::PathInfo::stripExtension(m_basename),
+		io::PathInfo::stripExtension(m_basename),
 		QCoreApplication::translate("dialogs::PlaybackDialog", "Playback")));
 }
 

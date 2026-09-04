@@ -3,7 +3,7 @@ extern "C" {
 #include <dpmsg/acl.h>
 }
 #include "libclient/utils/hostpresetmodel.h"
-#include "libshared/util/paths.h"
+#include "libclient/io/files.h"
 #include <QDir>
 #include <QFile>
 #include <QJsonDocument>
@@ -199,7 +199,7 @@ bool HostPresetModel::loadOldPreset(const QString &path, QByteArray &outData)
 {
 	QByteArray bytes;
 	QString error;
-	if(!paths::slurp(path, bytes, error)) {
+	if(!io::slurp(path, bytes, error)) {
 		qWarning(
 			"Could not read old preset '%s': %s", qUtf8Printable(path),
 			qUtf8Printable(error));

@@ -2,7 +2,7 @@
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libshared/util/paths.h"
+#include "libclient/utils/strings.h"
 #include <QAction>
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -169,7 +169,7 @@ QString ProjectRecordingSettingsDialog::getLimitText(
 		return tr(" This is %1% of the current %2 limit.")
 			.arg(
 				QString::number(percent),
-				utils::paths::formatFileSize(sizeLimitInBytes));
+				strings::formatFileSize(sizeLimitInBytes));
 	}
 }
 
@@ -178,7 +178,7 @@ void ProjectRecordingSettingsDialog::updateSizeLimitLabelText()
 	QString currentSizeText =
 		//: %1 is a file size, like "1 GB".
 		tr("The current autorecovery file size is %1.")
-			.arg(utils::paths::formatFileSize(m_lastReportedSizeInBytes));
+			.arg(strings::formatFileSize(m_lastReportedSizeInBytes));
 
 	QString limitSizeText =
 		getLimitText(m_lastReportedSizeInBytes, m_sizeLimitInBytes);

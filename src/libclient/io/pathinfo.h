@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef LIBSHARED_UTIL_PATHINFO
-#define LIBSHARED_UTIL_PATHINFO
+#ifndef LIBSHARED_IO_PATHINFO
+#define LIBSHARED_IO_PATHINFO
 #include <QFileInfo>
 #include <QString>
 
-namespace utils {
+namespace io {
 
 // Kind of like QFileInfo, except that it understands Android content URIs and
 // doesn't use weird terminology in its method names.

@@ -31,7 +31,7 @@ class AnnotationItem;
 }
 
 #ifdef DP_HAVE_ACTIVITYBROADCAST
-namespace net {
+namespace io {
 class ActivityBroadcast;
 }
 #endif
@@ -140,7 +140,7 @@ public:
 
 #ifdef DP_HAVE_ACTIVITYBROADCAST
 	virtual void
-	connectActivityBroadcast(net::ActivityBroadcast *activityBroadcast) = 0;
+	connectActivityBroadcast(io::ActivityBroadcast *activityBroadcast) = 0;
 #endif
 
 	virtual void connectCanvasFrame(widgets::CanvasFrame *canvasFrame) = 0;

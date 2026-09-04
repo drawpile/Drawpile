@@ -2,7 +2,7 @@
 #include "desktop/widgets/projectrecordingstatusbutton.h"
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "libclient/canvas/canvasmodel.h"
-#include "libshared/util/paths.h"
+#include "libclient/utils/strings.h"
 #include <QEvent>
 #include <QIcon>
 
@@ -43,8 +43,7 @@ bool ProjectRecordingStatusButton::event(QEvent *e)
 				m_canvas->projectRecordingLastReportedSizeInBytes();
 			tip.append(
 				tr("Autorecovery is enabled, file size is %1.")
-					.arg(
-						utils::paths::formatFileSize(lastReportedSizeInBytes)));
+					.arg(strings::formatFileSize(lastReportedSizeInBytes)));
 
 			size_t sizeLimitInBytes =
 				m_canvas->projectRecordingSizeLimitInBytes();

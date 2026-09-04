@@ -4,9 +4,9 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/import/recordingconverter.h"
-#include "libclient/utils/pathinfo.h"
+#include "libclient/io/files.h"
+#include "libclient/io/pathinfo.h"
 #include "libclient/utils/scopedoverridecursor.h"
-#include "libshared/util/paths.h"
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QFile>
@@ -239,7 +239,7 @@ void ProjectEditDialog::accept()
 		inputPaths.append(m_inputList->item(i)->data(PathRole).toString());
 	}
 
-	m_tempFile.reset(new utils::TempFile);
+	m_tempFile.reset(new io::TempFile);
 	if(!m_tempFile->setTemporaryPath()) {
 		onConversionFailed(
 			tr("Failed to initialize temporary file."), QString());
@@ -324,7 +324,7 @@ void ProjectEditDialog::handleInputPath(
 	}
 
 	QListWidgetItem *item = new QListWidgetItem;
-	item->setText(utils::PathInfo(path).basename());
+	item->setText(io::PathInfo(path).basename());
 	item->setToolTip(path);
 	item->setData(PathRole, path);
 	item->setFlags(
@@ -456,8 +456,7 @@ bool ProjectEditDialog::copyTemporaryToOutputFile(QString &outErrorMessage)
 		return false;
 	}
 
-	if(!utils::paths::copyFileContents(
-		   inputFile, outputFile, outErrorMessage)) {
+	if(!io::copyFileContents(inputFile, outputFile, outErrorMessage)) {
 		return false;
 	}
 

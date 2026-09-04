@@ -16,12 +16,12 @@ namespace canvas {
 class PaintEngine;
 }
 
-namespace project {
-class ProjectWrangler;
+namespace io {
+class TempFileHolder;
 }
 
-namespace utils {
-class TempFileHolder;
+namespace project {
+class ProjectWrangler;
 }
 
 namespace widgets {
@@ -131,7 +131,7 @@ private:
 	QString m_pauseTip;
 	QIcon m_playIcon;
 	QIcon m_pauseIcon;
-	utils::TempFileHolder *m_tempFileHolder = nullptr;
+	io::TempFileHolder *m_tempFileHolder = nullptr;
 	project::ProjectWrangler *m_projectWrangler = nullptr;
 	double m_currentPlaybackSeconds = 0.0;
 	double m_totalPlaybackSeconds = 0.0;

@@ -137,6 +137,12 @@ target_sources(dpclient PRIVATE
 	import/loadresult.h
 	import/recordingconverter.cpp
 	import/recordingconverter.h
+	io/files.cpp
+	io/files.h
+	io/pathinfo.cpp
+	io/pathinfo.h
+	io/tempfile.cpp
+	io/tempfile.h
 	net/announcementlist.cpp
 	net/announcementlist.h
 	net/authlistmodel.cpp
@@ -257,8 +263,6 @@ target_sources(dpclient PRIVATE
 	utils/listservermodel.h
 	utils/logging.cpp
 	utils/logging.h
-	utils/pathinfo.cpp
-	utils/pathinfo.h
 	utils/qtguicompat.cpp
 	utils/qtguicompat.h
 	utils/scopedoverridecursor.h
@@ -276,8 +280,6 @@ target_sources(dpclient PRIVATE
 	utils/statedatabase.h
 	utils/strings.cpp
 	utils/strings.h
-	utils/tempfile.cpp
-	utils/tempfile.h
 	utils/transformquad.h
 	utils/usernamevalidator.cpp
 	utils/usernamevalidator.h
@@ -358,8 +360,8 @@ endif()
 if(HAVE_UDPSOCKETS)
 	target_compile_definitions(dpclient PUBLIC DP_HAVE_ACTIVITYBROADCAST=1)
 	target_sources(dpclient PRIVATE
-		net/activitybroadcast.cpp
-		net/activitybroadcast.h
+		io/activitybroadcast.cpp
+		io/activitybroadcast.h
 	)
 endif()
 

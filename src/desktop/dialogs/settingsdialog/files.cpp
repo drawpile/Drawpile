@@ -6,7 +6,7 @@
 #include "desktop/widgets/noscroll.h"
 #include "libclient/config/config.h"
 #include "libclient/utils/logging.h"
-#include "libshared/util/paths.h"
+#include "libclient/utils/strings.h"
 #include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
@@ -221,7 +221,7 @@ void Files::clearLogFiles()
 			this, tr("Clear Log Files"),
 			tr("Do you want to delete %n log file(s)?", nullptr, count),
 			tr("It/They take(s) up %1 of space.", nullptr, count)
-				.arg(utils::paths::formatFileSize(totalSize)));
+				.arg(strings::formatFileSize(totalSize)));
 		connect(box, &QMessageBox::accepted, this, [infos] {
 			for(const QFileInfo &info : infos) {
 				QFile file(info.filePath());

@@ -2,7 +2,7 @@
 #ifndef LIBCLIENT_IMPORT_RECORDINGCONVERTER_H
 #define LIBCLIENT_IMPORT_RECORDINGCONVERTER_H
 #include "libclient/drawdance/canvasstate.h"
-#include "libclient/utils/tempfile.h"
+#include "libclient/io/tempfile.h"
 #include <QAtomicInt>
 #include <QObject>
 #include <QRunnable>
@@ -21,7 +21,7 @@ class RecordingConverter final : public QObject, public QRunnable {
 public:
 	RecordingConverter(
 		const QStringList &paths,
-		const QSharedPointer<utils::TempFile> &outputFile, bool saveSnapshots,
+		const QSharedPointer<io::TempFile> &outputFile, bool saveSnapshots,
 		QObject *parent = nullptr);
 
 	void run() override;
@@ -41,7 +41,7 @@ private:
 	static bool shouldRecordMessage(const net::Message &msg);
 
 	QStringList m_paths;
-	QSharedPointer<utils::TempFile> m_tempFile;
+	QSharedPointer<io::TempFile> m_tempFile;
 	QAtomicInt m_cancelled;
 	bool m_saveSnapshots;
 };

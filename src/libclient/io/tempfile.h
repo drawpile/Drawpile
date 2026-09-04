@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef LIBCLIENT_UTILS_TEMPFILE_H
-#define LIBCLIENT_UTILS_TEMPFILE_H
+#ifndef LIBCLIENT_IO_TEMPFILE_H
+#define LIBCLIENT_IO_TEMPFILE_H
 #include <QObject>
 #include <QSharedPointer>
 #include <QString>
 
-namespace utils {
+namespace io {
 
 class TempFile final {
 	Q_DISABLE_COPY_MOVE(TempFile)

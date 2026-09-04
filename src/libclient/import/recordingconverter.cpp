@@ -48,7 +48,7 @@ struct PlaybackCleanup {
 namespace impex {
 
 RecordingConverter::RecordingConverter(
-	const QStringList &paths, const QSharedPointer<utils::TempFile> &tempFile,
+	const QStringList &paths, const QSharedPointer<io::TempFile> &tempFile,
 	bool saveSnapshots, QObject *parent)
 	: QObject(parent)
 	, m_paths(paths)

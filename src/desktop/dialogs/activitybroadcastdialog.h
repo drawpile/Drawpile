@@ -11,7 +11,7 @@ class QPushButton;
 class QStackedWidget;
 class QPlainTextEdit;
 
-namespace net {
+namespace io {
 class ActivityBroadcast;
 }
 
@@ -23,8 +23,8 @@ class ActivityBroadcastDialog final : public QDialog {
 public:
 	explicit ActivityBroadcastDialog(QWidget *parent = nullptr);
 
-	net::ActivityBroadcast *activityBroadcast() { return m_activityBroadcast; }
-	void setActivityBroadcast(net::ActivityBroadcast *activityBroadcast);
+	io::ActivityBroadcast *activityBroadcast() { return m_activityBroadcast; }
+	void setActivityBroadcast(io::ActivityBroadcast *activityBroadcast);
 
 Q_SIGNALS:
 	void activityBroadcastStarted();
@@ -40,7 +40,7 @@ private:
 
 	void addBroadcastedActivityToLog(const QByteArray &bytes);
 
-	net::ActivityBroadcast *m_activityBroadcast = nullptr;
+	io::ActivityBroadcast *m_activityBroadcast = nullptr;
 	QStackedWidget *m_stack;
 	QWidget *m_startPage;
 	KisSliderSpinBox *m_portSpinner;

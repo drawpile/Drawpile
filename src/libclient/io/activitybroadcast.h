@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef LIBCLIENT_NET_ACTIVITYBROADCAST_H
-#define LIBCLIENT_NET_ACTIVITYBROADCAST_H
+#ifndef LIBCLIENT_IO_ACTIVITYBROADCAST_H
+#define LIBCLIENT_IO_ACTIVITYBROADCAST_H
 #ifndef DP_HAVE_ACTIVITYBROADCAST
 #	error "DP_HAVE_ACTIVITYBROADCAST undefined, should not include this header"
 #endif
@@ -15,7 +15,7 @@ namespace brushes {
 class ActiveBrush;
 }
 
-namespace net {
+namespace io {
 
 class ActivityBroadcast final : public QObject {
 	Q_OBJECT

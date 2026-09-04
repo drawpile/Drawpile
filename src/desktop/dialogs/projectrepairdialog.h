@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_DIALOGS_PROJECTREPAIRDIALOG_H
 #define DESKTOP_DIALOGS_PROJECTREPAIRDIALOG_H
-#include "libclient/utils/tempfile.h"
+#include "libclient/io/tempfile.h"
 #include <QDialog>
 
 class QLabel;
@@ -46,7 +46,7 @@ private:
 	QPushButton *m_finishedCloseButton;
 	QString m_path;
 	QString m_ext;
-	utils::TempFileHolder m_repairedFile = nullptr;
+	io::TempFileHolder m_repairedFile = nullptr;
 	ProgressStage m_progressStage = ProgressStage::Initial;
 };
 

@@ -2,7 +2,7 @@
 #include "desktop/utils/recents.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
-#include "libclient/utils/pathinfo.h"
+#include "libclient/io/pathinfo.h"
 #include "libclient/utils/statedatabase.h"
 #include "libclient/utils/wasmpersistence.h"
 #include <QFileInfo>
@@ -338,7 +338,7 @@ void Recents::updateFileMenu(QMenu *menu) const
 	menu->setEnabled(!paths.isEmpty());
 	int count = paths.size();
 	for(int i = 0; i < count; ++i) {
-		PathInfo pathInfo(paths[i]);
+		io::PathInfo pathInfo(paths[i]);
 		QAction *a = menu->addAction(QString(i < 10 ? "&%1. %2" : "%1. %2")
 										 .arg(i + 1)
 										 .arg(pathInfo.basename()));

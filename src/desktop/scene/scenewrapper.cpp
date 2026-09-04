@@ -23,7 +23,7 @@
 #include <QAction>
 #include <functional>
 #ifdef DP_HAVE_ACTIVITYBROADCAST
-#	include "libclient/net/activitybroadcast.h"
+#	include "libclient/io/activitybroadcast.h"
 #endif
 
 using std::placeholders::_6;
@@ -313,7 +313,7 @@ void SceneWrapper::connectActions(const Actions &actions)
 
 #ifdef DP_HAVE_ACTIVITYBROADCAST
 void SceneWrapper::connectActivityBroadcast(
-	net::ActivityBroadcast *activityBroadcast)
+	io::ActivityBroadcast *activityBroadcast)
 {
 	connect(
 		m_view, &CanvasView::penDown, activityBroadcast,

@@ -2,7 +2,7 @@
 #include "desktop/dialogs/activitybroadcastdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libclient/net/activitybroadcast.h"
+#include "libclient/io/activitybroadcast.h"
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QLabel>
@@ -82,7 +82,7 @@ ActivityBroadcastDialog::ActivityBroadcastDialog(QWidget *parent)
 }
 
 void ActivityBroadcastDialog::setActivityBroadcast(
-	net::ActivityBroadcast *activityBroadcast)
+	io::ActivityBroadcast *activityBroadcast)
 {
 	m_activityBroadcast = activityBroadcast;
 	if(m_activityBroadcast) {
@@ -118,7 +118,7 @@ bool ActivityBroadcastDialog::tryStart(QString &outError)
 		return false;
 	}
 
-	m_activityBroadcast = new net::ActivityBroadcast;
+	m_activityBroadcast = new io::ActivityBroadcast;
 	if(!m_activityBroadcast->start(m_portSpinner->value(), &outError)) {
 		m_activityBroadcast = nullptr;
 		delete m_activityBroadcast;
@@ -131,7 +131,7 @@ bool ActivityBroadcastDialog::tryStart(QString &outError)
 void ActivityBroadcastDialog::connectActivityBroadcast()
 {
 	connect(
-		m_activityBroadcast, &net::ActivityBroadcast::activityBroadcasted, this,
+		m_activityBroadcast, &io::ActivityBroadcast::activityBroadcasted, this,
 		&ActivityBroadcastDialog::addBroadcastedActivityToLog);
 }
 

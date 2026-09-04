@@ -6,8 +6,8 @@ extern "C" {
 }
 #include "libclient/drawdance/global.h"
 #include "libclient/drawdance/viewstate.h"
+#include "libclient/io/files.h"
 #include "libclient/project/projectwrangler.h"
-#include "libshared/util/paths.h"
 #include <QFile>
 #include <QLoggingCategory>
 #include <QTemporaryFile>
@@ -371,7 +371,7 @@ void ProjectWrangler::handleOpenSync(
 		}
 
 		QString error;
-		if(!utils::paths::copyFileContents(sourceFile, *tempFile, error)) {
+		if(!io::copyFileContents(sourceFile, *tempFile, error)) {
 			qCWarning(
 				lcDpProjectWrangler,
 				"Error copying file contents from '%s' to '%s': %s",

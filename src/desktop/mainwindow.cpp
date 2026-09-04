@@ -89,6 +89,8 @@ extern "C" {
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/import/loadresult.h"
+#include "libclient/io/files.h"
+#include "libclient/io/pathinfo.h"
 #include "libclient/net/client.h"
 #include "libclient/net/login.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
@@ -96,10 +98,10 @@ extern "C" {
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/images.h"
 #include "libclient/utils/logging.h"
-#include "libclient/utils/pathinfo.h"
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
+#include "libclient/utils/strings.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libclient/view/enums.h"
 #include "libshared/net/netutils.h"
@@ -169,7 +171,7 @@ extern "C" {
 #endif
 #if DP_HAVE_ACTIVITYBROADCAST
 #	include "desktop/dialogs/activitybroadcastdialog.h"
-#	include "libclient/net/activitybroadcast.h"
+#	include "libclient/io/activitybroadcast.h"
 #endif
 #ifdef Q_OS_MACOS
 static constexpr auto CTRL_KEY = Qt::META;
@@ -1171,7 +1173,7 @@ void MainWindow::updateTitle()
 {
 	QString name;
 	if(m_doc->haveCurrentPath()) {
-		name = utils::PathInfo(m_doc->currentPath()).basenameWithoutExtension();
+		name = io::PathInfo(m_doc->currentPath()).basenameWithoutExtension();
 	} else {
 		name = tr("Untitled");
 	}
@@ -1229,7 +1231,7 @@ void MainWindow::updateExportPath(const QString &path)
 		action->setEnabled(false);
 	} else {
 		action->setText(
-			tr("Export Again to %1").arg(utils::PathInfo(path).basename()));
+			tr("Export Again to %1").arg(io::PathInfo(path).basename()));
 		action->setEnabled(!path.isEmpty() && !m_doc->isSaveInProgress());
 	}
 }
@@ -1827,7 +1829,7 @@ void MainWindow::showProjectRecordingSizeLimitWarning(
 		   "Autorecovery will be disabled if the limit is reached.")
 			.arg(
 				QString::number(percent),
-				utils::paths::formatFileSize(qint64(sizeLimitInBytes))));
+				strings::formatFileSize(qint64(sizeLimitInBytes))));
 }
 
 void MainWindow::showProjectRecordingError(const QString &message)
@@ -2998,7 +3000,7 @@ void MainWindow::openDebugDumpPath(
 			new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
 		m_dumpPlaybackDialog->setWindowTitle(
 			QStringLiteral("%1 - %2")
-				.arg(utils::PathInfo::stripExtension(basename))
+				.arg(io::PathInfo::stripExtension(basename))
 				.arg(m_dumpPlaybackDialog->windowTitle()));
 		m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
 		m_dumpPlaybackDialog->show();
@@ -5756,12 +5758,12 @@ void MainWindow::dropUrl(const QUrl &url)
 {
 	if(url.isLocalFile()) {
 		QString path = url.toLocalFile();
-		QString suffix = utils::PathInfo(path).extension();
+		QString suffix = io::PathInfo(path).extension();
 		if(suffix.compare(QStringLiteral("zip"), Qt::CaseInsensitive) == 0) {
 			m_dockBrushPalette->importBrushesFrom(path);
 		} else if(
 			m_canvasView->canvas() &&
-			!utils::paths::looksLikeCanvasReplacingSuffix(suffix)) {
+			!io::looksLikeCanvasReplacingSuffix(suffix)) {
 			pasteFilePath(path);
 		} else {
 			questionOpenFileWindowReplacement([this, path](bool ok) {
@@ -9873,7 +9875,7 @@ void MainWindow::showActivityBroadcastDialog()
 		connect(
 			dlg, &dialogs::ActivityBroadcastDialog::activityBroadcastStarted,
 			this, [this, dlg] {
-				net::ActivityBroadcast *activityBroadcast =
+				io::ActivityBroadcast *activityBroadcast =
 					dlg->activityBroadcast();
 				activityBroadcast->setParent(this);
 				activityBroadcast->setObjectName(
@@ -9882,15 +9884,14 @@ void MainWindow::showActivityBroadcastDialog()
 				tools::ToolController *toolCtrl = m_doc->toolCtrl();
 				connect(
 					toolCtrl, &tools::ToolController::activeBrushChanged,
-					activityBroadcast,
-					&net::ActivityBroadcast::sendActiveBrush);
+					activityBroadcast, &io::ActivityBroadcast::sendActiveBrush);
 				connect(
 					toolCtrl, &tools::ToolController::activeToolChanged,
-					activityBroadcast, &net::ActivityBroadcast::sendActiveTool);
+					activityBroadcast, &io::ActivityBroadcast::sendActiveTool);
 				connect(
 					toolCtrl, &tools::ToolController::foregroundColorChanged,
 					activityBroadcast,
-					&net::ActivityBroadcast::sendForegroundColor);
+					&io::ActivityBroadcast::sendForegroundColor);
 				m_canvasView->connectActivityBroadcast(activityBroadcast);
 
 				activityBroadcast->sendActiveBrush(toolCtrl->activeBrush());
@@ -9899,8 +9900,8 @@ void MainWindow::showActivityBroadcastDialog()
 					toolCtrl->foregroundColor());
 			});
 
-		net::ActivityBroadcast *activityBroadcast =
-			findChild<net::ActivityBroadcast *>(
+		io::ActivityBroadcast *activityBroadcast =
+			findChild<io::ActivityBroadcast *>(
 				QStringLiteral("activitybroadcast"),
 				Qt::FindDirectChildrenOnly);
 		if(activityBroadcast) {
@@ -9924,7 +9925,7 @@ QString MainWindow::extractLoadPath(
 	}
 
 	if(outBasename) {
-		*outBasename = utils::PathInfo(path).basename();
+		*outBasename = io::PathInfo(path).basename();
 	}
 	return loadPath;
 }

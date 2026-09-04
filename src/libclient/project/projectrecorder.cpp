@@ -9,6 +9,7 @@ extern "C" {
 #include "libclient/config/config.h"
 #include "libclient/project/projectrecorder.h"
 #include "libclient/project/recoverymodel.h"
+#include "libclient/utils/strings.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/ulid.h"
 #include <QFile>
@@ -554,7 +555,7 @@ void ProjectRecorder::checkSizeLimit()
 		Q_EMIT errorOccurred(
 			//: %1 is the size, something like "5 GB".
 			tr("Size limit of %1 exceeded")
-				.arg(utils::paths::formatFileSize(qint64(m_sizeLimitInBytes))));
+				.arg(strings::formatFileSize(qint64(m_sizeLimitInBytes))));
 	}
 }
 

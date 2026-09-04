@@ -3,8 +3,10 @@
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/thumbnail.h"
+#include "libclient/io/files.h"
 #include "libclient/project/recoverymodel.h"
 #include "libclient/utils/scopedoverridecursor.h"
+#include "libclient/utils/strings.h"
 #include "libshared/util/paths.h"
 #include <QCheckBox>
 #include <QDateTime>
@@ -95,7 +97,7 @@ RecoveryEntryWidget::RecoveryEntryWidget(
 
 	sizeLabel->setText(
 		// %1 is a file size, such as "1.23 MB".
-		tr("Size: %1").arg(utils::paths::formatFileSize(entry.fileSize())));
+		tr("Size: %1").arg(strings::formatFileSize(entry.fileSize())));
 
 	QLabel *statusLabel = new QLabel;
 	statusLabel->setWordWrap(true);
@@ -220,7 +222,7 @@ void RecoveryEntryWidget::download()
 {
 	QByteArray bytes;
 	QString error;
-	if(utils::paths::slurp(m_path, bytes, error)) {
+	if(io::slurp(m_path, bytes, error)) {
 		FileWrangler(this).saveFileContent(getSuggestedExportBaseName(), bytes);
 		utils::showInformation(
 			this, tr("Download Started"),
@@ -286,7 +288,7 @@ bool RecoveryEntryWidget::saveTo(const QString &savePath, QString &outError)
 {
 	// We don't use QFile::copy here because that doesn't work on Android.
 	utils::ScopedOverrideCursor overrideCursor;
-	return utils::paths::copySaveFile(m_path, savePath, outError);
+	return io::copySaveFile(m_path, savePath, outError);
 }
 
 bool RecoveryEntryWidget::compareSaved(

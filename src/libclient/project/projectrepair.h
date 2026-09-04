@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_PROJECT_PROJECTREPAIR_H
 #define LIBCLIENT_PROJECT_PROJECTREPAIR_H
-#include "libclient/utils/tempfile.h"
+#include "libclient/io/tempfile.h"
 #include <QAtomicInt>
 #include <QObject>
 #include <QRunnable>
@@ -40,7 +40,7 @@ public:
 	FileType fileType() const { return m_fileType; }
 	bool verified() const { return m_verified; }
 	const QString &errorMessage() const { return m_errorMessage; }
-	utils::TempFileHolder &repairedFile() { return m_repairedFile; }
+	io::TempFileHolder &repairedFile() { return m_repairedFile; }
 
 	void run() override;
 
@@ -59,7 +59,7 @@ private:
 	QString m_path;
 	QString m_errorMessage;
 	drawdance::Database m_db;
-	utils::TempFileHolder m_repairedFile = nullptr;
+	io::TempFileHolder m_repairedFile = nullptr;
 	QAtomicInt m_cancel;
 	Status m_status = Status::Ok;
 	FileType m_fileType = FileType::Unknown;

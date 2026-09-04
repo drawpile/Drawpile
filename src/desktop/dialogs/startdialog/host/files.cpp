@@ -2,7 +2,7 @@
 #include "desktop/dialogs/startdialog/host/files.h"
 #include "desktop/dialogs/startdialog/host/categories.h"
 #include "desktop/filewrangler.h"
-#include "libclient/utils/pathinfo.h"
+#include "libclient/io/pathinfo.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QRegularExpression>
@@ -140,7 +140,7 @@ QString SessionSettingsImporter::getBansName(const QString &path)
 	if(path.isEmpty()) {
 		return QStringLiteral("bans");
 	} else {
-		QString baseName = utils::PathInfo(path).basename();
+		QString baseName = io::PathInfo(path).basename();
 		return baseName.isEmpty() ? path : baseName;
 	}
 }

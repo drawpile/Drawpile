@@ -6,8 +6,8 @@ extern "C" {
 #include "libclient/drawdance/annotation.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/io/files.h"
 #include "libclient/utils/annotations.h"
-#include "libshared/util/paths.h"
 #include <QElapsedTimer>
 #include <QPainter>
 #include <QRandomGenerator>
@@ -130,7 +130,7 @@ bool CanvasSaverRunnable::copyFileContents(
 	QFileDevice &sourceFile, QFileDevice &targetFile)
 {
 	QString error;
-	if(utils::paths::copyFileContents(sourceFile, targetFile, error)) {
+	if(io::copyFileContents(sourceFile, targetFile, error)) {
 		return true;
 	} else {
 		QByteArray errorBytes = error.toUtf8();

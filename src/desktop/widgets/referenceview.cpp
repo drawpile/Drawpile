@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/referenceview.h"
 #include "desktop/utils/qtguicompat.h"
+#include "libclient/io/pathinfo.h"
 #include "libclient/utils/cursors.h"
-#include "libclient/utils/pathinfo.h"
 #include "libclient/view/zoom.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
@@ -436,7 +436,7 @@ bool ReferenceView::canHandleDrop(const QMimeData *mimeData)
 			QUrl url = mimeData->urls().first();
 			if(url.isLocalFile()) {
 				if(QImageReader::supportedImageFormats().contains(
-					   utils::PathInfo(url.toLocalFile())
+					   io::PathInfo(url.toLocalFile())
 						   .extension()
 						   .toCaseFolded()
 						   .toUtf8())) {

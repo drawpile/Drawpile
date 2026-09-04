@@ -2,10 +2,10 @@
 #include "desktop/dialogs/projectrepairdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/io/files.h"
+#include "libclient/io/pathinfo.h"
 #include "libclient/project/projectrepair.h"
-#include "libclient/utils/pathinfo.h"
 #include "libclient/utils/scopedoverridecursor.h"
-#include "libshared/util/paths.h"
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QFile>
@@ -217,7 +217,7 @@ void ProjectRepairDialog::requestSave()
 	QString suggestedName =
 		QStringLiteral("%1-fixed%2%3")
 			.arg(
-				utils::PathInfo(m_path).basenameWithoutExtension(),
+				io::PathInfo(m_path).basenameWithoutExtension(),
 				QDateTime::currentDateTime().toString(
 					QStringLiteral("yyyyMMddhhmmss")),
 				m_ext);
@@ -250,7 +250,7 @@ void ProjectRepairDialog::requestSave()
 bool ProjectRepairDialog::saveTo(const QString &path, QString &outError)
 {
 	utils::ScopedOverrideCursor overrideCursor;
-	return utils::paths::copySaveFile(m_repairedFile.path(), path, outError);
+	return io::copySaveFile(m_repairedFile.path(), path, outError);
 }
 
 }

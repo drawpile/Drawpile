@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_DIALOGS_PROJECTEDITDIALOG_H
 #define DESKTOP_DIALOGS_PROJECTEDITDIALOG_H
+#include "libclient/io/tempfile.h"
 #include <QDialog>
 #include <QSharedPointer>
 #include <QVector>
-#include <libclient/utils/tempfile.h>
 
 class QLabel;
 class QProgressBar;
@@ -77,7 +77,7 @@ private:
 	QWidget *m_finishedPage;
 	QLabel *m_finishedLabel;
 	QPushButton *m_finishedOpenButton;
-	QSharedPointer<utils::TempFile> m_tempFile;
+	QSharedPointer<io::TempFile> m_tempFile;
 	QString m_outputPath;
 };
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/net/activitybroadcast.h"
+#include "libclient/io/activitybroadcast.h"
 #include "libclient/brushes/brush.h"
 #include "libclient/tools/tool.h"
 #include <QJsonDocument>
@@ -7,7 +7,7 @@
 #include <QNetworkDatagram>
 #include <QUdpSocket>
 
-namespace net {
+namespace io {
 
 namespace {
 static QJsonObject pointfToJson(const QPointF &p)

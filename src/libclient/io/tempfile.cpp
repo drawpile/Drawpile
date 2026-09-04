@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/utils/tempfile.h"
+#include "libclient/io/tempfile.h"
 #include <QFile>
 #include <QTemporaryFile>
 
-namespace utils {
+namespace io {
 
 TempFile::~TempFile()
 {

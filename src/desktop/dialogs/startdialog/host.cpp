@@ -9,7 +9,7 @@
 #include "desktop/dialogs/startdialog/host/session.h"
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
-#include "libshared/util/paths.h"
+#include "libclient/io/files.h"
 #include <QIcon>
 #include <QScrollArea>
 #include <QStackedWidget>
@@ -177,7 +177,7 @@ void Host::triggerImport()
 			} else if(path) {
 				QByteArray content;
 				QString error;
-				if(utils::paths::slurp(*path, content, error)) {
+				if(io::slurp(*path, content, error)) {
 					importer.importSessionSettings(*path, content);
 				} else {
 					onImportFailed(tr("Failed to read file: %1").arg(error));

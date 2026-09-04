@@ -26,7 +26,7 @@
 #include <QAction>
 #include <functional>
 #ifdef DP_HAVE_ACTIVITYBROADCAST
-#	include "libclient/net/activitybroadcast.h"
+#	include "libclient/io/activitybroadcast.h"
 #endif
 
 using std::placeholders::_6;
@@ -299,7 +299,7 @@ void ViewWrapper::connectActions(const Actions &actions)
 
 #ifdef DP_HAVE_ACTIVITYBROADCAST
 void ViewWrapper::connectActivityBroadcast(
-	net::ActivityBroadcast *activityBroadcast)
+	io::ActivityBroadcast *activityBroadcast)
 {
 	connect(
 		m_controller, &CanvasController::penDown, activityBroadcast,

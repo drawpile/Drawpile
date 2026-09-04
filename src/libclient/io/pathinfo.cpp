@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/utils/pathinfo.h"
+#include "libclient/io/pathinfo.h"
 #ifdef Q_OS_ANDROID
 #	include "libclient/utils/androidutils.h"
 #endif
 
-namespace utils {
+namespace io {
 
 PathInfo::PathInfo(const QString &path)
 	: m_path(path)
