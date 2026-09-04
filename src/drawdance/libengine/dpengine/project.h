@@ -273,6 +273,45 @@ typedef enum DP_ProjectVerifyStatus {
     DP_PROJECT_VERIFY_CANCELLED,
 } DP_ProjectVerifyStatus;
 
+typedef enum DP_ProjectCopyCallbackType {
+    DP_PROJECT_COPY_CALLBACK_SESSION,
+    DP_PROJECT_COPY_CALLBACK_FILTER_SNAPSHOT,
+    DP_PROJECT_COPY_CALLBACK_SNAPSHOT,
+} DP_ProjectCopyCallbackType;
+
+typedef struct DP_ProjectCopyCallbackParamsSession {
+    long long source_session_id;
+    long long target_session_id;
+} DP_ProjectCopyCallbackParamsSession;
+
+typedef struct DP_ProjectCopyCallbackParamsFilterSnapshot {
+    long long snapshot_id;
+    unsigned int flags;
+    int index;
+    int count;
+} DP_ProjectCopyCallbackParamsFilterSnapshot;
+
+typedef struct DP_ProjectCopyCallbackParamsSnapshot {
+    long long source_snapshot_id;
+    long long target_snapshot_id;
+    long long sequence_id;
+    long long continue_session_id;
+    long long continue_sequence_id;
+    unsigned int flags;
+} DP_ProjectCopyCallbackParamsSnapshot;
+
+typedef struct DP_ProjectCopyCallbackParams {
+    DP_ProjectCopyCallbackType type;
+    union {
+        DP_ProjectCopyCallbackParamsSession session;
+        DP_ProjectCopyCallbackParamsFilterSnapshot filter_snapshot;
+        DP_ProjectCopyCallbackParamsSnapshot snapshot;
+    } DP_ANONYMOUS(data);
+} DP_ProjectCopyCallbackParams;
+
+typedef int (*DP_ProjectCopyCallbackFn)(
+    void *user, const DP_ProjectCopyCallbackParams *params);
+
 typedef struct DP_ProjectSessionTimes {
     long long own_work_minutes;
     long long last_sequence_id;
@@ -323,6 +362,8 @@ typedef struct DP_ProjectInfoSnapshot {
 
 typedef struct DP_ProjectInfoOverview {
     long long session_id;
+    int source_type;
+    const char *source_param;
     const char *protocol;
     double opened_at;
     double closed_at;
@@ -363,6 +404,7 @@ typedef enum DP_ProjectPlayerControlType {
     DP_PROJECT_PLAYER_CONTROL_SKIP_SESSIONS,
     DP_PROJECT_PLAYER_CONTROL_PLAY,
     DP_PROJECT_PLAYER_CONTROL_SEEK,
+    DP_PROJECT_PLAYER_CONTROL_SEEK_IDS,
 } DP_ProjectPlayerControlType;
 
 typedef enum DP_ProjectPlayerControlCallbackType {
@@ -377,6 +419,11 @@ typedef int (*DP_ProjectPlayerControlCallbackFn)(
     void *user, DP_ProjectPlayer *pp,
     const DP_ProjectPlayerControlParams *params, int type);
 
+typedef struct DP_ProjectPlayerControlSeekIdsParams {
+    long long session_id;
+    long long sequence_id;
+} DP_ProjectPlayerControlSeekIdsParams;
+
 struct DP_ProjectPlayerControlParams {
     DP_ProjectPlayerControlType type;
     unsigned int control_id;
@@ -387,6 +434,7 @@ struct DP_ProjectPlayerControlParams {
         int undo_point_count;
         int session_delta;
         double seek_seconds;
+        DP_ProjectPlayerControlSeekIdsParams seek_ids;
     } DP_ANONYMOUS(data);
 };
 
@@ -570,6 +618,45 @@ int DP_project_session_save(DP_Project *prj, DP_CanvasState *cs,
                                                    DP_Output *),
                             void *thumb_write_user);
 
+int DP_project_session_save_at(DP_Project *prj, long long session_id,
+                               long long sequence_id, DP_CanvasState *cs,
+                               bool (*thumb_write_fn)(void *, DP_Image *,
+                                                      DP_Output *),
+                               void *thumb_write_user);
+
+// Copies the given sesssion id from the given path into the project. Uses the
+// same header parameters, except replacing the source_param with the given one.
+// The callback will be called along the way to filter sessions and report on
+// how ids get mapped. The filter callback must return 0 to include and any
+// other value to exclude the snapshot. Any other callback must return 0 to
+// continue and any other value to abort and return that value from this
+// function. This leaves several aspects of the session unmapped the fix
+// functions below must be called afterwards to correct the situation! Returns 0
+// on success and a negative value on error, as do all below fix functions.
+int DP_project_session_copy(DP_Project *prj, const char *path,
+                            const char *source_param, long long session_id,
+                            DP_ProjectCopyCallbackFn callback, void *user);
+
+// Replaces the given snapshot with the given canvas state. Used to replace
+// orphaned continued snapshots.
+int DP_project_session_copy_fix_replace_snapshot(DP_Project *prj,
+                                                 long long snapshot_id,
+                                                 long long sequence_id,
+                                                 DP_CanvasState *cs);
+
+// Replaces the continue session id of the given snapshot with the given new
+// session id.
+int DP_project_session_copy_fix_snapshot_continued_session_id(
+    DP_Project *prj, long long snapshot_id, long long new_continued_session_id);
+
+// Retrieves the final session id of the project.
+int DP_project_session_copy_fix_last_session_id(DP_Project *prj,
+                                                long long *out_session_id);
+
+// Clears the continue flag from any messages that don't actually have any
+// snapshots that continue them.
+int DP_project_session_copy_fix_orphaned_continuations(DP_Project *prj);
+
 
 DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
                                                 DP_DrawContext *dc,
@@ -661,6 +748,11 @@ long long DP_project_player_current_session_id(DP_ProjectPlayer *pp);
 long long DP_project_player_current_sequence_id(DP_ProjectPlayer *pp);
 
 DP_CanvasState *DP_project_player_current_canvas_noinc(DP_ProjectPlayer *pp);
+
+DP_CanvasState *
+DP_project_player_current_local_canvas_inc(DP_ProjectPlayer *pp);
+
+DP_DrawContext *DP_project_player_draw_context(DP_ProjectPlayer *pp);
 
 bool DP_project_player_local_state_get_reset(DP_ProjectPlayer *pp,
                                              bool (*fn)(void *, DP_Message *),

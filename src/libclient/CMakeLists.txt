@@ -99,8 +99,12 @@ target_sources(dpclient PRIVATE
 	drawdance/perf.h
 	drawdance/pixels.cpp
 	drawdance/pixels.h
+	drawdance/playback.cpp
+	drawdance/playback.h
 	drawdance/player.cpp
 	drawdance/player.h
+	drawdance/project.cpp
+	drawdance/project.h
 	drawdance/selection.cpp
 	drawdance/selection.h
 	drawdance/selectionset.cpp
@@ -219,6 +223,8 @@ target_sources(dpclient PRIVATE
 	tools/zoom.h
 	utils/annotations.cpp
 	utils/annotations.h
+	utils/asynctaskrunnable.cpp
+	utils/asynctaskrunnable.h
 	utils/avatarlistmodel.cpp
 	utils/avatarlistmodel.h
 	utils/avatarlistmodeldelegate.h

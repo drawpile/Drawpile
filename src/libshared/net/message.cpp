@@ -378,6 +378,11 @@ bool Message::shouldSmoothe() const
 	}
 }
 
+long long Message::guessMsecs(bool &outNextHasTime) const
+{
+	return DP_message_guess_msecs(m_data, &outNextHasTime);
+}
+
 void Message::setUchars(size_t size, unsigned char *out, void *user)
 {
 	if(size > 0) {

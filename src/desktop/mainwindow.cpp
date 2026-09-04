@@ -6558,6 +6558,11 @@ void MainWindow::setupActions()
 		makeAction("projectoverview", tr("Project statistics…"))
 			.noDefaultShortcut();
 #endif
+#ifndef __EMSCRIPTEN__
+	QAction *editProjects =
+		makeAction("editprojects", tr("Merge/split projects…"))
+			.noDefaultShortcut();
+#endif
 #ifdef DRAWPILE_REPAIR_DIALOG
 	QAction *repairFile =
 		makeAction("repairfile", tr("Repair file…")).noDefaultShortcut();
@@ -6669,6 +6674,11 @@ void MainWindow::setupActions()
 		projectOverview, &QAction::triggered, this,
 		&MainWindow::requestProjectOverview);
 #endif
+#ifndef __EMSCRIPTEN__
+	connect(
+		editProjects, &QAction::triggered, this,
+		&MainWindow::showProjectEditDialog);
+#endif
 #ifdef DRAWPILE_REPAIR_DIALOG
 	connect(repairFile, &QAction::triggered, this, &MainWindow::repairProject);
 #endif
@@ -6753,6 +6763,9 @@ void MainWindow::setupActions()
 #endif
 #ifdef DRAWPILE_PROJECT_DIALOG
 	filemenu->addAction(projectOverview);
+#endif
+#ifndef __EMSCRIPTEN__
+	filemenu->addAction(editProjects);
 #endif
 #ifdef DRAWPILE_REPAIR_DIALOG
 	filemenu->addAction(repairFile);

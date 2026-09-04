@@ -192,7 +192,7 @@ QStringList FileWrangler::getProjectEditImportPaths()
 {
 	return showOpenFileListDialogFilters(
 		tr("Recordings"), LastPath::IMAGE,
-		utils::fileFormatFilterList(utils::FileFormatOption::OpenRecordings));
+		utils::openPlaybackFormatFilterList());
 }
 
 QString FileWrangler::getProjectEditExportPath()

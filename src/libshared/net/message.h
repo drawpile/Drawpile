@@ -100,6 +100,7 @@ public:
 	bool serializeWsCompat(QByteArray &buffer) const;
 
 	bool shouldSmoothe() const;
+	long long guessMsecs(bool &outNextHasTime) const;
 
 	static void setUchars(size_t size, unsigned char *out, void *user);
 	static void setUint8s(int count, uint8_t *out, void *user);
