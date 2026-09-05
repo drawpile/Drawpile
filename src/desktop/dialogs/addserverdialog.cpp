@@ -142,7 +142,7 @@ void AddServerDialog::updateFaviconDownloadProgress(
 	} else {
 		d->ui.progressBar->setRange(0, 100);
 		d->ui.progressBar->setValue(
-			qRound(double(bytesTotal) / double(bytesReceived) * 100.0));
+			qRound(double(bytesReceived) / double(bytesTotal) * 100.0));
 	}
 }
 
