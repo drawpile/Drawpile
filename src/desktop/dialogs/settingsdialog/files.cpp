@@ -2,6 +2,7 @@
 #include "desktop/dialogs/settingsdialog/files.h"
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/banner.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/noscroll.h"
 #include "libclient/config/config.h"
@@ -14,8 +15,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QFormLayout>
-#include <QFrame>
-#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -45,34 +44,20 @@ void Files::setUp(config::Config *cfg, QVBoxLayout *layout)
 
 void Files::initAutorecord(config::Config *cfg, QFormLayout *form)
 {
-	QFrame *currentFrame = new QFrame;
-	currentFrame->setFrameShape(QFrame::StyledPanel);
-	currentFrame->setFrameShadow(QFrame::Sunken);
-	form->addRow(currentFrame);
-
-	QHBoxLayout *currentLayout = new QHBoxLayout(currentFrame);
-
-	currentLayout->addWidget(
-		utils::makeIconLabel(
-			QIcon::fromTheme(QStringLiteral("backup")), currentFrame));
-
-	QLabel *currentLabel = new QLabel(
+	widgets::Banner *currentBanner = new widgets::Banner(
+		QIcon::fromTheme(QStringLiteral("backup")),
 		utils::toHtmlWithLink(
 			//: The stuff in [] will turn into a link. Don't remove the [] or
 			//: replace them with different symbols!
 			tr("Changing autorecovery preferences will not affect the status "
 			   "or limits of any running sessions. [Click here to manage "
 			   "autorecovery on your current session.]"),
-			QStringLiteral("#")));
-	currentLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-	currentLabel->setTextFormat(Qt::RichText);
-	currentLabel->setWordWrap(true);
-	currentLayout->addWidget(currentLabel, 1);
+			QStringLiteral("#")),
+		Qt::RichText, false);
+	form->addRow(currentBanner);
 	connect(
-		currentLabel, &QLabel::linkActivated, this,
+		currentBanner, &widgets::Banner::linkActivated, this,
 		&Files::projectRecordingSettingsRequested);
-
-	utils::addFormSpacer(form);
 
 	QCheckBox *autoRecordHost =
 		new QCheckBox(tr("When offline or hosting sessions"));

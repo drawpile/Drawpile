@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/projectrecordingsettingsdialog.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/banner.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/utils/strings.h"
 #include <QAction>
@@ -29,33 +30,19 @@ ProjectRecordingSettingsDialog::ProjectRecordingSettingsDialog(
 	setLayout(dlgLayout);
 
 	if(!settingsOpen) {
-		QFrame *settingsFrame = new QFrame;
-		settingsFrame->setFrameShape(QFrame::StyledPanel);
-		settingsFrame->setFrameShadow(QFrame::Sunken);
-		dlgLayout->addWidget(settingsFrame);
-
-		QHBoxLayout *settingsLayout = new QHBoxLayout(settingsFrame);
-
-		settingsLayout->addWidget(
-			utils::makeIconLabel(
-				QIcon::fromTheme(QStringLiteral("backup")), settingsFrame));
-
-		QLabel *settingsLabel = new QLabel(
+		widgets::Banner *settingsBanner = new widgets::Banner(
+			QIcon::fromTheme(QStringLiteral("backup")),
 			utils::toHtmlWithLink(
 				//: The stuff in [] will turn into a link. Don't remove the []
 				//: or replace them with different symbols!
 				tr("These settings affect only the current session. You can "
 				   "change the defaults [in the preferences]."),
-				QStringLiteral("#")));
-		settingsLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-		settingsLabel->setTextFormat(Qt::RichText);
-		settingsLabel->setWordWrap(true);
-		settingsLayout->addWidget(settingsLabel, 1);
+				QStringLiteral("#")),
+			Qt::RichText, false);
+		dlgLayout->addWidget(settingsBanner);
 		connect(
-			settingsLabel, &QLabel::linkActivated, this,
+			settingsBanner, &widgets::Banner::linkActivated, this,
 			&ProjectRecordingSettingsDialog::preferencesRequested);
-
-		utils::addFormSpacer(dlgLayout);
 	}
 
 	m_enableCheckBox =

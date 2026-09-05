@@ -3,6 +3,7 @@
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/banner.h"
 #include "desktop/widgets/spanawaretreeview.h"
 #include "libclient/config/config.h"
 #include "libclient/net/sessionlistingmodel.h"
@@ -12,6 +13,7 @@
 #include <QAction>
 #include <QCheckBox>
 #include <QClipboard>
+#include <QDesktopServices>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -34,48 +36,20 @@ Browse::Browse(QWidget *parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 
-	m_noListServers = new QWidget;
-	m_noListServers->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_noListServers = new widgets::Banner(
+		QIcon::fromTheme("dialog-information"),
+		QStringLiteral("<p>%1</p><p>%2</p>")
+			.arg(
+				tr("You haven't added any servers yet. You can find some at <a "
+				   "href=\"https://drawpile.net/communities/\">drawpile.net/"
+				   "communities</a>."),
+				tr("To add the public Drawpile server, <a href=\"#\">click "
+				   "here</a>.")),
+		Qt::RichText, false);
 	layout->addWidget(m_noListServers);
-
-	QVBoxLayout *noListServersLayout = new QVBoxLayout;
-	noListServersLayout->setContentsMargins(0, 0, 0, 0);
-	m_noListServers->setLayout(noListServersLayout);
-
-	QHBoxLayout *iconLayout = new QHBoxLayout;
-	iconLayout->setContentsMargins(0, 0, 0, 0);
-	noListServersLayout->addLayout(iconLayout);
-
-	iconLayout->addWidget(utils::makeIconLabel(
-		QIcon::fromTheme("dialog-information"), m_noListServers));
-
-	QVBoxLayout *labelsLayout = new QVBoxLayout;
-	labelsLayout->setContentsMargins(0, 0, 0, 0);
-	iconLayout->addLayout(labelsLayout);
-
-	QLabel *communitiesLabel = new QLabel;
-	communitiesLabel->setOpenExternalLinks(true);
-	communitiesLabel->setWordWrap(true);
-	communitiesLabel->setTextFormat(Qt::RichText);
-	communitiesLabel->setText(
-		tr("You haven't added any servers yet. You can find some at <a "
-		   "href=\"https://drawpile.net/communities/\">drawpile.net/"
-		   "communities</a>."));
-	labelsLayout->addWidget(communitiesLabel);
-
-	QLabel *addPubLabel = new QLabel;
-	addPubLabel->setWordWrap(true);
-	addPubLabel->setTextFormat(Qt::RichText);
-	addPubLabel->setText(tr("To add the public Drawpile server, "
-							"<a href=\"#\">click here</a>."));
-	labelsLayout->addWidget(addPubLabel);
-	connect(addPubLabel, &QLabel::linkActivated, this, [this] {
-		emit addListServerUrlRequested(
-			QUrl{"https://pub.drawpile.net/listing/"});
-	});
-
-	noListServersLayout->addWidget(utils::makeSeparator());
+	connect(
+		m_noListServers, &widgets::Banner::linkActivated, this,
+		&Browse::openBannerLink);
 
 	QHBoxLayout *filterLayout = new QHBoxLayout;
 	layout->addLayout(filterLayout);
@@ -249,6 +223,17 @@ void Browse::resizeEvent(QResizeEvent *event)
 {
 	Page::resizeEvent(event);
 	m_updateColumnsDebounce.setNone();
+}
+
+void Browse::openBannerLink(const QString &link)
+{
+	if(link == QStringLiteral("#")) {
+		Q_EMIT addListServerUrlRequested(
+			QUrl(QStringLiteral("https://pub.drawpile.net/listing/")));
+	} else {
+		QDesktopServices::openUrl(
+			QUrl(QStringLiteral("https://drawpile.net/communities/")));
+	}
 }
 
 void Browse::updateListServers(const QVector<QVariantMap> &settingsListServers)

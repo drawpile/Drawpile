@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/projectdialog.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/banner.h"
 #include "desktop/widgets/spinner.h"
 #include "desktop/widgets/thumbnail.h"
 #include "libclient/project/projectwrangler.h"
@@ -34,50 +35,14 @@ ProjectDialog::ProjectDialog(QWidget *parent)
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
-	QFrame *dirtyFrame = new QFrame;
-	dirtyFrame->setFrameShape(QFrame::StyledPanel);
-	dirtyFrame->setFrameShadow(QFrame::Sunken);
-	layout->addWidget(dirtyFrame);
-
-	QHBoxLayout *dirtyLayout = new QHBoxLayout(dirtyFrame);
-
-	dirtyLayout->addWidget(
-		utils::makeIconLabel(
-			QIcon::fromTheme(QStringLiteral("dialog-information")),
-			dirtyFrame));
-
-	QString dirtyLabelText;
-	dirtyLabelText.append(
+	widgets::Banner *dirtyBanner = new widgets::Banner(
+		QIcon::fromTheme(QStringLiteral("dialog-information")),
 		tr("These statistics only reflect sessions saved in the project. "
 		   "Sessions where you disabled autorecovery or quit without saving "
 		   "and otherwise unsaved changes will not be present.")
-			.toHtmlEscaped());
-
-	QLabel *dirtyLabel = new QLabel(dirtyLabelText);
-	dirtyLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-	dirtyLabel->setTextFormat(Qt::RichText);
-	dirtyLabel->setWordWrap(true);
-	dirtyLayout->addWidget(dirtyLabel, 1);
-
-	QToolButton *dirtyCloseButton = new QToolButton;
-	dirtyCloseButton->setAutoRaise(true);
-	dirtyCloseButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	dirtyCloseButton->setToolTip(tr("Dismiss"));
-	dirtyCloseButton->setIcon(
-		QIcon::fromTheme(QStringLiteral("drawpile_close")));
-	dirtyLayout->addWidget(dirtyCloseButton, 0, Qt::AlignRight | Qt::AlignTop);
-	connect(
-		dirtyCloseButton, &QToolButton::clicked, dirtyFrame,
-		&QFrame::deleteLater);
-
-	QSpacerItem *dirtySpacer = utils::addFormSpacer(layout);
-	connect(
-		dirtyFrame, &QFrame::destroyed, this,
-		[layout, dirtySpacer] {
-			layout->removeItem(dirtySpacer);
-			delete dirtySpacer;
-		},
-		Qt::QueuedConnection);
+			.toHtmlEscaped(),
+		Qt::RichText, true);
+	layout->addWidget(dirtyBanner);
 
 	m_stack = new QStackedWidget;
 	layout->addWidget(m_stack, 1);

@@ -24,6 +24,7 @@ struct ListServer;
 }
 
 namespace widgets {
+class Banner;
 class SpanAwareTreeView;
 }
 
@@ -48,6 +49,7 @@ protected:
 	void resizeEvent(QResizeEvent *event) override;
 
 private slots:
+	void openBannerLink(const QString &link);
 	void updateListServers(const QVector<QVariantMap> &settingsListServers);
 	void periodicRefresh();
 	void showListingContextMenu(const QPoint &pos);
@@ -69,7 +71,7 @@ private:
 	bool isSessionIndex(const QModelIndex &index);
 	bool isListingIndex(const QModelIndex &index);
 
-	QWidget *m_noListServers;
+	widgets::Banner *m_noListServers;
 	QLineEdit *m_filterEdit;
 	QCheckBox *m_closedBox;
 	QCheckBox *m_passwordBox;
