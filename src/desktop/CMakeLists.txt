@@ -411,6 +411,8 @@ target_sources(drawpile PRIVATE
 	view/widgettouchhandler.h
 	widgets/artisticcolorwheel.cpp
 	widgets/artisticcolorwheel.h
+	widgets/banner.cpp
+	widgets/banner.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
 	widgets/canvasframe.cpp
