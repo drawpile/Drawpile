@@ -5,6 +5,7 @@ extern "C" {
 #include <QByteArray>
 #include <QFile>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#    include <QCoreApplication>
 #    include <QJniEnvironment>
 #    include <QJniObject>
 #else
@@ -153,9 +154,16 @@ extern "C" int DP_android_video_encoder_start(DP_AndroidVideoEncoder *ave)
     DP_ASSERT(ave->encoder);
 
     QJniEnvironment env;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QJniObject activity;
+    if (QNativeInterface::QAndroidApplication::isActivityContext()) {
+        activity = QNativeInterface::QAndroidApplication::context();
+    }
+#else
     QJniObject activity = QJniObject::callStaticObjectMethod(
         "org/qtproject/qt5/android/QtNative", "activity",
         "()Landroid/app/Activity;");
+#endif
     if (clear_exception(env) || !check_valid("activity", activity)) {
         return -1;
     }

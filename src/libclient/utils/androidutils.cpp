@@ -205,6 +205,21 @@ QString AndroidExitInfo::buildLogString() const
 }
 
 
+static QJniObject getActivity()
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	return QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+#else
+	if(QNativeInterface::QAndroidApplication::isActivityContext()) {
+		return QNativeInterface::QAndroidApplication::context();
+	} else {
+		return QJniObject();
+	}
+#endif
+}
+
 static bool clearException(QJniEnvironment &env)
 {
 	if(env->ExceptionCheck()) {
@@ -232,9 +247,7 @@ static QJniObject acquireLock(
 	const char *managerClass, const char *newFn, const char *newFnSignature)
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(clearException(env) || !checkValid("activity", activity)) {
 		return QJniObject{};
 	}
@@ -390,9 +403,7 @@ bool androidShowScalingDialog(
 	bool showOnStartup, bool canShowOnStartup)
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(clearException(env) || !checkValid("activity", activity)) {
 		return false;
 	}
@@ -439,9 +450,7 @@ bool androidShowScalingDialog(
 bool androidShowForegroundResourceExhaustionWarningDialog()
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(clearException(env) || !checkValid("activity", activity)) {
 		return false;
 	}
@@ -476,9 +485,7 @@ bool androidShowForegroundResourceExhaustionWarningDialog()
 bool createConnectionNotificationChannel()
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(clearException(env) || !checkValid("activity", activity)) {
 		return false;
 	}
@@ -512,9 +519,7 @@ bool shoulShowPostNotificationsRationale()
 void startConnectService()
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(!clearException(env) && checkValid("activity", activity)) {
 		activity.callMethod<void>("startConnectService", "()V");
 		clearException(env);
@@ -524,9 +529,7 @@ void startConnectService()
 void stopConnectService()
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(!clearException(env) && checkValid("activity", activity)) {
 		activity.callMethod<void>("stopConnectService", "()V");
 		clearException(env);
@@ -536,9 +539,7 @@ void stopConnectService()
 AndroidExitInfo androidGetLastApplicationExitInfo()
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(clearException(env) || !checkValid("activity", activity)) {
 		return AndroidExitInfo();
 	}
@@ -594,9 +595,7 @@ static QString getFallbackContentUriBasename(const QString &contentUri)
 static QString getContentUriDisplayName(const QString &contentUri)
 {
 	QJniEnvironment env;
-	QJniObject activity = QJniObject::callStaticObjectMethod(
-		"org/qtproject/qt5/android/QtNative", "activity",
-		"()Landroid/app/Activity;");
+	QJniObject activity = getActivity();
 	if(clearException(env) || !checkValid("activity", activity)) {
 		return QString();
 	}
