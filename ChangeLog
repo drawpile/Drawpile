@@ -51,6 +51,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make Selection → Fill Selection, gradient tool and shape fill tool adhere to layer alpha lock. Thanks hipofiz and Verdrusk for reporting.
  * Fix: Show proper download progress for list server favicons.
  * Fix: Make double-clicking dock titlebars not toggle them floating, since that's too easy to activate accidentally.
+ * Fix: Increase the drag threshold for arranging docks and toolbars in general, as well as for docks when not in arrange mode even further, to avoid accidental rearrangements.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

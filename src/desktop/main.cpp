@@ -1149,6 +1149,9 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	initTranslations(app, locale);
 	app.initBrushPresets();
+	// The default value is 10, we raise that a bit further because with tablets
+	// it's kind of easy to do accidental drags otherwise.
+	QApplication::setStartDragDistance(25);
 
 	StartupOptions startupOptions;
 	startupOptions.files = parser.positionalArguments();

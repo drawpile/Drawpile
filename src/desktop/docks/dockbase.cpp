@@ -2,6 +2,7 @@
 #include "desktop/docks/dockbase.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
+#include <QApplication>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -118,6 +119,16 @@ bool DockBase::event(QEvent *event)
 	case QEvent::MouseButtonDblClick:
 		// Don't toggle floating on double-click, that only happens on accident.
 		return false;
+	case QEvent::MouseMove:
+		if(!m_originalTitleBarWidget) {
+			int startDragDistance = QApplication::startDragDistance();
+			QApplication::setStartDragDistance(100);
+			bool result = QDockWidget::event(event);
+			QApplication::setStartDragDistance(startDragDistance);
+			return result;
+		} else {
+			break;
+		}
 	default:
 		break;
 	}
