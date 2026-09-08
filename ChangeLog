@@ -50,6 +50,7 @@ Unreleased Version 2.3.1-pre
  * Feature: When using Save As to save to a new dppr file, the current dppr file will be used as the basis for it, rather than an empty file. Thanks tiar for suggesting.
  * Fix: Make Selection → Fill Selection, gradient tool and shape fill tool adhere to layer alpha lock. Thanks hipofiz and Verdrusk for reporting.
  * Fix: Show proper download progress for list server favicons.
+ * Fix: Make double-clicking dock titlebars not toggle them floating, since that's too easy to activate accidentally.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.

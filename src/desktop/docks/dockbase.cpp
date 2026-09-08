@@ -2,6 +2,7 @@
 #include "desktop/docks/dockbase.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
@@ -109,6 +110,18 @@ void DockBase::setArrangeMode(bool arrangeMode)
 			arrangeWidget->deleteLater();
 		}
 	}
+}
+
+bool DockBase::event(QEvent *event)
+{
+	switch(event->type()) {
+	case QEvent::MouseButtonDblClick:
+		// Don't toggle floating on double-click, that only happens on accident.
+		return false;
+	default:
+		break;
+	}
+	return QDockWidget::event(event);
 }
 
 void DockBase::showEvent(QShowEvent *event)
