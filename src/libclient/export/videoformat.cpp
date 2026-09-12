@@ -2,19 +2,19 @@
 #include "libclient/export/videoformat.h"
 #include <QCoreApplication>
 #include <QtGlobal>
-#ifdef DP_LIBAV
 extern "C" {
+#ifdef DP_LIBAV
 #	include <dpimpex/save_video.h>
-#	include <dpimpex/save.h>
-}
 #endif
+#include <dpimpex/save.h>
+}
 
 
 namespace {
+#ifdef DP_LIBAV
 static bool
 isSaveVideoFormatSupported(VideoFormat format, bool (*predicate)(int))
 {
-#ifdef DP_LIBAV
 	switch(format) {
 	case VideoFormat::Gif:
 		return predicate(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
@@ -34,12 +34,9 @@ isSaveVideoFormatSupported(VideoFormat format, bool (*predicate)(int))
 	default:
 		break;
 	}
-#else
-	Q_UNUSED(format);
-	Q_UNUSED(ffmpeg);
-#endif
 	return false;
 }
+#endif
 
 static void appendFormatOption(
 	QVector<VideoFormatOption> &options, VideoFormatApplication application,
@@ -60,8 +57,13 @@ static void appendFormatOption(
 
 bool isVideoFormatSupportedFfmpeg(VideoFormat format)
 {
+#ifdef DP_LIBAV
 	return isSaveVideoFormatSupported(
 		format, DP_save_video_format_supported_ffmpeg);
+#else
+	Q_UNUSED(format);
+	return false;
+#endif
 }
 
 bool isVideoFormatSupportedNonFfmpeg(VideoFormat format)
@@ -75,8 +77,12 @@ bool isVideoFormatSupportedNonFfmpeg(VideoFormat format)
 	case VideoFormat::SpriteSheet:
 		return true;
 	default:
+#ifdef DP_LIBAV
 		return isSaveVideoFormatSupported(
 			format, DP_save_video_format_supported_non_ffmpeg);
+#else
+		return false;
+#endif
 	}
 }
 
@@ -150,6 +156,7 @@ QVector<VideoFormatOption> getVideoFormatOptions(
 	return options;
 }
 
+#ifdef DP_LIBAV
 namespace {
 static void addVideoEncoderOption(
 	QVector<VideoEncoderOption> &options, const DP_SaveVideoSupportEntry *entry)
@@ -193,9 +200,11 @@ static void addVideoEncoderOption(
 	}
 }
 }
+#endif
 
 QVector<VideoEncoderOption> getVideoEncoderOptions(VideoFormat format)
 {
+#ifdef DP_LIBAV
 	DP_SaveVideoSupport *support;
 	switch(format) {
 	case VideoFormat::Webp:
@@ -231,11 +240,16 @@ QVector<VideoEncoderOption> getVideoEncoderOptions(VideoFormat format)
 		}
 	}
 	return options;
+#else
+	Q_UNUSED(format);
+	return {};
+#endif
 }
 
 int getAutomaticVideoEncoderOptionIndex(
 	const QVector<VideoEncoderOption> &options, bool haveFfmpeg)
 {
+#ifdef DP_LIBAV
 	int types[] = {
 		DP_SAVE_VIDEO_ENCODER_TYPE_FFMPEG,
 		DP_SAVE_VIDEO_ENCODER_TYPE_ANDROID_SOFTWARE,
@@ -253,6 +267,10 @@ int getAutomaticVideoEncoderOptionIndex(
 			}
 		}
 	}
+#else
+	Q_UNUSED(options);
+	Q_UNUSED(haveFfmpeg);
+#endif
 	return 0;
 }
 
