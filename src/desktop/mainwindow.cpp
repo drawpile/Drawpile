@@ -3073,7 +3073,17 @@ void MainWindow::showProjectPlaybackDialog(
 
 	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
-		recordAction, std::bind(&QAction::setEnabled, recordAction, true));
+		[this, recordAction] {
+			recordAction->setEnabled(true);
+
+			config::Config *cfg = dpAppConfig();
+			if(cfg->getAutoRecordHost() && !m_doc->isProjectRecording()) {
+				canvas::CanvasModel *canvas = m_doc->canvas();
+				if(canvas) {
+					canvas->startProjectRecording(cfg, DP_PROJECT_SOURCE_FILE);
+				}
+			}
+		});
 }
 
 void MainWindow::resumeAutosave(const QString &path)
