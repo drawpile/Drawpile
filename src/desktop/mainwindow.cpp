@@ -3055,8 +3055,10 @@ void MainWindow::showProjectPlaybackDialog(
 	const QString &basename, const QString &loadPath, QTemporaryFile *tempFile,
 	bool looksLikeProject)
 {
+#ifndef __EMSCRIPTEN__
 	QAction *recordAction = getAction("recordsession");
 	recordAction->setEnabled(false);
+#endif
 
 	m_doc->initCanvas(true);
 	m_projectPlaybackDialog = new dialogs::ProjectPlaybackDialog(this);
@@ -3091,8 +3093,10 @@ void MainWindow::showProjectPlaybackDialog(
 		Qt::DirectConnection);
 	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
-		[this, recordAction] {
+		[=] {
+#ifndef __EMSCRIPTEN__
 			recordAction->setEnabled(true);
+#endif
 			canvas::CanvasModel *canvas = m_doc->canvas();
 			if(canvas) {
 				config::Config *cfg = dpAppConfig();
