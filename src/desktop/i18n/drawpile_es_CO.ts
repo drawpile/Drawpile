@@ -4165,37 +4165,37 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>View menu</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Menú de Vista</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Capas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Selección</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Animación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Sesión</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Herramientas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Help menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menú de Ayuda</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -4235,7 +4235,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+22"/>
         <source>Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animación</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -4280,7 +4280,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+39"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -4335,7 +4335,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Rotate the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar vista del lienzo</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -4350,12 +4350,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+14"/>
         <source>Project Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Información de Proyecto…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Text Input Debug Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Superposición de depuración de entrada de texto</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -5329,9 +5329,9 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message numerus="yes">
         <location filename="../utils/widgetutils.cpp" line="+16"/>
         <source>%n days(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n día</numerusform>
+            <numerusform>%n dias</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -5530,13 +5530,13 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+4"/>
         <source>%1 and %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 y %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>unknown</source>
         <extracomment>An unknown work time. Will be shown to the user like &quot;Your work time: unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>desconocido</translation>
     </message>
 </context>
 <context>
@@ -5703,7 +5703,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/actionpickerdialog.cpp" line="+21"/>
         <source>Select Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar acción</translation>
     </message>
 </context>
 <context>
@@ -5829,7 +5829,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+116"/>
         <source>FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -6432,7 +6432,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-502"/>
         <source>Common</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Común</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6632,7 +6632,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+52"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6642,12 +6642,12 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+9"/>
         <source>Basic</source>
-        <translation type="unfinished"></translation>
+        <translation>Básico</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Dabs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toques</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6657,17 +6657,17 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+11"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Directional Offsets</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamientos</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Tracking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguimiento/Trazado</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6677,12 +6677,12 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+8"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Grid Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa de Cuadrícula</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8217,7 +8217,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Choose an action to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige una acción para continuar.</translation>
     </message>
 </context>
 <context>
@@ -8334,19 +8334,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+6"/>
         <source>Xiaomi Stylus</source>
         <extracomment>Xiaomi is a brand of Android devices.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Xiaomi Stylus</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Apple Pencil</source>
         <extracomment>Apple is referring to the brand, not the fruit.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Apple Pencil</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Anti-Strain</source>
         <extracomment>This refers to a stylus pressure curve that is steeper than the default so that you don&apos;t have to strain to press the stylus down.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Presión Suave/Anti-Fatiga</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8364,12 +8364,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/ffmpegdialog.cpp" line="+22"/>
         <source>FFmpeg Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de FFmpeg</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>FFmpeg path or command:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruta o comando de FFmpeg:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8379,7 +8379,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+36"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprobando…</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -8400,52 +8400,52 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+109"/>
         <source>Successfully detected ffmpeg version %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se ha detectado correctamente la versión %1 de ffmpeg.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Error: the given program could not be started.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: No se pudo iniciar el programa especificado.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program did not finish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: el programa proporcionado no finalizó.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program exited with an error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: el programa especificado finalizó con un error.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: the given program does not appear to be ffmpeg.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: el programa proporcionado no parece ser ffmpeg.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>You can download a Windows version of ffmpeg from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes descargar una versión de ffmpeg para Windows desde %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>After downloading and unpacking everything, click on Choose and locate the %1 file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Después de descargar y descomprimir todo, haga clic en Elegir y localice el archivo %1.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes instalar ffmpeg a través de Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Probablemente puedas instalar ffmpeg a través de tu gestor de paquetes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Once it is installed, just using %1 in the field above should work. Otherwise, click on Choose and locate the executable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Una vez instalado, bastará con escribir %1 en el campo de arriba. De lo contrario, haga clic en Elegir y localice el archivo ejecutable.</translation>
     </message>
 </context>
 <context>
@@ -8453,7 +8453,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+74"/>
         <source>Set speed from FPS…</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer velocidad según FPS…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8463,12 +8463,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Reset range</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer rango</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer Velocidad</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8488,7 +8488,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+61"/>
         <source>FPS:</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS:</translation>
     </message>
 </context>
 <context>
@@ -8496,12 +8496,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/inputsettingsdialog.cpp" line="-35"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de entrada</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Stabilization</source>
-        <translation type="unfinished"></translation>
+        <translation>Estabilización</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8511,32 +8511,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Finish strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalizar Trazos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Adjust with velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar con la velocidad</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Maximum adjustment: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste máximo: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Maximum velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad máxima: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Adjustment</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste</translation>
     </message>
 </context>
 <context>
@@ -8544,7 +8544,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="-559"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Descartar</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -8568,43 +8568,43 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+27"/>
         <source>This session is hosted on a server that &lt;strong&gt;does not support the web browser version of Drawpile&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión se aloja en un servidor que &lt;strong&gt;no admite la versión de Drawpile para navegador web&lt;/strong&gt;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+26"/>
         <source> Only the desktop or mobile application will work.</source>
-        <translation type="unfinished"></translation>
+        <translation> Solo funcionará la aplicación de escritorio o la aplicación móvil.</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>This session &lt;strong&gt;restricts joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión &lt;strong&gt;restringe la conexión con la versión web de Drawpile.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Utilice &lt;a href=&quot;#&quot;&gt;códigos de invitación&lt;/a&gt; para permitir que las personas se unan a través del navegador web.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source> Operators and server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Los operadores y administradores de servidores pueden usar &lt;a href=&quot;#&quot;&gt;códigos de invitación&lt;/a&gt; para permitir que las personas se unan a través del navegador web.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> Server administrators can use &lt;a href=&quot;#&quot;&gt;invite codes&lt;/a&gt; to let people join via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation> Los administradores de servidores pueden usar &lt;a href=&quot;#&quot;&gt;códigos de invitación&lt;/a&gt; para permitir que las personas se unan a través del navegador web.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> The desktop or mobile application will work normally.</source>
-        <translation type="unfinished"></translation>
+        <translation> La aplicación de escritorio o móvil funcionará normalmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session &lt;strong&gt;does not allow joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión &lt;strong&gt;no permite unirse a la versión del navegador web de drawpile.&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8625,17 +8625,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+23"/>
         <source>To make it invite-only, [set a session password].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Para que sea solo invitación, [Establecer una contraseña de sesión].</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>To make it invite-only, a session operator can set a password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Para que sea solo invitación, un operador de sesión puede establecer una contraseña.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session is &lt;strong&gt;public&lt;/strong&gt;, strangers can join it!</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión es &lt;strong&gt;pública&lt;/strong&gt;, ¡cualquiera puede unirse!</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -8835,19 +8835,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+9"/>
         <source>Floofderg</source>
         <extracomment>The name of a layout, the person who made the layout has a character whose species is a furred dragon.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Floofderg</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kerfluff</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kerfluff</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lambda</source>
         <extracomment>The name of a layout, the person who made the layout has a username similar to this.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lambda</translation>
     </message>
 </context>
 <context>
@@ -8964,7 +8964,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>This username doesn&apos;t belong to an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este nombre de usuario no pertenece a una cuenta en %1.</translation>
     </message>
     <message>
         <location line="+628"/>
@@ -9073,115 +9073,115 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/projectdialog.cpp" line="+30"/>
         <source>Project Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Estadísticas del proyecto</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>The canvas has changes not saved in the project!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El lienzo tiene cambios que no se han guardado en el proyecto!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estas estadísticas solo reflejan las sesiones guardadas en el proyecto. Las sesiones en las que se deshabilitó la recuperación automática o se cerró sin guardar, así como los cambios no guardados, no aparecerán.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Despedir</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Unexpected Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error Inesperado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto problemente sea un bug de Drawpile.</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Total session time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo total de la sesión:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Your total work time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tu tiempo total de trabajo:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Session %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opened at:</source>
         <extracomment>Refers to the date and time a session was opened (started.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Inaugurado en:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Closed at:</source>
         <extracomment>Refers to the date and time a session was closed (ended.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cerrado a las:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>unknown</source>
         <extracomment>Part of &quot;Session time: unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración de la sesión:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your work time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tu tiempo de trabajo:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Recorded with an older, but compatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión anterior, pero compatible de Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recorded with an older, but compatible version (%1) of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión anterior, pero compatible (%1) de Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with a newer version of Drawpile with minor incompatibilities.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión más reciente de Drawpile con incompatibilidades menores.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with an old incompatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión antigua e incompatible de Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recorded with an old, incompatible version (%1) of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión antigua e incompatible (%1) de Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recorded with a new, incompatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión nueva e incompatible de Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Recorded with an unknown incompatible version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabado con una versión desconocida e incompatible de Drawpile.</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Loading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando…</translation>
     </message>
 </context>
 <context>
@@ -9189,62 +9189,62 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+25"/>
         <source>Manage Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestionar la recuperación automática</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>These settings affect only the current session. You can change the defaults [in the preferences].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Estos ajustes afectan únicamente a la sesión actual. Puede cambiar los valores predeterminados [en las preferencias].</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enable autorecovery for the current session</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar la recuperación automática para la sesión actual</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Size limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de tamaño</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+112"/>
         <source>Change Size Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el límite de tamaño</translation>
     </message>
     <message>
         <location line="-74"/>
         <source>Size limit: %1 GB</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de tamaño: %1 GB</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>No size limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin límite de tamaño</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You will receive a warning when the autorecovery file reaches %1% of the size limit. Once it exceeds the limit, autorecovery will terminate.</source>
         <extracomment>The %1% is a percentage, like 75%. Don&apos;t remove the second %!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Recibirás una advertencia cuando el archivo de autorrecuperación alcance el %1% del límite de tamaño. Una vez que supere el límite, la autorrecuperación finalizará.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> There is no size limit set.</source>
-        <translation type="unfinished"></translation>
+        <translation> No hay límite de tamaño establecido.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source> This is %1% of the current %2 limit.</source>
         <extracomment>The %1% becomes a percentage, like &quot;50%&quot;. Don&apos;t remove the second %! %2 is a file size, like &quot;5GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> Esto es el %1% del límite actual del %2%.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The current autorecovery file size is %1.</source>
         <extracomment>%1 is a file size, like &quot;1 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>El tamaño actual del archivo de autorrecuperación es %1.</translation>
     </message>
 </context>
 <context>
@@ -9515,22 +9515,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Make Session Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hacer pública la sesión</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Removing the password from the session will make it publicly visible and allow strangers to join! Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Si eliminas la contraseña de la sesión, esta se hará pública y permitirá que personas desconocidas se unan. ¿Estás seguro?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Yes, make public</source>
-        <translation type="unfinished"></translation>
+        <translation>Si, hacerla pública</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep password</source>
-        <translation type="unfinished"></translation>
+        <translation>No, mantener contraseña</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9766,7 +9766,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Croma</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9776,17 +9776,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luminosidad</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luminancia</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombras</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9802,37 +9802,37 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+124"/>
         <location line="+7"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango: </translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+19"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de saturación: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de croma: </translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+19"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rango de valor: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de Luminosidad: </translation>
     </message>
     <message>
         <location line="-17"/>
         <location line="+19"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de luminancia: </translation>
     </message>
     <message>
         <location line="-14"/>
@@ -9842,32 +9842,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+18"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desplazamiento de tono: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de saturación: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de croma: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de valor: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de luminosidad: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desplazamiento de luminancia: </translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9955,12 +9955,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Recover</source>
-        <translation type="unfinished"></translation>
+        <translation>Recuperar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Restore autorecovery files</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurar archivos de autorrecuperación</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10110,36 +10110,36 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location filename="../dialogs/animationexportdialog.cpp" line="-283"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+190"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este formato requiere FFmpeg; haga clic aquí para configurarlo.</translation>
     </message>
     <message>
         <location line="+39"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+181"/>
         <source>Prefer FFmpeg over internal encoder</source>
-        <translation type="unfinished"></translation>
+        <translation>Prefiero FFmpeg al codificador interno</translation>
     </message>
     <message>
         <location line="+211"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+257"/>
         <source>The selected format requires FFmpeg. Do you want to set it up now?</source>
-        <translation type="unfinished"></translation>
+        <translation>El formato seleccionado requiere FFmpeg. ¿Desea configurarlo ahora?</translation>
     </message>
     <message>
         <location line="+54"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+439"/>
         <source>Set up FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar FFmpeg</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+2"/>
         <source>FFmpeg settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes de FFmpeg</translation>
     </message>
     <message>
         <location filename="../dialogs/timelapsedialog.cpp" line="-1014"/>
         <source>Timelapse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Linea de tiempo/Timelapse</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10149,27 +10149,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Arriba a la izquierda</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Arriba a la derecha</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Abajo a la izquierda</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Abajo a la derecha</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Logo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Logo:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10179,22 +10179,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+40"/>
         <source>Duration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Duration presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes preestablecidos de duración:</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>pixels</source>
-        <translation type="unfinished"></translation>
+        <translation>Píxeles</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Resolution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolución:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10204,53 +10204,53 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Crop to selection area</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar área de selección</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Video with dimensions larger than 1920 pixels is not widely supported. Many devices and platforms won&apos;t play them properly, degrade their quality or refuse to recognize them altogether.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los vídeos con dimensiones superiores a 1920 píxeles no son compatibles con la mayoría de los dispositivos y plataformas. Muchos no los reproducen correctamente, degradan su calidad o directamente no los reconocen.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Play animation as result</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducir animación como resultado</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Use flipbook range and speed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utilizar el rango y la velocidad del libro animado/flipbook</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Advanced settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes avanzados</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Encoder:</source>
-        <translation type="unfinished"></translation>
+        <translation>Codificador:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Automatic</source>
         <comment>interpolation</comment>
         <extracomment>Image scaling option that picks an algorithm automatically.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Automático</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lanczos</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, lanczos scaling.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lanczos</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bicubic</source>
         <comment>interpolation</comment>
         <extracomment>The name of an image scaling algorithm, bicubic scaling.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bicúbico</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10276,32 +10276,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Interpolation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolación:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only time own drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo tiempo propio de dibujo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Timing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ritmo/Timing:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Backdrop:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fondo:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Logo scale:</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala del logo:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Logo padding:</source>
-        <translation type="unfinished"></translation>
+        <translation>Relleno del logo:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10311,12 +10311,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Logo opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad del logo:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Preview result:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista previa del resultado:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10324,27 +10324,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+8"/>
         <location line="+24"/>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation> Segundos</translation>
     </message>
     <message>
         <location line="-47"/>
         <source>Flash:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flash:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Linger result:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resultado persistente:</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Interval limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de intervalo:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Queue size:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tamaño de la cola:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10360,12 +10360,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Video with framerates above 30 FPS is not widely supported. Many devices and platforms won&apos;t play them properly, degrade their quality or refuse to recognize them altogether.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los vídeos con una velocidad de fotogramas superior a 30 FPS no son compatibles con la mayoría de los dispositivos y plataformas. Muchos no los reproducen correctamente, degradan su calidad o directamente no los reconocen.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>FFmpeg</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -12838,17 +12838,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Target file read error during verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de lectura del archivo de destino durante la verificación: %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: read size mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Falló la verificación: discrepancia en el tamaño de lectura</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: autorecovery and target file data does not match</source>
-        <translation type="unfinished"></translation>
+        <translation>La verificación falló: los datos del archivo de recuperación automática y del archivo de destino no coinciden</translation>
     </message>
 </context>
 <context>
@@ -13336,12 +13336,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+44"/>
         <source>Only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo se podrán unir las personas que invites</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Public, strangers can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Público, extraños se pueden unir</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -13472,12 +13472,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+13"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automático</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Columns:</source>
-        <translation type="unfinished"></translation>
+        <translation>Columnas:</translation>
     </message>
     <message>
         <location line="+535"/>
@@ -13552,22 +13552,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Display:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostrar:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Miniaturas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Trazo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Both</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ambos</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -14448,7 +14448,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Column width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ancho de columna:</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -14654,17 +14654,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Full</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lleno</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostrar Título</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Miniatura</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -14749,14 +14749,14 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar Con Velocidad</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Alters stabilization depending on how fast the stroke is.</source>
-        <translation type="unfinished"></translation>
+        <translation>La estabilización se modifica en función de la velocidad del trazo.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -14773,14 +14773,14 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+12"/>
         <source>Input Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes de Entrada…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+2"/>
         <source>Show the input settings dialog for more stabilizer settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muestra el cuadro de diálogo de configuración de entrada para obtener más opciones de configuración del estabilizador.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -14845,19 +14845,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/colordialog.cpp" line="+20"/>
         <source>Screen Color Picking Unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección de Color de Pantalla no Compatible</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picking colors from the screen is not supported under Wayland.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La selección de colores desde la pantalla no es compatible con Wayland.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Es posible que puedas cambiar a Xorg al iniciar sesión en tu cuenta de usuario de Linux.</translation>
     </message>
 </context>
 <context>
@@ -15102,32 +15102,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../toolwidgets/rotationsettings.cpp" line="+79"/>
         <source>Normal rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación Normal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Free rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación Libre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ratchet rotation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotación de Trinquete</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates smoothly, snaps to 0°</source>
-        <translation type="unfinished"></translation>
+        <translation>Gira suavemente y se engancha a los 0°</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates smoothly, never snaps</source>
-        <translation type="unfinished"></translation>
+        <translation>Gira suavemente, nunca se engancha</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotates in 15° increments</source>
-        <translation type="unfinished"></translation>
+        <translation>Gira en incrementos de 15°</translation>
     </message>
 </context>
 <context>
@@ -15382,7 +15382,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+21"/>
         <source>Manage…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestionar…</translation>
     </message>
 </context>
 <context>
@@ -15450,67 +15450,67 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-119"/>
         <source>Exit layer view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salir de vista de capa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit group view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salir de vista de grupo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit frame view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salir de vista de cuadro</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unlock canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Desbloquear lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar lienzo…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar todo</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar límites de capa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Disable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactivar antidesbordamiento</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set current layer as fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer capa actual como fuente de relleno</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear fill source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Borrar fuente de relleno</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar capas sensuradas</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Out of space, you must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuera del espacio, debes reiniciar el lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Out of space, operator must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuera del espacio, el operador debe restablecer el lienzo</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -15601,7 +15601,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+21"/>
         <source>Manage…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestionar…</translation>
     </message>
     <message>
         <location line="+416"/>
@@ -15683,19 +15683,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+41"/>
         <source>As regular window</source>
         <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Como ventana normal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of Drawpile</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>En la parte superior de Drawpile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of everything</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>encima de todo</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -16159,17 +16159,17 @@ Hexagonal: %4</translation>
     <message>
         <location filename="../widgets/projectrecordingstatusbutton.cpp" line="+45"/>
         <source>Autorecovery is enabled, file size is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>La autorecuperación está habilitada, el tamaño del archivo es %1.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Autorecovery is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>La autorrecuoeración está desactivada.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source> Click to manage.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> Haga clic para administrar/gestionar.</translation>
     </message>
 </context>
 <context>
@@ -16235,17 +16235,17 @@ Hexagonal: %4</translation>
     <message>
         <location line="+6"/>
         <source>Toggle visibility for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar visibilidad para ti</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar piel de cebolla solo para tí</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle frame move lock for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar bloqueo de movimiento de cuadro para ti</translation>
     </message>
     <message>
         <location line="+366"/>
