@@ -46,6 +46,14 @@ public:
 	bool isPlaying() const { return m_state == State::Playing; }
 	void setPlaying(bool playing);
 
+	bool isInProgress() const
+	{
+		return m_state != State::NotPrepared && m_state != State::Paused;
+	}
+
+Q_SIGNALS:
+	void stateChanged();
+
 private:
 	class PlaybackSlider;
 

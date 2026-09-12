@@ -87,62 +87,70 @@ void Lock::buildDescriptions()
 {
 	m_descriptions.clear();
 
-	if(hasAny(Reason::OutOfSpace)) {
-		if(m_op) {
-			m_descriptions.append(
-				tr("Out of space, you must reset the canvas"));
-		} else {
-			m_descriptions.append(
-				tr("Out of space, operator must reset the canvas"));
+	// Playback can change the other aspects of the canvas very rapidly, so it
+	// overrides all other descriptions to not make them flicker around.
+	if(hasAny(Reason::Playback)) {
+		m_descriptions.append(tr("Playback in progress"));
+
+	} else {
+		if(hasAny(Reason::OutOfSpace)) {
+			if(m_op) {
+				m_descriptions.append(
+					tr("Out of space, you must reset the canvas"));
+			} else {
+				m_descriptions.append(
+					tr("Out of space, operator must reset the canvas"));
+			}
 		}
-	}
 
-	if(hasAny(Reason::Reset)) {
-		m_descriptions.append(tr("Reset in progress"));
-	}
-
-	if(hasAny(Reason::Canvas)) {
-		m_descriptions.append(tr("Canvas is locked"));
-	}
-
-	if(hasAny(Reason::User)) {
-		m_descriptions.append(tr("User is locked"));
-	}
-
-	if(hasAny(Reason::NoSelection)) {
-		m_descriptions.append(tr("Tool requires a selection"));
-	}
-
-	if(hasAny(Reason::NoFillSource)) {
-		m_descriptions.append(tr("You need to set a layer as the fill source"));
-	}
-
-	if(hasAny(Reason::LayerGroup)) {
-		m_descriptions.append(tr("Layer is a group"));
-	} else if(hasAny(Reason::LayerLocked)) {
-		m_descriptions.append(tr("Layer is locked"));
-	} else if(hasAny(Reason::LayerCensoredRemote)) {
-		if(hasAny(Reason::LayerCensoredLocal)) {
-			m_descriptions.append(tr("Layer is censored and blocked"));
-		} else {
-			m_descriptions.append(tr("Layer is censored"));
+		if(hasAny(Reason::Reset)) {
+			m_descriptions.append(tr("Reset in progress"));
 		}
-	} else if(hasAny(Reason::LayerCensoredLocal)) {
-		m_descriptions.append(tr("Layer is blocked"));
-	} else if(hasAny(Reason::LayerHidden)) {
-		m_descriptions.append(tr("Layer is hidden"));
-	} else if(hasAny(Reason::NoLayer)) {
-		m_descriptions.append(tr("No layer selected"));
-	} else if(hasAny(Reason::OverlappingFillSource)) {
-		m_descriptions.append(tr("Choose a different layer to fill on"));
-	}
 
-	if(hasAny(Reason::LayerHiddenInFrame)) {
-		m_descriptions.append(tr("Layer is not visible in this frame"));
-	}
+		if(hasAny(Reason::Canvas)) {
+			m_descriptions.append(tr("Canvas is locked"));
+		}
 
-	if(hasAny(Reason::Tool)) {
-		m_descriptions.append(tr("Tool is locked"));
+		if(hasAny(Reason::User)) {
+			m_descriptions.append(tr("User is locked"));
+		}
+
+		if(hasAny(Reason::NoSelection)) {
+			m_descriptions.append(tr("Tool requires a selection"));
+		}
+
+		if(hasAny(Reason::NoFillSource)) {
+			m_descriptions.append(
+				tr("You need to set a layer as the fill source"));
+		}
+
+		if(hasAny(Reason::LayerGroup)) {
+			m_descriptions.append(tr("Layer is a group"));
+		} else if(hasAny(Reason::LayerLocked)) {
+			m_descriptions.append(tr("Layer is locked"));
+		} else if(hasAny(Reason::LayerCensoredRemote)) {
+			if(hasAny(Reason::LayerCensoredLocal)) {
+				m_descriptions.append(tr("Layer is censored and blocked"));
+			} else {
+				m_descriptions.append(tr("Layer is censored"));
+			}
+		} else if(hasAny(Reason::LayerCensoredLocal)) {
+			m_descriptions.append(tr("Layer is blocked"));
+		} else if(hasAny(Reason::LayerHidden)) {
+			m_descriptions.append(tr("Layer is hidden"));
+		} else if(hasAny(Reason::NoLayer)) {
+			m_descriptions.append(tr("No layer selected"));
+		} else if(hasAny(Reason::OverlappingFillSource)) {
+			m_descriptions.append(tr("Choose a different layer to fill on"));
+		}
+
+		if(hasAny(Reason::LayerHiddenInFrame)) {
+			m_descriptions.append(tr("Layer is not visible in this frame"));
+		}
+
+		if(hasAny(Reason::Tool)) {
+			m_descriptions.append(tr("Tool is locked"));
+		}
 	}
 }
 
@@ -150,7 +158,7 @@ void Lock::buildActions()
 {
 	m_actions.clear();
 
-	if(!hasAny(Reason::Reset)) {
+	if(!hasAny(Reason::Reset) && !hasAny(Reason::Playback)) {
 		if(hasAny(Reason::OutOfSpace)) {
 			if(m_op) {
 				m_actions.append(m_resetCanvasAction);

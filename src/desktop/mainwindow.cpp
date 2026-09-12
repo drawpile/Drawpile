@@ -3072,6 +3072,9 @@ void MainWindow::showProjectPlaybackDialog(
 	utils::centerOnParent(m_projectPlaybackDialog);
 
 	connect(
+		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::stateChanged,
+		this, &MainWindow::triggerUpdateLockState);
+	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
 		[this, recordAction] {
 			recordAction->setEnabled(true);
@@ -4986,6 +4989,10 @@ void MainWindow::updateLockState()
 
 	if(m_dockToolSettings->isCurrentToolLocked()) {
 		reasons.setReason(Reason::Tool);
+	}
+
+	if(m_projectPlaybackDialog && m_projectPlaybackDialog->isInProgress()) {
+		reasons.setReason(Reason::Playback);
 	}
 
 	if(m_viewLock->updateReasons(

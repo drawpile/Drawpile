@@ -596,6 +596,7 @@ void ProjectPlaybackDialog::onProjectPlayerPrepared(double totalPlaybackSeconds)
 		updatePlayState();
 		updateProgressLabelText();
 		triggerRewind();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -676,6 +677,7 @@ void ProjectPlaybackDialog::onProjectPlayerControlCompleted(
 		m_state = State::Paused;
 		m_progressSlider->updateValues(m_progressSlider->trackValue());
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -849,6 +851,7 @@ void ProjectPlaybackDialog::triggerRewind()
 		m_state = State::Rewinding;
 		m_controlId = m_projectWrangler->rewindPlayer();
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -858,6 +861,7 @@ void ProjectPlaybackDialog::triggerFastForward()
 		m_state = State::FastForwarding;
 		m_controlId = m_projectWrangler->fastForwardPlayer();
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -867,6 +871,7 @@ void ProjectPlaybackDialog::triggerStepSessions(int delta)
 		m_state = State::SteppingSessions;
 		m_controlId = m_projectWrangler->skipPlayerSessions(delta);
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -876,6 +881,7 @@ void ProjectPlaybackDialog::triggerStepUndoPoints(int undoPointCount)
 		m_state = State::SteppingUndoPoints;
 		m_controlId = m_projectWrangler->stepPlayerUndoPoints(undoPointCount);
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -885,6 +891,7 @@ void ProjectPlaybackDialog::triggerPlay()
 		m_state = State::Playing;
 		m_controlId = m_projectWrangler->startPlayer();
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -894,6 +901,7 @@ void ProjectPlaybackDialog::triggerPause()
 		m_state = State::Pausing;
 		m_projectWrangler->pausePlayer();
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 
@@ -903,6 +911,7 @@ void ProjectPlaybackDialog::triggerSeek(double seconds)
 		m_state = State::Seeking;
 		m_controlId = m_projectWrangler->seekPlayer(seconds);
 		updatePlayState();
+		Q_EMIT stateChanged();
 	}
 }
 

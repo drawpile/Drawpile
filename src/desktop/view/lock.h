@@ -28,6 +28,7 @@ public:
 		NoSelection = 1u << 12u,
 		NoFillSource = 1u << 13u,
 		OverlappingFillSource = 1u << 14u,
+		Playback = 1u << 15u,
 	};
 	Q_ENUM(Reason)
 
