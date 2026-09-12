@@ -9135,6 +9135,7 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("fillfgarea")),
 		getAction(QStringLiteral("recolorarea")),
 		getAction(QStringLiteral("selectcrop")),
+		getAction(QStringLiteral("maketimelapse")),
 		nullptr,
 		getAction(QStringLiteral("showselectionmask")),
 		getAction(QStringLiteral("editselection")),
