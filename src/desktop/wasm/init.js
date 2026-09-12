@@ -428,7 +428,7 @@ import { UAParser } from "ua-parser-js";
   // linear pressure curve, lines will come out almost invisibly thin unless the
   // user presses down with enough force to pierce their pen through the screen.
   // We can't actually determine if the user has such a pen, so we guess.
-  window.drawpileHasLowPressurePen = function () {
+  let lowPressurePen = (function () {
     try {
       const ua = getUa();
       const device = ua.getDevice?.model || "";
@@ -437,6 +437,13 @@ import { UAParser } from "ua-parser-js";
       return ios ? 1 : 0;
     } catch (e) {
       console.error(e);
+      return 0;
+    }
+  })();
+  window.drawpileHasLowPressurePen = function () {
+    if (lowPressurePen) {
+      return 1;
+    } else {
       return 0;
     }
   };
@@ -963,6 +970,28 @@ import { UAParser } from "ua-parser-js";
     localStorage.setItem("drawpile_last_locale", locale);
   }
 
+  function makeLowPressureCheckbox() {
+    const checkboxAttributes = { id: "low-pressure-checkbox", type: "checkbox" };
+    if (lowPressurePen) {
+      checkboxAttributes["checked"] = true;
+    }
+    return tag(
+      "div",
+      { className: "checkbox" },
+      [
+        tag(
+          "input",
+          checkboxAttributes
+        ),
+        tag(
+          "label",
+          { "for": "low-pressure-checkbox" },
+          "Optimize for low-pressure stylus (Apple Pencil, Xiaomi)"
+        ),
+      ]
+    );
+  }
+
   function makePressureTester() {
     const pressureBox = tag(
       "div",
@@ -971,6 +1000,7 @@ import { UAParser } from "ua-parser-js";
     );
 
     const pressureValues = new Set();
+    let highestPressure = 0.0;
     let pointerType = null;
 
     function handlePointer(e) {
@@ -985,7 +1015,18 @@ import { UAParser } from "ua-parser-js";
 
       pressureValues.add(e.pressure);
       if (pressureValues.size >= 2) {
-        pressureBox.textContent = "✔️ Pen pressure detected";
+        if (e.pressure > highestPressure) {
+          highestPressure = e.pressure;
+        }
+
+        let pressureText = "✔️ Pen pressure detected: ";
+        if (e.pressure > 0.0) {
+          pressureText += `${Math.round(e.pressure * 100.0)}%`;
+        } else {
+          pressureText += `reached ${Math.round(highestPressure * 100.0)}%`;
+        }
+        pressureText += "\nIf you can't easily reach 100%, you have a low-pressure stylus.";
+        pressureBox.textContent = pressureText;
       }
     }
 
@@ -1143,6 +1184,15 @@ import { UAParser } from "ua-parser-js";
           console.error("Error setting language", e);
         }
         try {
+          if (startup.querySelector("#low-pressure-checkbox").checked) {
+            lowPressurePen = true;
+          } else {
+            lowPressurePen = false;
+          }
+        } catch (e) {
+          console.error("Error setting low-pressure pen", e);
+        }
+        try {
           makePathMappings();
         } catch (e) {
           console.error("Error mapping paths", e);
@@ -1154,6 +1204,7 @@ import { UAParser } from "ua-parser-js";
 
       startup.appendChild(makeVersionSelector(params));
       startup.appendChild(makeLanguageSelector(params));
+      startup.appendChild(makeLowPressureCheckbox(params));
       startup.appendChild(makePressureTester());
       const button = tag("button", { class: upToDate ? "primary" : "danger" }, [
         upToDate ? "Start" : "Start Anyway",
