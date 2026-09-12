@@ -247,6 +247,14 @@ progress {
   flex-grow: 1;
 }
 
+.checkbox {
+  margin-bottom: 1em;
+}
+
+.checkbox > input {
+  margin-right: 0.4em;
+}
+
 .selector {
   align-items: center;
   display: flex;
@@ -265,9 +273,11 @@ progress {
   display: flex;
   height: 6em;
   justify-content: center;
+  line-height: 1.5;
   margin-bottom: 1em;
   text-align: center;
   user-select: none;
+  white-space: pre-wrap;
 }
 
 footer {
