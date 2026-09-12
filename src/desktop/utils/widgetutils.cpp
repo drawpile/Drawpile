@@ -1292,6 +1292,32 @@ QMessageBox *showCritical(
 	return msgbox;
 }
 
+QMessageBox *
+showUnhandledErrorMessageBox(QWidget *parent, const QString &errorMessage)
+{
+	QString objectName = QStringLiteral("unhandlederrorbox");
+	QMessageBox *box = parent->findChild<QMessageBox *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(box) {
+		qWarning(
+			"Unhandled error while another one is being presented: %s",
+			qUtf8Printable(errorMessage));
+	} else {
+		box = utils::makeWarning(
+			parent,
+			QCoreApplication::translate(
+				"dialogs::ProjectDialog", "Unexpected Error"),
+			errorMessage);
+		box->setInformativeText(
+			QCoreApplication::translate(
+				"dialogs::ProjectDialog",
+				"This is probably a bug in Drawpile."));
+		box->setObjectName(objectName);
+		box->show();
+	}
+	return box;
+}
+
 void setActionText(QAction *action, const QString &text)
 {
 	if(action) {

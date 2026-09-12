@@ -307,6 +307,9 @@ QMessageBox *showCritical(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
 
+QMessageBox *
+showUnhandledErrorMessageBox(QWidget *parent, const QString &errorMessage);
+
 QDialog *getInputText(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn);

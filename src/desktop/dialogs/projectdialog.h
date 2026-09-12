@@ -21,9 +21,6 @@ public:
 
 	void setTempPath(const QString &tempPath);
 
-	static void showUnhandledProjectErrorMessageBoxOn(
-		QWidget *parent, const QString &errorMessage);
-
 private:
 	void openProject();
 	void requestCancel();
