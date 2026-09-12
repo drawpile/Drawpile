@@ -6550,8 +6550,9 @@ void MainWindow::setupActions()
 						  .noDefaultShortcut();
 #endif
 #ifdef DRAWPILE_TIMELAPSE_DIALOG
-	QAction *makeTimelapse =
-		makeAction("maketimelapse", tr("Make timelapse…")).noDefaultShortcut();
+	QAction *makeTimelapse = makeAction("maketimelapse", tr("Make timelapse…"))
+								 .icon(QStringLiteral("kdenlive-show-video"))
+								 .noDefaultShortcut();
 #endif
 #ifdef DRAWPILE_PROJECT_DIALOG
 	QAction *projectOverview =
