@@ -867,7 +867,7 @@ import { UAParser } from "ua-parser-js";
 
   function makeVersionSelector(params) {
     const currentOption = tag("option", { value: "current" }, "Drawpile 2.3.0");
-    const betaOption = tag("option", { value: "beta" }, "Drawpile 2.3.1-beta.1");
+    const betaOption = tag("option", { value: "beta" }, "Drawpile 2.3.1-beta.2");
 
     const versionToSelect = params.get("version")?.trim();
     if (versionToSelect && /beta|alpha/i.test(versionToSelect)) {
