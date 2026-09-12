@@ -9167,7 +9167,9 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("fillfgarea")),
 		getAction(QStringLiteral("recolorarea")),
 		getAction(QStringLiteral("selectcrop")),
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
 		getAction(QStringLiteral("maketimelapse")),
+#endif
 		nullptr,
 		getAction(QStringLiteral("showselectionmask")),
 		getAction(QStringLiteral("editselection")),
