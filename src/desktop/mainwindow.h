@@ -351,6 +351,7 @@ private slots:
 		qint64 elapsedMsec);
 	void onCanvasDownloadError(const QString &errorMessage);
 	void offerDownload(const QString &defaultName, const QByteArray &bytes);
+	void finishDownload();
 #endif
 	void onTemplateExported(const QString &errorMessage);
 

@@ -3403,13 +3403,28 @@ void MainWindow::offerDownload(
 						tr("Error performing download."), tr("File is empty."));
 				} else {
 					FileWrangler(this).saveFileContent(defaultName, bytes);
-					if(m_reconnectAfterSave) {
-						reconnectWith(true);
-					}
+					finishDownload();
 				}
 			});
 		utils::showMessageBox(msgbox);
 	}
+}
+
+void MainWindow::finishDownload()
+{
+	QMessageBox *msgbox = utils::makeInformation(
+		this, tr("Download"),
+		tr("You should have been prompted to save the file. Please wait at "
+		   "least 30 seconds before closing this tab, otherwise some browsers "
+		   "will leave you with an empty file!"),
+		tr("You can check the file size in your operating system. If it is not "
+		   "zero, it should be done saving."));
+	connect(msgbox, &QMessageBox::accepted, this, [this] {
+		if(m_reconnectAfterSave) {
+			reconnectWith(true);
+		}
+	});
+	utils::showMessageBox(msgbox);
 }
 #endif
 
