@@ -3072,19 +3072,34 @@ void MainWindow::showProjectPlaybackDialog(
 	utils::centerOnParent(m_projectPlaybackDialog);
 
 	connect(
+		m_doc, &Document::dirtyCanvas, m_projectPlaybackDialog,
+		&dialogs::ProjectPlaybackDialog::setCanvasDirty);
+	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::stateChanged,
-		this, &MainWindow::triggerUpdateLockState);
+		this,
+		[this] {
+			if(m_projectPlaybackDialog &&
+			   m_projectPlaybackDialog->isInProgress()) {
+				m_projectPlaybackDialog->setCanvasDirty(false);
+				canvas::CanvasModel *canvas = m_doc->canvas();
+				if(canvas) {
+					canvas->setDirty(false);
+				}
+			}
+			triggerUpdateLockState();
+		},
+		Qt::DirectConnection);
 	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
 		[this, recordAction] {
 			recordAction->setEnabled(true);
-
-			config::Config *cfg = dpAppConfig();
-			if(cfg->getAutoRecordHost() && !m_doc->isProjectRecording()) {
-				canvas::CanvasModel *canvas = m_doc->canvas();
-				if(canvas) {
+			canvas::CanvasModel *canvas = m_doc->canvas();
+			if(canvas) {
+				config::Config *cfg = dpAppConfig();
+				if(cfg->getAutoRecordHost() && !m_doc->isProjectRecording()) {
 					canvas->startProjectRecording(cfg, DP_PROJECT_SOURCE_FILE);
 				}
+				canvas->setDirty(true);
 			}
 		});
 }

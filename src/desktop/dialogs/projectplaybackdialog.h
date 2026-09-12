@@ -51,6 +51,8 @@ public:
 		return m_state != State::NotPrepared && m_state != State::Paused;
 	}
 
+	void setCanvasDirty(bool canvasDirty);
+
 Q_SIGNALS:
 	void stateChanged();
 
@@ -78,6 +80,7 @@ private:
 	bool isPaused() const { return m_state == State::Paused; }
 
 	void updateTitle();
+	void updateDirtyWarning();
 
 	void setMessage(const QString &text, const QString &toolTip = QString());
 	void setMessageProgress(int percent);
@@ -158,11 +161,14 @@ private:
 	KisSliderSpinBox *m_playbackSpeedSlider;
 	PlaybackSlider *m_progressSlider;
 	QStackedWidget *m_progressStack;
+	QWidget *m_progressIdle;
 	QLabel *m_progressLabel;
+	QLabel *m_dirtyWarning;
 	QWidget *m_progressCancel;
 	State m_state = State::NotPrepared;
 	int m_playerState;
 	unsigned int m_controlId = 0u;
+	bool m_canvasDirty = false;
 	bool m_applyViewState = false;
 };
 

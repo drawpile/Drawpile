@@ -307,9 +307,26 @@ ProjectPlaybackDialog::ProjectPlaybackDialog(QWidget *parent)
 	m_progressStack = new QStackedWidget;
 	playbackLayout->addWidget(m_progressStack);
 
+	m_progressIdle = new QWidget;
+	m_progressIdle->setContentsMargins(0, 0, 0, 0);
+	m_progressStack->addWidget(m_progressIdle);
+
+	QVBoxLayout *progressIdleLayout = new QVBoxLayout(m_progressIdle);
+	progressIdleLayout->setContentsMargins(0, 0, 0, 0);
+
 	m_progressLabel = new QLabel;
 	m_progressLabel->setAlignment(Qt::AlignCenter);
-	m_progressStack->addWidget(m_progressLabel);
+	progressIdleLayout->addWidget(m_progressLabel);
+
+	m_dirtyWarning = new QLabel;
+	m_dirtyWarning->setAlignment(Qt::AlignCenter);
+	m_dirtyWarning->setTextFormat(Qt::RichText);
+	m_dirtyWarning->setText(
+		QStringLiteral("<strong>%1</strong>")
+			.arg(tr("Unsaved changes will be lost if you continue!")
+					 .toHtmlEscaped()));
+	utils::setWidgetRetainSizeWhenHidden(m_dirtyWarning, true);
+	progressIdleLayout->addWidget(m_dirtyWarning);
 
 	m_progressCancel = new QWidget;
 	m_progressCancel->setContentsMargins(0, 0, 0, 0);
@@ -361,6 +378,9 @@ ProjectPlaybackDialog::ProjectPlaybackDialog(QWidget *parent)
 	connect(
 		buttons, &QDialogButtonBox::rejected, this,
 		&ProjectPlaybackDialog::reject);
+	connect(
+		this, &ProjectPlaybackDialog::stateChanged, this,
+		&ProjectPlaybackDialog::updateDirtyWarning, Qt::DirectConnection);
 
 	showPage(m_messagePage);
 	updatePlayState();
@@ -371,6 +391,14 @@ ProjectPlaybackDialog::~ProjectPlaybackDialog()
 	setPlaying(false);
 	if(m_projectWrangler) {
 		m_projectWrangler->cancelPlayer();
+	}
+}
+
+void ProjectPlaybackDialog::setCanvasDirty(bool canvasDirty)
+{
+	if(canvasDirty != m_canvasDirty) {
+		m_canvasDirty = canvasDirty;
+		updateDirtyWarning();
 	}
 }
 
@@ -488,6 +516,11 @@ void ProjectPlaybackDialog::updateTitle()
 		QCoreApplication::translate("dialogs::PlaybackDialog", "Playback")));
 }
 
+void ProjectPlaybackDialog::updateDirtyWarning()
+{
+	m_dirtyWarning->setVisible(m_canvasDirty);
+}
+
 void ProjectPlaybackDialog::setMessage(
 	const QString &text, const QString &toolTip)
 {
@@ -591,6 +624,7 @@ void ProjectPlaybackDialog::onProjectPlayerPrepared(double totalPlaybackSeconds)
 	} else {
 		m_totalPlaybackSeconds = totalPlaybackSeconds;
 		m_state = State::Paused;
+		m_canvasDirty = false;
 		showPage(m_playbackPage);
 		m_progressSlider->updateValues(m_progressSlider->minimum());
 		updatePlayState();
@@ -810,7 +844,7 @@ void ProjectPlaybackDialog::updatePlayState()
 		progressPage = m_progressCancel;
 		break;
 	default:
-		progressPage = m_progressLabel;
+		progressPage = m_progressIdle;
 		break;
 	}
 	m_progressStack->setCurrentWidget(progressPage);
