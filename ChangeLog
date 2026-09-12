@@ -53,6 +53,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Make double-clicking dock titlebars not toggle them floating, since that's too easy to activate accidentally.
  * Fix: Increase the drag threshold for arranging docks and toolbars in general, as well as for docks when not in arrange mode even further, to avoid accidental rearrangements.
  * Feature: Add File → Merge/split projects. This lets you combine multiple dppr files or pull individual sessions out of them. Adding dprec/dptxt recordings to them is also supported.
+ * Feature: Warn about closing the browser tab too quickly after saving, since several browers will truncate the target file to 0 bytes and then write to a temporary file, leaving you with the former if you exit too quickly.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
