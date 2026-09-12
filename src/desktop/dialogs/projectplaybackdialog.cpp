@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/projectplaybackdialog.h"
-#include "desktop/dialogs/projectdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/noscroll.h"
@@ -606,8 +605,7 @@ void ProjectPlaybackDialog::onProjectErrorOccurred(
 		utils::showWarning(this, tr("Player Error"), errorMessage);
 		break;
 	default:
-		ProjectDialog::showUnhandledProjectErrorMessageBoxOn(
-			this, errorMessage);
+		utils::showUnhandledErrorMessageBox(this, errorMessage);
 		break;
 	}
 }

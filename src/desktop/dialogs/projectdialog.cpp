@@ -85,25 +85,6 @@ void ProjectDialog::setTempPath(const QString &tempPath)
 	}
 }
 
-void ProjectDialog::showUnhandledProjectErrorMessageBoxOn(
-	QWidget *parent, const QString &errorMessage)
-{
-	QString objectName = QStringLiteral("unhandlederrorbox");
-	QMessageBox *box = parent->findChild<QMessageBox *>(
-		objectName, Qt::FindDirectChildrenOnly);
-	if(box) {
-		qCWarning(
-			lcDpProjectDialog,
-			"Unhandled error while another one is being presented: %s",
-			qUtf8Printable(errorMessage));
-	} else {
-		box = utils::makeWarning(parent, tr("Unexpected Error"), errorMessage);
-		box->setInformativeText(tr("This is probably a bug in Drawpile."));
-		box->setObjectName(objectName);
-		box->show();
-	}
-}
-
 void ProjectDialog::openProject()
 {
 	if(!m_tempPath.isEmpty()) {
@@ -154,7 +135,7 @@ void ProjectDialog::handleProjectError(int type, const QString &errorMessage)
 		showErrorPage(errorMessage);
 		break;
 	default:
-		showUnhandledProjectErrorMessageBoxOn(this, errorMessage);
+		utils::showUnhandledErrorMessageBox(this, errorMessage);
 		break;
 	}
 }
