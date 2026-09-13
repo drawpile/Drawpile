@@ -748,13 +748,53 @@ void Client::triggerNormalBan()
 	QString message;
 	QJsonObject params;
 
-	// We'll say that 99 years has sufficient permanence.
 	QDate date = d->ban.expires.isValid() ? d->ban.expires.date() : QDate();
-	bool isTemporary =
-		date.isValid() && date.year() - QDate::currentDate().year() < 99;
+	QString shortTermExpiryMessage;
+	bool isTemporary = false;
+	if(date.isValid()) {
+		QDate today = QDate::currentDate();
+		// We'll say that 99 years has sufficient permanence.
+		if(date.year() - today.year() < 99) {
+			isTemporary = true;
+			// For bans about to expire imminently, it's really hard to judge
+			// for users when exactly it will do so, since they don't know the
+			// server time zone. Tell them a rough time frame if the ban is
+			// close to expiring.
+			qint64 secondsRemaining = d->ban.secondsRemaining;
+			qint64 threeDaysSeconds = 60LL * 60LL * 24LL * 3LL;
+			if(secondsRemaining > 0LL && secondsRemaining < threeDaysSeconds) {
+				if(secondsRemaining < 60LL) {
+					shortTermExpiryMessage =
+						QStringLiteral(" (less than a minute remaining)");
+				} else if(secondsRemaining < 3600LL) {
+					qint64 minutesRemaining = (secondsRemaining + 30LL) / 60LL;
+					if(minutesRemaining > 1LL) {
+						shortTermExpiryMessage =
+							QStringLiteral(" (about %1 minutes remaining)")
+								.arg(minutesRemaining);
+					} else {
+						shortTermExpiryMessage =
+							QStringLiteral(" (about a minute remaining)");
+					}
+				} else {
+					qint64 hoursRemaining =
+						(secondsRemaining + 1800LL) / 3600LL;
+					if(hoursRemaining > 1) {
+						shortTermExpiryMessage =
+							QStringLiteral(" (about %1 hours remaining)")
+								.arg(hoursRemaining);
+					} else {
+						shortTermExpiryMessage =
+							QStringLiteral(" (about an hour remaining)");
+					}
+				}
+			}
+		}
+	}
+
 	if(isTemporary) {
 		message = QStringLiteral("Banned from this server until ") +
-				  date.toString(Qt::ISODate);
+				  date.toString(Qt::ISODate) + shortTermExpiryMessage;
 	} else {
 		message = QStringLiteral("Permanently banned from this server");
 	}

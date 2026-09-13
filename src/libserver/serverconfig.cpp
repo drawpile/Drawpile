@@ -175,7 +175,8 @@ BanResult ServerConfig::isAddressBanned(const QHostAddress &addr) const
 					  !isInAnyRange(addr, ban.ipsExcluded);
 		if(banned) {
 			return makeBanResult(
-				ban, addr.toString(), QStringLiteral("IP"), reaction, true);
+				ban, addr.toString(), QStringLiteral("IP"),
+				now.secsTo(ban.expires), reaction, true);
 		}
 	}
 	return BanResult::notBanned();
@@ -191,7 +192,8 @@ BanResult ServerConfig::isSystemBanned(const QString &sid) const
 					  isInAnySystem(sid, ban.system, reaction);
 		if(banned) {
 			return makeBanResult(
-				ban, sid, QStringLiteral("SID"), reaction, false);
+				ban, sid, QStringLiteral("SID"), now.secsTo(ban.expires),
+				reaction, false);
 		}
 	}
 	return BanResult::notBanned();
@@ -207,8 +209,8 @@ BanResult ServerConfig::isUserBanned(long long userId) const
 					  isInAnyUser(userId, ban.users, reaction);
 		if(banned) {
 			return makeBanResult(
-				ban, QString::number(userId), QStringLiteral("User"), reaction,
-				false);
+				ban, QString::number(userId), QStringLiteral("User"),
+				now.secsTo(ban.expires), reaction, false);
 		}
 	}
 	return BanResult::notBanned();
@@ -445,15 +447,23 @@ bool ServerConfig::isInAnyUser(
 
 BanResult ServerConfig::makeBanResult(
 	const ExtBan &ban, const QString &cause, const QString &sourceType,
-	BanReaction reaction, bool isExemptable)
+	qint64 secondsRemaining, BanReaction reaction, bool isExemptable)
 {
 	// If we don't have a sensible reaction, treat this as a normal ban.
 	if(reaction == BanReaction::NotBanned || reaction == BanReaction::Unknown) {
 		reaction = BanReaction::NormalBan;
 	}
 	return {
-		reaction,	ban.reason, ban.expires, cause, QStringLiteral("extban"),
-		sourceType, ban.id,		isExemptable};
+		reaction,
+		ban.reason,
+		ban.expires,
+		cause,
+		QStringLiteral("extban"),
+		sourceType,
+		secondsRemaining,
+		ban.id,
+		isExemptable,
+	};
 }
 
 QJsonArray ServerConfig::banIpRangesToJson(

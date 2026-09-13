@@ -234,8 +234,10 @@ void Database::updateListServerWhitelist(const QStringList &whitelist)
 BanResult Database::isAddressBanned(const QHostAddress &addr) const
 {
 	drawdance::Query query = d->db.queryWithoutLock();
-	if(query.exec("select rowid, ip, subnet, expires from ipbans "
-				  "where expires > datetime('now')")) {
+	if(query.exec(
+		   "select rowid, ip, subnet, expires, "
+		   "julianday(expires) - julianday(datetime('now')) "
+		   "from ipbans where expires > datetime('now')")) {
 		while(query.next()) {
 			QHostAddress ip(query.columnText16(1));
 			int subnet = query.columnInt(2);
@@ -247,6 +249,7 @@ BanResult Database::isAddressBanned(const QHostAddress &addr) const
 					addr.toString(),
 					QStringLiteral("database"),
 					QStringLiteral("IP"),
+					qRound64(query.columnReal(4) * 86400.0),
 					query.columnInt(0),
 					true};
 			}
@@ -259,8 +262,9 @@ BanResult Database::isSystemBanned(const QString &sid) const
 {
 	drawdance::Query query = d->db.queryWithoutLock();
 	bool ok = query.exec(
-		"select id, reaction, expires, reason from systembans "
-		"where sid = ? and expires > datetime('now') limit 1",
+		"select id, reaction, expires, reason, "
+		"julianday(expires) - julianday(datetime('now')) "
+		"from systembans where sid = ? and expires > datetime('now') limit 1",
 		{sid});
 	if(ok && query.next()) {
 		int id = query.columnInt64(0);
@@ -274,6 +278,7 @@ BanResult Database::isSystemBanned(const QString &sid) const
 			sid,
 			QStringLiteral("database"),
 			QStringLiteral("SID"),
+			qRound64(query.columnReal(4) * 86400.0),
 			id,
 			false};
 	}
@@ -284,8 +289,9 @@ BanResult Database::isUserBanned(long long userId) const
 {
 	drawdance::Query query = d->db.queryWithoutLock();
 	bool ok = query.exec(
-		"select id, reaction, expires, reason from userbans "
-		"where userid = ? and expires > datetime('now') limit 1",
+		"select id, reaction, expires, reason, "
+		"julianday(expires) - julianday(datetime('now')) "
+		"from userbans where userid = ? and expires > datetime('now') limit 1",
 		{userId});
 	if(ok && query.next()) {
 		int id = query.columnInt64(0);
@@ -299,6 +305,7 @@ BanResult Database::isUserBanned(long long userId) const
 			QString::number(userId),
 			QStringLiteral("database"),
 			QStringLiteral("User"),
+			qRound64(query.columnReal(4) * 86400.0),
 			id,
 			false};
 	}

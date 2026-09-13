@@ -249,12 +249,13 @@ struct BanResult {
 	QString cause;
 	QString source;
 	QString sourceType;
+	qint64 secondsRemaining;
 	int sourceId;
 	bool isExemptable;
 
 	static BanResult notBanned()
 	{
-		return {BanReaction::NotBanned, {}, {}, {}, {}, {}, 0, true};
+		return {BanReaction::NotBanned, {}, {}, {}, {}, {}, 0LL, 0, true};
 	}
 };
 
@@ -437,7 +438,7 @@ private:
 
 	static BanResult makeBanResult(
 		const ExtBan &ban, const QString &cause, const QString &sourceType,
-		BanReaction reaction, bool isExemptable);
+		qint64 secondsRemaining, BanReaction reaction, bool isExemptable);
 
 	static QJsonArray
 	banIpRangesToJson(const QVector<BanIpRange> &ranges, bool includeReaction);

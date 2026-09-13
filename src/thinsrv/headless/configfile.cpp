@@ -134,6 +134,7 @@ void ConfigFile::reloadFile() const
 				sid,
 				QStringLiteral("configfile"),
 				QStringLiteral("SID"),
+				0LL,
 				sourceId,
 				false};
 
@@ -163,6 +164,7 @@ void ConfigFile::reloadFile() const
 					QString::number(userId),
 					QStringLiteral("configfile"),
 					QStringLiteral("User"),
+					0LL,
 					sourceId,
 					false};
 			} else {
@@ -223,7 +225,7 @@ BanResult ConfigFile::isAddressBanned(const QHostAddress &addr) const
 			return {
 				BanReaction::NormalBan, QString(), QDateTime(),
 				addr.toString(), QStringLiteral("configfile"),
-				QStringLiteral("IP"), i + 1, true};
+				QStringLiteral("IP"), 0LL, i + 1, true};
 		}
 	}
 

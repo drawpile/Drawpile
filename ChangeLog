@@ -55,6 +55,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add File → Merge/split projects. This lets you combine multiple dppr files or pull individual sessions out of them. Adding dprec/dptxt recordings to them is also supported.
  * Feature: Warn about closing the browser tab too quickly after saving, since several browers will truncate the target file to 0 bytes and then write to a temporary file, leaving you with the former if you exit too quickly.
  * Feature: The browser pressure tester now shows the pressure value and lets you toggle whether to optimize for low-pressure styluses like Apple Pencils, in case it doesn't get detected automatically.
+ * Server Feature: Tell the user how many hours or minutes remain on their ban if it expires in less than 3 days, since giving just a date can make it confusing with regards to time zones. Thanks Bluestrings for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
