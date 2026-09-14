@@ -9,12 +9,13 @@ set(SUPPORTED_LANGS
     de_DE # German
     # el_GR # Greek
     en_US # English
-    es_CO # American Spanish (Colombia used as a stand-in)
     eo_XZ # Esparanto
+    es_CO # American Spanish (Colombia used as a stand-in)
     # fa_IR # Farsi (Iran)
     fi_FI # Finnish
     # fil_PH # Filipono
     fr_FR # French
+    # got_Goth # Gothic
     # hi_IN # Hindi (India)
     id_ID # Indonesian
     it_IT # Italian
@@ -23,6 +24,7 @@ set(SUPPORTED_LANGS
     # mn_MN # Mongolian
     # ms_MY # Malay
     # nb_NO # Norwegian Bokmal
+    # nl_NL # Dutch
     pl_PL # Polish
     pt_BR # Brazilian Portuguese
     pt_PT # Portuguese Portuguese
@@ -32,6 +34,7 @@ set(SUPPORTED_LANGS
     uk_UA # Ukrainian
     vi_VN # Vietnamese
     zh_CN # Simplified Chinese
+    # zh_Hant # Traditional Chinese
 )
 
 # Qt doesn't have some translations, but Drawpile does.

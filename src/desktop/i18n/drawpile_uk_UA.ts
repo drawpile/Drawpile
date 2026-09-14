@@ -132,7 +132,7 @@
     </message>
     <message>
         <location line="-326"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+159"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+170"/>
         <source>Opacity: </source>
         <translation>Непрозорість: </translation>
     </message>
@@ -230,11 +230,13 @@
     </message>
     <message>
         <location line="-58"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+89"/>
         <source>Choose an action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+6"/>
         <source>Change…</source>
         <translation type="unfinished">Зміна…</translation>
     </message>
@@ -517,7 +519,7 @@
 <context>
     <name>FileWrangler</name>
     <message>
-        <location filename="../filewrangler.cpp" line="+186"/>
+        <location filename="../filewrangler.cpp" line="+215"/>
         <source>Certificates (%1)</source>
         <translation>Сертифікати (%1)</translation>
     </message>
@@ -527,12 +529,12 @@
         <translation>Імпорт</translation>
     </message>
     <message>
-        <location line="-144"/>
+        <location line="-172"/>
         <source>Open</source>
         <translation>Відкрити</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+37"/>
         <source>Open Debug Dump</source>
         <translation>Відкрийте дамп налагодження</translation>
     </message>
@@ -547,23 +549,23 @@
         <translation>Імпортувати ролі</translation>
     </message>
     <message>
-        <location line="+156"/>
-        <location line="+353"/>
+        <location line="+179"/>
+        <location line="+343"/>
         <source>Save Image</source>
         <translation>Зберегти зображення</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-343"/>
         <source>Export Image</source>
         <translation>Експортувати зображення</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+40"/>
         <source>Save Pre-Reset Image</source>
         <translation>Зберегти зображення до скидання</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Save Selection</source>
         <translation>Зберегти вибране</translation>
     </message>
@@ -584,6 +586,11 @@
     </message>
     <message>
         <location line="+42"/>
+        <source>Export PNG Spritesheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Performance Profile</source>
         <translation>Профіль продуктивності</translation>
     </message>
@@ -593,38 +600,32 @@
         <translation>Журнал подій планшета</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+154"/>
         <source>Log File</source>
         <translation>Файл журналу</translation>
     </message>
     <message>
-        <location line="-209"/>
-        <location line="+43"/>
+        <location line="-196"/>
         <source>Export MP4 Video</source>
         <translation>Експортувати як MP4 відео</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Export WebM Video</source>
-        <translation>Експортувати як WebM відео</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Export Custom FFmpeg Video</source>
-        <translation>Експортувати як користувацьке FFmpeg відео</translation>
-    </message>
-    <message>
-        <location line="-84"/>
+        <location line="-27"/>
         <source>Save Animation Frames</source>
         <translation>Зберегти кадри анімації</translation>
     </message>
     <message>
-        <location line="-305"/>
+        <location line="-338"/>
         <source>Add Avatar</source>
         <translation>Додати аватар</translation>
     </message>
     <message>
         <location line="+14"/>
+        <source>Open Playback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Import Animation Frames</source>
         <translation>Імпортувати анімацію з кадрів</translation>
     </message>
@@ -665,12 +666,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+463"/>
+        <location line="+476"/>
         <source>Session Settings (%1)</source>
         <translation>Налаштування сеансу (%1)</translation>
     </message>
     <message>
-        <location line="-462"/>
+        <location line="-475"/>
         <source>Session Bans (%1)</source>
         <translation>Заборони сеансів (%1)</translation>
     </message>
@@ -715,7 +716,22 @@
         <translation>Еталонне зображення</translation>
     </message>
     <message>
-        <location line="+193"/>
+        <location line="+8"/>
+        <source>Recordings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Save Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Repairable Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+197"/>
         <source>Export Frames in ZIP</source>
         <translation>Експортувати кадри як ZIP</translation>
     </message>
@@ -735,18 +751,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+43"/>
-        <source>Save Image Series</source>
-        <translation>Зберегти послідовність зображень</translation>
-    </message>
-    <message>
-        <location line="+92"/>
+        <location line="+106"/>
         <source>Export Autorecovery File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Save Repaired File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Repaired File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -791,7 +812,7 @@
         <translation>Зберегти як %1</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+25"/>
         <source>Replace Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -836,14 +857,12 @@
         <translation type="unfinished">Ні, тримай</translation>
     </message>
     <message>
-        <location line="+217"/>
-        <location line="+5"/>
-        <location line="+507"/>
+        <location line="+815"/>
         <source>Untitled</source>
         <translation>Без назви</translation>
     </message>
     <message>
-        <location line="-405"/>
+        <location line="-476"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>Без назви%1</translation>
@@ -1028,7 +1047,7 @@
 <context>
     <name>HudHandler</name>
     <message>
-        <location filename="../scene/hudhandler.cpp" line="+62"/>
+        <location filename="../scene/hudhandler.cpp" line="+63"/>
         <source>More…</source>
         <translation>Більше…</translation>
     </message>
@@ -1145,7 +1164,7 @@
 <context>
     <name>KisSliderSpinBoxPrivate</name>
     <message>
-        <location filename="../widgets/kis_slider_spin_box_p.h" line="+411"/>
+        <location filename="../widgets/kis_slider_spin_box_p.h" line="+414"/>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
@@ -1154,7 +1173,7 @@ Subrange: [%3, %4]</source>
 Піддіапазон: [%3, %4]</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+227"/>
         <source>&amp;Select All</source>
         <translation>&amp;Виберіть усі</translation>
     </message>
@@ -1332,7 +1351,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1513"/>
+        <location filename="../utils/widgetutils.cpp" line="+1581"/>
         <source>Open Link</source>
         <translation>Відкрити посилання</translation>
     </message>
@@ -1503,12 +1522,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MacMenu</name>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="+85"/>
+        <location filename="../widgets/macmenu.cpp" line="+88"/>
         <source>Minimize</source>
         <translation>Мінімізувати</translation>
     </message>
     <message numerus="yes">
-        <location line="+173"/>
+        <location line="+179"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
             <numerusform>Зміни у %n зображенні не збережено. Хочете переглянути ці зміни, перш ніж виходити?</numerusform>
@@ -1535,18 +1554,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+851"/>
+        <location filename="../mainwindow.cpp" line="+878"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 приєднується!</translation>
     </message>
     <message>
-        <location line="+274"/>
-        <location line="+3067"/>
+        <location line="+300"/>
+        <location line="+3332"/>
         <source>Untitled</source>
         <translation>Без назви</translation>
     </message>
     <message>
-        <location line="-1795"/>
+        <location line="-2085"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>Вихід з Drawpile</translation>
@@ -1564,12 +1583,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <location line="+31"/>
-        <location line="+961"/>
+        <location line="+1168"/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location line="-972"/>
+        <location line="-1179"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Деякі зміни не збережено. Зберегти їх перед виходом?</translation>
     </message>
@@ -1584,12 +1603,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Відкинути</translation>
     </message>
     <message>
-        <location line="+616"/>
+        <location line="+829"/>
         <source>Saving...</source>
         <translation>Збереження...</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+30"/>
         <source>Couldn&apos;t save image</source>
         <translation>Не вдалося зберегти зображення</translation>
     </message>
@@ -1599,7 +1618,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Зображення збережено</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+121"/>
         <source>Joined the session!</source>
         <translation>Приєднано до сеансу!</translation>
     </message>
@@ -1619,28 +1638,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Не вдалося експортувати шаблон сеансу</translation>
     </message>
     <message>
-        <location line="+137"/>
-        <source>Pause</source>
-        <translation>Призупинити</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="-846"/>
         <source>Play</source>
         <translation>Пуск</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+982"/>
         <source>Stop Recording</source>
         <translation>Припинити записування</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2754"/>
+        <location line="+2884"/>
         <source>Record...</source>
         <translation>Записати…</translation>
     </message>
     <message>
-        <location line="-2350"/>
+        <location line="-2387"/>
         <source>Invalid address</source>
         <translation>Некоректна адреса</translation>
     </message>
@@ -1686,12 +1700,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3586"/>
+        <location line="+3722"/>
         <source>Terminate</source>
         <translation>Перервати</translation>
     </message>
     <message>
-        <location line="-3388"/>
+        <location line="-3524"/>
         <source>Would you like to join the session instead?</source>
         <translation>Хочете замість цього долучитися до сеансу?</translation>
     </message>
@@ -1701,17 +1715,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Долучитися</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+214"/>
         <source>Session blocked by parental controls</source>
         <translation>Сеанс заблоковано засобами батьківського контролю</translation>
     </message>
     <message>
-        <location line="+723"/>
+        <location line="+729"/>
         <source>The image could not be loaded</source>
         <translation>Не вдалося завантажити зображення</translation>
     </message>
     <message>
-        <location line="+477"/>
+        <location line="+491"/>
         <source>About Drawpile</source>
         <translation>Про Drawpile</translation>
     </message>
@@ -1727,7 +1741,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../widgets/macmenu.cpp" line="-239"/>
+        <location filename="../widgets/macmenu.cpp" line="-248"/>
         <source>&amp;New</source>
         <translation>&amp;Створити</translation>
     </message>
@@ -1737,8 +1751,8 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>&amp;Відкрити...</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../utils/widgetutils.cpp" line="-379"/>
+        <location line="+13"/>
+        <location filename="../utils/widgetutils.cpp" line="-415"/>
         <source>Close</source>
         <translation>Закрити</translation>
     </message>
@@ -1753,23 +1767,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Зберегти &amp;як…</translation>
     </message>
     <message>
-        <location line="-2804"/>
+        <location line="-2919"/>
         <source>Saving animation...</source>
         <translation>Зберігаємо анімацію...</translation>
     </message>
     <message>
-        <location line="-1199"/>
+        <location line="-1429"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>Запитаний пензель не дозволяє іншим його використовувати.</translation>
     </message>
     <message>
-        <location line="+668"/>
+        <location line="+476"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>Полотно завантажено %1:%2.%3</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+649"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>Зображення збережено в %1:%2.%3</translation>
@@ -1813,12 +1827,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Помилка завантаження.</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+137"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
         <translation>Цей сеанс було проведено за допомогою старішої версії Drawpile. Деякі функції, такі як обрізання шарів, деякі режими накладання та малювання в масці виділення, будуть недоступні.</translation>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+649"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Немає полотна для розгортання! Створіть нове або відкрийте файл.</translation>
     </message>
@@ -1828,41 +1842,41 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Розмір полотна занадто великий для розміщення.</translation>
     </message>
     <message>
-        <location line="+2288"/>
+        <location line="+2312"/>
         <source>Arrange Docks</source>
         <translation>Організувати доки</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+121"/>
         <location line="+6"/>
-        <location filename="../widgets/macmenu.cpp" line="+14"/>
+        <location filename="../widgets/macmenu.cpp" line="+17"/>
         <location line="+2"/>
         <source>&amp;Quit</source>
         <translation>Ви&amp;йти</translation>
     </message>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="-19"/>
+        <location filename="../widgets/macmenu.cpp" line="-22"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+107"/>
+        <location filename="../mainwindow.cpp" line="+124"/>
         <location filename="../widgets/macmenu.cpp" line="+6"/>
         <source>Open &amp;Recent</source>
         <translation>Відкрити &amp;недавні</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+39"/>
         <source>&amp;Export</source>
         <translation>&amp;Експорт</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+39"/>
         <source>File Tools</source>
         <translation>Робота з файлами</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+52"/>
         <source>&amp;Undo</source>
         <translation>С&amp;касувати</translation>
     </message>
@@ -1914,7 +1928,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+16"/>
         <location line="+4"/>
-        <location filename="../widgets/macmenu.cpp" line="+24"/>
+        <location filename="../widgets/macmenu.cpp" line="+27"/>
         <location line="+2"/>
         <source>Prefere&amp;nces</source>
         <translation>На&amp;лаштування</translation>
@@ -2070,7 +2084,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Розташування панелі дій вибору</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+56"/>
         <source>Clear Fill Source</source>
         <translation>Очистити джерело заповнення</translation>
     </message>
@@ -2080,7 +2094,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Блоковий шар (цензура для вас)</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+22"/>
+        <source>Select Layer Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Select Layer Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Toggle Layer Check State</source>
         <translation>&amp;Переключити стан перевірки шару</translation>
     </message>
@@ -2095,7 +2119,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>&amp;Зніміть позначку з усіх</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Layer</source>
         <translation type="unfinished">Шар</translation>
     </message>
@@ -2110,12 +2134,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>&amp;Скасувати позначення</translation>
     </message>
     <message>
-        <location line="-746"/>
+        <location line="-764"/>
         <source>Delete</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location line="+765"/>
+        <location line="+783"/>
         <source>Fill Selection</source>
         <translation>Заповнити позначене</translation>
     </message>
@@ -2135,7 +2159,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>З&amp;міни</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-665"/>
+        <location filename="../mainwindow.cpp" line="-683"/>
         <source>&amp;Expand Canvas</source>
         <translation>Роз&amp;ширити полотно</translation>
     </message>
@@ -2195,7 +2219,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Нова група шарів</translation>
     </message>
     <message>
-        <location line="+314"/>
+        <location line="+249"/>
+        <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
         <source>Selection</source>
         <translation type="unfinished">Вибіром</translation>
     </message>
@@ -2210,12 +2239,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Показати вікно попереднього перегляду анімації</translation>
     </message>
     <message>
-        <location line="-749"/>
+        <location line="-767"/>
         <source>Zoom &amp;In</source>
         <translation>З&amp;більшити</translation>
     </message>
     <message>
-        <location line="-2536"/>
+        <location line="-2612"/>
         <source>Reason:</source>
         <translation>Причина:</translation>
     </message>
@@ -2230,7 +2259,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Полотно розблоковано</translation>
     </message>
     <message>
-        <location line="+559"/>
+        <location line="+569"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>Від руки (режим стирання, натисніть, щоб скинути)</translation>
     </message>
@@ -2250,7 +2279,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Інструмент пензля від руки (режим альфа-блокування)</translation>
     </message>
     <message>
-        <location line="+968"/>
+        <location line="+990"/>
         <source>Export Image…</source>
         <translation>Експортувати зображення…</translation>
     </message>
@@ -2270,12 +2299,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Експортувати шаблон &amp;сеансу...</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+24"/>
         <source>Export &amp;Brushes…</source>
         <translation>Експортувати &amp;пензлі…</translation>
     </message>
     <message>
-        <location line="+612"/>
+        <location line="+651"/>
         <source>Zoom &amp;Out</source>
         <translation>З&amp;меншити</translation>
     </message>
@@ -2331,12 +2360,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+8"/>
-        <location line="+873"/>
+        <location line="+933"/>
         <source>Rotation</source>
         <translation>Обертання</translation>
     </message>
     <message>
-        <location line="-812"/>
+        <location line="-872"/>
         <source>User Pointers</source>
         <translation>Вказівники користувача</translation>
     </message>
@@ -2346,14 +2375,14 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Створити шар</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+594"/>
+        <location filename="../docks/layerlistdock.cpp" line="+599"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Duplicate Layer</source>
         <translation>Дублювати шар</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="+12"/>
+        <location filename="../mainwindow.cpp" line="+22"/>
         <source>Delete Layer</source>
         <translation>Вилучити шар</translation>
     </message>
@@ -2370,7 +2399,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Увімкнути режим шару &amp;ескізу</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+440"/>
+        <location filename="../mainwindow.cpp" line="+468"/>
         <source>Next Frame</source>
         <translation>Наступний кадр</translation>
     </message>
@@ -2390,12 +2419,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Create Layers on Current Key Frame</source>
-        <translation>Створення шарів на поточному ключовому кадрі</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+16"/>
         <source>Create Layers on Next Key Frame</source>
         <translation>Створіть шари на наступному ключовому кадрі</translation>
     </message>
@@ -2404,18 +2428,28 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <source>Create Layers on Previous Key Frame</source>
         <translation>Створення шарів на попередньому ключовому кадрі</translation>
     </message>
+    <message numerus="yes">
+        <location line="+5"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+3885"/>
+        <source>Create Layer Group(s) on Current Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+22"/>
+        <location line="+24"/>
         <source>Animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+27"/>
         <source>Create Layers on Key Frame</source>
         <translation>Створення шарів на ключовому кадрі</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+137"/>
         <source>Share your canvas with others</source>
         <translation>Поділитися своїм полотном з іншими</translation>
     </message>
@@ -2530,7 +2564,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Інформація про систему…</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+83"/>
         <source>Set Artificial Lag...</source>
         <translation>Встановити штучну затримку...</translation>
     </message>
@@ -2540,12 +2574,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Штучне роз&apos;єднання...</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-80"/>
         <source>Open Debug Dump...</source>
         <translation>Відкрити дамп налагодження...</translation>
     </message>
     <message>
-        <location line="-437"/>
+        <location line="-473"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2555,7 +2589,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Exposure</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2595,12 +2629,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
-        <source>Unassign Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+63"/>
         <source>Increase Exposure on All Tracks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2625,12 +2654,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+361"/>
+        <location line="+391"/>
         <source>Statistics…</source>
         <translation>Статистика…</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+85"/>
         <source>Toggle Eraser Mode</source>
         <translation>Перемкнути режим стирання</translation>
     </message>
@@ -2655,7 +2684,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Установіть колір переднього плану на чорний, а колір фону на білий</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+268"/>
         <source>Could not write log file: %1</source>
         <translation>Не вдалося записати файл журналу: %1</translation>
     </message>
@@ -2670,17 +2699,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Фокусне полотно</translation>
     </message>
     <message>
-        <location line="-1375"/>
+        <location line="-1482"/>
         <source>Show Censored Layers</source>
         <translation>Показати цензуровані шари</translation>
     </message>
     <message>
-        <location line="-5464"/>
+        <location line="-5805"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;Комбінація клавіш &quot;%1&quot; неоднозначна, вона відповідає:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location line="-677"/>
+        <location line="-698"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation>відключити вас від сеансу</translation>
@@ -2740,13 +2769,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ні, скасувати</translation>
     </message>
     <message>
-        <location line="+128"/>
-        <location line="+5038"/>
+        <location line="+149"/>
+        <location line="+5335"/>
         <source>Export Again</source>
         <translation>Знову експорт</translation>
     </message>
     <message>
-        <location line="-5034"/>
+        <location line="-5331"/>
         <source>Export Again to %1</source>
         <translation>Знову експортуйте до %1</translation>
     </message>
@@ -2761,7 +2790,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Виправити</translation>
     </message>
     <message>
-        <location line="+881"/>
+        <location line="+857"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>Ви не маєте дозволу вирізати, вставляти, заповнювати чи видаляти.</translation>
@@ -2792,7 +2821,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ви не маєте на це дозволу.</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+260"/>
         <source>New</source>
         <translation>Новий</translation>
     </message>
@@ -2812,12 +2841,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ви збираєтеся відкрити останній файл і закрити це вікно.</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="-274"/>
         <source>Opening file…</source>
         <translation>Відкриваємо файл…</translation>
     </message>
     <message>
-        <location line="-1860"/>
+        <location line="-1613"/>
         <source>Open</source>
         <translation>Відчинено</translation>
     </message>
@@ -2827,7 +2856,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ви збираєтеся відкрити новий файл і закрити це вікно.</translation>
     </message>
     <message>
-        <location line="+2115"/>
+        <location line="+2302"/>
         <source>Image saving failed</source>
         <translation>Не вдалося зберегти зображення</translation>
     </message>
@@ -2842,7 +2871,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Завантаження завершено, натисніть «Зберегти», щоб зберегти файл.</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+149"/>
         <source>Outdated Version</source>
         <translation>Застаріла версія</translation>
     </message>
@@ -2852,22 +2881,24 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ця сесія була проведена за допомогою нової версії Drawpile. Ви не побачите ефекту, коли інші користувачі використовують нові функції, яких ще немає у вашій версії, і ви не зможете стиснути або скинути полотно. Перевірте &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; на наявність оновлень.</translation>
     </message>
     <message>
-        <location line="+219"/>
+        <location line="+231"/>
         <source>Unsupported format.</source>
         <translation>Формат не підтримується.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Couldn&apos;t start recording.</source>
         <translation>Не вдалося розпочати запис.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-1886"/>
+        <location line="+56"/>
+        <location line="+1833"/>
         <source>Unknown error.</source>
         <translation>Невідома помилка.</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Error downloading profile.</source>
         <translation>Помилка завантаження профілю.</translation>
     </message>
@@ -2892,12 +2923,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Помилка закриття журналу подій планшета.</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+80"/>
         <source>Error opening tablet event log.</source>
         <translation>Помилка відкриття журналу подій планшета.</translation>
     </message>
     <message>
-        <location line="+222"/>
+        <location line="+252"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Ви вже підключилися до сеансу! Спершу відключіться, щоб розмістити один.</translation>
     </message>
@@ -2917,7 +2948,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>У вас є незбережені зміни. Зберегти їх перед повторним підключенням?</translation>
     </message>
     <message>
-        <location line="-2794"/>
+        <location line="-3059"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
         <translation>Переключено в режим перегляду кадрів.
@@ -2976,51 +3007,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
-        <location line="+10"/>
-        <source>Project Overview</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-9"/>
-        <source>To view statistics, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the statistics?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <location line="+44"/>
-        <location line="+10"/>
-        <location line="+30"/>
-        <source>Timelapse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-83"/>
-        <source>Unexpected save format. To view statistics, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+44"/>
-        <source>To make a timelapse, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the timelapse?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Unexpected save format. To make a timelapse, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+792"/>
+        <location line="+1077"/>
         <source>Open Recovered File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3030,7 +3017,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1365"/>
+        <location line="+1506"/>
         <source>Did the download complete successfully?</source>
         <translation>Завантаження успішно завершилося?</translation>
     </message>
@@ -3055,7 +3042,8 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Так, перепідключитися</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-1035"/>
+        <location line="+1037"/>
         <source>Download</source>
         <translation>Завантажити</translation>
     </message>
@@ -3111,7 +3099,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Відключено: %1</translation>
     </message>
     <message>
-        <location line="+244"/>
+        <location line="+248"/>
         <source>Undo Limit... (%1)</source>
         <translation>Скасувати обмеження... (%1)</translation>
     </message>
@@ -3121,7 +3109,8 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Змінити ліміт скасування сеансу, поточний ліміт становить %1.</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="-2444"/>
+        <location line="+2483"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
@@ -3141,7 +3130,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Скинути зображення занадто велике</translation>
     </message>
     <message>
-        <location line="+460"/>
+        <location line="+466"/>
         <source>Cr&amp;op canvas to transform…</source>
         <translation>Обрізати полотно для перетворення…</translation>
     </message>
@@ -3157,12 +3146,12 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Не вдалося завантажити зображення: %1.</translation>
     </message>
     <message>
-        <location line="+276"/>
+        <location line="-3539"/>
         <source>User #%1</source>
         <translation>Користувач #%1</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+3864"/>
         <source>Altering selection…</source>
         <translation>Зміна вибору…</translation>
     </message>
@@ -3173,23 +3162,23 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+2235"/>
+        <location line="+2363"/>
         <source>Tablet Event Log...</source>
         <translation>Журнал подій планшета...</translation>
     </message>
     <message>
-        <location line="-2231"/>
+        <location line="-2359"/>
         <source>Stop Profile</source>
         <translation>Зупинити профіль</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+2232"/>
+        <location line="+2360"/>
         <source>Profile...</source>
         <translation>Профіль...</translation>
     </message>
     <message>
-        <location line="-2221"/>
+        <location line="-2349"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Встановити штучну затримку... (наразі %1 мс)</translation>
     </message>
@@ -3215,12 +3204,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+2179"/>
+        <location line="+2307"/>
         <source>Record Debug Dumps</source>
         <translation>Записуйте дампи налагодження</translation>
     </message>
     <message>
-        <location line="-2178"/>
+        <location line="-2306"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -3243,7 +3232,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Ви збираєтеся відкрити дамп налагодження та закрити це вікно.</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+40"/>
         <source>Cause Crash</source>
         <translation>Причина аварії</translation>
     </message>
@@ -3293,7 +3282,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Вертикальні виступи з боків</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+45"/>
         <source>Autorecovery</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3338,13 +3327,135 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Імпортувати анімацію з &amp;шарів…</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+25"/>
         <source>Project statistics…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-6"/>
         <source>Make timelapse…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-4710"/>
+        <location line="+56"/>
+        <source>Save Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-55"/>
+        <source>Error preparing project overview file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Error preparing timelapse file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+679"/>
+        <source>Resuming…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>It may be possible to repair it.</source>
+        <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Repair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Incompatible Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Open Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>What do you want to do with this recording?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Convert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Directly opens this recording to let you play it back.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+313"/>
+        <source>Open Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open the project file and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+372"/>
+        <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
+        <source>Record</source>
+        <translation type="unfinished">Запис</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Do you want to start another recording anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2766"/>
+        <source>Open &amp;Player…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+65"/>
+        <source>Convert &amp;Recordings to Project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Merge/split projects…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Repair file…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3358,17 +3469,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+129"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+33"/>
         <source>&amp;Import</source>
         <translation>&amp;Імпорт</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+110"/>
         <source>&amp;Copy Merged</source>
         <translation>&amp;Копія об&apos;єднана</translation>
     </message>
@@ -3444,11 +3555,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+92"/>
+        <location line="+889"/>
         <source>Edit</source>
         <translation type="unfinished">Редагувати</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="-867"/>
         <source>Canvas Background</source>
         <translation>Полотно фону</translation>
     </message>
@@ -3605,7 +3717,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+3"/>
-        <location filename="../mainwindow.cpp" line="+10"/>
+        <location filename="../mainwindow.cpp" line="+20"/>
         <source>Layer Properties…</source>
         <translation>Властивості шару…</translation>
     </message>
@@ -3655,17 +3767,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Зафіксувати положення шару</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Select Above</source>
         <translation>Виберіть Вище</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Select Below</source>
         <translation>Виберіть Нижче</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>Layer Color Marker</source>
         <translation>Маркер кольору шару</translation>
     </message>
@@ -3786,52 +3898,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Малювати на виділеному</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation>Обведення маскою/заливка ласо за допомогою виділення</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Keep brush strokes inside the selection mask</source>
         <translation>Зберігайте мазки пензля всередині маски виділення</translation>
     </message>
     <message>
-        <location line="+156"/>
-        <source>Set Key Frame to Current Layer</source>
-        <translation>Установіть «Ключовий кадр» на поточний шар</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Set Blank Key Frame</source>
-        <translation>Встановити порожній ключовий кадр</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Cut Key Frame</source>
-        <translation>Вирізати ключовий кадр</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Copy Key Frame</source>
-        <translation>Копіювати ключовий кадр</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Paste Key Frame</source>
-        <translation>Вставити ключовий кадр</translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+197"/>
         <source>Key Frame Properties...</source>
         <translation>Ключові властивості кадру...</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Delete Key Frame</source>
-        <translation>Видалити ключовий кадр</translation>
-    </message>
-    <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>New Track</source>
         <translation>Новий трек</translation>
     </message>
@@ -3871,12 +3948,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Доріжка нижче</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Create Group on Current Key Frame</source>
-        <translation>Створити групу на поточному ключовому кадрі</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+22"/>
         <source>Create Group on Next Key Frame</source>
         <translation>Створити групу на наступному ключовому кадрі</translation>
     </message>
@@ -3896,12 +3968,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Дублювати до попереднього ключового кадру</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+29"/>
         <source>Key Frame Color Marker</source>
         <translation>Маркер кольору ключового кадру</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Create Group on Key Frame</source>
         <translation>Створити групу на ключовому кадрі</translation>
     </message>
@@ -3911,7 +3983,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Дубльований ключовий кадр</translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+127"/>
         <source>&amp;Host...</source>
         <translation>В&amp;узол…</translation>
     </message>
@@ -4047,13 +4119,13 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+1"/>
-        <source>Lass&amp;o Fill</source>
-        <translation>Заливка ласо</translation>
+        <source>Fill enclosed areas</source>
+        <translation>Заповніть закриті ділянки</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>Fill enclosed areas</source>
-        <translation>Заповніть закриті ділянки</translation>
+        <source>S&amp;hape Fill</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4142,12 +4214,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
+        <source>Debug Input Events…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Text Input Debug Overlay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+7"/>
+        <source>UDP Activity Stream…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+67"/>
         <source>Cause Crash…</source>
         <translation>Причина аварії…</translation>
     </message>
@@ -4227,7 +4309,37 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Попередній слот пензля</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+5"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Right-click drawing: none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Use background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Right-click drawing: use background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Right-click drawing: erase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+93"/>
         <source>Tool blend mode: %1</source>
         <translation>Режим змішування інструменту: %1</translation>
     </message>
@@ -4352,7 +4464,7 @@ You can re-enable them via the View menu or preferences.</source>
         <translation>Розгорнути/Згорнути</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+37"/>
         <source>Apply</source>
         <translation>Застосувати</translation>
     </message>
@@ -4388,23 +4500,107 @@ You can re-enable it via the View menu.</source>
 Ви можете знову ввімкнути її через меню «Вигляд».</translation>
     </message>
     <message>
-        <location line="+644"/>
+        <location line="+676"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>Щоб повідомити про помилку або запропонувати функцію, [перегляньте сюди].</translation>
     </message>
     <message>
-        <location line="-1244"/>
+        <location line="-1306"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>З&amp;меншити розмір пензля</translation>
     </message>
     <message>
-        <location line="-538"/>
+        <location line="-600"/>
         <source>Change Frame Range or FPS...</source>
         <translation>Змінити діапазон кадрів або FPS...</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+6"/>
+        <source>Timeline tool: edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+30"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-24"/>
+        <source>Set Key Frame(s) to Current Layer</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+5"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+10"/>
+        <source>Set Blank Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+55"/>
+        <source>Cut Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+6"/>
+        <source>Copy Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>Paste Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Paste Decloned Key Frame Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+16"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+5"/>
+        <source>Delete Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+5"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+6"/>
+        <source>Unassign Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Declone Key Frame Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Increase Exposure on Current Track</source>
         <translation>Збільшення експозиції на поточному треку</translation>
     </message>
@@ -4413,13 +4609,24 @@ You can re-enable it via the View menu.</source>
         <source>Decrease Exposure on Current Track</source>
         <translation>Зменшити експозицію на поточній доріжці</translation>
     </message>
+    <message numerus="yes">
+        <location line="+31"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-63"/>
+        <source>Create Layers on Current Key Frame(s)</source>
+        <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+462"/>
+        <location line="+473"/>
         <source>&amp;Increase Brush Size</source>
         <translation>З&amp;більшити розмір пензля</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+138"/>
         <source>Drawing tools</source>
         <translation>Інструменти малювання</translation>
     </message>
@@ -4477,17 +4684,22 @@ You can re-enable it via the View menu.</source>
         <translation>Скасувати дію</translation>
     </message>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="-65"/>
+        <location filename="../widgets/macmenu.cpp" line="-68"/>
         <source>&amp;Open…</source>
         <translation>&amp;Відкрити…</translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>Open &amp;Playback…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>&amp;Start…</source>
         <translation>&amp;Старт…</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+36"/>
         <source>&amp;Host…</source>
         <translation>&amp;Хост…</translation>
     </message>
@@ -4507,16 +4719,26 @@ You can re-enable it via the View menu.</source>
         <translation>Вікно</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+139"/>
+        <location filename="../utils/widgetutils.cpp" line="+176"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../widgets/timelinewidget.cpp" line="-45"/>
+        <source>Set Key Frame(s) to %1</source>
+        <extracomment>%1 is the name of a layer.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+285"/>
+        <location filename="../utils/widgetutils.cpp" line="+298"/>
         <source>None</source>
         <translation>Жоден</translation>
     </message>
@@ -4531,7 +4753,7 @@ You can re-enable it via the View menu.</source>
         <translation>Зняти позначку з ключового кадру</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+8"/>
         <source>Blue</source>
         <translation>Синій</translation>
     </message>
@@ -4546,7 +4768,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначити ключовий кадр синім</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select blue-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Green</source>
         <translation>Зелений</translation>
     </message>
@@ -4561,7 +4788,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначити ключовий кадр зеленим</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select green-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Yellow</source>
         <translation>Жовтий</translation>
     </message>
@@ -4576,7 +4808,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначити ключовий кадр жовтим</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Select yellow-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Orange</source>
         <translation>Помаранчевий</translation>
     </message>
@@ -4591,7 +4828,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначте ключовий кадр помаранчевим кольором</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Select orange-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Brown</source>
         <translation>Коричневий</translation>
     </message>
@@ -4606,7 +4848,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначте ключовий кадр коричневим</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select brown-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Red</source>
         <translation>Червоний</translation>
     </message>
@@ -4621,7 +4868,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначити ключовий кадр червоним</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select red-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Purple</source>
         <translation>Фіолетовий</translation>
     </message>
@@ -4636,7 +4888,12 @@ You can re-enable it via the View menu.</source>
         <translation>Позначте ключовий кадр фіолетовим</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Select purple-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Gray</source>
         <translation>Сірий</translation>
     </message>
@@ -4649,6 +4906,11 @@ You can re-enable it via the View menu.</source>
         <location line="+1"/>
         <source>Mark key frame gray</source>
         <translation>Позначити ключовий кадр сірим</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Select gray-marked layer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4695,92 +4957,9 @@ You can re-enable it via the View menu.</source>
     </message>
 </context>
 <context>
-    <name>PlaybackDialog</name>
-    <message>
-        <location filename="../ui/playback.ui" line="+14"/>
-        <source>Playback</source>
-        <translation>Відтворення</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>Play</source>
-        <translation>Пуск</translation>
-    </message>
-    <message>
-        <location line="-34"/>
-        <source>Rewind to Beginning</source>
-        <translation>Перемотати на початок</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Skip Backward</source>
-        <translation>Перейти назад</translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Next Stroke</source>
-        <translation>Наступний удар</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Skip Forward</source>
-        <translation>Пропустити вперед</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Playback Speed: </source>
-        <translation>Швидкість відтворення: </translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>%</source>
-        <translation>%</translation>
-    </message>
-    <message>
-        <location line="+79"/>
-        <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation>Створення індексу дозволить швидко переходити до будь-якої частини запису.</translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Build Index</source>
-        <translation>Створити покажчик</translation>
-    </message>
-    <message>
-        <location line="+82"/>
-        <source>Frame:</source>
-        <translation>Кадр:</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Automatically save a frame at each step</source>
-        <translation>Автоматично зберігати кадр на кожному кроці</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Autosave</source>
-        <translation>Автозбереження</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Save frame</source>
-        <translation>Зберегти кадр</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Stop</source>
-        <translation>Зупинити</translation>
-    </message>
-    <message>
-        <location line="+39"/>
-        <source>Export Video...</source>
-        <translation>Експортувати відео…</translation>
-    </message>
-</context>
-<context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-856"/>
+        <location filename="../filewrangler.cpp" line="-855"/>
         <source>All files (*)</source>
         <translation>Усі файли (*)</translation>
     </message>
@@ -4821,8 +5000,8 @@ You can re-enable it via the View menu.</source>
     </message>
     <message>
         <location line="+5"/>
-        <source>Lasso Fill</source>
-        <translation>Заливка лассо</translation>
+        <source>Shape Fill</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4883,6 +5062,28 @@ You can re-enable it via the View menu.</source>
         <location line="+5"/>
         <source>Inspector</source>
         <translation>Інспекторі</translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <location filename="../dialogs/projecteditdialog.cpp" line="+314"/>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="+200"/>
+        <source>Save</source>
+        <translation type="unfinished">Зберегти</translation>
+    </message>
+    <message>
+        <location line="+104"/>
+        <location filename="../dialogs/projectplaybackdialog.cpp" line="+340"/>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="-135"/>
+        <location line="+137"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="+9"/>
+        <source>Close</source>
+        <translation type="unfinished">Закрити</translation>
     </message>
 </context>
 <context>
@@ -5328,7 +5529,7 @@ You can re-enable it via the View menu.</source>
 <context>
     <name>Time</name>
     <message numerus="yes">
-        <location filename="../utils/widgetutils.cpp" line="+16"/>
+        <location filename="../utils/widgetutils.cpp" line="+59"/>
         <source>%n days(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -5337,7 +5538,7 @@ You can re-enable it via the View menu.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+7"/>
+        <location line="-5"/>
         <source>%n hour(s)</source>
         <translation type="unfinished">
             <numerusform>%n година</numerusform>
@@ -5346,7 +5547,7 @@ You can re-enable it via the View menu.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+7"/>
+        <location line="-6"/>
         <source>%n minute(s)</source>
         <translation type="unfinished">
             <numerusform>%n хвилина</numerusform>
@@ -5355,7 +5556,7 @@ You can re-enable it via the View menu.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+6"/>
+        <location line="-6"/>
         <source>%n second(s)</source>
         <translation type="unfinished">
             <numerusform>%n секунда</numerusform>
@@ -5364,7 +5565,7 @@ You can re-enable it via the View menu.</source>
         </translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-5"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
         <translation type="unfinished">, </translation>
@@ -5447,77 +5648,9 @@ You can re-enable it via the View menu.</source>
     </message>
 </context>
 <context>
-    <name>VideoExport</name>
-    <message>
-        <location filename="../ui/videoexport.ui" line="+14"/>
-        <source>Export video</source>
-        <translation>Експортування відео</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Video Options</source>
-        <translation>Параметри відео</translation>
-    </message>
-    <message>
-        <location line="+49"/>
-        <source>Framerate:</source>
-        <translation>Частота кадрів:</translation>
-    </message>
-    <message>
-        <location line="-35"/>
-        <source> FPS</source>
-        <translation> кд/с</translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>Size:</source>
-        <translation>Розмір:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Format:</source>
-        <translation>Формат:</translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Export Options</source>
-        <translation>Параметри експорту</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Image format:</source>
-        <translation>Формат файла зображення:</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>File name pattern:</source>
-        <translation>Шаблон назви файла:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Підтримувані замінники у шаблонах:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - номер кадру&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - суфікс назви файла&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Path to ffmpeg:</source>
-        <translation>Шлях до ffmpeg:</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Choose</source>
-        <translation>Виберіть</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Custom Arguments:</source>
-        <translation>Спеціальні аргументи:</translation>
-    </message>
-</context>
-<context>
     <name>WorkTime</name>
     <message numerus="yes">
-        <location filename="../utils/widgetutils.cpp" line="+7"/>
+        <location filename="../utils/widgetutils.cpp" line="+29"/>
         <source>%n minute(s)</source>
         <translation type="unfinished">
             <numerusform>%n хвилина</numerusform>
@@ -5744,7 +5877,7 @@ You can re-enable it via the View menu.</source>
 <context>
     <name>dialogs::AnimationExportDialog</name>
     <message>
-        <location filename="../dialogs/animationexportdialog.cpp" line="+32"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="+35"/>
         <source>Export Animation</source>
         <translation>Експорт анімації</translation>
     </message>
@@ -5754,7 +5887,7 @@ You can re-enable it via the View menu.</source>
         <translation>Вихід</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>Format:</source>
         <translation>Формат:</translation>
     </message>
@@ -5779,7 +5912,12 @@ You can re-enable it via the View menu.</source>
         <translation>Масштабування:</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+57"/>
+        <source>Encoder:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Input</source>
         <translation>Введення</translation>
     </message>
@@ -5789,7 +5927,7 @@ You can re-enable it via the View menu.</source>
         <translation>Діапазон кадрів:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+15"/>
         <source> FPS</source>
         <translation> FPS</translation>
     </message>
@@ -5834,12 +5972,17 @@ You can re-enable it via the View menu.</source>
         <translation>Експорт</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+119"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+34"/>
+        <source>%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Output resolution will be %1x%2 pixels.</source>
         <translation>Вихідна роздільна здатність становитиме %1x%2 пікселів.</translation>
     </message>
@@ -6208,7 +6351,7 @@ You can re-enable it via the View menu.</source>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+75"/>
         <source>Change…</source>
         <translation>Зміна…</translation>
     </message>
@@ -6218,7 +6361,7 @@ You can re-enable it via the View menu.</source>
         <translation>Ярлик:</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Choose File…</source>
         <translation>Виберіть файл…</translation>
     </message>
@@ -6248,7 +6391,7 @@ You can re-enable it via the View menu.</source>
         <translation>Опис:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Allow others in a session to use this brush</source>
         <translation>Дозволити іншим учасникам сеансу використовувати цей пензель</translation>
     </message>
@@ -6258,20 +6401,33 @@ You can re-enable it via the View menu.</source>
         <translation>Спільне використання:</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+69"/>
         <source>No shortcut assigned</source>
         <translation>Ярлик не призначено</translation>
     </message>
 </context>
 <context>
+    <name>dialogs::BrushSaveDialog</name>
+    <message>
+        <location filename="../dialogs/brushsavedialog.cpp" line="+17"/>
+        <source>Save Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Tags:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+163"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+171"/>
         <source>Brush Editor</source>
         <translation>Редактор пензля</translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location line="+128"/>
         <source>Brush</source>
         <translation>Кисть</translation>
     </message>
@@ -6301,13 +6457,13 @@ You can re-enable it via the View menu.</source>
         <translation>Пензель перезапису</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+113"/>
         <source>Brush Type:</source>
         <translation>Тип пензля:</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+501"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+539"/>
         <source>Round Pixel Brush</source>
         <translation>Кругла піксельна кисть</translation>
     </message>
@@ -6440,7 +6596,7 @@ You can re-enable it via the View menu.</source>
         <translation>пк</translation>
     </message>
     <message>
-        <location line="-502"/>
+        <location line="-520"/>
         <source>Common</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6455,7 +6611,17 @@ You can re-enable it via the View menu.</source>
         <translation>Налаштування заповнення проти переповнення.</translation>
     </message>
     <message>
-        <location line="+408"/>
+        <location line="+97"/>
+        <source>Undelete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Save Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+320"/>
         <source>Enable anti-overflow</source>
         <translation>Увімкнути захист від переповнення</translation>
     </message>
@@ -6700,7 +6866,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished">Користувацька</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+116"/>
         <source>Smudging: </source>
         <translation>Розмазування: </translation>
     </message>
@@ -6715,7 +6881,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Захист від переповнення автоматично змушує мазки пензля залишатися всередині ліній. Встановіть шар з лініями як джерело заливки, а потім малюйте на іншому шарі.</translation>
     </message>
     <message>
-        <location line="-837"/>
+        <location line="-870"/>
         <source>Color Pickup: 1/</source>
         <translation>Збір кольору: 1/</translation>
     </message>
@@ -6725,18 +6891,18 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Зберегти альфа-версію</translation>
     </message>
     <message>
-        <location line="+1097"/>
+        <location line="+1130"/>
         <source>Minimum Smudging: </source>
         <translation>Мінімум розмазування: </translation>
     </message>
     <message>
-        <location line="-216"/>
-        <location line="+220"/>
+        <location line="-249"/>
+        <location line="+253"/>
         <source>Smudging</source>
         <translation>Розмазування</translation>
     </message>
     <message>
-        <location line="-498"/>
+        <location line="-531"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -6783,7 +6949,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Змішування кольорів на шарі, на якому малюється.</translation>
     </message>
     <message>
-        <location line="+207"/>
+        <location line="+240"/>
         <source>Blending: </source>
         <translation>Змішування: </translation>
     </message>
@@ -8387,7 +8553,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Виберіть</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+37"/>
         <source>Checking…</source>
         <translation type="unfinished">Перевірка…</translation>
     </message>
@@ -8455,6 +8621,21 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Once it is installed, just using %1 in the field above should work. Otherwise, click on Choose and locate the executable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/widgetutils.cpp" line="-221"/>
+        <source>Programming Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>FFmpeg is not supported on this platform.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>If you see this message, you found a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8725,7 +8906,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Пройти через</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1248"/>
+        <location filename="../mainwindow.cpp" line="-1345"/>
         <source>Blend alpha</source>
         <translation>Змішати альфа</translation>
     </message>
@@ -9060,60 +9241,35 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
+        <location filename="../dialogs/projectplaybackdialog.cpp" line="+175"/>
         <source>Playback</source>
         <translation>Відтворення</translation>
-    </message>
-    <message>
-        <location line="+153"/>
-        <source>Building index...</source>
-        <translation>Індекс будівлі...</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Index building failed.</source>
-        <translation>Не вдалося створити індекс.</translation>
-    </message>
-    <message>
-        <location line="+151"/>
-        <source>Video error</source>
-        <translation>Помилка відео</translation>
     </message>
 </context>
 <context>
     <name>dialogs::ProjectDialog</name>
     <message>
-        <location filename="../dialogs/projectdialog.cpp" line="+30"/>
+        <location filename="../dialogs/projectdialog.cpp" line="+32"/>
         <source>Project Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>The canvas has changes not saved in the project!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Dismiss</source>
-        <translation type="unfinished">Відхилити</translation>
-    </message>
-    <message>
-        <location line="+100"/>
+        <location filename="../utils/widgetutils.cpp" line="-302"/>
         <source>Unexpected Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>This is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location filename="../dialogs/projectdialog.cpp" line="+165"/>
         <source>Total session time:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9128,13 +9284,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Converted from a recording file, no timing information available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+10"/>
         <source>Opened at:</source>
         <extracomment>Refers to the date and time a session was opened (started.)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Closed at:</source>
         <extracomment>Refers to the date and time a session was closed (ended.)</extracomment>
         <translation type="unfinished"></translation>
@@ -9156,7 +9317,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>Recorded with an older, but compatible version of Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9197,20 +9358,294 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::ProjectEditDialog</name>
+    <message>
+        <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
+        <location line="+746"/>
+        <source>Error %1 opening input file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-732"/>
+        <source>Error %1 opening temporary file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Error copying to temporary file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>No recording in dpcs file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Failed to open project: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Failed to read project: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Project contains no sessions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Unknown file format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Failed to open recording: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Incompatible recording.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+64"/>
+        <source>Project session %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Edit Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Add the dppr, dprec and dptxt files you want to include. You can drag sessions to change their order and remove unwanted ones from the set. Once done, press %1 to create a new dppr file.</source>
+        <extracomment>%1 is what the &quot;Save&quot; button says.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Add</source>
+        <translation type="unfinished">Додати</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Move up</source>
+        <translation type="unfinished">Рухатися вгору</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Move down</source>
+        <translation type="unfinished">Рухатися вниз</translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Project file created successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Open project file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Back</source>
+        <translation type="unfinished">Назад</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Loading…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Failed to initialize temporary file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Processing…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+103"/>
+        <location line="+124"/>
+        <source>Error</source>
+        <translation type="unfinished">Помилка</translation>
+    </message>
+    <message numerus="yes">
+        <location line="-123"/>
+        <source>Failed to load %n file(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+111"/>
+        <source>Conversion suceeded, but file saving failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Saving project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>No converted file available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>No file to save to given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Error %1 opening output file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ProjectPlaybackDialog</name>
+    <message>
+        <location filename="../dialogs/projectplaybackdialog.cpp" line="-311"/>
+        <source>Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pause</source>
+        <translation type="unfinished">Призупинити</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Loading…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Rewind session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Skip stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Skip session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Playback speed: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Unsaved changes will be lost if you continue!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Follow view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Converting recording %1…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Failed to open temporary file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+72"/>
+        <source>Conversion cancelled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Opening project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Player Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Nothing to play back.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+127"/>
+        <source>uncapped</source>
+        <extracomment>This refers to uncapped playback speed. I didn&apos;t want to call this &quot;unlimited&quot; because it&apos;s still limited by how fast the device can actually play a recording, but no artificial limits.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+113"/>
+        <source>Session %1 - End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session %1 - Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Sequence number %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::ProjectRecordingSettingsDialog</name>
     <message>
-        <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+25"/>
+        <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+26"/>
         <source>Manage Autorecovery</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+12"/>
         <source>These settings affect only the current session. You can change the defaults [in the preferences].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+11"/>
         <source>Enable autorecovery for the current session</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9221,12 +9656,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+112"/>
+        <location line="+111"/>
         <source>Change Size Limit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-73"/>
         <source>Size limit: %1 GB</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9247,7 +9682,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source> This is %1% of the current %2 limit.</source>
         <extracomment>The %1% becomes a percentage, like &quot;50%&quot;. Don&apos;t remove the second %! %2 is a file size, like &quot;5GB&quot;.</extracomment>
         <translation type="unfinished"></translation>
@@ -9256,6 +9691,69 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <source>The current autorecovery file size is %1.</source>
         <extracomment>%1 is a file size, like &quot;1 GB&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ProjectRepairDialog</name>
+    <message>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="-182"/>
+        <source>Repair Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Checking…</source>
+        <translation type="unfinished">Перевірка…</translation>
+    </message>
+    <message>
+        <location line="+88"/>
+        <source>Repairing…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Cancelled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error %1:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>The project has been repaired, but no corruption was detected. You can choose to save it file anyway, but it may now contain invalid data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The project has been repaired, choose a file to save it to.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It is strongly recommended that you save to a new file. Overwriting an existing file may render it irrecoverable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The repaired project has been saved, do you want to open it now?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Error</source>
+        <translation type="unfinished">Помилка</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Error saving repaired project.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10048,7 +10546,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Показати мережеві налаштування</translation>
     </message>
     <message>
-        <location line="+378"/>
+        <location line="+7"/>
+        <source>Manage servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+381"/>
         <source>Checking…</source>
         <translation>Перевірка…</translation>
     </message>
@@ -10087,7 +10590,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Підключення через TCP</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Host</source>
         <translation>Хост</translation>
     </message>
@@ -10123,26 +10626,38 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TimelapseDialog</name>
     <message>
-        <location filename="../dialogs/animationexportdialog.cpp" line="-283"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+190"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="-335"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+193"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+181"/>
-        <source>Prefer FFmpeg over internal encoder</source>
+        <location line="+94"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+259"/>
+        <source>This encoder requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+211"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+257"/>
-        <source>The selected format requires FFmpeg. Do you want to set it up now?</source>
+        <location line="+200"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
+        <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+439"/>
+        <location line="+89"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+493"/>
+        <source>Internal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+7"/>
+        <source>Automatic (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+51"/>
         <source>Set up FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10153,12 +10668,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1014"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1239"/>
         <source>Timelapse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+54"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10193,17 +10708,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Формат:</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+45"/>
         <source>Duration:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+37"/>
+        <source>Switch to speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Duration presets:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+11"/>
+        <source>Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Switch to duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Speed presets:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>pixels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10213,7 +10748,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Keep aspect ratio</source>
         <translation type="unfinished">Зберігати пропорції</translation>
     </message>
@@ -10238,17 +10773,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="-389"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+31"/>
         <source>Advanced settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+19"/>
         <source>Encoder:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+18"/>
         <source>Automatic</source>
         <comment>interpolation</comment>
         <extracomment>Image scaling option that picks an algorithm automatically.</extracomment>
@@ -10305,7 +10841,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+24"/>
         <source>Backdrop:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10315,7 +10851,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+22"/>
         <source>Logo padding:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10330,13 +10866,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Preview result:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+38"/>
+        <location line="+39"/>
         <location line="+8"/>
         <location line="+24"/>
         <source> seconds</source>
@@ -10379,12 +10915,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+84"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+119"/>
+        <source>Calculating video duration…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Starting export…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10394,7 +10935,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+450"/>
+        <location line="+575"/>
         <source>%1 loop(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -10403,7 +10944,12 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+138"/>
+        <source>Choose Background Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Choose Backdrop Color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10413,7 +10959,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+31"/>
         <source>Reset</source>
         <translation type="unfinished">Скинути</translation>
     </message>
@@ -10423,7 +10969,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+76"/>
         <source>Back</source>
         <translation type="unfinished">Назад</translation>
     </message>
@@ -10438,7 +10984,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+17"/>
+        <source>Video duration: %1</source>
+        <extracomment>%1 is a time, something like &quot;1 minute, 30 seconds&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Timelapse exported in %1.</source>
         <extracomment>%1 is a time, like &quot;1 minute, 20 seconds&quot;.</extracomment>
         <translation type="unfinished"></translation>
@@ -10554,69 +11106,15 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::VideoExportDialog</name>
-    <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="+35"/>
-        <source>Image Series</source>
-        <translation>Серія зображень</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>MP4 Video</source>
-        <translation>MP4 відео</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>WebM Video</source>
-        <translation>Відео WebM</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Custom FFmpeg Command</source>
-        <translation>Спеціальна команда FFmpeg</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Original</source>
-        <translation>Оригінал</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Custom:</source>
-        <translation>Спеціальні:</translation>
-    </message>
-    <message>
-        <location line="+81"/>
-        <source>Executables</source>
-        <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation>Виконувані файли</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Choose ffmpeg path</source>
-        <translation>Виберіть шлях ffmpeg</translation>
-    </message>
-    <message>
-        <location line="+107"/>
-        <source>Checking…</source>
-        <translation>Перевірка…</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Not found. %1</source>
-        <translation>Не знайдено. %1</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+61"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+52"/>
         <source>Changing autorecovery preferences will not affect the status or limits of any running sessions. [Click here to manage autorecovery on your current session.]</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+11"/>
         <source>When offline or hosting sessions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10640,7 +11138,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Use system file picker dialogs</source>
         <translation>Використовуйте діалоги для вибору системних файлів</translation>
     </message>
@@ -10709,7 +11207,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Бажаний формат експорту:</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
+        <source>Default file name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, %S seconds, %T session title.</source>
+        <extracomment>These are template placeholders for the default file name. For example, if the user types in %Y, it will be replaced with the current year. Do not change the letters or casing!</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Write debugging log to file</source>
         <translation>Запис журналу налагодження у файл</translation>
     </message>
@@ -11196,7 +11705,42 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Попередній перегляд події</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+14"/>
+        <source>Chat message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Private message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>User joined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>User left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Canvas locked</source>
+        <translation type="unfinished">Полотно заблоковано</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Canvas unlocked</source>
+        <translation type="unfinished">Полотно розблоковано</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Disconnected</source>
+        <translation type="unfinished">Відключено</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -11226,7 +11770,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Ваше ім’я користувача завжди зараховується як згадка. Ви можете додати додаткові тригерні слова або фрази, які ви також хочете підрахувати, наприклад інші псевдоніми. Одне слово чи фраза на рядок, регістр не має значення.</translation>
     </message>
     <message>
-        <location line="-150"/>
+        <location line="-151"/>
         <source>Display notification while connected to a session</source>
         <translation>Відображати сповіщення під час підключення до сеансу</translation>
     </message>
@@ -11505,12 +12049,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+168"/>
+        <location line="+171"/>
         <source>Restore defaults…</source>
         <translation>Відновити налаштування за замовчуванням…</translation>
     </message>
     <message>
-        <location line="-284"/>
+        <location line="-287"/>
         <source>Shortcuts</source>
         <translation type="unfinished">Скорочення</translation>
     </message>
@@ -11520,7 +12064,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Справді відновити всі ярлики до стандартних значень?</translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+126"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
         <translation>Ярлик «Редагувати полотно»</translation>
@@ -11590,12 +12134,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Keyboard shortcuts to trigger actions, like switching tools, creating layers or anything else you can pick from the top menu bar.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>Keyboard shortcuts to switch brushes. Assigning the same shortcut to multiple brushes will toggle through them.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11666,7 +12210,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../mainwindow.cpp" line="-707"/>
+        <location filename="../mainwindow.cpp" line="-717"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -11747,7 +12291,24 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+3"/>
+        <source>Wait for movement before starting strokes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Ignore inputs with no pressure (Gaomon)</source>
+        <extracomment>Gaomon is a brand that makes pen tablets. This is a setting for a workaround that ignores zero-pressure movements from those.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Ignore full-pressure blotches (Ugee)</source>
+        <extracomment>Ugee is a brand that makes pen tablets. This is a setting for a workaround that ignores full-pressure blotches from those.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Translate F21 key to middle click (OnePlus)</source>
         <extracomment>OnePlus is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
         <translation type="unfinished"></translation>
@@ -11789,7 +12350,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Tools</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tools.cpp" line="+129"/>
+        <location filename="../dialogs/settingsdialog/tools.cpp" line="+142"/>
         <source>Toggle between previous and current tool</source>
         <translation>Перемикання між попереднім і поточним інструментом</translation>
     </message>
@@ -11799,12 +12360,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Комбінації клавіш:</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Double-tap Alt key to focus canvas</source>
-        <translation>Двічі торкніться клавіші Alt, щоб сфокусувати полотно</translation>
-    </message>
-    <message>
-        <location line="+11"/>
+        <location line="+22"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
         <translation>Тимчасово перемкніть інструмент, утримуючи основний ярлик для %1</translation>
     </message>
@@ -11829,17 +12385,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Розділіть один колір для всіх слотів пензля</translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-152"/>
         <source>px</source>
         <translation>px</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+97"/>
         <source>Enable brush outline</source>
         <translation>Увімкнути контур пензля</translation>
     </message>
     <message>
-        <location line="-75"/>
+        <location line="-95"/>
         <source>Brush outline:</source>
         <translation>Контур пензля:</translation>
     </message>
@@ -11895,7 +12451,44 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Вибір кольору:</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+7"/>
+        <source>Do nothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Use background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Right-click drawing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Option</source>
+        <extracomment>The Option key on Mac computer keyboards. On macOS, you have this key on your keyboard instead of the Alt key.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Alt</source>
+        <extracomment>The Alt key on PC keyboards.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Double-tap %1 key to focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
         <translation>мс</translation>
@@ -11920,7 +12513,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="-161"/>
+        <location line="-181"/>
         <source>Color space:</source>
         <translation>Колірний простір:</translation>
     </message>
@@ -11963,7 +12556,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Touch</name>
     <message>
-        <location filename="../dialogs/settingsdialog/touch.cpp" line="+30"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="-61"/>
         <source>Touch Tester</source>
         <translation>Торкніться Тестер</translation>
     </message>
@@ -11978,7 +12571,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Потрібно для деяких планшетів з екраном, ймовірно, не працює для малювання пальцями!</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+86"/>
         <source>Touch mode:</source>
         <translation>Сенсорний режим:</translation>
     </message>
@@ -11993,16 +12586,25 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Жести</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <location line="+33"/>
-        <location line="+21"/>
+        <location line="+81"/>
+        <location line="+37"/>
         <location line="+29"/>
         <location line="+8"/>
         <source>No action</source>
         <translation>Ніяких дій</translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="+14"/>
+        <source>Smoothing: </source>
+        <translation type="unfinished">Згладжування: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Do nothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Undo</source>
         <translation>Відмінити</translation>
     </message>
@@ -12027,7 +12629,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Перемкнути ластик</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Toggle erase mode</source>
         <translation>Перемкнути режим стирання</translation>
     </message>
@@ -12037,37 +12639,42 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Увімкнути режим перефарбування</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-163"/>
         <source>One-finger tap:</source>
         <translation>Дотик одним пальцем:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Two-finger tap:</source>
         <translation>Дотик двома пальцями:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Three-finger tap:</source>
         <translation>Дотик трьома пальцями:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Four-finger tap:</source>
         <translation>Дотик чотирма пальцями:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+51"/>
         <source>Pick color</source>
         <translation>Виберіть колір</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>One-finger tap and hold:</source>
         <translation>Натисніть і утримуйте одним пальцем:</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
+        <source>One-finger double-tap:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Draw</source>
         <translation>Малювати</translation>
     </message>
@@ -12117,12 +12724,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Поворот двома пальцями:</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Smoothing:</source>
-        <translation>Згладжування:</translation>
+        <location line="+26"/>
+        <source>Mirror canvas horizontally</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
+        <source>Flip canvas upside-down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Trigger action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-26"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -12349,17 +12966,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Browse</name>
     <message>
-        <location filename="../dialogs/startdialog/browse.cpp" line="+62"/>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+43"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
         <translation>Ви ще не додали жодного сервера. Деякі з них можна знайти на &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+3"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
         <translation>Щоб додати публічний сервер Drawpile, &lt;a href=&quot;#&quot;&gt;натисніть тут&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+12"/>
         <source>Filter</source>
         <translation>Фільтр</translation>
     </message>
@@ -12414,12 +13031,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Показати сеанси, які перераховані на кількох серверах</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+170"/>
         <source>Loading...</source>
         <translation>Завантаження...</translation>
     </message>
     <message>
-        <location line="-96"/>
+        <location line="-107"/>
         <source>Join</source>
         <translation>Приєднуйтесь</translation>
     </message>
@@ -12444,7 +13061,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Власник копії</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+104"/>
         <source>Nothing here yet!</source>
         <translation>Тут ще нічого немає!</translation>
     </message>
@@ -12479,6 +13096,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-39"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1290"/>
         <source>Background:</source>
         <translation>Фон:</translation>
     </message>
@@ -12634,12 +13252,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Recover</name>
     <message>
-        <location filename="../dialogs/startdialog/recover.cpp" line="+423"/>
+        <location filename="../dialogs/startdialog/recover.cpp" line="+429"/>
         <source>No files to recover.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+56"/>
         <source>Autorecovery Removal Failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12649,7 +13267,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>File not found.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12685,7 +13303,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::RecoveryEntryWidget</name>
     <message>
-        <location filename="../dialogs/startdialog/recover.cpp" line="-429"/>
+        <location filename="../dialogs/startdialog/recover.cpp" line="-441"/>
+        <source>Session: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Modified %1</source>
         <extracomment>%1 is a date and time saying when the file was last modified.</extracomment>
         <translation type="unfinished"></translation>
@@ -12713,6 +13336,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+4"/>
+        <source>Corrupted, may be possible to repair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Error: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12732,7 +13360,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+10"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12762,7 +13390,32 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Ні, тримай</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+17"/>
+        <source>Corrupted File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This file is corrupted. Do you want to attempt to repair it or save it as-is?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>You can also attempt to repair it after saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Repair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Save as-is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
         <source>Download Started</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12812,37 +13465,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
-        <source>Failed to open autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Failed to open target file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Failed to read from autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Failed to write to target file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Failed to write to target file: read/write mismatch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+35"/>
         <source>Failed to open autorecovery file for verification: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13481,17 +14104,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+117"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+129"/>
         <source>Brushes</source>
         <translation>Пензлі</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+29"/>
         <source>Search</source>
         <translation>Пошук</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+104"/>
         <source>Size:</source>
         <translation type="unfinished">Розмір:</translation>
     </message>
@@ -13506,7 +14129,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+535"/>
+        <location line="+665"/>
         <source>New Tag</source>
         <translation>Новий тег</translation>
     </message>
@@ -13516,7 +14139,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Видалити тег</translation>
     </message>
     <message>
-        <location line="-672"/>
+        <location line="-817"/>
         <source>&amp;Edit Brush</source>
         <translation>&amp;Пензель редагування</translation>
     </message>
@@ -13532,6 +14155,27 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+3"/>
+        <source>Undelete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Save Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Remove Brush from History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+875"/>
+        <source>Clear Brush History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-872"/>
         <source>&amp;New Brush</source>
         <translation>&amp;Нова кисть</translation>
     </message>
@@ -13596,12 +14240,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+33"/>
         <source>Export Brush…</source>
         <translation>Експорт пензля…</translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+303"/>
         <source>Overwrite Brush</source>
         <translation>Пензель перезапису</translation>
     </message>
@@ -13617,13 +14261,15 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+341"/>
+        <location line="+443"/>
         <location line="+45"/>
+        <location line="+25"/>
+        <location line="+33"/>
         <source>Keep</source>
         <translation>Тримайте</translation>
     </message>
     <message>
-        <location line="-323"/>
+        <location line="-413"/>
         <source>Brush Import</source>
         <translation>Імпорт пензля</translation>
     </message>
@@ -13660,7 +14306,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+145"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
         <translation>Без тегів</translation>
@@ -13672,7 +14318,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Кисть не вибрано</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+71"/>
         <location line="+16"/>
         <source>Tag name:</source>
         <translation>Назва тегу:</translation>
@@ -13694,7 +14340,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location line="-3"/>
+        <location line="-4"/>
         <source>Delete Brush</source>
         <translation>Видалити кисть</translation>
     </message>
@@ -13702,6 +14348,50 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
         <translation>Справді видалити пензель &quot;%1&quot;?</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You can still recover it from the brush history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+19"/>
+        <source>%n deleted brush(es) will be erased irrecoverably.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Do you really want to clear the contents of the history tag?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Clear</source>
+        <translation type="unfinished">Очистити</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>The brush will be deleted permanently and cannot be recovered.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Remove Brush History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Really remove brush &apos;%1&apos; from the history tag?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14122,7 +14812,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::DockBase</name>
     <message>
-        <location filename="../docks/dockbase.cpp" line="+89"/>
+        <location filename="../docks/dockbase.cpp" line="+91"/>
         <source>Drag here to arrange</source>
         <translation>Перетягніть сюди, щоб упорядкувати</translation>
     </message>
@@ -14173,7 +14863,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-451"/>
+        <location filename="../docks/layerlistdock.cpp" line="-454"/>
         <source>Layers</source>
         <translation>Шари</translation>
     </message>
@@ -14199,12 +14889,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+1962"/>
+        <location line="+2023"/>
         <source>Opacity: </source>
         <translation>Непрозорість: </translation>
     </message>
     <message>
-        <location line="-1961"/>
+        <location line="-2022"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -14214,7 +14904,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Змінити відтінок ескізу</translation>
     </message>
     <message>
-        <location line="+356"/>
+        <location line="+359"/>
         <source>Duplicate Layer Group</source>
         <translation>Створити групу шарів</translation>
     </message>
@@ -14264,7 +14954,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Зніміть прапорець із шару</translation>
     </message>
     <message>
-        <location line="+1073"/>
+        <location line="+1121"/>
         <source>Layer Limit Reached</source>
         <translation>Досягнуто ліміту шарів</translation>
     </message>
@@ -14293,13 +14983,13 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+502"/>
+        <location line="+512"/>
         <source>Sketch: </source>
         <translation>Ескіз: </translation>
     </message>
     <message>
         <location line="+267"/>
-        <location filename="../mainwindow.cpp" line="-5535"/>
+        <location filename="../mainwindow.cpp" line="-5896"/>
         <source>Layer</source>
         <translation>Шар</translation>
     </message>
@@ -14309,7 +14999,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Група</translation>
     </message>
     <message>
-        <location line="-939"/>
+        <location line="-949"/>
         <source>Delete Layer?</source>
         <translation>Видалити шар?</translation>
     </message>
@@ -14467,12 +15157,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Хронологія</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+110"/>
         <source>Play</source>
         <translation>Відтворити</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+37"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14528,7 +15218,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+7217"/>
+        <location filename="../mainwindow.cpp" line="+7685"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation>Пожертвувати</translation>
@@ -14540,7 +15230,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Відкрийте сторінку пожертв Drawpile у вашому браузері</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+1066"/>
+        <location filename="../mainwindow.cpp" line="+1101"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Зробіть пожертву Drawpile], щоб допомогти продовжувати розробку та роботу серверів.</translation>
@@ -14668,7 +15358,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::BrushSettings</name>
     <message>
-        <location filename="../toolwidgets/brushsettings.cpp" line="-168"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-293"/>
+        <source>Right-click drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+104"/>
         <source>Preview</source>
         <translation type="unfinished">Попередній перегляд</translation>
     </message>
@@ -14731,6 +15426,21 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
         <translation>&amp;Видалити кисть</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Undelete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Save Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Remove Brush From History</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
@@ -14800,7 +15510,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Робить стабілізатор параметром пензля, як у MyPaint, а не незалежним параметром, як у Krita.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+12"/>
         <source>Input Settings…</source>
@@ -14835,7 +15545,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/%1пікс</translation>
     </message>
     <message>
-        <location line="+690"/>
+        <location line="+718"/>
         <source>Smudging: </source>
         <translation>Розмазування: </translation>
     </message>
@@ -14845,13 +15555,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Змішування: </translation>
     </message>
     <message>
-        <location line="+832"/>
+        <location line="+879"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation>/%1</translation>
     </message>
     <message>
-        <location line="-1560"/>
+        <location line="-1635"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>Ви не маєте дозволу на використання пензлів MyPaint.</translation>
     </message>
@@ -15096,6 +15806,31 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+75"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Lasso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Fills the shape with intersections making holes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Fan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fills the shape without holes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Shape:</source>
+        <translation type="unfinished">Форма:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -15388,12 +16123,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../scene/hudhandler.cpp" line="+235"/>
+        <location filename="../scene/hudhandler.cpp" line="+249"/>
         <source>Restoring canvas…</source>
         <translation>Відновлення полотна…</translation>
     </message>
     <message>
-        <location line="+293"/>
+        <location line="+352"/>
         <source>Compressing canvas…</source>
         <translation>Стискання полотна…</translation>
     </message>
@@ -15419,7 +16154,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::Lock</name>
     <message>
-        <location filename="../view/lock.cpp" line="+101"/>
+        <location filename="../view/lock.cpp" line="+107"/>
         <source>Reset in progress</source>
         <translation>Виконується скидання</translation>
     </message>
@@ -15434,7 +16169,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Користувач заблокований</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>You need to set a layer as the fill source</source>
         <translation>Вам потрібно встановити шар як джерело заливки</translation>
     </message>
@@ -15479,7 +16214,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Не вибрано жодного шару</translation>
     </message>
     <message>
-        <location line="-119"/>
+        <location line="-126"/>
         <source>Exit layer view</source>
         <translation>Вийти з режиму перегляду шарів</translation>
     </message>
@@ -15535,6 +16270,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+47"/>
+        <source>Playback in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Out of space, you must reset the canvas</source>
         <translation>Не вистачає місця, потрібно скинути налаштування полотна</translation>
     </message>
@@ -15544,7 +16284,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Не вистачає місця, оператор повинен скинути налаштування полотна</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Choose a different layer to fill on</source>
         <translation>Виберіть інший шар для заповнення</translation>
     </message>
@@ -15554,15 +16294,23 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Інструмент заблоковано</translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="-33"/>
         <source>Tool requires a selection</source>
         <translation>Інструмент вимагає вибору</translation>
     </message>
 </context>
 <context>
+    <name>widgets::Banner</name>
+    <message>
+        <location filename="../widgets/banner.cpp" line="+45"/>
+        <source>Dismiss</source>
+        <translation type="unfinished">Відхилити</translation>
+    </message>
+</context>
+<context>
     <name>widgets::BrushPreview</name>
     <message>
-        <location filename="../widgets/brushpreview.cpp" line="+20"/>
+        <location filename="../widgets/brushpreview.cpp" line="+22"/>
         <source>Click to edit brush</source>
         <translation>Натисніть, щоб редагувати пензель</translation>
     </message>
@@ -15613,7 +16361,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+358"/>
+        <location filename="../scene/canvasview.cpp" line="+367"/>
         <location filename="../view/canvasview.cpp" line="-44"/>
         <source>Reconnect</source>
         <translation>Повторне підключення</translation>
@@ -15635,7 +16383,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+416"/>
+        <location line="+438"/>
         <source>Vertical flip: ON</source>
         <translation>Вертикальний переворот: УВІМК</translation>
     </message>
@@ -15655,7 +16403,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Горизонтальне дзеркало: ВИМК</translation>
     </message>
     <message>
-        <location line="+2059"/>
+        <location line="+2136"/>
         <source>Zoom: %1%</source>
         <translation>Збільшити: %1%</translation>
     </message>
@@ -16024,7 +16772,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+59"/>
+        <location filename="../widgets/netstatus.cpp" line="+60"/>
         <source>Copy address to clipboard</source>
         <translation>Скопіювати адресу в буфер обміну</translation>
     </message>
@@ -16079,7 +16827,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Закріплений дійсний сертифікат</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+204"/>
         <source>not connected</source>
         <translation>не підключено</translation>
     </message>
@@ -16193,7 +16941,7 @@ Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Autorecovery is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16211,7 +16959,7 @@ Hex: %4</source>
         <translation>Немає останніх файлів.</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+27"/>
         <source>No recent hosts.</source>
         <translation>Немає останніх хостів.</translation>
     </message>
@@ -16224,7 +16972,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+1057"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-2520"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Порожній ключовий кадр (дублікат)</translation>
     </message>
@@ -16279,7 +17027,7 @@ Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+366"/>
+        <location line="+433"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
@@ -16288,8 +17036,8 @@ or via Animation ▸ New Track.</source>
 або через Анімація ▸ Нова доріжка.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8284"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+709"/>
+        <location filename="../mainwindow.cpp" line="-8787"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+1036"/>
         <source>Track</source>
         <translation>Трек</translation>
     </message>
@@ -16302,16 +17050,6 @@ or via Animation ▸ New Track.</source>
         <location line="+0"/>
         <source>Track Name</source>
         <translation>Назва доріжки</translation>
-    </message>
-    <message>
-        <location line="+739"/>
-        <source>Set Key Frame to %1</source>
-        <translation>Установіть для ключового кадру значення %1</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Set Key Frame to Current Layer</source>
-        <translation>Установіть «Ключовий кадр» на поточний шар</translation>
     </message>
 </context>
 <context>

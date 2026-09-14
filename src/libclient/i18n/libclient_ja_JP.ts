@@ -2,9 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>AndroidForegroundResourceExhaustionWarningDialog</name>
+    <message>
+        <location filename="../utils/androidutils.cpp" line="+459"/>
+        <source>Resource Exhaustion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+</context>
+<context>
     <name>AndroidScalingDialog</name>
     <message>
-        <location filename="../utils/androidutils.cpp" line="+187"/>
+        <location line="-57"/>
         <source>Interface scale: %1</source>
         <translation>インターフェースの拡大率: %1</translation>
     </message>
@@ -288,7 +306,7 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+100"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+97"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>引数が間違っています。これはおそらく Drawpile のバグです。</translation>
     </message>
@@ -652,7 +670,12 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1224"/>
+        <location filename="../document.cpp" line="+377"/>
+        <source>Resumed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+919"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -689,48 +712,14 @@
         <translation>レイヤー境界を選択: 現在のレイヤーは空です。</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+258"/>
         <source>Download cancelled</source>
         <translation>ダウンロードがキャンセルされました</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="-20"/>
         <source>Error saving image</source>
         <translation>画像保存時のエラー</translation>
-    </message>
-</context>
-<context>
-    <name>FfmpegExporter</name>
-    <message>
-        <location filename="../export/ffmpegexporter.cpp" line="+62"/>
-        <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation>Windowsバージョンのffmpegは&lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; からダウンロードできます。Drawpileのffmpeg のパスとしてffmpeg.exeを選択します。</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>You can install ffmpeg through Homebrew.</source>
-        <translation>ffmpegはHomebrewからインストールできます。</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>You can probably install ffmpeg through your package manager.</source>
-        <translation>おそらくパッケージマネージャーからffmpegをインストールできます。</translation>
-    </message>
-    <message>
-        <location line="+98"/>
-        <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
-        <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation>ffmpegのパス &apos;%1&apos; からの起動に失敗しました。 %2</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Ffmpeg crashed!</source>
-        <translation>Ffmpeg がクラッシュしました！</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Ffmpeg process error</source>
-        <translation>Ffmpegプロセスエラー</translation>
     </message>
 </context>
 <context>
@@ -782,7 +771,7 @@ Select a regular layer instead.</source>
 <context>
     <name>ProjectSaver</name>
     <message>
-        <location filename="../export/projectsaver.cpp" line="+42"/>
+        <location filename="../export/projectsaver.cpp" line="+47"/>
         <source>Autosave cancelled during save</source>
         <translation>保存中に自動保存がキャンセルされました</translation>
     </message>
@@ -811,11 +800,12 @@ Select a regular layer instead.</source>
     </message>
     <message>
         <location line="+7"/>
+        <location line="+88"/>
         <source>Recordings (%1)</source>
         <translation>セッション記録 (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-81"/>
         <source>Performance Profile (%1)</source>
         <translation>パフォーマンスプロファイル (%1)</translation>
     </message>
@@ -861,19 +851,37 @@ Select a regular layer instead.</source>
     </message>
     <message>
         <location line="+5"/>
+        <location line="+18"/>
+        <location line="+12"/>
+        <location line="+11"/>
         <source>All Supported Files (%1)</source>
         <translation>サポートされたすべてのファイル (%1)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-35"/>
+        <location line="+16"/>
+        <location line="+10"/>
+        <location line="+13"/>
         <source>All Files (*)</source>
         <translation>すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <location line="-25"/>
+        <location line="+11"/>
+        <location line="+12"/>
+        <source>Projects (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Canvases (%1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+125"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+131"/>
         <source>Layer %1</source>
         <translation>レイヤー %1</translation>
     </message>
@@ -1043,22 +1051,22 @@ Select a regular layer instead.</source>
 <context>
     <name>TimelapseSaverRunnable</name>
     <message>
-        <location filename="../export/timelapsesaverrunnable.cpp" line="+101"/>
+        <location filename="../export/timelapsesaverrunnable.cpp" line="+103"/>
         <source>Loading project…</source>
         <translation>プロジェクトを読込中…</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+19"/>
         <source>Calculating…</source>
         <translation>計算中…</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+35"/>
         <source>Finishing up…</source>
         <translation>最終処理中…</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+60"/>
         <source>Rendering preview…</source>
         <translation>プレビューをレンダリング中…</translation>
     </message>
@@ -1073,7 +1081,7 @@ Select a regular layer instead.</source>
         <translation>結果をレンダリング中…</translation>
     </message>
     <message>
-        <location line="+392"/>
+        <location line="+399"/>
         <source>No input path given.</source>
         <translation>入力パスが指定されていません.</translation>
     </message>
@@ -1115,17 +1123,7 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>Failed to open %1: %2</source>
-        <translation>開くことに失敗 %1: %2</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Failed to open temporary file: %1</source>
-        <translation>一時ファイルを開くことに失敗: %1</translation>
-    </message>
-    <message>
-        <location line="+32"/>
+        <location line="+22"/>
         <source>Error %d opening project.</source>
         <translation>ロジェクトを開く際にエラー %d が発生しました。</translation>
     </message>
@@ -1140,9 +1138,24 @@ Select a regular layer instead.</source>
         <translation>再生タイミングの読み取りエラーが発生しました。</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+20"/>
         <source>Failed to start playback.</source>
         <translation>再生開始に失敗しました。</translation>
+    </message>
+</context>
+<context>
+    <name>Units</name>
+    <message>
+        <location filename="../utils/strings.cpp" line="+12"/>
+        <source>%</source>
+        <extracomment>Percent, put after numbers as a unit, like 42%. Unless your language uses a different symbol or something, leave this as it is.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>px</source>
+        <extracomment>Abbreviation for pixels, put after a number as a unit, like 42px. Unless your language calls pixels something different, leave this as it is.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1349,9 +1362,18 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
+    <name>brushes::BrushPresetModel</name>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+2951"/>
+        <source>Brush requested from user &quot;%1&quot; on %2 at %3.</source>
+        <extracomment>%1 is a username, %2 is a date, %3 is a time.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1338"/>
+        <location line="-1325"/>
         <source>All</source>
         <translation>すべて</translation>
     </message>
@@ -1359,6 +1381,11 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <source>Untagged</source>
         <translation>タグなし</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>History</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1371,13 +1398,18 @@ Select a regular layer instead.</source>
         <translation>どのタグにも割り当てられていないブラシを表示します。</translation>
     </message>
     <message>
-        <location line="+108"/>
-        <location line="+457"/>
+        <location line="+2"/>
+        <source>Show a history of brushes used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+123"/>
+        <location line="+459"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>&apos;%1&apos; を開けません。</translation>
     </message>
     <message>
-        <location line="-423"/>
+        <location line="-425"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>無効なブラシ パック: order.conf が内部に見つかりません</translation>
     </message>
@@ -1397,7 +1429,7 @@ Select a regular layer instead.</source>
         <translation>タグ &apos;%1&apos; を作成できませんでした。</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
         <translation>ブラシ プリセット &apos;%1&apos; を作成できませんでした。</translation>
     </message>
@@ -1427,7 +1459,17 @@ Select a regular layer instead.</source>
         <translation>ブラシ ファイル &apos;%1&apos; からブラシをロードできません</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="-461"/>
+        <source> (deleted)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source> (unsaved)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+517"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
         <translation>ブラシファイル &apos;%1&apos; には JSON オブジェクトが含まれていません</translation>
     </message>
@@ -1447,7 +1489,7 @@ Select a regular layer instead.</source>
         <translation>ブラシファイル &apos;%1&apos; には古い設定 &apos;%2&apos; が含まれています</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+134"/>
         <source>No brushes exported</source>
         <translation>ブラシはエクスポートされませんでした</translation>
     </message>
@@ -1485,7 +1527,12 @@ Select a regular layer instead.</source>
 <context>
     <name>canvas::CanvasModel</name>
     <message>
-        <location filename="../canvas/canvasmodel.cpp" line="+671"/>
+        <location filename="../canvas/canvasmodel.cpp" line="+720"/>
+        <source>No session to resume given</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+115"/>
         <source>Project recording is already active</source>
         <translation>プロジェクトの記録はすでに有効</translation>
     </message>
@@ -1556,7 +1603,7 @@ Select a regular layer instead.</source>
 <context>
     <name>dialogs::AnimationExportDialog</name>
     <message>
-        <location filename="../export/videoformat.cpp" line="+86"/>
+        <location filename="../export/videoformat.cpp" line="+96"/>
         <source>Frames as PNGs</source>
         <translation>フレームをPNGで書き出し</translation>
     </message>
@@ -1564,6 +1611,11 @@ Select a regular layer instead.</source>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
         <translation>フレームをPNGで書き出しZIP圧縮</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>PNG Spritesheet</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1632,6 +1684,190 @@ Select a regular layer instead.</source>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
         <translation>フレーム %1</translation>
+    </message>
+</context>
+<context>
+    <name>impex::RecordingConverter</name>
+    <message>
+        <location filename="../import/recordingconverter.cpp" line="+92"/>
+        <source>No input files given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Error %1 opening project file %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Error initializing compressor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+72"/>
+        <source>Finishing project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Error finishing project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Error closing project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Processing project %1 session %2…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>Error %1 copying session %2 from project %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Error %1 opening project %2: %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Error %1 opening temporary file for %2: %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error loading project %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Converting recording %1…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Failed to open recording %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Incompatible recording.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Error %1 opening project session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error setting compressor session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Error %1 opening project snapshot.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error %1 finishing project snapshot.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Error %1 converting recording %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Error %1 reading recording %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Error flushing compressor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Error %1 saving project snapshot.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Error %1 closing project session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Error %1 opening project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Processing project %1 snapshot %2…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Error opening playback for project %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Error %1 preparing playback for project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <location line="+133"/>
+        <source>Error %1 processing project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-123"/>
+        <source>Error %1 replacing snapshot in project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Session %1 not found in project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Error %1 updating snapshot in project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Error %1 reading sessions in project %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Processing final project snapshot…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error opening playback for project %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error %1 preparing playback for project %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Error %1 saving snapshot in project %2.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2386,7 +2622,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+151"/>
+        <location filename="../net/server.cpp" line="+156"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>プロキシを使用する予定がない場合は、Drawpile の設定の 「ネットワーク」タブでネットワーク プロキシを無効にすることができます。</translation>
     </message>
@@ -2401,7 +2637,7 @@ Select a regular layer instead.</source>
         <translation>ネットワークの読み込みエラー: %1</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>Network write error</source>
         <translation>ネットワークの書き込みエラー</translation>
     </message>
@@ -2411,17 +2647,17 @@ Select a regular layer instead.</source>
         <translation>ネットワークの書き込みエラー: %1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <source>Network connection timed out</source>
         <translation>ネットワーク接続のタイムアウト</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+100"/>
         <source>Received invalid data</source>
         <translation>無効なデータを受信</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation>ソケットエラー %1: %2</translation>
@@ -2436,12 +2672,12 @@ Select a regular layer instead.</source>
 <context>
     <name>project::ProjectRecorder</name>
     <message>
-        <location filename="../project/projectrecorder.cpp" line="+50"/>
+        <location filename="../project/projectrecorder.cpp" line="+237"/>
         <source>Autosave recording already active</source>
         <translation>自動保存の記録は既に有効</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+11"/>
         <source>Could not find any available autosave path</source>
         <translation>利用可能な自動保存パスが見つかりませんでした</translation>
     </message>
@@ -2451,12 +2687,22 @@ Select a regular layer instead.</source>
         <translation>自動保存の記録を開始できませんでした: %1</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="-154"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
         <translation>プロジェクトファイル &apos;%1&apos; の削除中にエラー: %2</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="-42"/>
+        <source>Invalid session %1 given to resume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+185"/>
+        <source>No path to resume given</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+176"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
         <translation>プロジェクトを開く際にエラーコード %1 が発生しました: %2</translation>
@@ -2472,6 +2718,12 @@ Select a regular layer instead.</source>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
         <translation>プロジェクトの書き込み中にエラー %1: %2</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error %1 resuming session: %2</source>
+        <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2498,51 +2750,96 @@ Select a regular layer instead.</source>
         <translation>スナップショットの作成中にエラー %1 : %2</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+99"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
         <translation>サイズ制限の %1 を超えました</translation>
     </message>
 </context>
 <context>
+    <name>project::ProjectRepair</name>
+    <message>
+        <location filename="../project/projectrepair.cpp" line="+38"/>
+        <source>Failed to set temporary input path.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Failed to open project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Failed to close project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Failed to set temporary output path.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Failed to start repair: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Failed to repair file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>project::ProjectWrangler</name>
     <message>
-        <location filename="../project/projectwrangler.cpp" line="+45"/>
+        <location filename="../project/projectwrangler.cpp" line="+53"/>
         <source>Initialization failed</source>
         <translation>初期化に失敗</translation>
     </message>
     <message>
         <location line="+14"/>
+        <location line="+14"/>
+        <location line="+170"/>
         <source>Not initialized</source>
         <translation>初期化されていない</translation>
     </message>
     <message>
-        <location line="+62"/>
-        <source>Error %d opening project file: %s</source>
-        <translation>プロジェクトファイル : %s を開く際にエラー %d</translation>
+        <location line="+12"/>
+        <source>Error %1 opening project file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Error %1 generating project overview: %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
-        <source>Error %d generating project overview: %s</source>
-        <translation>プロジェクト概要: %s の生成中にエラー %d</translation>
+        <source>Error %1 preparing player: %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>Unhandled error %d of type %d: %s</source>
-        <translation>未処理のエラー %d タイプ %d: %s</translation>
+        <location line="+8"/>
+        <source>Error %1 in player: %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+18"/>
+        <source>Unhandled error %1 of type %2: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
         <translation>開くことに失敗 &apos;%1&apos;:%2</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
         <translation>一時ファイルを開くことに失敗 &apos; %1&apos;: %2</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
         <translation>&apos;%1&apos;から一時ファイル &apos;%2&apos; へのコピーに失敗</translation>
     </message>
@@ -2550,7 +2847,7 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::FreehandSettings</name>
     <message>
-        <location filename="../tools/freehand.cpp" line="+145"/>
+        <location filename="../tools/freehand.cpp" line="+159"/>
         <source>Anti-overflow requires a fill source layer.</source>
         <translation>はみ出し防止には塗りつぶし参照元レイヤーが必要です。</translation>
     </message>
@@ -2558,7 +2855,7 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::GradientSettings</name>
     <message>
-        <location filename="../tools/gradient.cpp" line="+135"/>
+        <location filename="../tools/gradient.cpp" line="+137"/>
         <source>You need to drag to create a gradient.</source>
         <translation>グラデーションを作成するにはドラッグする必要があります。</translation>
     </message>
@@ -2654,6 +2951,54 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
+    <name>utils::paths</name>
+    <message>
+        <location filename="../io/files.cpp" line="+37"/>
+        <source>File size out of bounds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Could not read entire file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Error opening source file &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Error opening target file &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Failed to commit target file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Error reading from source file &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Tried to write %1 byte(s) to target file &apos;%2&apos;, but only wrote %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Error flushing target file &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>wasmsupport</name>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
@@ -2679,7 +3024,7 @@ Select a regular layer instead.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../view/canvascontrollerbase.cpp" line="+434"/>
+        <location filename="../view/canvascontrollerbase.cpp" line="+442"/>
         <source>Vertical flip: ON</source>
         <translation>上下反転:オン</translation>
     </message>
@@ -2699,7 +3044,7 @@ Select a regular layer instead.</source>
         <translation>水平ミラー:オフ</translation>
     </message>
     <message>
-        <location line="+2220"/>
+        <location line="+2306"/>
         <source>Zoom: %1%</source>
         <translation>拡大率: %1%</translation>
     </message>

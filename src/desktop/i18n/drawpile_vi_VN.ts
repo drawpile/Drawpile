@@ -132,7 +132,7 @@
     </message>
     <message>
         <location line="-326"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+159"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+170"/>
         <source>Opacity: </source>
         <translation>Độ trong suốt: </translation>
     </message>
@@ -230,11 +230,13 @@
     </message>
     <message>
         <location line="-58"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+89"/>
         <source>Choose an action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+6"/>
         <source>Change…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -517,7 +519,7 @@
 <context>
     <name>FileWrangler</name>
     <message>
-        <location filename="../filewrangler.cpp" line="+186"/>
+        <location filename="../filewrangler.cpp" line="+215"/>
         <source>Certificates (%1)</source>
         <translation type="unfinished">Chứng nhận (%1)</translation>
     </message>
@@ -527,12 +529,12 @@
         <translation>Nhập</translation>
     </message>
     <message>
-        <location line="-144"/>
+        <location line="-172"/>
         <source>Open</source>
         <translation>Mở</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+37"/>
         <source>Open Debug Dump</source>
         <translation>Mở mục debug</translation>
     </message>
@@ -547,23 +549,23 @@
         <translation>Nhập Vai trò</translation>
     </message>
     <message>
-        <location line="+156"/>
-        <location line="+353"/>
+        <location line="+179"/>
+        <location line="+343"/>
         <source>Save Image</source>
         <translation>Lưu Ảnh</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-343"/>
         <source>Export Image</source>
         <translation>Xuất Ảnh</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+40"/>
         <source>Save Pre-Reset Image</source>
         <translation>Lưu Hình Ảnh Trước Khi Đặt Lại</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Save Selection</source>
         <translation>Lưu Vùng chọn</translation>
     </message>
@@ -584,6 +586,11 @@
     </message>
     <message>
         <location line="+42"/>
+        <source>Export PNG Spritesheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Performance Profile</source>
         <translation>Giám sát Hiệu suất</translation>
     </message>
@@ -593,38 +600,32 @@
         <translation>Nhật ký Sự kiện Bảng vẽ</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+154"/>
         <source>Log File</source>
         <translation>Tập tin Nhật ký</translation>
     </message>
     <message>
-        <location line="-209"/>
-        <location line="+43"/>
+        <location line="-196"/>
         <source>Export MP4 Video</source>
         <translation>Xuất video MP4</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Export WebM Video</source>
-        <translation>Xuất video WEBM</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Export Custom FFmpeg Video</source>
-        <translation>Xuất video FFmpeg tuỳ chỉnh</translation>
-    </message>
-    <message>
-        <location line="-84"/>
+        <location line="-27"/>
         <source>Save Animation Frames</source>
         <translation>Lưu các Khung hình Hoạt hình</translation>
     </message>
     <message>
-        <location line="-305"/>
+        <location line="-338"/>
         <source>Add Avatar</source>
         <translation>Thêm Hình đại diện</translation>
     </message>
     <message>
         <location line="+14"/>
+        <source>Open Playback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Import Animation Frames</source>
         <translation>Nhập các Khung hình Hoạt hình</translation>
     </message>
@@ -665,12 +666,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+463"/>
+        <location line="+476"/>
         <source>Session Settings (%1)</source>
         <translation>Cài đặt phiên (%1)</translation>
     </message>
     <message>
-        <location line="-462"/>
+        <location line="-475"/>
         <source>Session Bans (%1)</source>
         <translation>Người Dùng bị Cấm trong Phiên (%1)</translation>
     </message>
@@ -715,7 +716,22 @@
         <translation>Hình ảnh Tham chiếu</translation>
     </message>
     <message>
-        <location line="+193"/>
+        <location line="+8"/>
+        <source>Recordings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Save Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Repairable Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+197"/>
         <source>Export Frames in ZIP</source>
         <translation>Xuất khung hình vào tập tin ZIP</translation>
     </message>
@@ -735,18 +751,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+43"/>
-        <source>Save Image Series</source>
-        <translation>Lưu Chuỗi Hình ảnh</translation>
-    </message>
-    <message>
-        <location line="+92"/>
+        <location line="+106"/>
         <source>Export Autorecovery File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Save Repaired File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Repaired File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -791,7 +812,7 @@
         <translation>Lưu dưới dạng %1</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+25"/>
         <source>Replace Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -836,14 +857,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+217"/>
-        <location line="+5"/>
-        <location line="+507"/>
+        <location line="+815"/>
         <source>Untitled</source>
         <translation type="unfinished">Không tựa đề</translation>
     </message>
     <message>
-        <location line="-405"/>
+        <location line="-476"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>Chưa Đặt Tên%1</translation>
@@ -1028,7 +1047,7 @@
 <context>
     <name>HudHandler</name>
     <message>
-        <location filename="../scene/hudhandler.cpp" line="+62"/>
+        <location filename="../scene/hudhandler.cpp" line="+63"/>
         <source>More…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1145,7 +1164,7 @@
 <context>
     <name>KisSliderSpinBoxPrivate</name>
     <message>
-        <location filename="../widgets/kis_slider_spin_box_p.h" line="+411"/>
+        <location filename="../widgets/kis_slider_spin_box_p.h" line="+414"/>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
@@ -1154,7 +1173,7 @@ Khoảng đầy đủ: [%1, %2]
 Khoảng con: [%3, %4]</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+227"/>
         <source>&amp;Select All</source>
         <translation>&amp;Chọn tất cả</translation>
     </message>
@@ -1332,7 +1351,7 @@ Khoảng con: [%3, %4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1513"/>
+        <location filename="../utils/widgetutils.cpp" line="+1581"/>
         <source>Open Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1501,12 +1520,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MacMenu</name>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="+85"/>
+        <location filename="../widgets/macmenu.cpp" line="+88"/>
         <source>Minimize</source>
         <translation>Thu nhỏ</translation>
     </message>
     <message numerus="yes">
-        <location line="+173"/>
+        <location line="+179"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
             <numerusform>Bạn có %n hình ảnh với những thay đổi chưa được lưu. Bạn có muốn xem lại những thay đổi này trước thoát không?</numerusform>
@@ -1531,13 +1550,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+1125"/>
-        <location line="+3067"/>
+        <location filename="../mainwindow.cpp" line="+1178"/>
+        <location line="+3332"/>
         <source>Untitled</source>
         <translation>Không tựa đề</translation>
     </message>
     <message>
-        <location line="-2513"/>
+        <location line="-2778"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1552,12 +1571,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+513"/>
+        <location line="+465"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+220"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>Thoát Drawpile</translation>
@@ -1575,12 +1594,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <location line="+31"/>
-        <location line="+961"/>
+        <location line="+1168"/>
         <source>Cancel</source>
         <translation>Hủy bỏ</translation>
     </message>
     <message>
-        <location line="-972"/>
+        <location line="-1179"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ở đây có các thay đổi chưa được lưu. Ghi lại chúng trước khi thoát chứ</translation>
     </message>
@@ -1595,7 +1614,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Hủy</translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+133"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation type="unfinished"></translation>
@@ -1626,23 +1645,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+262"/>
+        <location line="+18"/>
         <source>Opening file…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+49"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+612"/>
         <source>Saving...</source>
         <translation>Đang lưu...</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+29"/>
         <source>Image saving failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1711,7 +1730,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+44"/>
         <source>Joined the session!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1731,32 +1750,29 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+137"/>
-        <source>Pause</source>
-        <translation>Tạm dừng</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="-846"/>
         <source>Play</source>
         <translation>Phát</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+1048"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-1886"/>
+        <location line="+56"/>
+        <location line="+1833"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Error downloading profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1781,12 +1797,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+80"/>
         <source>Error opening tablet event log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+264"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1881,7 +1897,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+108"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1891,22 +1907,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="-2444"/>
+        <location line="+2483"/>
         <source>Error</source>
         <translation type="unfinished">Lỗi</translation>
     </message>
     <message>
-        <location line="+628"/>
+        <location line="+634"/>
         <source>The image could not be loaded</source>
         <translation>Ảnh không thể tải được</translation>
     </message>
     <message>
-        <location line="+260"/>
+        <location line="-3555"/>
         <source>User #%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+3864"/>
         <source>Altering selection…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1917,23 +1934,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+1"/>
-        <location line="+2235"/>
+        <location line="+2363"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2231"/>
+        <location line="-2359"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+2232"/>
+        <location line="+2360"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2221"/>
+        <location line="-2349"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1959,12 +1976,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location line="+2179"/>
+        <location line="+2307"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2178"/>
+        <location line="-2306"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1973,7 +1990,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+58"/>
         <source>Cause Crash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2029,7 +2046,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+27"/>
-        <location filename="../widgets/macmenu.cpp" line="-239"/>
+        <location filename="../widgets/macmenu.cpp" line="-248"/>
         <source>&amp;New</source>
         <translation>Mớ&amp;i</translation>
     </message>
@@ -2039,7 +2056,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;Mở...</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+22"/>
         <source>&amp;Download Image…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2084,12 +2101,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+37"/>
         <source>Start...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+244"/>
+        <location line="+273"/>
         <source>&amp;Copy Merged</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2189,8 +2206,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+600"/>
-        <location filename="../mainwindow.cpp" line="+121"/>
+        <location filename="../docks/layerlistdock.cpp" line="+605"/>
+        <location filename="../mainwindow.cpp" line="+131"/>
         <source>Layer Properties…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2200,12 +2217,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+298"/>
+        <location line="+223"/>
+        <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
         <source>Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+51"/>
+        <source>Timeline tool: edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2215,7 +2242,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Exposure</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2255,47 +2282,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+38"/>
         <source>Key Frame Properties...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Unassign Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+25"/>
         <source>Increase Exposure on All Tracks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2345,12 +2337,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+22"/>
         <source>Create Group on Next Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2370,7 +2357,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+49"/>
         <source>Create Group on Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2380,7 +2367,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+127"/>
         <source>Share your canvas with others</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2475,12 +2462,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+26"/>
         <source>Statistics…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+91"/>
         <source>Choose the current foreground color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2500,7 +2487,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+154"/>
         <source>Tool blend mode: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2546,18 +2533,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-5028"/>
-        <location line="+2754"/>
+        <location line="-5304"/>
+        <location line="+2884"/>
         <source>Record...</source>
         <translation>Thu đĩa...</translation>
     </message>
     <message>
-        <location line="-2938"/>
+        <location line="-3059"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+940"/>
+        <location line="+1024"/>
         <source>Become Operator</source>
         <translation>Trở thành nhà điều hành</translation>
     </message>
@@ -2573,40 +2560,40 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3586"/>
+        <location line="+3722"/>
         <source>Terminate</source>
         <translation>Chấm dứt</translation>
     </message>
     <message>
-        <location line="-3176"/>
+        <location line="-3308"/>
         <source>Session blocked by parental controls</source>
         <translation>Phiên bị chặn bởi sự kiểm soát của cha mẹ</translation>
     </message>
     <message>
-        <location line="+1433"/>
+        <location line="+1453"/>
         <source>Hide Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+103"/>
+        <location line="+126"/>
         <location line="+6"/>
-        <location filename="../widgets/macmenu.cpp" line="+14"/>
+        <location filename="../widgets/macmenu.cpp" line="+17"/>
         <location line="+2"/>
         <source>&amp;Quit</source>
         <translation>&amp;Thoát</translation>
     </message>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="-19"/>
+        <location filename="../widgets/macmenu.cpp" line="-22"/>
         <source>&amp;File</source>
         <translation>&amp;Tập tin</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+140"/>
+        <location filename="../mainwindow.cpp" line="+163"/>
         <source>&amp;Export</source>
         <translation>&amp;Xuất</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+91"/>
         <source>&amp;Undo</source>
         <translation>&amp;Hủy</translation>
     </message>
@@ -2641,7 +2628,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;Dán</translation>
     </message>
     <message>
-        <location line="+871"/>
+        <location line="+889"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Bỏ chọn</translation>
     </message>
@@ -2661,12 +2648,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Màu xóa chọn</translation>
     </message>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="+28"/>
+        <location filename="../widgets/macmenu.cpp" line="+31"/>
         <source>&amp;Edit</source>
         <translation>&amp;Sửa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-665"/>
+        <location filename="../mainwindow.cpp" line="-683"/>
         <source>&amp;Expand Canvas</source>
         <translation>Rộng vùng vẽ</translation>
     </message>
@@ -2691,7 +2678,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+354"/>
+        <location line="+372"/>
         <source>Flipbook</source>
         <translation>Flipbook</translation>
     </message>
@@ -2701,12 +2688,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Hiển thị cửa sổ xem thử hoạt hình</translation>
     </message>
     <message>
-        <location line="-729"/>
+        <location line="-747"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Quay vùng vẽ ngược chiều</translation>
     </message>
     <message>
-        <location line="-1635"/>
+        <location line="-1701"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2726,7 +2713,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+996"/>
+        <location line="+1018"/>
         <source>Import &amp;Brushes...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2736,12 +2723,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+24"/>
         <source>Export &amp;Brushes…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+658"/>
+        <location line="+697"/>
         <source>Show Names</source>
         <translation>Hiện tên</translation>
     </message>
@@ -2773,7 +2760,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="+12"/>
+        <location filename="../mainwindow.cpp" line="+22"/>
         <source>Delete Layer</source>
         <translation>Xóa lớp</translation>
     </message>
@@ -2790,12 +2777,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-116"/>
+        <location filename="../mainwindow.cpp" line="-126"/>
         <source>Show Censored Layers</source>
         <translation>Hiện lớp kiểm</translation>
     </message>
     <message>
-        <location line="+760"/>
+        <location line="+820"/>
         <source>Report...</source>
         <translation>Báo cáo...</translation>
     </message>
@@ -2805,7 +2792,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Khóa mọi thứ</translation>
     </message>
     <message>
-        <location line="+604"/>
+        <location line="+651"/>
         <source>Finish action</source>
         <translation>Hoàn tất thao tác</translation>
     </message>
@@ -2815,17 +2802,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Hủy bỏ thao tác</translation>
     </message>
     <message>
-        <location line="-1616"/>
+        <location line="-1723"/>
         <source>Show User &amp;Pointers</source>
         <translation>Hiện con trỏ người dùng</translation>
     </message>
     <message>
-        <location line="-498"/>
+        <location line="-507"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+136"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2876,12 +2863,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+8"/>
-        <location line="+873"/>
+        <location line="+933"/>
         <source>Rotation</source>
         <translation>Xoay</translation>
     </message>
     <message>
-        <location line="-826"/>
+        <location line="-886"/>
         <source>Layer View Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2892,17 +2879,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+78"/>
+        <location filename="../mainwindow.cpp" line="+87"/>
         <source>Select Above</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Select Below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+611"/>
         <source>&amp;Host...</source>
         <translation>&amp;Máy chủ...</translation>
     </message>
@@ -2947,7 +2934,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+85"/>
         <source>Set Artificial Lag...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2957,12 +2944,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-80"/>
         <source>Open Debug Dump...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+105"/>
         <source>Toggle Eraser Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2977,39 +2964,39 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Tăng âm kích thước chổi</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+138"/>
         <source>Drawing tools</source>
         <translation>Công cụ vẽ</translation>
     </message>
     <message>
-        <location line="-4769"/>
+        <location line="-5045"/>
         <source>Stop Recording</source>
         <translation>Dừng thu đĩa</translation>
     </message>
     <message>
-        <location line="+424"/>
+        <location line="+517"/>
         <source>Host Session</source>
         <translation>Lưu trữ phiên</translation>
     </message>
     <message>
-        <location line="+2272"/>
-        <location filename="../utils/widgetutils.cpp" line="-379"/>
+        <location line="+2304"/>
+        <location filename="../utils/widgetutils.cpp" line="-415"/>
         <source>Close</source>
         <translation>Đóng</translation>
     </message>
     <message>
-        <location line="+192"/>
-        <location filename="../widgets/macmenu.cpp" line="-35"/>
+        <location line="+224"/>
+        <location filename="../widgets/macmenu.cpp" line="-38"/>
         <source>Open &amp;Recent</source>
         <translation>Mở &amp;gần đây</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+78"/>
         <source>File Tools</source>
         <translation>Công cụ tập tin</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+96"/>
         <source>Paste &amp;From File...</source>
         <translation>Dán đọc từ tập tin...</translation>
     </message>
@@ -3026,18 +3013,18 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <location line="+4"/>
-        <location filename="../widgets/macmenu.cpp" line="+24"/>
+        <location filename="../widgets/macmenu.cpp" line="+27"/>
         <location line="+2"/>
         <source>Prefere&amp;nces</source>
         <translation>Tù&amp;y thích</translation>
     </message>
     <message>
-        <location line="+826"/>
+        <location line="+844"/>
         <source>Select &amp;All</source>
         <translation>Chọn tất cả</translation>
     </message>
     <message>
-        <location line="-601"/>
+        <location line="-619"/>
         <source>Edit Tools</source>
         <translation>Công cụ sửa</translation>
     </message>
@@ -3061,8 +3048,73 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>&amp;Full Screen</source>
         <translation>&amp;Toàn màn hình</translation>
     </message>
+    <message numerus="yes">
+        <location line="+696"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
+        <source>Set Key Frame(s) to Current Layer</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+5"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+10"/>
+        <source>Set Blank Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+55"/>
+        <source>Cut Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+6"/>
+        <source>Copy Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>Paste Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+732"/>
+        <location line="+5"/>
+        <source>Paste Decloned Key Frame Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+16"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+5"/>
+        <source>Delete Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+5"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+6"/>
+        <source>Unassign Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Declone Key Frame Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Track Visible for You</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3076,8 +3128,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Track Frame Move Locked for You</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <location line="+19"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-63"/>
+        <source>Create Layers on Current Key Frame(s)</source>
+        <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+278"/>
+        <location line="+281"/>
         <source>Pick colors from the image</source>
         <translation>Chọn màu từ hình ảnh</translation>
     </message>
@@ -3092,12 +3153,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Đườn&amp;g</translation>
     </message>
     <message>
-        <location line="-7113"/>
+        <location line="-7540"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+151"/>
+        <location line="+156"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation type="unfinished"></translation>
@@ -3157,18 +3218,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
-        <location line="+5038"/>
+        <location line="+149"/>
+        <location line="+5335"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-5034"/>
+        <location line="-5331"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1516"/>
+        <location line="+1640"/>
         <source>New</source>
         <translation type="unfinished">Mới</translation>
     </message>
@@ -3188,7 +3249,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1742"/>
+        <location line="-1887"/>
         <source>Open</source>
         <translation type="unfinished">Mở</translation>
     </message>
@@ -3198,7 +3259,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2323"/>
+        <location line="+2525"/>
         <source>Outdated Version</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3208,12 +3269,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+87"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+465"/>
+        <location line="+548"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3233,7 +3294,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2794"/>
+        <location line="-3059"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
@@ -3291,51 +3352,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
-        <location line="+10"/>
-        <source>Project Overview</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-9"/>
-        <source>To view statistics, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the statistics?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <location line="+44"/>
-        <location line="+10"/>
-        <location line="+30"/>
-        <source>Timelapse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-83"/>
-        <source>Unexpected save format. To view statistics, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+44"/>
-        <source>To make a timelapse, you have to save a project file (.dppr) first. Do you want to do so now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>There are changes not saved to a project file (.dppr) yet. Do you want to save them now so they show up in the timelapse?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Unexpected save format. To make a timelapse, you have to save to a project file (.dppr).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+792"/>
+        <location line="+1077"/>
         <source>Open Recovered File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3345,7 +3362,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1365"/>
+        <location line="+1506"/>
         <source>Did the download complete successfully?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3370,7 +3387,8 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-1035"/>
+        <location line="+1037"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3391,7 +3409,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+526"/>
+        <location line="+530"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3406,7 +3424,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+460"/>
+        <location line="+466"/>
         <source>Cr&amp;op canvas to transform…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3422,7 +3440,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+448"/>
+        <location line="+446"/>
         <source>Open Debug Dump</source>
         <translation type="unfinished">Mở mục debug</translation>
     </message>
@@ -3432,7 +3450,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+255"/>
+        <location line="+271"/>
         <source>Show Icons on Tabs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3442,7 +3460,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+29"/>
         <source>Autorecovery</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3462,13 +3480,135 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+52"/>
         <source>Project statistics…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-6"/>
         <source>Make timelapse…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-4710"/>
+        <location line="+56"/>
+        <source>Save Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-55"/>
+        <source>Error preparing project overview file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Error preparing timelapse file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+679"/>
+        <source>Resuming…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>It may be possible to repair it.</source>
+        <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Repair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Incompatible Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Open Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>What do you want to do with this recording?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Convert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Directly opens this recording to let you play it back.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+313"/>
+        <source>Open Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open the project file and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+372"/>
+        <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
+        <source>Record</source>
+        <translation type="unfinished">Thu đĩa</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Do you want to start another recording anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2766"/>
+        <source>Open &amp;Player…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+65"/>
+        <source>Convert &amp;Recordings to Project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Merge/split projects…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Repair file…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3477,12 +3617,12 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+129"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+187"/>
+        <location line="+199"/>
         <source>Input Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3493,11 +3633,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+88"/>
+        <location line="+889"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="-820"/>
         <source>Interface scale…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3757,7 +3898,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+56"/>
         <source>Clear Fill Source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3807,7 +3948,17 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+6"/>
+        <source>Select Layer Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Select Layer Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Toggle Layer Check State</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3822,7 +3973,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Layer</source>
         <translation type="unfinished">Lớp</translation>
     </message>
@@ -3948,12 +4099,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Keep brush strokes inside the selection mask</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3963,7 +4109,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+89"/>
         <source>Increase Exposure on Current Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3993,12 +4139,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+16"/>
         <source>Create Layers on Next Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4007,23 +4148,31 @@ You can exit it via the View menu or the timeline.</source>
         <source>Create Layers on Previous Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <location line="+5"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+5"/>
+        <source>Create Layer Group(s) on Current Key Frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location line="+22"/>
+        <location line="+24"/>
         <source>Animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>Key Frame Color Marker</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>Create Layers on Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+143"/>
         <source>Event Log</source>
         <translation>Nhật ký sự kiện</translation>
     </message>
@@ -4109,12 +4258,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+1"/>
-        <source>Lass&amp;o Fill</source>
+        <source>Fill enclosed areas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>Fill enclosed areas</source>
+        <source>S&amp;hape Fill</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4199,12 +4348,22 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
+        <source>Debug Input Events…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Text Input Debug Overlay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+7"/>
+        <source>UDP Activity Stream…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+67"/>
         <source>Cause Crash…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4284,7 +4443,37 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+5"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Right-click drawing: none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Use background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Right-click drawing: use background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Right-click drawing: erase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+219"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4367,7 +4556,7 @@ You can re-enable them via the View menu or preferences.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+37"/>
         <source>Apply</source>
         <translation type="unfinished">Áp dụng</translation>
     </message>
@@ -4402,18 +4591,18 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+644"/>
+        <location line="+676"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1353"/>
+        <location line="-1435"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Phím tắt</translation>
     </message>
     <message>
-        <location line="+270"/>
+        <location line="+317"/>
         <location filename="../widgets/macmenu.cpp" line="+41"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Trang chủ</translation>
@@ -4466,17 +4655,22 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;Trợ giúp</translation>
     </message>
     <message>
-        <location line="-65"/>
+        <location line="-68"/>
         <source>&amp;Open…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>Open &amp;Playback…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>&amp;Start…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+36"/>
         <source>&amp;Host…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4496,16 +4690,24 @@ You can re-enable it via the View menu.</source>
         <translation>Cửa sổ</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+139"/>
+        <location filename="../utils/widgetutils.cpp" line="+176"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation type="unfinished">%1 (%2)</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../widgets/timelinewidget.cpp" line="-50"/>
+        <source>Set Key Frame(s) to %1</source>
+        <extracomment>%1 is the name of a layer.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+285"/>
+        <location filename="../utils/widgetutils.cpp" line="+298"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4520,7 +4722,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+8"/>
         <source>Blue</source>
         <translation type="unfinished">Xanh da trời</translation>
     </message>
@@ -4535,7 +4737,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select blue-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Green</source>
         <translation type="unfinished">Xanh lá cây</translation>
     </message>
@@ -4550,7 +4757,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select green-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Yellow</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4565,7 +4777,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Select yellow-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Orange</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4580,7 +4797,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Select orange-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Brown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4595,7 +4817,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select brown-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Red</source>
         <translation type="unfinished">Đỏ</translation>
     </message>
@@ -4610,7 +4837,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Select red-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Purple</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4625,7 +4857,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Select purple-marked layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Gray</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4637,6 +4874,11 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Select gray-marked layer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4684,92 +4926,9 @@ You can re-enable it via the View menu.</source>
     </message>
 </context>
 <context>
-    <name>PlaybackDialog</name>
-    <message>
-        <location filename="../ui/playback.ui" line="+69"/>
-        <source>Play</source>
-        <translation>Phát</translation>
-    </message>
-    <message>
-        <location line="-55"/>
-        <source>Playback</source>
-        <translation>Phát</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>%</source>
-        <translation type="unfinished">%</translation>
-    </message>
-    <message>
-        <location line="+79"/>
-        <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Build Index</source>
-        <translation>Xây dựng chỉ mục</translation>
-    </message>
-    <message>
-        <location line="+82"/>
-        <source>Frame:</source>
-        <translation>Khung:</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Automatically save a frame at each step</source>
-        <translation>Tự động lưu một khung ở mỗi bước</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Autosave</source>
-        <translation>Tự động lưu</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Save frame</source>
-        <translation>Lưu khung</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Stop</source>
-        <translation>Dừng</translation>
-    </message>
-    <message>
-        <location line="+39"/>
-        <source>Export Video...</source>
-        <translation>Xuất phim...</translation>
-    </message>
-</context>
-<context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-856"/>
+        <location filename="../filewrangler.cpp" line="-855"/>
         <source>All files (*)</source>
         <translation>Mọi tập tin (*)</translation>
     </message>
@@ -4810,7 +4969,7 @@ You can re-enable it via the View menu.</source>
     </message>
     <message>
         <location line="+5"/>
-        <source>Lasso Fill</source>
+        <source>Shape Fill</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4872,6 +5031,28 @@ You can re-enable it via the View menu.</source>
         <location line="+5"/>
         <source>Inspector</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <location filename="../dialogs/projecteditdialog.cpp" line="+314"/>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="+200"/>
+        <source>Save</source>
+        <translation type="unfinished">Lưu</translation>
+    </message>
+    <message>
+        <location line="+104"/>
+        <location filename="../dialogs/projectplaybackdialog.cpp" line="+340"/>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="-135"/>
+        <location line="+137"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="+9"/>
+        <source>Close</source>
+        <translation type="unfinished">Đóng</translation>
     </message>
 </context>
 <context>
@@ -5317,35 +5498,35 @@ You can re-enable it via the View menu.</source>
 <context>
     <name>Time</name>
     <message numerus="yes">
-        <location filename="../utils/widgetutils.cpp" line="+16"/>
+        <location filename="../utils/widgetutils.cpp" line="+59"/>
         <source>%n days(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+7"/>
+        <location line="-5"/>
         <source>%n hour(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+7"/>
+        <location line="-6"/>
         <source>%n minute(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+6"/>
+        <location line="-6"/>
         <source>%n second(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-5"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
         <translation type="unfinished"></translation>
@@ -5428,77 +5609,9 @@ You can re-enable it via the View menu.</source>
     </message>
 </context>
 <context>
-    <name>VideoExport</name>
-    <message>
-        <location filename="../ui/videoexport.ui" line="+14"/>
-        <source>Export video</source>
-        <translation>Xuất xem phim</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>Framerate:</source>
-        <translation>Tốc độ khung hình:</translation>
-    </message>
-    <message>
-        <location line="-35"/>
-        <source> FPS</source>
-        <translation> FPS</translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>Size:</source>
-        <translation>Kích thước:</translation>
-    </message>
-    <message>
-        <location line="-42"/>
-        <source>Video Options</source>
-        <translation>Tùy chọn xem phim</translation>
-    </message>
-    <message>
-        <location line="+56"/>
-        <source>Format:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Export Options</source>
-        <translation>Tùy chọn xuất</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Image format:</source>
-        <translation>Định dạng ảnh:</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>File name pattern:</source>
-        <translation>Mẫu tên tập tin:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hỗ trợ giữ chỗ mẫu:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - chỗ mẫu&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - tập tin mở rỗng&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Choose</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>WorkTime</name>
     <message numerus="yes">
-        <location filename="../utils/widgetutils.cpp" line="+7"/>
+        <location filename="../utils/widgetutils.cpp" line="+29"/>
         <source>%n minute(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -5720,7 +5833,7 @@ You can re-enable it via the View menu.</source>
 <context>
     <name>dialogs::AnimationExportDialog</name>
     <message>
-        <location filename="../dialogs/animationexportdialog.cpp" line="+32"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="+35"/>
         <source>Export Animation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5730,7 +5843,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>Format:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5755,7 +5868,12 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+57"/>
+        <source>Encoder:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5765,7 +5883,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+15"/>
         <source> FPS</source>
         <translation type="unfinished"> FPS</translation>
     </message>
@@ -5810,12 +5928,17 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished">Xuất</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+119"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+34"/>
+        <source>%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Output resolution will be %1x%2 pixels.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6178,7 +6301,7 @@ You can re-enable it via the View menu.</source>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+75"/>
         <source>Change…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6188,7 +6311,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Choose File…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6218,7 +6341,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Allow others in a session to use this brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6228,20 +6351,33 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+69"/>
         <source>No shortcut assigned</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::BrushSaveDialog</name>
+    <message>
+        <location filename="../dialogs/brushsavedialog.cpp" line="+17"/>
+        <source>Save Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Tags:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+163"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+171"/>
         <source>Brush Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location line="+128"/>
         <source>Brush</source>
         <translation type="unfinished">Chổi</translation>
     </message>
@@ -6271,13 +6407,13 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+113"/>
         <source>Brush Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+501"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+539"/>
         <source>Round Pixel Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6410,7 +6546,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished">điểm ảnh</translation>
     </message>
     <message>
-        <location line="-502"/>
+        <location line="-520"/>
         <source>Common</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6425,7 +6561,17 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+408"/>
+        <location line="+97"/>
+        <source>Undelete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Save Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+320"/>
         <source>Enable anti-overflow</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6668,7 +6814,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+116"/>
         <source>Smudging: </source>
         <translation type="unfinished">Nhoè: </translation>
     </message>
@@ -6683,7 +6829,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-837"/>
+        <location line="-870"/>
         <source>Color Pickup: 1/</source>
         <translation type="unfinished">Bộ chọn màu: 1/</translation>
     </message>
@@ -6693,18 +6839,18 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished">Khoá kênh alpha</translation>
     </message>
     <message>
-        <location line="+1097"/>
+        <location line="+1130"/>
         <source>Minimum Smudging: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-216"/>
-        <location line="+220"/>
+        <location line="-249"/>
+        <location line="+253"/>
         <source>Smudging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-498"/>
+        <location line="-531"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -6751,7 +6897,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+207"/>
+        <location line="+240"/>
         <source>Blending: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -8262,7 +8408,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+37"/>
         <source>Checking…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8330,6 +8476,21 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Once it is installed, just using %1 in the field above should work. Otherwise, click on Choose and locate the executable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/widgetutils.cpp" line="-221"/>
+        <source>Programming Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>FFmpeg is not supported on this platform.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>If you see this message, you found a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8596,7 +8757,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1118"/>
+        <location filename="../mainwindow.cpp" line="-1215"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8931,60 +9092,35 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
+        <location filename="../dialogs/projectplaybackdialog.cpp" line="+175"/>
         <source>Playback</source>
         <translation type="unfinished">Phát</translation>
-    </message>
-    <message>
-        <location line="+153"/>
-        <source>Building index...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+151"/>
-        <source>Video error</source>
-        <translation type="unfinished">Lỗi xem phim</translation>
     </message>
 </context>
 <context>
     <name>dialogs::ProjectDialog</name>
     <message>
-        <location filename="../dialogs/projectdialog.cpp" line="+30"/>
+        <location filename="../dialogs/projectdialog.cpp" line="+32"/>
         <source>Project Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>The canvas has changes not saved in the project!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Dismiss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+100"/>
+        <location filename="../utils/widgetutils.cpp" line="-302"/>
         <source>Unexpected Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>This is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location filename="../dialogs/projectdialog.cpp" line="+165"/>
         <source>Total session time:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8999,13 +9135,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Converted from a recording file, no timing information available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+10"/>
         <source>Opened at:</source>
         <extracomment>Refers to the date and time a session was opened (started.)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Closed at:</source>
         <extracomment>Refers to the date and time a session was closed (ended.)</extracomment>
         <translation type="unfinished"></translation>
@@ -9027,7 +9168,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>Recorded with an older, but compatible version of Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9068,20 +9209,292 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::ProjectEditDialog</name>
+    <message>
+        <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
+        <location line="+746"/>
+        <source>Error %1 opening input file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-732"/>
+        <source>Error %1 opening temporary file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Error copying to temporary file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>No recording in dpcs file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Failed to open project: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Failed to read project: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Project contains no sessions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Unknown file format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Failed to open recording: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Incompatible recording.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+64"/>
+        <source>Project session %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Edit Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Add the dppr, dprec and dptxt files you want to include. You can drag sessions to change their order and remove unwanted ones from the set. Once done, press %1 to create a new dppr file.</source>
+        <extracomment>%1 is what the &quot;Save&quot; button says.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Add</source>
+        <translation type="unfinished">Thêm</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Remove</source>
+        <translation type="unfinished">Loại bỏ</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Move up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Move down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Project file created successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Open project file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Loading…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Failed to initialize temporary file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Processing…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+103"/>
+        <location line="+124"/>
+        <source>Error</source>
+        <translation type="unfinished">Lỗi</translation>
+    </message>
+    <message numerus="yes">
+        <location line="-123"/>
+        <source>Failed to load %n file(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+111"/>
+        <source>Conversion suceeded, but file saving failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Saving project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>No converted file available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>No file to save to given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Error %1 opening output file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ProjectPlaybackDialog</name>
+    <message>
+        <location filename="../dialogs/projectplaybackdialog.cpp" line="-311"/>
+        <source>Play</source>
+        <translation type="unfinished">Phát</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pause</source>
+        <translation type="unfinished">Tạm dừng</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Loading…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Rewind session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Skip stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Skip session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Playback speed: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Unsaved changes will be lost if you continue!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Follow view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Converting recording %1…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Failed to open temporary file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+72"/>
+        <source>Conversion cancelled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Opening project…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Player Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Nothing to play back.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+127"/>
+        <source>uncapped</source>
+        <extracomment>This refers to uncapped playback speed. I didn&apos;t want to call this &quot;unlimited&quot; because it&apos;s still limited by how fast the device can actually play a recording, but no artificial limits.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+113"/>
+        <source>Session %1 - End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session %1 - Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Sequence number %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::ProjectRecordingSettingsDialog</name>
     <message>
-        <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+25"/>
+        <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+26"/>
         <source>Manage Autorecovery</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+12"/>
         <source>These settings affect only the current session. You can change the defaults [in the preferences].</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+11"/>
         <source>Enable autorecovery for the current session</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9092,12 +9505,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+112"/>
+        <location line="+111"/>
         <source>Change Size Limit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-73"/>
         <source>Size limit: %1 GB</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9118,7 +9531,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source> This is %1% of the current %2 limit.</source>
         <extracomment>The %1% becomes a percentage, like &quot;50%&quot;. Don&apos;t remove the second %! %2 is a file size, like &quot;5GB&quot;.</extracomment>
         <translation type="unfinished"></translation>
@@ -9127,6 +9540,69 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <source>The current autorecovery file size is %1.</source>
         <extracomment>%1 is a file size, like &quot;1 GB&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ProjectRepairDialog</name>
+    <message>
+        <location filename="../dialogs/projectrepairdialog.cpp" line="-182"/>
+        <source>Repair Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Checking…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+88"/>
+        <source>Repairing…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Cancelled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Error %1:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>The project has been repaired, but no corruption was detected. You can choose to save it file anyway, but it may now contain invalid data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The project has been repaired, choose a file to save it to.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It is strongly recommended that you save to a new file. Overwriting an existing file may render it irrecoverable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The repaired project has been saved, do you want to open it now?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Error</source>
+        <translation type="unfinished">Lỗi</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Error saving repaired project.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9913,7 +10389,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+378"/>
+        <location line="+7"/>
+        <source>Manage servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+381"/>
         <source>Checking…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9950,7 +10431,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Host</source>
         <translation type="unfinished">Máy chủ</translation>
     </message>
@@ -9986,26 +10467,38 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TimelapseDialog</name>
     <message>
-        <location filename="../dialogs/animationexportdialog.cpp" line="-283"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+190"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="-335"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+193"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+181"/>
-        <source>Prefer FFmpeg over internal encoder</source>
+        <location line="+94"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+259"/>
+        <source>This encoder requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+211"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+257"/>
-        <source>The selected format requires FFmpeg. Do you want to set it up now?</source>
+        <location line="+200"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
+        <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+439"/>
+        <location line="+89"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+493"/>
+        <source>Internal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+7"/>
+        <source>Automatic (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+51"/>
         <source>Set up FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10016,12 +10509,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1014"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1239"/>
         <source>Timelapse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+54"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10056,17 +10549,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+45"/>
         <source>Duration:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+37"/>
+        <source>Switch to speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Duration presets:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+11"/>
+        <source>Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Switch to duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Speed presets:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>pixels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10076,7 +10589,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Keep aspect ratio</source>
         <translation type="unfinished">Giữ tỷ lệ khung hình</translation>
     </message>
@@ -10101,17 +10614,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="-389"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+31"/>
         <source>Advanced settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+19"/>
         <source>Encoder:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+18"/>
         <source>Automatic</source>
         <comment>interpolation</comment>
         <extracomment>Image scaling option that picks an algorithm automatically.</extracomment>
@@ -10168,7 +10682,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+24"/>
         <source>Backdrop:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10178,7 +10692,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+22"/>
         <source>Logo padding:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10193,13 +10707,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Preview result:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+38"/>
+        <location line="+39"/>
         <location line="+8"/>
         <location line="+24"/>
         <source> seconds</source>
@@ -10242,12 +10756,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+84"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+119"/>
+        <source>Calculating video duration…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Starting export…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10257,14 +10776,19 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+450"/>
+        <location line="+575"/>
         <source>%1 loop(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+138"/>
+        <source>Choose Background Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Choose Backdrop Color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10274,7 +10798,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+31"/>
         <source>Reset</source>
         <translation type="unfinished">Đặt lại</translation>
     </message>
@@ -10284,7 +10808,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+76"/>
         <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10299,7 +10823,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Xuất</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+17"/>
+        <source>Video duration: %1</source>
+        <extracomment>%1 is a time, something like &quot;1 minute, 30 seconds&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Timelapse exported in %1.</source>
         <extracomment>%1 is a time, like &quot;1 minute, 20 seconds&quot;.</extracomment>
         <translation type="unfinished"></translation>
@@ -10415,69 +10945,15 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::VideoExportDialog</name>
-    <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="+35"/>
-        <source>Image Series</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>WebM Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Original</source>
-        <translation type="unfinished">Gốc</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Custom:</source>
-        <translation type="unfinished">Tự chọn:</translation>
-    </message>
-    <message>
-        <location line="+81"/>
-        <source>Executables</source>
-        <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+107"/>
-        <source>Checking…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+61"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+52"/>
         <source>Changing autorecovery preferences will not affect the status or limits of any running sessions. [Click here to manage autorecovery on your current session.]</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+11"/>
         <source>When offline or hosting sessions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10499,7 +10975,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Use system file picker dialogs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10568,7 +11044,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
+        <source>Default file name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, %S seconds, %T session title.</source>
+        <extracomment>These are template placeholders for the default file name. For example, if the user types in %Y, it will be replaced with the current year. Do not change the letters or casing!</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Write debugging log to file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11049,7 +11536,42 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+14"/>
+        <source>Chat message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Private message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>User joined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>User left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Canvas locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Canvas unlocked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Disconnected</source>
+        <translation type="unfinished">Đã ngắt kết nối</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -11079,7 +11601,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-150"/>
+        <location line="-151"/>
         <source>Display notification while connected to a session</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11354,12 +11876,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+168"/>
+        <location line="+171"/>
         <source>Restore defaults…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-284"/>
+        <location line="-287"/>
         <source>Shortcuts</source>
         <translation type="unfinished">Phím tắt</translation>
     </message>
@@ -11369,7 +11891,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+126"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
         <translation type="unfinished"></translation>
@@ -11437,12 +11959,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Keyboard shortcuts to trigger actions, like switching tools, creating layers or anything else you can pick from the top menu bar.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>Keyboard shortcuts to switch brushes. Assigning the same shortcut to multiple brushes will toggle through them.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11513,7 +12035,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../mainwindow.cpp" line="-707"/>
+        <location filename="../mainwindow.cpp" line="-717"/>
         <source>Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11594,7 +12116,24 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+3"/>
+        <source>Wait for movement before starting strokes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Ignore inputs with no pressure (Gaomon)</source>
+        <extracomment>Gaomon is a brand that makes pen tablets. This is a setting for a workaround that ignores zero-pressure movements from those.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Ignore full-pressure blotches (Ugee)</source>
+        <extracomment>Ugee is a brand that makes pen tablets. This is a setting for a workaround that ignores full-pressure blotches from those.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Translate F21 key to middle click (OnePlus)</source>
         <extracomment>OnePlus is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
         <translation type="unfinished"></translation>
@@ -11636,7 +12175,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Tools</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tools.cpp" line="+129"/>
+        <location filename="../dialogs/settingsdialog/tools.cpp" line="+142"/>
         <source>Toggle between previous and current tool</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11646,12 +12185,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
+        <location line="+22"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11676,17 +12210,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-152"/>
         <source>px</source>
         <translation type="unfinished">điểm ảnh</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+97"/>
         <source>Enable brush outline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-75"/>
+        <location line="-95"/>
         <source>Brush outline:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11742,7 +12276,44 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+7"/>
+        <source>Do nothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Use background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Right-click drawing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Option</source>
+        <extracomment>The Option key on Mac computer keyboards. On macOS, you have this key on your keyboard instead of the Alt key.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Alt</source>
+        <extracomment>The Alt key on PC keyboards.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Double-tap %1 key to focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
         <translation type="unfinished"></translation>
@@ -11765,7 +12336,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="-161"/>
+        <location line="-181"/>
         <source>Color space:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11808,7 +12379,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Touch</name>
     <message>
-        <location filename="../dialogs/settingsdialog/touch.cpp" line="+30"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="-61"/>
         <source>Touch Tester</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11823,7 +12394,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+86"/>
         <source>Touch mode:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11838,16 +12409,25 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
-        <location line="+33"/>
-        <location line="+21"/>
+        <location line="+81"/>
+        <location line="+37"/>
         <location line="+29"/>
         <location line="+8"/>
         <source>No action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="+14"/>
+        <source>Smoothing: </source>
+        <translation type="unfinished">Mịn: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Do nothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Undo</source>
         <translation type="unfinished">Hủy</translation>
     </message>
@@ -11872,7 +12452,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Toggle erase mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11882,37 +12462,42 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-163"/>
         <source>One-finger tap:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Two-finger tap:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Three-finger tap:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Four-finger tap:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+51"/>
         <source>Pick color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>One-finger tap and hold:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
+        <source>One-finger double-tap:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Draw</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11962,12 +12547,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Smoothing:</source>
-        <translation type="unfinished">Mịn:</translation>
+        <location line="+26"/>
+        <source>Mirror canvas horizontally</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
+        <source>Flip canvas upside-down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Trigger action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-26"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -12194,17 +12789,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Browse</name>
     <message>
-        <location filename="../dialogs/startdialog/browse.cpp" line="+62"/>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+43"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+3"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+12"/>
         <source>Filter</source>
         <translation type="unfinished">Bộ lọc</translation>
     </message>
@@ -12259,12 +12854,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+170"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-96"/>
+        <location line="-107"/>
         <source>Join</source>
         <translation type="unfinished">Tham gia</translation>
     </message>
@@ -12289,7 +12884,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+104"/>
         <source>Nothing here yet!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12324,6 +12919,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-39"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1290"/>
         <source>Background:</source>
         <translation type="unfinished">Nền:</translation>
     </message>
@@ -12477,12 +13073,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Recover</name>
     <message>
-        <location filename="../dialogs/startdialog/recover.cpp" line="+423"/>
+        <location filename="../dialogs/startdialog/recover.cpp" line="+429"/>
         <source>No files to recover.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+56"/>
         <source>Autorecovery Removal Failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12492,7 +13088,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>File not found.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12528,7 +13124,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::RecoveryEntryWidget</name>
     <message>
-        <location filename="../dialogs/startdialog/recover.cpp" line="-429"/>
+        <location filename="../dialogs/startdialog/recover.cpp" line="-441"/>
+        <source>Session: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Modified %1</source>
         <extracomment>%1 is a date and time saying when the file was last modified.</extracomment>
         <translation type="unfinished"></translation>
@@ -12556,6 +13157,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+4"/>
+        <source>Corrupted, may be possible to repair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Error: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12575,7 +13181,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+10"/>
         <source>Delete</source>
         <translation type="unfinished">Xóa</translation>
     </message>
@@ -12605,7 +13211,32 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+17"/>
+        <source>Corrupted File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This file is corrupted. Do you want to attempt to repair it or save it as-is?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>You can also attempt to repair it after saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Repair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Save as-is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
         <source>Download Started</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12655,37 +13286,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
-        <source>Failed to open autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Failed to open target file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Failed to read from autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Failed to write to target file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Failed to write to target file: read/write mismatch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+35"/>
         <source>Failed to open autorecovery file for verification: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13324,17 +13925,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+117"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+129"/>
         <source>Brushes</source>
         <translation type="unfinished">Chổi</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+29"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+104"/>
         <source>Size:</source>
         <translation type="unfinished">Kích thước:</translation>
     </message>
@@ -13349,7 +13950,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+535"/>
+        <location line="+665"/>
         <source>New Tag</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13359,7 +13960,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-672"/>
+        <location line="-817"/>
         <source>&amp;Edit Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13375,6 +13976,27 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+3"/>
+        <source>Undelete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Save Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Remove Brush from History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+875"/>
+        <source>Clear Brush History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-872"/>
         <source>&amp;New Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13439,12 +14061,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+33"/>
         <source>Export Brush…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+303"/>
         <source>Overwrite Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13460,13 +14082,15 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+341"/>
+        <location line="+443"/>
         <location line="+45"/>
+        <location line="+25"/>
+        <location line="+33"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-323"/>
+        <location line="-413"/>
         <source>Brush Import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13497,7 +14121,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+145"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
         <translation type="unfinished"></translation>
@@ -13509,7 +14133,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+71"/>
         <location line="+16"/>
         <source>Tag name:</source>
         <translation type="unfinished"></translation>
@@ -13531,7 +14155,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Xóa</translation>
     </message>
     <message>
-        <location line="-3"/>
+        <location line="-4"/>
         <source>Delete Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13539,6 +14163,48 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You can still recover it from the brush history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+19"/>
+        <source>%n deleted brush(es) will be erased irrecoverably.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Do you really want to clear the contents of the history tag?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Clear</source>
+        <translation type="unfinished">Xóa</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>The brush will be deleted permanently and cannot be recovered.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Remove Brush History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Really remove brush &apos;%1&apos; from the history tag?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Remove</source>
+        <translation type="unfinished">Loại bỏ</translation>
     </message>
 </context>
 <context>
@@ -13959,7 +14625,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::DockBase</name>
     <message>
-        <location filename="../docks/dockbase.cpp" line="+89"/>
+        <location filename="../docks/dockbase.cpp" line="+91"/>
         <source>Drag here to arrange</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14010,7 +14676,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-448"/>
+        <location filename="../docks/layerlistdock.cpp" line="-451"/>
         <source>Layers</source>
         <translation type="unfinished">Lớp</translation>
     </message>
@@ -14036,12 +14702,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+1962"/>
+        <location line="+2023"/>
         <source>Opacity: </source>
         <translation type="unfinished">Độ trong suốt: </translation>
     </message>
     <message>
-        <location line="-1961"/>
+        <location line="-2022"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -14051,7 +14717,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+356"/>
+        <location line="+359"/>
         <source>Duplicate Layer Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14101,7 +14767,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1073"/>
+        <location line="+1121"/>
         <source>Layer Limit Reached</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14126,13 +14792,13 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+502"/>
+        <location line="+512"/>
         <source>Sketch: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+267"/>
-        <location filename="../mainwindow.cpp" line="-5535"/>
+        <location filename="../mainwindow.cpp" line="-5896"/>
         <source>Layer</source>
         <translation type="unfinished">Lớp</translation>
     </message>
@@ -14142,7 +14808,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-939"/>
+        <location line="-949"/>
         <source>Delete Layer?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14300,12 +14966,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+110"/>
         <source>Play</source>
         <translation type="unfinished">Phát</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+37"/>
         <source>Zoom</source>
         <translation type="unfinished">Thu phóng</translation>
     </message>
@@ -14361,7 +15027,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+7217"/>
+        <location filename="../mainwindow.cpp" line="+7685"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
@@ -14373,7 +15039,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+1066"/>
+        <location filename="../mainwindow.cpp" line="+1101"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
@@ -14501,7 +15167,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::BrushSettings</name>
     <message>
-        <location filename="../toolwidgets/brushsettings.cpp" line="-168"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-293"/>
+        <source>Right-click drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+104"/>
         <source>Preview</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14563,6 +15234,21 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Undelete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Save Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Remove Brush From History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14633,7 +15319,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+12"/>
         <source>Input Settings…</source>
@@ -14668,7 +15354,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+690"/>
+        <location line="+718"/>
         <source>Smudging: </source>
         <translation type="unfinished">Nhoè: </translation>
     </message>
@@ -14678,13 +15364,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+832"/>
+        <location line="+879"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1560"/>
+        <location line="-1635"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14929,6 +15615,31 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+75"/>
         <source>Mode:</source>
         <translation type="unfinished">Chế độ :</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Lasso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Fills the shape with intersections making holes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Fan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fills the shape without holes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Shape:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -15221,12 +15932,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../scene/hudhandler.cpp" line="+235"/>
+        <location filename="../scene/hudhandler.cpp" line="+249"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+293"/>
+        <location line="+352"/>
         <source>Compressing canvas…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15252,7 +15963,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::Lock</name>
     <message>
-        <location filename="../view/lock.cpp" line="+101"/>
+        <location filename="../view/lock.cpp" line="+107"/>
         <source>Reset in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15267,7 +15978,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>You need to set a layer as the fill source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15312,7 +16023,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-119"/>
+        <location line="-126"/>
         <source>Exit layer view</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15368,6 +16079,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+47"/>
+        <source>Playback in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Out of space, you must reset the canvas</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15377,7 +16093,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Choose a different layer to fill on</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15387,15 +16103,23 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="-33"/>
         <source>Tool requires a selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>widgets::Banner</name>
+    <message>
+        <location filename="../widgets/banner.cpp" line="+45"/>
+        <source>Dismiss</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>widgets::BrushPreview</name>
     <message>
-        <location filename="../widgets/brushpreview.cpp" line="+20"/>
+        <location filename="../widgets/brushpreview.cpp" line="+22"/>
         <source>Click to edit brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15446,7 +16170,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+358"/>
+        <location filename="../scene/canvasview.cpp" line="+367"/>
         <location filename="../view/canvasview.cpp" line="-44"/>
         <source>Reconnect</source>
         <translation type="unfinished"></translation>
@@ -15468,7 +16192,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+416"/>
+        <location line="+438"/>
         <source>Vertical flip: ON</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15488,7 +16212,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2059"/>
+        <location line="+2136"/>
         <source>Zoom: %1%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15849,7 +16573,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+59"/>
+        <location filename="../widgets/netstatus.cpp" line="+60"/>
         <source>Copy address to clipboard</source>
         <translation type="unfinished">Chép địa chỉ vào clipboard</translation>
     </message>
@@ -15904,7 +16628,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+204"/>
         <source>not connected</source>
         <translation type="unfinished">chưa kết nối</translation>
     </message>
@@ -16015,7 +16739,7 @@ Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Autorecovery is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16033,7 +16757,7 @@ Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+27"/>
         <source>No recent hosts.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16046,7 +16770,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+1057"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-2520"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16101,15 +16825,15 @@ Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+366"/>
+        <location line="+433"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8284"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+709"/>
+        <location filename="../mainwindow.cpp" line="-8787"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+1036"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16121,16 +16845,6 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+739"/>
-        <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Set Key Frame to Current Layer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
