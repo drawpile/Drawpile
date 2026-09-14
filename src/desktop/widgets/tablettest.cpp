@@ -51,10 +51,11 @@ void TabletTester::paintEvent(QPaintEvent *e)
 void TabletTester::mousePressEvent(QMouseEvent *e)
 {
 	const auto mousePos = compat::mousePos(*e);
-	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3")
+	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3%4")
 						 .arg(mousePos.x())
 						 .arg(mousePos.y())
-						 .arg(e->button()));
+						 .arg(e->button())
+						 .arg(modifiersToString(e->modifiers())));
 	m_mouseDown = true;
 	m_mousePath.clear();
 	update();
@@ -63,10 +64,11 @@ void TabletTester::mousePressEvent(QMouseEvent *e)
 void TabletTester::mouseMoveEvent(QMouseEvent *e)
 {
 	const auto mousePos = compat::mousePos(*e);
-	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3")
+	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3%4")
 						 .arg(mousePos.x())
 						 .arg(mousePos.y())
-						 .arg(COMPAT_FLAGS_ARG(e->buttons())));
+						 .arg(COMPAT_FLAGS_ARG(e->buttons()))
+						 .arg(modifiersToString(e->modifiers())));
 	m_mousePath << e->pos();
 	update();
 }
@@ -115,10 +117,11 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	}
 
 	const auto posF = compat::tabPosF(*e);
-	msg += QString(" X=%1 Y=%2 B=%3 P=%4% XT=%5° YT=%6° R=%7° T=%8 %9")
+	msg += QString(" X=%1 Y=%2 B=%3%4 P=%5% XT=%6° YT=%7° R=%8° T=%9 %10")
 			   .arg(posF.x(), 0, 'f', 2)
 			   .arg(posF.y(), 0, 'f', 2)
 			   .arg(COMPAT_FLAGS_ARG(e->buttons()))
+			   .arg(modifiersToString(e->modifiers()))
 			   .arg(e->pressure() * 100, 0, 'f', 1)
 			   .arg(e->xTilt())
 			   .arg(e->yTilt())
@@ -139,6 +142,25 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	}
 
 	emit eventReport(msg);
+}
+
+QString TabletTester::modifiersToString(Qt::KeyboardModifiers mods)
+{
+	QString s;
+	s.reserve(4);
+	if(mods.testFlag(Qt::ShiftModifier)) {
+		s.append(QStringLiteral("S"));
+	}
+	if(mods.testFlag(Qt::ControlModifier)) {
+		s.append(QStringLiteral("C"));
+	}
+	if(mods.testFlag(Qt::AltModifier)) {
+		s.append(QStringLiteral("A"));
+	}
+	if(mods.testFlag(Qt::MetaModifier)) {
+		s.append(QStringLiteral("M"));
+	}
+	return s;
 }
 
 }

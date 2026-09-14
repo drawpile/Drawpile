@@ -31,6 +31,8 @@ protected:
 	void tabletEvent(QTabletEvent *e) override;
 
 private:
+	static QString modifiersToString(Qt::KeyboardModifiers mods);
+
 	QVector<QPointF> m_mousePath;
 	QVector<canvas::Point> m_tabletPath;
 	bool m_mouseDown = false;

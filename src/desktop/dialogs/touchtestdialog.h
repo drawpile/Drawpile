@@ -37,6 +37,8 @@ private:
 	void debugLogTouchEvent(QTouchEvent *event);
 	void debugLogGestureEvent(QGestureEvent *event);
 	void debugLogEvent(QEvent *event, const QString extraInfo);
+
+	static QString modifiersToString(Qt::KeyboardModifiers mods);
 };
 
 class TouchTestDialog final : public QDialog {

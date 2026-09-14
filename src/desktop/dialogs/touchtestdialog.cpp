@@ -93,23 +93,26 @@ void TouchTestView::debugLogTouchEvent(QTouchEvent *event)
 	const QInputDevice *inputDevice = event->device();
 	if(inputDevice) {
 		deviceInfo =
-			QStringLiteral("Device '%1' capabilities=%2 type=%3")
+			QStringLiteral("Device '%1' capabilities=%2 type=%3 modifiers=%4")
 				.arg(
 					inputDevice->name(),
 					QString::number(int(inputDevice->capabilities()), 16),
-					QString::number(int(inputDevice->type())));
+					QString::number(int(inputDevice->type())),
+					modifiersToString(event->modifiers()));
 	}
 #else
 	const QTouchDevice *touchDevice = event->device();
 	if(touchDevice) {
 		deviceInfo =
 			QStringLiteral(
-				"Device '%1' capabilities=%2 type=%3 maxTouchPoints=%4")
+				"Device '%1' capabilities=%2 type=%3 maxTouchPoints=%4 "
+				"modifiers=%5")
 				.arg(
 					touchDevice->name(),
 					QString::number(int(touchDevice->capabilities()), 16),
 					QString::number(int(touchDevice->type())),
-					QString::number(touchDevice->maximumTouchPoints()));
+					QString::number(touchDevice->maximumTouchPoints()),
+					modifiersToString(event->modifiers()));
 	}
 #endif
 	debugLogEvent(event, deviceInfo);
@@ -233,6 +236,25 @@ void TouchTestView::debugLogEvent(QEvent *event, const QString extraInfo)
 		message += QStringLiteral(" ") + extraInfo;
 	}
 	emit logEvent(message);
+}
+
+QString TouchTestView::modifiersToString(Qt::KeyboardModifiers mods)
+{
+	QString s;
+	s.reserve(4);
+	if(mods.testFlag(Qt::ShiftModifier)) {
+		s.append(QStringLiteral("S"));
+	}
+	if(mods.testFlag(Qt::ControlModifier)) {
+		s.append(QStringLiteral("C"));
+	}
+	if(mods.testFlag(Qt::AltModifier)) {
+		s.append(QStringLiteral("A"));
+	}
+	if(mods.testFlag(Qt::MetaModifier)) {
+		s.append(QStringLiteral("M"));
+	}
+	return s;
 }
 
 
