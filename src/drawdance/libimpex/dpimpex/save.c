@@ -386,8 +386,22 @@ static bool ora_store_layers(DP_SaveOraContext *c, int *next_index,
 {
     int count = DP_layer_list_count(ll);
     DP_ASSERT(DP_layer_props_list_count(lpl) == count);
+    bool in_clipping_group = false;
     for (int i = count - 1; i >= 0; --i) {
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+
+        // Clipping groups create an implicit group, so the indexes get
+        // bumped by one when reading the file.
+        if (DP_layer_props_clip(lp)) {
+            if (!in_clipping_group) {
+                ++*next_index;
+                in_clipping_group = true;
+            }
+        }
+        else {
+            in_clipping_group = false;
+        }
+
         DP_SaveOraLayer *sol = save_ora_context_layer_insert(
             c, DP_layer_props_id(lp), (*next_index)++);
 
