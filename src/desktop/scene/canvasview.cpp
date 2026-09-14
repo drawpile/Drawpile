@@ -1511,7 +1511,7 @@ void CanvasView::penPressEvent(
 		m_prevpoint =
 			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		if(penmode != m_penmode) {
-			setPenMode(m_penmode);
+			setPenMode(penmode);
 			resetCursor();
 		}
 		onPenDown(
