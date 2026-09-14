@@ -6,17 +6,17 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+459"/>
         <source>Resource Exhaustion</source>
-        <translation type="unfinished"></translation>
+        <translation>Ressourcenerschöpfung</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es scheint als wäre Drawpile beendet worden weil nicht genug Speicher verfügbar war. Falls Sie dabei waren einer Sitzung beizutreten oder eine Datei zu öffnen, so ist die Leinwand ggf. zu groß oder hat zu viele Ebenen für Ihr Gerät.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -672,7 +672,7 @@
     <message>
         <location filename="../document.cpp" line="+377"/>
         <source>Resumed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortgesetzt.</translation>
     </message>
     <message>
         <location line="+919"/>
@@ -870,12 +870,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <location line="+11"/>
         <location line="+12"/>
         <source>Projects (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekte (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvases (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwände (%1)</translation>
     </message>
 </context>
 <context>
@@ -1153,13 +1153,13 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <location filename="../utils/strings.cpp" line="+12"/>
         <source>%</source>
         <extracomment>Percent, put after numbers as a unit, like 42%. Unless your language uses a different symbol or something, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>px</source>
         <extracomment>Abbreviation for pixels, put after a number as a unit, like 42px. Unless your language calls pixels something different, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -1371,7 +1371,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <location filename="../brushes/brushpresetmodel.cpp" line="+2951"/>
         <source>Brush requested from user &quot;%1&quot; on %2 at %3.</source>
         <extracomment>%1 is a username, %2 is a date, %3 is a time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel von Nutzer &quot;%1&quot; am %2 um %3 angefragt.</translation>
     </message>
 </context>
 <context>
@@ -1389,7 +1389,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+2"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1404,7 +1404,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+2"/>
         <source>Show a history of brushes used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeigt einen Verlauf der verwendeten Pinsel an.</translation>
     </message>
     <message>
         <location line="+123"/>
@@ -1505,12 +1505,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="-390"/>
         <source> (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation> (gelöscht)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation> (nicht gespeichert)</translation>
     </message>
     <message>
         <location line="+430"/>
@@ -1533,7 +1533,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+720"/>
         <source>No session to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Sitzung zum Fortsetzen gegeben</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -1619,7 +1619,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+5"/>
         <source>PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG-Sprite-Bogen</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1695,183 +1695,183 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../import/recordingconverter.cpp" line="+92"/>
         <source>No input files given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Eingabedateien gegeben.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 opening project file %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen der Projektdatei %2.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error initializing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Initialisieren des Kompressors.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Finishing project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt fertigstellen…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error finishing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler bei der Fertigstellung des Projekts.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schließen des Projekts.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Processing project %1 session %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeite Projekt %1 Sitzung %2…</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Error %1 copying session %2 from project %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Kopieren der Sitzung %2 von Projekt %3.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Error %1 opening project %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen des Projekts %2: %3.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening temporary file for %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim öffnen der temporären Datei für %2: %3.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error loading project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Laden von Projekt %1.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertiere Aufnahme %1…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Aufnahme %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatible Aufnahme.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen der Projektsitzung.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error setting compressor session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Setzen der Kompressorsitzung.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error %1 opening project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen des Projektschnappschusses.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 finishing project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 bei der Fertigstellung des Projektsnapschusses.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Error %1 converting recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Konvertieren von Aufnahme %2.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error %1 reading recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Lesen der Aufnahme %2.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error flushing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Leeren des Kompressors.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Error %1 saving project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Speichern des Projektschnappschusses.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 closing project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Schließen der Projektsitzung.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 opening project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen von Projekt %2.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Processing project %1 snapshot %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeite Projekt %1 Schnappschuss %2…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error opening playback for project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler bei Wiedergabe von Projekt %1.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 preparing playback for project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 bei Vorbereitung der Wiedergabe für Projekt %2.</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+133"/>
         <source>Error %1 processing project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 bei Verarbeitung von Projekt %2.</translation>
     </message>
     <message>
         <location line="-123"/>
         <source>Error %1 replacing snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Ersetzen von Schnappschuss in Projekt %2.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session %1 not found in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung %1 in Projekt %2 nicht gefunden.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 updating snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Aktualisieren von Schnappschuss in Projekt %2.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 reading sessions in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Lesen der Sitzungen in Projekt %2.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Processing final project snapshot…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeite letzen Projektschnappschuss…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error opening playback for project %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Wiedergabe für Projekt %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing playback for project %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 bei Vorbereitung der Wiedergabe für Projekt %2</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Error %1 saving snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Speichern von Schnappschuss in Projekt %2.</translation>
     </message>
 </context>
 <context>
@@ -2699,12 +2699,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="-42"/>
         <source>Invalid session %1 given to resume</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Sitzung %1 zur Fortsetzung gegeben</translation>
     </message>
     <message>
         <location line="+185"/>
         <source>No path to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>Keinen Pfad zur Fortsetzung gegeben</translation>
     </message>
     <message>
         <location line="+176"/>
@@ -2728,7 +2728,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <location line="+5"/>
         <source>Error %1 resuming session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Forsetzen der Sitzung: %2</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2766,32 +2766,32 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../project/projectrepair.cpp" line="+38"/>
         <source>Failed to set temporary input path.</source>
-        <translation type="unfinished"></translation>
+        <translation>Temporärer Eingabepfad konnte nicht gesetzt werden.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Failed to open project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt konnte nicht geöffnet werden.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Failed to close project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt konnte nicht geschlossen werden.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Failed to set temporary output path.</source>
-        <translation type="unfinished"></translation>
+        <translation>Temporärer Ausgabepfad konnte nicht gesetzt weren.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to start repair: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Start der Reparatur: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to repair file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei konnte nicht repariert werden: %1</translation>
     </message>
 </context>
 <context>
@@ -2811,27 +2811,27 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+12"/>
         <source>Error %1 opening project file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen der Projektdatei: %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 generating project overview: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Erstellen der Projektübersicht: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 bei der Vorbereitung der Wiedergabe: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 in player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 in Wiedergabe: %2</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Unhandled error %1 of type %2: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbehandelter Fehler %1 von Typ %2: %3</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -2960,47 +2960,47 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../io/files.cpp" line="+37"/>
         <source>File size out of bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateigröße ungültig</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Could not read entire file</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamte Datei konnte nicht gelesen werden</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Quelldatei &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Zieldatei &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Festschreiben der Zieldatei: %1</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Lesen von Quelldatei &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben von %1 Byte(s) zu Zieldatei &apos;%2&apos;: %3</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Tried to write %1 byte(s) to target file &apos;%2&apos;, but only wrote %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Versuchte %1 Byte(s) in Zieldatei &apos;%2&apos; zu schreiben, aber schrieb nur %3</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error flushing target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Abschluss der Zieldatei &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
