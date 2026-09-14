@@ -232,13 +232,13 @@
         <location line="-58"/>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+89"/>
         <source>Choose an action</source>
-        <translation type="unfinished"></translation>
+        <translation>اختار فعل</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+6"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>تغير…</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -276,7 +276,7 @@
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>تدوير حر للوحة الرسم</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -306,17 +306,17 @@
     <message>
         <location line="+4"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير شفافية الفرشاة</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير صلابة الفرشاة</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير تدرج اللون</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -326,12 +326,12 @@
     <message>
         <location line="+4"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير قيمة اللون</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل اداه الممحاة</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -341,7 +341,7 @@
     <message>
         <location line="+4"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>تبديل خيار الحفاظ على قناة ألفا</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -587,7 +587,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير ورقة صور (Spritesheet) بصيغة PNG</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح الاعاده</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -693,12 +693,12 @@
     <message>
         <location line="+9"/>
         <source>Project Information</source>
-        <translation type="unfinished"></translation>
+        <translation>معلومات المشروع</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ملفات مشروع Drawpile</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -718,17 +718,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>التسجيلات</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ المشروع</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ملفات قابلة للإصلاح</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -748,27 +748,27 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير ملف PNG متحرك</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Export Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير ملف الاسترداد التلقائي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawpile Project</source>
-        <translation type="unfinished"></translation>
+        <translation>مشروع Drawpile</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Save Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ الملف المُصلَح</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف مُصلَح</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -814,47 +814,47 @@
     <message>
         <location line="+25"/>
         <source>Replace Project</source>
-        <translation type="unfinished"></translation>
+        <translation>استبدال المشروع</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The project file %1 already exists. Do you want to append to it or replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف المشروع %1 موجود بالفعل. هل تريد إلحاق البيانات به أم استبداله؟</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>If you replace the file, any data it contains from past sessions will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>إذا قمت باستبدال الملف، فستُفقد أي بيانات يحتوي عليها من جلسات سابقة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>ألحق</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>استبدال</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace Image</source>
-        <translation type="unfinished"></translation>
+        <translation>استبدال الصورة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>الملف %1 موجود بالفعل، هل تريد استبداله؟</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>نعم، استبدل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>لا، احتفظ به</translation>
     </message>
     <message>
         <location line="+815"/>
@@ -1540,12 +1540,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>إذا لم تراجع مستنداتك، فستضيع جميع التغييرات.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>مراجعة التغييرات…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1704,7 +1704,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>ليس لديك إذن لتغيير خلفية الجلسة.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1920,59 +1920,59 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+396"/>
         <source>Disable Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>تعطيل الاسترداد التلقائي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to disable autorecovery for this session?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل أنت متأكد من أنك تريد تعطيل الاسترداد التلقائي لهذه الجلسة؟</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsaved data will be discarded and can&apos;t be recovered. You will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم تجاهل البيانات غير المحفوظة ولن يمكن استعادتها. لن تتمكن من إنشاء مقطع فيديو بفاصل زمني (Timelapse).</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, disable</source>
         <extracomment>&quot;Yes&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>نعم، اعطيل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, keep enabled</source>
         <extracomment>&quot;No&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>لا، أبقِه مفعَّلاً</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Autorecovery deactivated</source>
-        <translation type="unfinished"></translation>
+        <translation>تم إيقاف الاسترداد التلقائي</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>The autorecovery file has exceeded %1% of the %2 size limit. Autorecovery will be disabled if the limit is reached.</source>
-        <translation type="unfinished"></translation>
+        <translation>لقد تجاوز ملف الاسترداد التلقائي نسبة %1% من الحد الأقصى للحجم البالغ %2. سيتم تعطيل الاسترداد التلقائي في حال الوصول إلى هذا الحد.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery Error</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في الاسترداد التلقائي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في الاسترداد التلقائي: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery will be disabled for the current session. The file will be left available for recovery. If you continue, you will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم تعطيل الاسترداد التلقائي للجلسة الحالية، وستظل الملفات متاحة للاسترداد. إذا تابعت، فلن تتمكن من إنشاء مقطع فيديو بفاصل زمني (Timelapse).</translation>
     </message>
     <message>
         <location line="+1077"/>
         <source>Open Recovered File</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح الملف المستعاد</translation>
     </message>
     <message>
         <location line="+1"/>
