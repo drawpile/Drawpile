@@ -1265,6 +1265,11 @@ int Config::defaultTimelapseDurationSeconds()
 	return 120;
 }
 
+int Config::defaultTimelapseDurationSpeedMode()
+{
+	return 0;
+}
+
 int Config::defaultTimelapseExportFormat()
 {
 	return -1;
@@ -1353,6 +1358,11 @@ QVariantHash Config::defaultTimelapsePreferredEncoders()
 bool Config::defaultTimelapseShowAdvanced()
 {
 	return false;
+}
+
+int Config::defaultTimelapseSpeedPercent()
+{
+	return 100;
 }
 
 bool Config::defaultTimelapseTimeOwnOnly()

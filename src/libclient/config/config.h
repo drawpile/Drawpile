@@ -1224,6 +1224,10 @@ public:
 	virtual void setTimelapseDurationSeconds(int value) = 0;
 	static int defaultTimelapseDurationSeconds();
 
+	virtual int getTimelapseDurationSpeedMode() const = 0;
+	virtual void setTimelapseDurationSpeedMode(int value) = 0;
+	static int defaultTimelapseDurationSpeedMode();
+
 	virtual int getTimelapseExportFormat() const = 0;
 	virtual void setTimelapseExportFormat(int value) = 0;
 	static int defaultTimelapseExportFormat();
@@ -1295,6 +1299,10 @@ public:
 	virtual bool getTimelapseShowAdvanced() const = 0;
 	virtual void setTimelapseShowAdvanced(bool value) = 0;
 	static bool defaultTimelapseShowAdvanced();
+
+	virtual int getTimelapseSpeedPercent() const = 0;
+	virtual void setTimelapseSpeedPercent(int value) = 0;
+	static int defaultTimelapseSpeedPercent();
 
 	virtual bool getTimelapseTimeOwnOnly() const = 0;
 	virtual void setTimelapseTimeOwnOnly(bool value) = 0;
@@ -1617,6 +1625,7 @@ Q_SIGNALS:
 	void changeThreeFingerTapTrigger(const QString &value);
 	void changeTimelapseBackdropColor(const QColor &value);
 	void changeTimelapseDurationSeconds(int value);
+	void changeTimelapseDurationSpeedMode(int value);
 	void changeTimelapseExportFormat(int value);
 	void changeTimelapseFlashColor(const QColor &value);
 	void changeTimelapseFlashSeconds(int value);
@@ -1635,6 +1644,7 @@ Q_SIGNALS:
 	void changeTimelapseMaxQueueEntries(int value);
 	void changeTimelapsePreferredEncoders(const QVariantHash &value);
 	void changeTimelapseShowAdvanced(bool value);
+	void changeTimelapseSpeedPercent(int value);
 	void changeTimelapseTimeOwnOnly(bool value);
 	void changeToolBarConfig(const QVariantHash &value);
 	void changeToolToggle(bool value);

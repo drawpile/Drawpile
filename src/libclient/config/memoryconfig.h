@@ -742,6 +742,9 @@ public:
 	int getTimelapseDurationSeconds() const override;
 	void setTimelapseDurationSeconds(int value) override;
 
+	int getTimelapseDurationSpeedMode() const override;
+	void setTimelapseDurationSpeedMode(int value) override;
+
 	int getTimelapseExportFormat() const override;
 	void setTimelapseExportFormat(int value) override;
 
@@ -795,6 +798,9 @@ public:
 
 	bool getTimelapseShowAdvanced() const override;
 	void setTimelapseShowAdvanced(bool value) override;
+
+	int getTimelapseSpeedPercent() const override;
+	void setTimelapseSpeedPercent(int value) override;
 
 	bool getTimelapseTimeOwnOnly() const override;
 	void setTimelapseTimeOwnOnly(bool value) override;
@@ -1108,6 +1114,7 @@ private:
 	QString m_threeFingerTapTrigger = defaultThreeFingerTapTrigger();
 	QColor m_timelapseBackdropColor = defaultTimelapseBackdropColor();
 	int m_timelapseDurationSeconds = defaultTimelapseDurationSeconds();
+	int m_timelapseDurationSpeedMode = defaultTimelapseDurationSpeedMode();
 	int m_timelapseExportFormat = defaultTimelapseExportFormat();
 	QColor m_timelapseFlashColor = defaultTimelapseFlashColor();
 	int m_timelapseFlashSeconds = defaultTimelapseFlashSeconds();
@@ -1127,6 +1134,7 @@ private:
 	QVariantHash m_timelapsePreferredEncoders =
 		defaultTimelapsePreferredEncoders();
 	bool m_timelapseShowAdvanced = defaultTimelapseShowAdvanced();
+	int m_timelapseSpeedPercent = defaultTimelapseSpeedPercent();
 	bool m_timelapseTimeOwnOnly = defaultTimelapseTimeOwnOnly();
 	QVariantHash m_toolBarConfig = defaultToolBarConfig();
 	bool m_toolToggle = defaultToolToggle();

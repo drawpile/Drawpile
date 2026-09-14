@@ -3094,6 +3094,19 @@ void MemoryConfig::setTimelapseDurationSeconds(int value)
 	}
 }
 
+int MemoryConfig::getTimelapseDurationSpeedMode() const
+{
+	return m_timelapseDurationSpeedMode;
+}
+
+void MemoryConfig::setTimelapseDurationSpeedMode(int value)
+{
+	if(value != m_timelapseDurationSpeedMode) {
+		m_timelapseDurationSpeedMode = value;
+		Q_EMIT changeTimelapseDurationSpeedMode(m_timelapseDurationSpeedMode);
+	}
+}
+
 int MemoryConfig::getTimelapseExportFormat() const
 {
 	return m_timelapseExportFormat;
@@ -3326,6 +3339,19 @@ void MemoryConfig::setTimelapseShowAdvanced(bool value)
 	if(value != m_timelapseShowAdvanced) {
 		m_timelapseShowAdvanced = value;
 		Q_EMIT changeTimelapseShowAdvanced(m_timelapseShowAdvanced);
+	}
+}
+
+int MemoryConfig::getTimelapseSpeedPercent() const
+{
+	return m_timelapseSpeedPercent;
+}
+
+void MemoryConfig::setTimelapseSpeedPercent(int value)
+{
+	if(value != m_timelapseSpeedPercent) {
+		m_timelapseSpeedPercent = value;
+		Q_EMIT changeTimelapseSpeedPercent(m_timelapseSpeedPercent);
 	}
 }
 

@@ -15,7 +15,6 @@ extern "C" {
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/timelapsesaverrunnable.h"
 #include "libclient/export/videoformat.h"
-#include "libshared/util/paths.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QElapsedTimer>
@@ -39,7 +38,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	const QColor &backdropColor, const QColor &checkerColor1,
 	const QColor &checkerColor2, const QColor &flashColor,
 	const QRect &logoRect, double logoOpacity, const QImage &logoImage,
-	double framerate, double lingerBeforeSeconds, double playbackSeconds,
+	double framerate, double lingerBeforeSeconds, double playbackSecondsOrSpeed,
 	double flashSeconds, double lingerAfterSeconds, double maxDeltaSeconds,
 	int maxQueueEntries, bool timeOwnOnly, int lingerBeforeLoops,
 	int lingerAfterLoops, int frameRangeFirst, int frameRangeLast,
@@ -69,7 +68,7 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 			  : logoImage)
 	, m_framerate(framerate)
 	, m_lingerBeforeSeconds(lingerBeforeSeconds)
-	, m_playbackSeconds(playbackSeconds)
+	, m_playbackSecondsOrSpeed(playbackSecondsOrSpeed)
 	, m_flashSeconds(flashSeconds)
 	, m_lingerAfterSeconds(lingerAfterSeconds)
 	, m_maxDeltaSeconds(maxDeltaSeconds)
@@ -81,7 +80,6 @@ TimelapseSaverRunnable::TimelapseSaverRunnable(
 	, m_frameRangeFirst(frameRangeFirst)
 	, m_frameRangeLast(frameRangeLast)
 	, m_animationFramerate(animationFramerate)
-	, m_totalSeconds(calculateTotalSeconds())
 	, m_vmf(DP_view_mode_filter_clone(m_vmb.get(), vmfOrNull))
 {
 }
@@ -141,6 +139,17 @@ void TimelapseSaverRunnable::run()
 			Q_EMIT saveCancelled();
 			return;
 		}
+
+		// Positive values are a playback time, negative ones a relative speed.
+		if(m_playbackSecondsOrSpeed > 0.0) {
+			m_playbackSeconds = m_playbackSecondsOrSpeed;
+		} else {
+			m_playbackSeconds =
+				DP_project_playback_total_seconds(m_projectPlayback) /
+				-m_playbackSecondsOrSpeed;
+		}
+		m_totalSeconds = calculateTotalSeconds();
+		Q_EMIT durationCalculated(m_totalSeconds);
 
 		saveOk = saveVideo(errorMessage);
 		m_dc = nullptr;
@@ -710,10 +719,10 @@ bool TimelapseSaverRunnable::checkParameters(QString &outErrorMessage) const
 	// If the animation information is garbage already, an invalid time is
 	// probably just a knock-on effect of that, so don't report that as well.
 	if(!animationError &&
-	   (lingerTimeError || !std::isfinite(m_playbackSeconds) ||
-		!std::isfinite(m_flashSeconds) || !std::isfinite(m_totalSeconds) ||
-		!std::isfinite(m_maxDeltaSeconds) || m_playbackSeconds <= 0.0 ||
-		m_flashSeconds < 0.0 || m_maxDeltaSeconds <= 0.0)) {
+	   (lingerTimeError || !std::isfinite(m_playbackSecondsOrSpeed) ||
+		!std::isfinite(m_flashSeconds) || !std::isfinite(m_maxDeltaSeconds) ||
+		m_playbackSecondsOrSpeed == 0.0 || m_flashSeconds < 0.0 ||
+		m_maxDeltaSeconds <= 0.0)) {
 		appendError(tr("Invalid time given."));
 	}
 

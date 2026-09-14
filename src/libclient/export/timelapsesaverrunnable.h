@@ -40,10 +40,10 @@ public:
 		const QColor &checkerColor1, const QColor &checkerColor2,
 		const QColor &flashColor, const QRect &logoRect, double logoOpacity,
 		const QImage &logoImage, double framerate, double lingerBeforeSeconds,
-		double playbackSeconds, double flashSeconds, double lingerAfterSeconds,
-		double maxDeltaSeconds, int maxQueueEntries, bool timeOwnOnly,
-		int lingerBeforeLoops, int lingerAfterLoops, int frameRangeFirst,
-		int frameRangeLast, double animationFramerate,
+		double playbackSecondsOrSpeed, double flashSeconds,
+		double lingerAfterSeconds, double maxDeltaSeconds, int maxQueueEntries,
+		bool timeOwnOnly, int lingerBeforeLoops, int lingerAfterLoops,
+		int frameRangeFirst, int frameRangeLast, double animationFramerate,
 		QObject *parent = nullptr);
 
 	void run() override;
@@ -53,6 +53,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
 	void stepChanged(const QString &message);
+	void durationCalculated(double totalSeconds);
 	void progress(int percent);
 	void frameProgress(const QImage &img);
 	void saveComplete(qint64 msecs);
@@ -182,7 +183,7 @@ private:
 	const QImage m_logoImage;
 	const double m_framerate;
 	const double m_lingerBeforeSeconds;
-	const double m_playbackSeconds;
+	const double m_playbackSecondsOrSpeed;
 	const double m_flashSeconds;
 	const double m_lingerAfterSeconds;
 	const double m_maxDeltaSeconds;
@@ -193,10 +194,11 @@ private:
 	const int m_frameRangeFirst;
 	const int m_frameRangeLast;
 	const double m_animationFramerate;
-	const double m_totalSeconds;
 	drawdance::ViewModeBuffer m_vmb;
 	DP_ViewModeFilter m_vmf;
 	QImage m_scaledLogoImage;
+	double m_playbackSeconds = 0.0;
+	double m_totalSeconds = 0.0;
 	int m_elapsedFrames = 0;
 	DP_DrawContext *m_dc = nullptr;
 	DP_ProjectPlayback *m_projectPlayback = nullptr;

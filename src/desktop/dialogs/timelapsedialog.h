@@ -20,6 +20,7 @@ class QLabel;
 class QProgressBar;
 class QPushButton;
 class QScrollArea;
+class QStackedWidget;
 class TimelapseSaverRunnable;
 
 namespace canvas {
@@ -62,6 +63,8 @@ private:
 	static constexpr int DEFAULT_MAX_HEIGHT = 1920;
 	static constexpr int DEFAULT_FALLBACK_WIDTH = 1920;
 	static constexpr int DEFAULT_FALLBACK_HEIGHT = 1080;
+	static constexpr int DURATION_PAGE_INDEX = 0;
+	static constexpr int SPEED_PAGE_INDEX = 1;
 
 	enum class LogoLocation {
 		None,
@@ -88,6 +91,9 @@ private:
 	void updateSecondsText(int seconds);
 	int getDurationSeconds() const;
 	void setDurationSeconds(int seconds);
+	void switchToSpeed();
+	void switchToDuration();
+	void switchDurationSpeed(int page);
 	void updateFormat();
 	void updateEncoder();
 	void updateFfmpeg();
@@ -134,6 +140,7 @@ private:
 	void updateExportButton();
 
 	void updateProgressLabel(const QString &message);
+	void updateTimingLabel(double totalSeconds);
 	void setProgress(int percent);
 	void handleSaveComplete(qint64 msecs);
 	void handleSaveCancelled();
@@ -152,8 +159,11 @@ private:
 	QWidget *m_finishPage;
 	QComboBox *m_formatCombo;
 	utils::FormNote *m_ffmpegFormatNote = nullptr;
+	QStackedWidget *m_durationSpeedLabelStack;
+	QStackedWidget *m_durationSpeedContentStack;
 	KisSliderSpinBox *m_minutesSpinner;
 	KisSliderSpinBox *m_secondsSpinner;
+	KisSliderSpinBox *m_speedSpinner;
 	KisSliderSpinBox *m_widthSpinner;
 	KisSliderSpinBox *m_heightSpinner;
 	QCheckBox *m_keepAspectCheckBox;
@@ -187,6 +197,7 @@ private:
 	QPushButton *m_ffmpegButton = nullptr;
 	QLabel *m_progressLabel;
 	QProgressBar *m_progressBar;
+	QLabel *m_timingLabel;
 	QLabel *m_finishLabel;
 	QDialogButtonBox *m_buttons;
 	QString m_ffmpegPath;

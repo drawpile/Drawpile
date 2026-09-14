@@ -8825,6 +8825,12 @@ int DP_project_playback_measure(DP_ProjectPlayback *pb, DP_DrawContext *dc,
     return result;
 }
 
+double DP_project_playback_total_seconds(DP_ProjectPlayback *pb)
+{
+    DP_ASSERT(pb);
+    return pb->total_playback_seconds;
+}
+
 int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
                              double framerate, double target_seconds,
                              DP_ProjectPlaybackCallbackFn callback, void *user)

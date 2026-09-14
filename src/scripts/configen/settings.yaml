@@ -1523,6 +1523,12 @@ settings:
     qsettings: 'timelapse/durationseconds'
     legacy_package: 'desktop'
 
+  - id: timelapseDurationSpeedMode
+    type: 'int'
+    default: '0'
+    qsettings: 'timelapse/durationspeedmode'
+    legacy_package: 'desktop'
+
   - id: timelapseLingerAfterLoops
     type: 'int'
     default: '0'
@@ -1623,6 +1629,12 @@ settings:
     type: 'bool'
     default: 'false'
     qsettings: 'timelapse/showadvanced'
+    legacy_package: 'desktop'
+
+  - id: timelapseSpeedPercent
+    type: 'int'
+    default: '100'
+    qsettings: 'timelapse/speedpercent'
     legacy_package: 'desktop'
 
   - id: timelapseTimeOwnOnly

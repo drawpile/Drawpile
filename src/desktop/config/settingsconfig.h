@@ -749,6 +749,9 @@ public:
 	int getTimelapseDurationSeconds() const override;
 	void setTimelapseDurationSeconds(int value) override;
 
+	int getTimelapseDurationSpeedMode() const override;
+	void setTimelapseDurationSpeedMode(int value) override;
+
 	int getTimelapseExportFormat() const override;
 	void setTimelapseExportFormat(int value) override;
 
@@ -802,6 +805,9 @@ public:
 
 	bool getTimelapseShowAdvanced() const override;
 	void setTimelapseShowAdvanced(bool value) override;
+
+	int getTimelapseSpeedPercent() const override;
+	void setTimelapseSpeedPercent(int value) override;
 
 	bool getTimelapseTimeOwnOnly() const override;
 	void setTimelapseTimeOwnOnly(bool value) override;

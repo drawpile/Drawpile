@@ -840,6 +840,11 @@ SettingsConfig::SettingsConfig(
 		&desktop::settings::Settings::timelapseDurationSecondsChanged, this,
 		&SettingsConfig::changeTimelapseDurationSeconds, Qt::DirectConnection);
 	connect(
+		m_settings,
+		&desktop::settings::Settings::timelapseDurationSpeedModeChanged, this,
+		&SettingsConfig::changeTimelapseDurationSpeedMode,
+		Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::timelapseExportFormatChanged,
 		this, &SettingsConfig::changeTimelapseExportFormat,
 		Qt::DirectConnection);
@@ -911,6 +916,10 @@ SettingsConfig::SettingsConfig(
 	connect(
 		m_settings, &desktop::settings::Settings::timelapseShowAdvancedChanged,
 		this, &SettingsConfig::changeTimelapseShowAdvanced,
+		Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::timelapseSpeedPercentChanged,
+		this, &SettingsConfig::changeTimelapseSpeedPercent,
 		Qt::DirectConnection);
 	connect(
 		m_settings, &desktop::settings::Settings::timelapseTimeOwnOnlyChanged,
@@ -3342,6 +3351,16 @@ void SettingsConfig::setTimelapseDurationSeconds(int value)
 	m_settings->setTimelapseDurationSeconds(value);
 }
 
+int SettingsConfig::getTimelapseDurationSpeedMode() const
+{
+	return m_settings->timelapseDurationSpeedMode();
+}
+
+void SettingsConfig::setTimelapseDurationSpeedMode(int value)
+{
+	m_settings->setTimelapseDurationSpeedMode(value);
+}
+
 int SettingsConfig::getTimelapseExportFormat() const
 {
 	return m_settings->timelapseExportFormat();
@@ -3520,6 +3539,16 @@ bool SettingsConfig::getTimelapseShowAdvanced() const
 void SettingsConfig::setTimelapseShowAdvanced(bool value)
 {
 	m_settings->setTimelapseShowAdvanced(value);
+}
+
+int SettingsConfig::getTimelapseSpeedPercent() const
+{
+	return m_settings->timelapseSpeedPercent();
+}
+
+void SettingsConfig::setTimelapseSpeedPercent(int value)
+{
+	m_settings->setTimelapseSpeedPercent(value);
 }
 
 bool SettingsConfig::getTimelapseTimeOwnOnly() const

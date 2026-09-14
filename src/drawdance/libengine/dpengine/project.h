@@ -723,6 +723,8 @@ int DP_project_playback_measure(DP_ProjectPlayback *pb, DP_DrawContext *dc,
                                 const DP_Rect *crop_or_null,
                                 unsigned int flags);
 
+double DP_project_playback_total_seconds(DP_ProjectPlayback *pb);
+
 int DP_project_playback_play(DP_ProjectPlayback *pb, DP_DrawContext *dc,
                              double framerate, double target_seconds,
                              DP_ProjectPlaybackCallbackFn callback, void *user);

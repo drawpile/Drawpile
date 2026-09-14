@@ -647,6 +647,10 @@ SETTING(
 	"timelapse/durationseconds",
 	config::Config::defaultTimelapseDurationSeconds())
 SETTING(
+	timelapseDurationSpeedMode, TimelapseDurationSpeedMode,
+	"timelapse/durationspeedmode",
+	config::Config::defaultTimelapseDurationSpeedMode())
+SETTING(
 	timelapseExportFormat, TimelapseExportFormat, "timelapse/exportformat",
 	config::Config::defaultTimelapseExportFormat())
 SETTING(
@@ -707,6 +711,9 @@ SETTING(
 SETTING(
 	timelapseShowAdvanced, TimelapseShowAdvanced, "timelapse/showadvanced",
 	config::Config::defaultTimelapseShowAdvanced())
+SETTING(
+	timelapseSpeedPercent, TimelapseSpeedPercent, "timelapse/speedpercent",
+	config::Config::defaultTimelapseSpeedPercent())
 SETTING(
 	timelapseTimeOwnOnly, TimelapseTimeOwnOnly, "timelapse/timeownonly",
 	config::Config::defaultTimelapseTimeOwnOnly())
