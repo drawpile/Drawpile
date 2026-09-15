@@ -6,17 +6,17 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+459"/>
         <source>Resource Exhaustion</source>
-        <translation type="unfinished"></translation>
+        <translation>リソース枯渇</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile はメモリ不足のため終了したようです。セッションに参加しようとしていたか、またはファイルを開こうとしていた場合、お使いのデバイスで処理するにはキャンバスが大きすぎるか、レイヤーが多すぎる可能性があります。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -672,7 +672,7 @@
     <message>
         <location filename="../document.cpp" line="+377"/>
         <source>Resumed.</source>
-        <translation type="unfinished"></translation>
+        <translation>再開しました。</translation>
     </message>
     <message>
         <location line="+919"/>
@@ -870,12 +870,12 @@ Select a regular layer instead.</source>
         <location line="+11"/>
         <location line="+12"/>
         <source>Projects (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト(%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvases (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス(%1)</translation>
     </message>
 </context>
 <context>
@@ -1149,13 +1149,13 @@ Select a regular layer instead.</source>
         <location filename="../utils/strings.cpp" line="+12"/>
         <source>%</source>
         <extracomment>Percent, put after numbers as a unit, like 42%. Unless your language uses a different symbol or something, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>px</source>
         <extracomment>Abbreviation for pixels, put after a number as a unit, like 42px. Unless your language calls pixels something different, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -1367,7 +1367,7 @@ Select a regular layer instead.</source>
         <location filename="../brushes/brushpresetmodel.cpp" line="+2951"/>
         <source>Brush requested from user &quot;%1&quot; on %2 at %3.</source>
         <extracomment>%1 is a username, %2 is a date, %3 is a time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ユーザー &quot;%1&quot; から%2の%3にブラシがリクエストされました。</translation>
     </message>
 </context>
 <context>
@@ -1385,7 +1385,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>履歴</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1400,7 +1400,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Show a history of brushes used.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用したブラシの履歴を表示します。</translation>
     </message>
     <message>
         <location line="+123"/>
@@ -1461,12 +1461,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-461"/>
         <source> (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation> (削除済み)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation> (未保存)</translation>
     </message>
     <message>
         <location line="+517"/>
@@ -1529,7 +1529,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+720"/>
         <source>No session to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>再開するセッションの指定なし</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -1615,7 +1615,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>PNGスプライトシート</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1691,183 +1691,183 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../import/recordingconverter.cpp" line="+92"/>
         <source>No input files given.</source>
-        <translation type="unfinished"></translation>
+        <translation>入力ファイルがありません。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 opening project file %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイル%2を開く際にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error initializing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>圧縮処理の初期化中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Finishing project…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの終了処理中…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error finishing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの終了処理中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを閉じる際にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Processing project %1 session %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %1 セッション %2 の処理中…</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Error %1 copying session %2 from project %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %3 から セッション %2 のコピー中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Error %1 opening project %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 を開く際にエラーが発生しました %1 : %3。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening temporary file for %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 の一時ファイルを開く際にエラーが発生しました %1 : %3。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error loading project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %1 の読込中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>記録を変換中 %1…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>記録 %1 を開くのに失敗しました 。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のない記録です。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトのセッションを開く際にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error setting compressor session.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの圧縮処理設定中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error %1 opening project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトのスナップショットを開く際にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 finishing project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトのスナップショットの完了中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Error %1 converting recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>記録 %2 の変換中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error %1 reading recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>記録 %2 の読込中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error flushing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>圧縮処理のバッファ出力中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Error %1 saving project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトのスナップショットの保存中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 closing project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトのセッションを閉じる際にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 opening project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 を開く際にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Processing project %1 snapshot %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %1 のスナップショット %2 を処理中…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error opening playback for project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %1 のプレイバックを開く際にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 preparing playback for project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 のプレイバックの再生準備中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+133"/>
         <source>Error %1 processing project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 の処理中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="-123"/>
         <source>Error %1 replacing snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 のスナップショット置き換え中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session %1 not found in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 の中にセッション %1 が見つかりません。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 updating snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 のスナップショット更新中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 reading sessions in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 のセッション読込中にエラー %1 が発生しました。</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Processing final project snapshot…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの最終状態を処理中…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error opening playback for project %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %1 のプレイバックを開く際にエラーが発生しました</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing playback for project %2</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 の再生準備中にエラー %1 が発生しました</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Error %1 saving snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト %2 のスナップショットの保存中にエラー %1 が発生しました。</translation>
     </message>
 </context>
 <context>
@@ -2694,12 +2694,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-42"/>
         <source>Invalid session %1 given to resume</source>
-        <translation type="unfinished"></translation>
+        <translation>再開用に指定されたセッション %1 が無効です</translation>
     </message>
     <message>
         <location line="+185"/>
         <source>No path to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>再開用のパスが指定されていません</translation>
     </message>
     <message>
         <location line="+176"/>
@@ -2723,7 +2723,7 @@ Select a regular layer instead.</source>
         <location line="+5"/>
         <source>Error %1 resuming session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>セッション再開中にエラーが発生 %1: %2</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2761,32 +2761,32 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../project/projectrepair.cpp" line="+38"/>
         <source>Failed to set temporary input path.</source>
-        <translation type="unfinished"></translation>
+        <translation>一時入力パスの設定に失敗しました。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Failed to open project.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを開くのに失敗しました。</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Failed to close project.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを閉じるのに失敗しました。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Failed to set temporary output path.</source>
-        <translation type="unfinished"></translation>
+        <translation>一時的な出力パスの設定に失敗しました。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to start repair: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>修復の開始に失敗: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to repair file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの修復に失敗: %1</translation>
     </message>
 </context>
 <context>
@@ -2806,27 +2806,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Error %1 opening project file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイルを開く際にエラー %1 が発生: %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 generating project overview: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの概要を生成中にエラー %1 が発生: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイヤーの準備中にエラー %1 が発生: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 in player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイヤーでエラー %1 が発生: %2</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Unhandled error %1 of type %2: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>タイプ %2 の未処理のエラー %1 が発生しました: %3</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -2955,47 +2955,47 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../io/files.cpp" line="+37"/>
         <source>File size out of bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルサイズが範囲外</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Could not read entire file</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル全体の読み込み失敗</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ソースファイル %1 を開く際にエラーが発生しました: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>対象のファイル %1 を開く際にエラーが発生しました: %2</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>対象のファイルのコミットに失敗: %1</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ソースファイル &quot;%1&quot; の読込中にエラー: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>対象のファイル &quot;%2&quot; へ %1 バイト書き込み中にエラー: %3</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Tried to write %1 byte(s) to target file &apos;%2&apos;, but only wrote %3</source>
-        <translation type="unfinished"></translation>
+        <translation>対象のファイル &quot;%2&quot; に %1 バイトの書き込みを試みましたが、%3 バイトしか書き込めませんでした</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error flushing target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>対象のファイル &quot;%1&quot; へのデータ書き出し中にエラーが発生しました: %2</translation>
     </message>
 </context>
 <context>
