@@ -22,6 +22,7 @@ class CanvasModel;
 
 namespace drawdance {
 class BrushEngine;
+class LiquifyEngine;
 class StrokeEngine;
 class StrokeWorker;
 }
@@ -32,6 +33,7 @@ class Client;
 
 namespace tools {
 
+class LiquifyTool;
 class Tool;
 class TransformTool;
 
@@ -183,6 +185,9 @@ public:
 	void setTransformParams(bool accurate, int interpolation);
 	int transformInterpolation() const { return m_transformInterpolation; }
 
+	void setLiquifyParams(int interpolation);
+	int liquifyInterpolation() const { return m_liquifyInterpolation; }
+
 	const SelectionParams &selectionParams() const { return m_selectionParams; }
 	void setSelectionParams(const SelectionParams &selectionParams)
 	{
@@ -195,6 +200,7 @@ public:
 
 	Tool *getTool(Tool::Type type);
 	TransformTool *transformTool();
+	LiquifyTool *liquifyTool();
 
 	//! Is there a multipart drawing operation in progress?
 	bool isMultipartDrawing() const;
@@ -221,6 +227,9 @@ public:
 	void setStrokeEngineParams(
 		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0,
 		int smoothing = 0);
+	void setLiquifyEngineParams(
+		drawdance::LiquifyEngine &le, qreal size, qreal amount, qreal spacing,
+		bool sizePressure, bool amountPressure);
 
 	/**
 	 * Runs the given task in the background. Takes over the task using
@@ -405,6 +414,7 @@ private:
 
 	bool m_transformPreviewAccurate;
 	int m_transformInterpolation;
+	int m_liquifyInterpolation;
 	int m_transformPreviewIdsUsed;
 	Tool::BeginParams m_hotSwapParams;
 	SelectionParams m_selectionParams;

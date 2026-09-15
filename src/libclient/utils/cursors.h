@@ -28,6 +28,7 @@ public:
 	static const QCursor &lassoFill() { return get()->m_lassoFill; }
 	static const QCursor &lassoFillCheck() { return get()->m_lassoFillCheck; }
 	static const QCursor &line() { return get()->m_line; }
+	static const QCursor &liquify() { return get()->m_liquify; }
 	static const QCursor &magicWand() { return get()->m_magicWand; }
 	static const QCursor &magicWandExclude()
 	{
@@ -104,6 +105,7 @@ private:
 	const QCursor m_lassoFill;
 	const QCursor m_lassoFillCheck;
 	const QCursor m_line;
+	const QCursor m_liquify;
 	const QCursor m_magicWand;
 	const QCursor m_magicWandExclude;
 	const QCursor m_magicWandIntersect;

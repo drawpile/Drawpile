@@ -15,6 +15,7 @@ class GradientSettings;
 class InspectorSettings;
 class LaserPointerSettings;
 class LassoFillSettings;
+class LiquifySettings;
 class PanSettings;
 class RotationSettings;
 class SelectionSettings;
@@ -59,6 +60,7 @@ public:
 	tools::InspectorSettings *inspectorSettings();
 	tools::LaserPointerSettings *laserPointerSettings();
 	tools::LassoFillSettings *lassoFillSettings();
+	tools::LiquifySettings *liquifySettings();
 	tools::PanSettings *panSettings();
 	tools::RotationSettings *rotationSettings();
 	tools::SelectionSettings *selectionSettings();
@@ -138,6 +140,7 @@ public slots:
 	void startTransformMoveActiveLayer();
 	void startTransformMoveMask();
 	void startTransformPaste(const QRect &srcBounds, const QImage &image);
+	void startLiquifyActiveLayer();
 
 signals:
 	//! This signal is emitted when the current tool changes its size
@@ -171,7 +174,7 @@ private:
 	void selectTool(tools::Tool::Type tool);
 	void startSelection(int type);
 	void startTransformMove(bool onlyMask, bool startMove, bool quickMove);
-	void clearTemporaryTransform();
+	void clearTemporaryTools();
 	void quickAdjustCurrent1(qreal adjustment, bool wheel);
 	void quickAdjustCurrent2(qreal adjustment, bool wheel);
 	void quickAdjustCurrent3(qreal adjustment, bool wheel);

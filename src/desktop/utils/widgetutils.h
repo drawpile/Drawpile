@@ -188,6 +188,10 @@ void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
 void setWidgetLongPressEnabled(QWidget *widget, bool enabled);
 
+void setButtonCheckedSignalsBlocked(QAbstractButton *button, bool checked);
+void setSpinnerValueSignalsBlocked(QSpinBox *spinBox, int value);
+void setDoubleSpinnerValueSignalsBlocked(QDoubleSpinBox *spinBox, double value);
+
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos);
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
 bool sizeFitsOnScreen(QWidget *widget, const QSize &size);

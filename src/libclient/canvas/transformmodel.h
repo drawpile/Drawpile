@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_CANVAS_TRANSFORMMODEL_H
 #define LIBCLIENT_CANVAS_TRANSFORMMODEL_H
+#include "libclient/image/kis_liquify_transform_worker.h"
 #include "libclient/net/message.h"
 #include "libclient/utils/transformquad.h"
 #include <QHash>
@@ -8,6 +9,13 @@
 #include <QObject>
 #include <QSet>
 #include <QVector>
+#include <functional>
+
+class KisLiquifyTransformWorker;
+
+namespace drawdance {
+class CanvasState;
+}
 
 namespace canvas {
 
@@ -15,12 +23,16 @@ class CanvasModel;
 
 class TransformModel : public QObject {
 	Q_OBJECT
+	Q_DISABLE_COPY_MOVE(TransformModel)
 public:
 	TransformModel(CanvasModel *canvas);
+	~TransformModel() override;
 
 	bool isActive() const { return m_active; }
+	bool isLiquify() const { return m_liquifyWorker; }
+	bool isTransformActive() const { return m_active && !m_liquifyWorker; }
+	bool isLiquifyActive() const { return m_active && m_liquifyWorker; }
 	bool isMovedFromCanvas() const { return m_active && !m_pasted; }
-	bool isStampable() const { return m_pasted || m_layerIds.size() == 1; }
 	bool isAffectedByLayerAlphaLock() const { return m_pasted && !m_stamped; }
 	bool isDstQuadValid() const { return m_dstQuadValid; }
 	bool isJustApplied() const { return m_justApplied; }
@@ -30,9 +42,15 @@ public:
 	TransformQuad srcQuad() const { return TransformQuad(m_srcBounds); }
 	const TransformQuad &dstQuad() const { return m_dstQuad; }
 	const QImage &floatingImage();
+	QPoint floatingImageOffset() { return m_floatingImageOffset; }
 	QImage layerImage(int layerId);
 	int blendMode() const { return m_blendMode; }
 	qreal opacity() const { return m_opacity; }
+
+	bool isStampable() const
+	{
+		return (m_pasted || m_layerIds.size() == 1) && !m_liquifyWorker;
+	}
 
 	void beginFromCanvas(
 		const QRect &srcBounds, const QImage &mask,
@@ -40,11 +58,19 @@ public:
 
 	void beginFloating(const QRect &srcBounds, const QImage &image);
 
+	void beginLiquifyFromCanvas(
+		const QRect &srcBounds, const QImage &mask,
+		const QSet<int> &sourceLayerIds);
+
 	void setDeselectOnApply(bool deselectOnApply);
 	void setDstQuad(const TransformQuad &dstQuad);
 	void setPreviewAccurate(bool previewAccurate);
 	void setBlendMode(int blendMode);
 	void setOpacity(qreal opacity);
+
+	void liquify(const std::function<void(KisLiquifyTransformWorker *)> &fn);
+	KisLiquifyTransformWorker::State liquifyState() const;
+	void setLiquifyState(const KisLiquifyTransformWorker::State &state);
 
 	void applyOffset(int x, int y);
 
@@ -65,6 +91,7 @@ signals:
 	void transformCut(
 		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);
 	void transformCutCleared();
+	void liquifyPreviewRequested();
 
 private:
 	QVector<net::Message> applyFromCanvas(
@@ -101,6 +128,14 @@ private:
 		uint8_t contextId, int layerId, int interpolation, bool stamp,
 		bool *outMovedSelection);
 
+	QVector<net::Message>
+	applyLiquify(uint8_t contextId, int layerId, int interpolation);
+
+	void applyLiquifyCutAndPaste(
+		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+		int sourceId, int srcX, int srcY, int srcW, int srcH,
+		const QImage &mask, bool bilinear);
+
 	void clear();
 
 	void updateLayerIds();
@@ -109,6 +144,9 @@ private:
 	QImage getLayerImage(int layerId) const;
 	QImage getLayerImageWithMask(int layerId, const QImage &mask) const;
 	QImage getMergedImage() const;
+	static QImage getMergedImageFrom(
+		const drawdance::CanvasState &canvasState, const QImage &mask,
+		const QSet<int> &layerIds, QRect srcBounds);
 	static void applyMaskToImage(QImage &img, const QImage &mask);
 	void applyOpacityToImage(QImage &img) const;
 	static bool isImageBlank(const QImage &img);
@@ -130,6 +168,12 @@ private:
 
 	int getEffectiveBlendModeForLayer(int layerId) const;
 
+	void emitLiquifyPreviewRequest();
+	void requestLiquifyPreviewUpdate();
+	void runLiquifyPreviewUpdate();
+	void handleLiquifyPreviewUpdate(
+		unsigned int id, const QImage &img, QPoint offset);
+
 	static bool isQuadValid(const TransformQuad &quad);
 
 	static int
@@ -138,6 +182,7 @@ private:
 	static bool isVisibleInViewModeCallback(void *user, DP_LayerProps *lp);
 
 	CanvasModel *m_canvas;
+	KisLiquifyTransformWorker *m_liquifyWorker = nullptr;
 	bool m_active = false;
 	bool m_pasted = false;
 	bool m_deselectOnApply = false;
@@ -145,12 +190,17 @@ private:
 	bool m_dstQuadValid = false;
 	bool m_justApplied = false;
 	bool m_previewAccurate = true;
+	bool m_liquifyPreviewRequested = false;
+	bool m_liquifyPreviewInProgress = false;
+	bool m_liquifyPreviewPending = false;
 	QSet<int> m_layerIds;
 	QRect m_srcBounds;
 	TransformQuad m_dstQuad;
 	QImage m_mask;
 	QImage m_floatingImage;
 	QHash<int, QImage> m_layerImages;
+	unsigned int m_liquifyPreviewId = 0u;
+	QPoint m_floatingImageOffset;
 	int m_blendMode;
 	qreal m_opacity = 1.0;
 };

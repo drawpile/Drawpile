@@ -6,6 +6,7 @@ extern "C" {
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/colorpickitem.h"
 #include "desktop/scene/lasertrailitem.h"
+#include "desktop/scene/liquifyitem.h"
 #include "desktop/scene/maskpreviewitem.h"
 #include "desktop/scene/outlineitem.h"
 #include "desktop/scene/pathpreviewitem.h"
@@ -597,11 +598,13 @@ void CanvasScene::setSelection(
 
 void CanvasScene::onTransformChanged()
 {
-	bool hadTransform = m_transform;
+	bool hadTransformOrLiquify = m_transform || m_liquify;
 	canvas::TransformModel *transform =
 		m_canvasModel ? m_canvasModel->transform() : nullptr;
+
 	bool active = transform && transform->isActive();
-	if(active) {
+	bool isLiquify = active && transform->isLiquify();
+	if(active && !isLiquify) {
 		const TransformQuad &quad = transform->dstQuad();
 		bool valid = transform->isDstQuadValid();
 		if(m_transform) {
@@ -621,14 +624,32 @@ void CanvasScene::onTransformChanged()
 		m_transform = nullptr;
 	}
 
+	if(active && isLiquify) {
+		if(!m_liquify) {
+			m_liquify = new LiquifyItem(m_canvasGroup);
+			m_liquify->setUpdateSceneOnRefresh(true);
+		}
+		// Accurate previews happen in the paint engine, fast ones in the item.
+		if(transform->isPreviewAccurate()) {
+			m_liquify->setImage(QImage(), QPoint());
+		} else {
+			m_liquify->setImage(
+				transform->floatingImage(), transform->floatingImageOffset());
+		}
+	} else if(m_liquify) {
+		delete m_liquify;
+		m_liquify = nullptr;
+	}
+
 	if(m_selection) {
-		bool haveTransform = m_transform;
-		m_selection->updateVisibility(!haveTransform);
+		bool haveTransformOrLiquify = m_transform || m_liquify;
+		m_selection->updateVisibility(!haveTransformOrLiquify);
 		// Bit of a hack to mitigate the selection flickering back to the old
 		// location after a transform and then stumbling into the new one by
 		// delaying its display slightly if it was just applied.
-		bool shouldDelaySelection = hadTransform && !haveTransform &&
-									transform && transform->isJustApplied();
+		bool shouldDelaySelection = hadTransformOrLiquify &&
+									!haveTransformOrLiquify && transform &&
+									transform->isJustApplied();
 		m_selection->setTransparentDelay(shouldDelaySelection ? 0.5 : 0.0);
 	}
 }
