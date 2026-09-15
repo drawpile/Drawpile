@@ -29,6 +29,7 @@ class ColorPickItem;
 class CursorItem;
 #endif
 class LaserTrailItem;
+class LiquifyItem;
 class MaskPreviewItem;
 class OutlineItem;
 class PathPreviewItem;
@@ -50,6 +51,7 @@ class CanvasScene final : public QGraphicsScene, public HudScene {
 	using CursorItem = drawingboard::CursorItem;
 #endif
 	using LaserTrailItem = drawingboard::LaserTrailItem;
+	using LiquifyItem = drawingboard::LiquifyItem;
 	using MaskPreviewItem = drawingboard::MaskPreviewItem;
 	using NoticeItem = drawingboard::NoticeItem;
 	using OutlineItem = drawingboard::OutlineItem;
@@ -169,6 +171,7 @@ private:
 	PathPreviewItem *m_pathPreview = nullptr;
 	SelectionItem *m_selection = nullptr;
 	TransformItem *m_transform = nullptr;
+	LiquifyItem *m_liquify = nullptr;
 	OutlineItem *m_outline = nullptr;
 	ColorPickItem *m_colorPick = nullptr;
 	QColor m_foregroundColor;

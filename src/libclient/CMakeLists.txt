@@ -135,6 +135,16 @@ target_sources(dpclient PRIVATE
 	export/videoexporthandle.h
 	export/videoformat.cpp
 	export/videoformat.h
+	image/KisSpatialContainer.cpp
+	image/KisSpatialContainer.h
+	image/geom.cpp
+	image/geom.h
+	image/kis_four_point_interpolator_backward.h
+	image/kis_four_point_interpolator_forward.h
+	image/kis_grid_interpolation_tools.cpp
+	image/kis_grid_interpolation_tools.h
+	image/kis_liquify_transform_worker.cpp
+	image/kis_liquify_transform_worker.h
 	import/animationimporter.cpp
 	import/animationimporter.h
 	import/canvasloaderrunnable.cpp
@@ -199,6 +209,8 @@ target_sources(dpclient PRIVATE
 	tools/laser.h
 	tools/lassofill.cpp
 	tools/lassofill.h
+	tools/liquify.cpp
+	tools/liquify.h
 	tools/magicwand.cpp
 	tools/magicwand.h
 	tools/pan.cpp

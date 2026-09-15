@@ -267,6 +267,11 @@ DP_INLINE double DP_clamp_double(double x, double min, double max)
     return x < min ? min : x > max ? max : x;
 }
 
+DP_INLINE float DP_clamp_float(float x, float min, float max)
+{
+    return x < min ? min : x > max ? max : x;
+}
+
 DP_INLINE float DP_min_float(float x, float y)
 {
     return x < y ? x : y;

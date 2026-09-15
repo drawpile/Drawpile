@@ -63,6 +63,25 @@ typedef struct DP_BrushEngineStrokeParams {
     bool allow_pixel_perfect;
 } DP_BrushEngineStrokeParams;
 
+typedef struct DP_LiquifyEngineStrokeParams {
+    float size;
+    float amount;
+    float spacing;
+    int smoothing;
+    bool size_pressure;
+    bool amount_pressure;
+    bool interpolate;
+    bool smoothing_finish_strokes;
+} DP_LiquifyEngineStrokeParams;
+
+typedef struct DP_LiquifyEngineDab {
+    float x;
+    float y;
+    float size;
+    float amount;
+    float direction_rad;
+} DP_LiquifyEngineDab;
+
 
 typedef void (*DP_StrokeEnginePushPointFn)(void *user, DP_BrushPoint bp,
                                            DP_CanvasState *cs_or_null);
@@ -70,10 +89,12 @@ typedef void (*DP_StrokeEnginePollControlFn)(void *user, bool enable);
 typedef void (*DP_BrushEnginePushMessageFn)(void *user, DP_Message *msg);
 typedef void (*DP_BrushEnginePollControlFn)(void *user, bool enable);
 typedef DP_CanvasState *(*DP_BrushEngineSyncFn)(void *user);
+typedef void (*DP_LiquifyEnginePushDabFn)(void *user, DP_LiquifyEngineDab dab);
 
 typedef struct DP_MaskSync DP_MaskSync;
 typedef struct DP_StrokeEngine DP_StrokeEngine;
 typedef struct DP_BrushEngine DP_BrushEngine;
+typedef struct DP_LiquifyEngine DP_LiquifyEngine;
 
 
 DP_MaskSync *DP_mask_sync_new(void);
@@ -160,6 +181,21 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
                                 DP_CanvasState *cs_or_null, bool push_pen_up);
 
 void DP_brush_engine_offset_add(DP_BrushEngine *be, float x, float y);
+
+
+DP_LiquifyEngine *DP_liquify_engine_new(DP_LiquifyEnginePushDabFn push_dab,
+                                        void *user);
+
+void DP_liquify_engine_free(DP_LiquifyEngine *le);
+
+void DP_liquify_engine_params_set(DP_LiquifyEngine *le,
+                                  const DP_LiquifyEngineStrokeParams *lesp);
+
+void DP_liquify_engine_stroke_begin(DP_LiquifyEngine *le, float zoom);
+
+void DP_liquify_engine_stroke_to(DP_LiquifyEngine *le, DP_BrushPoint bp);
+
+void DP_liquify_engine_stroke_end(DP_LiquifyEngine *le, long long time_msec);
 
 
 #endif

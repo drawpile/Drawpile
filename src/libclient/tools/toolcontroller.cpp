@@ -20,6 +20,7 @@ extern "C" {
 #include "libclient/tools/inspector.h"
 #include "libclient/tools/laser.h"
 #include "libclient/tools/lassofill.h"
+#include "libclient/tools/liquify.h"
 #include "libclient/tools/magicwand.h"
 #include "libclient/tools/pan.h"
 #include "libclient/tools/rotation.h"
@@ -97,6 +98,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new RotationTool(*this));
 	registerTool(new Inspector(*this));
 	registerTool(new TransformTool(*this));
+	registerTool(new LiquifyTool(*this));
 	DP_mask_sync_decref(ms);
 
 #if !defined(QT_NO_DEBUG) || defined(QT_FORCE_ASSERTS)
@@ -156,6 +158,11 @@ Tool *ToolController::getTool(Tool::Type type)
 TransformTool *ToolController::transformTool()
 {
 	return static_cast<TransformTool *>(m_toolbox[Tool::TRANSFORM]);
+}
+
+LiquifyTool *ToolController::liquifyTool()
+{
+	return static_cast<LiquifyTool *>(m_toolbox[Tool::LIQUIFY]);
 }
 
 void ToolController::finishActiveTool()
@@ -559,6 +566,14 @@ void ToolController::setTransformParams(bool accurate, int interpolation)
 	}
 }
 
+
+void ToolController::setLiquifyParams(int interpolation)
+{
+	if(interpolation != m_liquifyInterpolation) {
+		m_liquifyInterpolation = interpolation;
+		updateTransformPreview();
+	}
+}
 void ToolController::setBrushSizeLimit(int brushSizeLimit)
 {
 	for(Tool *tool : m_toolbox) {
@@ -780,6 +795,22 @@ void ToolController::setStrokeEngineParams(
 	};
 	fillStabilizerVelocityParams(sesp);
 	se.setParams(sesp);
+}
+
+void ToolController::setLiquifyEngineParams(
+	drawdance::LiquifyEngine &le, qreal size, qreal amount, qreal spacing,
+	bool sizePressure, bool amountPressure)
+{
+	le.setParams({
+		float(size),
+		float(amount),
+		float(spacing),
+		qBound(0, m_globalSmoothing, MAX_SMOOTHING),
+		sizePressure,
+		amountPressure,
+		m_interpolateInputs,
+		true,
+	});
 }
 
 void ToolController::executeAsync(Task *task)

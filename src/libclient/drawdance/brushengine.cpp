@@ -188,4 +188,40 @@ DP_CanvasState *BrushEngine::sync(void *user)
 	return brushEngine->m_sync();
 }
 
+
+LiquifyEngine::LiquifyEngine()
+	: m_data(DP_liquify_engine_new(&LiquifyEngine::pushDab, this))
+{
+}
+
+LiquifyEngine::~LiquifyEngine()
+{
+	DP_liquify_engine_free(m_data);
+}
+
+void LiquifyEngine::setParams(const DP_LiquifyEngineStrokeParams &params)
+{
+	DP_liquify_engine_params_set(m_data, &params);
+}
+
+void LiquifyEngine::beginStroke(float zoom)
+{
+	DP_liquify_engine_stroke_begin(m_data, zoom);
+}
+
+void LiquifyEngine::strokeTo(const canvas::Point &point)
+{
+	DP_liquify_engine_stroke_to(m_data, canvasPointToBrushPoint(point));
+}
+
+void LiquifyEngine::endStroke(long long timeMsec)
+{
+	DP_liquify_engine_stroke_end(m_data, timeMsec);
+}
+
+void LiquifyEngine::pushDab(void *user, DP_LiquifyEngineDab dab)
+{
+	static_cast<LiquifyEngine *>(user)->m_dabs.append(dab);
+}
+
 }

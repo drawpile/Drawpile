@@ -11,6 +11,7 @@
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/lassofillsettings.h"
+#include "desktop/toolwidgets/liquifysettings.h"
 #include "desktop/toolwidgets/pansettings.h"
 #include "desktop/toolwidgets/rotationsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
@@ -18,6 +19,7 @@
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "libclient/config/config.h"
 #include "libclient/tools/enums.h"
+#include "libclient/tools/liquify.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/tools/transform.h"
@@ -138,6 +140,11 @@ struct ToolSettings::Private {
 				new tools::TransformSettings(ctrl)),
 			"transform", QIcon::fromTheme("drawpile_transform"),
 			QApplication::tr("Transform")};
+		pages[tools::Tool::LIQUIFY] = {
+			QSharedPointer<tools::ToolSettings>(
+				new tools::LiquifySettings(ctrl)),
+			"liquify", QIcon::fromTheme("drawpile_liquify"),
+			QApplication::tr("Liquify")};
 		pages[tools::Tool::PAN] = {
 			QSharedPointer<tools::ToolSettings>(new tools::PanSettings(ctrl)),
 			"pan", QIcon::fromTheme("hand"), QApplication::tr("Pan")};
@@ -217,6 +224,12 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 				setTool(tools::Tool::FREEHAND);
 			}
 		});
+
+	tools::LiquifySettings *ls = liquifySettings();
+	connect(
+		ls, &tools::LiquifySettings::sizeChanged, this,
+		&ToolSettings::sizeChanged);
+
 	connect(
 		ctrl, &tools::ToolController::globalSmoothingChanged, bs,
 		&tools::BrushSettings::setGlobalSmoothing);
@@ -410,6 +423,12 @@ tools::LassoFillSettings *ToolSettings::lassoFillSettings()
 		getToolSettingsPage(tools::Tool::LASSOFILL));
 }
 
+tools::LiquifySettings *ToolSettings::liquifySettings()
+{
+	return static_cast<tools::LiquifySettings *>(
+		getToolSettingsPage(tools::Tool::LIQUIFY));
+}
+
 tools::PanSettings *ToolSettings::panSettings()
 {
 	return static_cast<tools::PanSettings *>(
@@ -447,7 +466,7 @@ tools::ZoomSettings *ToolSettings::zoomSettings()
 void ToolSettings::setTool(tools::Tool::Type tool)
 {
 	if(tool != d->currentTool) {
-		clearTemporaryTransform();
+		clearTemporaryTools();
 		d->previousTool = d->currentTool;
 		tools::BrushSettings *bs =
 			qobject_cast<tools::BrushSettings *>(d->currentSettings());
@@ -645,9 +664,23 @@ void ToolSettings::startTransformPaste(
 	}
 }
 
-void ToolSettings::clearTemporaryTransform()
+void ToolSettings::startLiquifyActiveLayer()
+{
+	tools::Tool::Type toolToReturnTo = d->currentTool;
+	setToolTemporary(tools::Tool::LIQUIFY);
+	if(d->ctrl->activeTool() == tools::Tool::LIQUIFY) {
+		d->ctrl->liquifyTool()->beginTemporary(toolToReturnTo);
+	} else {
+		qWarning(
+			"ToolSettings::startLiquifyActiveLayer: active tool is not "
+			"liquify");
+	}
+}
+
+void ToolSettings::clearTemporaryTools()
 {
 	d->ctrl->transformTool()->clearTemporary();
+	d->ctrl->liquifyTool()->clearTemporary();
 }
 
 void ToolSettings::setPreviousTool()

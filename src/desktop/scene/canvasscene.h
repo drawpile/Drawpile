@@ -22,6 +22,7 @@ class AnnotationItem;
 class CanvasItem;
 class ColorPickItem;
 class LaserTrailItem;
+class LiquifyItem;
 class MaskPreviewItem;
 class OutlineItem;
 class PathPreviewItem;
@@ -187,6 +188,7 @@ private:
 	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;
 	TransformItem *m_transform;
+	LiquifyItem *m_liquify;
 
 	OutlineItem *m_outlineItem;
 	ColorPickItem *m_colorPick = nullptr;

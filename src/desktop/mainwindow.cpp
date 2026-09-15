@@ -57,6 +57,7 @@ extern "C" {
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/lassofillsettings.h"
+#include "desktop/toolwidgets/liquifysettings.h"
 #include "desktop/toolwidgets/rotationsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
@@ -5074,6 +5075,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		m_dockToolSettings->fillSettings()->setFeatureAccess(canUse);
 		m_dockToolSettings->lassoFillSettings()->setFeatureAccess(canUse);
 		m_dockToolSettings->gradientSettings()->setFeatureAccess(canUse);
+		m_dockToolSettings->liquifySettings()->setFeatureAccess(canUse);
 		break;
 	case DP_FEATURE_LASER:
 		m_dockToolSettings->laserPointerSettings()->setFeatureAccess(canUse);
@@ -5668,7 +5670,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("transformrotateccw")->setEnabled(haveTransform);
 	getAction("transformshrinktoview")->setEnabled(haveTransform);
 	getAction("showselectionmask")->setEnabled(!selectionEditActive);
-	m_dockToolSettings->selectionSettings()->setActionEnabled(haveSelection);
+	m_dockToolSettings->selectionSettings()->setActionsEnabled(haveSelection);
 	m_dockToolSettings->gradientSettings()->setSelectionValid(haveSelection);
 
 	HudHandler::ActionBar actionBar = HudHandler::ActionBar::None;
@@ -7867,6 +7869,12 @@ void MainWindow::setupActions()
 			.statusTip(
 				tr("Transform only the selection mask itself, switch "
 				   "back tools afterwards"));
+	QAction *startliquify =
+		makeAction("startliquify", tr("Li&quify"))
+			.shortcut("Q")
+			.icon("drawpile_liquify")
+			.statusTip(
+				tr("Liquify the selection, switch back tools afterwards"));
 	QAction *transformmirror =
 		makeAction("transformmirror", tr("&Mirror Transform"))
 			.icon("drawpile_mirror")
@@ -7968,6 +7976,9 @@ void MainWindow::setupActions()
 		starttransformmask, &QAction::triggered, m_dockToolSettings,
 		&docks::ToolSettings::startTransformMoveMask);
 	connect(
+		startliquify, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::startLiquifyActiveLayer);
+	connect(
 		editselection, &QAction::triggered, m_doc->toolCtrl(),
 		&tools::ToolController::setSelectionEditActive);
 	connect(
@@ -8001,6 +8012,7 @@ void MainWindow::setupActions()
 	selectMenu->addSeparator();
 	selectMenu->addAction(starttransform);
 	selectMenu->addAction(starttransformmask);
+	selectMenu->addAction(startliquify);
 	selectMenu->addAction(transformmirror);
 	selectMenu->addAction(transformflip);
 	selectMenu->addAction(transformrotatecw);
@@ -8015,7 +8027,8 @@ void MainWindow::setupActions()
 
 	m_dockToolSettings->gradientSettings()->setActions(
 		selectall, selectlayerbounds);
-	m_dockToolSettings->selectionSettings()->setAction(starttransform);
+	m_dockToolSettings->selectionSettings()->setActions(
+		starttransform, startliquify);
 	m_dockToolSettings->transformSettings()->setActions(
 		transformmirror, transformflip, transformrotatecw, transformrotateccw,
 		transformshrinktoview, stamp);
@@ -8446,6 +8459,13 @@ void MainWindow::setupActions()
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Lasso Select")).icon("edit-select-lasso").statusTip(tr("Select a free-form area")).shortcut("D").checkable();
 	QAction *magicwandtool = makeAction("toolselectmagicwand", tr("&Magic Wand Select")).icon("drawpile_magicwand").statusTip(tr("Select areas with similar colors")).shortcut("W").checkable();
 	QAction *transformtool = makeAction("tooltransform", tr("&Transform Tool")).icon("drawpile_transform").statusTip(tr("Transform selection")).noDefaultShortcut().checkable();
+	// clang-format on
+	QAction *liquifytool = makeAction("toolliquify", tr("&Liquify"))
+							   .icon(QStringLiteral("drawpile_liquify"))
+							   .statusTip(tr("Liquify selection"))
+							   .noDefaultShortcut()
+							   .checkable();
+	// clang-format off
 	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *rotationtool = makeAction("toolrotation", tr("Rotation")).icon("drawpile_rotate").statusTip(tr("Rotate the canvas view")).shortcut("Shift+R").checkable();
@@ -8468,6 +8488,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(lassotool);
 	m_drawingtools->addAction(magicwandtool);
 	m_drawingtools->addAction(transformtool);
+	m_drawingtools->addAction(liquifytool);
 	m_drawingtools->addAction(pantool);
 	m_drawingtools->addAction(zoomtool);
 	m_drawingtools->addAction(rotationtool);
@@ -9210,18 +9231,18 @@ void MainWindow::setupHud()
 			//: Refers to expanding or shrinking the selection.
 			getAction(QStringLiteral("selectalter")), tr("Expand/Shrink")),
 		ActionBarItem::Button(getAction(QStringLiteral("starttransform"))),
-#ifdef __EMSCRIPTEN__
-		ActionBarItem::Button(
-			getAction(QStringLiteral("downloadselection")),
-			QIcon::fromTheme(QStringLiteral("document-export"))),
-#else
-		ActionBarItem::Button(
-			//: Refers to saving the selected area as an image.
-			getAction(QStringLiteral("saveselection")),
-			QIcon::fromTheme(QStringLiteral("document-export"))),
-#endif
+		ActionBarItem::Button(getAction(QStringLiteral("startliquify"))),
 	});
 	selectionActionBar->setOverflowMenuActions({
+#ifdef __EMSCRIPTEN__
+		getAction(QStringLiteral("downloadselection")),
+#else
+		getAction(QStringLiteral("saveselection")),
+#endif
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
+		getAction(QStringLiteral("maketimelapse")),
+#endif
+		nullptr,
 		getAction(QStringLiteral("selectall")),
 		getAction(QStringLiteral("selectlayerbounds")),
 		getAction(QStringLiteral("selectlayercontents")),
@@ -9230,9 +9251,6 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("fillfgarea")),
 		getAction(QStringLiteral("recolorarea")),
 		getAction(QStringLiteral("selectcrop")),
-#ifdef DRAWPILE_TIMELAPSE_DIALOG
-		getAction(QStringLiteral("maketimelapse")),
-#endif
 		nullptr,
 		getAction(QStringLiteral("showselectionmask")),
 		getAction(QStringLiteral("editselection")),
