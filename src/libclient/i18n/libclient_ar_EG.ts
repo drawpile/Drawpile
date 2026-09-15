@@ -474,12 +474,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير شفافية الفرشاة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير صلابة الفرشاة</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -511,17 +511,17 @@
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation>تدوير اللوحة بشكلٍ حر</translation>
+        <translation>تدوير حر للوحة الرسم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>تغيير تدرُّج اللون</translation>
+        <translation>تغيير تدرج اللون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>تغيير تشبع اللون</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -531,7 +531,7 @@
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل اداه الممحاة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -541,7 +541,7 @@
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>تبديل خيار الحفاظ على قناة ألفا</translation>
     </message>
     <message>
         <location line="+2"/>

@@ -587,7 +587,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG Sprite-Bogen exportieren</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe öffnen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -718,17 +718,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahmen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt speichern</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparierbare Dateien</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -763,12 +763,12 @@
     <message>
         <location line="+15"/>
         <source>Save Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparierte Datei speichern</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparierte Datei</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3168,123 +3168,123 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="-4710"/>
         <location line="+56"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern fehlgeschlagen</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Error preparing project overview file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Vorbereiten der Projektübersichtsdatei.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Error preparing timelapse file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Vorbereiten der Zeitrafferdatei.</translation>
     </message>
     <message>
         <location line="+679"/>
         <source>Resuming…</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortsetzen…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>It may be possible to repair it.</source>
         <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sie kann möglicherweise repariert werden.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparieren</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Incompatible Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatible Aufnahme</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Aufnahme ist inkompatibel, sie kann nicht mit dieser Version von Drawpile geöffnet werden.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahme öffnen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>What do you want to do with this recording?</source>
-        <translation type="unfinished"></translation>
+        <translation>Was möchten Sie mit dieser Aufnahme tun?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Aufnahme in eine Projektdatei (dppr) umwandeln. Sie können danach einen Zeitraffer davon erstellen.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Directly opens this recording to let you play it back.</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet diese Aufnahme direkt zur Wiedergabe.</translation>
     </message>
     <message>
         <location line="+313"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt öffnen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open the project file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie sind im Begriff die Projektdatei zu öffnen und dieses Fenster zu schließen.</translation>
     </message>
     <message>
         <location line="+372"/>
         <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie sollten dazu aufgefordert worden sein die Datei zu speichern. Bitte warten Sie mindestens 30 Sekunden bevor Sie diesen Tab schließen, andernfalls lassen manche Browser Sie mit einer leeren Datei zurück!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können die Dateigröße in Ihrem Betriebssystem prüfen. Wenn sie nicht Null ist, sollte die Datei fertig gespeichert worden sein.</translation>
     </message>
     <message>
         <location line="+334"/>
         <source>Record</source>
-        <translation type="unfinished">Aufzeichnen</translation>
+        <translation>Aufzeichnen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie nehmen diese Sitzung bereits auf, da die automatische Wiederherstellung aktiviert ist. Wenn Sie eine Projektdatei (.dppr) speichern, wierd die Aufnahme ebenfalls gespeichert.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Do you want to start another recording anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie trotzdem noch eine Aufnahme starten?</translation>
     </message>
     <message>
         <location line="+2766"/>
         <source>Open &amp;Player…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe öffnen…</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Convert &amp;Recordings to Project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahmen zu P&amp;rojekt konvertieren…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Merge/split projects…</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekte zusammenführen/aufteilen…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Repair file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei reparieren…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3650,12 +3650,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+6"/>
         <source>Select Layer Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene darüber auswählen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Select Layer Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene darunter auswählen</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4031,7 +4031,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+0"/>
         <source>S&amp;hape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Formfüllung</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4117,7 +4117,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+4"/>
         <source>Debug Input Events…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabeereignisse analysieren…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4127,7 +4127,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+7"/>
         <source>UDP Activity Stream…</source>
-        <translation type="unfinished"></translation>
+        <translation>UDP-Aktivitätsstrom…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4217,32 +4217,32 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+5"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: none</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick-Malen: keins</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe verwenden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-click drawing: use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick-Malen: Hintergrundfarbe verwenden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Radieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick-Malen: radieren</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -4424,7 +4424,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="-542"/>
         <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Striche/Formfüllung durch Selektion maskieren</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -4434,79 +4434,79 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+6"/>
         <source>Timeline tool: edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstrahlwerkzeug: Bearbeiten</translation>
     </message>
     <message numerus="yes">
         <location line="+30"/>
         <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
         <source>Set Key Frame(s) to Current Layer</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbild auf aktuelle Ebene setzen</numerusform>
+            <numerusform>Schlüsselbilder auf aktuelle Ebene setzen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+10"/>
         <source>Set Blank Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Leeres Schlüsselbild setzen</numerusform>
+            <numerusform>Leeree Schlüsselbilder setzen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+55"/>
         <source>Cut Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbild ausschneiden</numerusform>
+            <numerusform>Schlüsselbilder ausschneiden</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Copy Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbild kopieren</numerusform>
+            <numerusform>Schlüsselbilder kopieren</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>Paste Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbild einfügen</numerusform>
+            <numerusform>Schlüsselbilder einfügen</numerusform>
         </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste Decloned Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Entklonte Schlüsselbilder einfügen</translation>
     </message>
     <message numerus="yes">
         <location line="+16"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Delete Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbild löschen</numerusform>
+            <numerusform>Schlüsselbilder löschen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Unassign Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbildzuordnung aufheben</numerusform>
+            <numerusform>Schlüsselbildzuordnungen aufheben</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Declone Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbildebenen entklonen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4523,18 +4523,18 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
         <location filename="../widgets/timelinewidget.cpp" line="-63"/>
         <source>Create Layers on Current Key Frame(s)</source>
         <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ebenen auf aktuellem Schlüsselbild erstellen</numerusform>
+            <numerusform>Ebenen auf aktuellen Schlüsselbildern erstellen</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Create Layer Group(s) on Current Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ebenengruppe auf aktuellem Schlüsselbild erstellen</numerusform>
+            <numerusform>Ebenengruppen auf aktuellem Schlüsselbildern erstellen</numerusform>
         </translation>
     </message>
     <message>
@@ -4683,7 +4683,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+3"/>
         <source>Open &amp;Playback…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe öffnen…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4720,9 +4720,9 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
         <location filename="../widgets/timelinewidget.cpp" line="-50"/>
         <source>Set Key Frame(s) to %1</source>
         <extracomment>%1 is the name of a layer.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Schlüsselbild auf %1 setzen</numerusform>
+            <numerusform>Schlüsselbilder auf %1 setzen</numerusform>
         </translation>
     </message>
 </context>
@@ -4761,7 +4761,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+1"/>
         <source>Select blue-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Blau markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4781,7 +4781,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+1"/>
         <source>Select green-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Grün markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4801,7 +4801,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+2"/>
         <source>Select yellow-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelb markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4821,7 +4821,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+2"/>
         <source>Select orange-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Orange markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4841,7 +4841,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+1"/>
         <source>Select brown-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Braun markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4861,7 +4861,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+1"/>
         <source>Select red-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Rot markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4881,7 +4881,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+2"/>
         <source>Select purple-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Lila markierte Ebene auswählen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4901,7 +4901,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+1"/>
         <source>Select gray-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Grau markierte Ebene auswählen</translation>
     </message>
 </context>
 <context>
@@ -4992,7 +4992,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+5"/>
         <source>Shape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Formfüllung</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5061,7 +5061,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
         <location filename="../dialogs/projecteditdialog.cpp" line="+314"/>
         <location filename="../dialogs/projectrepairdialog.cpp" line="+200"/>
         <source>Save</source>
-        <translation type="unfinished">Speichern</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -5069,12 +5069,12 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-135"/>
         <location line="+137"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="+9"/>
         <source>Close</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -5899,7 +5899,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+57"/>
         <source>Encoder:</source>
-        <translation type="unfinished">Enkoder:</translation>
+        <translation>Enkoder:</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -5964,7 +5964,7 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+34"/>
         <source>%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2 Sprites mit jeweils %3x%4 Pixeln, %5x%6 Pixel insgesamt.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6393,12 +6393,12 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location filename="../dialogs/brushsavedialog.cpp" line="+17"/>
         <source>Save Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel speichern</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tags:</translation>
     </message>
 </context>
 <context>
@@ -6580,12 +6580,12 @@ Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     <message>
         <location line="+97"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel wiederherstellen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel speichern…</translation>
     </message>
     <message>
         <location line="+320"/>
@@ -8608,17 +8608,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-221"/>
         <source>Programming Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Programmierfehler</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FFmpeg is not supported on this platform.</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg wird auf dieser Plattform nicht unterstützt.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>If you see this message, you found a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Sie diese Nachricht sehen, haben Sie einen Bug in Drawpile gefunden.</translation>
     </message>
 </context>
 <context>
@@ -9266,7 +9266,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+8"/>
         <source>Converted from a recording file, no timing information available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Von Aufnahmedatei konvertiert, keine Zeitinformationen verfügbar.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9343,162 +9343,162 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
         <location line="+746"/>
         <source>Error %1 opening input file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen der Eingabedatei: %2</translation>
     </message>
     <message>
         <location line="-732"/>
         <source>Error %1 opening temporary file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim Öffnen der temporären Datei: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error copying to temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Kopieren zur temporären Datei: %1</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>No recording in dpcs file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Aufnahme in dpcs-Datei.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Failed to open project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen des Projekts: %1</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Failed to read project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Lesen des Projekts: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Project contains no sessions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt enthält keine Sitzungen.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown file format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekanntes Dateiformat.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Aufnahme: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatible Aufnahme.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Project session %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektsitzung %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahme</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Edit Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt bearbeiten</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add the dppr, dprec and dptxt files you want to include. You can drag sessions to change their order and remove unwanted ones from the set. Once done, press %1 to create a new dppr file.</source>
         <extracomment>%1 is what the &quot;Save&quot; button says.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fügen Sie die dppr, dprec und dptxt Dateien hinzu, die Sie mit einbeziehen möchten. Sie können Sitzungen ziehen um ihre Reihenfolge zu verändern und unerwünschte Einträge entfernen. Wenn Sie fertig sind, drücken Sie auf %1 um eine neue dppr-Datei zu erstellen.</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Add</source>
-        <translation type="unfinished">Hinzufügen</translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move up</source>
-        <translation type="unfinished">Nach oben</translation>
+        <translation>Nach oben</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Move down</source>
-        <translation type="unfinished">Nach unten</translation>
+        <translation>Nach unten</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Project file created successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektdatei erfolgreich erstellt.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Open project file</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektdatei öffnen</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Back</source>
-        <translation type="unfinished">Zurück</translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Loading…</source>
-        <translation type="unfinished">Lade…</translation>
+        <translation>Lade…</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Failed to initialize temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Initialisieren der temporären Datei.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Processing…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeite…</translation>
     </message>
     <message>
         <location line="+103"/>
         <location line="+124"/>
         <source>Error</source>
-        <translation type="unfinished">Fehler</translation>
+        <translation>Fehler</translation>
     </message>
     <message numerus="yes">
         <location line="-123"/>
         <source>Failed to load %n file(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Fehler beim Laden von %n Datei.</numerusform>
+            <numerusform>Fehler beim Laden von %n Dateien.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Conversion suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertierung erfolgreich, aber Speichern der Datei ist fehlgeschlagen.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Saving project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Projekt…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine konvertierte Datei verfügbar.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No file to save to given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Datei zum Speichern gegeben.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Error %1 opening output file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1 beim öffnen der Ausgabedatei: %2</translation>
     </message>
 </context>
 <context>
@@ -9506,108 +9506,108 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/projectplaybackdialog.cpp" line="-311"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pause</source>
-        <translation type="unfinished">Pause</translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Loading…</source>
-        <translation type="unfinished">Lade…</translation>
+        <translation>Lade…</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Rewind session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung zurückspulen</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Skip stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Strich überspringen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Skip session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung überspringen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Playback speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielgeschwindigkeit: </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unsaved changes will be lost if you continue!</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim Weitermachen gehen Änderungen verloren!</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Options</source>
-        <translation type="unfinished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Follow view</source>
-        <translation type="unfinished"></translation>
+        <translation>Sicht verfolgen</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertiere Aufnahme %1…</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Failed to open temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim öffnen der temporären Datei.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Conversion cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertierung abgebrochen.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Opening project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Projekt…</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Player Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabefehler</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Nothing to play back.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts zum Wiedergeben.</translation>
     </message>
     <message>
         <location line="+127"/>
         <source>uncapped</source>
         <extracomment>This refers to uncapped playback speed. I didn&apos;t want to call this &quot;unlimited&quot; because it&apos;s still limited by how fast the device can actually play a recording, but no artificial limits.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ungedeckelt</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Session %1 - End</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung %1 - Ende</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung %1 - Fehler</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1</source>
-        <translation type="unfinished">Sitzung %1</translation>
+        <translation>Sitzung %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Sequence number %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sequenznummer %1</translation>
     </message>
 </context>
 <context>
@@ -9678,62 +9678,62 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-182"/>
         <source>Repair Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt reparieren</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Checking…</source>
-        <translation type="unfinished">Prüfe…</translation>
+        <translation>Prüfe…</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Repairing…</source>
-        <translation type="unfinished"></translation>
+        <translation>Repariere…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Abgebrochen.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error %1:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler %1:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The project has been repaired, but no corruption was detected. You can choose to save it file anyway, but it may now contain invalid data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Projekt wurde repariert, aber es wurde keine Korruption festgestellt. Sie können die Datei trotzdem speichern, aber sie kann ungültige Daten enthalten.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The project has been repaired, choose a file to save it to.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Projekt wurde repariert, wählen Sie eine Datei zum Speichern aus.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is strongly recommended that you save to a new file. Overwriting an existing file may render it irrecoverable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es wird äußerst empfohlen eine neue Datei zu speichern. Die existierende Datei zu überschreiben kann sie nicht wiederherstellbar machen.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeichert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The repaired project has been saved, do you want to open it now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Das reparierte Projekt wurde gespeichert, möchten Sie es jetzt öffnen?</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error</source>
-        <translation type="unfinished">Fehler</translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Error saving repaired project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Speichern des reparierten Projekts.</translation>
     </message>
 </context>
 <context>
@@ -10524,7 +10524,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Manage servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Server verwalten</translation>
     </message>
     <message>
         <location line="+381"/>
@@ -10610,25 +10610,25 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+94"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+259"/>
         <source>This encoder requires FFmpeg, click here to set it up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Enkoder erfordert FFmpeg, klicken Sie hier zum Einrichten.</translation>
     </message>
     <message>
         <location line="+200"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Der gewählte Enkoder benötigt FFmpeg. Möchten Sie es jetzt einrichten?</translation>
     </message>
     <message>
         <location line="+89"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+493"/>
         <source>Internal</source>
-        <translation type="unfinished"></translation>
+        <translation>Intern</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+7"/>
         <source>Automatic (%1)</source>
-        <translation type="unfinished">Automatisch (%1)</translation>
+        <translation>Automatisch (%1)</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10690,7 +10690,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+37"/>
         <source>Switch to speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu Geschwindigkeit wechseln</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10700,17 +10700,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+11"/>
         <source>Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Switch to duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu Dauer wechseln</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Speed presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeitsvoreinstellungen:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10897,7 +10897,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+119"/>
         <source>Calculating video duration…</source>
-        <translation type="unfinished"></translation>
+        <translation>Videolänge wird berechnet…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10920,7 +10920,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+138"/>
         <source>Choose Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe auswählen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10961,7 +10961,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+17"/>
         <source>Video duration: %1</source>
         <extracomment>%1 is a time, something like &quot;1 minute, 30 seconds&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Videodauer: %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -11182,13 +11182,13 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Default file name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standarddateiname:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, %S seconds, %T session title.</source>
         <extracomment>These are template placeholders for the default file name. For example, if the user types in %Y, it will be replaced with the current year. Do not change the letters or casing!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Platzhalter: %Y Jahr, %m Monat, %d Tag, %H Stunden, %M Minuten, %S Sekunden, %T Sitzungstitel.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11677,37 +11677,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+14"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Chatnachricht</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Private Nachricht</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzer beigetreten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzer getrennt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Leinwand gesperrt</translation>
+        <translation>Leinwand gesperrt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Leinwand entsperrt</translation>
+        <translation>Leinwand entsperrt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Verbindung getrennt</translation>
+        <translation>Verbindung getrennt</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -12260,19 +12260,19 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Wait for movement before starting strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Warte auf Bewegung vor Start eines Striches</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore inputs with no pressure (Gaomon)</source>
         <extracomment>Gaomon is a brand that makes pen tablets. This is a setting for a workaround that ignores zero-pressure movements from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Eingabe ohne Druck ignorieren (Gaomon)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore full-pressure blotches (Ugee)</source>
         <extracomment>Ugee is a brand that makes pen tablets. This is a setting for a workaround that ignores full-pressure blotches from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Flecken mit vollem Druck ignorieren (Ugee)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12420,39 +12420,39 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts tun</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe verwenden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Radieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick-Malen:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Option</source>
         <extracomment>The Option key on Mac computer keyboards. On macOS, you have this key on your keyboard instead of the Alt key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Option</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
         <extracomment>The Alt key on PC keyboards.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Double-tap %1 key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand mit Doppeldruck auf %1 fokussieren</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12562,12 +12562,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+14"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">Glättung: </translation>
+        <translation>Glättung: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts tun</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12637,7 +12637,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>One-finger double-tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit einem Finger doppelt tippen:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -12692,17 +12692,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+26"/>
         <source>Mirror canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand horizontal spiegeln</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand vertikal spiegeln</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trigger action</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktion ausführen</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -13270,7 +13270,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="-441"/>
         <source>Session: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung: %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -13302,7 +13302,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Corrupted, may be possible to repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Korrupt, kann möglicherweise repariert werden</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13357,27 +13357,27 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+17"/>
         <source>Corrupted File</source>
-        <translation type="unfinished"></translation>
+        <translation>Korrupte Datei</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This file is corrupted. Do you want to attempt to repair it or save it as-is?</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Datei ist korrupt. Möchten Sie versuchen diese zu reparieren oder nur speichern?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can also attempt to repair it after saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können auch nach dem Speichern eine Reparatur versuchen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as-is</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur speichern</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -14091,23 +14091,23 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel wiederherstellen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel speichern…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove Brush from History</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel aus Verlauf entfernen</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+875"/>
         <source>Clear Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselverlauf leeren</translation>
     </message>
     <message>
         <location line="-872"/>
@@ -14249,45 +14249,45 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>You can still recover it from the brush history.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können sie aus dem Pinselverlauf wiederherstellen.</translation>
     </message>
     <message numerus="yes">
         <location line="+19"/>
         <source>%n deleted brush(es) will be erased irrecoverably.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n gelöschter Pinsel werden unwiederrufbar gelöscht.</numerusform>
+            <numerusform>%n gelöschte Pinsel werden unwiederrufbar gelöscht.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Do you really want to clear the contents of the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie wirklich die Inhalte des Verlaufs leeren?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Clear</source>
-        <translation type="unfinished">Leeren</translation>
+        <translation>Leeren</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>The brush will be deleted permanently and cannot be recovered.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Pinsel wird unwiederruflich gelöscht.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselverlauf entfernen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really remove brush &apos;%1&apos; from the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel &apos;%1&apos; wirklich aus dem Verlauf löschen?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location line="-853"/>
@@ -15319,7 +15319,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-293"/>
         <source>Right-click drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick-Malen</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -15389,17 +15389,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel wiederherstellen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel speichern…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove Brush From History</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel aus Verlauf entfernen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -15769,27 +15769,27 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+5"/>
         <source>Lasso</source>
-        <translation type="unfinished"></translation>
+        <translation>Lasso</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fills the shape with intersections making holes</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllt die Form, Überschneidungen machen Löcher</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Fan</source>
-        <translation type="unfinished"></translation>
+        <translation>Fächer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fills the shape without holes</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllt die Form ohne Löcher</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished">Form:</translation>
+        <translation>Form:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -16230,7 +16230,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+47"/>
         <source>Playback in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe läuft</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -16263,7 +16263,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../widgets/banner.cpp" line="+45"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
