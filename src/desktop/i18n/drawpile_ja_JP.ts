@@ -587,7 +587,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>PNGのスプライトシートをエクスポート</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイバックを開く</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -718,17 +718,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>記録</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを保存</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>修復可能なファイル</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -763,12 +763,12 @@
     <message>
         <location line="+15"/>
         <source>Save Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>修復済みファイルを保存</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>修復済みファイル</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1999,7 +1999,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+324"/>
         <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲でストローク/シェイプ塗りつぶしをマスク(&amp;k)</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -2009,72 +2009,72 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+6"/>
         <source>Timeline tool: edit</source>
-        <translation type="unfinished"></translation>
+        <translation>タイムラインツール:編集</translation>
     </message>
     <message numerus="yes">
         <location line="+30"/>
         <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
         <source>Set Key Frame(s) to Current Layer</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>現在のレイヤーにキーフレームを設定</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+10"/>
         <source>Set Blank Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>空のキーフレームを設定</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+55"/>
         <source>Cut Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>キーフレームを切り取り</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Copy Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>キーフレームをコピー</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>Paste Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>キーフレームを貼り付け</numerusform>
         </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste Decloned Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>クローン解除されたキーフレームレイヤーを貼り付け</translation>
     </message>
     <message numerus="yes">
         <location line="+16"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Delete Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>キーフレームを削除</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Unassign Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>キーフレームの割当解除</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Declone Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームレイヤーをクローン解除</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2101,16 +2101,16 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="-63"/>
         <source>Create Layers on Current Key Frame(s)</source>
         <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>現在のキーフレームにレイヤーを作成</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Create Layer Group(s) on Current Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>現在のキーフレームにレイヤーグループを作成</numerusform>
         </translation>
     </message>
     <message>
@@ -2250,7 +2250,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>再生を破棄します</translation>
+        <translation>プレイバックを破棄します</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2845,123 +2845,123 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="-4710"/>
         <location line="+56"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>保存に失敗</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Error preparing project overview file.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクト概要ファイルの準備中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Error preparing timelapse file.</source>
-        <translation type="unfinished"></translation>
+        <translation>タイムラプスファイルの準備中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+679"/>
         <source>Resuming…</source>
-        <translation type="unfinished"></translation>
+        <translation>再開中…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>It may be possible to repair it.</source>
         <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>このファイルは修復できる可能性があります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>修復</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Incompatible Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のない記録</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>この記録は互換性がありません,このバージョンのDrawpileでは開くことができません。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>記録を開く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>What do you want to do with this recording?</source>
-        <translation type="unfinished"></translation>
+        <translation>この記録をどうしますか？</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>変換</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>この記録をプロジェクトファイル(dpprファイル)に変換します。後でタイムラプスを作成できます。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Directly opens this recording to let you play it back.</source>
-        <translation type="unfinished"></translation>
+        <translation>この記録を直接開いて再生できるようにします。</translation>
     </message>
     <message>
         <location line="+313"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを開く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open the project file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイルを開いて、このウィンドウを閉じます。</translation>
     </message>
     <message>
         <location line="+372"/>
         <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの保存を促すメッセージが表示されたはずです。このタブを閉じる前に少なくとも30秒ほどお待ちください。すぐに閉じると、ご利用のブラウザによってはファイルが空のままになってしまうことがあります！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>オペレーティングシステムからファイルサイズを確認できます。サイズがゼロでない場合保存は完了しています。</translation>
     </message>
     <message>
         <location line="+334"/>
         <source>Record</source>
-        <translation type="unfinished">記録</translation>
+        <translation>記録</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動回復が有効になっているため、このセッションは既に記録されています。プロジェクトファイル(.dppr)に保存すると記録データも一緒に保存されます。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Do you want to start another recording anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>このまま別の記録を開始しますか？</translation>
     </message>
     <message>
         <location line="+2766"/>
         <source>Open &amp;Player…</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイヤーを開く(&amp;P)…</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Convert &amp;Recordings to Project…</source>
-        <translation type="unfinished"></translation>
+        <translation>記録をプロジェクトに変換(&amp;R)…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Merge/split projects…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの統合や分割…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Repair file…</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの修復…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3980,12 +3980,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Select Layer Above</source>
-        <translation type="unfinished"></translation>
+        <translation>上のレイヤーを選択</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Select Layer Below</source>
-        <translation type="unfinished"></translation>
+        <translation>下のレイヤーを選択</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4331,7 +4331,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>S&amp;hape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>シェイプ塗りつぶし(&amp;h)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4412,12 +4412,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Debug Input Events…</source>
-        <translation type="unfinished"></translation>
+        <translation>入力イベントをデバッグ…</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>UDP Activity Stream…</source>
-        <translation type="unfinished"></translation>
+        <translation>UDPアクティビティのストリーム配信…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4507,32 +4507,32 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>None</source>
-        <translation type="unfinished">なし</translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: none</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリック描画: なし</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色を使用</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-click drawing: use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリック描画: 背景色を使う</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>消去</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: erase</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリック描画: 消去</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -4671,7 +4671,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+3"/>
         <source>Open &amp;Playback…</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイバックを開く(&amp;P)…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4708,8 +4708,8 @@ You can re-enable it via the View menu.</source>
         <location filename="../widgets/timelinewidget.cpp" line="-50"/>
         <source>Set Key Frame(s) to %1</source>
         <extracomment>%1 is the name of a layer.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>キーフレームを%1に設定</numerusform>
         </translation>
     </message>
 </context>
@@ -4748,7 +4748,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Select blue-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>青色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4768,7 +4768,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Select green-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>緑色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4788,7 +4788,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+2"/>
         <source>Select yellow-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>黄色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4808,7 +4808,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+2"/>
         <source>Select orange-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>オレンジ色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4828,7 +4828,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Select brown-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>茶色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4848,7 +4848,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Select red-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>赤色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4868,7 +4868,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+2"/>
         <source>Select purple-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>紫色にマークされたレイヤーを選択</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4888,7 +4888,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+1"/>
         <source>Select gray-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>灰色にマークされたレイヤーを選択</translation>
     </message>
 </context>
 <context>
@@ -4979,7 +4979,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+5"/>
         <source>Shape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>シェイプ塗りつぶし</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5048,7 +5048,7 @@ You can re-enable it via the View menu.</source>
         <location filename="../dialogs/projecteditdialog.cpp" line="+314"/>
         <location filename="../dialogs/projectrepairdialog.cpp" line="+200"/>
         <source>Save</source>
-        <translation type="unfinished">保存</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -5056,12 +5056,12 @@ You can re-enable it via the View menu.</source>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-135"/>
         <location line="+137"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="+9"/>
         <source>Close</source>
-        <translation type="unfinished">閉じる</translation>
+        <translation>閉じる</translation>
     </message>
 </context>
 <context>
@@ -5880,7 +5880,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+57"/>
         <source>Encoder:</source>
-        <translation type="unfinished">エンコーダー:</translation>
+        <translation>エンコーダー:</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -5945,7 +5945,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+34"/>
         <source>%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1×%2 個のスプライト 各 %3×%4 ピクセル、全体で %5×%6 ピクセル。</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6371,12 +6371,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../dialogs/brushsavedialog.cpp" line="+17"/>
         <source>Save Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの保存</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ:</translation>
     </message>
 </context>
 <context>
@@ -6573,12 +6573,12 @@ You can re-enable it via the View menu.</source>
     <message>
         <location line="+97"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの復元</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの保存…</translation>
     </message>
     <message>
         <location line="+320"/>
@@ -8586,17 +8586,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-221"/>
         <source>Programming Error</source>
-        <translation type="unfinished"></translation>
+        <translation>プログラミングエラー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FFmpeg is not supported on this platform.</source>
-        <translation type="unfinished"></translation>
+        <translation>このプラットフォームではFFmpegはサポートされていません。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>If you see this message, you found a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>このメッセージが表示されたということは、Drawpileにバグが見つかったということです。</translation>
     </message>
 </context>
 <context>
@@ -9199,7 +9199,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/projectplaybackdialog.cpp" line="+175"/>
         <source>Playback</source>
-        <translation>再生</translation>
+        <translation>プレイバック</translation>
     </message>
 </context>
 <context>
@@ -9242,7 +9242,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Converted from a recording file, no timing information available.</source>
-        <translation type="unfinished"></translation>
+        <translation>記録ファイルから変換されたため、タイミング情報は利用できません。</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9319,161 +9319,161 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
         <location line="+746"/>
         <source>Error %1 opening input file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>入力されたファイルを開いているときにエラー %1: %2</translation>
     </message>
     <message>
         <location line="-732"/>
         <source>Error %1 opening temporary file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>一時ファイルを開いているときにエラー %1 : %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error copying to temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>一時ファイルにコピー中にエラー: %1</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>No recording in dpcs file.</source>
-        <translation type="unfinished"></translation>
+        <translation>dpcsファイルに記録がありません。</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Failed to open project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを開くのに失敗: %1</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Failed to read project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの読み込みに失敗: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Project contains no sessions.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトにはセッションが含まれていません。</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown file format.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なファイル形式です。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>記録を開くのに失敗: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のない記録です。</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Project session %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトのセッション %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>記録</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Edit Project</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの編集</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add the dppr, dprec and dptxt files you want to include. You can drag sessions to change their order and remove unwanted ones from the set. Once done, press %1 to create a new dppr file.</source>
         <extracomment>%1 is what the &quot;Save&quot; button says.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>含めたい dppr、dprec、dptxt ファイルを追加してください。セッションをドラッグして順序を変更したり、必要のないセッションを削除できます。完了したら、%1を押して新しい dppr ファイルを作成してください。</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Add</source>
-        <translation type="unfinished">追加</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move up</source>
-        <translation type="unfinished">上へ移動</translation>
+        <translation>上へ移動</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Move down</source>
-        <translation type="unfinished">下へ移動</translation>
+        <translation>下へ移動</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Project file created successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイルが正常に作成されました。</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Open project file</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトファイルを開く</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Back</source>
-        <translation type="unfinished">戻る</translation>
+        <translation>戻る</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Loading…</source>
-        <translation type="unfinished">読み込み中…</translation>
+        <translation>読み込み中…</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Failed to initialize temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>一時ファイルの初期化に失敗しました。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Processing…</source>
-        <translation type="unfinished"></translation>
+        <translation>処理中…</translation>
     </message>
     <message>
         <location line="+103"/>
         <location line="+124"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation>エラー</translation>
     </message>
     <message numerus="yes">
         <location line="-123"/>
         <source>Failed to load %n file(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 件のファイルの読み込みに失敗しました。</numerusform>
         </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Conversion suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>変換は成功しましたが、ファイルの保存に失敗しました。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Saving project…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの保存中…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>変換されたファイルが見つかりません。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No file to save to given.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存先ファイルが指定されていません。</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Error %1 opening output file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>出力ファイルを開く際にエラー %1 : %2</translation>
     </message>
 </context>
 <context>
@@ -9481,108 +9481,108 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/projectplaybackdialog.cpp" line="-311"/>
         <source>Play</source>
-        <translation type="unfinished">再生</translation>
+        <translation>再生</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pause</source>
-        <translation type="unfinished">一時停止</translation>
+        <translation>一時停止</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Loading…</source>
-        <translation type="unfinished">読み込み中…</translation>
+        <translation>読み込み中…</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Rewind session</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの巻き戻し</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Skip stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>ストロークをスキップ</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Skip session</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションをスキップ</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Playback speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>再生速度: </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unsaved changes will be lost if you continue!</source>
-        <translation type="unfinished"></translation>
+        <translation>続行すると保存されていない変更内容は失われます！</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Options</source>
-        <translation type="unfinished">オプション</translation>
+        <translation>オプション</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Follow view</source>
-        <translation type="unfinished"></translation>
+        <translation>画面表示を再生表示に合わせる</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>記録を変換中 %1…</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Failed to open temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>一時ファイルを開くのに失敗しました。</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Conversion cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>変換はキャンセルされました。</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Opening project…</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを開く…</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Player Error</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイヤーのエラー</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Nothing to play back.</source>
-        <translation type="unfinished"></translation>
+        <translation>プレイバックはありません。</translation>
     </message>
     <message>
         <location line="+127"/>
         <source>uncapped</source>
         <extracomment>This refers to uncapped playback speed. I didn&apos;t want to call this &quot;unlimited&quot; because it&apos;s still limited by how fast the device can actually play a recording, but no artificial limits.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>制限なし</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Session %1 - End</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション %1 - 終了</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション %1 - エラー</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1</source>
-        <translation type="unfinished">セッション %1</translation>
+        <translation>セッション %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Sequence number %1</source>
-        <translation type="unfinished"></translation>
+        <translation>通し番号 %1</translation>
     </message>
 </context>
 <context>
@@ -9653,62 +9653,62 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-182"/>
         <source>Repair Project</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの修復</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Checking…</source>
-        <translation type="unfinished">確認中…</translation>
+        <translation>確認中…</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Repairing…</source>
-        <translation type="unfinished"></translation>
+        <translation>修復中…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンセル済み。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error %1:</source>
-        <translation type="unfinished"></translation>
+        <translation>エラー %1:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The project has been repaired, but no corruption was detected. You can choose to save it file anyway, but it may now contain invalid data.</source>
-        <translation type="unfinished"></translation>
+        <translation>このプロジェクトは修復されました、破損は検出されませんでした。ファイルを保存することはできますが、無効なデータが含まれている可能性があります。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The project has been repaired, choose a file to save it to.</source>
-        <translation type="unfinished"></translation>
+        <translation>このプロジェクトは修復されました、保存先ファイルを選択してください。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is strongly recommended that you save to a new file. Overwriting an existing file may render it irrecoverable.</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいファイルに保存することを強くお勧めします。既存のファイルを上書きすると、復元できなくなる可能性があります。</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Saved</source>
-        <translation type="unfinished"></translation>
+        <translation>保存済み</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The repaired project has been saved, do you want to open it now?</source>
-        <translation type="unfinished"></translation>
+        <translation>修復されたプロジェクトは保存されました、今すぐ開きますか？</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Error saving repaired project.</source>
-        <translation type="unfinished"></translation>
+        <translation>修復されたプロジェクトの保存中にエラーが発生しました。</translation>
     </message>
 </context>
 <context>
@@ -10496,7 +10496,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Manage servers</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーの管理</translation>
     </message>
     <message>
         <location line="+381"/>
@@ -10581,25 +10581,25 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+94"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+259"/>
         <source>This encoder requires FFmpeg, click here to set it up.</source>
-        <translation type="unfinished"></translation>
+        <translation>このエンコーダーにはFFmpegが必要です。こちらをクリックして設定してください。</translation>
     </message>
     <message>
         <location line="+200"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したエンコーダーにはFFmpegが必要です。今すぐ設定しますか？</translation>
     </message>
     <message>
         <location line="+89"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+493"/>
         <source>Internal</source>
-        <translation type="unfinished"></translation>
+        <translation>内部</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+7"/>
         <source>Automatic (%1)</source>
-        <translation type="unfinished">自動(%1)</translation>
+        <translation>自動(%1)</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10656,32 +10656,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+45"/>
         <source>Duration:</source>
-        <translation>間隔:</translation>
+        <translation>再生時間:</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Switch to speed</source>
-        <translation type="unfinished"></translation>
+        <translation>再生速度に切り替え</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duration presets:</source>
-        <translation>間隔プリセット:</translation>
+        <translation>再生時間プリセット:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>再生速度:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Switch to duration</source>
-        <translation type="unfinished"></translation>
+        <translation>再生時間に切り替え</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Speed presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>再生速度のプリセット:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10868,7 +10868,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+119"/>
         <source>Calculating video duration…</source>
-        <translation type="unfinished"></translation>
+        <translation>動画の再生時間を計算しています…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10890,7 +10890,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+138"/>
         <source>Choose Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色を選択</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10931,7 +10931,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+17"/>
         <source>Video duration: %1</source>
         <extracomment>%1 is a time, something like &quot;1 minute, 30 seconds&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>動画の再生時間: %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -11151,13 +11151,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Default file name:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトのファイル名:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, %S seconds, %T session title.</source>
         <extracomment>These are template placeholders for the default file name. For example, if the user types in %Y, it will be replaced with the current year. Do not change the letters or casing!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>入力例: %Y 年、%m 月、%d 日、%H 時、%M 分、%S 秒、%T セッションのタイトル。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11643,37 +11643,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>チャットメッセージ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>プライベートメッセージ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーが参加</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザー退出</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">キャンバスのロック</translation>
+        <translation>キャンバスのロック</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">キャンバスのロック解除</translation>
+        <translation>キャンバスのロック解除</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected</source>
-        <translation type="unfinished">切断しました</translation>
+        <translation>切断しました</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -12223,19 +12223,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Wait for movement before starting strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>動きを待ってからストロークを開始</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore inputs with no pressure (Gaomon)</source>
         <extracomment>Gaomon is a brand that makes pen tablets. This is a setting for a workaround that ignores zero-pressure movements from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>筆圧を検知しない入力を無視する (Gaomon)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore full-pressure blotches (Ugee)</source>
         <extracomment>Ugee is a brand that makes pen tablets. This is a setting for a workaround that ignores full-pressure blotches from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>最大筆圧による染みを無視 (Ugee)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12383,39 +12383,39 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>何もしない</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色を使用</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>消去</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing:</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリック描画:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Option</source>
         <extracomment>The Option key on Mac computer keyboards. On macOS, you have this key on your keyboard instead of the Alt key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>オプション</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
         <extracomment>The Alt key on PC keyboards.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Double-tap %1 key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>%1キーをダブルタップしてキャンバスにフォーカス</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12524,12 +12524,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>スムージング: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>何もしない</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12599,7 +12599,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>One-finger double-tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>一本指ダブルタップ:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -12654,17 +12654,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+26"/>
         <source>Mirror canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスを水平に左右反転</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスを上下反転</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trigger action</source>
-        <translation type="unfinished"></translation>
+        <translation>トリガーアクション</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -13231,7 +13231,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="-441"/>
         <source>Session: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション: %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -13263,7 +13263,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Corrupted, may be possible to repair</source>
-        <translation type="unfinished"></translation>
+        <translation>破損していますが、修復できる可能性があります</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13318,27 +13318,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Corrupted File</source>
-        <translation type="unfinished"></translation>
+        <translation>破損したファイル</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This file is corrupted. Do you want to attempt to repair it or save it as-is?</source>
-        <translation type="unfinished"></translation>
+        <translation>このファイルは破損しています。修復をしますか？そのまま保存しますか？</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can also attempt to repair it after saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存後に修復を試みることも可能です。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>修復</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as-is</source>
-        <translation type="unfinished"></translation>
+        <translation>そのまま保存</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -14082,23 +14082,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの復元</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの保存…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove Brush from History</source>
-        <translation type="unfinished"></translation>
+        <translation>履歴からブラシを削除</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+875"/>
         <source>Clear Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの履歴をクリア</translation>
     </message>
     <message>
         <location line="-872"/>
@@ -14272,44 +14272,44 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>You can still recover it from the brush history.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの履歴から復元することが可能です。</translation>
     </message>
     <message numerus="yes">
         <location line="+19"/>
         <source>%n deleted brush(es) will be erased irrecoverably.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>削除された %n 個のブラシは完全に消去され、復元できなくなります。</numerusform>
         </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Do you really want to clear the contents of the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>履歴タグの内容を本当にクリアしますか？</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Clear</source>
-        <translation type="unfinished">クリア</translation>
+        <translation>クリア</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>The brush will be deleted permanently and cannot be recovered.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシは完全に削除され、復元することはできません。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの履歴を削除</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really remove brush &apos;%1&apos; from the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ &apos;%1&apos; を履歴タグから削除してもよろしいですか？</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
 </context>
 <context>
@@ -15274,7 +15274,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-293"/>
         <source>Right-click drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリック描画</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -15344,17 +15344,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの復元</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの保存…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove Brush From History</source>
-        <translation type="unfinished"></translation>
+        <translation>履歴からブラシを削除</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -15724,27 +15724,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Lasso</source>
-        <translation type="unfinished"></translation>
+        <translation>なげなわ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fills the shape with intersections making holes</source>
-        <translation type="unfinished"></translation>
+        <translation>交差部分を穴抜きにして図形を塗りつぶす</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Fan</source>
-        <translation type="unfinished"></translation>
+        <translation>扇状</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fills the shape without holes</source>
-        <translation type="unfinished"></translation>
+        <translation>重なった部分に穴をあけずに図形全体を塗りつぶす</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished">形状:</translation>
+        <translation>形状:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -16185,7 +16185,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+47"/>
         <source>Playback in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>再生中</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -16218,7 +16218,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/banner.cpp" line="+45"/>
         <source>Dismiss</source>
-        <translation type="unfinished">無視</translation>
+        <translation>無視</translation>
     </message>
 </context>
 <context>
