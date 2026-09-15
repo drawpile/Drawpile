@@ -2,6 +2,7 @@
 #include "libshared/util/paths.h"
 #include <QDebug>
 #include <QDir>
+#include <cmake-config/config.h>
 
 namespace utils {
 namespace paths {
