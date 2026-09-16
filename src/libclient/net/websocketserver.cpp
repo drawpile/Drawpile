@@ -36,23 +36,19 @@ WebSocketServer::WebSocketServer(int timeoutSecs, int proxyMode, Client *client)
 	m_msgqueue->setIdleTimeout(timeoutSecs * 1000);
 	m_msgqueue->setPingInterval(15 * 1000);
 
-#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
-	// AutoConnection doesn't work here in Emscripten. On Android, we get error
-	// 1002 "Received Continuation frame, while there is nothing to continue."
-	// without this.
-	Qt::ConnectionType connectionType = Qt::QueuedConnection;
-#else
-	Qt::ConnectionType connectionType = Qt::AutoConnection;
-#endif
+	// AutoConnection doesn't properly here. In Emscripten, stuff comes in on
+	// the wrong thread. On Android, we get error 1002 "Received Continuation
+	// frame, while there is nothing to continue." On Windows, we sometimes get
+	// random disconnects. A queued connection seems to fix all these.
 	connect(
 		m_socket, &QWebSocket::disconnected, this,
-		&WebSocketServer::handleDisconnect, connectionType);
+		&WebSocketServer::handleDisconnect, Qt::QueuedConnection);
 	connect(
 		m_socket, WebSocketError, this, &WebSocketServer::handleSocketError,
-		connectionType);
+		Qt::QueuedConnection);
 	connect(
 		m_socket, &QWebSocket::stateChanged, this,
-		&WebSocketServer::handleSocketStateChange, connectionType);
+		&WebSocketServer::handleSocketStateChange, Qt::QueuedConnection);
 
 	connectMessageQueue(m_msgqueue);
 }

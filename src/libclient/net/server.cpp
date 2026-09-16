@@ -210,8 +210,8 @@ void Server::handleTimeout(qint64 idleTimeout)
 void Server::connectMessageQueue(MessageQueue *mq)
 {
 #ifdef __EMSCRIPTEN__
-	// AutoConnection doesn't work here in Emscripten. On Android, unlike in
-	// related places, we don't need a queued conenction to avoid 1002 errors.
+	// AutoConnection doesn't work here in Emscripten. On other platforms, we
+	// don't need a queued connection, unlike in a few other places.
 	Qt::ConnectionType connectionType = Qt::QueuedConnection;
 #else
 	Qt::ConnectionType connectionType = Qt::AutoConnection;

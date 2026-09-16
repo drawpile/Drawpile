@@ -14,23 +14,19 @@ WebSocketMessageQueue::WebSocketMessageQueue(
 	: MessageQueue(decodeOpaque, parent)
 	, m_socket(socket)
 {
-#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
-	// AutoConnection doesn't work here in Emscripten. On Android, we get error
-	// 1002 "Received Continuation frame, while there is nothing to continue."
-	// without this.
-	Qt::ConnectionType connectionType = Qt::QueuedConnection;
-#else
-	Qt::ConnectionType connectionType = Qt::AutoConnection;
-#endif
+	// AutoConnection doesn't properly here. In Emscripten, stuff comes in on
+	// the wrong thread. On Android, we get error 1002 "Received Continuation
+	// frame, while there is nothing to continue." On Windows, we sometimes get
+	// random disconnects. A queued connection seems to fix all these.
 	connect(
 		socket, &QWebSocket::binaryMessageReceived, this,
-		&WebSocketMessageQueue::receiveBinaryMessage, connectionType);
+		&WebSocketMessageQueue::receiveBinaryMessage, Qt::QueuedConnection);
 	connect(
 		socket, &QWebSocket::textMessageReceived, this,
-		&WebSocketMessageQueue::receiveTextMessage, connectionType);
+		&WebSocketMessageQueue::receiveTextMessage, Qt::QueuedConnection);
 	connect(
 		socket, &QWebSocket::bytesWritten, this,
-		&WebSocketMessageQueue::dataWritten, connectionType);
+		&WebSocketMessageQueue::dataWritten, Qt::QueuedConnection);
 }
 
 int WebSocketMessageQueue::uploadQueueBytes() const
