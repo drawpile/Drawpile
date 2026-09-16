@@ -230,6 +230,14 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 			"Simply averages inputs to get a smoother result. Faster than the "
 			"time-based stabilizer, but not as smooth.",
 			nullptr));
+	m_stabilizerAction->setCheckable(true);
+	m_smoothingAction->setCheckable(true);
+	m_stabilizationModeGroup->addAction(m_stabilizerAction);
+	m_stabilizationModeGroup->addAction(m_smoothingAction);
+	m_stabilizerAction->setChecked(true);
+	connect(
+		m_stabilizationModeGroup, &QActionGroup::triggered, this,
+		&LassoFillSettings::updateStabilizationMode);
 
 	stabilizerMenu->addSeparator();
 
