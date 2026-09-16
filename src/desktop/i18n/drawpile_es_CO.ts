@@ -587,7 +587,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar hoja de sprites PNG</translation>
     </message>
     <message>
         <location line="+7"/>
