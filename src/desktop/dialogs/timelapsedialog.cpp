@@ -34,6 +34,7 @@ extern "C" {
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSignalBlocker>
+#include <QSplitter>
 #include <QStackedWidget>
 #include <QThreadPool>
 #include <QVBoxLayout>
@@ -63,21 +64,25 @@ TimelapseDialog::TimelapseDialog(
 	QVBoxLayout *layout = new QVBoxLayout;
 	setLayout(layout);
 
+	QSplitter *splitter = new QSplitter(Qt::Vertical);
+	layout->addWidget(splitter, 1);
+
+	m_timelapsePreview = new widgets::TimelapsePreview;
+	m_timelapsePreview->setMinimumHeight(100);
+	splitter->addWidget(m_timelapsePreview);
+
 	m_scroll = new QScrollArea;
 	m_scroll->setContentsMargins(0, 0, 0, 0);
-	utils::KineticScroller *kineticScroller =
-		utils::bindKineticScrolling(m_scroll);
-	layout->addWidget(m_scroll, 1);
+	utils::KineticScroller *kineticScroller = utils::bindKineticScrollingWith(
+		m_scroll, Qt::ScrollBarAsNeeded, Qt::ScrollBarAlwaysOn);
+	splitter->addWidget(m_scroll);
 
 	QWidget *scrollWidget = new QWidget;
 	m_scroll->setWidget(scrollWidget);
 	m_scroll->setWidgetResizable(true);
 
 	QVBoxLayout *scrollLayout = new QVBoxLayout(scrollWidget);
-
-	m_timelapsePreview = new widgets::TimelapsePreview;
-	m_timelapsePreview->setFixedHeight(280);
-	scrollLayout->addWidget(m_timelapsePreview);
+	scrollLayout->setSpacing(0);
 
 	m_settingsPage = new QWidget;
 	m_progressPage = new QWidget;
@@ -91,6 +96,7 @@ TimelapseDialog::TimelapseDialog(
 	scrollLayout->addWidget(m_settingsPage);
 	scrollLayout->addWidget(m_progressPage);
 	scrollLayout->addWidget(m_finishPage);
+	scrollLayout->addStretch();
 
 	QVBoxLayout *settingsLayout = new QVBoxLayout(m_settingsPage);
 	settingsLayout->setContentsMargins(0, 0, 0, 0);
@@ -706,6 +712,15 @@ TimelapseDialog::TimelapseDialog(
 
 	m_buttons = new QDialogButtonBox();
 	layout->addWidget(m_buttons);
+
+	splitter->setCollapsible(0, true);
+	splitter->setCollapsible(1, false);
+	splitter->setStretchFactor(0, 0);
+	splitter->setStretchFactor(1, 1);
+	if(splitter->handleWidth() < 12) {
+		splitter->setHandleWidth(12);
+	}
+	splitter->setSizes({280, 2000});
 
 	updatePreviewCanvas();
 	showSettingsPage();
