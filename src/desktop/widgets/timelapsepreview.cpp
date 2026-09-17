@@ -3,8 +3,10 @@
 #include "desktop/widgets/spinner.h"
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/utils/canvastoimagerunnable.h"
+#include "libclient/utils/qtguicompat.h"
 #include <QBrush>
 #include <QLoggingCategory>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPalette>
 #include <QPen>
@@ -19,6 +21,7 @@ namespace widgets {
 TimelapsePreview::TimelapsePreview(QWidget *parent)
 	: QWidget(parent)
 {
+	setMouseTracking(true);
 }
 
 void TimelapsePreview::setCanvas(
@@ -138,6 +141,42 @@ void TimelapsePreview::setRenderedFrame(const QImage &renderedFrame)
 	}
 }
 
+void TimelapsePreview::mousePressEvent(QMouseEvent *event)
+{
+	if(haveLogo()) {
+		QPoint pos = compat::mousePos(*event);
+		if(m_scaledLogoRect.contains(pos)) {
+			m_draggingLogo = true;
+			m_dragStartPos = pos;
+			m_logoDragStartRect = m_scaledLogoRect;
+		}
+	}
+	updateCursor(event);
+}
+
+void TimelapsePreview::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	mousePressEvent(event);
+}
+
+void TimelapsePreview::mouseMoveEvent(QMouseEvent *event)
+{
+	if(m_draggingLogo) {
+		updateDrag(event);
+	} else {
+		updateCursor(event);
+	}
+}
+
+void TimelapsePreview::mouseReleaseEvent(QMouseEvent *event)
+{
+	if(m_draggingLogo) {
+		m_draggingLogo = false;
+		updateDrag(event);
+	}
+	updateCursor(event);
+}
+
 void TimelapsePreview::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
@@ -194,8 +233,7 @@ void TimelapsePreview::paintEvent(QPaintEvent *event)
 				}
 			}
 
-			if(!m_logoImage.isNull() && !m_scaledLogoRect.isEmpty() &&
-			   m_logoOpacity > 0.0) {
+			if(haveLogo()) {
 				QSize cacheSize(
 					qRound(qreal(m_scaledLogoRect.width()) * dpr),
 					qRound(qreal(m_scaledLogoRect.height()) * dpr));
@@ -288,6 +326,41 @@ bool TimelapsePreview::updateRects()
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void TimelapsePreview::updateDrag(QMouseEvent *event)
+{
+	m_scaledLogoDragOffset = (compat::mousePos(*event) - m_dragStartPos);
+	update();
+	if(!m_scaledLogoDragOffset.isNull() && !m_logoRect.isEmpty() &&
+	   !m_scaledLogoRect.isEmpty()) {
+
+		qreal ratioX =
+			(qreal(m_logoRect.width()) / qreal(m_scaledLogoRect.width()));
+		qreal ratioY =
+			(qreal(m_logoRect.height()) / qreal(m_scaledLogoRect.height()));
+		qreal ratio = (ratioX + ratioY) / 2.0;
+		QRect sr = m_logoDragStartRect.translated(m_scaledLogoDragOffset);
+		Q_EMIT logoMoved(QRect(
+			QPoint(
+				qRound((sr.left() - m_canvasRect.x()) * ratio),
+				qRound((sr.top() - m_canvasRect.y()) * ratio)),
+			QPoint(
+				qRound((sr.right() - m_canvasRect.x()) * ratio),
+				qRound((sr.bottom() - m_canvasRect.y()) * ratio))));
+	}
+}
+
+void TimelapsePreview::updateCursor(QMouseEvent *event)
+{
+	if(m_draggingLogo) {
+		setCursor(Qt::ClosedHandCursor);
+	} else if(
+		haveLogo() && m_scaledLogoRect.contains(compat::mousePos(*event))) {
+		setCursor(Qt::OpenHandCursor);
+	} else {
+		setCursor(Qt::ArrowCursor);
 	}
 }
 

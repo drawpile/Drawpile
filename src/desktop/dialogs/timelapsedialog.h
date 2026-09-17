@@ -106,6 +106,7 @@ private:
 	void updateAspectRatio(bool checked);
 	void updateLogoRect();
 	void updateLogoOpacity(int opacity);
+	void updateLogoOffsetsFromPreview(const QRect &r);
 	void updatePreviewCrop();
 	void updatePreviewSize();
 	void updatePreviewCanvas();

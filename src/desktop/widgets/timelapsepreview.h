@@ -4,6 +4,7 @@
 #include <QColor>
 #include <QImage>
 #include <QPixmap>
+#include <QPoint>
 #include <QRect>
 #include <QSize>
 #include <QWidget>
@@ -34,7 +35,14 @@ public:
 	void setAcceptRender(bool acceptRender);
 	void setRenderedFrame(const QImage &renderedFrame);
 
+Q_SIGNALS:
+	void logoMoved(const QRect &logoRect);
+
 protected:
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseDoubleClickEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
 	void resizeEvent(QResizeEvent *event) override;
 	void paintEvent(QPaintEvent *event) override;
 
@@ -42,6 +50,14 @@ private:
 	void onCanvasToImageFinished(const QImage &img, unsigned int correlationId);
 	void updateSpinner();
 	bool updateRects();
+	void updateDrag(QMouseEvent *event);
+	void updateCursor(QMouseEvent *event);
+
+	bool haveLogo() const
+	{
+		return !m_logoImage.isNull() && !m_scaledLogoRect.isEmpty() &&
+			   m_logoOpacity > 0.0;
+	}
 
 	static QRect centerInRect(const QRect &parentRect, const QSize &childSize);
 
@@ -60,9 +76,13 @@ private:
 	QRect m_outputRect;
 	QRect m_canvasRect;
 	QRect m_scaledLogoRect;
+	QRect m_logoDragStartRect;
 	QRect m_renderedFrameRect;
+	QPoint m_dragStartPos;
+	QPoint m_scaledLogoDragOffset;
 	unsigned int m_canvasStateCorrelationId = 0;
 	bool m_acceptRender = false;
+	bool m_draggingLogo = false;
 };
 
 }
