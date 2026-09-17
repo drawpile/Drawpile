@@ -6,17 +6,17 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+459"/>
         <source>Resource Exhaustion</source>
-        <translation type="unfinished"></translation>
+        <translation>资源用尽</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation type="unfinished"></translation>
+        <translation>看起来 Drawpile 是因为内存不足而退出的。如果你尝试加入一个房间或者打开一个文件，可能是因为画布过大或者图层过多而导致你的设备无法处理。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -24,12 +24,12 @@
     <message>
         <location line="-57"/>
         <source>Interface scale: %1</source>
-        <translation>界面缩放比例: %1</translation>
+        <translation>界面缩放比例：%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation>界面缩放比例: %1 (默认)</translation>
+        <translation>界面缩放比例：%1 (默认)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -60,12 +60,12 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation>内存分配失败. 某些浏览器在刷新时会出现这种情况. 请完全关闭此页面和浏览器, 然后再试一次.</translation>
+        <translation>内存分配失败。某些浏览器在刷新时会出现这种情况。请完全关闭此页面和浏览器，然后再试一次。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation>内存分配不是共享数据缓冲区, 尽管你的浏览器支持它. 你可能需要更改设置.</translation>
+        <translation>内存分配不是共享数据缓冲区，尽管你的浏览器支持它。你可能需要更改设置。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -90,17 +90,17 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation>启动中, 这应该只需要一会儿…</translation>
+        <translation>启动中，这应该只需要一会儿…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation>正在加载资产</translation>
+        <translation>正在加载资源</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation>加载中, 这可能需要一些时间…</translation>
+        <translation>加载中，这可能需要一些时间…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -110,7 +110,7 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation>初始化中, 这可能需要一些时间…</translation>
+        <translation>初始化中，这可能需要一些时间…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -130,52 +130,52 @@
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation>这通常是因为你的浏览器并不是最新版本或者你是通过某种嵌入式的浏览器来查看页面的, 比如聊天程序的浏览器, 因此你需要正确的打开它. 如需了解更多信息, 请查看 &lt;a href=&quot;#&quot;&gt;此帮助页面&lt;/a&gt;.</translation>
+        <translation>这通常是因为你的浏览器并不是最新版本或者你是通过某种嵌入式的浏览器来查看页面的，比如聊天程序的浏览器，因此你需要正确的打开它。如需了解更多信息，请查看 &lt;a href=&quot;#&quot;&gt;此帮助页面&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation>无效房间链接.</translation>
+        <translation>无效房间链接。</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation>无论如何你都不是通过有效链接来到房间的.</translation>
+        <translation>无论如何你都不是通过有效链接来到房间的。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在一个内置浏览器中打开Drawpile的.</translation>
+        <translation>&lt;strong&gt;内置浏览器：&lt;/strong&gt; 看起来你是在一个内置浏览器中打开Drawpile的。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在 %1 的内置浏览器中打开Drawpile的.</translation>
+        <translation>&lt;strong&gt;内置浏览器：&lt;/strong&gt; 看起来你是在 %1 的内置浏览器中打开Drawpile的。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation>这通常无法正常运作, 请在一个真正的浏览器中打开此页面.</translation>
+        <translation>这通常无法正常运作，请在一个真正的浏览器中打开此页面。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation>可能不兼容的浏览器:</translation>
+        <translation>可能不兼容的浏览器：</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;可能不兼容的浏览器:&lt;/strong&gt; Linux上的Firefox并非在所有系统上都支持笔压. 如果你没有笔压, 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Linux 程序&lt;/a&gt;.</translation>
+        <translation>&lt;strong&gt;可能不兼容的浏览器：&lt;/strong&gt; Linux上的Firefox并非在所有系统上都支持笔压。如果你没有笔压，请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Linux 程序&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; Windows上的Firefox在运行Drawpile时会遇到一些问题. 比如输入文本/或者按 Ctrl+Z 撤销时可能无法正常工作. 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Windows 程序&lt;/a&gt;.</translation>
+        <translation>&lt;strong&gt;不兼容的浏览器：&lt;/strong&gt; Windows上的Firefox在运行Drawpile时会遇到一些问题。比如输入文本/或者按 Ctrl+Z 撤销时可能无法正常工作。请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Windows 程序&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; %1 上的Chrome在运行Drawpile时会遇到一些问题. 这实际上只是另一个shell中的 (Safari) 系统浏览器, 这会导致控件最终出现在屏幕外的问题. 请考虑直接使用 (Safari) 系统浏览器.</translation>
+        <translation>&lt;strong&gt;不兼容的浏览器：&lt;/strong&gt; %1 上的Chrome在运行Drawpile时会遇到一些问题。这实际上只是另一个shell中的 (Safari) 系统浏览器，这会导致控件最终出现在屏幕外的问题。请考虑直接使用 (Safari) 系统浏览器。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -190,17 +190,17 @@
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation>检测到鼠标输入, 而不是笔</translation>
+        <translation>检测到鼠标输入，而不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation>检测到触控输入, 而不是笔</translation>
+        <translation>检测到触控输入，而不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation>检测到输入, 但不是笔</translation>
+        <translation>检测到输入，但不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -210,7 +210,7 @@
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation>检测到笔, 但没有压力变化</translation>
+        <translation>检测到笔，但没有压力变化</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -225,27 +225,27 @@
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation>&lt;strong&gt;警告:&lt;/strong&gt; 此安装是 &lt;strong&gt;过时的&lt;/strong&gt; 版本 &lt;code&gt;%1&lt;/code&gt;, 而不是最新版本 &lt;code&gt;%2&lt;/code&gt;.</translation>
+        <translation>&lt;strong&gt;警告：&lt;/strong&gt; 此安装是 &lt;strong&gt;过时的&lt;/strong&gt; 版本 &lt;code&gt;%1&lt;/code&gt;，而不是最新版本 &lt;code&gt;%2&lt;/code&gt;。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation>请尝试刷新页面. 如果没有任何变化, 请通知服务器主人进行更新.</translation>
+        <translation>请尝试刷新页面。如果没有任何变化，请通知服务器主人进行更新。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation>&lt;strong&gt;警告:&lt;/strong&gt; 无法确定安装是否为最新版本. 可能 &lt;code&gt;%1&lt;/code&gt; 版本已经过时.</translation>
+        <translation>&lt;strong&gt;警告：&lt;/strong&gt; 无法确定安装是否为最新版本。可能 &lt;code&gt;%1&lt;/code&gt; 版本已经过时。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation>请尝试刷新页面. 如果没有任何变化, 请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt;drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系.</translation>
+        <translation>请尝试刷新页面。如果没有任何变化，请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt;drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation>无论如何你都可以继续, 但可能无法正常运作.</translation>
+        <translation>无论如何你都可以继续，但可能无法正常运作。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -275,7 +275,7 @@
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation>你尝试要加入的房间需要使用测试版本的Drawpile.</translation>
+        <translation>你尝试要加入的房间需要使用测试版本的Drawpile。</translation>
     </message>
 </context>
 <context>
@@ -308,43 +308,43 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+97"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
+        <translation>糟糕的争论，这可能是Drawpile的一个漏洞。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unsupported format.</source>
-        <translation>不支持的格式.</translation>
+        <translation>不支持的格式。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation>无法将画布合并成一个平面图像.</translation>
+        <translation>无法将画布合并成一个平面图像。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation>无法打开文件进行写入.</translation>
+        <translation>无法打开文件进行写入。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation>保存操作失败, 但文件可能被部分写入.</translation>
+        <translation>保存操作失败，但文件可能被部分写入。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Internal error during saving.</source>
-        <translation>保存时出现内部错误.</translation>
+        <translation>保存时出现内部错误。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation>未知错误.</translation>
+        <translation>未知错误。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation>画布尺寸超出范围, %2 格式下的宽度和高度必须介于 1 和 %1 之间.</translation>
+        <translation>画布尺寸超出范围，%2 格式下的宽度和高度必须介于 1 和 %1 之间。</translation>
     </message>
 </context>
 <context>
@@ -392,13 +392,13 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation>%1: %2</translation>
+        <translation>%1：%2</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation>%1: %2 (%3)</translation>
+        <translation>%1：%2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -566,12 +566,12 @@
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation>未知动作%1</translation>
+        <translation>未知动作 %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation>反转, 切换轴向</translation>
+        <translation>反转，切换轴向</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -589,17 +589,17 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation>&apos;%1&apos; 不包含任何有效的服务器证书.</translation>
+        <translation>&apos;%1&apos; 不包含任何有效的服务器证书。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation>&apos;%1&apos; 包含多个服务器证书, 目前不支持.</translation>
+        <translation>&apos;%1&apos; 包含多个服务器证书，目前不支持。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation>&apos;%1&apos; 包含一个无效的证书.</translation>
+        <translation>&apos;%1&apos; 包含一个无效的证书。</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -609,27 +609,27 @@
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation>无法从&apos;%1&apos;读取证书.</translation>
+        <translation>无法从&apos;%1&apos;读取证书。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation>无法打开 &apos;%1&apos; 进行写入: %2.</translation>
+        <translation>无法打开 &apos;%1&apos; 进行写入：%2。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation>无法写入 &apos;%1&apos;: %2.</translation>
+        <translation>无法写入 &apos;%1&apos;：%2。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation>无法将 &apos;%1&apos; 移动到 &apos;%2&apos;: %3.</translation>
+        <translation>无法将 &apos;%1&apos; 移动到 &apos;%2&apos;：%3。</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation>无法删除 &apos;%1&apos;: %2.</translation>
+        <translation>无法删除 &apos;%1&apos;：%2。</translation>
     </message>
 </context>
 <context>
@@ -672,44 +672,44 @@
     <message>
         <location filename="../document.cpp" line="+377"/>
         <source>Resumed.</source>
-        <translation type="unfinished"></translation>
+        <translation>已恢复的。</translation>
     </message>
     <message>
         <location line="+919"/>
         <source>Unknown format.</source>
-        <translation>未知格式.</translation>
+        <translation>未知格式。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation>标题错误.</translation>
+        <translation>标题错误。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation>打开文件时出现错误.</translation>
+        <translation>打开文件时出现错误。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation>启动录制时出现错误.</translation>
+        <translation>启动录制时出现错误。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation>未知错误.</translation>
+        <translation>未知错误。</translation>
     </message>
     <message>
         <location line="+553"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation>像素转为选区: 当前图层是空的.</translation>
+        <translation>像素转为选区：当前图层是空的。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation>选择像素区域: 当前图层是空的.</translation>
+        <translation>选择像素区域：当前图层是空的。</translation>
     </message>
     <message>
         <location line="+258"/>
@@ -732,14 +732,14 @@
     <message>
         <location line="+74"/>
         <source>No layer selected.</source>
-        <translation>未选择图层.</translation>
+        <translation>未选择图层。</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation>无法填充图层组 %1.
-请选择一个常规图层.</translation>
+        <translation>无法填充图层组 %1。
+请选择一个常规图层。</translation>
     </message>
 </context>
 <context>
@@ -747,17 +747,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation>可见性: 隐藏</translation>
+        <translation>可见性：隐藏</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation>可见性: 揭示</translation>
+        <translation>可见性：揭示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation>可见性: 限制</translation>
+        <translation>可见性：限制</translation>
     </message>
 </context>
 <context>
@@ -802,7 +802,7 @@ Select a regular layer instead.</source>
         <location line="+7"/>
         <location line="+88"/>
         <source>Recordings (%1)</source>
-        <translation>录像 (%1)</translation>
+        <translation>录像文件 (%1)</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -870,12 +870,12 @@ Select a regular layer instead.</source>
         <location line="+11"/>
         <location line="+12"/>
         <source>Projects (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>项目文件 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvases (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>画布文件 (%1)</translation>
     </message>
 </context>
 <context>
@@ -975,7 +975,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation>不兼容 (%1)</translation>
+        <translation>不兼容的 (%1)</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1083,64 +1083,64 @@ Select a regular layer instead.</source>
     <message>
         <location line="+399"/>
         <source>No input path given.</source>
-        <translation>未指定输入路径.</translation>
+        <translation>未指定输入路径。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation>未指定输出路径.</translation>
+        <translation>未指定输出路径。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation>指定的输出格式 %1 无效.</translation>
+        <translation>指定的输出格式 %1 无效。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation>指定的帧率 %1 无效.</translation>
+        <translation>指定的帧率 %1 无效。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation>指定的动画参数无效.</translation>
+        <translation>指定的动画参数无效。</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation>指定的时长无效.</translation>
+        <translation>指定的时长无效。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation>指定的帧队列大小 %1 无效.</translation>
+        <translation>指定的帧队列大小 %1 无效。</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
         <translation>
-            <numerusform>无效参数:</numerusform>
+            <numerusform>无效参数：</numerusform>
         </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error %d opening project.</source>
-        <translation>打开项目时出现错误 %d .</translation>
+        <translation>打开项目时出现错误 %d。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation>无可播放的内容. 你可能还没在此项目文件中录制任何内容.</translation>
+        <translation>没有可播放的内容。你可能还没在此项目文件中录制任何内容。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation>读取播放时间出现错误.</translation>
+        <translation>读取播放时间出现错误。</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Failed to start playback.</source>
-        <translation>开始播放失败.</translation>
+        <translation>开始播放失败。</translation>
     </message>
 </context>
 <context>
@@ -1149,13 +1149,13 @@ Select a regular layer instead.</source>
         <location filename="../utils/strings.cpp" line="+12"/>
         <source>%</source>
         <extracomment>Percent, put after numbers as a unit, like 42%. Unless your language uses a different symbol or something, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>px</source>
         <extracomment>Abbreviation for pixels, put after a number as a unit, like 42px. Unless your language calls pixels something different, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -1367,7 +1367,7 @@ Select a regular layer instead.</source>
         <location filename="../brushes/brushpresetmodel.cpp" line="+2951"/>
         <source>Brush requested from user &quot;%1&quot; on %2 at %3.</source>
         <extracomment>%1 is a username, %2 is a date, %3 is a time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>用户 &quot;%1&quot; 于 %2 的 %3 请求了笔刷。</translation>
     </message>
 </context>
 <context>
@@ -1385,33 +1385,33 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>历史记录</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation>显示全部笔刷, 不管是否添加标签.</translation>
+        <translation>显示全部笔刷，不管是否添加标签。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation>显示未添加标签的笔刷.</translation>
+        <translation>显示未添加标签的笔刷。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show a history of brushes used.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示已使用笔刷的历史记录。</translation>
     </message>
     <message>
         <location line="+123"/>
         <location line="+459"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation>无法打开 &apos;%1&apos;.</translation>
+        <translation>无法打开 &apos;%1&apos;。</translation>
     </message>
     <message>
         <location line="-425"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation>无效笔刷包: 里面未找到order.conf</translation>
+        <translation>无效笔刷包：里面未找到 order.conf</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1421,17 +1421,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation>无效笔刷包: order.conf 未包含笔刷</translation>
+        <translation>无效笔刷包：order.conf 未包含笔刷</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation>无法创建笔刷预设&apos;%1&apos;.</translation>
+        <translation>无法创建笔刷预设&apos;%1&apos;。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;.</translation>
+        <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;。</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -1471,7 +1471,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation>错误写入 &apos;%1&apos;: %2</translation>
+        <translation>写入 &apos;%1&apos; 时出现错误：%2</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1496,17 +1496,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="-434"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation>无法创建标签&apos;%1&apos;.</translation>
+        <translation>无法创建标签 &apos;%1&apos;。</translation>
     </message>
     <message>
         <location line="-390"/>
         <source> (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation> (已删除的)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation> (未保存的)</translation>
     </message>
     <message>
         <location line="+430"/>
@@ -1516,7 +1516,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+81"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation>笔刷文件 &apos;%1&apos; 不包含有效的 JSON: %1</translation>
+        <translation>笔刷文件 &apos;%1&apos; 不包含有效的 JSON：%1</translation>
     </message>
     <message>
         <location line="-55"/>
@@ -1529,7 +1529,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+720"/>
         <source>No session to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定要恢复的房间</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -1615,7 +1615,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG 精灵表</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1691,183 +1691,183 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../import/recordingconverter.cpp" line="+92"/>
         <source>No input files given.</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定输入文件。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 opening project file %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目文件 %2 时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error initializing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>初始化压缩器时出现错误。</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Finishing project…</source>
-        <translation type="unfinished"></translation>
+        <translation>完成项目中…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error finishing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>完成项目时出现错误。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭项目时出现错误。</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Processing project %1 session %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在处理项目 %1 房间 %2…</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Error %1 copying session %2 from project %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>从项目 %3 复制房间 %2 时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Error %1 opening project %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目 %2 时出现错误 %1：%3。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening temporary file for %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %2 打开临时文件时出现错误 %1：%3。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error loading project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>加载项目文件 %1 时出现错误。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在转换录像文件 %1…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开录像文件 %1。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容的录像文件。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目文件时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error setting compressor session.</source>
-        <translation type="unfinished"></translation>
+        <translation>设置压缩器房间时出现错误。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error %1 opening project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目快照时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 finishing project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>完成项目快照时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Error %1 converting recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>转换录像文件 %2 时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error %1 reading recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取录像文件 %2 时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error flushing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>清空压缩器时出现错误。</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Error %1 saving project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存项目快照时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 closing project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭项目房间时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 opening project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目文件 %2.时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Processing project %1 snapshot %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在处理项目 %1 的快照 %2…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error opening playback for project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>为项目 %1 打开回放时出现错误。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 preparing playback for project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>为项目 %2 准备回放时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+133"/>
         <source>Error %1 processing project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>处理项目 %2 时出现错误 %1。</translation>
     </message>
     <message>
         <location line="-123"/>
         <source>Error %1 replacing snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>替换项目 %2 的快照时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session %1 not found in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>在项目 %2 中未找到房间 %1。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 updating snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>更新项目 %2 的快照时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 reading sessions in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取项目 %2 的房间时出现错误 %1。</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Processing final project snapshot…</source>
-        <translation type="unfinished"></translation>
+        <translation>处理最终的项目快照中…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error opening playback for project %1</source>
-        <translation type="unfinished"></translation>
+        <translation>为项目 %1 打开回放时出现错误</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing playback for project %2</source>
-        <translation type="unfinished"></translation>
+        <translation>为项目 %2 准备回放时出现错误 %1</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Error %1 saving snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存项目 %2 的快照时出现错误 %1。</translation>
     </message>
 </context>
 <context>
@@ -1934,143 +1934,143 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+735"/>
         <source>%1 banned by %2.</source>
-        <translation>%1 已被 %2 禁止IP.</translation>
+        <translation>%1 已被 %2 禁止IP。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 kicked by %2.</source>
-        <translation>%1 已被 %2 踢除.</translation>
+        <translation>%1 已被 %2 踢除。</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>%1 made operator by the server.</source>
-        <translation>%1 被服务器赋予了房间管理员身份.</translation>
+        <translation>%1 被服务器赋予了房间管理员身份。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation>%1 被 %2 赋予了房间管理员身份.</translation>
+        <translation>%1 被 %2 赋予了房间管理员身份。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation>%1 通过服务器管理员创建的邀请代码获得了房间管理员身份.</translation>
+        <translation>%1 通过服务器管理员创建的邀请代码获得了房间管理员身份。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation>%1 通过 %2 创建的邀请代码获得了房间管理员身份.</translation>
+        <translation>%1 通过 %2 创建的邀请代码获得了房间管理员身份。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation>%1 的房间管理员身份已被服务器移除.</translation>
+        <translation>%1 的房间管理员身份已被服务器移除。</translation>
     </message>
     <message>
         <location line="-659"/>
         <source>You have been kicked.</source>
-        <translation>你已被踢除.</translation>
+        <translation>你已被踢除。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation>你已被 %1 踢除.</translation>
+        <translation>你已被 %1 踢除。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation>服务器发生错误.</translation>
+        <translation>服务器发生错误。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation>服务器发生错误: %1</translation>
+        <translation>服务器发生错误：%1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation>服务器正在关闭.</translation>
+        <translation>服务器正在关闭。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation>房间已被关闭: %1</translation>
+        <translation>房间已被关闭：%1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation>断开连接.</translation>
+        <translation>断开连接。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation>断开连接: %1</translation>
+        <translation>断开连接：%1</translation>
     </message>
     <message>
         <location line="+563"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
+        <translation>只有服务器管理员可以导出普通的被禁的用户。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation>服务器错误.</translation>
+        <translation>服务器错误。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation>导出未在此服务器上配置的加密的被禁的用户.</translation>
+        <translation>导出未在此服务器上配置的加密的被禁的用户。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation>该服务器不支持导出加密的被禁的用户.</translation>
+        <translation>该服务器不支持导出加密的被禁的用户。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation>服务器无法读取导入的数据. 这可能是因为数据是从其他服务器导出的. 你只能将被禁的用户导入导出在同一个服务器里.</translation>
+        <translation>服务器无法读取导入的数据。这可能是因为数据是从其他服务器导出的。你只能将被禁的用户导入到与导出时相同的服务器中。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation>导入数据无效.</translation>
+        <translation>导入数据无效。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation>导入数据出错.</translation>
+        <translation>导入数据出错。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation>导入未在此服务器上配置的加密的被禁的用户.</translation>
+        <translation>导入未在此服务器上配置的加密的被禁的用户。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation>该服务器不支持导入加密的被禁的用户.</translation>
+        <translation>该服务器不支持导入加密的被禁的用户。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation>该服务器不支持禁止新用户加入. 请设置或更改房间密码.</translation>
+        <translation>该服务器不支持禁止新用户加入。请设置或更改房间密码。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>房间密码已被服务器管理员移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
+        <translation>房间密码已被服务器管理员移除。此服务器不允许通过浏览器加入公共房间，它们将被断开连接。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>房间密码已被 %1 移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
+        <translation>房间密码已被 %1 移除。此服务器不允许通过浏览器加入公共房间，它们将被断开连接。</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation>%1 通过服务器管理员创建的邀请代码获得了信任用户身份.</translation>
+        <translation>%1 通过服务器管理员创建的邀请代码获得了信任用户身份。</translation>
     </message>
     <message>
         <location line="+134"/>
@@ -2081,90 +2081,90 @@ Select a regular layer instead.</source>
     <message>
         <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation>%1 的房间管理员身份已被 %2 移除.</translation>
+        <translation>%1 的房间管理员身份已被 %2 移除。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation>房间缓存空间不足! 要想继续绘制, 房间管理员必须将房间重置到一个较小的大小. 这可以通过菜单中的 房间&gt;重置... 来完成.</translation>
+        <translation>房间缓存空间不足！要想继续绘制，房间管理员必须将房间重置到一个较小的大小。这可以通过菜单中的 房间&gt;重置... 来完成。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation>房间重置已取消! 房间管理员必须解锁画布并手动重置房间.</translation>
+        <translation>房间重置已取消！房间管理员必须解锁画布并手动重置房间。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation>房间重置失败! 房间管理员必须解锁画布并手动重置房间.</translation>
+        <translation>房间重置失败！房间管理员必须解锁画布并手动重置房间。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation>准备重置房间! 请稍等, 房间应该很快可以重新使用…</translation>
+        <translation>准备重置房间！请稍等，房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation>准备由 %1 重置房间! 请稍等, 房间应该很快可以重新使用…</translation>
+        <translation>准备由 %1 重置房间！请稍等，房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation>%1 正在压缩画布! 请稍等, 房间应该很快可以重新使用…</translation>
+        <translation>%1 正在压缩画布！请稍等，房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation>%1 正在替换画布! 请稍等, 房间应该很快可以重新使用…</translation>
+        <translation>%1 正在替换画布！请稍等，房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation>%1 正在将画布还原到之前的状态! 请稍等, 房间应该很快可以重新使用…</translation>
+        <translation>%1 正在将画布还原到之前的状态！请稍等，房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation>房间已被服务器管理员 (%1) 终止.</translation>
+        <translation>房间已被服务器管理员 (%1) 终止。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation>房间已被管理员终止: %1</translation>
+        <translation>房间已被管理员终止：%1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation>房间已被服务器管理员 (%1) 终止: %2</translation>
+        <translation>房间已被服务器管理员 (%1) 终止：%2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation>%1 被服务器赋予了信任用户身份.</translation>
+        <translation>%1 被服务器赋予了信任用户身份。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation>%1 被 %2 赋予了信任用户身份.</translation>
+        <translation>%1 被 %2 赋予了信任用户身份。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation>%1 通过 %2 创建的邀请代码获得了信任用户身份.</translation>
+        <translation>%1 通过 %2 创建的邀请代码获得了信任用户身份。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation>%1 的信任用户身份已被服务器移除.</translation>
+        <translation>%1 的信任用户身份已被服务器移除。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation>%1 的信任用户身份已被 %2 移除.</translation>
+        <translation>%1 的信任用户身份已被 %2 移除。</translation>
     </message>
 </context>
 <context>
@@ -2172,7 +2172,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation>没有邀请代码, 请点击创建来添加一个.</translation>
+        <translation>没有邀请代码，请点击创建来添加一个。</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2256,7 +2256,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+1255"/>
         <source>Username already taken!</source>
-        <translation>用户名已被使用!</translation>
+        <translation>用户名已被使用！</translation>
     </message>
     <message>
         <location line="-861"/>
@@ -2272,7 +2272,7 @@ Select a regular layer instead.</source>
         <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation>认证服务器错误: %1</translation>
+        <translation>认证服务器错误：%1</translation>
     </message>
     <message>
         <location line="+153"/>
@@ -2292,7 +2292,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-42"/>
         <source>Session not yet started!</source>
-        <translation>房间还未创建!</translation>
+        <translation>房间还未创建！</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2318,37 +2318,37 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation>你已被禁止访问该房间!</translation>
+        <translation>你已被禁止访问该房间！</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation>房间别名已保留!</translation>
+        <translation>房间别名已保留！</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation>这通常说明你的Drawpile版本太旧. 你需要更新吗?</translation>
+        <translation>这通常说明你的Drawpile版本太旧。你需要更新吗？</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation>房间未找到, 可能已关闭或者其邀请链接已更改</translation>
+        <translation>房间未找到，可能已关闭或者其邀请链接已更改</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation>此服务器只允许通过直接链接加入房间.</translation>
+        <translation>此服务器只允许通过直接链接加入房间。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation>无效服务器名.</translation>
+        <translation>无效服务器名。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation>你不能在这里创建公共房间, 只有私人房间允许被创建. 你可以在房间栏中切换到私人房间来重新创建.</translation>
+        <translation>你不能在这里创建公共房间，只有私人房间允许被创建。你可以在房间栏中切换到私人房间来重新创建。</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -2363,27 +2363,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="-1170"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation>已重新定向到一个不接受重新定向的服务器: %1</translation>
+        <translation>已重新定向到一个不接受重新定向的服务器：%1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation>此服务器没有提供登录方式来加入房间!</translation>
+        <translation>此服务器没有提供登录方式来加入房间！</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation>此服务器没有提供登录方式来创建房间!</translation>
+        <translation>此服务器没有提供登录方式来创建房间！</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation>服务器期望在不支持的socket上使用 STARTTLS.</translation>
+        <translation>服务器期望在不支持的socket上使用 STARTTLS。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation>未在有固定证书的服务器上启用安全模式!</translation>
+        <translation>未在有固定证书的服务器上启用安全模式！</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -2418,12 +2418,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation>意外的ext-auth响应: %1</translation>
+        <translation>意外的ext-auth响应：%1</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Invalid ident intent response.</source>
-        <translation>无效标识意图响应.</translation>
+        <translation>无效标识意图响应。</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -2433,7 +2433,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+176"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
+        <translation>不同Drawpile版本（%1）的房间正在进行中！</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2454,17 +2454,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+35"/>
         <source>Pinned certificate has changed!</source>
-        <translation>固定证书已更改!</translation>
+        <translation>固定证书已更改！</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Session not found!</source>
-        <translation>未找到房间!</translation>
+        <translation>未找到房间！</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation>用户名无效!</translation>
+        <translation>用户名无效！</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2474,7 +2474,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Session is closed!</source>
-        <translation>房间已关闭!</translation>
+        <translation>房间已关闭！</translation>
     </message>
 </context>
 <context>
@@ -2487,7 +2487,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+57"/>
         <source>%1 (incompatible)</source>
-        <translation>%1 (不兼容)</translation>
+        <translation>%1 (不兼容的)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2497,12 +2497,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (minor incompatibility)</source>
-        <translation>Drawpile 2.3 (轻微不兼容)</translation>
+        <translation>Drawpile 2.3 (轻微不兼容的)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation>Drawpile 2.3 (完全兼容)</translation>
+        <translation>Drawpile 2.3 (完全兼容的)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2580,43 +2580,43 @@ Select a regular layer instead.</source>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间已满人或者已关闭.</translation>
+        <translation>房间已满人或者已关闭。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间需要账号加入.</translation>
+        <translation>房间需要账号加入。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间不允许通过网页浏览器加入.</translation>
+        <translation>房间不允许通过网页浏览器加入。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间不允许通过 WebSockets 加入.</translation>
+        <translation>房间不允许通过 WebSockets 加入。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间是由一个较新的 Drawpile 版本创建的, 因此你必须更新. 如果没有可用的更新, 则可能是由一个开发中的 Drawpile 版本创建的.</translation>
+        <translation>房间是由一个较新的 Drawpile 版本创建的，因此你必须更新。如果没有可用的更新，则可能是由一个开发中的 Drawpile 版本创建的。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间是由一个旧的不兼容的 Drawpile 版本创建的.</translation>
+        <translation>房间是由一个旧的不兼容的 Drawpile 版本创建的。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>房间是由一个不兼容的协议创建的.</translation>
+        <translation>房间是由一个不兼容的协议创建的。</translation>
     </message>
 </context>
 <context>
@@ -2624,7 +2624,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+156"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation>如果你不打算使用代理, 你可以在首选项的网络页面中禁用网络代理.</translation>
+        <translation>如果你不打算使用代理，你可以在首选项的网络页面中禁用网络代理。</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2634,7 +2634,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation>网络读取错误: %1</translation>
+        <translation>网络读取错误：%1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2644,7 +2644,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation>网络写入错误: %1</translation>
+        <translation>网络写入错误：%1</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2660,7 +2660,7 @@ Select a regular layer instead.</source>
         <location line="+64"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation>Socket 错误 %1: %2</translation>
+        <translation>Socket 错误 %1：%2</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2684,70 +2684,70 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation>无法开始自动保存录制功能: %1</translation>
+        <translation>无法启动自动保存录制功能：%1</translation>
     </message>
     <message>
         <location line="-154"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation>移除项目出现错误 &apos;%1&apos;: %2</translation>
+        <translation>移除项目 &apos;%1&apos; 时出现错误：%2</translation>
     </message>
     <message>
         <location line="-42"/>
         <source>Invalid session %1 given to resume</source>
-        <translation type="unfinished"></translation>
+        <translation>用于恢复的房间 %1 无效</translation>
     </message>
     <message>
         <location line="+185"/>
         <source>No path to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定恢复路径</translation>
     </message>
     <message>
         <location line="+176"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>打开项目出现错误 &apos;%1&apos;: %2</translation>
+        <translation>打开项目出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>关闭项目出现错误 &apos;%1&apos;: %2</translation>
+        <translation>关闭项目出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>写入项目出现错误 &apos;%1&apos;: %2</translation>
+        <translation>写入项目出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 resuming session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>恢复房间出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>打开房间出现错误 &apos;%1&apos;: %2</translation>
+        <translation>打开房间出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>关闭房间出现错误 &apos;%1&apos;: %2</translation>
+        <translation>关闭房间出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>录制指令出现错误 &apos;%1&apos;: %2</translation>
+        <translation>录制指令出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation>创建快照出现错误 &apos;%1&apos;: %2</translation>
+        <translation>创建快照出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -2761,32 +2761,32 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../project/projectrepair.cpp" line="+38"/>
         <source>Failed to set temporary input path.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法设置临时输入路径。</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Failed to open project.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开项目文件。</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Failed to close project.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法关闭项目文件。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Failed to set temporary output path.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法设置临时输出路径。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to start repair: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法启动修复：%1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to repair file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法修复文件：%1</translation>
     </message>
 </context>
 <context>
@@ -2806,37 +2806,37 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Error %1 opening project file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>打开项目文件时出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 generating project overview: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>生成项目概况时出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>准备播放器时出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 in player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>播放器中出现错误 %1：%2</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Unhandled error %1 of type %2: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>类型为 %2 的未处理错误 %1：%3</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation>无法打开 &apos;%1&apos;: %2</translation>
+        <translation>无法打开 &apos;%1&apos;：%2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation>无法打开临时文件 &apos;%1&apos;: %2</translation>
+        <translation>无法打开临时文件 &apos;%1&apos;：%2</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -2849,7 +2849,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/freehand.cpp" line="+159"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation>防溢出需要一个填充源图层.</translation>
+        <translation>防溢出需要一个填充源图层。</translation>
     </message>
 </context>
 <context>
@@ -2857,7 +2857,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+137"/>
         <source>You need to drag to create a gradient.</source>
-        <translation>你需要拖动来创建一个渐变.</translation>
+        <translation>你需要拖动来创建一个渐变。</translation>
     </message>
 </context>
 <context>
@@ -2865,27 +2865,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+423"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation>你没有权限变换选区.</translation>
+        <translation>你没有权限变换选区。</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation>无画布.</translation>
+        <translation>无画布。</translation>
     </message>
     <message>
         <location line="-253"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation>你没有权限进行这种变换.</translation>
+        <translation>你没有权限进行这种变换。</translation>
     </message>
     <message>
         <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation>你没有权限进行图章变换.</translation>
+        <translation>你没有权限进行图章变换。</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation>未选中有东西可以被变换.</translation>
+        <translation>未选中有东西可以被变换。</translation>
     </message>
 </context>
 <context>
@@ -2907,47 +2907,47 @@ Select a regular layer instead.</source>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation>自动检查更新已禁用, &lt;a href=&quot;#autoupdate&quot;&gt;请点击这里来启用&lt;/a&gt;.</translation>
+        <translation>自动检查更新已禁用，&lt;a href=&quot;#autoupdate&quot;&gt;请点击这里来启用&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation>如果你不想要自动检查更新, &lt;a href=&quot;#checkupdates&quot;&gt;请点击这里来手动检查&lt;/a&gt;.</translation>
+        <translation>如果你不想要自动检查更新，&lt;a href=&quot;#checkupdates&quot;&gt;请点击这里来手动检查&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation>网络错误: %1</translation>
+        <translation>网络错误：%1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation>无法理解获取的数据.</translation>
+        <translation>无法理解获取的数据。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation>无法理解获取的更新.</translation>
+        <translation>无法理解获取的更新。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation>无法保存更新.</translation>
+        <translation>无法保存更新。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation>无法理解获取的新闻.</translation>
+        <translation>无法理解获取的新闻。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation>无法保存新闻.</translation>
+        <translation>无法保存新闻。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation>暂无新闻.</translation>
+        <translation>暂无新闻。</translation>
     </message>
 </context>
 <context>
@@ -2955,47 +2955,47 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../io/files.cpp" line="+37"/>
         <source>File size out of bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>文件大小超出范围</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Could not read entire file</source>
-        <translation type="unfinished"></translation>
+        <translation>无法读取整个文件</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>打开源文件 &apos;%1&apos; 时出现错误：%2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>打开目标文件 &apos;%1&apos; 时出现错误：%2</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>提交目标文件失败：%1</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>读取源文件 &apos;%1&apos; 时出现错误：%2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>将 %1 个字节写入目标文件 &apos;%2&apos; 时出现错误：%3</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Tried to write %1 byte(s) to target file &apos;%2&apos;, but only wrote %3</source>
-        <translation type="unfinished"></translation>
+        <translation>尝试将 %1 个字节写入目标文件 &apos;%2&apos;，但实际只写入了 %3</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error flushing target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>清空目标文件 &apos;%1&apos; 时出现错误：%2</translation>
     </message>
 </context>
 <context>
@@ -3003,22 +3003,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation>你使用的不是 web.drawpile.net 上的官方客户端. 大多数服务器不允许从其他地方连接.</translation>
+        <translation>你使用的不是 web.drawpile.net 上的官方客户端。大多数服务器不允许从其他地方连接。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation>房间地址看起来不像一个有效的 WebSocket URL.</translation>
+        <translation>房间地址看起来不像一个有效的 WebSocket URL。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation>你正在尝试连接一个IP地址, 而不是一个正确的域名. 这通常是行不通的, 除非你先将浏览器配置为允许这样做.</translation>
+        <translation>你正在尝试连接一个IP地址，而不是一个正确的域名。这通常是行不通的，除非你先将浏览器配置为允许这样做。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation>服务器可能不支持通过网页浏览器加入.</translation>
+        <translation>服务器可能不支持通过网页浏览器加入。</translation>
     </message>
 </context>
 <context>
@@ -3026,32 +3026,32 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+442"/>
         <source>Vertical flip: ON</source>
-        <translation>垂直翻转: 开</translation>
+        <translation>垂直翻转：开</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation>垂直翻转: 关</translation>
+        <translation>垂直翻转：关</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation>水平翻转: 开</translation>
+        <translation>水平翻转：开</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>水平翻转: 关</translation>
+        <translation>水平翻转：关</translation>
     </message>
     <message>
         <location line="+2306"/>
         <source>Zoom: %1%</source>
-        <translation>缩放: %1%</translation>
+        <translation>缩放：%1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation>旋转: %1°</translation>
+        <translation>旋转：%1°</translation>
     </message>
     <message>
         <location line="+35"/>
