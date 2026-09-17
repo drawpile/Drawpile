@@ -122,7 +122,7 @@ void Notifications::initGrid(config::Config *cfg, QVBoxLayout *layout)
 		QString text = tr(TEXT);                                               \
                                                                                \
 		QLabel *label = new QLabel(this);                                      \
-		label->setText(TEXT);                                                  \
+		label->setText(text);                                                  \
 		grid->addWidget(label, row, 0, Qt::AlignLeft);                         \
                                                                                \
 		QCheckBox *soundBox = new QCheckBox(this);                             \
