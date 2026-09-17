@@ -69,6 +69,7 @@ extern "C" {
 #include "desktop/view/lock.h"
 #include "desktop/widgets/canvasframe.h"
 #include "desktop/widgets/dualcolorbutton.h"
+#include "desktop/widgets/largeiconmenu.h"
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/nonaltstealingmenubar.h"
 #include "desktop/widgets/projectrecordingstatusbutton.h"
@@ -6838,10 +6839,18 @@ void MainWindow::setupActions()
 
 	// clang-format on
 
-	if(!m_singleSession) {
-		m_toolBarFile->addAction(newdocument);
-		m_toolBarFile->addAction(open);
-	}
+	QToolButton *commonMenuButton = new QToolButton;
+	commonMenuButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	commonMenuButton->setPopupMode(QToolButton::InstantPopup);
+	commonMenuButton->setToolTip(tr("File"));
+	commonMenuButton->setStatusTip(commonMenuButton->toolTip());
+	commonMenuButton->setIcon(
+		QIcon::fromTheme(QStringLiteral("document-open-folder")));
+	m_toolBarFile->addWidget(commonMenuButton);
+
+	QMenu *commonMenu = new widgets::LargeIconMenu(commonMenuButton);
+	commonMenuButton->setMenu(commonMenu);
+
 #ifdef __EMSCRIPTEN__
 	m_toolBarFile->addAction(download);
 #else
@@ -8952,6 +8961,17 @@ void MainWindow::setupActions()
 			[this, menuAction = menu->menuAction()] {
 				menuBar()->setActiveAction(menuAction);
 			});
+	}
+
+	if(!m_singleSession) {
+		commonMenu->addAction(newdocument);
+		commonMenu->addAction(open);
+		commonMenu->addSeparator();
+		commonMenu->addAction(save);
+		commonMenu->addAction(exportDocument);
+		commonMenu->addAction(savesel);
+		commonMenu->addAction(exportAnimation);
+		commonMenu->addAction(makeTimelapse);
 	}
 
 	// Brush slot shortcuts

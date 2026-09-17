@@ -59,6 +59,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Allow switching timelapses to be speed-based instead of duration-based. It will calculate the video duration from the given speed. Thanks xxxx for suggesting.
  * Fix: When saving an ORA file with clipping groups, the animation timeline's frame assignments no longer get garbled. Thanks BluesFlying for reporting.
  * Fix: Solve an issue where on some systems you would get disconnected on the first attempt of joining a session and then it worked fine on reconnect. This fix was already applied on Android, but aparently it also rarely happens elsewhere. Thanks Greendyno for reporting.
+ * Feature: Replace the New and Open buttons in the toolbar with a menu that has all the common file actions. Thanks tysontan for suggesting.
 
 2026-05-16 Version 2.3.1-beta.1
  * Fix: Force canvas view dimensions to be even on hardware renderers, since otherwise the view gets scrunched on some graphics cards.
