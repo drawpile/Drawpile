@@ -8967,12 +8967,19 @@ void MainWindow::setupActions()
 		commonMenu->addAction(newdocument);
 		commonMenu->addAction(open);
 		commonMenu->addSeparator();
-		commonMenu->addAction(save);
-		commonMenu->addAction(exportDocument);
-		commonMenu->addAction(savesel);
-		commonMenu->addAction(exportAnimation);
-		commonMenu->addAction(makeTimelapse);
 	}
+#ifdef __EMSCRIPTEN__
+	commonMenu->addAction(download);
+	commonMenu->addAction(downloadsel);
+#else
+	commonMenu->addAction(save);
+	commonMenu->addAction(exportDocument);
+	commonMenu->addAction(savesel);
+#endif
+	commonMenu->addAction(exportAnimation);
+	commonMenu->addAction(makeTimelapse);
+	commonMenu->addSeparator();
+	commonMenu->addAction(preferences);
 
 	// Brush slot shortcuts
 	m_brushSlots = new QActionGroup(this);
