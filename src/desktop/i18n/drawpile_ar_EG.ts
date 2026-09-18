@@ -321,7 +321,7 @@
     <message>
         <location line="+3"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير تشبع اللون</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1977,7 +1977,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recovered file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>أنت وشك ان تفتح ملف مُستعاد وإغلاق هذه النافذة.</translation>
     </message>
     <message>
         <location line="+1506"/>
@@ -1987,34 +1987,34 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>لديك تغييرات غير محفوظة؛ هل ترغب ان تنزيلها قبل إعادة الاتصال؟</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>لديك تغييرات غير محفوظة؛ هل ترغب ان حفظها قبل إعادة الاتصال، أم إعادة الاتصال في نافذة جديدة؟</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>لا، حاول مرة أخرى</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>نعم، أعد الاتصال</translation>
     </message>
     <message>
         <location line="-1035"/>
         <location line="+1037"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>نافذة جديدة</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -2101,7 +2101,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>تحتوي لوحة الرسم الخاصة بك على بيانات كثيرة للغاية، الحد الأقصى للخادم %1 ميجابايت. قم بدمج بعض الطبقات أو حذفها لتبسيط لوحة الرسم.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2111,7 +2111,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة تعيين الصورة الكبيرة جداً</translation>
     </message>
     <message>
         <location line="+466"/>
@@ -2121,7 +2121,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>قص اللوحة القماشية لتناسب التحديد…</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -2143,88 +2143,88 @@ You can exit it via the View menu or the timeline.</source>
         <location line="-328"/>
         <location line="+56"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل الحفظ</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Error preparing project overview file.</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في إعداد ملف النظره عامة على المشروع.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Error preparing timelapse file.</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في إعداد ملف التصوير المسرّع (Time-lapse).</translation>
     </message>
     <message>
         <location line="+679"/>
         <source>Resuming…</source>
-        <translation type="unfinished"></translation>
+        <translation>جارٍ الاستئناف…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>It may be possible to repair it.</source>
         <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>قد يكون من الممكن إصلاحه.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>صلح</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Incompatible Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>تسجيل غير متوافق</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>هذا التسجيل غير متوافق؛ ولا يمكن فتحه باستخدام هذا الإصدار من Drawpile.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>بدء التسجيل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>What do you want to do with this recording?</source>
-        <translation type="unfinished"></translation>
+        <translation>ماذا تريد أن تفعل بهذا التسجيل؟</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>حول</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>حوّل هذا التسجيل إلى ملف مشروع (dppr)؛ فهذا يتيح لك إنشاء مقطع فيديو بفاصل زمني (timelapse) منه لاحقاً.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Directly opens this recording to let you play it back.</source>
-        <translation type="unfinished"></translation>
+        <translation>يفتح هذا التسجيل مباشرةً ليتيح لك تشغيله.</translation>
     </message>
     <message>
         <location line="+313"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح المشروع</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open the project file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>أنت على وشك فتح ملف المشروع وإغلاق هذه النافذة.</translation>
     </message>
     <message>
         <location line="+372"/>
         <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
-        <translation type="unfinished"></translation>
+        <translation>كان من المفترض أن تظهر لك مطالبة بحفظ الملف. يرجى الانتظار لمدة 30 ثانية على الأقل قبل إغلاق هذه النافذة، وإلا فقد تحصل على ملف فارغ !</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكنك التحقق من حجم الملف في نظام لديك. إذا لم يكن الحجم صفراً، فهذا يعني أن عملية الحفظ قد اكتملت.</translation>
     </message>
     <message>
         <location line="+334"/>
@@ -2234,12 +2234,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+3"/>
         <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم حالياً تسجيل هذه الجلسة نظراً لتفعيل ميزة الاسترداد التلقائي؛ وعند الحفظ في ملف مشروع (dppr.)، سيتم حفظ التسجيل أيضاً.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Do you want to start another recording anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل ترغب في بدء تسجيل آخر على أية حال؟</translation>
     </message>
     <message>
         <location line="+2325"/>
@@ -2399,7 +2399,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Open &amp;Player…</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح المشغل…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2410,12 +2410,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>الاسترداد التلقائي</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage autorecovery…</source>
-        <translation type="unfinished"></translation>
+        <translation>إدارة الاسترداد التلقائي…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2425,7 +2425,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>تنزيل التحديد…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2440,17 +2440,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ باسم DPCS…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ باسم ORA…</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير وتحريك…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2460,22 +2460,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد الحركة من الطبقات…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Convert &amp;Recordings to Project…</source>
-        <translation type="unfinished"></translation>
+        <translation>تحويل التسجيلات إلى مشروع…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Merge/split projects…</source>
-        <translation type="unfinished"></translation>
+        <translation>دمج/تقسيم المشاريع…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Repair file…</source>
-        <translation type="unfinished"></translation>
+        <translation>إصلاح الملف…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2599,7 +2599,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Input Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>إعدادات الإدخال</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2612,63 +2612,63 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+71"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>توسيع وللأعلى…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>توسيع ولأسفل…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>توسيع لليسار…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>توسيع لليمين…</translation>
     </message>
     <message>
         <location line="+92"/>
         <location line="+889"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>تعديل</translation>
     </message>
     <message>
         <location line="-820"/>
         <source>Interface scale…</source>
-        <translation type="unfinished"></translation>
+        <translation>مقياس الواجهة…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>تكوين شريط أدوات الرسم…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>أظهر شريط الأدوات الجانبي دائمًا</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>أظهر شريط الأدوات السفلي دائمًا</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع اليد اليسرى</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبير باتجاه المركز في اتجاه الداخل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبيرا في اتجاه المركزي الى الخارج</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2678,217 +2678,217 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة ضبط التكبير/التصغير عند المركز</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;تناسب القماش</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>ملاءمة اللوحة والعرض</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>ملاءمة اللوحة والارتفاع</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;إعادة تعيين دوران اللوحة</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>تدوير اللوحة عكس اتجاه عقارب الساعة</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>اعكس قماش</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>اعكس لوحة الرسم أفقياً</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>عكس/قلب لوحة الرسم أفقياً</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>عكس اللوحة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>اقلب اللوحة رأساً على عقب</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>عكس/قلب لوحة الرسم عمودياً</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>إخفاء عن المؤشر</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>إظهار المساطر</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>إظهار التحديد والقناع</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>التبديل في عرض التحديد بين القناع والمخطط الخارجي</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>تحديد قناع الاختيار واللون…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>غيّر لون مسحة قناع التحديد</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>إظهار شريط إجراءات التحديد</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>أعلى اليسار</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط إجراءات التحديد في الزاوية العلوية اليسرى</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>قمة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط إجراءات التحديد العلوي</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>العلوي الأيمن</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط إجراءات التحديد في الزاوية العلوية اليمنى</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>أسفل اليسار</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط إجراءات التحديد في أسفل اليسار</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>القاع</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط إجراءات التحديد السفلي</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>أسفل اليمين</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط إجراءات التحديد في الزاوية السفلية اليمنى</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>ملاءمة للشاشة</translation>
     </message>
     <message>
         <location line="+131"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>المنظر</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>عرض المجموعة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>اعرض مجموعة الطبقات الأصلية الحالية فقط</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>إشعارات وضع العرض على اللوحة</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>مدة الإقامة</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>ثانية واحدة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 ثوانٍ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>دقيقة واحدة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>ساعة واحدة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>للأبد</translation>
     </message>
     <message>
         <location line="+29"/>
