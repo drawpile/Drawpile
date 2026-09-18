@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Grabación</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -718,17 +718,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabaciones</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Proyecto</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos reparables</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -763,12 +763,12 @@
     <message>
         <location line="+15"/>
         <source>Save Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Archivo Reparado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo Reparado</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1861,88 +1861,88 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
         <location line="-2559"/>
         <location line="+56"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Guardar Fallido</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Error preparing project overview file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al preparar el archivo de resumen del proyecto.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Error preparing timelapse file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error al preparar el archivo de linea de tiempo (timelapse).</translation>
     </message>
     <message>
         <location line="+679"/>
         <source>Resuming…</source>
-        <translation type="unfinished"></translation>
+        <translation>Resumiendo…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>It may be possible to repair it.</source>
         <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Puede que sea posible repararlo.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparar</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Incompatible Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabación Incompatible</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta grabación es incompatible, no se puede abrir con esta versión de Drawpile.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abrir Grabación</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>What do you want to do with this recording?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Qué quieres hacer con esta grabación?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Convertir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Convierte esta grabación en un archivo de proyecto (dppr). Esto te permitirá crear un vídeo timelapse posteriormente.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Directly opens this recording to let you play it back.</source>
-        <translation type="unfinished"></translation>
+        <translation>Abre directamente esta grabación para que puedas reproducirla.</translation>
     </message>
     <message>
         <location line="+313"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Proyecto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open the project file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de abrir el archivo del proyecto y cerrar esta ventana.</translation>
     </message>
     <message>
         <location line="+372"/>
         <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Debería haber aparecido un aviso para guardar el archivo. Por favor, espere al menos 30 segundos antes de cerrar esta pestaña; de lo contrario, ¡algunos navegadores podrían dejar el archivo vacío!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes comprobar el tamaño del archivo en tu sistema operativo. Si no es cero, debería guardarse.</translation>
     </message>
     <message>
         <location line="+334"/>
@@ -1952,12 +1952,12 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+3"/>
         <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ya estás grabando esta sesión porque la recuperación automática está habilitada. Si guardas el archivo en un archivo de proyecto (.dppr), también se guardará la grabación.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Do you want to start another recording anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Quieres empezar otra grabación de todos modos?</translation>
     </message>
     <message>
         <location line="+700"/>
@@ -2131,7 +2131,7 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+7"/>
         <source>Open &amp;Player…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir &amp;Reproductor…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2162,17 +2162,17 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+34"/>
         <source>Convert &amp;Recordings to Project…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Convirtiendo &amp;Grabaciones en Proyecto…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Merge/split projects…</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusionar/dividir Proyectos…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Repair file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparar archivo…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2549,12 +2549,12 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+6"/>
         <source>Select Layer Above</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seleccione la Capa Superior</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Select Layer Below</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seleccione la Capa Inferior</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2604,7 +2604,7 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+48"/>
         <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Relleno de Formas/Trazos de Más&amp;caras por Selección</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -2619,7 +2619,7 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+6"/>
         <source>Timeline tool: edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de línea de tiempo: editar</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4087,73 +4087,73 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-447"/>
         <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
         <source>Set Key Frame(s) to Current Layer</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Establecer Fotograma Clave en la Capa Actual</numerusform>
+            <numerusform>Establecer Fotogramas Clave en la Capa Actual</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+10"/>
         <source>Set Blank Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Establecer Fotograma Clave en Blanco</numerusform>
+            <numerusform>Establecer Fotogramas Clave en Blanco</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+55"/>
         <source>Cut Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Cortar Fotograma Clave</numerusform>
+            <numerusform>Cortar Fotogramas Clave</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Copy Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Copiar Fotograma Clave</numerusform>
+            <numerusform>Copiar Fotogramas Clave</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>Paste Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Pegar Fotograma Clave</numerusform>
+            <numerusform>Pegar Fotogramas Clave</numerusform>
         </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste Decloned Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pegar Capas de Fotogramas Claves Desvinculadas</translation>
     </message>
     <message numerus="yes">
         <location line="+16"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Delete Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Borrar Fotograma Clave</numerusform>
+            <numerusform>Borrar Fotogramas Clave</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Unassign Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Desasignar Fotograma Clave</numerusform>
+            <numerusform>Desasignar Fotogramas Clave</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Declone Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desvincular Capas de Fotogramas Clave</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4195,34 +4195,34 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location filename="../widgets/timelinewidget.cpp" line="-63"/>
         <source>Create Layers on Current Key Frame(s)</source>
         <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Crear Capas en el Fotograma Clave Actual</numerusform>
+            <numerusform>Crear Capas en los Fotogramas Clave Actuales</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Create Layer Group(s) on Current Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Crear Grupo de Capas en el Fotograma Clave Actual</numerusform>
+            <numerusform>Crear Grupo de Capas en los Fotogramas Clave Actuales</numerusform>
         </translation>
     </message>
     <message>
         <location line="+267"/>
         <source>S&amp;hape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Relleno de F&amp;orma</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Debug Input Events…</source>
-        <translation type="unfinished"></translation>
+        <translation>Depurar Eventos de Entrada…</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>UDP Activity Stream…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flujo de Actividad UDP…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4307,27 +4307,27 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Right-click drawing: none</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trazado con clic derecho: ninguno</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar color de fondo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-click drawing: use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Trazado con clic derecho: usar color de fondo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Trazado con clic derecho: borrar</translation>
     </message>
     <message>
         <location line="+144"/>
@@ -4681,7 +4681,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Open &amp;Playback…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir &amp;Reproducción…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4718,9 +4718,9 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location filename="../widgets/timelinewidget.cpp" line="-50"/>
         <source>Set Key Frame(s) to %1</source>
         <extracomment>%1 is the name of a layer.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Establecer fotograma clave en %1</numerusform>
+            <numerusform>Establecer fotogramas clave en %1</numerusform>
         </translation>
     </message>
 </context>
@@ -4759,7 +4759,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Select blue-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en azul</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4779,7 +4779,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Select green-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en verde</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4799,7 +4799,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Select yellow-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en amarillo</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4819,7 +4819,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Select orange-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en naranja</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4839,7 +4839,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Select brown-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en café</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4859,7 +4859,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Select red-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en rojo</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4879,7 +4879,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Select purple-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en morado</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4899,7 +4899,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Select gray-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione la capa marcada en gris</translation>
     </message>
 </context>
 <context>
@@ -4990,7 +4990,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+5"/>
         <source>Shape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Relleno de forma</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5962,7 +5962,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+34"/>
         <source>%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2 sprites de %3x%4 píxeles cada uno, %5x%6 píxeles en total.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6391,12 +6391,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/brushsavedialog.cpp" line="+17"/>
         <source>Save Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Pincel</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiquetas:</translation>
     </message>
 </context>
 <context>
@@ -6593,7 +6593,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+97"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurar Pincel</translation>
     </message>
     <message>
         <location line="+9"/>
