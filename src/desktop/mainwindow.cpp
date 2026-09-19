@@ -6842,10 +6842,10 @@ void MainWindow::setupActions()
 	QToolButton *commonMenuButton = new QToolButton;
 	commonMenuButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	commonMenuButton->setPopupMode(QToolButton::InstantPopup);
-	commonMenuButton->setToolTip(tr("File"));
+	commonMenuButton->setToolTip(tr("Menu"));
 	commonMenuButton->setStatusTip(commonMenuButton->toolTip());
 	commonMenuButton->setIcon(
-		QIcon::fromTheme(QStringLiteral("document-open-folder")));
+		QIcon::fromTheme(QStringLiteral("application-menu")));
 	m_toolBarFile->addWidget(commonMenuButton);
 
 	QMenu *commonMenu = new widgets::LargeIconMenu(commonMenuButton);
@@ -8979,7 +8979,15 @@ void MainWindow::setupActions()
 	commonMenu->addAction(exportAnimation);
 	commonMenu->addAction(makeTimelapse);
 	commonMenu->addSeparator();
-	commonMenu->addAction(preferences);
+	commonMenu->addMenu(filemenu);
+	commonMenu->addMenu(editmenu);
+	commonMenu->addMenu(viewmenu);
+	commonMenu->addMenu(layerMenu);
+	commonMenu->addMenu(selectMenu);
+	commonMenu->addMenu(animationMenu);
+	commonMenu->addMenu(sessionmenu);
+	commonMenu->addMenu(toolsmenu);
+	commonMenu->addMenu(helpmenu);
 
 	// Brush slot shortcuts
 	m_brushSlots = new QActionGroup(this);
