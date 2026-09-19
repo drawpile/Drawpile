@@ -6598,7 +6598,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+9"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Pincel…</translation>
     </message>
     <message>
         <location line="+320"/>
@@ -8606,17 +8606,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-221"/>
         <source>Programming Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de programación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FFmpeg is not supported on this platform.</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg no es compatible con esta plataforma.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>If you see this message, you found a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Si ve este mensaje, ¡felicidades! ha encontrado un error en Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -9264,7 +9264,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Converted from a recording file, no timing information available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Convertido a partir de un archivo de grabación; no hay información de temporización disponible.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9341,78 +9341,78 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
         <location line="+746"/>
         <source>Error %1 opening input file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el archivo de entrada: %2</translation>
     </message>
     <message>
         <location line="-732"/>
         <source>Error %1 opening temporary file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el archivo temporal: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error copying to temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al copiar al archivo temporal: %1</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>No recording in dpcs file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No hay registro/grabación en el archivo dpcs.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Failed to open project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir el proyecto: %1</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Failed to read project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al leer el proyecto: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Project contains no sessions.</source>
-        <translation type="unfinished"></translation>
+        <translation>El proyecto no contiene sesiones.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown file format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de archivo desconocido.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No se pudo abrir la grabación: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Grabación incompatible.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Project session %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sesión del proyecto %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recording</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Grabando</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Edit Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar Proyecto</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add the dppr, dprec and dptxt files you want to include. You can drag sessions to change their order and remove unwanted ones from the set. Once done, press %1 to create a new dppr file.</source>
         <extracomment>%1 is what the &quot;Save&quot; button says.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Agregue los archivos dppr, dprec y dptxt que desee incluir. Puede arrastrar las sesiones para cambiar su orden y eliminar las que no desee. Una vez hecho esto, presione %1 para crear un nuevo archivo dppr.</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9432,12 +9432,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+59"/>
         <source>Project file created successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo de proyecto creado exitosamente.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Open project file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir archivo de proyecto</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -9452,12 +9452,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+56"/>
         <source>Failed to initialize temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo inicializar el archivo temporal.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Processing…</source>
-        <translation type="unfinished"></translation>
+        <translation>Procesando…</translation>
     </message>
     <message>
         <location line="+103"/>
@@ -9468,35 +9468,35 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message numerus="yes">
         <location line="-123"/>
         <source>Failed to load %n file(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Error al cargar el archivo %n.</numerusform>
+            <numerusform>Error al cargar los archivos %n.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Conversion suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>La conversión se realizó correctamente, pero el guardado del archivo falló.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Saving project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardando proyecto…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay ningún archivo convertido disponible.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No file to save to given.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se ha especificado ningún archivo para guardar.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Error %1 opening output file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el archivo de salida: %2</translation>
     </message>
 </context>
 <context>
@@ -9519,27 +9519,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+26"/>
         <source>Rewind session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión de rebobinado</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Skip stroke</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saltear trazo</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Skip session</source>
-        <translation type="unfinished"></translation>
+        <translation>Saltear sesión</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Playback speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad de reproducción: </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unsaved changes will be lost if you continue!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Los cambios no guardados se perderán si continúas!</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -9549,27 +9549,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Follow view</source>
-        <translation type="unfinished"></translation>
+        <translation>Seguir vista</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Convirtiendo grabación %1…</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Failed to open temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir el archivo temporal.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Conversion cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversión cancelada.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Opening project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abriendo Proyecto…</translation>
     </message>
     <message>
         <location line="+37"/>
