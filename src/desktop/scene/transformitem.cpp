@@ -37,7 +37,7 @@ void TransformItem::setQuad(const TransformQuad &quad, bool valid)
 
 void TransformItem::setPreviewImage(const QImage &image)
 {
-	bool imageChanged = image != m_previewImage;
+	bool imageChanged = image.cacheKey() != m_previewImage.cacheKey();
 	if(imageChanged) {
 		m_previewImage = image;
 		updatePreviewTransform();
