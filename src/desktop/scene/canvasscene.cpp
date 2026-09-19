@@ -351,7 +351,6 @@ void CanvasScene::setSelection(
 		if(!m_selection) {
 			m_selection = new SelectionItem(
 				m_selectionIgnored, m_showSelectionMask, m_zoom, m_group);
-			m_selection->setUpdateSceneOnRefresh(true);
 		}
 		m_selection->setModel(mask);
 		m_selection->setTransparentDelay(0.0);
@@ -374,7 +373,6 @@ void CanvasScene::onTransformChanged()
 			m_transform->setQuad(quad, valid);
 		} else {
 			m_transform = new TransformItem(quad, valid, m_zoom, m_group);
-			m_transform->setUpdateSceneOnRefresh(true);
 		}
 		// Accurate previews happen in the paint engine, fast ones in the item.
 		if(transform->isPreviewAccurate()) {
