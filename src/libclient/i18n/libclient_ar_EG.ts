@@ -521,7 +521,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير تشبع اللون</translation>
     </message>
     <message>
         <location line="+2"/>

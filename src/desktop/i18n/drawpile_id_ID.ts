@@ -587,7 +587,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Spritesheet PNG</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka Pemutaran</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -718,17 +718,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekaman</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Proyek</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Berkas yang Dapat Diperbaiki</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -763,12 +763,12 @@
     <message>
         <location line="+15"/>
         <source>Save Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Berkas yang Diperbaiki</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Berkas yang Diperbaiki</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2138,103 +2138,103 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <location line="-328"/>
         <location line="+56"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Penyimpanan Gagal</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Error preparing project overview file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat saat menyiapkan berkas ikhtisar proyek.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Error preparing timelapse file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat saat menyiapkan berkas timelapse.</translation>
     </message>
     <message>
         <location line="+679"/>
         <source>Resuming…</source>
-        <translation type="unfinished"></translation>
+        <translation>Melanjutkan…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>It may be possible to repair it.</source>
         <extracomment>&quot;It&quot; refers to a corrupted file.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Berkas tersebut mungkin dapat diperbaiki.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Perbaiki</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Incompatible Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekaman Tidak Kompatibel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekaman ini tidak kompatibel dan tidak dapat dibuka dengan versi Drawpile ini.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka Rekaman</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>What do you want to do with this recording?</source>
-        <translation type="unfinished"></translation>
+        <translation>Apa yang ingin Anda lakukan dengan rekaman ini?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Konversi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Turn this recording into a project (dppr) file. Lets you make a timelapse of it afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubah rekaman ini menjadi berkas proyek (dppr). Setelah itu, Anda dapat membuat timelapse darinya.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Directly opens this recording to let you play it back.</source>
-        <translation type="unfinished"></translation>
+        <translation>Langsung membuka rekaman ini agar Anda dapat memutarnya kembali.</translation>
     </message>
     <message>
         <location line="+313"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka Proyek</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open the project file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda akan membuka berkas proyek dan menutup jendela ini.</translation>
     </message>
     <message>
         <location line="+372"/>
         <source>You should have been prompted to save the file. Please wait at least 30 seconds before closing this tab, otherwise some browsers will leave you with an empty file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda seharusnya telah diminta untuk menyimpan berkas. Harap tunggu setidaknya 30 detik sebelum menutup tab ini, karena beberapa peramban dapat menghasilkan berkas kosong!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can check the file size in your operating system. If it is not zero, it should be done saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda dapat memeriksa ukuran berkas di sistem operasi Anda. Jika ukurannya tidak nol, penyimpanan seharusnya telah selesai.</translation>
     </message>
     <message>
         <location line="+334"/>
         <source>Record</source>
-        <translation type="unfinished">Rekam</translation>
+        <translation>Rekam</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda sudah merekam sesi ini karena pemulihan otomatis diaktifkan. Jika Anda menyimpan ke berkas proyek (.dppr), rekaman juga akan disimpan.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Do you want to start another recording anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>Apakah Anda tetap ingin memulai rekaman lain?</translation>
     </message>
     <message>
         <location line="+2325"/>
@@ -2396,7 +2396,7 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
     <message>
         <location line="+7"/>
         <source>Open &amp;Player…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka &amp;Player…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2462,17 +2462,17 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
     <message>
         <location line="+7"/>
         <source>Convert &amp;Recordings to Project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konversi &amp;Rekaman menjadi Proyek…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Merge/split projects…</source>
-        <translation type="unfinished"></translation>
+        <translation>Gabungkan/pisahkan proyek…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Repair file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Perbaiki berkas…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2945,12 +2945,12 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
     <message>
         <location line="+6"/>
         <source>Select Layer Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Lapisan di Atas</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Select Layer Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Lapisan di Bawah</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3818,7 +3818,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+0"/>
         <source>S&amp;hape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Isi B&amp;entuk</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3919,7 +3919,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+4"/>
         <source>Debug Input Events…</source>
-        <translation type="unfinished"></translation>
+        <translation>Debug Peristiwa Input…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3929,7 +3929,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+7"/>
         <source>UDP Activity Stream…</source>
-        <translation type="unfinished"></translation>
+        <translation>Aliran Aktivitas UDP…</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -4034,32 +4034,32 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+5"/>
         <source>None</source>
-        <translation type="unfinished">Tidak ada</translation>
+        <translation>Tidak Ada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: none</source>
-        <translation type="unfinished"></translation>
+        <translation>Menggambar dengan klik kanan: tidak ada</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Gunakan warna latar belakang</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-click drawing: use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Menggambar dengan klik kanan: gunakan warna latar belakang</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing: erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Menggambar dengan klik kanan: hapus</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -4415,77 +4415,77 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="-611"/>
         <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Mask&amp;ing Goresan/Isian Bentuk berdasarkan Seleksi</translation>
     </message>
     <message>
         <location line="+134"/>
         <source>Timeline tool: edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Alat timeline: edit</translation>
     </message>
     <message numerus="yes">
         <location line="+30"/>
         <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
         <source>Set Key Frame(s) to Current Layer</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Atur Key Frame ke Lapisan Saat Ini</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+10"/>
         <source>Set Blank Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Atur Key Frame Kosong</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+55"/>
         <source>Cut Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Potong Key Frame</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Copy Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Salin Key Frame</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>Paste Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Tempel Key Frame</numerusform>
         </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste Decloned Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempel Lapisan Key Frame yang Dibatalkan Kloningnya</translation>
     </message>
     <message numerus="yes">
         <location line="+16"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Delete Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Hapus Key Frame</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Unassign Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Batalkan Penetapan Key Frame</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Declone Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Batalkan Kloning Lapisan Key Frame</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4527,16 +4527,16 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <location filename="../widgets/timelinewidget.cpp" line="-63"/>
         <source>Create Layers on Current Key Frame(s)</source>
         <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Buat Lapisan pada Key Frame Saat Ini</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Create Layer Group(s) on Current Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Buat Grup Lapisan pada Key Frame Saat Ini</numerusform>
         </translation>
     </message>
     <message>
@@ -4671,7 +4671,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+3"/>
         <source>Open &amp;Playback…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka &amp;Pemutaran…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4708,8 +4708,8 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <location filename="../widgets/timelinewidget.cpp" line="-50"/>
         <source>Set Key Frame(s) to %1</source>
         <extracomment>%1 is the name of a layer.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Atur Key Frame ke %1</numerusform>
         </translation>
     </message>
 </context>
@@ -4748,7 +4748,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+1"/>
         <source>Select blue-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda biru</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4768,7 +4768,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+1"/>
         <source>Select green-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda hijau</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4788,7 +4788,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+2"/>
         <source>Select yellow-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda kuning</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4808,7 +4808,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+2"/>
         <source>Select orange-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda oranye</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4828,7 +4828,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+1"/>
         <source>Select brown-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda cokelat</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4848,7 +4848,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+1"/>
         <source>Select red-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda merah</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4868,7 +4868,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+2"/>
         <source>Select purple-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda ungu</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4888,7 +4888,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+1"/>
         <source>Select gray-marked layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih lapisan bertanda abu-abu</translation>
     </message>
 </context>
 <context>
@@ -4979,7 +4979,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+5"/>
         <source>Shape Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Isi Bentuk</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5048,7 +5048,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <location filename="../dialogs/projecteditdialog.cpp" line="+314"/>
         <location filename="../dialogs/projectrepairdialog.cpp" line="+200"/>
         <source>Save</source>
-        <translation type="unfinished">Simpan</translation>
+        <translation>Simpan</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -5056,12 +5056,12 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-135"/>
         <location line="+137"/>
         <source>Cancel</source>
-        <translation type="unfinished">Batal</translation>
+        <translation>Batal</translation>
     </message>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="+9"/>
         <source>Close</source>
-        <translation type="unfinished">Tutup</translation>
+        <translation>Tutup</translation>
     </message>
 </context>
 <context>
@@ -5880,7 +5880,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+57"/>
         <source>Encoder:</source>
-        <translation type="unfinished">Enkoder:</translation>
+        <translation>Encoder:</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -5945,7 +5945,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+34"/>
         <source>%1x%2 sprites at %3x%4 pixels each, %5x%6 pixels total.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spritesheet %1x%2 pada ukuran %3x%4 piksel masing-masing, dengan total %5x%6 piksel.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6371,12 +6371,12 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location filename="../dialogs/brushsavedialog.cpp" line="+17"/>
         <source>Save Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Kuas</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag:</translation>
     </message>
 </context>
 <context>
@@ -6573,12 +6573,12 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     <message>
         <location line="+97"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulihkan Kuas yang Dihapus</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Kuas…</translation>
     </message>
     <message>
         <location line="+320"/>
@@ -8586,17 +8586,17 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-221"/>
         <source>Programming Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat Pemrograman</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FFmpeg is not supported on this platform.</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg tidak didukung pada platform ini.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>If you see this message, you found a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jika Anda melihat pesan ini, Anda telah menemukan bug di Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -9242,7 +9242,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+8"/>
         <source>Converted from a recording file, no timing information available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dikonversi dari berkas rekaman, informasi waktu tidak tersedia.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9319,161 +9319,161 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
         <location line="+746"/>
         <source>Error %1 opening input file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat %1 saat membuka berkas masukan: %2</translation>
     </message>
     <message>
         <location line="-732"/>
         <source>Error %1 opening temporary file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat %1 saat membuka berkas sementara: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error copying to temporary file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat saat menyalin ke berkas sementara: %1</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>No recording in dpcs file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak ada rekaman dalam berkas dpcs.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Failed to open project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka proyek: %1</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Failed to read project: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membaca proyek: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Project contains no sessions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyek tidak berisi sesi.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown file format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format berkas tidak dikenal.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka rekaman: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekaman tidak kompatibel.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Project session %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi proyek %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekaman</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Edit Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunting Proyek</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add the dppr, dprec and dptxt files you want to include. You can drag sessions to change their order and remove unwanted ones from the set. Once done, press %1 to create a new dppr file.</source>
         <extracomment>%1 is what the &quot;Save&quot; button says.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tambahkan berkas dppr, dprec, dan dptxt yang ingin Anda sertakan. Anda dapat menyeret sesi untuk mengubah urutannya dan menghapus sesi yang tidak diinginkan dari kumpulan. Setelah selesai, tekan %1 untuk membuat berkas dppr baru.</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Add</source>
-        <translation type="unfinished">Tambah</translation>
+        <translation>Tambah</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove</source>
-        <translation type="unfinished">Hapus</translation>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move up</source>
-        <translation type="unfinished">Pindah ke atas</translation>
+        <translation>Pindahkan ke atas</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Move down</source>
-        <translation type="unfinished">Pindah ke bawah</translation>
+        <translation>Pindahkan ke bawah</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Project file created successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Berkas proyek berhasil dibuat.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Open project file</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka berkas proyek</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Back</source>
-        <translation type="unfinished">Kembali</translation>
+        <translation>Kembali</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Loading…</source>
-        <translation type="unfinished">Memuat…</translation>
+        <translation>Memuat…</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Failed to initialize temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal menginisialisasi berkas sementara.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Processing…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memproses…</translation>
     </message>
     <message>
         <location line="+103"/>
         <location line="+124"/>
         <source>Error</source>
-        <translation type="unfinished">Kesalahan</translation>
+        <translation>Galat</translation>
     </message>
     <message numerus="yes">
         <location line="-123"/>
         <source>Failed to load %n file(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Gagal memuat %n berkas.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Conversion suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konversi berhasil, tetapi penyimpanan berkas gagal.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Saving project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyimpan proyek…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak ada berkas hasil konversi yang tersedia.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>No file to save to given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak ada berkas tujuan penyimpanan yang diberikan.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Error %1 opening output file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat %1 saat membuka berkas keluaran: %2</translation>
     </message>
 </context>
 <context>
@@ -9481,108 +9481,108 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location filename="../dialogs/projectplaybackdialog.cpp" line="-311"/>
         <source>Play</source>
-        <translation type="unfinished">Putar</translation>
+        <translation>Putar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pause</source>
-        <translation type="unfinished">Jeda</translation>
+        <translation>Jeda</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Loading…</source>
-        <translation type="unfinished">Memuat…</translation>
+        <translation>Memuat…</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Rewind session</source>
-        <translation type="unfinished"></translation>
+        <translation>Putar ulang sesi</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Skip stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Lewati goresan</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Skip session</source>
-        <translation type="unfinished"></translation>
+        <translation>Lewati sesi</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Playback speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Kecepatan pemutaran: </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Unsaved changes will be lost if you continue!</source>
-        <translation type="unfinished"></translation>
+        <translation>Perubahan yang belum disimpan akan hilang jika Anda melanjutkan!</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Options</source>
-        <translation type="unfinished">Opsi</translation>
+        <translation>Opsi</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Follow view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikuti tampilan</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengonversi rekaman %1…</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Failed to open temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka berkas sementara.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Conversion cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konversi dibatalkan.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Opening project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Membuka proyek…</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Player Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat Player</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Nothing to play back.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak ada yang dapat diputar.</translation>
     </message>
     <message>
         <location line="+127"/>
         <source>uncapped</source>
         <extracomment>This refers to uncapped playback speed. I didn&apos;t want to call this &quot;unlimited&quot; because it&apos;s still limited by how fast the device can actually play a recording, but no artificial limits.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>tanpa batas</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Session %1 - End</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi %1 - Selesai</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi %1 - Galat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1</source>
-        <translation type="unfinished">Sesi %1</translation>
+        <translation>Sesi %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Sequence number %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nomor urut %1</translation>
     </message>
 </context>
 <context>
@@ -9653,62 +9653,62 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-182"/>
         <source>Repair Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Perbaiki Proyek</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Checking…</source>
-        <translation type="unfinished">Memeriksa…</translation>
+        <translation>Memeriksa…</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Repairing…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memperbaiki…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibatalkan.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error %1:</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat %1:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The project has been repaired, but no corruption was detected. You can choose to save it file anyway, but it may now contain invalid data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyek telah diperbaiki, tetapi tidak ada kerusakan yang terdeteksi. Anda tetap dapat memilih untuk menyimpan berkas tersebut, tetapi kini berkas mungkin berisi data yang tidak valid.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The project has been repaired, choose a file to save it to.</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyek telah diperbaiki, pilih berkas untuk menyimpannya.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is strongly recommended that you save to a new file. Overwriting an existing file may render it irrecoverable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sangat disarankan agar Anda menyimpan ke berkas baru. Menimpa berkas yang ada dapat menyebabkan berkas tersebut tidak dapat dipulihkan.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Tersimpan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The repaired project has been saved, do you want to open it now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyek yang telah diperbaiki sudah disimpan, apakah Anda ingin membukanya sekarang?</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error</source>
-        <translation type="unfinished">Kesalahan</translation>
+        <translation>Galat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Error saving repaired project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Galat saat menyimpan proyek yang telah diperbaiki.</translation>
     </message>
 </context>
 <context>
@@ -10496,7 +10496,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+7"/>
         <source>Manage servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kelola server</translation>
     </message>
     <message>
         <location line="+381"/>
@@ -10581,25 +10581,25 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <location line="+94"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+259"/>
         <source>This encoder requires FFmpeg, click here to set it up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder ini memerlukan FFmpeg, klik di sini untuk menyiapkannya.</translation>
     </message>
     <message>
         <location line="+200"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoder yang dipilih memerlukan FFmpeg. Apakah Anda ingin menyiapkannya sekarang?</translation>
     </message>
     <message>
         <location line="+89"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+493"/>
         <source>Internal</source>
-        <translation type="unfinished"></translation>
+        <translation>Internal</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+7"/>
         <source>Automatic (%1)</source>
-        <translation type="unfinished">Otomatis (%1)</translation>
+        <translation>Otomatis (%1)</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10661,7 +10661,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+37"/>
         <source>Switch to speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Beralih ke kecepatan</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10671,17 +10671,17 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+11"/>
         <source>Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kecepatan:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Switch to duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Beralih ke durasi</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Speed presets:</source>
-        <translation type="unfinished"></translation>
+        <translation>Prasetel kecepatan:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10868,7 +10868,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+119"/>
         <source>Calculating video duration…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menghitung durasi video…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10890,7 +10890,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+138"/>
         <source>Choose Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Warna Latar Belakang</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10931,7 +10931,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <location line="+17"/>
         <source>Video duration: %1</source>
         <extracomment>%1 is a time, something like &quot;1 minute, 30 seconds&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Durasi video: %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -11151,13 +11151,13 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+7"/>
         <source>Default file name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama berkas default:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, %S seconds, %T session title.</source>
         <extracomment>These are template placeholders for the default file name. For example, if the user types in %Y, it will be replaced with the current year. Do not change the letters or casing!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Placeholder: %Y tahun, %m bulan, %d hari, %H jam, %M menit, %S detik, %T judul sesi.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11643,37 +11643,37 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+14"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Pesan obrolan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Pesan pribadi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengguna bergabung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengguna keluar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Kanvas terkunci</translation>
+        <translation>Kanvas dikunci</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Kanvas tidak terkunci</translation>
+        <translation>Kanvas dibuka kuncinya</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Terputus</translation>
+        <translation>Terputus</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -12223,19 +12223,19 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+3"/>
         <source>Wait for movement before starting strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunggu pergerakan sebelum memulai goresan</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore inputs with no pressure (Gaomon)</source>
         <extracomment>Gaomon is a brand that makes pen tablets. This is a setting for a workaround that ignores zero-pressure movements from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Abaikan input tanpa tekanan (Gaomon)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore full-pressure blotches (Ugee)</source>
         <extracomment>Ugee is a brand that makes pen tablets. This is a setting for a workaround that ignores full-pressure blotches from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Abaikan noda dengan tekanan penuh (Ugee)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12383,39 +12383,39 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+7"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Jangan lakukan apa pun</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Gunakan warna latar belakang</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Menggambar dengan klik kanan:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Option</source>
         <extracomment>The Option key on Mac computer keyboards. On macOS, you have this key on your keyboard instead of the Alt key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Option</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
         <extracomment>The Alt key on PC keyboards.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Double-tap %1 key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Ketuk dua kali tombol %1 untuk memfokuskan kanvas</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12524,12 +12524,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+14"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">Penghalusan: </translation>
+        <translation>Penghalusan: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Jangan lakukan apa pun</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12599,7 +12599,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+7"/>
         <source>One-finger double-tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ketuk dua kali dengan satu jari:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -12654,17 +12654,17 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+26"/>
         <source>Mirror canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerminkan kanvas secara horizontal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Balikkan kanvas secara vertikal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trigger action</source>
-        <translation type="unfinished"></translation>
+        <translation>Picu tindakan</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -13231,7 +13231,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="-441"/>
         <source>Session: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi: %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -13263,7 +13263,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+4"/>
         <source>Corrupted, may be possible to repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Rusak, mungkin dapat diperbaiki</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13318,27 +13318,27 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+17"/>
         <source>Corrupted File</source>
-        <translation type="unfinished"></translation>
+        <translation>Berkas Rusak</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This file is corrupted. Do you want to attempt to repair it or save it as-is?</source>
-        <translation type="unfinished"></translation>
+        <translation>Berkas ini rusak. Apakah Anda ingin mencoba memperbaikinya atau menyimpannya sebagaimana adanya?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can also attempt to repair it after saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda juga dapat mencoba memperbaikinya setelah menyimpannya.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Perbaiki</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as-is</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan sebagaimana adanya</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -14082,23 +14082,23 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+3"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulihkan Kuas yang Dihapus</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Kuas…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove Brush from History</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus Kuas dari Riwayat</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+875"/>
         <source>Clear Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus Riwayat Kuas</translation>
     </message>
     <message>
         <location line="-872"/>
@@ -14272,44 +14272,44 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+1"/>
         <source>You can still recover it from the brush history.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda masih dapat memulihkannya dari riwayat kuas.</translation>
     </message>
     <message numerus="yes">
         <location line="+19"/>
         <source>%n deleted brush(es) will be erased irrecoverably.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n kuas yang dihapus akan dihapus secara permanen dan tidak dapat dipulihkan.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Do you really want to clear the contents of the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>Apakah Anda benar-benar ingin menghapus isi tag riwayat?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Clear</source>
-        <translation type="unfinished">Hapus</translation>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>The brush will be deleted permanently and cannot be recovered.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kuas akan dihapus secara permanen dan tidak dapat dipulihkan.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus Riwayat Kuas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really remove brush &apos;%1&apos; from the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>Benarkah ingin menghapus kuas &apos;%1&apos; dari tag riwayat?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove</source>
-        <translation type="unfinished">Hapus</translation>
+        <translation>Hapus</translation>
     </message>
 </context>
 <context>
@@ -15274,7 +15274,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-293"/>
         <source>Right-click drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Menggambar dengan klik kanan</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -15344,17 +15344,17 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+7"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulihkan Kuas yang Dihapus</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Kuas…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove Brush From History</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus Kuas dari Riwayat</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -15724,27 +15724,27 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+5"/>
         <source>Lasso</source>
-        <translation type="unfinished"></translation>
+        <translation>Laso</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fills the shape with intersections making holes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengisi bentuk dengan perpotongan sehingga membentuk lubang</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Fan</source>
-        <translation type="unfinished"></translation>
+        <translation>Kipas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fills the shape without holes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengisi bentuk tanpa lubang</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished">Bentuk:</translation>
+        <translation>Bentuk:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -16185,7 +16185,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location line="+47"/>
         <source>Playback in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Pemutaran sedang berlangsung</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -16218,7 +16218,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <message>
         <location filename="../widgets/banner.cpp" line="+45"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutup</translation>
     </message>
 </context>
 <context>
