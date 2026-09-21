@@ -9574,28 +9574,28 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+37"/>
         <source>Player Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de Reproducción</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Nothing to play back.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay nada que reproducir.</translation>
     </message>
     <message>
         <location line="+127"/>
         <source>uncapped</source>
         <extracomment>This refers to uncapped playback speed. I didn&apos;t want to call this &quot;unlimited&quot; because it&apos;s still limited by how fast the device can actually play a recording, but no artificial limits.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">sin límite (artificial, dependerá del dispositivo)</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Session %1 - End</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sesión %1 - Fin</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session %1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sesión %1 - Error</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9605,7 +9605,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Sequence number %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Número de secuencia %1</translation>
     </message>
 </context>
 <context>
@@ -9676,52 +9676,52 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/projectrepairdialog.cpp" line="-182"/>
         <source>Repair Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparar proyecto</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificando…</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Repairing…</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparando…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelado.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error %1:</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>The project has been repaired, but no corruption was detected. You can choose to save it file anyway, but it may now contain invalid data.</source>
-        <translation type="unfinished"></translation>
+        <translation>El proyecto ha sido reparado, pero no se detectó ningún error. Puedes guardar el archivo de todos modos, pero es posible que contenga datos no válidos.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The project has been repaired, choose a file to save it to.</source>
-        <translation type="unfinished"></translation>
+        <translation>El proyecto ha sido reparado, elija un archivo para guardarlo.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is strongly recommended that you save to a new file. Overwriting an existing file may render it irrecoverable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se recomienda encarecidamente guardar el archivo en uno nuevo. Sobrescribir un archivo existente puede hacerlo irrecuperable.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The repaired project has been saved, do you want to open it now?</source>
-        <translation type="unfinished"></translation>
+        <translation>El proyecto reparado se ha guardado, ¿quieres abrirlo ahora?</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9731,7 +9731,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Error saving repaired project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al guardar el proyecto reparado.</translation>
     </message>
 </context>
 <context>
@@ -10522,7 +10522,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Manage servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Administrar servidores</translation>
     </message>
     <message>
         <location line="+381"/>
@@ -10608,25 +10608,25 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+94"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+259"/>
         <source>This encoder requires FFmpeg, click here to set it up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este codificador requiere FFmpeg; haga clic aquí para configurarlo.</translation>
     </message>
     <message>
         <location line="+200"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
-        <translation type="unfinished"></translation>
+        <translation>El codificador seleccionado requiere FFmpeg. ¿Desea configurarlo ahora?</translation>
     </message>
     <message>
         <location line="+89"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+493"/>
         <source>Internal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Interno</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../dialogs/timelapsedialog.cpp" line="+7"/>
         <source>Automatic (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automático (%1)</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10688,7 +10688,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+37"/>
         <source>Switch to speed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cambiar a velocidad</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10698,17 +10698,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Switch to duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar a duración</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Speed presets:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajustes de velocidad preestablecidos:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10895,50 +10895,50 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+119"/>
         <source>Calculating video duration…</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculando la duración del vídeo…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Starting export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando exportación…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Cancelling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelando…</translation>
     </message>
     <message numerus="yes">
         <location line="+575"/>
         <source>%1 loop(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 bucle</numerusform>
+            <numerusform>%1 bucles</numerusform>
         </translation>
     </message>
     <message>
         <location line="+138"/>
         <source>Choose Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Elegir color de fondo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Choose Backdrop Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Elegir color de telón de fondo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Choose Flash Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige el color del flash</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to reset all timelapse settings to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Estás seguro de que quieres restablecer todos los ajustes de lapso de tiempo a sus valores predeterminados?</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -10959,13 +10959,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+17"/>
         <source>Video duration: %1</source>
         <extracomment>%1 is a time, something like &quot;1 minute, 30 seconds&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Duración del vídeo: %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Timelapse exported in %1.</source>
         <extracomment>%1 is a time, like &quot;1 minute, 20 seconds&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lapso de tiempo (Timelapse) exportado en: %1.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -10975,7 +10975,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Failed to export timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error al exportar el lapso de tiempo (timelapse).</translation>
     </message>
 </context>
 <context>
@@ -11083,29 +11083,29 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+52"/>
         <source>Changing autorecovery preferences will not affect the status or limits of any running sessions. [Click here to manage autorecovery on your current session.]</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Modificar las preferencias de recuperación automática no afectará el estado ni los límites de las sesiones en ejecución. [Haga clic aquí para administrar la recuperación automática en su sesión actual.]</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>When offline or hosting sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuando está desconectado o aloja sesiones</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autorecovery:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Auto-recuperación:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When joining sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Al unirse a las sesiones</translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>Snapshot every %1 minute(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Guardar una instantánea cada %1 minuto</numerusform>
+            <numerusform>Guardar instantáneas cada %1 minutos</numerusform>
         </translation>
     </message>
     <message>
@@ -11140,7 +11140,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="-15"/>
         <location line="+17"/>
         <source>Drawpile Project (.dppr)</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyecto de Drawpile (.dppr)</translation>
     </message>
     <message>
         <location line="-14"/>
@@ -11180,13 +11180,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Default file name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre del archivo por defecto:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Placeholders: %Y year, %m month, %d day, %H hours, %M minutes, %S seconds, %T session title.</source>
         <extracomment>These are template placeholders for the default file name. For example, if the user types in %Y, it will be replaced with the current year. Do not change the letters or casing!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Marcadores de posición: %Y año, %m mes, %d día, %H horas, %M minutos, %S segundos, %T título de la sesión.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11201,33 +11201,33 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Clear log files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar archivos de registro…</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+7"/>
         <source>Clear Log Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar archivos de registro</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No log files to clear found.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se encontraron archivos de registro para borrar.</translation>
     </message>
     <message numerus="yes">
         <location line="+8"/>
         <source>Do you want to delete %n log file(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>¿Desea eliminar el archivo de registro %n?</numerusform>
+            <numerusform>¿Desea eliminar los archivos de registro %n?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>It/They take(s) up %1 of space.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Ocupa %1 de espacio.</numerusform>
+            <numerusform>Ocupan %1 de espacio.</numerusform>
         </translation>
     </message>
 </context>
@@ -11305,7 +11305,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+15"/>
         <source>Improve zoom quality (hardware renderer only)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mejora la calidad del zoom (solo renderizador de hardware)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -11326,7 +11326,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+31"/>
         <source>%1 (not found)</source>
         <extracomment>%1 is the name of a theme, whose file was not found.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (no encontrado)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11344,7 +11344,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+8"/>
         <source>Night Mode</source>
         <extracomment>The name for a color scheme that is dark like the night.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Modo Nocturno</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11675,22 +11675,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+14"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mensaje de Chat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mensaje privado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Un Usuario se a unido</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">El Usuario se fue</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12096,22 +12096,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+18"/>
         <source>Choose which shortcuts you want to modify:</source>
-        <translation type="unfinished"></translation>
+        <translation>Elija qué accesos directos desea modificar:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keyboard shortcuts to trigger actions, like switching tools, creating layers or anything else you can pick from the top menu bar.</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajos de teclado para activar acciones, como cambiar de herramienta, crear capas o cualquier otra cosa que pueda elegir desde la barra de menú superior.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Keyboard shortcuts to switch brushes. Assigning the same shortcut to multiple brushes will toggle through them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajos de teclado para cambiar pinceles. Asignar el mismo atajo a varios pinceles se alternará entre ellos.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Shortcuts for mouse or stylus buttons, wheels or keyboard keys that apply only in the canvas view. For example, panning, rotating, zooming, color picking, brush resizing and more.</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajos para botones de ratón o stylus, ruedas o teclas de teclado que se aplican solo en la vista de lienzo. Por ejemplo, panorámica, rotación, zoom, selección de color, cambio de tamaño de pincel y más.</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -12253,42 +12253,42 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Workarounds:</source>
-        <translation type="unfinished"></translation>
+        <translation>Soluciones de compatibilidad:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Wait for movement before starting strokes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Espere el movimiento antes de iniciar los trazos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore inputs with no pressure (Gaomon)</source>
         <extracomment>Gaomon is a brand that makes pen tablets. This is a setting for a workaround that ignores zero-pressure movements from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ignorar las entradas sin presión (Gaomon)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ignore full-pressure blotches (Ugee)</source>
         <extracomment>Ugee is a brand that makes pen tablets. This is a setting for a workaround that ignores full-pressure blotches from those.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ignore las manchas de presión total (Gee)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Translate F21 key to middle click (OnePlus)</source>
         <extracomment>OnePlus is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Traducir la tecla F21 al clic central (OnePlus)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Translate page keys to clicks (Xiaomi)</source>
         <extracomment>Xiaomi is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Traducir teclas de página a clics (Xiaomi)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Disregard position history (Xiaomi)</source>
         <extracomment>Xiaomi is a brand that makes Android tablets. This is a setting for a workaround that matters for those tablets.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar el historial de posiciones (Xiaomi)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12377,12 +12377,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-9"/>
         <source>No outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin contorno</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Blank</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vacío/ninguna</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12418,39 +12418,39 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>No hacer nada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Use background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar color de fondo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-click drawing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dibujar con Click derecho:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Option</source>
         <extracomment>The Option key on Mac computer keyboards. On macOS, you have this key on your keyboard instead of the Alt key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Option</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
         <extracomment>The Alt key on PC keyboards.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Double-tap %1 key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulsa dos veces la tecla %1 para enfocar el lienzo</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12527,12 +12527,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+29"/>
         <source>Enable pressure for touch drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar la presión para dibujar con la pantalla táctil</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
-        <translation type="unfinished"></translation>
+        <translation>Necesario para ciertas tabletas con pantalla; ¡probablemente no funcione para dibujar con el dedo!</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -12565,7 +12565,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>No hacer nada</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12635,7 +12635,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>One-finger double-tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Doble toque con un dedo:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -12650,7 +12650,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Automatic (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automático (%1)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12690,17 +12690,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+26"/>
         <source>Mirror canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Espejo de lienzo horizontal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Voltee el lienzo boca abajo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trigger action</source>
-        <translation type="unfinished"></translation>
+        <translation>Acción del gatillo</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -12733,7 +12733,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Change mode and scale…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar modo y escala…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -12829,7 +12829,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>View mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Avisos del modo de visualización</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13095,12 +13095,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+51"/>
         <source>HostError</source>
-        <translation type="unfinished"></translation>
+        <translation>Error del host</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Public sessions require a title. Do you want to host an invite-only session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Las sesiones públicas requieren un título. ¿Prefieres organizar una sesión solo por invitación?</translation>
     </message>
     <message>
         <location line="+16"/>
