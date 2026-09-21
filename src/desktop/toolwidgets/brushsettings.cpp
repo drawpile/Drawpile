@@ -2519,7 +2519,7 @@ int BrushSettings::getDefaultPresetIdForSlot(int i)
 	case 8:
 		return 126; // MyPaint Kaerhorn Classic SK
 	case ERASER_SLOT_INDEX:
-		return 200; // Drawpile Paint 2
+		return 199; // Drawpile Paint 1
 	default:
 		qWarning("Unknown slot for default preset %d", i);
 		return 0;
@@ -2581,15 +2581,13 @@ QByteArray BrushSettings::getDefaultBrushForSlot(int i)
 			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
 			   "classic\",\"version\":1}";
 	case ERASER_SLOT_INDEX:
-		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
-			   "dst-out\",\"erase\":true,\"hard\":0.800000011920929,"
-			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
-			   "0;1,1;\",\"opacityp\":true,\"resmudge\":1,\"shape\":\"round-"
-			   "soft\",\"size\":20,\"sizecurve\":\"0,0;0.25,0.0625;0.5,0.25;0."
-			   "75,0.5625;1,1;\",\"sizep\":true,\"smoothing\":0,"
-			   "\"smudgecurve\":\"0,0;1,1;\",\"spacing\":0.05000000074505806,"
-			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
-			   "classic\",\"version\":1}";
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"-dp-"
+			   "erase\",\"hard\":0.699999988079071,\"hardcurve\":\"0,0;1,1;\","
+			   "\"opacity\":1,\"opacitycurve\":\"0,0;1,1;\",\"opacityp\":true,"
+			   "\"resmudge\":1,\"shape\":\"round-soft\",\"size\":20,"
+			   "\"sizecurve\":\"0,0;1,1;\",\"smudgecurve\":\"0,0;1,1;\","
+			   "\"spacing\":0.20000000298023224,\"stabilizer\":0},\"type\":"
+			   "\"dp-classic\",\"version\":1}";
 	default:
 		qWarning("Unknown slot for default brush %d", i);
 		return QByteArray();
