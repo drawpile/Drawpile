@@ -1,0 +1,1 @@
+Support for exporting video for animations and timelapses on Android, Android 16 support, better session resumption, project playback and more. See the webstie for the full changelog.
