@@ -25,6 +25,76 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.3.1-beta.2" type="development" date="2026-09-22">
+      <url>https://drawpile.net/news/release-2.3.1-beta.2/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.</li>
+          <li>Fix: Make default filename use *months* as the second number, not *minutes*. Thanks hipofiz for reporting.</li>
+          <li>Fix: Allow dragging initial curve tool point to let you change its control point again. Thanks Astre for reporting.</li>
+          <li>Fix: A fix for the application not starting up on Android older than 8. Thanks freyalupen for reporting.</li>
+          <li>Feature: Allow triggering any action via touch taps. Thanks Bnuuyman for suggesting.</li>
+          <li>Feature: Add one-finger double-tap touch action. Lets you bind stuff to tapping twice quickly with a single finger. Thanks Bnuuyman for suggesting.</li>
+          <li>Feature: Allow selecting multiple frames in the timeline, letting you move, copy, delete etc. them all at once. You can use Shift or Ctrl or switch to the "select" timeline tool to do it without keyboard keys.</li>
+          <li>Feature: Add support for stylus barrel rotation on Android, for styluses that support it. Thanks kwh0209 for helping test this. This is a patch to Qt.</li>
+          <li>Fix: Make repeated move transforms not cause the transformation to get scaled by one pixel. Thanks Hermanni for reporting.</li>
+          <li>Feature: Allow fractional scaling for animation exports, in case you need very specific pixel dimensions.</li>
+          <li>Feature: Allow configuring right-click drawing to do nothing (the default), draw with the background color or erase. Thanks noelle and walnut for suggesting.</li>
+          <li>Fix: Give select layer above and below shortcuts a proper title with "layer" in the name so that you have a chance of finding them in the list. Thanks anonymous for reporting.</li>
+          <li>Feature: Allow selecting color-marked layers via keyboard shortcuts. Thanks anonymous for suggesting.</li>
+          <li>Feature: If Drawpile on Android is terminated due to resource exhaustion, such as running out of memory, it will now show a message about it on the next startup. Thanks Bluestrings for suggesting.</li>
+          <li>Feature: Add a workaround for full-pressure blotches on Ugee tablets. Enabled by default on Android and the browser where it is known to happen, shouldn't cause interference for styluses that behave normally. Thanks London for reporting.</li>
+          <li>Fix: Make sure MyPaint brush strokes start with proper directional values if the brush makes use of them. Previously they could end up with the value being zero degrees instead. Thanks tiar for reporting.</li>
+          <li>Fix: Call the Option key on macOS by its proper name. Thanks Axocrat for reporting.</li>
+          <li>Feature: Allow configuring whether a stroke is started only when moving the stylus. Enabled by default, as it was before. Thanks dAVePAGE for suggesting.</li>
+          <li>Fix: Make MyPaint brushes not require movement to put down the first part of their stroke. Brushes that use directional inputs don't do this, since movement is needed to have a direction. Thanks dAVePAGE for reporting.</li>
+          <li>Feature: Turn the lasso fill tool into a shape fill tool with two shape options: lasso and fan. The latter option does not produce holes, everything gets filled. Thanks lan700ng and VolutBrum for suggesting.</li>
+          <li>Fix: Correct saving of key frame properties to dppr files. Thanks marddle for reporting.</li>
+          <li>Feature: Allow exporting animations and timelapses on Android with the OS-supplied media encoder. Thanks Bluestrings, hpar and marddle for testing.</li>
+          <li>Fix: Make WEBM video export use a higher quality.</li>
+          <li>Feature: Add a declone key frame layers action. For the selected key frames, it will duplicate the layers referenced by multiple key frames.</li>
+          <li>Feature: Add a paste decloned key frame layers action. Will paste and duplicate layers if necessary.</li>
+          <li>Fix: Allow hitting enter/return twice on a number input to accept the dialog they're in, rather than entering edit mode again. You can also hold Shift to explicitly accept the dialog and Ctrl to explicitly enter edit mode instead.</li>
+          <li>Feature: Allow configuring the default save file name format under Edit &gt; Preferences &gt; Files. Thanks Bluestrings for suggesting.</li>
+          <li>Feature: Show the current layer title on the cursor when using the layer pick canvas shortcut (Ctrl+Shift+Left Click by default.) Thanks Gabr for suggesting.</li>
+          <li>Fix: Take the canvas rotation into account when constraining the angle (Shift by default) in the line and gradient tools. Thanks Ben for reporting.</li>
+          <li>Fix: Properly remember the selection of built-in brush tags like All or Untagged.</li>
+          <li>Feature: A history of used brushes, selectable as as a new "History" tag. Deleted brushes and brushes requested from other users will be retained here and can be undeleted or saved respectively until the history is cleared or they are explicitly removed. Thanks Ausjamcian, Geese and Phoneme for suggesting.</li>
+          <li>Feature: Add a clear button for the search field in the brushes dock. Thanks Bluestrings for suggesting.</li>
+          <li>Fix: Optimize non-tile-aligned canvas resizes. They should now be faster and use less memory. Thanks Bluestrings for reporting.</li>
+          <li>Fix: Retrieve file display names properly on Android. They could sometimes end up with wonky names when using file providers with ugly paths.</li>
+          <li>Fix: Use the proper input minimum and input maximum ranges in the MyPaint brush settings. Thanks Pine for reporting.</li>
+          <li>Feature: Allow exporting animations and timelapses on Windows using the OS-supplied media encoder.</li>
+          <li>Fix: Allow toggling the workaround that ignores zero-pressure tablet inputs, in case you have a tablet that reports no pressure despite you pressing the stylus down. SuperDisplay is known to do this. Thanks Tenzin for reporting.</li>
+          <li>Fix: Encode special characters in invite links so that they don't cause trouble when copying them around. Thanks Bluestrings for reporting.</li>
+          <li>Feature: Project playback, via File &gt; Open Player. Can play back dppr files. This replaces the previous player, dprec and dptxt files will be converted on the fly.</li>
+          <li>Feature: Drawpile will now ask you if you start a recording while autorecovery is enabled, to avoid accidentally recording double for no reason. Thanks tiar for reporting.</li>
+          <li>Feature: Allow converting dprec and dptxt recordings to dppr files via File &gt; Import &gt; Convert Recordings to Project. You'll also be prompted about it when you use File &gt; Open on these files.</li>
+          <li>Feature: Support for Android 16. Older versions continue to be supported, same as before.</li>
+          <li>Fix: Make timeline selection tool work properly while dragging over a track with onion skins enabled.</li>
+          <li>Feature: Add Tools &gt; Developer Tools &gt; UDP Activity Stream. This emits the cursor position over the canvas view and some other activity over a UDP socket, which can be consumed by stream avatars, brush sound makers and similar programs. Thanks Maniko for suggesting.</li>
+          <li>Feature: PNG spritesheet export for animations. Thanks greendyno and ULTRA TECH for suggesting.</li>
+          <li>Fix: A crash when resizing the canvas smaller while a lasso selection is being transformed. Thanks greendyno for reporting.</li>
+          <li>Feature: Repairing dppr and dpcs files via File &gt; Repair File. If the file is detected to be corrupted, you will also be prompted to repair it when opening or recovering the file.</li>
+          <li>Feature: The the position, zoom, rotation, mirror and flip state of the view is now saved in dppr files. This state is restored when resuming a session on Android and following it can be toggled in the playback dialog.</li>
+          <li>Feature: When using Save As to save to a new dppr file, the current dppr file will be used as the basis for it, rather than an empty file. Thanks tiar for suggesting.</li>
+          <li>Fix: Make Selection → Fill Selection, gradient tool and shape fill tool adhere to layer alpha lock. Thanks hipofiz and Verdrusk for reporting.</li>
+          <li>Fix: Show proper download progress for list server favicons.</li>
+          <li>Fix: Make double-clicking dock titlebars not toggle them floating, since that's too easy to activate accidentally.</li>
+          <li>Fix: Increase the drag threshold for arranging docks and toolbars in general, as well as for docks when not in arrange mode even further, to avoid accidental rearrangements.</li>
+          <li>Feature: Add File → Merge/split projects. This lets you combine multiple dppr files or pull individual sessions out of them. Adding dprec/dptxt recordings to them is also supported.</li>
+          <li>Feature: Warn about closing the browser tab too quickly after saving, since several browers will truncate the target file to 0 bytes and then write to a temporary file, leaving you with the former if you exit too quickly.</li>
+          <li>Feature: The browser pressure tester now shows the pressure value and lets you toggle whether to optimize for low-pressure styluses like Apple Pencils, in case it doesn't get detected automatically.</li>
+          <li>Server Feature: Tell the user how many hours or minutes remain on their ban if it expires in less than 3 days, since giving just a date can make it confusing with regards to time zones. Thanks Bluestrings for suggesting.</li>
+          <li>Feature: Allow switching timelapses to be speed-based instead of duration-based. It will calculate the video duration from the given speed. Thanks xxxx for suggesting.</li>
+          <li>Fix: When saving an ORA file with clipping groups, the animation timeline's frame assignments no longer get garbled. Thanks BluesFlying for reporting.</li>
+          <li>Fix: Solve an issue where on some systems you would get disconnected on the first attempt of joining a session and then it worked fine on reconnect. This fix was already applied on Android, but aparently it also rarely happens elsewhere. Thanks Greendyno for reporting.</li>
+          <li>Feature: Replace the New and Open buttons in the toolbar with a menu that has common file actions and repeats the top menu bar for systems where that's annoying to access. Thanks tysontan for suggesting.</li>
+          <li>Feature: Allow dragging the logo in the timelapse dialog, rather than having to fiddle with the padding sliders.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.3.1-beta.1" type="development" date="2026-05-16">
       <url>https://drawpile.net/news/release-2.3.1-beta.1/</url>
       <description>
