@@ -8977,7 +8977,9 @@ void MainWindow::setupActions()
 	commonMenu->addAction(savesel);
 #endif
 	commonMenu->addAction(exportAnimation);
+#ifdef DRAWPILE_TIMELAPSE_DIALOG
 	commonMenu->addAction(makeTimelapse);
+#endif
 	commonMenu->addSeparator();
 	commonMenu->addMenu(filemenu);
 	commonMenu->addMenu(editmenu);
