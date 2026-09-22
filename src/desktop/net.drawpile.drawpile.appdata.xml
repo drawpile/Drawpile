@@ -94,6 +94,53 @@
           <li>Feature: Allow dragging the logo in the timelapse dialog, rather than having to fiddle with the padding sliders.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-x86_64.msi</location>
+          <checksum type="sha256">592875342cff8f7ef6ad949cbb751f53040320606d4678f412689455fa90362a</checksum>
+          <size type="download">25174016</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-x86.msi</location>
+          <checksum type="sha256">5c39bc5c5f284c28e4629db4f1b412ec89d1ce723d77064976a177e64b8f24fc</checksum>
+          <size type="download">21372928</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-arm64.msi</location>
+          <checksum type="sha256">6bfa0275a42d981e44e3288c835591e778ab6c582b5fbe5a6702c1341165beaa</checksum>
+          <size type="download">22675456</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-x86_64.dmg</location>
+          <checksum type="sha256">d65c8558bf65448eef9eb8ecc8b6166d91c9bed13c796e09b83f823a84e88c45</checksum>
+          <size type="download">34841656</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-arm64.dmg</location>
+          <checksum type="sha256">fd32bce19c275f9fb5f7618d86d669eafe5c98247fa4ce6cbae66f3684c352f7</checksum>
+          <size type="download">32141790</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-x86_64.AppImage</location>
+          <checksum type="sha256">75044294062b5bcbc607b9cbbb031e403b4cf9e20f07ddd87522d5caf0877db6</checksum>
+          <size type="download">56202432</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-30-36-arm64-v8a.apk</location>
+          <checksum type="sha256">6948c1cc35adac29182b5136e42403dfda3d577b6656ccdc5629aadcb6e30535</checksum>
+          <size type="download">24533334</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1-beta.2/Drawpile-2.3.1-beta.2-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">95064de58308100197c82e5bcc90a69ba69202cfbebf65ac71d0f8279babe0cb</checksum>
+          <size type="download">21170736</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.1-beta.2.tar.gz</location>
+          <checksum type="sha256">f44c1e7944983176e54c7d44d38ff68d649976114415eadc9edc39ab2e13b0a9</checksum>
+          <size type="download">12254781</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.3.1-beta.1" type="development" date="2026-05-16">
       <url>https://drawpile.net/news/release-2.3.1-beta.1/</url>
