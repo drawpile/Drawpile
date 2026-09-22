@@ -5561,7 +5561,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/inputsettingsdialog.cpp" line="+54"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -13217,32 +13217,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="+429"/>
         <source>No files to recover.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No hay archivos para recuperar.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Autorecovery Removal Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al eliminar la recuperación automática</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Could not remove autorecovery file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo eliminar el archivo de autorrecuperación %1.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>File not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo no encontrado.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>File is locked by another process.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo está bloqueado por otro proceso.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error deleting file: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error eliminando el archivo: %1.</translation>
     </message>
 </context>
 <context>
@@ -13250,7 +13250,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/recovernotice.cpp" line="+45"/>
         <source>You have unsaved files to recover!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">¡Tienes archivos sin guardar para recuperar!</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -13260,7 +13260,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Descartar</translation>
     </message>
 </context>
 <context>
@@ -13268,49 +13268,49 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/recover.cpp" line="-441"/>
         <source>Session: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Modified %1</source>
         <extracomment>%1 is a date and time saying when the file was last modified.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modificado el %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown modification time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fecha de modificación desconocida</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Size: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Work time: %1</source>
         <extracomment>How long you&apos;ve worked on an autorecovery file. %1 is either a time span like &quot;1 hour and 15 minutes&quot; or &quot;unknown&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo invertido: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Locked by another process</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueado por otro proceso</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Corrupted, may be possible to repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Corrompido, puede ser posible reparar</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown status</source>
-        <translation type="unfinished"></translation>
+        <translation>Estado desconocido</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13330,17 +13330,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+13"/>
         <source>Delete Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Borrar archivo de autorecuperación</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to permanently delete this autorecovery file?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Estas seguro de que quieres borrar este archivo de auto recuperación de forma permanente?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Any unrecovered data will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los datos no recuperados se perderán.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13355,47 +13355,47 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+17"/>
         <source>Corrupted File</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo corrupto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This file is corrupted. Do you want to attempt to repair it or save it as-is?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Este archivo está dañado. ¿Desea intentar repararlo o guardarlo tal cual?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can also attempt to repair it after saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>También puedes intentar repararlo después de guardarlo.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Repair</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as-is</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar tal cual</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Download Started</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga iniciada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your browser should have prompted you to download the file. Make sure to check it for completeness afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tu navegador debería haberte pedido que descargaras el archivo. Asegúrate de comprobar que esté completo después.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de descarga</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to read autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al leer el archivo de autorrecuperación: %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -13405,47 +13405,47 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Verification Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de verificación</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file may not have been saved correctly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es posible que el archivo no se haya guardado correctamente.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export successful. Do you want to open the file now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportación realizada con éxito. ¿Desea abrir el archivo ahora?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete original autorecovery file</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar el archivo de recuperación automática original</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Failed to open autorecovery file for verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No se pudo abrir el archivo de autorrecuperación para su verificación: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Failed to open target file for verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir el archivo de destino para su verificación: %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Verification failed: file sizes do not match</source>
-        <translation type="unfinished"></translation>
+        <translation>Falló la verificación: los tamaños de los archivos no coinciden</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery file read error during verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de lectura del archivo de autorrecuperación durante la verificación: %1</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13473,7 +13473,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation>Despedir</translation>
+        <translation>Descartar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13511,7 +13511,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation>Estás usando la versión de navegador web de Drawpile en modo independiente. &lt;strong&gt; No &lt;/strong&gt; guardará automáticamente lo que dibujes, ¡así que guárdalo con frecuencia!</translation>
+        <translation>Estás usando la versión de navegador web de Drawpile en modo independiente. &lt;strong&gt;No&lt;/strong&gt; guardará automáticamente lo que dibujes, ¡así que guárdalo con frecuencia!</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -13526,7 +13526,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation>Si tienes un enlace de invitación para una sesión de dibujo, puedes &lt;a href=&quot;#join&quot;&gt;Unirte&lt;/a&gt; a ella directamente. Alternativamente, puedes &lt;a href=&quot;#browse&quot;&gt;Explorar&lt;/a&gt; las sesiones publicas o crear un&lt;a href=&quot;#create&quot;&gt;Nuevo Lienzo&lt;/a&gt; para dibujar por ti mismo.</translation>
+        <translation>Siono tienes un enlace de invitación para una sesión de dibujo, puedes &lt;a href=&quot;#join&quot;&gt;unirte&lt;/a&gt; directamente. Alternativamente, puedes &lt;a href=&quot;#browse&quot;&gt;explorar&lt;/a&gt; las sesiones públicas o simplemente crear un &lt;a href=&quot;#create&quot;&gt;nuevo lienzo&lt;/a&gt; para dibujar por tu cuenta.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -14119,23 +14119,23 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pincel de recuperación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar pincel…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove Brush from History</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar pincel del historial</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+875"/>
         <source>Clear Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar historial de pinceles</translation>
     </message>
     <message>
         <location line="-872"/>
@@ -14312,20 +14312,20 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>You can still recover it from the brush history.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aún puedes recuperarlo del historial de pinceles.</translation>
     </message>
     <message numerus="yes">
         <location line="+19"/>
         <source>%n deleted brush(es) will be erased irrecoverably.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Se eliminará irrecuperablemente %n pincel.</numerusform>
+            <numerusform>Se eliminarán irrecuperablemente %n pinceles.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Do you really want to clear the contents of the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿De verdad quieres borrar el contenido de la etiqueta history (historial)?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -14335,17 +14335,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+23"/>
         <source>The brush will be deleted permanently and cannot be recovered.</source>
-        <translation type="unfinished"></translation>
+        <translation>El pincel se eliminará permanentemente y no se podrá recuperar.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove Brush History</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar historial de pinceles</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really remove brush &apos;%1&apos; from the history tag?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente desea eliminar el pincel &apos;%1&apos; de la etiqueta de historial?</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -15317,7 +15317,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-293"/>
         <source>Right-click drawing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dibujo con clic derecho</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -15387,17 +15387,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Undelete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pincel de recuperación</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar pincel…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove Brush From History</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar pincel del historial</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -15767,22 +15767,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Lasso</source>
-        <translation type="unfinished"></translation>
+        <translation>Lazo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fills the shape with intersections making holes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rellena la forma con intersecciones que forman agujeros.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Fan</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abanico</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fills the shape without holes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rellena la forma sin agujeros</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -16228,7 +16228,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+47"/>
         <source>Playback in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducción en progreso</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -16261,7 +16261,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../widgets/banner.cpp" line="+45"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Descartar</translation>
     </message>
 </context>
 <context>
