@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+459"/>
         <source>Resource Exhaustion</source>
-        <translation type="unfinished"></translation>
+        <translation>Agotamiento de recursos</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation type="unfinished"></translation>
+        <translation>Parece que Drawpile se cerró por falta de memoria. Si intentabas unirte a una sesión o abrir un archivo, es posible que el lienzo sea demasiado grande o tenga demasiadas capas para que tu dispositivo lo pueda manejar.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -672,7 +672,7 @@
     <message>
         <location filename="../document.cpp" line="+377"/>
         <source>Resumed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Resumido.</translation>
     </message>
     <message>
         <location line="+919"/>
@@ -870,12 +870,12 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+11"/>
         <location line="+12"/>
         <source>Projects (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Proyectos (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvases (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzos (%1)</translation>
     </message>
 </context>
 <context>
@@ -1153,13 +1153,13 @@ En su lugar, selecciona una capa regular.</translation>
         <location filename="../utils/strings.cpp" line="+12"/>
         <source>%</source>
         <extracomment>Percent, put after numbers as a unit, like 42%. Unless your language uses a different symbol or something, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>px</source>
         <extracomment>Abbreviation for pixels, put after a number as a unit, like 42px. Unless your language calls pixels something different, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -1371,7 +1371,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location filename="../brushes/brushpresetmodel.cpp" line="+2951"/>
         <source>Brush requested from user &quot;%1&quot; on %2 at %3.</source>
         <extracomment>%1 is a username, %2 is a date, %3 is a time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pincel solicitado por el usuario &quot;%1&quot; en %2 a las %3.</translation>
     </message>
 </context>
 <context>
@@ -1389,7 +1389,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Historial</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1404,7 +1404,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Show a history of brushes used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar historial de pinceles usados.</translation>
     </message>
     <message>
         <location line="+123"/>
@@ -1465,12 +1465,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-461"/>
         <source> (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation> (eliminado)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> (sin guardar)</translation>
     </message>
     <message>
         <location line="+517"/>
@@ -1533,7 +1533,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+720"/>
         <source>No session to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>No se proporcionó ninguna sesión para reanudar</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -1619,7 +1619,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoja de sprites PNG</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1695,183 +1695,183 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../import/recordingconverter.cpp" line="+92"/>
         <source>No input files given.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se han proporcionado archivos de entrada.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 opening project file %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el archivo de proyecto %2.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Error initializing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error inicializando el compresor.</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Finishing project…</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminando proyecto…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error finishing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error terminadon proyecto.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error cerrando el proyecto.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Processing project %1 session %2…</source>
-        <translation type="unfinished"></translation>
+        <translation>Procesando proyecto %1 sesión %2…</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Error %1 copying session %2 from project %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al copiar la sesión %2 del proyecto %3.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Error %1 opening project %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el proyecto %2: %3.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening temporary file for %2: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el archivo temporal para %2: %3.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error loading project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al cargar el proyecto %1.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Converting recording %1…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Convirtiendo grabación %1…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to open recording %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir la grabación %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Incompatible recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabación incompatible.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error %1 opening project session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir la sesión del proyecto.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error setting compressor session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al configurar la sesión del compresor.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error %1 opening project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error %1 al abrir la instantánea del proyecto.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 finishing project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al finalizar la instantánea del proyecto.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Error %1 converting recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al convertir la grabación %2.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error %1 reading recording %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 leyendon la grabación %2.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error flushing compressor.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error al vaciar el compresor.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Error %1 saving project snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 guardando la instantánea del proyecto.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 closing project session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error %1 cerrando la sesión del proyecto.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 opening project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 abriendo el proyecto %2.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Processing project %1 snapshot %2…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Procesando instantánea %2 del proyecto %1…</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error opening playback for project %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error abriendo la reproducción del proyecto %1.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 preparing playback for project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error %1 preparando la reproducción para el proyecto %2.</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+133"/>
         <source>Error %1 processing project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 procesando el proyecto %2.</translation>
     </message>
     <message>
         <location line="-123"/>
         <source>Error %1 replacing snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 reemplazando la instantánea en el proyecto %2.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session %1 not found in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión %1 no encontrada en el proyecto %2.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 updating snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 actualizando la instantánea en el proyecto %2.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error %1 reading sessions in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error %1 leyendo las sesiones en el proyecto %2.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Processing final project snapshot…</source>
-        <translation type="unfinished"></translation>
+        <translation>Procesando la instantánea final del proyecto…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error opening playback for project %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error abriendo la reproducción del proyecto %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing playback for project %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 preparando la reproducción del proyecto %2</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Error %1 saving snapshot in project %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 guardando la instantánea en el proyecto %2.</translation>
     </message>
 </context>
 <context>
