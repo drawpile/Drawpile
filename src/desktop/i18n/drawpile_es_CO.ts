@@ -2100,7 +2100,7 @@ Puedes salir de él a través del menú Visualizar o la línea de tiempo.</trans
     <message>
         <location line="+183"/>
         <source>Toggle Dock %1</source>
-        <translation>Alternar Dock %1</translation>
+        <translation type="unfinished">Alternar Panel %1</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -2811,7 +2811,7 @@ Puede volver a activarla a través del menú Ver.</translation>
     <message>
         <location line="+7"/>
         <source>&amp;Docks</source>
-        <translation>&amp;Muelles</translation>
+        <translation>&amp;Paneles</translation>
     </message>
     <message>
         <location line="+21"/>
