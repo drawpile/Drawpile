@@ -2699,12 +2699,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-42"/>
         <source>Invalid session %1 given to resume</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión %1 no válida dada para reanudar</translation>
     </message>
     <message>
         <location line="+185"/>
         <source>No path to resume given</source>
-        <translation type="unfinished"></translation>
+        <translation>No se ha proporcionado ninguna ruta para reanudar la actividad</translation>
     </message>
     <message>
         <location line="+176"/>
@@ -2728,7 +2728,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+5"/>
         <source>Error %1 resuming session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al reanudar la sesión: %2</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2766,32 +2766,32 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../project/projectrepair.cpp" line="+38"/>
         <source>Failed to set temporary input path.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo establecer la ruta de entrada temporal.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Failed to open project.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir el proyecto.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Failed to close project.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo cerrar el proyecto.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Failed to set temporary output path.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo establecer la ruta de salida temporal.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to start repair: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al iniciar la reparación: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to repair file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al reparar el archivo: %1</translation>
     </message>
 </context>
 <context>
@@ -2811,27 +2811,27 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+12"/>
         <source>Error %1 opening project file: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al abrir el archivo del proyecto: %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 generating project overview: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 al generar la descripción general del proyecto: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error %1 preparando jugador: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 in player: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error %1 en el jugador: %2</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Unhandled error %1 of type %2: %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error no controlado %1 de tipo %2: %3</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -2960,47 +2960,47 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../io/files.cpp" line="+37"/>
         <source>File size out of bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño del archivo fuera de los límites</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Could not read entire file</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo leer el archivo completo</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al abrir el archivo fuente &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al abrir el archivo de destino &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Failed to commit target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al confirmar el archivo de destino: %1</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al leer el archivo de origen &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al escribir %1 byte(s) en el archivo de destino &apos;%2&apos;: %3</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Tried to write %1 byte(s) to target file &apos;%2&apos;, but only wrote %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Se intentó escribir %1 byte(s) en el archivo de destino &apos;%2&apos;, pero solo se escribieron %3</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error flushing target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error al vaciar el archivo de destino &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
