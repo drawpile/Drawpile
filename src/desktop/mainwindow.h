@@ -532,6 +532,7 @@ private:
 	void deactivateAllDocks();
 	void prepareDockTabUpdate();
 	void updateDockTabs();
+	void forceUpdateDockTabs();
 
 #ifndef __EMSCRIPTEN__
 	bool saveAsType(int saveImageType, bool force);

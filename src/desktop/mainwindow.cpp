@@ -9873,6 +9873,17 @@ void MainWindow::prepareDockTabUpdate()
 void MainWindow::updateDockTabs()
 {
 	m_dockTabUpdatePending = false;
+	forceUpdateDockTabs();
+	// For some reason starting with Qt 6.11, setting dock tabs became
+	// unreliable, they keep getting reverted to being blank instead. Forcing
+	// them back to having icons a little later works though, it has something
+	// to do with the tabs getting laid out again I guess.
+	QTimer::singleShot(
+		100, Qt::CoarseTimer, this, &MainWindow::forceUpdateDockTabs);
+}
+
+void MainWindow::forceUpdateDockTabs()
+{
 	bool showIcons =
 		m_smallScreenMode || getAction("docktabicons")->isChecked();
 
