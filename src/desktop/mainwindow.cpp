@@ -3014,11 +3014,6 @@ void MainWindow::openDebugDumpPath(
 }
 
 #ifndef __EMSCRIPTEN__
-void MainWindow::convertRecordings()
-{
-	showProjectEditDialog()->promptForInputFiles();
-}
-
 dialogs::ProjectEditDialog *MainWindow::showProjectEditDialog()
 {
 	QString objectName = QStringLiteral("projecteditdialog");
@@ -6712,7 +6707,7 @@ void MainWindow::setupActions()
 #ifndef __EMSCRIPTEN__
 	connect(
 		importRecordings, &QAction::triggered, this,
-		&MainWindow::convertRecordings);
+		&MainWindow::showProjectEditDialog);
 #endif
 	connect(
 		exportBrushes, &QAction::triggered, m_dockBrushPalette,

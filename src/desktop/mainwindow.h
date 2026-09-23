@@ -309,7 +309,6 @@ private slots:
 #endif
 	void openDebugDump();
 #ifndef __EMSCRIPTEN__
-	void convertRecordings();
 	dialogs::ProjectEditDialog *showProjectEditDialog();
 	void openEditedProject(const QString &path);
 #endif
