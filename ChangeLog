@@ -1,5 +1,6 @@
 Unreleased Version 2.3.1-pre
  * Fix: Make dock tab icons show up properly on Qt 6.11, they could end up blank there.
+ * Fix: Don't skip initial command when playing back recordings. This caused the canvas size command to be skipped on old converted recordings, meaning its size stayed at zero and nothing would play. Thanks dango for reporting.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.

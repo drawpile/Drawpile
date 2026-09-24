@@ -9372,7 +9372,7 @@ static int project_player_start_session(DP_ProjectPlayer *pp,
                                         long long session_id)
 {
     bool ok = project_playback_play_session(pp->c, session_id, true)
-           && playback_init_messages(pp->c, session_id, 1LL);
+           && playback_init_messages(pp->c, session_id, 0LL);
     if (ok) {
         pp->session_id = session_id;
         pp->sequence_id = 0LL;
