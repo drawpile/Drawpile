@@ -2596,7 +2596,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+158"/>
         <source>Disconnected</source>
-        <translation>切断しました</translation>
+        <translation>切断</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11673,7 +11673,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Disconnected</source>
-        <translation>切断しました</translation>
+        <translation>切断</translation>
     </message>
     <message>
         <location line="+11"/>
