@@ -444,7 +444,7 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation>Arrastar Tela de Pintura</translation>
+        <translation type="unfinished">Mover Tela de Pintura</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -531,7 +531,7 @@
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligar/Desligar Apagador</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -561,7 +561,7 @@
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Acionar ação</translation>
     </message>
     <message>
         <location line="+2"/>
