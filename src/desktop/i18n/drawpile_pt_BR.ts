@@ -234,13 +234,13 @@
         <location line="-58"/>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+89"/>
         <source>Choose an action</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolha uma ação</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+6"/>
         <source>Change…</source>
-        <translation type="unfinished">Mudar…</translation>
+        <translation>Mudar…</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -333,7 +333,7 @@
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligar/Desligar Apagador</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -363,7 +363,7 @@
     <message>
         <location line="+3"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Acionar ação</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -589,7 +589,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Folha de Sprites em PNG</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -624,7 +624,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Reprodução</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -695,7 +695,7 @@
     <message>
         <location line="+9"/>
         <source>Project Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informações do Projeto</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -720,17 +720,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravações</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar Projeto</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivos Reparáveis</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -750,7 +750,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar PNG Animado</translation>
     </message>
     <message>
         <location line="+106"/>
