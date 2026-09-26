@@ -844,7 +844,7 @@
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation>Файл %1 уже существует. Хотите ли вы заменить его?</translation>
+        <translation>Файл &quot;% 1&quot; уже существует. Вы хотите заменить его?</translation>
     </message>
     <message>
         <location line="+3"/>
