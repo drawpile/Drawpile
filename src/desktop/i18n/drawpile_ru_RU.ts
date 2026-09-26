@@ -197,7 +197,7 @@
         <location line="+105"/>
         <location line="+102"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
@@ -341,7 +341,7 @@
     <message>
         <location line="+4"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished">Переключить сохранение альфа</translation>
+        <translation>Переключить сохранение альфа</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -361,7 +361,7 @@
     <message>
         <location line="+3"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Действие при срабатывании</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -371,12 +371,12 @@
     <message>
         <location line="+3"/>
         <source>Center Tool</source>
-        <translation type="unfinished">Центрировать инструмент</translation>
+        <translation>Центрирование</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished">Ограничить и центрировать инструмент</translation>
+        <translation>Ограничение и центрирование</translation>
     </message>
 </context>
 <context>
@@ -587,7 +587,7 @@
     <message>
         <location line="+42"/>
         <source>Export PNG Spritesheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать спрайт лист в формате PNG</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть проигрыватель</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -698,7 +698,7 @@
     <message>
         <location line="+1"/>
         <source>Drawpile Project Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы проекта Drawpile</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -718,17 +718,17 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>Записи</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить проект</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Repairable Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстанавливаемые файлы</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -753,7 +753,7 @@
     <message>
         <location line="+106"/>
         <source>Export Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать файл автосохранения</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -844,7 +844,7 @@
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation>Файл &quot;% 1&quot; уже существует. Вы хотите заменить его?</translation>
+        <translation>Файл %1 уже существует. Вы хотите заменить его?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1764,7 +1764,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+1453"/>
         <source>Hide Docks</source>
-        <translation>Скрывать панели</translation>
+        <translation>Скрыть панели</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -2125,19 +2125,19 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <source>Create Layers on Current Key Frame(s)</source>
         <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
         <translation>
-            <numerusform></numerusform>
             <numerusform>Создать слои на текущем ключевом кадре</numerusform>
-            <numerusform>Создать слои на текущем ключевом кадре</numerusform>
+            <numerusform>Создать слои на текущих ключевых кадрах</numerusform>
+            <numerusform>Создать слои на текущих ключевых кадрах</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Create Layer Group(s) on Current Key Frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Создать группу слоев на текущем кадре</numerusform>
+            <numerusform>Создать группы слоев на текущих кадрах</numerusform>
+            <numerusform>Создать группы слоев на текущих кадрах</numerusform>
         </translation>
     </message>
     <message>
@@ -2245,9 +2245,9 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="-24"/>
         <source>Set Key Frame(s) to Current Layer</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform>Установить ключевой кадр к текущему слою</numerusform>
-            <numerusform>Установить ключевой кадр к текущему слою</numerusform>
+            <numerusform>Установить ключевые кадры к текущему слою</numerusform>
+            <numerusform>Установить ключевые кадры к текущему слою</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -2255,9 +2255,9 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="+10"/>
         <source>Set Blank Key Frame(s)</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform>Вставить пустой ключевой кадр</numerusform>
-            <numerusform>Вставить пустой ключевой кадр</numerusform>
+            <numerusform>Вставить пустые ключевые кадры</numerusform>
+            <numerusform>Вставить пустые ключевые кадры</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -2265,9 +2265,9 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="+55"/>
         <source>Cut Key Frame(s)</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform>Вырезать ключевой кадр</numerusform>
-            <numerusform>Вырезать ключевой кадр</numerusform>
+            <numerusform>Вырезать ключевые кадры</numerusform>
+            <numerusform>Вырезать ключевые кадры</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -2275,16 +2275,16 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Copy Key Frame(s)</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform>Скопировать ключевой кадр</numerusform>
-            <numerusform>Скопировать ключевой кадр</numerusform>
+            <numerusform>Скопировать ключевые кадры</numerusform>
+            <numerusform>Скопировать ключевые кадры</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>Paste Key Frame(s)</source>
         <translation>
-            <numerusform></numerusform>
+            <numerusform>Вставить ключевой кадр</numerusform>
             <numerusform>Вставить ключевые кадры</numerusform>
             <numerusform>Вставить ключевые кадры</numerusform>
         </translation>
@@ -2299,7 +2299,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Delete Key Frame(s)</source>
         <translation>
-            <numerusform></numerusform>
+            <numerusform>Удалить ключевой кадр</numerusform>
             <numerusform>Удалить ключевые кадры</numerusform>
             <numerusform>Удалить ключевые кадры</numerusform>
         </translation>
@@ -2309,9 +2309,9 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Unassign Key Frame(s)</source>
         <translation>
-            <numerusform></numerusform>
-            <numerusform>Разорвать связь тестовых блоков</numerusform>
-            <numerusform>Разорвать связь тестовых блоков</numerusform>
+            <numerusform>Разорвать связь ключевого кадра</numerusform>
+            <numerusform>Разорвать связь ключевых кадров</numerusform>
+            <numerusform>Разорвать связь ключевых кадров</numerusform>
         </translation>
     </message>
     <message>
@@ -3332,12 +3332,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+396"/>
         <source>Disable Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить автосохранение</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to disable autorecovery for this session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите отключить автосохранение для текущей сессии?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3359,27 +3359,27 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+30"/>
         <source>Autorecovery deactivated</source>
-        <translation type="unfinished"></translation>
+        <translation>Автосохранение деактивировано</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>The autorecovery file has exceeded %1% of the %2 size limit. Autorecovery will be disabled if the limit is reached.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл автосохранения превысил %1% из %2 лимита размера. Автосохранение будет отключено при достижения лимита.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Autorecovery Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка автосохранения</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка автосохранения: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Autorecovery will be disabled for the current session. The file will be left available for recovery. If you continue, you will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автосохранение будет отключено для текущей сессии. Файл будет возможно восстановить. Если вы продолжите, у вас не получится создать таймлапс.</translation>
     </message>
     <message>
         <location line="+1077"/>
@@ -3502,12 +3502,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+29"/>
         <source>Autorecovery</source>
-        <translation>Автовосстановление</translation>
+        <translation>Автосохранение</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage autorecovery…</source>
-        <translation>Настройки автовосстановления…</translation>
+        <translation>Настройки автосохранения…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3629,7 +3629,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+3"/>
         <source>You are already recording this session because autorecovery is enabled. If you save to a project file (.dppr), it will save the recording as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта сессия уже записывается, так как автосохранение включено. Если вы сохраните файл в формате проекта Drawpile (.dppr), то запись так же сохранится.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5684,7 +5684,7 @@ You can re-enable it via the View menu.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+63"/>
         <source>Pick</source>
-        <translation>Выбрать</translation>
+        <translation>Подобрать цвет</translation>
     </message>
 </context>
 <context>
@@ -9256,7 +9256,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>These statistics only reflect sessions saved in the project. Sessions where you disabled autorecovery or quit without saving and otherwise unsaved changes will not be present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Эти данные показывают только сохраненные сессии. Сессии, во время которых автосохранение было отключено, или вы вышли без сохранения, и любые другие несохраненные изменения не будут показаны.</translation>
     </message>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-302"/>
@@ -9636,7 +9636,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/projectrecordingsettingsdialog.cpp" line="+26"/>
         <source>Manage Autorecovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки автосохранения</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9647,7 +9647,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Enable autorecovery for the current session</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить автосохранение для текущей сессии</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -9674,7 +9674,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+8"/>
         <source>You will receive a warning when the autorecovery file reaches %1% of the size limit. Once it exceeds the limit, autorecovery will terminate.</source>
         <extracomment>The %1% is a percentage, like 75%. Don&apos;t remove the second %!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы получите предупреждение, когда файл автосохранения достигнет %1% лимита размера. После превышения лимита автосохранение отключится.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9691,7 +9691,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <source>The current autorecovery file size is %1.</source>
         <extracomment>%1 is a file size, like &quot;1 GB&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Размер файла автосохранения составляет %1.</translation>
     </message>
 </context>
 <context>
@@ -10473,7 +10473,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Restore autorecovery files</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить файлы автосохранения</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11111,7 +11111,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+52"/>
         <source>Changing autorecovery preferences will not affect the status or limits of any running sessions. [Click here to manage autorecovery on your current session.]</source>
         <extracomment>The stuff in [] will turn into a link. Don&apos;t remove the [] or replace them with different symbols!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Изменение предпочтений автосохранения не подействует на статус и лимиты активных сессий. [Посмотреть настройки автосохранения для текущей сессии.]</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -11121,7 +11121,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Autorecovery:</source>
-        <translation type="unfinished"></translation>
+        <translation>Автосохранение:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12736,7 +12736,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Trigger action</source>
-        <translation type="unfinished"></translation>
+        <translation>Действие при срабатывании</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -13259,12 +13259,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+56"/>
         <source>Autorecovery Removal Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаление автосохранения не было успешным</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Could not remove autorecovery file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось удалить файл автосохранения %1.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -13367,12 +13367,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Delete Autorecovery File</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить файл автосохранения</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Are you sure you want to permanently delete this autorecovery file?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите безвозвратно удалить этот файл автосохранения?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13432,7 +13432,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Failed to read autorecovery file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Чтение файла автосохранения не было успешно: %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -13462,12 +13462,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Delete original autorecovery file</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить оригинальный файл автосохранения</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Failed to open autorecovery file for verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Открытие файла автосохранения для проверки не было успешно: %1</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13482,7 +13482,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Autorecovery file read error during verification: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка чтения файла автосохранения во время проверки: %1</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13497,7 +13497,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Verification failed: autorecovery and target file data does not match</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка не была успешной: файл автосохранения и целевой файл не совпадают</translation>
     </message>
 </context>
 <context>
@@ -16938,12 +16938,12 @@ Hex: %4</translation>
     <message>
         <location filename="../widgets/projectrecordingstatusbutton.cpp" line="+45"/>
         <source>Autorecovery is enabled, file size is %1.</source>
-        <translation>Автоматическое восстановление включено, размер файла %1.</translation>
+        <translation>Автосохранение включено, размер файла %1.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Autorecovery is disabled.</source>
-        <translation>Автоматическое восстановление отключено.</translation>
+        <translation>Автосохранение отключено.</translation>
     </message>
     <message>
         <location line="+2"/>
