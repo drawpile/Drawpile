@@ -331,7 +331,7 @@
     <message>
         <location line="+4"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить ластик</translation>
     </message>
     <message>
         <location line="+4"/>
