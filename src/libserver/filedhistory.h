@@ -80,6 +80,8 @@ public:
 	void setOverrideSizeLimit(size_t overrideSizeLimit) override;
 	void setFlags(Flags f) override;
 	void setAutoResetThreshold(size_t limit) override;
+	unsigned int drawingTimeMinutes() const override;
+	void setDrawingTimeMinutes(unsigned int drawingTimeMinutes) override;
 	int nextCatchupKey() override;
 	void joinUser(uint8_t id, const QString &name) override;
 
@@ -88,6 +90,7 @@ public:
 	qint64 resetStreamHeaderPos() const override;
 
 	void terminate() override;
+	void flush() override;
 	void cleanupBatches(long long before) override;
 	std::tuple<net::MessageList, long long>
 	getBatch(long long after) const override;
@@ -232,6 +235,8 @@ private:
 	size_t m_autoResetThreshold;
 	ArchiveMode m_archiveMode = ArchiveMode::Default;
 	Flags m_flags;
+	unsigned int m_drawingTimeMinutes = 0u;
+	unsigned int m_savedDrawingTimeMinutes = 0u;
 	int m_nextCatchupKey;
 	QStringList m_announcements;
 

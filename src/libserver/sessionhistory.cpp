@@ -458,6 +458,14 @@ void SessionHistory::setMinimumAutoResetThreshold(
 	}
 }
 
+void SessionHistory::incrementDrawingTimeMinutes()
+{
+	unsigned int t = drawingTimeMinutes();
+	if(t < std::numeric_limits<unsigned int>::max()) {
+		setDrawingTimeMinutes(t + 1u);
+	}
+}
+
 void SessionHistory::setAuthenticatedOperator(const QString &authId, bool op)
 {
 	if(op) {

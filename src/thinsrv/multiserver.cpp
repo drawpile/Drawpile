@@ -506,6 +506,7 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::UnlistedHostPolicy,
 		config::MinimumAutoresetThreshold,
 		config::SessionLessClientLingerTime,
+		config::ClobberLingeringSessions,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

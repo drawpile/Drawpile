@@ -192,6 +192,10 @@ private:
 
 	ThinServerClient *searchClientByPathUid(const QString &uid);
 
+	void tryClobberSessions(int sessionCountLimit);
+
+	int effectiveSessionCount() const;
+
 	sessionlisting::Announcements *m_announcements;
 	ServerConfig *m_config;
 	TemplateLoader *m_tpls = nullptr;

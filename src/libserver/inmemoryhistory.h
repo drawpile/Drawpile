@@ -30,6 +30,11 @@ public:
 		// nothing to do
 	}
 
+	void flush() override
+	{
+		// nothing to do
+	}
+
 	void cleanupBatches(long long) override
 	{
 		// no caching, nothing to do
@@ -73,6 +78,14 @@ public:
 	void setFlags(Flags f) override { m_flags = f; }
 	void setAutoResetThreshold(size_t limit) override;
 	size_t autoResetThreshold() const override { return m_autoReset; }
+	unsigned int drawingTimeMinutes() const override
+	{
+		return m_drawingTimeMinutes;
+	}
+	void setDrawingTimeMinutes(unsigned int drawingTimeMinutes) override
+	{
+		m_drawingTimeMinutes = drawingTimeMinutes;
+	}
 	int nextCatchupKey() override;
 
 	void addAnnouncement(const QString &url) override
@@ -128,6 +141,7 @@ private:
 	size_t m_overrideSizeLimit = 0;
 	size_t m_autoReset;
 	Flags m_flags;
+	unsigned int m_drawingTimeMinutes = 0u;
 	int m_nextCatchupKey;
 	int m_resetStreamIndex = -1;
 	net::MessageList m_resetStream;

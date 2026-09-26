@@ -128,9 +128,10 @@ std::tuple<Session *, QString> SessionServer::createSession(
 {
 	Q_ASSERT(!id.isNull());
 
-	if(m_sessions.size() >= m_config->getConfigInt(config::SessionCountLimit)) {
+	if(protocolVersion.serverVersion() !=
+	   protocol::ProtocolVersion::current().serverVersion()) {
 		return std::tuple<Session *, QString>{
-			nullptr, QStringLiteral("closed")};
+			nullptr, QStringLiteral("badProtocol")};
 	}
 
 	if(getSessionById(id, false) ||
@@ -139,10 +140,11 @@ std::tuple<Session *, QString> SessionServer::createSession(
 			nullptr, QStringLiteral("idInUse")};
 	}
 
-	if(protocolVersion.serverVersion() !=
-	   protocol::ProtocolVersion::current().serverVersion()) {
+	int sessionCountLimit = m_config->getConfigInt(config::SessionCountLimit);
+	tryClobberSessions(sessionCountLimit);
+	if(effectiveSessionCount() >= sessionCountLimit) {
 		return std::tuple<Session *, QString>{
-			nullptr, QStringLiteral("badProtocol")};
+			nullptr, QStringLiteral("closed")};
 	}
 
 	SessionHistory *history =
@@ -566,6 +568,79 @@ ThinServerClient *SessionServer::searchClientByPathUid(const QString &uid)
 		}
 	}
 	return nullptr;
+}
+
+void SessionServer::tryClobberSessions(int sessionCountLimit)
+{
+	// We only need to try clobbering sessions if we have too many.
+	int excessSessions = effectiveSessionCount() - sessionCountLimit + 1;
+	if(excessSessions <= 0) {
+		return;
+	}
+
+	// Don't clobber if it's disabled.
+	if(!m_config->getConfigBool(config::ClobberLingeringSessions)) {
+		return;
+	}
+
+	// Collect clobberable sessions. Just in case some kind of signal causes
+	// interference and destroys them from under us, we'll use QPointers.
+	QVector<QPointer<Session>> candidates;
+	candidates.reserve(m_sessions.size());
+	for(Session *session : m_sessions) {
+		if(session->isClobberCandidate()) {
+			candidates.append(session);
+		}
+	}
+
+	// If we can't clobber enough sessions, don't do anything.
+	if(candidates.size() < excessSessions) {
+		return;
+	}
+
+	// Lowest drawing time goes first, in case of a tie the older session wins.
+	std::sort(
+		candidates.begin(), candidates.end(),
+		[](const QPointer<Session> &a, const QPointer<Session> &b) {
+			SessionHistory *aHistory = a->history();
+			SessionHistory *bHistory = b->history();
+			unsigned int aMinutes = aHistory->drawingTimeMinutes();
+			unsigned int bMinutes = bHistory->drawingTimeMinutes();
+			if(aMinutes < bMinutes) {
+				return true;
+			} else if(aMinutes > bMinutes) {
+				return false;
+			} else {
+				return aHistory->startTime() > bHistory->startTime();
+			}
+		});
+
+	// We'll be extra careful in case sessions get destroyed from under us.
+	while(excessSessions > 0 && !candidates.isEmpty()) {
+		Session *session = candidates.takeFirst().data();
+		if(session) {
+			session->log(
+				Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(QStringLiteral(
+						"Closing lingering non-persistent session to make room "
+						"for a new one.")));
+			session->killSession(QStringLiteral(
+				"Session terminated due to being empty and space is needed"));
+		}
+		--excessSessions;
+	}
+}
+
+int SessionServer::effectiveSessionCount() const
+{
+	int count = 0;
+	for(Session *session : m_sessions) {
+		if(session->state() != Session::State::Shutdown) {
+			++count;
+		}
+	}
+	return count;
 }
 
 }

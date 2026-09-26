@@ -248,6 +248,10 @@ public:
 
 	void setMinimumAutoResetThreshold(size_t minimumAutoResetThreshold);
 
+	virtual unsigned int drawingTimeMinutes() const = 0;
+	virtual void setDrawingTimeMinutes(unsigned int drawingTimeMinutes) = 0;
+	void incrementDrawingTimeMinutes();
+
 	virtual int nextCatchupKey() = 0;
 
 	/**
@@ -374,6 +378,11 @@ public:
 	 * @brief End this session and delete any associated files (if any)
 	 */
 	virtual void terminate() = 0;
+
+	/**
+	 * @brief Flush pending in-memory data, called during shutdown.
+	 */
+	virtual void flush() = 0;
 
 	/**
 	 * @brief Get the base size limit, disregarding the override size limit.

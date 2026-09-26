@@ -575,6 +575,18 @@ bool Session::isClosed() const
 		   (m_state != State::Initialization && m_state != State::Running);
 }
 
+bool Session::isClobberCandidate() const
+{
+	if(m_state == State::Running && userCount() <= 0) {
+		SessionHistory::Flags flags = m_history->flags();
+		if(!flags.testFlag(SessionHistory::Persistent) &&
+		   !flags.testFlag(SessionHistory::IdleOverride)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 {
 	QStringList changes;
@@ -1899,6 +1911,8 @@ void Session::killSession(const QString &message, bool terminate, bool quiet)
 
 	if(terminate) {
 		m_history->terminate();
+	} else {
+		m_history->flush();
 	}
 
 	this->deleteLater();
@@ -2012,7 +2026,16 @@ void Session::addedToHistory(const net::Message &msg)
 		}
 	}
 	m_lastEventTime.start();
-	// TODO calculate activity score that can be shown in listings
+
+	if(m_state == State::Running && msg.isInCommandRange()) {
+		// Count up the drawing time in 30 second chunks. This is used to
+		// determine which sessions to end first if the session limit is hit and
+		// clobbering of lingering sessions is enabled.
+		if(!m_drawingTimer.isValid() || m_drawingTimer.hasExpired(60000LL)) {
+			m_drawingTimer.start();
+			m_history->incrementDrawingTimeMinutes();
+		}
+	}
 }
 
 void Session::restartRecording()
@@ -2397,6 +2420,9 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 		o.insert(
 			QStringLiteral("minResetThreshold"),
 			int(m_history->minimumAutoResetThreshold()));
+		o.insert(
+			QStringLiteral("drawingTimeMinutes"),
+			int(m_history->drawingTimeMinutes()));
 
 		o[QStringLiteral("deputies")] =
 			m_history->hasFlag(SessionHistory::Deputies);

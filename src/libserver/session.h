@@ -105,6 +105,14 @@ public:
 	bool isClosed() const;
 
 	/**
+	 * @brief Could this session be clobbered by a new one?
+	 *
+	 * A session is clobberable if it is running, has no users, is not
+	 * persistent and is not exempt from idle timeouts.
+	 */
+	bool isClobberCandidate() const;
+
+	/**
 	 *  Does this session support autoresetting?
 	 */
 	virtual bool supportsAutoReset() const = 0;
@@ -575,8 +583,10 @@ private:
 
 	net::MessageList m_resetstream;
 	uint m_resetstreamsize = 0;
+	unsigned int m_drawingTime = 0u;
 
 	QElapsedTimer m_lastEventTime;
+	QElapsedTimer m_drawingTimer;
 };
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210

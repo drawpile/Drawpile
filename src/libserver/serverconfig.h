@@ -182,7 +182,13 @@ static const ConfigKey
 	// session has ended, neither state should last for extended periods of
 	// time. Values less than or equal to zero mean there is no limit.
 	SessionLessClientLingerTime(
-		55, "sessionLessClientLingerTime", "0", ConfigKey::TIME);
+		55, "sessionLessClientLingerTime", "0", ConfigKey::TIME),
+	// Whether new sessions can replace lingering, empty, non-persistent,
+	// non-idle-time-exempt sessions if the server runs out of space. The ones
+	// with the lowest "drawing time" will be terminated first, which is a
+	// coarse measurement of how long users actually spent drawing in a session.
+	ClobberLingeringSessions(
+		56, "clobberLingeringSessions", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started

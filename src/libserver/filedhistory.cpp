@@ -539,6 +539,11 @@ bool FiledHistory::load()
 				qWarning() << "Invalid USV entry:" << QString::fromUtf8(params);
 			}
 
+		} else if(cmd == QByteArrayLiteral("DT")) {
+			unsigned int drawingTimeMinutes = params.toUInt();
+			m_drawingTimeMinutes = drawingTimeMinutes;
+			m_savedDrawingTimeMinutes = drawingTimeMinutes;
+
 		} else {
 			qWarning() << id()
 					   << "unknown journal entry:" << QString::fromUtf8(cmd);
@@ -678,6 +683,15 @@ void FiledHistory::terminate()
 	}
 }
 
+void FiledHistory::flush()
+{
+	if(m_savedDrawingTimeMinutes != m_drawingTimeMinutes) {
+		writeStringToJournal(
+			QStringLiteral("DT %1\n").arg(m_drawingTimeMinutes));
+		m_savedDrawingTimeMinutes = m_drawingTimeMinutes;
+	}
+}
+
 void FiledHistory::closeBlock()
 {
 	// Flush the output files just to be safe
@@ -727,6 +741,17 @@ void FiledHistory::setAutoResetThreshold(size_t limit)
 		m_autoResetThreshold = t;
 		writeStringToJournal(QStringLiteral("AUTORESET %1\n").arg(t));
 	}
+}
+
+unsigned int FiledHistory::drawingTimeMinutes() const
+{
+	return m_drawingTimeMinutes;
+}
+
+void FiledHistory::setDrawingTimeMinutes(unsigned int drawingTimeMinutes)
+{
+	m_drawingTimeMinutes = drawingTimeMinutes;
+	// Don't write yet, it's not that important. It's done in flush() instead.
 }
 
 int FiledHistory::nextCatchupKey()
