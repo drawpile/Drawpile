@@ -2283,10 +2283,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message numerus="yes">
         <location line="+4"/>
         <source>Paste Key Frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Вставить ключевые кадры</numerusform>
+            <numerusform>Вставить ключевые кадры</numerusform>
         </translation>
     </message>
     <message>
