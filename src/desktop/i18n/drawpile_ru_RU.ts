@@ -2244,10 +2244,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="-447"/>
         <location filename="../widgets/timelinewidget.cpp" line="-24"/>
         <source>Set Key Frame(s) to Current Layer</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Установить ключевой кадр к текущему слою</numerusform>
+            <numerusform>Установить ключевой кадр к текущему слою</numerusform>
         </translation>
     </message>
     <message numerus="yes">
