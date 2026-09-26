@@ -2274,10 +2274,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+4"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Copy Key Frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Скопировать ключевой кадр</numerusform>
+            <numerusform>Скопировать ключевой кадр</numerusform>
         </translation>
     </message>
     <message numerus="yes">
