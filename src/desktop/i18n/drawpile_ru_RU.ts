@@ -2254,10 +2254,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+10"/>
         <source>Set Blank Key Frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Вставить пустой ключевой кадр</numerusform>
+            <numerusform>Вставить пустой ключевой кадр</numerusform>
         </translation>
     </message>
     <message numerus="yes">
