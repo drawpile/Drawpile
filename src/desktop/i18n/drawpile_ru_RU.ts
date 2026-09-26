@@ -2124,10 +2124,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location filename="../widgets/timelinewidget.cpp" line="+3880"/>
         <source>Create Layers on Current Key Frame(s)</source>
         <extracomment>Note that &quot;layers&quot; is always supposed to be plural! This may create multiple layers even on a single key frame.</extracomment>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Создать слои на текущем ключевом кадре</numerusform>
+            <numerusform>Создать слои на текущем ключевом кадре</numerusform>
         </translation>
     </message>
     <message numerus="yes">
