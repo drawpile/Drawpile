@@ -7512,7 +7512,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Stroke duration</translation>
+        <translation>Длительность штриха</translation>
     </message>
     <message>
         <location line="+3"/>
