@@ -444,7 +444,7 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation>Перемещение по холсту</translation>
+        <translation type="unfinished">Панорама холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -454,7 +454,7 @@
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation>Масштаб холста</translation>
+        <translation>Масштабирование холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -526,7 +526,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>Изменить значение цвета</translation>
+        <translation>Изменить яркость цвета</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -541,7 +541,7 @@
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить сохранение альфа</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -556,12 +556,12 @@
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыть панели</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Действие при срабатывании</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1666,12 +1666,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамический</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Рабочий стол</translation>
     </message>
     <message>
         <location line="+3"/>
