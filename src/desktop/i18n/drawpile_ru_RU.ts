@@ -2308,10 +2308,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+5"/>
         <location filename="../widgets/timelinewidget.cpp" line="+6"/>
         <source>Unassign Key Frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Разорвать связь тестовых блоков</numerusform>
+            <numerusform>Разорвать связь тестовых блоков</numerusform>
         </translation>
     </message>
     <message>
