@@ -2298,10 +2298,10 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+16"/>
         <location filename="../widgets/timelinewidget.cpp" line="+5"/>
         <source>Delete Key Frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Удалить ключевые кадры</numerusform>
+            <numerusform>Удалить ключевые кадры</numerusform>
         </translation>
     </message>
     <message numerus="yes">
