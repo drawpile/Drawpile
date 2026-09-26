@@ -232,7 +232,7 @@
         <location line="-58"/>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+89"/>
         <source>Choose an action</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать действие</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -286,7 +286,7 @@
     <message>
         <location line="+4"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished">Увеличить холст</translation>
+        <translation>Масштабирование холста</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -326,7 +326,7 @@
     <message>
         <location line="+4"/>
         <source>Change Color Value</source>
-        <translation type="unfinished">Изменить значение цвета</translation>
+        <translation>Изменить яркость цвета</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -356,7 +356,7 @@
     <message>
         <location line="+3"/>
         <source>Hide Docks</source>
-        <translation type="unfinished">Скрывать панели</translation>
+        <translation>Скрыть панели</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -748,7 +748,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Анимированный PNG</translation>
     </message>
     <message>
         <location line="+106"/>
@@ -824,7 +824,7 @@
     <message>
         <location line="+6"/>
         <source>If you replace the file, any data it contains from past sessions will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Если вы замените этот файл, все данные прошлых сессий этого файла будут потеряны.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -844,7 +844,7 @@
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 уже существует. Хотите ли вы заменить его?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -16938,12 +16938,12 @@ Hex: %4</translation>
     <message>
         <location filename="../widgets/projectrecordingstatusbutton.cpp" line="+45"/>
         <source>Autorecovery is enabled, file size is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическое восстановление включено, размер файла %1.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Autorecovery is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическое восстановление отключено.</translation>
     </message>
     <message>
         <location line="+2"/>
