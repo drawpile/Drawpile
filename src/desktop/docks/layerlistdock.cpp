@@ -746,6 +746,27 @@ void LayerList::clearLayerSelection()
 	m_view->selectionModel()->clear();
 }
 
+void LayerList::setCheckedLayers(const QSet<int> &layerIds)
+{
+	disableAutoselectAny();
+	canvas::LayerListModel *layers = m_canvas->layerlist();
+
+	QItemSelection sel;
+	for(int checkedLayerId : layerIds) {
+		QModelIndex idx = layers->layerIndex(checkedLayerId);
+		if(idx.isValid()) {
+			sel.select(idx, idx);
+		}
+	}
+
+	QModelIndex idx = currentSelection();
+	if(idx.isValid()) {
+		sel.select(idx, idx);
+	}
+
+	m_view->selectionModel()->select(sel, QItemSelectionModel::ClearAndSelect);
+}
+
 void LayerList::selectAbove()
 {
 	disableAutoselectAny();

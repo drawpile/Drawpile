@@ -4,6 +4,7 @@
 #include <QColor>
 #include <QItemSelectionModel>
 #include <QModelIndex>
+#include <QSet>
 #include <QVector>
 #include <QWidget>
 #include <functional>
@@ -116,6 +117,7 @@ signals:
 	void trackSelected(int trackId);
 	void frameSelected(int frame);
 	void layerSelected(int layerId);
+	void layersChecked(const QSet<int> &layerIds);
 	void blankLayerSelected();
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
@@ -238,6 +240,7 @@ private:
 	void zoomBy(int delta);
 	void setZoomAdjust(int zoomAdjust);
 	void onSelectionChanged();
+	void emitCheckedLayers();
 
 	SetCurrentResult setCurrent(
 		int trackId, int frame, bool triggerUpdate, bool selectLayer,

@@ -3,6 +3,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Don't skip initial command when playing back recordings. This caused the canvas size command to be skipped on old converted recordings, meaning its size stayed at zero and nothing would play. Thanks dango for reporting.
  * Server Feature: Allow new sessions to clobber empty, non-persistent, lingering sessions. Server owners can enable this to prevent "server is full" errors that would resolve themselves by waiting a few minutes for these lingering sessions to time out. Sessions with the lowest time spent drawing are terminated first. Thanks Bluestrings for suggesting.
  * Fix: Make hitting "save" after joining a session in the same window not save over the save file from a previous session in the same window. Unless you are reconnecting to the same session, in which case it will save over the file as it should. The logic for this was reversed from what it should be. Thanks Bonbli and D'mitri for reporting.
+ * Fix: Also select layers when multiple key frames are selected.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.

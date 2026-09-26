@@ -3438,9 +3438,22 @@ void TimelineWidget::onSelectionChanged()
 {
 	d->selectionStateValid = false;
 	if(!d->selectionUpdatesBlocked) {
+		emitCheckedLayers();
 		updateActions();
 		update();
 	}
+}
+
+void TimelineWidget::emitCheckedLayers()
+{
+	QSet<int> layerIds = d->getSelectionState().selectedLayerIds();
+	// Exclude the current layer, since it may be a group that the user is
+	// navigating inside of and it would be annoying to check the parent.
+	const canvas::TimelineKeyFrame *tkf = d->currentVisibleKeyFrame();
+	if(tkf) {
+		layerIds.remove(tkf->layerId);
+	}
+	Q_EMIT layersChecked(layerIds);
 }
 
 TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
@@ -3558,6 +3571,7 @@ TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
 				}
 				emit frameViewModeRequested();
 			}
+			emitCheckedLayers();
 		}
 		updateActions();
 		update();

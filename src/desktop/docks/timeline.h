@@ -56,6 +56,7 @@ signals:
 	void frameSelected(int frame);
 	void layerSelected(int layerId);
 	void blankLayerSelected();
+	void layersChecked(const QSet<int> &layerIds);
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 	void trackMoveLockEnabled(int trackId, bool moveLock);

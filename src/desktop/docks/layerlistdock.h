@@ -110,6 +110,7 @@ public:
 	void selectLayer(int id);
 	void autoSelectLayer(int id);
 	void clearLayerSelection();
+	void setCheckedLayers(const QSet<int> &layerIds);
 	void selectAbove();
 	void selectBelow();
 
