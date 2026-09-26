@@ -423,7 +423,7 @@ void Document::onServerLogin(const net::LoggedInParams &params)
 	{
 		canvas::ReconnectState *reconnectState = nullptr;
 		if(params.join) {
-			initCanvas(m_reconnectState != nullptr);
+			initCanvas(!m_reconnectState);
 			if(params.skipCatchup) {
 				reconnectState = m_reconnectState;
 				m_reconnectState = nullptr;
