@@ -11,7 +11,7 @@
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Программа Drawpile вышла из-за недостатка памяти. Если вы пытались присоединиться к сессии или открыть файл, то холст возможно слишком большой или имеет слишком много слоев для вашего устройства.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2975,12 +2975,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка открытия исходного файла &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка открытия целевого файла &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2990,7 +2990,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка чтения из исходного файла &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
