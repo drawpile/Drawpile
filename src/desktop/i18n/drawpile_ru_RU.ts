@@ -758,17 +758,17 @@
     <message>
         <location line="+1"/>
         <source>Drawpile Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Проект Drawpile</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Save Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить восстановленный файл</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Repaired File</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановленный файл</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -814,12 +814,12 @@
     <message>
         <location line="+25"/>
         <source>Replace Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить проект</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The project file %1 already exists. Do you want to append to it or replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл проекта %1 уже существует. Вы хотите дополнить или заменить его?</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -829,17 +829,17 @@
     <message>
         <location line="+2"/>
         <source>Append</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнить</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить изображение</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2002,7 +2002,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+640"/>
         <source>Mas&amp;k Strokes/Shape Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Мас&amp;кировать штрихи/фигурные заливки через выделение</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -2012,47 +2012,47 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+51"/>
         <source>Timeline tool: edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент временной шкалы: правка</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделить</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline tool: select</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент временной шкалы: выделить</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Выдержка</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline tool: exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент временной шкалы: выдержка</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Увеличить</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom in</source>
-        <translation type="unfinished"></translation>
+        <translation>Временная шкала: увеличить</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшить</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Timeline: zoom out</source>
-        <translation type="unfinished"></translation>
+        <translation>Временная шкала: уменьшить</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2062,7 +2062,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>Timeline: reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Временная шкала: сбросить масштабирование</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -2072,12 +2072,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+25"/>
         <source>Increase Exposure on All Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Увеличить выдержку на всех дорожках</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Decrease Exposure on All Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшить выдержку на всех дорожках</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2292,7 +2292,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+5"/>
         <source>Paste Decloned Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вставить деклонированные слои ключевых кадров</translation>
     </message>
     <message numerus="yes">
         <location line="+16"/>
@@ -2317,7 +2317,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>Declone Key Frame Layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Деклонировать слои ключевых кадров</translation>
     </message>
     <message>
         <location line="+505"/>
@@ -2881,12 +2881,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../mainwindow.cpp" line="+462"/>
         <source>Track Visible for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Дорожка видима для вас</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin for You</source>
-        <translation type="unfinished"></translation>
+        <translation>Восковка дорожки видна для вас</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2896,12 +2896,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Next Frame Within Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующий кадр в пределе</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame Within Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Прошлый кадр в пределе</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -2986,7 +2986,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+44"/>
         <source>Rotate the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Повернуть вид холста</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2996,7 +2996,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+19"/>
         <source>Project Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о проекте…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3342,19 +3342,19 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+2"/>
         <source>Unsaved data will be discarded and can&apos;t be recovered. You will not be able to create a timelapse.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неcохраненные изменения будут отклонены и их не будет возможно восстановить. У вас не получится создать таймлапс.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, disable</source>
         <extracomment>&quot;Yes&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Да, отключить</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, keep enabled</source>
         <extracomment>&quot;No&quot; button in the &quot;do you want to turn off autosaving&quot; dialog.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Нет, оставить включенным</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3538,7 +3538,7 @@ You can exit it via the View menu or the timeline.</source>
         <location line="-4710"/>
         <location line="+56"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка сохранения</translation>
     </message>
     <message>
         <location line="-55"/>
@@ -3569,17 +3569,17 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+44"/>
         <source>Incompatible Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовместимая запись</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This recording is incompatible, it cannot be opened with this version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта запись несовместима, ее нельзя открыть в этой версии Drawpile.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть запись</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3589,7 +3589,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+3"/>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Конвертировать</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3604,7 +3604,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+313"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть проект</translation>
     </message>
     <message>
         <location line="+1"/>
