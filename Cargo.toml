@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "src/drawdance/libimpex/oxipng-c",
     "src/drawdance/rust",
     "src/tools/dprectool",
     "src/tools/drawpile-cmd",

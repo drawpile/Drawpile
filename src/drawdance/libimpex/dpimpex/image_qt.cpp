@@ -14,12 +14,19 @@ extern "C" {
 #include <QImage>
 #include <QImageReader>
 #include <QImageWriter>
+#ifdef DP_OXIPNG
+#    include <oxipng-c/oxipng-c.h>
+// oxipng level 1 with deflate level 8 takes roughly as much time as Qt for a
+// ~15% smaller output
+#    define OXIPNG_LEVEL         1
+#    define OXIPNG_DEFLATE_LEVEL 8
+#endif
 
 
 extern "C" void DP_image_impex_init(void)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	QImageReader::setAllocationLimit(0);
+    QImageReader::setAllocationLimit(0);
 #endif
 }
 
@@ -190,9 +197,76 @@ static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
     return ok ? DP_output_flush(output) : false;
 }
 
+#ifdef DP_OXIPNG
+DP_FORCE_INLINE void bgra_to_rgba(unsigned char *bytes, size_t pixel_index,
+                                  DP_UPixel8 pixel)
+{
+    size_t byte_index = pixel_index * 4u;
+    bytes[byte_index + 0u] = pixel.bytes.r;
+    bytes[byte_index + 1u] = pixel.bytes.g;
+    bytes[byte_index + 2u] = pixel.bytes.b;
+    bytes[byte_index + 3u] = pixel.bytes.a;
+}
+
+// Returns false if oxipng couldn't compress the image, in which case nothing
+// was written to the output and Qt should be used instead.
+// Otherwise the result of writing it out is assigned to ok.
+static bool write_png_oxipng(DP_Output *output, int width, int height,
+                             void *pixels, bool premultiplied, bool &ok)
+{
+    // Qt keeps pixels as premultiplied or unpremultiplied BGRA, but oxipng
+    // wants them unpremultiplied in RGBA order.
+    size_t pixel_count = DP_int_to_size(width) * DP_int_to_size(height);
+    size_t size = pixel_count * 4u;
+    unsigned char *bytes = static_cast<unsigned char *>(DP_malloc(size));
+    if (premultiplied) {
+        const DP_Pixel8 *src = static_cast<const DP_Pixel8 *>(pixels);
+        for (size_t pixel_index = 0; pixel_index < pixel_count; ++pixel_index) {
+            bgra_to_rgba(bytes, pixel_index,
+                         DP_pixel8_unpremultiply(src[pixel_index]));
+        }
+    }
+    else {
+        const DP_UPixel8 *src = static_cast<const DP_UPixel8 *>(pixels);
+        for (size_t pixel_index = 0; pixel_index < pixel_count; ++pixel_index) {
+            bgra_to_rgba(bytes, pixel_index, src[pixel_index]);
+        }
+    }
+
+    OxipngRawImage *image;
+    OxipngResult result =
+        oxipng_raw_image_new(DP_int_to_uint32(width), DP_int_to_uint32(height),
+                             8, bytes, size, &image);
+    DP_free(bytes);
+
+    if (result == OxipngResult_Success) {
+        OxipngBuffer *buffer;
+        result = oxipng_raw_image_create_optimized_png(
+            image, OXIPNG_LEVEL, OXIPNG_DEFLATE_LEVEL, &buffer);
+        oxipng_raw_image_free(image);
+        if (result == OxipngResult_Success) {
+            ok = DP_output_write(output, oxipng_buffer_data(buffer),
+                                 oxipng_buffer_size(buffer))
+              && DP_output_flush(output);
+            oxipng_buffer_free(buffer);
+            return true;
+        }
+    }
+
+    DP_warn("Oxipng failed with result %d, falling back to Qt", int(result));
+    return false;
+}
+#endif
+
 extern "C" bool DP_image_png_write(DP_Output *output, int width, int height,
                                    DP_Pixel8 *pixels)
 {
+#ifdef DP_OXIPNG
+    bool ok;
+    if (write_png_oxipng(output, width, height, pixels, true, ok)) {
+        return ok;
+    }
+#endif
     return write_image(output, width, height, reinterpret_cast<uchar *>(pixels),
                        "PNG", -1, QImage::Format_ARGB32_Premultiplied);
 }
@@ -201,6 +275,12 @@ extern "C" bool DP_image_png_write_unpremultiplied(DP_Output *output, int width,
                                                    int height,
                                                    DP_UPixel8 *pixels)
 {
+#ifdef DP_OXIPNG
+    bool ok;
+    if (write_png_oxipng(output, width, height, pixels, false, ok)) {
+        return ok;
+    }
+#endif
     return write_image(output, width, height, reinterpret_cast<uchar *>(pixels),
                        "PNG", -1, QImage::Format_ARGB32);
 }
