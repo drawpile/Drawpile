@@ -3,15 +3,14 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 typedef enum OxipngResult {
-  OxipngResult_Success = 0,
-  OxipngResult_NullPointer,
-  OxipngResult_InvalidBitDepth,
-  OxipngResult_InvalidDataLength,
-  OxipngResult_OptimizationFailed,
-  OxipngResult_Panic,
+    OxipngResult_Success = 0,
+    OxipngResult_NullPointer,
+    OxipngResult_InvalidBitDepth,
+    OxipngResult_InvalidDataLength,
+    OxipngResult_OptimizationFailed,
+    OxipngResult_Panic,
 } OxipngResult;
 
 /**
@@ -36,10 +35,8 @@ extern "C" {
  * * `out_image` receives the image on success, free it with
  *   `oxipng_raw_image_free`.
  */
-enum OxipngResult oxipng_raw_image_new(uint32_t width,
-                                       uint32_t height,
-                                       uint8_t bit_depth,
-                                       const uint8_t *data,
+enum OxipngResult oxipng_raw_image_new(uint32_t width, uint32_t height,
+                                       uint8_t bit_depth, const uint8_t *data,
                                        uintptr_t data_len,
                                        struct OxipngRawImage **out_image);
 
@@ -56,9 +53,10 @@ void oxipng_raw_image_free(struct OxipngRawImage *image);
  * * `out_buffer` receives the png file contents on success, free it with
  *   `oxipng_buffer_free`.
  */
-enum OxipngResult oxipng_raw_image_create_optimized_png(const struct OxipngRawImage *image,
-                                                        uint8_t level,
-                                                        struct OxipngBuffer **out_buffer);
+enum OxipngResult
+oxipng_raw_image_create_optimized_png(const struct OxipngRawImage *image,
+                                      uint8_t level, uint8_t deflate_level,
+                                      struct OxipngBuffer **out_buffer);
 
 /**
  * Get the bytes in the given buffer, NULL if the buffer is NULL.
@@ -79,5 +77,5 @@ uintptr_t oxipng_buffer_size(const struct OxipngBuffer *buffer);
 void oxipng_buffer_free(struct OxipngBuffer *buffer);
 
 #ifdef __cplusplus
-}  // extern "C"
-#endif  // __cplusplus
+} // extern "C"
+#endif // __cplusplus

@@ -16,8 +16,10 @@ extern "C" {
 #include <QImageWriter>
 #ifdef DP_OXIPNG
 #    include <oxipng-c/oxipng-c.h>
-// oxipng level 0 is faster than Qt and gives a slightly smaller file
-#    define OXIPNG_LEVEL 0
+// oxipng level 1 with deflate level 8 takes roughly as much time as Qt for a
+// ~15% smaller output
+#    define OXIPNG_LEVEL         1
+#    define OXIPNG_DEFLATE_LEVEL 8
 #endif
 
 
@@ -239,8 +241,8 @@ static bool write_png_oxipng(DP_Output *output, int width, int height,
 
     if (result == OxipngResult_Success) {
         OxipngBuffer *buffer;
-        result =
-            oxipng_raw_image_create_optimized_png(image, OXIPNG_LEVEL, &buffer);
+        result = oxipng_raw_image_create_optimized_png(
+            image, OXIPNG_LEVEL, OXIPNG_DEFLATE_LEVEL, &buffer);
         oxipng_raw_image_free(image);
         if (result == OxipngResult_Success) {
             ok = DP_output_write(output, oxipng_buffer_data(buffer),

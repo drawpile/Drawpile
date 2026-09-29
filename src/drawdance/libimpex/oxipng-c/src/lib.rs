@@ -2,7 +2,7 @@
 //! C bindings for building a raw RGBA image out of pixel data and compressing
 //! it into an optimized PNG.
 
-use oxipng::{BitDepth, ColorType, Options, PngError, RawImage};
+use oxipng::{BitDepth, ColorType, Deflater, Options, PngError, RawImage};
 use std::{
     panic::{self, AssertUnwindSafe},
     ptr, slice,
@@ -88,6 +88,7 @@ pub unsafe extern "C" fn oxipng_raw_image_free(image: *mut OxipngRawImage) {
 pub unsafe extern "C" fn oxipng_raw_image_create_optimized_png(
     image: *const OxipngRawImage,
     level: u8,
+    deflate_level: u8,
     out_buffer: *mut *mut OxipngBuffer,
 ) -> OxipngResult {
     if out_buffer.is_null() {
@@ -100,6 +101,9 @@ pub unsafe extern "C" fn oxipng_raw_image_create_optimized_png(
 
     let mut opts = Options::from_preset(level);
     opts.optimize_alpha = true;
+    opts.deflater = Deflater::Libdeflater {
+        compression: deflate_level,
+    };
     // An unwind across the FFI boundary would take the whole process down,
     // turn it into an error instead.
     let result = panic::catch_unwind(AssertUnwindSafe(|| image.image.create_optimized_png(&opts)));
