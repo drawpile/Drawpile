@@ -26,6 +26,7 @@ dp_target_sources(dpengine
     dpengine/layer_props.c
     dpengine/layer_props_list.c
     dpengine/layer_routes.c
+    dpengine/liquify.c
     dpengine/local_state.c
     dpengine/ops.c
     dpengine/paint.c
@@ -73,6 +74,7 @@ dp_target_sources(dpengine
     dpengine/layer_props.h
     dpengine/layer_props_list.h
     dpengine/layer_routes.h
+    dpengine/liquify.h
     dpengine/load_enums.h
     dpengine/local_state.h
     dpengine/local_state_action.h

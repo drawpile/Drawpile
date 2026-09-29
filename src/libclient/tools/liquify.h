@@ -9,6 +9,10 @@ namespace canvas {
 class TransformModel;
 }
 
+namespace drawdance {
+class Liquify;
+}
+
 namespace tools {
 
 class LiquifyTool final : public Tool {
@@ -17,6 +21,7 @@ public:
 		Move,
 		Scale,
 		Rotate,
+		Smoothe,
 		Undo,
 		Last = Undo,
 	};
@@ -26,11 +31,9 @@ public:
 		qreal size = 60.0;
 		qreal amount = 0.05;
 		qreal spacing = 0.2;
-		qreal flow = 0.2;
 		bool sizePressure = false;
 		bool amountPressure = false;
 		bool reverse = false;
-		bool wash = false;
 	};
 
 	LiquifyTool(ToolController &owner);
@@ -52,6 +55,7 @@ public:
 
 private:
 	static constexpr int MAX_STATE_STACK_DEPTH = 50;
+	static constexpr float SMOOTHE_KERNEL_RADIUS = 1.5f;
 
 	bool isLiquifyActive() const;
 	canvas::TransformModel *getActiveLiquifyModel() const;
@@ -59,7 +63,7 @@ private:
 	void endLiquify(canvas::TransformModel *transform, bool applied);
 
 	void processDabs();
-	void applyDabs(canvas::TransformModel *transform);
+	void applyDabs(drawdance::Liquify &liquify);
 
 	qreal effectiveAmount(qreal amount) const
 	{
@@ -79,12 +83,10 @@ private:
 	canvas::Point m_firstPoint;
 	QVector<KisLiquifyTransformWorker::State> m_stateStack;
 	qreal m_zoom = 1.0;
-	qreal m_flow = 0.0;
 	Operation m_operation = Operation::Move;
 	Tool::Type m_toolToReturnTo = Tool::Type::_LASTTOOL;
 	int m_stateStackTop = -1;
 	bool m_reverse = false;
-	bool m_wash = false;
 	bool m_drawing = false;
 	bool m_strokeStarted = false;
 };

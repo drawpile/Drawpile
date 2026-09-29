@@ -3,6 +3,8 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
+#include "libclient/drawdance/global.h"
+#include "libclient/drawdance/liquify.h"
 #include "libclient/image/geom.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
@@ -23,10 +25,8 @@ LiquifyTool::LiquifyTool(ToolController &owner)
 void LiquifyTool::begin(const BeginParams &params)
 {
 	if(isLiquifyActive()) {
-		m_flow = m_props.flow;
 		m_operation = m_props.operation;
 		m_reverse = m_props.reverse;
-		m_wash = m_props.wash;
 		m_owner.setLiquifyEngineParams(
 			m_liquifyEngine, m_props.size, m_props.amount, m_props.spacing,
 			m_props.sizePressure, m_props.amountPressure);
@@ -121,7 +121,7 @@ void LiquifyTool::undoMultipart()
 	if(transform) {
 		if(m_stateStackTop > 0) {
 			--m_stateStackTop;
-			transform->setLiquifyState(m_stateStack[m_stateStackTop]);
+			// transform->setLiquifyState(m_stateStack[m_stateStackTop]);
 		} else {
 			cancelMultipart();
 		}
@@ -133,7 +133,7 @@ void LiquifyTool::redoMultipart()
 	canvas::TransformModel *transform = getActiveLiquifyModel();
 	if(transform && m_stateStackTop + 1 < m_stateStack.size()) {
 		++m_stateStackTop;
-		transform->setLiquifyState(m_stateStack[m_stateStackTop]);
+		// transform->setLiquifyState(m_stateStack[m_stateStackTop]);
 	}
 }
 
@@ -208,9 +208,10 @@ canvas::TransformModel *LiquifyTool::tryBeginLiquify()
 
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginLiquifyFromCanvas(
-		selection->bounds(), selection->image(), m_owner.selectedLayers());
+		selection->bounds(), selection->image(), m_owner.selectedLayers(),
+		m_owner.liquifyInterpolation());
 	m_stateStack.clear();
-	m_stateStack.append(transform->liquifyState());
+	m_stateStack.append({});
 	m_stateStackTop = 0;
 	setCursor(utils::Cursors::liquify());
 	return transform;
@@ -229,7 +230,9 @@ void LiquifyTool::processDabs()
 	if(m_liquifyEngine.hasDabs()) {
 		canvas::TransformModel *transform = getActiveLiquifyModel();
 		if(transform) {
-			applyDabs(transform);
+			transform->liquify(
+				std::bind(
+					&LiquifyTool::applyDabs, this, std::placeholders::_1));
 		} else {
 			qWarning("LiquifyTool::processDabs: liquify not active");
 		}
@@ -237,43 +240,48 @@ void LiquifyTool::processDabs()
 	}
 }
 
-void LiquifyTool::applyDabs(canvas::TransformModel *transform)
+void LiquifyTool::applyDabs(drawdance::Liquify &liquify)
 {
-	transform->liquify([this](KisLiquifyTransformWorker *worker) {
-		for(const DP_LiquifyEngineDab &dab : m_liquifyEngine.dabs()) {
-			QPointF base(dab.x, dab.y);
-			qreal sigma = dab.size / 3.0;
-
-			switch(m_operation) {
-			case Operation::Move: {
-				qreal amount = effectiveAmount(dab.amount);
-				qreal offsetLength = sigma * amount;
-				qreal offsetAngle = dab.direction_rad;
-				QPointF offset = QPointF(qCos(offsetAngle), qSin(offsetAngle)) *
-								 offsetLength;
-				worker->translatePoints(base, offset, sigma, m_wash, m_flow);
-				break;
-			}
-			case Operation::Scale: {
-				qreal amount = effectiveAmount(dab.amount);
-				worker->scalePoints(base, amount, sigma, m_wash, m_flow);
-				break;
-			}
-			case Operation::Rotate: {
-				qreal amount = effectiveAmount(dab.amount);
-				qreal angle = 2.0 * M_PI * amount;
-				worker->rotatePoints(base, angle, sigma, m_wash, m_flow);
-				break;
-			}
-			case Operation::Undo:
-				// This operation doesn't support reverse, wash or flow.
-				worker->undoPoints(base, dab.amount, sigma);
-				break;
-			default:
-				Q_UNREACHABLE();
-			}
+	drawdance::DrawContext drawContext = drawdance::DrawContextPool::acquire();
+	for(const DP_LiquifyEngineDab &dab : m_liquifyEngine.dabs()) {
+		qreal sigma = dab.size / 3.0;
+		switch(m_operation) {
+		case Operation::Move: {
+			qreal amount = effectiveAmount(dab.amount);
+			qreal offsetLength = amount * sigma;
+			qreal offsetAngle = dab.direction_rad;
+			QPointF offset =
+				QPointF(qCos(offsetAngle), qSin(offsetAngle)) * offsetLength;
+			liquify.opMove(
+				drawContext.get(), dab.x, dab.y, dab.size, offset.x(),
+				offset.y());
+			break;
 		}
-	});
+		case Operation::Scale: {
+			qreal amount = effectiveAmount(dab.amount);
+			liquify.opScale(drawContext.get(), dab.x, dab.y, dab.size, amount);
+			break;
+		}
+		case Operation::Rotate: {
+			qreal amount = effectiveAmount(dab.amount);
+			qreal angle = 2.0 * M_PI * amount;
+			liquify.opRotate(drawContext.get(), dab.x, dab.y, dab.size, angle);
+			break;
+		}
+		case Operation::Smoothe:
+			liquify.opSmoothe(
+				drawContext.get(), dab.x, dab.y, dab.size,
+				qBound(0.0f, dab.amount, 1.0f), SMOOTHE_KERNEL_RADIUS);
+			break;
+		case Operation::Undo:
+			liquify.opErase(
+				drawContext.get(), dab.x, dab.y, dab.size,
+				qBound(0.0f, dab.amount, 1.0f));
+			break;
+		default:
+			Q_UNREACHABLE();
+		}
+	}
 }
 
 void LiquifyTool::pushState(canvas::TransformModel *transform)
@@ -288,7 +296,7 @@ void LiquifyTool::pushState(canvas::TransformModel *transform)
 		m_stateStack.remove(0, shiftCount);
 	}
 
-	m_stateStack.append(transform->liquifyState());
+	m_stateStack.append({});
 	m_stateStackTop = m_stateStack.size() - 1;
 }
 

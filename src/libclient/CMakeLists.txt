@@ -93,6 +93,8 @@ target_sources(dpclient PRIVATE
 	drawdance/layerprops.h
 	drawdance/layerpropslist.cpp
 	drawdance/layerpropslist.h
+	drawdance/liquify.cpp
+	drawdance/liquify.h
 	drawdance/paintengine.cpp
 	drawdance/paintengine.h
 	drawdance/perf.cpp

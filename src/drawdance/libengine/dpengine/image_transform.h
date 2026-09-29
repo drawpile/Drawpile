@@ -30,6 +30,11 @@ typedef struct DP_Image DP_Image;
 typedef union DP_Pixel8 DP_Pixel8;
 
 
+float DP_image_transform_epsilon(int interpolation);
+
+uint32_t DP_image_transform_fetch(int interpolation, int width, int height,
+                                  const uint32_t *pixels, double px, double py);
+
 bool DP_image_transform_draw(int src_width, int src_height,
                              const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
                              DP_Image *dst_img, DP_Transform tf,

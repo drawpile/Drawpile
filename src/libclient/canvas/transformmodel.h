@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_CANVAS_TRANSFORMMODEL_H
 #define LIBCLIENT_CANVAS_TRANSFORMMODEL_H
-#include "libclient/image/kis_liquify_transform_worker.h"
+#include "libclient/drawdance/liquify.h"
 #include "libclient/net/message.h"
 #include "libclient/utils/transformquad.h"
 #include <QHash>
@@ -26,12 +26,11 @@ class TransformModel : public QObject {
 	Q_DISABLE_COPY_MOVE(TransformModel)
 public:
 	TransformModel(CanvasModel *canvas);
-	~TransformModel() override;
 
 	bool isActive() const { return m_active; }
-	bool isLiquify() const { return m_liquifyWorker; }
-	bool isTransformActive() const { return m_active && !m_liquifyWorker; }
-	bool isLiquifyActive() const { return m_active && m_liquifyWorker; }
+	bool isLiquify() const { return !m_liquify.isNull(); }
+	bool isTransformActive() const { return m_active && m_liquify.isNull(); }
+	bool isLiquifyActive() const { return m_active && !m_liquify.isNull(); }
 	bool isMovedFromCanvas() const { return m_active && !m_pasted; }
 	bool isAffectedByLayerAlphaLock() const { return m_pasted && !m_stamped; }
 	bool isDstQuadValid() const { return m_dstQuadValid; }
@@ -49,7 +48,7 @@ public:
 
 	bool isStampable() const
 	{
-		return (m_pasted || m_layerIds.size() == 1) && !m_liquifyWorker;
+		return (m_pasted || m_layerIds.size() == 1) && m_liquify.isNull();
 	}
 
 	void beginFromCanvas(
@@ -60,17 +59,18 @@ public:
 
 	void beginLiquifyFromCanvas(
 		const QRect &srcBounds, const QImage &mask,
-		const QSet<int> &sourceLayerIds);
+		const QSet<int> &sourceLayerIds, int liquifyInterpolation);
 
 	void setDeselectOnApply(bool deselectOnApply);
 	void setDstQuad(const TransformQuad &dstQuad);
 	void setPreviewAccurate(bool previewAccurate);
+	void setLiquifyInterpolation(int liquifyInterpolation);
 	void setBlendMode(int blendMode);
 	void setOpacity(qreal opacity);
 
-	void liquify(const std::function<void(KisLiquifyTransformWorker *)> &fn);
-	KisLiquifyTransformWorker::State liquifyState() const;
-	void setLiquifyState(const KisLiquifyTransformWorker::State &state);
+	void liquify(const std::function<void(drawdance::Liquify &)> &fn);
+	// KisLiquifyTransformWorker::State liquifyState() const;
+	// void setLiquifyState(const KisLiquifyTransformWorker::State &state);
 
 	void applyOffset(int x, int y);
 
@@ -132,9 +132,10 @@ private:
 	applyLiquify(uint8_t contextId, int layerId, int interpolation);
 
 	void applyLiquifyCutAndPaste(
-		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
-		int sourceId, int srcX, int srcY, int srcW, int srcH,
-		const QImage &mask, bool bilinear);
+		QVector<net::Message> &msgs,
+		const drawdance::LiquifyState &liquifyState, unsigned int contextId,
+		int layerId, int sourceId, int srcX, int srcY, int srcW, int srcH,
+		const QImage &mask, int interpolation);
 
 	void clear();
 
@@ -182,7 +183,7 @@ private:
 	static bool isVisibleInViewModeCallback(void *user, DP_LayerProps *lp);
 
 	CanvasModel *m_canvas;
-	KisLiquifyTransformWorker *m_liquifyWorker = nullptr;
+	drawdance::Liquify m_liquify;
 	bool m_active = false;
 	bool m_pasted = false;
 	bool m_deselectOnApply = false;
@@ -201,6 +202,7 @@ private:
 	QHash<int, QImage> m_layerImages;
 	unsigned int m_liquifyPreviewId = 0u;
 	QPoint m_floatingImageOffset;
+	int m_liquifyInterpolation;
 	int m_blendMode;
 	qreal m_opacity = 1.0;
 };

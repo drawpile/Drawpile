@@ -11,6 +11,11 @@ static void cleanupImage(void *user)
 	DP_image_free(static_cast<DP_Image *>(user));
 }
 
+static void cleanupUint32(void *user)
+{
+	DP_free(static_cast<uint32_t *>(user));
+}
+
 static void cleanupPixels8(void *user)
 {
 	DP_free(static_cast<DP_Pixel8 *>(user));
@@ -38,6 +43,17 @@ QImage wrapImage(DP_Image *img)
 			img};
 	} else {
 		return QImage{};
+	}
+}
+
+QImage wrapImageUint32(int width, int height, uint32_t *pixels)
+{
+	if(width > 0 && height > 0 && pixels) {
+		return QImage(
+			reinterpret_cast<uchar *>(pixels), width, height,
+			QImage::Format_ARGB32_Premultiplied, cleanupUint32, pixels);
+	} else {
+		return QImage();
 	}
 }
 

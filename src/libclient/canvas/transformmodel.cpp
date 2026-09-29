@@ -26,11 +26,11 @@ namespace {
 class LiquifyPreviewTask : public AsyncTask {
 public:
 	explicit LiquifyPreviewTask(
-		KisLiquifyTransformWorker *liquifyWorker, bool bilinear,
+		const drawdance::LiquifyState &liquifyState, int interpolation,
 		const std::function<QImage(QPointF &)> &getMergedImage)
-		: m_liquifyWorker(*liquifyWorker)
+		: m_liquifyState(liquifyState)
 		, m_getMergedImage(getMergedImage)
-		, m_bilinear(bilinear)
+		, m_interpolation(interpolation)
 	{
 	}
 
@@ -50,30 +50,40 @@ public:
 				QStringLiteral("No source image"));
 		}
 
-		QPointF dstOffset;
-		m_dstImage = m_liquifyWorker.runOnQImage(
-			srcImage, srcOffset, QTransform(), m_bilinear, dstOffset);
+		// TODO identity
+		// TODO re-use transformer
+
+		drawdance::LiquifyTransformer liquifyTransformer =
+			drawdance::LiquifyTransformer::init(
+				srcOffset.x(), srcOffset.y(), srcImage);
+		liquifyTransformer.apply(m_liquifyState, m_interpolation);
+
+		if(isCancelled()) {
+			return AsyncTaskResult::cancelled();
+		}
+
+		m_dstImage = liquifyTransformer.targetImage(m_dstOffset);
 		if(m_dstImage.isNull()) {
 			return AsyncTaskResult::errorProceed(
 				QStringLiteral("No destination image"));
 		}
 
-		m_dstOffset = dstOffset.toPoint();
 		return AsyncTaskResult::ok();
 	}
 
 private:
-	KisLiquifyTransformWorker m_liquifyWorker;
+	drawdance::LiquifyState m_liquifyState;
 	std::function<QImage(QPointF &)> m_getMergedImage;
 	QImage m_dstImage;
 	QPoint m_dstOffset;
-	bool m_bilinear;
+	int m_interpolation;
 };
 }
 
 TransformModel::TransformModel(CanvasModel *canvas)
 	: QObject(canvas)
 	, m_canvas(canvas)
+	, m_liquifyInterpolation(DP_MSG_TRANSFORM_REGION_MODE_NEAREST)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 {
 	LayerListModel *layerlist = canvas->layerlist();
@@ -88,11 +98,6 @@ TransformModel::TransformModel(CanvasModel *canvas)
 		&TransformModel::requestLiquifyPreviewUpdate, Qt::QueuedConnection);
 }
 
-TransformModel::~TransformModel()
-{
-	delete m_liquifyWorker;
-}
-
 bool TransformModel::isPreviewAccurate() const
 {
 	return m_previewAccurate && canPreviewAccurate();
@@ -100,7 +105,7 @@ bool TransformModel::isPreviewAccurate() const
 
 bool TransformModel::canPreviewAccurate() const
 {
-	return !m_liquifyWorker &&
+	return !isLiquify() &&
 		   (m_pasted || m_layerIds.size() <= DP_PREVIEW_TRANSFORM_COUNT);
 }
 
@@ -169,7 +174,8 @@ void TransformModel::beginFloating(const QRect &srcBounds, const QImage &image)
 }
 
 void TransformModel::beginLiquifyFromCanvas(
-	const QRect &srcBounds, const QImage &mask, const QSet<int> &sourceLayerIds)
+	const QRect &srcBounds, const QImage &mask, const QSet<int> &sourceLayerIds,
+	int liquifyInterpolation)
 {
 	LayerListModel *layerlist = m_canvas->layerlist();
 	layerlist->initCheckedLayers(sourceLayerIds);
@@ -178,8 +184,9 @@ void TransformModel::beginLiquifyFromCanvas(
 	m_srcBounds = srcBounds;
 	m_dstQuad = TransformQuad(srcBounds);
 	m_dstQuadValid = isQuadValid(m_dstQuad);
-	m_liquifyWorker = new KisLiquifyTransformWorker(srcBounds);
 	m_mask = isMaskRelevant(mask) ? mask : QImage();
+	m_liquify = drawdance::Liquify::init(srcBounds, m_mask);
+	m_liquifyInterpolation = liquifyInterpolation;
 	setLayers(layerlist->checkedLayers());
 }
 
@@ -192,7 +199,7 @@ void TransformModel::setDeselectOnApply(bool deselectOnApply)
 
 void TransformModel::setDstQuad(const TransformQuad &dstQuad)
 {
-	if(m_active && !m_liquifyWorker) {
+	if(m_active && !isLiquify()) {
 		TransformQuad result = dstQuad.round();
 		if(result != m_dstQuad && !result.boundingRect().isEmpty()) {
 			m_dstQuad = result;
@@ -209,8 +216,18 @@ void TransformModel::setPreviewAccurate(bool previewAccurate)
 {
 	if(previewAccurate != m_previewAccurate) {
 		m_previewAccurate = previewAccurate;
-		if(m_active) {
+		if(isTransformActive()) {
 			emit transformChanged();
+		}
+	}
+}
+
+void TransformModel::setLiquifyInterpolation(int liquifyInterpolation)
+{
+	if(liquifyInterpolation != m_liquifyInterpolation) {
+		m_liquifyInterpolation = liquifyInterpolation;
+		if(isLiquifyActive()) {
+			requestLiquifyPreviewUpdate();
 		}
 	}
 }
@@ -232,28 +249,14 @@ void TransformModel::setOpacity(qreal opacity)
 }
 
 void TransformModel::liquify(
-	const std::function<void(KisLiquifyTransformWorker *)> &fn)
+	const std::function<void(drawdance::Liquify &)> &fn)
 {
-	if(m_active && m_liquifyWorker) {
-		fn(m_liquifyWorker);
+	if(isLiquifyActive()) {
+		fn(m_liquify);
 		requestLiquifyPreviewUpdate();
 	} else {
 		qWarning("TransformModel::liquify: liquify not active");
 	}
-}
-
-KisLiquifyTransformWorker::State TransformModel::liquifyState() const
-{
-	Q_ASSERT(m_liquifyWorker);
-	return m_liquifyWorker->state();
-}
-
-void TransformModel::setLiquifyState(
-	const KisLiquifyTransformWorker::State &state)
-{
-	Q_ASSERT(m_liquifyWorker);
-	m_liquifyWorker->setState(state);
-	requestLiquifyPreviewUpdate();
 }
 
 void TransformModel::applyOffset(int x, int y)
@@ -271,7 +274,7 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 {
 	if(m_active && m_dstQuadValid) {
 		utils::ScopedOverrideCursor waitCursor;
-		if(m_liquifyWorker) {
+		if(isLiquify()) {
 			return applyLiquify(contextId, layerId, interpolation);
 		} else if(m_pasted) {
 			return applyFloating(
@@ -698,7 +701,12 @@ QVector<net::Message> TransformModel::applyFloating(
 QVector<net::Message>
 TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 {
-	if(!m_liquifyWorker || m_liquifyWorker->isIdentity()) {
+	if(m_liquify.isNull()) {
+		return {};
+	}
+
+	drawdance::LiquifyState liquifyState = m_liquify.currentState();
+	if(liquifyState.isNull()) {
 		return {};
 	}
 
@@ -706,7 +714,6 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 	int srcY = m_srcBounds.y();
 	int srcW = m_srcBounds.width();
 	int srcH = m_srcBounds.height();
-	bool bilinear = interpolation == DP_MSG_TRANSFORM_REGION_MODE_BILINEAR;
 
 	QVector<net::Message> msgs;
 	msgs.reserve(m_layerIds.size() * 2 + 4);
@@ -716,32 +723,36 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 	if(singleLayerSourceId > 0) {
 		if(hasContentInSelection(singleLayerSourceId)) {
 			applyLiquifyCutAndPaste(
-				msgs, contextId, layerId, singleLayerSourceId, srcX, srcY, srcW,
-				srcH, m_mask, bilinear);
+				msgs, liquifyState, contextId, layerId, singleLayerSourceId,
+				srcX, srcY, srcW, srcH, m_mask, interpolation);
 		}
 	} else {
 		for(int layerIdToLiquify : m_layerIds) {
 			if(hasContentInSelection(layerIdToLiquify)) {
 				applyLiquifyCutAndPaste(
-					msgs, contextId, layerIdToLiquify, layerIdToLiquify, srcX,
-					srcY, srcW, srcH, m_mask, bilinear);
+					msgs, liquifyState, contextId, layerIdToLiquify,
+					layerIdToLiquify, srcX, srcY, srcW, srcH, m_mask,
+					interpolation);
 			}
 		}
 	}
 
 	canvas::SelectionModel *selection = m_canvas->selection();
 	if(selection->isValid()) {
-		QPointF offset;
-		QImage img = m_liquifyWorker->runOnQImage(
-			selection->image(), QPointF(srcX, srcY), QTransform(), bilinear,
-			offset);
-		if(img.isNull()) {
+		drawdance::LiquifyTransformer liquifyTransformer =
+			drawdance::LiquifyTransformer::init(srcX, srcY, selection->image());
+		liquifyTransformer.apply(liquifyState, interpolation);
+
+		QPoint dstPos;
+		QImage dstImage = liquifyTransformer.targetImage(dstPos);
+		if(dstImage.isNull()) {
 			qWarning("TransformModel::applyLiquify: null selection image");
 		} else {
 			net::makeSelectionPutMessages(
 				msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
-				DP_MSG_SELECTION_PUT_OP_REPLACE, offset.x(), offset.y(),
-				img.width(), img.height(), isImageOpaque(img) ? QImage() : img);
+				DP_MSG_SELECTION_PUT_OP_REPLACE, dstPos.x(), dstPos.y(),
+				dstImage.width(), dstImage.height(),
+				isImageOpaque(dstImage) ? QImage() : dstImage);
 		}
 	}
 
@@ -749,21 +760,29 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 }
 
 void TransformModel::applyLiquifyCutAndPaste(
-	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
-	int sourceId, int srcX, int srcY, int srcW, int srcH, const QImage &mask,
-	bool bilinear)
+	QVector<net::Message> &msgs, const drawdance::LiquifyState &liquifyState,
+	unsigned int contextId, int layerId, int sourceId, int srcX, int srcY,
+	int srcW, int srcH, const QImage &mask, int interpolation)
 {
-	QPointF offset;
-	QImage img = m_liquifyWorker->runOnQImage(
-		getLayerImageWithMask(sourceId, mask), QPointF(srcX, srcY),
-		QTransform(), bilinear, offset);
-	if(img.isNull()) {
+	QImage srcImage = getLayerImageWithMask(sourceId, mask);
+	if(srcImage.isNull()) {
+		qWarning("Source image is null");
+		return;
+	}
+
+	drawdance::LiquifyTransformer liquifyTransformer =
+		drawdance::LiquifyTransformer::init(srcX, srcY, srcImage);
+	liquifyTransformer.apply(liquifyState, interpolation);
+
+	QPoint dstPos;
+	QImage dstImage = liquifyTransformer.targetImage(dstPos);
+	if(dstImage.isNull()) {
 		qWarning("TransformModel::applyLiquifyCutAndPaste: null image");
 	} else {
 		applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 		net::makePutImageMessagesCompat(
-			msgs, contextId, layerId, DP_BLEND_MODE_NORMAL, qRound(offset.x()),
-			qRound(offset.y()), img, m_canvas->isCompatibilityMode());
+			msgs, contextId, layerId, DP_BLEND_MODE_NORMAL, dstPos.x(),
+			dstPos.y(), dstImage, m_canvas->isCompatibilityMode());
 	}
 }
 
@@ -783,8 +802,7 @@ void TransformModel::clear()
 	m_layerImages.clear();
 	m_blendMode = DP_BLEND_MODE_NORMAL;
 	m_opacity = 1.0;
-	delete m_liquifyWorker;
-	m_liquifyWorker = nullptr;
+	m_liquify = drawdance::Liquify::null();
 }
 
 void TransformModel::updateLayerIds()
@@ -1051,7 +1069,7 @@ void TransformModel::emitLiquifyPreviewRequest()
 void TransformModel::requestLiquifyPreviewUpdate()
 {
 	m_liquifyPreviewRequested = false;
-	if(m_liquifyWorker && !m_layerIds.isEmpty()) {
+	if(isLiquify() && !m_layerIds.isEmpty()) {
 		if(m_liquifyPreviewInProgress) {
 			m_liquifyPreviewPending = true;
 		} else {
@@ -1064,7 +1082,7 @@ void TransformModel::runLiquifyPreviewUpdate()
 {
 	m_liquifyPreviewInProgress = true;
 	AsyncTaskRunnable *runnable = new AsyncTaskRunnable({new LiquifyPreviewTask(
-		m_liquifyWorker, true,
+		m_liquify.currentState(), m_liquifyInterpolation,
 		[canvasState = m_canvas->paintEngine()->viewCanvasState(),
 		 mask = m_mask, layerIds = m_layerIds,
 		 srcBounds = m_srcBounds](QPointF &outOffset) {

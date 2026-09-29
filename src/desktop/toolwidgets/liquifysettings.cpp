@@ -75,6 +75,9 @@ void LiquifySettings::pushSettings()
 		props.operation = LiquifyTool::Operation::Scale;
 		props.reverse = true;
 		break;
+	case int(Operation::Smoothe):
+		props.operation = LiquifyTool::Operation::Smoothe;
+		break;
 	case int(Operation::Erase):
 		props.operation = LiquifyTool::Operation::Undo;
 		break;
@@ -168,6 +171,16 @@ QWidget *LiquifySettings::createUiWidget(QWidget *parent)
 	shrinkButton->setIcon(QIcon::fromTheme("drawpile_liquify_shrink"));
 	headerLayout->addWidget(shrinkButton, 1);
 
+	widgets::GroupedToolButton *smootheButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	smootheButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	smootheButton->setCheckable(true);
+	smootheButton->setChecked(false);
+	smootheButton->setStatusTip(tr("Smoothe"));
+	smootheButton->setToolTip(smootheButton->statusTip());
+	smootheButton->setIcon(QIcon::fromTheme("drawpile_liquify_smoothe"));
+	headerLayout->addWidget(smootheButton, 1);
+
 	widgets::GroupedToolButton *eraseButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
 	eraseButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -186,6 +199,7 @@ QWidget *LiquifySettings::createUiWidget(QWidget *parent)
 	m_operationGroup->addButton(rotateRightButton, int(Operation::RotateRight));
 	m_operationGroup->addButton(expandButton, int(Operation::Expand));
 	m_operationGroup->addButton(shrinkButton, int(Operation::Shrink));
+	m_operationGroup->addButton(smootheButton, int(Operation::Smoothe));
 	m_operationGroup->addButton(eraseButton, int(Operation::Erase));
 	connect(
 		m_operationGroup,
