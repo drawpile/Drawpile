@@ -50,6 +50,10 @@ if(NOT ANDROID AND NOT EMSCRIPTEN)
 		TOOLS "Command-line tools" OFF "CARGO_COMMAND" OFF)
 	add_feature_info("Command-line tools, requires Rust (TOOLS)" TOOLS "")
 
+	cmake_dependent_option(
+		OXIPNG "Optimize saved PNGs with oxipng" ON "CARGO_COMMAND" OFF)
+	add_feature_info("PNG optimization, requires Rust (OXIPNG)" OXIPNG "")
+
 	option(TESTS "Build unit tests" OFF)
 	add_feature_info("Unit tests (TESTS)" TESTS "")
 
