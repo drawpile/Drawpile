@@ -55,6 +55,7 @@ private:
 		RotateRight,
 		Expand,
 		Shrink,
+		Smoothe,
 		Erase,
 		Last = Erase,
 	};

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  SPDX-FileCopyrightText: none
+  SPDX-License-Identifier: CC0-1.0
+-->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg3"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <g
+     fill="none"
+     stroke="#373737"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="g3"
+     transform="matrix(1.2307692,0,0,1.2307692,-1.8461536,-1.8461536)"
+     style="fill:#232629;fill-opacity:1">
+    <path
+       d="m 2,5 c 2.2,-2 3.8,2 6,0 2.2,-2 3.8,2 6,0"
+       id="path1"
+       style="fill:#232629;fill-opacity:1" />
+    <path
+       d="m 2,8 c 2.2,-2 3.8,2 6,0 2.2,-2 3.8,2 6,0"
+       id="path2"
+       style="fill:#232629;fill-opacity:1" />
+    <path
+       d="m 2,11 c 2.2,-2 3.8,2 6,0 2.2,-2 3.8,2 6,0"
+       id="path3"
+       style="fill:#232629;fill-opacity:1" />
+  </g>
+</svg>

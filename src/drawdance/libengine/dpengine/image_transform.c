@@ -247,6 +247,23 @@ static uint32_t fetch_transformed_pixel(int interpolation, int width,
     }
 }
 
+float DP_image_transform_epsilon(int interpolation)
+{
+    switch (interpolation) {
+    case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
+        return 0.5f;
+    default:
+        return 0.001f;
+    }
+}
+
+uint32_t DP_image_transform_fetch(int interpolation, int width, int height,
+                                  const uint32_t *pixels, double px, double py)
+{
+    return fetch_transformed_pixel(interpolation, width, height,
+                                   (const DP_Pixel8 *)pixels, px, py);
+}
+
 static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
                                            const DP_Pixel8 *pixels,
                                            DP_Transform tf, int interpolation,

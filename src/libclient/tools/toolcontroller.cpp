@@ -400,17 +400,21 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	connect(
 		m_model->selection(), &canvas::SelectionModel::selectionChanged, this,
 		&ToolController::updateSelection);
+
+	canvas::TransformModel *transform = m_model->transform();
 	connect(
-		m_model->transform(), &canvas::TransformModel::transformChanged, this,
+		transform, &canvas::TransformModel::transformChanged, this,
 		&ToolController::updateTransformPreview);
 	connect(
-		m_model->transform(), &canvas::TransformModel::transformCut, this,
+		transform, &canvas::TransformModel::transformCut, this,
 		&ToolController::setTransformCutPreview);
 	connect(
-		m_model->transform(), &canvas::TransformModel::transformCutCleared,
-		this, &ToolController::clearTransformCutPreview);
+		transform, &canvas::TransformModel::transformCutCleared, this,
+		&ToolController::clearTransformCutPreview);
 	m_model->setTransformInterpolation(m_transformInterpolation);
-	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
+	transform->setPreviewAccurate(m_transformPreviewAccurate);
+	transform->setLiquifyInterpolation(m_liquifyInterpolation);
+
 	updateSelection();
 	updateSelectionMaskingEnabled(m_model->isCompatibilityMode());
 	emit modelChanged(model);
@@ -571,6 +575,9 @@ void ToolController::setLiquifyParams(int interpolation)
 {
 	if(interpolation != m_liquifyInterpolation) {
 		m_liquifyInterpolation = interpolation;
+		if(m_model) {
+			m_model->transform()->setLiquifyInterpolation(interpolation);
+		}
 		updateTransformPreview();
 	}
 }
