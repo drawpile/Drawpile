@@ -70,6 +70,9 @@ int DP_liquify_refcount(DP_Liquify *l);
 
 DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l);
 
+// Returns false if the given liquify state doesn't belong to us.
+bool DP_liquify_current_state_set_inc(DP_Liquify *l, DP_LiquifyState *ls);
+
 uint32_t *DP_liquify_dump(DP_Liquify *l, int *out_width, int *out_height);
 
 // Must only be called from one thread at a time!

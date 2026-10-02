@@ -8,6 +8,73 @@ extern "C" {
 
 namespace drawdance {
 
+LiquifyState LiquifyState::null()
+{
+	return LiquifyState(nullptr);
+}
+
+LiquifyState LiquifyState::inc(DP_LiquifyState *ls)
+{
+	return LiquifyState(DP_liquify_state_incref_nullable(ls));
+}
+
+LiquifyState LiquifyState::noinc(DP_LiquifyState *ls)
+{
+	return LiquifyState(ls);
+}
+
+LiquifyState::LiquifyState()
+	: LiquifyState(nullptr)
+{
+}
+
+LiquifyState::LiquifyState(const LiquifyState &other)
+	: LiquifyState(DP_liquify_state_incref_nullable(other.m_data))
+{
+}
+
+LiquifyState::LiquifyState(LiquifyState &&other)
+	: LiquifyState(other.m_data)
+{
+	other.m_data = nullptr;
+}
+
+LiquifyState &LiquifyState::operator=(const LiquifyState &other)
+{
+	DP_liquify_state_decref_nullable(m_data);
+	m_data = DP_liquify_state_incref_nullable(other.m_data);
+	return *this;
+}
+
+LiquifyState &LiquifyState::operator=(LiquifyState &&other)
+{
+	DP_liquify_state_decref_nullable(m_data);
+	m_data = other.m_data;
+	other.m_data = nullptr;
+	return *this;
+}
+
+LiquifyState::~LiquifyState()
+{
+	DP_liquify_state_decref_nullable(m_data);
+}
+
+DP_LiquifyState *LiquifyState::get() const
+{
+	return m_data;
+}
+
+bool LiquifyState::isNull() const
+{
+	return !m_data;
+}
+
+LiquifyState::LiquifyState(DP_LiquifyState *ls)
+	: m_data(ls)
+{
+}
+
+
 Liquify Liquify::init(QRect bounds, const QImage &mask)
 {
 	FillMaskParams params = {bounds, mask};
@@ -77,9 +144,14 @@ bool Liquify::isNull() const
 	return !m_data;
 }
 
-LiquifyState Liquify::currentState()
+LiquifyState Liquify::currentState() const
 {
 	return LiquifyState::noinc(DP_liquify_current_state_inc(m_data));
+}
+
+bool Liquify::setCurrentState(const LiquifyState &state)
+{
+	return DP_liquify_current_state_set_inc(m_data, state.get());
 }
 
 QImage Liquify::dump() const
@@ -175,73 +247,6 @@ void Liquify::fillMask(void *user, unsigned char *out)
 			}
 		}
 	}
-}
-
-
-LiquifyState LiquifyState::null()
-{
-	return LiquifyState(nullptr);
-}
-
-LiquifyState LiquifyState::inc(DP_LiquifyState *ls)
-{
-	return LiquifyState(DP_liquify_state_incref_nullable(ls));
-}
-
-LiquifyState LiquifyState::noinc(DP_LiquifyState *ls)
-{
-	return LiquifyState(ls);
-}
-
-LiquifyState::LiquifyState()
-	: LiquifyState(nullptr)
-{
-}
-
-LiquifyState::LiquifyState(const LiquifyState &other)
-	: LiquifyState(DP_liquify_state_incref_nullable(other.m_data))
-{
-}
-
-LiquifyState::LiquifyState(LiquifyState &&other)
-	: LiquifyState(other.m_data)
-{
-	other.m_data = nullptr;
-}
-
-LiquifyState &LiquifyState::operator=(const LiquifyState &other)
-{
-	DP_liquify_state_decref_nullable(m_data);
-	m_data = DP_liquify_state_incref_nullable(other.m_data);
-	return *this;
-}
-
-LiquifyState &LiquifyState::operator=(LiquifyState &&other)
-{
-	DP_liquify_state_decref_nullable(m_data);
-	m_data = other.m_data;
-	other.m_data = nullptr;
-	return *this;
-}
-
-LiquifyState::~LiquifyState()
-{
-	DP_liquify_state_decref_nullable(m_data);
-}
-
-DP_LiquifyState *LiquifyState::get() const
-{
-	return m_data;
-}
-
-bool LiquifyState::isNull() const
-{
-	return !m_data;
-}
-
-LiquifyState::LiquifyState(DP_LiquifyState *ls)
-	: m_data(ls)
-{
 }
 
 

@@ -4,7 +4,6 @@
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/drawdance/global.h"
-#include "libclient/drawdance/liquify.h"
 #include "libclient/image/geom.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
@@ -53,10 +52,6 @@ void LiquifyTool::motion(const MotionParams &params)
 				m_firstPoint.setPressure(point.pressure());
 			} else {
 				m_strokeStarted = true;
-				canvas::TransformModel *transform = getActiveLiquifyModel();
-				if(transform) {
-					pushState(transform);
-				}
 				m_liquifyEngine.beginStroke(m_zoom);
 				m_liquifyEngine.strokeTo(point);
 				processDabs();
@@ -74,6 +69,10 @@ void LiquifyTool::end(const EndParams &params)
 			m_strokeStarted = false;
 			m_liquifyEngine.endStroke(QDateTime::currentMSecsSinceEpoch());
 			processDabs();
+			canvas::TransformModel *transform = getActiveLiquifyModel();
+			if(transform) {
+				pushState(transform);
+			}
 		}
 	}
 }
@@ -121,7 +120,7 @@ void LiquifyTool::undoMultipart()
 	if(transform) {
 		if(m_stateStackTop > 0) {
 			--m_stateStackTop;
-			// transform->setLiquifyState(m_stateStack[m_stateStackTop]);
+			transform->setLiquifyState(m_stateStack[m_stateStackTop]);
 		} else {
 			cancelMultipart();
 		}
@@ -133,7 +132,7 @@ void LiquifyTool::redoMultipart()
 	canvas::TransformModel *transform = getActiveLiquifyModel();
 	if(transform && m_stateStackTop + 1 < m_stateStack.size()) {
 		++m_stateStackTop;
-		// transform->setLiquifyState(m_stateStack[m_stateStackTop]);
+		transform->setLiquifyState(m_stateStack[m_stateStackTop]);
 	}
 }
 
@@ -211,7 +210,7 @@ canvas::TransformModel *LiquifyTool::tryBeginLiquify()
 		selection->bounds(), selection->image(), m_owner.selectedLayers(),
 		m_owner.liquifyInterpolation());
 	m_stateStack.clear();
-	m_stateStack.append({});
+	m_stateStack.append(transform->liquifyState());
 	m_stateStackTop = 0;
 	setCursor(utils::Cursors::liquify());
 	return transform;
@@ -296,7 +295,7 @@ void LiquifyTool::pushState(canvas::TransformModel *transform)
 		m_stateStack.remove(0, shiftCount);
 	}
 
-	m_stateStack.append({});
+	m_stateStack.append(transform->liquifyState());
 	m_stateStackTop = m_stateStack.size() - 1;
 }
 

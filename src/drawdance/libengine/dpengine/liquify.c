@@ -101,9 +101,7 @@ static DP_LiquifyTile *tile_alloc_zeroed(DP_Liquify *l)
     DP_LiquifyTile *lt = l->free_tiles;
     if (lt) {
         l->free_tiles = lt->next_free;
-        for (int i = 0; i < (int)DP_ARRAY_LENGTH(lt->d); ++i) {
-            lt->d[i] = 0.0f;
-        }
+        memset(lt->d, 0, sizeof(lt->d));
     }
     else {
         lt = DP_malloc_simd_zeroed(sizeof(*lt));
@@ -360,19 +358,6 @@ static void map_sample_pixel_bilinear(DP_LiquifyMap *lm, float xf, float yf,
             + (1.0f - tx) * ty * dy01 + tx * ty * dy11;
 }
 
-static void map_sample_pixel_bilinear_nullable(DP_LiquifyMap *lm_or_null,
-                                               float xf, float yf,
-                                               float *out_dx, float *out_dy)
-{
-    if (lm_or_null) {
-        map_sample_pixel_bilinear(lm_or_null, xf, yf, out_dx, out_dy);
-    }
-    else {
-        *out_dx = 0.0f;
-        *out_dy = 0.0f;
-    }
-}
-
 static void map_init_tile_inc(DP_LiquifyMap *lm, int tx, int ty,
                               DP_LiquifyTile *lt)
 {
@@ -523,6 +508,21 @@ DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l)
     return ls;
 }
 
+bool DP_liquify_current_state_set_inc(DP_Liquify *l, DP_LiquifyState *ls)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    DP_ASSERT(ls);
+    DP_ASSERT(DP_atomic_get(&ls->refcount) > 0);
+    if (ls->l == l) {
+        DP_liquify_state_apply(ls);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 static uint32_t liquify_dump_color(float dx, float dy)
 {
     if (dx == 0.0f && dy == 0.0f) {
@@ -588,16 +588,14 @@ static float calculate_alpha(float distance, float radius)
     return DP_square_float((1.0f - DP_square_float(distance / radius)));
 }
 
-static void op_move(const DP_LiquifyOpParams *params, DP_LiquifyMap *lm_or_null,
-                    int x, int y, DP_UNUSED float distance_squared,
-                    float *out_x, float *out_y)
+static void op_transform(const DP_LiquifyOpParams *params, float xf, float yf,
+                         float prev_x, float prev_y, float *out_x, float *out_y,
+                         void (*fn)(const DP_LiquifyOpParams *params, float xf,
+                                    float yf, float prev_x, float prev_y,
+                                    float center_x, float center_y,
+                                    float src_dx, float src_dy, float alpha,
+                                    float *out_x, float *out_y))
 {
-    float xf = DP_int_to_float(x);
-    float yf = DP_int_to_float(y);
-
-    float prev_x, prev_y;
-    map_sample_pixel_bilinear_nullable(lm_or_null, xf, yf, &prev_x, &prev_y);
-
     float src_x = xf - prev_x;
     float src_y = yf - prev_y;
 
@@ -609,169 +607,82 @@ static void op_move(const DP_LiquifyOpParams *params, DP_LiquifyMap *lm_or_null,
     float src_distance =
         sqrtf(DP_square_float(src_dx) + DP_square_float(src_dy));
     float radius = params->radius;
-    float strength;
     if (src_distance < radius) {
-        float fade = (1.0f - DP_square_float(src_distance / radius));
-        strength = DP_square_float(fade);
+        float alpha = calculate_alpha(src_distance, radius);
+        fn(params, xf, yf, prev_x, prev_y, center_x, center_y, src_dx, src_dy,
+           alpha, out_x, out_y);
     }
     else {
-        strength = 0.0f;
+        *out_x = prev_x;
+        *out_y = prev_y;
     }
-
-    float a_x = xf - (params->move.dx * strength);
-    float a_y = yf - (params->move.dy * strength);
-
-    *out_x = (xf - a_x) + prev_x;
-    *out_y = (yf - a_y) + prev_y;
 }
 
-static void op_scale(const DP_LiquifyOpParams *params,
-                     DP_LiquifyMap *lm_or_null, int x, int y,
-                     DP_UNUSED float distance_squared, float *out_x,
-                     float *out_y)
+static void op_transform_move(const DP_LiquifyOpParams *params,
+                              DP_UNUSED float xf, DP_UNUSED float yf,
+                              float prev_x, float prev_y,
+                              DP_UNUSED float center_x,
+                              DP_UNUSED float center_y, DP_UNUSED float src_dx,
+                              DP_UNUSED float src_dy, float alpha, float *out_x,
+                              float *out_y)
 {
-    float xf = DP_int_to_float(x);
-    float yf = DP_int_to_float(y);
+    *out_x = prev_x + (params->move.dx * alpha);
+    *out_y = prev_y + (params->move.dy * alpha);
+}
 
-    float prev_x, prev_y;
-    map_sample_pixel_bilinear_nullable(lm_or_null, xf, yf, &prev_x, &prev_y);
-
-    float src_x = xf - prev_x;
-    float src_y = yf - prev_y;
-
-    float center_x = params->x;
-    float center_y = params->y;
-    float src_dx = src_x - center_x;
-    float src_dy = src_y - center_y;
-
-    // Don't grab stuff from outside the brush area. Smoothly fade out the edges
-    // to avoid jitter as the brush is moved.
-    float src_distance =
-        sqrtf(DP_square_float(src_dx) + DP_square_float(src_dy));
-    float radius = params->radius;
-    float effective_amount;
-    if (src_distance < radius) {
-        float fade = (1.0f - DP_square_float(src_distance / radius));
-        effective_amount = params->scale.amount * DP_square_float(fade);
-    }
-    else {
-        effective_amount = 0.0f;
-    }
-
-    // Clamp the ratio so that bloating doesn't end up inverting.
-    float ratio = DP_max_float(0.001f, 1.0f - effective_amount);
+static void op_transform_scale(const DP_LiquifyOpParams *params, float xf,
+                               float yf, DP_UNUSED float prev_x,
+                               DP_UNUSED float prev_y, float center_x,
+                               float center_y, float src_dx, float src_dy,
+                               float alpha, float *out_x, float *out_y)
+{
+    float ratio = DP_max_float(0.001f, 1.0f - params->scale.amount * alpha);
     *out_x = xf - center_x - (src_dx * ratio);
     *out_y = yf - center_y - (src_dy * ratio);
 }
 
-static void op_rotate(const DP_LiquifyOpParams *params,
-                      DP_LiquifyMap *lm_or_null, int x, int y,
-                      DP_UNUSED float distance_squared, float *out_x,
-                      float *out_y)
+static void op_transform_rotate(const DP_LiquifyOpParams *params, float xf,
+                                float yf, DP_UNUSED float prev_x,
+                                DP_UNUSED float prev_y, float center_x,
+                                float center_y, float src_dx, float src_dy,
+                                float alpha, float *out_x, float *out_y)
 {
-    float xf = DP_int_to_float(x);
-    float yf = DP_int_to_float(y);
-
-    float prev_x, prev_y;
-    map_sample_pixel_bilinear_nullable(lm_or_null, xf, yf, &prev_x, &prev_y);
-
-    float src_x = xf - prev_x;
-    float src_y = yf - prev_y;
-
-    float center_x = params->x;
-    float center_y = params->y;
-    float src_dx = src_x - center_x;
-    float src_dy = src_y - center_y;
-
-    float src_distance =
-        sqrtf(DP_square_float(src_dx) + DP_square_float(src_dy));
-    float radius = params->radius;
-    float theta;
-    if (src_distance < radius) {
-        float fade = (1.0f - DP_square_float(src_distance / radius));
-        theta = params->rotate.angle * DP_square_float(fade);
-    }
-    else {
-        theta = 0.0f;
-    }
-
-    float cos_t = cosf(theta);
-    float sin_t = sinf(theta);
-    float rot_rx = (src_dx * cos_t) - (src_dy * sin_t);
-    float rot_ry = (src_dx * sin_t) + (src_dy * cos_t);
-
-    *out_x = xf - center_x - rot_rx;
-    *out_y = yf - center_y - rot_ry;
+    float theta = params->rotate.angle * alpha;
+    float cos_theta = cosf(theta);
+    float sin_theta = sinf(theta);
+    *out_x = xf - center_x - (src_dx * cos_theta) + (src_dy * sin_theta);
+    *out_y = yf - center_y - (src_dx * sin_theta) - (src_dy * cos_theta);
 }
 
 static void op_smoothe(const DP_LiquifyOpParams *params,
-                       DP_LiquifyMap *lm_or_null, int x, int y,
-                       float distance_squared, float *out_x, float *out_y)
+                       DP_LiquifyMap *lm_or_null, float xf, float yf,
+                       float distance_squared, float prev_x, float prev_y,
+                       float *out_x, float *out_y)
 {
-    if (lm_or_null) {
-        float xf = DP_int_to_float(x);
-        float yf = DP_int_to_float(y);
+    float kernel_radius = params->smoothe.kernel_radius;
+    float lx, ly, rx, ry, tx, ty, bx, by;
+    map_sample_pixel_bilinear(lm_or_null, xf - kernel_radius, yf, &lx, &ly);
+    map_sample_pixel_bilinear(lm_or_null, xf + kernel_radius, yf, &rx, &ry);
+    map_sample_pixel_bilinear(lm_or_null, xf, yf - kernel_radius, &tx, &ty);
+    map_sample_pixel_bilinear(lm_or_null, xf, yf + kernel_radius, &bx, &by);
 
-        // FIXME: These don't need to sample bilinear? Same above
-        float cur_x, cur_y;
-        map_sample_pixel_bilinear(lm_or_null, xf, yf, &cur_x, &cur_y);
+    float avg_x = (lx + rx + tx + bx) * 0.25f;
+    float avg_y = (ly + ry + ty + by) * 0.25f;
 
-        float kernel_radius = params->smoothe.kernel_radius;
-        float lx, ly, rx, ry, tx, ty, bx, by;
-        map_sample_pixel_bilinear(lm_or_null, xf - kernel_radius, yf, &lx, &ly);
-        map_sample_pixel_bilinear(lm_or_null, xf + kernel_radius, yf, &rx, &ry);
-        map_sample_pixel_bilinear(lm_or_null, xf, yf - kernel_radius, &tx, &ty);
-        map_sample_pixel_bilinear(lm_or_null, xf, yf + kernel_radius, &bx, &by);
+    float alpha = calculate_alpha(sqrtf(distance_squared), params->radius);
+    float ratio = DP_min_float(1.0f, alpha * params->smoothe.amount);
 
-        float avg_x = (lx + rx + tx + bx) * 0.25f;
-        float avg_y = (ly + ry + ty + by) * 0.25f;
-
-        float alpha = calculate_alpha(sqrtf(distance_squared), params->radius);
-        float ratio = DP_min_float(1.0f, alpha * params->smoothe.amount);
-
-        *out_x = cur_x + ((avg_x - cur_x) * ratio);
-        *out_y = cur_y + ((avg_y - cur_y) * ratio);
-    }
-    else {
-        *out_x = 0.0f;
-        *out_y = 0.0f;
-    }
+    *out_x = prev_x + ((avg_x - prev_x) * ratio);
+    *out_y = prev_y + ((avg_y - prev_y) * ratio);
 }
 
-static void op_erase(const DP_LiquifyOpParams *params,
-                     DP_LiquifyMap *lm_or_null, int x, int y,
-                     float distance_squared, float *out_x, float *out_y)
+static void op_erase(const DP_LiquifyOpParams *params, float distance_squared,
+                     float prev_x, float prev_y, float *out_x, float *out_y)
 {
-    if (lm_or_null) {
-        float prev_x, prev_y;
-        map_get_pixel(lm_or_null, x, y, &prev_x, &prev_y);
-
-        float alpha = calculate_alpha(sqrtf(distance_squared), params->radius);
-        float ratio = alpha * (1.0f - params->erase.amount);
-        *out_x = (prev_x * (1.0f - alpha)) + prev_x * ratio;
-        *out_y = (prev_y * (1.0f - alpha)) + prev_y * ratio;
-    }
-    else {
-        *out_x = 0.0f;
-        *out_y = 0.0f;
-    }
-}
-
-static DP_LiquifyOpFn liquify_op_get(DP_LiquifyOpType type)
-{
-    switch (type) {
-    case DP_LIQUIFY_OP_TYPE_MOVE:
-        return op_move;
-    case DP_LIQUIFY_OP_TYPE_SCALE:
-        return op_scale;
-    case DP_LIQUIFY_OP_TYPE_ROTATE:
-        return op_rotate;
-    case DP_LIQUIFY_OP_TYPE_SMOOTHE:
-        return op_smoothe;
-    case DP_LIQUIFY_OP_TYPE_ERASE:
-        return op_erase;
-    }
-    DP_UNREACHABLE();
+    float alpha = calculate_alpha(sqrtf(distance_squared), params->radius);
+    float ratio = alpha * (1.0f - params->erase.amount);
+    *out_x = (prev_x * (1.0f - alpha)) + prev_x * ratio;
+    *out_y = (prev_y * (1.0f - alpha)) + prev_y * ratio;
 }
 
 bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
@@ -811,7 +722,7 @@ bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
     float *ys = xs + area_size;
 
     float radius_squared = DP_square_float(radius);
-    DP_LiquifyOpFn op_fn = liquify_op_get(params->type);
+    DP_LiquifyOpType type = params->type;
 
     // Modifications may only be made from one thread, so no need to lock yet.
     DP_LiquifyMap *old_lm = l->lm;
@@ -827,12 +738,39 @@ bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
             float dx_squared = DP_square_float(dx);
             float distance_squared = dx_squared + dy_squared;
 
+            float prev_x, prev_y;
+            map_get_pixel_nullable(old_lm, x, y, &prev_x, &prev_y);
+
             float out_x, out_y;
             if (distance_squared < radius_squared) {
-                op_fn(params, old_lm, x, y, distance_squared, &out_x, &out_y);
+                switch (type) {
+                case DP_LIQUIFY_OP_TYPE_MOVE:
+                    op_transform(params, xf, yf, prev_x, prev_y, &out_x, &out_y,
+                                 op_transform_move);
+                    break;
+                case DP_LIQUIFY_OP_TYPE_SCALE:
+                    op_transform(params, xf, yf, prev_x, prev_y, &out_x, &out_y,
+                                 op_transform_scale);
+                    break;
+                case DP_LIQUIFY_OP_TYPE_ROTATE:
+                    op_transform(params, xf, yf, prev_x, prev_y, &out_x, &out_y,
+                                 op_transform_rotate);
+                    break;
+                case DP_LIQUIFY_OP_TYPE_SMOOTHE:
+                    op_smoothe(params, old_lm, xf, yf, distance_squared, prev_x,
+                               prev_y, &out_x, &out_y);
+                    break;
+                case DP_LIQUIFY_OP_TYPE_ERASE:
+                    op_erase(params, distance_squared, prev_x, prev_y, &out_x,
+                             &out_y);
+                    break;
+                default:
+                    DP_UNREACHABLE();
+                }
             }
             else {
-                map_get_pixel_nullable(old_lm, x, y, &out_x, &out_y);
+                out_x = prev_x;
+                out_y = prev_y;
             }
 
             xs[out_index] = out_x;

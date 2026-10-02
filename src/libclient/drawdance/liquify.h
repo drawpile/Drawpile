@@ -13,7 +13,29 @@ struct DP_LiquifyTransformer;
 
 namespace drawdance {
 
-class LiquifyState;
+class LiquifyState final {
+public:
+	static LiquifyState null();
+	static LiquifyState inc(DP_LiquifyState *ls);
+	static LiquifyState noinc(DP_LiquifyState *ls);
+
+	LiquifyState();
+	LiquifyState(const LiquifyState &other);
+	LiquifyState(LiquifyState &&other);
+	LiquifyState &operator=(const LiquifyState &other);
+	LiquifyState &operator=(LiquifyState &&other);
+	~LiquifyState();
+
+	DP_LiquifyState *get() const;
+
+	bool isNull() const;
+
+private:
+	explicit LiquifyState(DP_LiquifyState *ls);
+
+	DP_LiquifyState *m_data;
+};
+
 
 class Liquify final {
 public:
@@ -33,7 +55,10 @@ public:
 
 	bool isNull() const;
 
-	LiquifyState currentState();
+	LiquifyState currentState() const;
+
+	// Returns false if the state doesn't belong to us.
+	bool setCurrentState(const LiquifyState &state);
 
 	QImage dump() const;
 
@@ -68,30 +93,6 @@ private:
 	static void fillMask(void *user, unsigned char *out);
 
 	DP_Liquify *m_data;
-};
-
-
-class LiquifyState final {
-public:
-	static LiquifyState null();
-	static LiquifyState inc(DP_LiquifyState *ls);
-	static LiquifyState noinc(DP_LiquifyState *ls);
-
-	LiquifyState();
-	LiquifyState(const LiquifyState &other);
-	LiquifyState(LiquifyState &&other);
-	LiquifyState &operator=(const LiquifyState &other);
-	LiquifyState &operator=(LiquifyState &&other);
-	~LiquifyState();
-
-	DP_LiquifyState *get() const;
-
-	bool isNull() const;
-
-private:
-	explicit LiquifyState(DP_LiquifyState *ls);
-
-	DP_LiquifyState *m_data;
 };
 
 

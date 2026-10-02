@@ -69,8 +69,8 @@ public:
 	void setOpacity(qreal opacity);
 
 	void liquify(const std::function<void(drawdance::Liquify &)> &fn);
-	// KisLiquifyTransformWorker::State liquifyState() const;
-	// void setLiquifyState(const KisLiquifyTransformWorker::State &state);
+	drawdance::LiquifyState liquifyState() const;
+	void setLiquifyState(const drawdance::LiquifyState &state);
 
 	void applyOffset(int x, int y);
 

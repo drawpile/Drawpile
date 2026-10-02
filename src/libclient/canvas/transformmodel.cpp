@@ -259,6 +259,29 @@ void TransformModel::liquify(
 	}
 }
 
+drawdance::LiquifyState TransformModel::liquifyState() const
+{
+	if(isLiquifyActive()) {
+		return m_liquify.currentState();
+	} else {
+		qWarning("TransformModel::liquifyState: liquify not active");
+		return drawdance::LiquifyState::null();
+	}
+}
+
+void TransformModel::setLiquifyState(const drawdance::LiquifyState &state)
+{
+	if(isLiquifyActive()) {
+		if(m_liquify.setCurrentState(state)) {
+			requestLiquifyPreviewUpdate();
+		} else {
+			qWarning("TransformModel::setLiquifyState: foreign state");
+		}
+	} else {
+		qWarning("TransformModel::setLiquifyState: liquify not active");
+	}
+}
+
 void TransformModel::applyOffset(int x, int y)
 {
 	if(m_active) {
