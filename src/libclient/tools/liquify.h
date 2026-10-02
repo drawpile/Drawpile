@@ -2,7 +2,7 @@
 #ifndef LIBCLIENT_TOOLS_LIQUIFY_H
 #define LIBCLIENT_TOOLS_LIQUIFY_H
 #include "libclient/drawdance/brushengine.h"
-#include "libclient/image/kis_liquify_transform_worker.h"
+#include "libclient/drawdance/liquify.h"
 #include "libclient/tools/tool.h"
 
 namespace canvas {
@@ -30,9 +30,11 @@ public:
 		Operation operation = Operation::Move;
 		qreal size = 60.0;
 		qreal amount = 0.05;
+		qreal hardness = 0.5;
 		qreal spacing = 0.2;
 		bool sizePressure = false;
 		bool amountPressure = false;
+		bool hardnessPressure = false;
 		bool reverse = false;
 	};
 
@@ -54,7 +56,7 @@ public:
 	void setProperties(const Properties &props) { m_props = props; }
 
 private:
-	static constexpr int MAX_STATE_STACK_DEPTH = 50;
+	static constexpr int MAX_STATE_STACK_DEPTH = 100;
 	static constexpr float SMOOTHE_KERNEL_RADIUS = 1.5f;
 
 	bool isLiquifyActive() const;
@@ -81,7 +83,7 @@ private:
 	Properties m_props;
 	drawdance::LiquifyEngine m_liquifyEngine;
 	canvas::Point m_firstPoint;
-	QVector<KisLiquifyTransformWorker::State> m_stateStack;
+	QVector<drawdance::LiquifyState> m_stateStack;
 	qreal m_zoom = 1.0;
 	Operation m_operation = Operation::Move;
 	Tool::Type m_toolToReturnTo = Tool::Type::_LASTTOOL;

@@ -66,10 +66,12 @@ typedef struct DP_BrushEngineStrokeParams {
 typedef struct DP_LiquifyEngineStrokeParams {
     float size;
     float amount;
+    float hardness;
     float spacing;
     int smoothing;
     bool size_pressure;
     bool amount_pressure;
+    bool hardness_pressure;
     bool interpolate;
     bool smoothing_finish_strokes;
 } DP_LiquifyEngineStrokeParams;
@@ -79,6 +81,7 @@ typedef struct DP_LiquifyEngineDab {
     float y;
     float size;
     float amount;
+    float hardness;
     float direction_rad;
 } DP_LiquifyEngineDab;
 

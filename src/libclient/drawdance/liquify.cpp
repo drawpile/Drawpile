@@ -2,181 +2,10 @@
 extern "C" {
 #include <dpengine/liquify.h>
 }
-#include "libclient/drawdance/image.h"
 #include "libclient/drawdance/liquify.h"
 #include <cstring>
 
 namespace drawdance {
-
-Liquify Liquify::init(QRect bounds, const QImage &mask)
-{
-	FillMaskParams params = {bounds, mask};
-	return Liquify(DP_liquify_new(
-		bounds.x(), bounds.y(), bounds.width(), bounds.height(),
-		&Liquify::fillMask, &params));
-}
-
-Liquify Liquify::null()
-{
-	return Liquify(nullptr);
-}
-
-Liquify Liquify::inc(DP_Liquify *l)
-{
-	return Liquify(DP_liquify_incref_nullable(l));
-}
-
-Liquify Liquify::noinc(DP_Liquify *l)
-{
-	return Liquify(l);
-}
-
-Liquify::Liquify()
-	: Liquify(nullptr)
-{
-}
-
-Liquify::Liquify(const Liquify &other)
-	: Liquify(DP_liquify_incref_nullable(other.m_data))
-{
-}
-
-Liquify::Liquify(Liquify &&other)
-	: Liquify(other.m_data)
-{
-	other.m_data = nullptr;
-}
-
-Liquify &Liquify::operator=(const Liquify &other)
-{
-	DP_liquify_decref_nullable(m_data);
-	m_data = DP_liquify_incref_nullable(other.m_data);
-	return *this;
-}
-
-Liquify &Liquify::operator=(Liquify &&other)
-{
-	DP_liquify_decref_nullable(m_data);
-	m_data = other.m_data;
-	other.m_data = nullptr;
-	return *this;
-}
-
-Liquify::~Liquify()
-{
-	DP_liquify_decref_nullable(m_data);
-}
-
-DP_Liquify *Liquify::get() const
-{
-	return m_data;
-}
-
-bool Liquify::isNull() const
-{
-	return !m_data;
-}
-
-LiquifyState Liquify::currentState()
-{
-	return LiquifyState::noinc(DP_liquify_current_state_inc(m_data));
-}
-
-QImage Liquify::dump() const
-{
-	int width, height;
-	uint32_t *data = DP_liquify_dump(m_data, &width, &height);
-	return wrapImageUint32(width, height, data);
-}
-
-void Liquify::opMove(
-	DP_DrawContext *dc, float x, float y, float size, float dx, float dy)
-{
-	op(dc, int(DP_LIQUIFY_OP_TYPE_MOVE), x, y, size,
-	   [dx, dy](DP_LiquifyOpParams &params) {
-		   params.op.move.dx = dx;
-		   params.op.move.dy = dy;
-	   });
-}
-
-void Liquify::opScale(
-	DP_DrawContext *dc, float x, float y, float size, float amount)
-{
-	op(dc, int(DP_LIQUIFY_OP_TYPE_SCALE), x, y, size,
-	   [amount](DP_LiquifyOpParams &params) {
-		   params.op.scale.amount = amount;
-	   });
-}
-
-void Liquify::opRotate(
-	DP_DrawContext *dc, float x, float y, float size, float angle)
-{
-	op(dc, int(DP_LIQUIFY_OP_TYPE_ROTATE), x, y, size,
-	   [angle](DP_LiquifyOpParams &params) {
-		   params.op.rotate.angle = angle;
-	   });
-}
-
-void Liquify::opSmoothe(
-	DP_DrawContext *dc, float x, float y, float size, float amount,
-	float kernelRadius)
-{
-	op(dc, int(DP_LIQUIFY_OP_TYPE_SMOOTHE), x, y, size,
-	   [amount, kernelRadius](DP_LiquifyOpParams &params) {
-		   params.op.smoothe.amount = amount;
-		   params.op.smoothe.kernel_radius = kernelRadius;
-	   });
-}
-
-void Liquify::opErase(
-	DP_DrawContext *dc, float x, float y, float size, float amount)
-{
-	op(dc, int(DP_LIQUIFY_OP_TYPE_ERASE), x, y, size,
-	   [amount](DP_LiquifyOpParams &params) {
-		   params.op.erase.amount = amount;
-	   });
-}
-
-Liquify::Liquify(DP_Liquify *l)
-	: m_data(l)
-{
-}
-
-void Liquify::op(
-	DP_DrawContext *dc, int type, float x, float y, float size,
-	const std::function<void(DP_LiquifyOpParams &params)> &fn)
-{
-	DP_LiquifyOpParams params;
-	params.type = DP_LiquifyOpType(type);
-	params.x = x;
-	params.y = y;
-	params.radius = size * 0.5f;
-	fn(params);
-	DP_liquify_op(m_data, dc, &params);
-}
-
-void Liquify::fillMask(void *user, unsigned char *out)
-{
-	const FillMaskParams &params = *static_cast<const FillMaskParams *>(user);
-
-	QRect bounds = params.bounds;
-	int w = bounds.width();
-	int h = bounds.height();
-
-	const QImage &mask = params.mask;
-	if(mask.isNull() || mask.size() != bounds.size()) {
-		std::memset(out, 255, size_t(w) * size_t(h));
-	} else {
-		int i = 0;
-		for(int y = 0; y < h; ++y) {
-			for(int x = 0; x < w; ++x) {
-				out[i] = qAlpha(mask.pixel(x, y));
-				++i;
-			}
-		}
-	}
-}
-
 
 LiquifyState LiquifyState::null()
 {
@@ -242,6 +71,155 @@ bool LiquifyState::isNull() const
 LiquifyState::LiquifyState(DP_LiquifyState *ls)
 	: m_data(ls)
 {
+}
+
+
+Liquify Liquify::init(QRect bounds)
+{
+	return Liquify(DP_liquify_new(
+		bounds.x(), bounds.y(), bounds.width(), bounds.height()));
+}
+
+Liquify Liquify::null()
+{
+	return Liquify(nullptr);
+}
+
+Liquify Liquify::inc(DP_Liquify *l)
+{
+	return Liquify(DP_liquify_incref_nullable(l));
+}
+
+Liquify Liquify::noinc(DP_Liquify *l)
+{
+	return Liquify(l);
+}
+
+Liquify::Liquify()
+	: Liquify(nullptr)
+{
+}
+
+Liquify::Liquify(const Liquify &other)
+	: Liquify(DP_liquify_incref_nullable(other.m_data))
+{
+}
+
+Liquify::Liquify(Liquify &&other)
+	: Liquify(other.m_data)
+{
+	other.m_data = nullptr;
+}
+
+Liquify &Liquify::operator=(const Liquify &other)
+{
+	DP_liquify_decref_nullable(m_data);
+	m_data = DP_liquify_incref_nullable(other.m_data);
+	return *this;
+}
+
+Liquify &Liquify::operator=(Liquify &&other)
+{
+	DP_liquify_decref_nullable(m_data);
+	m_data = other.m_data;
+	other.m_data = nullptr;
+	return *this;
+}
+
+Liquify::~Liquify()
+{
+	DP_liquify_decref_nullable(m_data);
+}
+
+DP_Liquify *Liquify::get() const
+{
+	return m_data;
+}
+
+bool Liquify::isNull() const
+{
+	return !m_data;
+}
+
+LiquifyState Liquify::currentState() const
+{
+	return LiquifyState::noinc(DP_liquify_current_state_inc(m_data));
+}
+
+bool Liquify::setCurrentState(const LiquifyState &state)
+{
+	return DP_liquify_current_state_set_inc(m_data, state.get());
+}
+
+void Liquify::opMove(
+	DP_DrawContext *dc, float x, float y, float size, float hardness, float dx,
+	float dy)
+{
+	op(dc, int(DP_LIQUIFY_OP_TYPE_MOVE), x, y, size, hardness,
+	   [dx, dy](DP_LiquifyOpParams &params) {
+		   params.op.move.dx = dx;
+		   params.op.move.dy = dy;
+	   });
+}
+
+void Liquify::opScale(
+	DP_DrawContext *dc, float x, float y, float size, float hardness,
+	float amount)
+{
+	op(dc, int(DP_LIQUIFY_OP_TYPE_SCALE), x, y, size, hardness,
+	   [amount](DP_LiquifyOpParams &params) {
+		   params.op.scale.amount = amount;
+	   });
+}
+
+void Liquify::opRotate(
+	DP_DrawContext *dc, float x, float y, float size, float hardness,
+	float angle)
+{
+	op(dc, int(DP_LIQUIFY_OP_TYPE_ROTATE), x, y, size, hardness,
+	   [angle](DP_LiquifyOpParams &params) {
+		   params.op.rotate.angle = angle;
+	   });
+}
+
+void Liquify::opSmoothe(
+	DP_DrawContext *dc, float x, float y, float size, float hardness,
+	float amount, float kernelRadius)
+{
+	op(dc, int(DP_LIQUIFY_OP_TYPE_SMOOTHE), x, y, size, hardness,
+	   [amount, kernelRadius](DP_LiquifyOpParams &params) {
+		   params.op.smoothe.amount = amount;
+		   params.op.smoothe.kernel_radius = kernelRadius;
+	   });
+}
+
+void Liquify::opErase(
+	DP_DrawContext *dc, float x, float y, float size, float hardness,
+	float amount)
+{
+	op(dc, int(DP_LIQUIFY_OP_TYPE_ERASE), x, y, size, hardness,
+	   [amount](DP_LiquifyOpParams &params) {
+		   params.op.erase.amount = amount;
+	   });
+}
+
+Liquify::Liquify(DP_Liquify *l)
+	: m_data(l)
+{
+}
+
+void Liquify::op(
+	DP_DrawContext *dc, int type, float x, float y, float size, float hardness,
+	const std::function<void(DP_LiquifyOpParams &params)> &fn)
+{
+	DP_LiquifyOpParams params;
+	params.type = DP_LiquifyOpType(type);
+	params.x = x;
+	params.y = y;
+	params.radius = size * 0.5f;
+	params.hardness = hardness;
+	fn(params);
+	DP_liquify_op(m_data, dc, &params);
 }
 
 
@@ -345,6 +323,9 @@ QImage LiquifyTransformer::targetImage(QPoint &outPos) const
 		outPos = QPoint(x, y);
 		return img;
 	} else {
+		outPos = QPoint(
+			DP_liquify_transformer_source_x(m_data),
+			DP_liquify_transformer_source_y(m_data));
 		return QImage();
 	}
 }

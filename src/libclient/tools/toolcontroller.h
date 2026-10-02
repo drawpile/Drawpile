@@ -228,8 +228,9 @@ public:
 		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0,
 		int smoothing = 0);
 	void setLiquifyEngineParams(
-		drawdance::LiquifyEngine &le, qreal size, qreal amount, qreal spacing,
-		bool sizePressure, bool amountPressure);
+		drawdance::LiquifyEngine &le, qreal size, qreal amount, qreal hardness,
+		qreal spacing, bool sizePressure, bool amountPressure,
+		bool hardnessPressure);
 
 	/**
 	 * Runs the given task in the background. Takes over the task using

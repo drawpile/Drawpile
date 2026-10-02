@@ -6,6 +6,8 @@
 typedef struct DP_DrawContext DP_DrawContext;
 
 
+// #define DP_LIQUIFY_DEBUG_OVERLAY 1
+
 typedef struct DP_Liquify DP_Liquify;
 typedef struct DP_LiquifyState DP_LiquifyState;
 typedef struct DP_LiquifyTransformer DP_LiquifyTransformer;
@@ -45,6 +47,7 @@ typedef struct DP_LiquifyOpParams {
     float x;
     float y;
     float radius;
+    float hardness;
     union {
         DP_LiquifyOpMoveParams move;
         DP_LiquifyOpScaleParams scale;
@@ -56,9 +59,7 @@ typedef struct DP_LiquifyOpParams {
 
 
 DP_Liquify *DP_liquify_new(int mask_x, int mask_y, int mask_width,
-                           int mask_height,
-                           void (*fill_mask)(void *, unsigned char *),
-                           void *user);
+                           int mask_height);
 
 DP_Liquify *DP_liquify_incref(DP_Liquify *l);
 DP_Liquify *DP_liquify_incref_nullable(DP_Liquify *l_or_null);
@@ -70,7 +71,8 @@ int DP_liquify_refcount(DP_Liquify *l);
 
 DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l);
 
-uint32_t *DP_liquify_dump(DP_Liquify *l, int *out_width, int *out_height);
+// Returns false if the given liquify state doesn't belong to us.
+bool DP_liquify_current_state_set_inc(DP_Liquify *l, DP_LiquifyState *ls);
 
 // Must only be called from one thread at a time!
 bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
@@ -103,6 +105,9 @@ void DP_liquify_transformer_decref_nullable(DP_LiquifyTransformer *ltr_or_null);
 
 int DP_liquify_transformer_refcount(DP_LiquifyTransformer *ltr);
 
+int DP_liquify_transformer_source_x(DP_LiquifyTransformer *ltr);
+int DP_liquify_transformer_source_y(DP_LiquifyTransformer *ltr);
+
 // Not thread-safe! Returns whether the image changed.
 bool DP_liquify_transformer_apply(DP_LiquifyTransformer *ltr,
                                   DP_LiquifyState *ls_or_null,
@@ -115,6 +120,5 @@ bool DP_liquify_transformer_target_image(DP_LiquifyTransformer *ltr, int *out_x,
                                          int *out_y, int *out_width,
                                          int *out_height,
                                          const uint32_t **out_data);
-
 
 #endif

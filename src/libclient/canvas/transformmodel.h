@@ -69,8 +69,8 @@ public:
 	void setOpacity(qreal opacity);
 
 	void liquify(const std::function<void(drawdance::Liquify &)> &fn);
-	// KisLiquifyTransformWorker::State liquifyState() const;
-	// void setLiquifyState(const KisLiquifyTransformWorker::State &state);
+	drawdance::LiquifyState liquifyState() const;
+	void setLiquifyState(const drawdance::LiquifyState &state);
 
 	void applyOffset(int x, int y);
 
@@ -173,7 +173,8 @@ private:
 	void requestLiquifyPreviewUpdate();
 	void runLiquifyPreviewUpdate();
 	void handleLiquifyPreviewUpdate(
-		unsigned int id, const QImage &img, QPoint offset);
+		unsigned int id,
+		const drawdance::LiquifyTransformer &liquifyTransformer, bool changed);
 
 	static bool isQuadValid(const TransformQuad &quad);
 
@@ -184,6 +185,7 @@ private:
 
 	CanvasModel *m_canvas;
 	drawdance::Liquify m_liquify;
+	drawdance::LiquifyTransformer m_liquifyTransformer;
 	bool m_active = false;
 	bool m_pasted = false;
 	bool m_deselectOnApply = false;

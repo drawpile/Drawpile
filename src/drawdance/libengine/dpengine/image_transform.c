@@ -44,30 +44,31 @@ struct DP_RenderSpansData {
 };
 
 
-static uint32_t fetch_transformed_pixel_nearest(int width, int height,
-                                                const DP_Pixel8 *pixels,
-                                                double px, double py)
+static DP_Pixel8 get_pixel_blank(int width, int height, const DP_Pixel8 *pixels,
+                                 int x, int y)
 {
-    int x = CLAMP(DP_double_to_int(px + 0.5), 0, width - 1);
-    int y = CLAMP(DP_double_to_int(py + 0.5), 0, height - 1);
-    return pixels[y * width + x].color;
-}
-
-static void fetch_transformed_bilinear_pixel_bounds(int l1, int l2, int v1,
-                                                    int *out_v1, int *out_v2)
-{
-    if (v1 < l1) {
-        *out_v1 = l1;
-        *out_v2 = l1;
-    }
-    else if (v1 >= l2) {
-        *out_v1 = l2;
-        *out_v2 = l2;
+    if (x >= 0 && x < width && y >= 0 && y < height) {
+        return pixels[y * width + x];
     }
     else {
-        *out_v1 = v1;
-        *out_v2 = v1 + 1;
+        return (DP_Pixel8){0};
     }
+}
+
+static DP_Pixel8 get_pixel_clamp(int width, int height, const DP_Pixel8 *pixels,
+                                 int x, int y)
+{
+    return pixels[DP_clamp_int(y, 0, height - 1) * width
+                  + DP_clamp_int(x, 0, width - 1)];
+}
+
+static uint32_t fetch_transformed_pixel_nearest(
+    int width, int height, const DP_Pixel8 *pixels, double px, double py,
+    DP_Pixel8 (*get_pixel)(int, int, const DP_Pixel8 *, int, int))
+{
+    int x = DP_double_to_int(px + 0.5);
+    int y = DP_double_to_int(py + 0.5);
+    return get_pixel(width, height, pixels, x, y).color;
 }
 
 static uint32_t interpolate_pixel(uint32_t x, uint32_t a, uint32_t y,
@@ -93,37 +94,32 @@ static uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr, uint32_t bl,
     return interpolate_pixel(xtop, idisty, xbot, disty);
 }
 
-static void get_bilinear_params(int width, int height, const DP_Pixel8 *pixels,
-                                double px, double py, int *out_x1, int *out_y1,
-                                DP_Pixel8 *out_tl, DP_Pixel8 *out_tr,
-                                DP_Pixel8 *out_bl, DP_Pixel8 *out_br)
+static void get_bilinear_params(
+    int width, int height, const DP_Pixel8 *pixels, double px, double py,
+    int *out_x1, int *out_y1, DP_Pixel8 *out_tl, DP_Pixel8 *out_tr,
+    DP_Pixel8 *out_bl, DP_Pixel8 *out_br,
+    DP_Pixel8 (*get_pixel)(int, int, const DP_Pixel8 *, int, int))
 {
     int x1 = DP_double_to_int(px) - (px < 0 ? 1 : 0);
     int y1 = DP_double_to_int(py) - (py < 0 ? 1 : 0);
-
-    int x2, y2;
-    fetch_transformed_bilinear_pixel_bounds(0, width - 1, x1, &x1, &x2);
-    fetch_transformed_bilinear_pixel_bounds(0, height - 1, y1, &y1, &y2);
-
-    const DP_Pixel8 *s1 = pixels + y1 * width;
-    const DP_Pixel8 *s2 = pixels + y2 * width;
-
+    int x2 = x1 + 1;
+    int y2 = y1 + 1;
     *out_x1 = x1;
     *out_y1 = y1;
-    *out_tl = s1[x1];
-    *out_tr = s1[x2];
-    *out_bl = s2[x1];
-    *out_br = s2[x2];
+    *out_tl = get_pixel(width, height, pixels, x1, y1);
+    *out_tr = get_pixel(width, height, pixels, x2, y1);
+    *out_bl = get_pixel(width, height, pixels, x1, y2);
+    *out_br = get_pixel(width, height, pixels, x2, y2);
 }
 
-static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
-                                                 const DP_Pixel8 *pixels,
-                                                 double px, double py)
+static uint32_t fetch_transformed_pixel_bilinear(
+    int width, int height, const DP_Pixel8 *pixels, double px, double py,
+    DP_Pixel8 (*get_pixel)(int, int, const DP_Pixel8 *, int, int))
 {
     int x1, y1;
     DP_Pixel8 tl, tr, bl, br;
     get_bilinear_params(width, height, pixels, px, py, &x1, &y1, &tl, &tr, &bl,
-                        &br);
+                        &br, get_pixel);
 
     uint32_t distx = DP_double_to_uint32((px - DP_int_to_double(x1)) * 256.0);
     uint32_t disty = DP_double_to_uint32((py - DP_int_to_double(y1)) * 256.0);
@@ -195,14 +191,14 @@ static void find_closest_color(DP_UPixelFloat candidate, DP_UPixelFloat ip,
     }
 }
 
-static uint32_t fetch_transformed_pixel_binary(int width, int height,
-                                               const DP_Pixel8 *pixels,
-                                               double px, double py)
+static uint32_t fetch_transformed_pixel_binary(
+    int width, int height, const DP_Pixel8 *pixels, double px, double py,
+    DP_Pixel8 (*get_pixel)(int, int, const DP_Pixel8 *, int, int))
 {
     int x1, y1;
     DP_Pixel8 tl, tr, bl, br;
     get_bilinear_params(width, height, pixels, px, py, &x1, &y1, &tl, &tr, &bl,
-                        &br);
+                        &br, get_pixel);
 
     float distx = DP_double_to_float(px) - DP_int_to_float(x1);
     float disty = DP_double_to_float(py) - DP_int_to_float(y1);
@@ -233,18 +229,40 @@ static uint32_t fetch_transformed_pixel_binary(int width, int height,
     }
 }
 
-static uint32_t fetch_transformed_pixel(int interpolation, int width,
-                                        int height, const DP_Pixel8 *pixels,
-                                        double px, double py)
+static uint32_t fetch_transformed_pixel(
+    int interpolation, int width, int height, const DP_Pixel8 *pixels,
+    double px, double py,
+    DP_Pixel8 (*get_pixel)(int, int, const DP_Pixel8 *, int, int))
 {
     switch (interpolation) {
     case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
-        return fetch_transformed_pixel_nearest(width, height, pixels, px, py);
+        return fetch_transformed_pixel_nearest(width, height, pixels, px, py,
+                                               get_pixel);
     case DP_MSG_TRANSFORM_REGION_MODE_BINARY:
-        return fetch_transformed_pixel_binary(width, height, pixels, px, py);
+        return fetch_transformed_pixel_binary(width, height, pixels, px, py,
+                                              get_pixel);
     default:
-        return fetch_transformed_pixel_bilinear(width, height, pixels, px, py);
+        return fetch_transformed_pixel_bilinear(width, height, pixels, px, py,
+                                                get_pixel);
     }
+}
+
+static uint32_t fetch_transformed_pixel_clamp(int interpolation, int width,
+                                              int height,
+                                              const DP_Pixel8 *pixels,
+                                              double px, double py)
+{
+    return fetch_transformed_pixel(interpolation, width, height, pixels, px, py,
+                                   get_pixel_clamp);
+}
+
+static uint32_t fetch_transformed_pixel_blank(int interpolation, int width,
+                                              int height,
+                                              const DP_Pixel8 *pixels,
+                                              double px, double py)
+{
+    return fetch_transformed_pixel(interpolation, width, height, pixels, px, py,
+                                   get_pixel_blank);
 }
 
 float DP_image_transform_epsilon(int interpolation)
@@ -257,11 +275,20 @@ float DP_image_transform_epsilon(int interpolation)
     }
 }
 
-uint32_t DP_image_transform_fetch(int interpolation, int width, int height,
-                                  const uint32_t *pixels, double px, double py)
+uint32_t DP_image_transform_fetch_clamp(int interpolation, int width,
+                                        int height, const uint32_t *pixels,
+                                        double px, double py)
 {
-    return fetch_transformed_pixel(interpolation, width, height,
-                                   (const DP_Pixel8 *)pixels, px, py);
+    return fetch_transformed_pixel_clamp(interpolation, width, height,
+                                         (const DP_Pixel8 *)pixels, px, py);
+}
+
+uint32_t DP_image_transform_fetch_blank(int interpolation, int width,
+                                        int height, const uint32_t *pixels,
+                                        double px, double py)
+{
+    return fetch_transformed_pixel_blank(interpolation, width, height,
+                                         (const DP_Pixel8 *)pixels, px, py);
 }
 
 static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
@@ -286,8 +313,8 @@ static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
         double iw = fw == 0.0 ? 1.0 : 1.0 / fw;
         double px = fx * iw - 0.5;
         double py = fy * iw - 0.5;
-        b->color = fetch_transformed_pixel(interpolation, width, height, pixels,
-                                           px, py);
+        b->color = fetch_transformed_pixel_clamp(interpolation, width, height,
+                                                 pixels, px, py);
 
         fx += fdx;
         fy += fdy;

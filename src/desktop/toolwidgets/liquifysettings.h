@@ -49,6 +49,10 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	// Too hard of a hardness causes funky artifacts at the edges of e.g.
+	// rotation or expansion. We cap it at a limit that still has smooth edges.
+	static constexpr qreal HARDNESS_MULTIPLIER = (0.8 / 0.99);
+
 	enum class Operation {
 		Move,
 		RotateLeft,
@@ -74,6 +78,8 @@ private:
 	widgets::GroupedToolButton *m_sizePressureButton = nullptr;
 	KisSliderSpinBox *m_amountSlider = nullptr;
 	widgets::GroupedToolButton *m_amountPressureButton = nullptr;
+	KisSliderSpinBox *m_hardnessSlider = nullptr;
+	widgets::GroupedToolButton *m_hardnessPressureButton = nullptr;
 	KisSliderSpinBox *m_spacingSlider = nullptr;
 	QButtonGroup *m_interpolationGroup = nullptr;
 	QPushButton *m_applyButton = nullptr;

@@ -4,7 +4,6 @@
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/drawdance/global.h"
-#include "libclient/drawdance/liquify.h"
 #include "libclient/image/geom.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
@@ -28,8 +27,9 @@ void LiquifyTool::begin(const BeginParams &params)
 		m_operation = m_props.operation;
 		m_reverse = m_props.reverse;
 		m_owner.setLiquifyEngineParams(
-			m_liquifyEngine, m_props.size, m_props.amount, m_props.spacing,
-			m_props.sizePressure, m_props.amountPressure);
+			m_liquifyEngine, m_props.size, m_props.amount, m_props.hardness,
+			m_props.spacing, m_props.sizePressure, m_props.amountPressure,
+			m_props.hardnessPressure);
 		m_firstPoint = params.point;
 		m_zoom = params.zoom;
 		m_drawing = true;
@@ -53,10 +53,6 @@ void LiquifyTool::motion(const MotionParams &params)
 				m_firstPoint.setPressure(point.pressure());
 			} else {
 				m_strokeStarted = true;
-				canvas::TransformModel *transform = getActiveLiquifyModel();
-				if(transform) {
-					pushState(transform);
-				}
 				m_liquifyEngine.beginStroke(m_zoom);
 				m_liquifyEngine.strokeTo(point);
 				processDabs();
@@ -74,6 +70,10 @@ void LiquifyTool::end(const EndParams &params)
 			m_strokeStarted = false;
 			m_liquifyEngine.endStroke(QDateTime::currentMSecsSinceEpoch());
 			processDabs();
+			canvas::TransformModel *transform = getActiveLiquifyModel();
+			if(transform) {
+				pushState(transform);
+			}
 		}
 	}
 }
@@ -121,7 +121,7 @@ void LiquifyTool::undoMultipart()
 	if(transform) {
 		if(m_stateStackTop > 0) {
 			--m_stateStackTop;
-			// transform->setLiquifyState(m_stateStack[m_stateStackTop]);
+			transform->setLiquifyState(m_stateStack[m_stateStackTop]);
 		} else {
 			cancelMultipart();
 		}
@@ -133,7 +133,7 @@ void LiquifyTool::redoMultipart()
 	canvas::TransformModel *transform = getActiveLiquifyModel();
 	if(transform && m_stateStackTop + 1 < m_stateStack.size()) {
 		++m_stateStackTop;
-		// transform->setLiquifyState(m_stateStack[m_stateStackTop]);
+		transform->setLiquifyState(m_stateStack[m_stateStackTop]);
 	}
 }
 
@@ -211,7 +211,7 @@ canvas::TransformModel *LiquifyTool::tryBeginLiquify()
 		selection->bounds(), selection->image(), m_owner.selectedLayers(),
 		m_owner.liquifyInterpolation());
 	m_stateStack.clear();
-	m_stateStack.append({});
+	m_stateStack.append(transform->liquifyState());
 	m_stateStackTop = 0;
 	setCursor(utils::Cursors::liquify());
 	return transform;
@@ -253,29 +253,32 @@ void LiquifyTool::applyDabs(drawdance::Liquify &liquify)
 			QPointF offset =
 				QPointF(qCos(offsetAngle), qSin(offsetAngle)) * offsetLength;
 			liquify.opMove(
-				drawContext.get(), dab.x, dab.y, dab.size, offset.x(),
-				offset.y());
+				drawContext.get(), dab.x, dab.y, dab.size, dab.hardness,
+				offset.x(), offset.y());
 			break;
 		}
 		case Operation::Scale: {
 			qreal amount = effectiveAmount(dab.amount);
-			liquify.opScale(drawContext.get(), dab.x, dab.y, dab.size, amount);
+			liquify.opScale(
+				drawContext.get(), dab.x, dab.y, dab.size, dab.hardness,
+				amount);
 			break;
 		}
 		case Operation::Rotate: {
 			qreal amount = effectiveAmount(dab.amount);
 			qreal angle = 2.0 * M_PI * amount;
-			liquify.opRotate(drawContext.get(), dab.x, dab.y, dab.size, angle);
+			liquify.opRotate(
+				drawContext.get(), dab.x, dab.y, dab.size, dab.hardness, angle);
 			break;
 		}
 		case Operation::Smoothe:
 			liquify.opSmoothe(
-				drawContext.get(), dab.x, dab.y, dab.size,
+				drawContext.get(), dab.x, dab.y, dab.size, dab.hardness,
 				qBound(0.0f, dab.amount, 1.0f), SMOOTHE_KERNEL_RADIUS);
 			break;
 		case Operation::Undo:
 			liquify.opErase(
-				drawContext.get(), dab.x, dab.y, dab.size,
+				drawContext.get(), dab.x, dab.y, dab.size, dab.hardness,
 				qBound(0.0f, dab.amount, 1.0f));
 			break;
 		default:
@@ -296,7 +299,7 @@ void LiquifyTool::pushState(canvas::TransformModel *transform)
 		m_stateStack.remove(0, shiftCount);
 	}
 
-	m_stateStack.append({});
+	m_stateStack.append(transform->liquifyState());
 	m_stateStackTop = m_stateStack.size() - 1;
 }
 

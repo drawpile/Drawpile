@@ -270,6 +270,8 @@ void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
                       const DP_Pixel8 *DP_RESTRICT src, int pixel_count,
                       uint8_t opacity);
 
+DP_Pixel8 DP_blend_pixel8(DP_Pixel8 dst, DP_Pixel8 src, uint8_t opacity);
+
 
 DP_Spectral DP_rgb_to_spectral(float r, float g, float b);
 

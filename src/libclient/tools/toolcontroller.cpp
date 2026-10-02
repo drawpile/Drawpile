@@ -805,16 +805,19 @@ void ToolController::setStrokeEngineParams(
 }
 
 void ToolController::setLiquifyEngineParams(
-	drawdance::LiquifyEngine &le, qreal size, qreal amount, qreal spacing,
-	bool sizePressure, bool amountPressure)
+	drawdance::LiquifyEngine &le, qreal size, qreal amount, qreal hardness,
+	qreal spacing, bool sizePressure, bool amountPressure,
+	bool hardnessPressure)
 {
 	le.setParams({
 		float(size),
 		float(amount),
+		float(hardness),
 		float(spacing),
 		qBound(0, m_globalSmoothing, MAX_SMOOTHING),
 		sizePressure,
 		amountPressure,
+		hardnessPressure,
 		m_interpolateInputs,
 		true,
 	});

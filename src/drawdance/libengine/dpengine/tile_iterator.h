@@ -25,6 +25,9 @@
 #include <dpcommon/geom.h>
 
 
+DP_Rect DP_tile_area_make(DP_Rect pixel_area);
+
+
 typedef struct DP_TileIterator {
     DP_Rect dst;       // area to iterate, might exceed canvas in any direction
     DP_Rect area;      // intersection of canvas and dst

@@ -307,6 +307,7 @@ struct DP_LiquifyEngine {
     struct {
         float size;
         float amount;
+        float hardness;
         float spacing;
         float last_x;
         float last_y;
@@ -314,6 +315,7 @@ struct DP_LiquifyEngine {
         float length;
         bool size_pressure;
         bool amount_pressure;
+        bool hardness_pressure;
         bool active;
         bool in_progress;
     } stroke;
@@ -3661,6 +3663,8 @@ DP_LiquifyEngine *DP_liquify_engine_new(DP_LiquifyEnginePushDabFn push_dab,
             0.0f,
             0.0f,
             0.0f,
+            0.0f,
+            false,
             false,
             false,
             false,
@@ -3698,9 +3702,11 @@ void DP_liquify_engine_params_set(DP_LiquifyEngine *le,
 
     le->stroke.size = lesp->size;
     le->stroke.amount = lesp->amount;
+    le->stroke.hardness = lesp->hardness;
     le->stroke.spacing = lesp->spacing;
     le->stroke.size_pressure = lesp->size_pressure;
     le->stroke.amount_pressure = lesp->amount_pressure;
+    le->stroke.size_pressure = lesp->hardness_pressure;
 }
 
 void DP_liquify_engine_stroke_begin(DP_LiquifyEngine *le, float zoom)
@@ -3747,6 +3753,16 @@ static float liquify_amount_at(DP_LiquifyEngine *le, float pressure)
     }
 }
 
+static float liquify_hardness_at(DP_LiquifyEngine *le, float pressure)
+{
+    if (le->stroke.hardness_pressure) {
+        return le->stroke.hardness * pressure;
+    }
+    else {
+        return le->stroke.hardness;
+    }
+}
+
 static float liquify_spacing_at(DP_LiquifyEngine *le, float pressure)
 {
     return le->stroke.spacing * liquify_size_at(le, pressure);
@@ -3784,6 +3800,7 @@ static void stroke_liquify(DP_LiquifyEngine *le, float x, float y,
                 dab_y,
                 liquify_size_at(le, dab_p),
                 liquify_amount_at(le, dab_p),
+                liquify_hardness_at(le, dab_p),
                 direction_rad,
             };
             le->push_dab(le->user, dab);

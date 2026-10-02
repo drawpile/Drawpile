@@ -26,57 +26,35 @@ namespace {
 class LiquifyPreviewTask : public AsyncTask {
 public:
 	explicit LiquifyPreviewTask(
-		const drawdance::LiquifyState &liquifyState, int interpolation,
-		const std::function<QImage(QPointF &)> &getMergedImage)
-		: m_liquifyState(liquifyState)
-		, m_getMergedImage(getMergedImage)
+		const drawdance::LiquifyTransformer &liquifyTransformer,
+		const drawdance::LiquifyState &liquifyState, int interpolation)
+		: m_liquifyTransformer(liquifyTransformer)
+		, m_liquifyState(liquifyState)
 		, m_interpolation(interpolation)
 	{
 	}
 
-	const QImage &dstImage() const { return m_dstImage; }
-	QPoint dstOffset() const { return m_dstOffset; }
+	const drawdance::LiquifyTransformer liquifyTransformer() const
+	{
+		return m_liquifyTransformer;
+	}
+
+	bool changed() const { return m_changed; }
 
 	AsyncTaskResult run() override
 	{
 		if(isCancelled()) {
 			return AsyncTaskResult::cancelled();
 		}
-
-		QPointF srcOffset;
-		QImage srcImage = m_getMergedImage(srcOffset);
-		if(srcImage.isNull()) {
-			return AsyncTaskResult::errorProceed(
-				QStringLiteral("No source image"));
-		}
-
-		// TODO identity
-		// TODO re-use transformer
-
-		drawdance::LiquifyTransformer liquifyTransformer =
-			drawdance::LiquifyTransformer::init(
-				srcOffset.x(), srcOffset.y(), srcImage);
-		liquifyTransformer.apply(m_liquifyState, m_interpolation);
-
-		if(isCancelled()) {
-			return AsyncTaskResult::cancelled();
-		}
-
-		m_dstImage = liquifyTransformer.targetImage(m_dstOffset);
-		if(m_dstImage.isNull()) {
-			return AsyncTaskResult::errorProceed(
-				QStringLiteral("No destination image"));
-		}
-
+		m_changed = m_liquifyTransformer.apply(m_liquifyState, m_interpolation);
 		return AsyncTaskResult::ok();
 	}
 
 private:
+	drawdance::LiquifyTransformer m_liquifyTransformer;
 	drawdance::LiquifyState m_liquifyState;
-	std::function<QImage(QPointF &)> m_getMergedImage;
-	QImage m_dstImage;
-	QPoint m_dstOffset;
-	int m_interpolation;
+	const int m_interpolation;
+	bool m_changed = false;
 };
 }
 
@@ -185,7 +163,7 @@ void TransformModel::beginLiquifyFromCanvas(
 	m_dstQuad = TransformQuad(srcBounds);
 	m_dstQuadValid = isQuadValid(m_dstQuad);
 	m_mask = isMaskRelevant(mask) ? mask : QImage();
-	m_liquify = drawdance::Liquify::init(srcBounds, m_mask);
+	m_liquify = drawdance::Liquify::init(srcBounds);
 	m_liquifyInterpolation = liquifyInterpolation;
 	setLayers(layerlist->checkedLayers());
 }
@@ -256,6 +234,29 @@ void TransformModel::liquify(
 		requestLiquifyPreviewUpdate();
 	} else {
 		qWarning("TransformModel::liquify: liquify not active");
+	}
+}
+
+drawdance::LiquifyState TransformModel::liquifyState() const
+{
+	if(isLiquifyActive()) {
+		return m_liquify.currentState();
+	} else {
+		qWarning("TransformModel::liquifyState: liquify not active");
+		return drawdance::LiquifyState::null();
+	}
+}
+
+void TransformModel::setLiquifyState(const drawdance::LiquifyState &state)
+{
+	if(isLiquifyActive()) {
+		if(m_liquify.setCurrentState(state)) {
+			requestLiquifyPreviewUpdate();
+		} else {
+			qWarning("TransformModel::setLiquifyState: foreign state");
+		}
+	} else {
+		qWarning("TransformModel::setLiquifyState: liquify not active");
 	}
 }
 
@@ -803,6 +804,7 @@ void TransformModel::clear()
 	m_blendMode = DP_BLEND_MODE_NORMAL;
 	m_opacity = 1.0;
 	m_liquify = drawdance::Liquify::null();
+	m_liquifyTransformer = drawdance::LiquifyTransformer::null();
 }
 
 void TransformModel::updateLayerIds()
@@ -820,6 +822,7 @@ void TransformModel::setLayers(const QSet<int> &layerIds)
 	m_layerIds = layerIds;
 	m_floatingImage = QImage();
 	m_floatingImageOffset = m_srcBounds.topLeft();
+	m_liquifyTransformer = drawdance::LiquifyTransformer::null();
 
 	// Don't try replacing this with `erase`, that's bugged and causes botched
 	// assertions in Qt. Also avoid similar functions like `erase_if`.
@@ -838,6 +841,9 @@ void TransformModel::setLayers(const QSet<int> &layerIds)
 
 	emit transformCut(m_layerIds, m_srcBounds, m_mask);
 	emit transformChanged();
+	if(isLiquifyActive()) {
+		emitLiquifyPreviewRequest();
+	}
 }
 
 QImage TransformModel::getLayerImage(int layerId) const
@@ -1080,15 +1086,26 @@ void TransformModel::requestLiquifyPreviewUpdate()
 
 void TransformModel::runLiquifyPreviewUpdate()
 {
+	if(m_liquifyTransformer.isNull()) {
+		QImage mergedImage = getMergedImage();
+		if(mergedImage.isNull()) {
+			m_liquifyPreviewInProgress = false;
+			m_liquifyPreviewPending = false;
+			if(!m_floatingImage.isNull()) {
+				m_floatingImage = QImage();
+				Q_EMIT transformChanged();
+			}
+			return;
+		}
+
+		m_liquifyTransformer = drawdance::LiquifyTransformer::init(
+			m_srcBounds.x(), m_srcBounds.y(), getMergedImage());
+	}
+
 	m_liquifyPreviewInProgress = true;
 	AsyncTaskRunnable *runnable = new AsyncTaskRunnable({new LiquifyPreviewTask(
-		m_liquify.currentState(), m_liquifyInterpolation,
-		[canvasState = m_canvas->paintEngine()->viewCanvasState(),
-		 mask = m_mask, layerIds = m_layerIds,
-		 srcBounds = m_srcBounds](QPointF &outOffset) {
-			outOffset = QPointF(srcBounds.topLeft());
-			return getMergedImageFrom(canvasState, mask, layerIds, srcBounds);
-		})});
+		m_liquifyTransformer, m_liquify.currentState(),
+		m_liquifyInterpolation)});
 
 	connect(
 		runnable, &AsyncTaskRunnable::runFinished, runnable,
@@ -1098,7 +1115,7 @@ void TransformModel::runLiquifyPreviewUpdate()
 				LiquifyPreviewTask *task =
 					static_cast<LiquifyPreviewTask *>(runnable->taskAt(0));
 				model->handleLiquifyPreviewUpdate(
-					id, task->dstImage(), task->dstOffset());
+					id, task->liquifyTransformer(), task->changed());
 			}
 			runnable->deleteLater();
 		},
@@ -1109,17 +1126,26 @@ void TransformModel::runLiquifyPreviewUpdate()
 }
 
 void TransformModel::handleLiquifyPreviewUpdate(
-	unsigned int id, const QImage &img, QPoint offset)
+	unsigned int id, const drawdance::LiquifyTransformer &liquifyTransformer,
+	bool changed)
 {
-	if(id == m_liquifyPreviewId) {
+	bool isValidUpdate = id == m_liquifyPreviewId &&
+						 liquifyTransformer.get() == m_liquifyTransformer.get();
+	if(isValidUpdate) {
+		if(changed) {
+			m_floatingImage =
+				liquifyTransformer.targetImage(m_floatingImageOffset);
+		}
+
 		m_liquifyPreviewInProgress = false;
 		if(m_liquifyPreviewPending) {
 			m_liquifyPreviewPending = false;
 			requestLiquifyPreviewUpdate();
 		}
-		m_floatingImage = img;
-		m_floatingImageOffset = offset;
-		Q_EMIT transformChanged();
+
+		if(changed) {
+			Q_EMIT transformChanged();
+		}
 	}
 }
 
@@ -1151,5 +1177,4 @@ bool TransformModel::isVisibleInViewModeCallback(void *user, DP_LayerProps *lp)
 			static_cast<const QSet<int> *>(user)->contains(
 				DP_layer_props_id(lp)));
 }
-
 }

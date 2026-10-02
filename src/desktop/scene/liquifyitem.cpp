@@ -12,10 +12,22 @@ LiquifyItem::LiquifyItem(QGraphicsItem *parent)
 
 void LiquifyItem::setImage(const QImage &image, QPoint offset)
 {
-	if(image.cacheKey() != m_image.cacheKey() || offset != m_offset) {
+	bool imageChanged = image.cacheKey() != m_image.cacheKey();
+	bool offsetChanged = offset != m_offset;
+	bool boundsChanged = offsetChanged || image.size() != m_image.size();
+
+	if(imageChanged) {
 		m_image = image;
+	}
+
+	if(offsetChanged) {
 		m_offset = offset;
+	}
+
+	if(boundsChanged) {
 		m_boundingRect = QRectF(QRect(offset, image.size()));
+		refreshGeometry();
+	} else if(imageChanged) {
 		refresh();
 	}
 }

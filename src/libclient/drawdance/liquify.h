@@ -13,64 +13,6 @@ struct DP_LiquifyTransformer;
 
 namespace drawdance {
 
-class LiquifyState;
-
-class Liquify final {
-public:
-	static Liquify init(QRect bounds, const QImage &mask);
-	static Liquify null();
-	static Liquify inc(DP_Liquify *l);
-	static Liquify noinc(DP_Liquify *l);
-
-	Liquify();
-	Liquify(const Liquify &other);
-	Liquify(Liquify &&other);
-	Liquify &operator=(const Liquify &other);
-	Liquify &operator=(Liquify &&other);
-	~Liquify();
-
-	DP_Liquify *get() const;
-
-	bool isNull() const;
-
-	LiquifyState currentState();
-
-	QImage dump() const;
-
-	void opMove(
-		DP_DrawContext *dc, float x, float y, float size, float dx, float dy);
-
-	void
-	opScale(DP_DrawContext *dc, float x, float y, float size, float amount);
-
-	void
-	opRotate(DP_DrawContext *dc, float x, float y, float size, float angle);
-
-	void opSmoothe(
-		DP_DrawContext *dc, float x, float y, float size, float amount,
-		float kernelRadius);
-
-	void
-	opErase(DP_DrawContext *dc, float x, float y, float size, float amount);
-
-private:
-	struct FillMaskParams {
-		QRect bounds;
-		const QImage &mask;
-	};
-
-	explicit Liquify(DP_Liquify *l);
-
-	void
-	op(DP_DrawContext *dc, int type, float x, float y, float size,
-	   const std::function<void(DP_LiquifyOpParams &params)> &fn);
-
-	static void fillMask(void *user, unsigned char *out);
-
-	DP_Liquify *m_data;
-};
-
-
 class LiquifyState final {
 public:
 	static LiquifyState null();
@@ -95,6 +37,61 @@ private:
 };
 
 
+class Liquify final {
+public:
+	static Liquify init(QRect bounds);
+	static Liquify null();
+	static Liquify inc(DP_Liquify *l);
+	static Liquify noinc(DP_Liquify *l);
+
+	Liquify();
+	Liquify(const Liquify &other);
+	Liquify(Liquify &&other);
+	Liquify &operator=(const Liquify &other);
+	Liquify &operator=(Liquify &&other);
+	~Liquify();
+
+	DP_Liquify *get() const;
+
+	bool isNull() const;
+
+	LiquifyState currentState() const;
+
+	// Returns false if the state doesn't belong to us.
+	bool setCurrentState(const LiquifyState &state);
+
+	void opMove(
+		DP_DrawContext *dc, float x, float y, float size, float hardness,
+		float dx, float dy);
+
+	void opScale(
+		DP_DrawContext *dc, float x, float y, float size, float hardness,
+		float amount);
+
+	void opRotate(
+		DP_DrawContext *dc, float x, float y, float size, float hardness,
+		float angle);
+
+	void opSmoothe(
+		DP_DrawContext *dc, float x, float y, float size, float hardness,
+		float amount, float kernelRadius);
+
+	void opErase(
+		DP_DrawContext *dc, float x, float y, float size, float hardness,
+		float amount);
+
+private:
+	explicit Liquify(DP_Liquify *l);
+
+	void
+	op(DP_DrawContext *dc, int type, float x, float y, float size,
+	   float hardness,
+	   const std::function<void(DP_LiquifyOpParams &params)> &fn);
+
+	DP_Liquify *m_data;
+};
+
+
 class LiquifyTransformer final {
 public:
 	static LiquifyTransformer
@@ -116,6 +113,8 @@ public:
 
 	bool apply(const LiquifyState &liquifyState, int interpolation);
 
+	// Returns a null image for null transforms. In that case the outPos will be
+	// set to the source x and y coordinates.
 	QImage targetImage(QPoint &outPos) const;
 
 private:

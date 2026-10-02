@@ -49,12 +49,14 @@ void LiquifySettings::pushSettings()
 	controller()->setLiquifyParams(m_interpolationGroup->checkedId());
 
 	LiquifyTool::Properties props;
-	// TODO are these ratios right? Compare with Krita.
 	props.size = qreal(m_sizeSlider->value());
 	props.amount = qreal(m_amountSlider->value()) / 100.0;
+	props.hardness =
+		qreal(m_hardnessSlider->value() - 1) / 100.0 * HARDNESS_MULTIPLIER;
 	props.spacing = qreal(m_spacingSlider->value()) / 100.0;
 	props.sizePressure = m_sizePressureButton->isChecked();
 	props.amountPressure = m_amountPressureButton->isChecked();
+	props.hardnessPressure = m_hardnessPressureButton->isChecked();
 
 	int operation = m_operationGroup->checkedId();
 	switch(operation) {
@@ -265,6 +267,30 @@ QWidget *LiquifySettings::createUiWidget(QWidget *parent)
 
 	++row;
 
+	m_hardnessSlider = new widgets::NoScrollKisSliderSpinBox;
+	m_hardnessSlider->setRange(1, 100);
+	m_hardnessSlider->setPrefix(tr("Hardness: "));
+	m_hardnessSlider->setBlockUpdateSignalOnDrag(true);
+	grid->addWidget(m_hardnessSlider, row, 0, 1, 2);
+	connect(
+		m_hardnessSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &LiquifySettings::pushSettings);
+
+	m_hardnessPressureButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_hardnessPressureButton->setIcon(
+		QIcon::fromTheme(QStringLiteral("pathshape")));
+	m_hardnessPressureButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	m_hardnessPressureButton->setCheckable(true);
+	m_hardnessPressureButton->setToolTip(tr("Pressure sensitivity"));
+	m_hardnessPressureButton->setStatusTip(m_hardnessPressureButton->toolTip());
+	grid->addWidget(m_hardnessPressureButton, row, 2);
+	connect(
+		m_hardnessPressureButton, &widgets::GroupedToolButton::clicked, this,
+		&LiquifySettings::pushSettings);
+
+	++row;
+
 	m_spacingSlider = new widgets::NoScrollKisSliderSpinBox;
 	m_spacingSlider->setRange(1, 300);
 	m_spacingSlider->setPrefix(tr("Spacing: "));
@@ -362,6 +388,8 @@ void LiquifySettings::loadDefaultSettings()
 	utils::setButtonCheckedSignalsBlocked(m_sizePressureButton, false);
 	utils::setSpinnerValueSignalsBlocked(m_amountSlider, 5);
 	utils::setButtonCheckedSignalsBlocked(m_amountPressureButton, false);
+	utils::setSpinnerValueSignalsBlocked(m_hardnessSlider, 50);
+	utils::setButtonCheckedSignalsBlocked(m_hardnessPressureButton, false);
 	utils::setSpinnerValueSignalsBlocked(m_spacingSlider, 20);
 	pushSettings();
 }
