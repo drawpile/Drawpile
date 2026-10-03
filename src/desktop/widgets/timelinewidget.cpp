@@ -3463,6 +3463,14 @@ TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
 	bool needsUpdate = false;
 
 	int trackIndex = d->trackIndexById(trackId);
+	int actualFrame = qBound(0, frame, qMax(0, d->visibleFrameCount() - 1));
+	const canvas::TimelineKeyFrame *prevKeyFrame;
+	if(actualFrame == d->currentFrame) {
+		prevKeyFrame = nullptr;
+	} else {
+		prevKeyFrame = d->currentVisibleKeyFrame();
+	}
+
 	if(trackIndex != -1) {
 		d->currentTrackId = trackId;
 		emit trackSelected(trackId);
@@ -3471,10 +3479,7 @@ TimelineWidget::SetCurrentResult TimelineWidget::setCurrent(
 		trackIndex = d->trackIndexById(d->currentTrackId);
 	}
 
-	int actualFrame = qBound(0, frame, qMax(0, d->visibleFrameCount() - 1));
 	if(actualFrame != d->currentFrame) {
-		const canvas::TimelineKeyFrame *prevKeyFrame =
-			d->currentVisibleKeyFrame();
 		d->currentFrame = actualFrame;
 		emit frameSelected(frame);
 		needsUpdate = true;
