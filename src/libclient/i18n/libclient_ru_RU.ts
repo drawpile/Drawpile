@@ -11,7 +11,7 @@
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Программа Drawpile вышла из-за недостатка памяти. Если вы пытались присоединиться к сессии или открыть файл, то холст возможно слишком большой или имеет слишком много слоев для вашего устройства.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -444,7 +444,7 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation>Перемещение по холсту</translation>
+        <translation type="unfinished">Панорама холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -454,7 +454,7 @@
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation>Масштаб холста</translation>
+        <translation>Масштабирование холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -526,12 +526,12 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>Изменить значение цвета</translation>
+        <translation>Изменить яркость цвета</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить ластик</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -541,7 +541,7 @@
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить сохранение альфа</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -556,12 +556,12 @@
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыть панели</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Действие при срабатывании</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1666,12 +1666,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамический</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Рабочий стол</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2975,12 +2975,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка открытия исходного файла &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка открытия целевого файла &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2990,7 +2990,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка чтения из исходного файла &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
