@@ -40,18 +40,14 @@ DP_TileIterator DP_tile_iterator_make(int canvas_width, int canvas_height,
         DP_Rect tile_area = DP_rect_make(
             col, row, DP_tile_size_round_up(DP_rect_width(area) + xd),
             DP_tile_size_round_up(DP_rect_height(area) + yd));
-        return (DP_TileIterator){canvas,
-                                 dst,
-                                 area,
-                                 tile_area,
+        return (DP_TileIterator){dst, area, tile_area,
                                  DP_rect_left(tile_area) - 1,
                                  DP_rect_top(tile_area)};
     }
     else {
-        return (DP_TileIterator){
-            canvas,  dst,
-            area,    (DP_Rect){INT_MAX, INT_MAX, INT_MIN, INT_MIN},
-            INT_MAX, INT_MAX};
+        return (DP_TileIterator){dst, area,
+                                 (DP_Rect){INT_MAX, INT_MAX, INT_MIN, INT_MIN},
+                                 INT_MAX, INT_MAX};
     }
 }
 

@@ -21,13 +21,11 @@
  */
 #ifndef DPENGINE_TILE_ITERATOR_H
 #define DPENGINE_TILE_ITERATOR_H
-#include "tile.h"
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
 
 
 typedef struct DP_TileIterator {
-    DP_Rect canvas;    // canvas rectangle, from (0, 0) to (width, height)
     DP_Rect dst;       // area to iterate, might exceed canvas in any direction
     DP_Rect area;      // intersection of canvas and dst
     DP_Rect tile_area; // affected tiles in tile space, not pixel space
