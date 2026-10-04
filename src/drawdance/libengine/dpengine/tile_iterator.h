@@ -35,6 +35,9 @@ typedef struct DP_TileIterator {
 DP_TileIterator DP_tile_iterator_make(int canvas_width, int canvas_height,
                                       DP_Rect dst);
 
+DP_TileIterator DP_tile_iterator_make_with(DP_Rect dst,
+                                           DP_Rect *canvas_or_null);
+
 bool DP_tile_iterator_next(DP_TileIterator *ti);
 
 

@@ -29,7 +29,20 @@ DP_TileIterator DP_tile_iterator_make(int canvas_width, int canvas_height,
                                       DP_Rect dst)
 {
     DP_Rect canvas = DP_rect_make(0, 0, canvas_width, canvas_height);
-    DP_Rect area = DP_rect_intersection(canvas, dst);
+    return DP_tile_iterator_make_with(dst, &canvas);
+}
+
+
+DP_TileIterator DP_tile_iterator_make_with(DP_Rect dst, DP_Rect *canvas_or_null)
+{
+    DP_Rect area;
+    if (canvas_or_null) {
+        area = DP_rect_intersection(*canvas_or_null, dst);
+    }
+    else {
+        area = dst;
+    }
+
     if (DP_rect_valid(area)) {
         int x = DP_rect_x(area);
         int y = DP_rect_y(area);
