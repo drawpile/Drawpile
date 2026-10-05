@@ -68,6 +68,12 @@ else()
     message(SEND_ERROR "Unknown IMAGE_IMPL value '${IMAGE_IMPL}'")
 endif()
 
+if(OXIPNG)
+    add_cargo_library(oxipngc oxipngc)
+    target_link_libraries(dpimpex PRIVATE oxipngc)
+    target_compile_definitions(dpimpex PRIVATE DP_OXIPNG=1)
+endif()
+
 if(TARGET LIBAV::LIBAV)
     target_sources(dpimpex PRIVATE
         dpimpex/save_video.c
