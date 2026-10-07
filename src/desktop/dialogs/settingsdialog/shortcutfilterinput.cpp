@@ -25,10 +25,14 @@ ShortcutFilterInput::ShortcutFilterInput(QWidget *parent)
 
 	connect(
 		m_filterEdit, &QLineEdit::textChanged, this,
-		&ShortcutFilterInput::handleFilterTextChanged);
+		&ShortcutFilterInput::handleFilterTextChanged, Qt::QueuedConnection);
 	connect(
 		m_conflictBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
-		&ShortcutFilterInput::handleConflictBoxStateChanged);
+		&ShortcutFilterInput::handleConflictBoxStateChanged,
+		Qt::QueuedConnection);
+	connect(
+		this, &ShortcutFilterInput::updateRequested, this,
+		&ShortcutFilterInput::handleUpdate, Qt::QueuedConnection);
 }
 
 bool ShortcutFilterInput::isEmpty() const
@@ -43,10 +47,10 @@ void ShortcutFilterInput::checkConflictBox()
 	}
 }
 
-void ShortcutFilterInput::handleFilterTextChanged(const QString &text)
+void ShortcutFilterInput::handleFilterTextChanged()
 {
 	if(!m_conflictBox->isChecked()) {
-		updateFilterText(text);
+		requestUpdate();
 	}
 }
 
@@ -55,17 +59,34 @@ void ShortcutFilterInput::handleConflictBoxStateChanged(
 {
 	bool checked = state != Qt::Unchecked;
 	m_filterEdit->setDisabled(checked);
-	updateFilterText(checked ? QStringLiteral("\1") : m_filterEdit->text());
-	emit conflictBoxChecked(checked);
+	requestUpdate();
 }
 
-void ShortcutFilterInput::updateFilterText(const QString &text)
+void ShortcutFilterInput::requestUpdate()
 {
-	QString filterText = text.trimmed();
-	if(m_filterText != filterText) {
-		m_filterText = filterText;
-		emit filtered(m_filterText);
+	if(!m_updatePending) {
+		m_updatePending = true;
+		Q_EMIT updateRequested();
 	}
+}
+
+void ShortcutFilterInput::handleUpdate()
+{
+	bool showConflicts = m_conflictBox->isChecked();
+	QString filterText =
+		showConflicts ? QStringLiteral("\1") : m_filterEdit->text().trimmed();
+
+	if(filterText != m_filterText) {
+		m_filterText = filterText;
+		Q_EMIT filtered(filterText);
+	}
+
+	if(m_showConflicts != showConflicts) {
+		m_showConflicts = showConflicts;
+		Q_EMIT conflictBoxChecked(showConflicts);
+	}
+
+	m_updatePending = false;
 }
 
 }

@@ -119,6 +119,10 @@ Shortcuts::Shortcuts(config::Config *cfg, QWidget *parent)
 		m_filter, &ShortcutFilterInput::filtered, this,
 		&Shortcuts::updateTabTexts, Qt::QueuedConnection);
 	updateTabTexts();
+
+	connect(
+		m_filter, &ShortcutFilterInput::updateRequested, this,
+		&Shortcuts::finishEditing, Qt::DirectConnection);
 }
 
 void Shortcuts::initiateFixShortcutConflicts()
@@ -234,7 +238,7 @@ QWidget *Shortcuts::initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate)
 	connect(
 		m_filter, &ShortcutFilterInput::conflictBoxChecked,
 		m_brushShortcutsFilterModel,
-		&BrushShortcutFilterProxyModel::setSearchAllTags);
+		&BrushShortcutFilterProxyModel::setSearchAllTags, Qt::QueuedConnection);
 
 	QWidget *widget = new QWidget;
 	QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -249,14 +253,14 @@ QWidget *Shortcuts::initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate)
 		&BrushShortcutFilterProxyModel::setCurrentTagRow);
 	connect(
 		m_filter, &ShortcutFilterInput::conflictBoxChecked, tagCombo,
-		&QComboBox::setDisabled);
+		&QComboBox::setDisabled, Qt::QueuedConnection);
 
 	m_brushesTable = ProportionalTableView::make(
 		m_filter, int(BrushShortcutModel::FilterRole), m_brushShortcutsModel,
 		m_brushShortcutsFilterModel, false);
 	connect(
 		m_filter, &ShortcutFilterInput::filtered, m_brushShortcutsFilterModel,
-		&BrushShortcutFilterProxyModel::setSearchString);
+		&BrushShortcutFilterProxyModel::setSearchString, Qt::QueuedConnection);
 	m_brushesTable->setColumnStretches({6, 2});
 	m_brushesTable->verticalHeader()->setSectionResizeMode(
 		QHeaderView::ResizeToContents);

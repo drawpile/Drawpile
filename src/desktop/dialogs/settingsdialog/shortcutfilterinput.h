@@ -19,18 +19,22 @@ public:
 
 	void checkConflictBox();
 
-signals:
+Q_SIGNALS:
 	void filtered(const QString &text);
 	void conflictBoxChecked(bool checked);
+	void updateRequested();
 
 private:
-	void handleFilterTextChanged(const QString &text);
+	void handleFilterTextChanged();
 	void handleConflictBoxStateChanged(compat::CheckBoxState state);
-	void updateFilterText(const QString &text);
+	void requestUpdate();
+	void handleUpdate();
 
 	QLineEdit *m_filterEdit;
 	QCheckBox *m_conflictBox;
 	QString m_filterText;
+	bool m_showConflicts = false;
+	bool m_updatePending = false;
 };
 
 }
