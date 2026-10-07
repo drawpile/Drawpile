@@ -543,9 +543,11 @@ SETTING(
 	preferredExportFormat, PreferredExportFormat,
 	"settings/preferredexportformat",
 	config::Config::defaultPreferredExportFormat())
-SETTING(
-	preferredSaveFormat, PreferredSaveFormat, "settings/preferredsaveformat",
-	config::Config::defaultPreferredSaveFormat())
+SETTING_GETSET_V(
+	V1, preferredSaveFormat, PreferredSaveFormat,
+	"settings/preferredsaveformat",
+	config::Config::defaultPreferredSaveFormat(), &any::getExactVersion,
+	&any::set)
 SETTING(
 	promptLayerCreate, PromptLayerCreate, "settings/promptlayercreate",
 	config::Config::defaultPromptLayerCreate())

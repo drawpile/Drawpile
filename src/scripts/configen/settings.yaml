@@ -1327,6 +1327,8 @@ settings:
     default: 'QString()'
     qsettings: 'settings/preferredsaveformat'
     legacy_package: 'desktop'
+    legacy_version: 1
+    legacy_get: 'any::getExactVersion'
 
   - id: promptLayerCreate
     type: 'bool'
