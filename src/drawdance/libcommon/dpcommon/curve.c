@@ -554,3 +554,30 @@ double DP_curve_value_at(DP_Curve *curve, double x)
     double y = curve->get_value_at(curve, x);
     return DP_clamp_double(y, 0.0, 1.0);
 }
+
+float DP_curve_value_at_float(DP_Curve *curve, float x)
+{
+    DP_ASSERT(curve);
+    DP_ASSERT(DP_atomic_get(&curve->refcount) > 0);
+    return DP_double_to_float(DP_curve_value_at(curve, DP_float_to_double(x)));
+}
+
+double DP_curve_value_at_nullable(DP_Curve *curve_or_null, double x)
+{
+    if (curve_or_null) {
+        return DP_curve_value_at(curve_or_null, x);
+    }
+    else {
+        return DP_clamp_double(x, 0.0, 1.0);
+    }
+}
+
+float DP_curve_value_at_float_nullable(DP_Curve *curve_or_null, float x)
+{
+    if (curve_or_null) {
+        return DP_curve_value_at_float(curve_or_null, x);
+    }
+    else {
+        return DP_clamp_float(x, 0.0f, 1.0f);
+    }
+}

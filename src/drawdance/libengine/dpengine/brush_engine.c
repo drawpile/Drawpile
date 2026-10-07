@@ -171,6 +171,16 @@ struct DP_StrokeEngine {
         DP_Vector points;
         DP_StabilizerPoint last_point;
     } stabilizer;
+    struct {
+        DP_Queue queue;
+        DP_Curve *start_curve;
+        DP_Curve *end_curve;
+        long long start_delay_msec;
+        long long end_delay_msec;
+        long long start_msec;
+        long long last_msec;
+        bool active;
+    } taper;
     float zoom;
     DP_StrokeEnginePushPointFn push_point;
     DP_StrokeEnginePollControlFn poll_control;
@@ -680,6 +690,7 @@ stroke_engine_init(DP_StrokeEnginePushPointFn push_point,
          DP_QUEUE_NULL,
          DP_VECTOR_NULL,
          {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}, 0.0f}},
+        {DP_QUEUE_NULL, NULL, NULL, 0LL, 0LL, 0LL, 0LL, false},
         1.0f,
         push_point,
         poll_control_or_null,
@@ -687,6 +698,7 @@ stroke_engine_init(DP_StrokeEnginePushPointFn push_point,
     };
     DP_queue_init(&se.stabilizer.queue, 128, sizeof(DP_StabilizerPoint));
     DP_vector_init(&se.stabilizer.points, 128, sizeof(DP_StabilizerPoint));
+    DP_queue_init(&se.taper.queue, 128, sizeof(DP_BrushPoint));
     return se;
 }
 
@@ -704,6 +716,7 @@ DP_stroke_engine_new(DP_StrokeEnginePushPointFn push_point,
 static void stroke_engine_dispose(DP_StrokeEngine *se)
 {
     DP_free(se->smoother.points);
+    DP_queue_dispose(&se->taper.queue);
     DP_vector_dispose(&se->stabilizer.points);
     DP_queue_dispose(&se->stabilizer.queue);
     DP_curve_decref_nullable(se->stabilizer.velocity_curve);
@@ -773,6 +786,101 @@ static void stroke_engine_push(DP_StrokeEngine *se, DP_BrushPoint bp,
 }
 
 
+static void taper_points_push(DP_StrokeEngine *se, DP_BrushPoint bp)
+{
+    *((DP_BrushPoint *)DP_queue_push(&se->taper.queue, sizeof(DP_BrushPoint))) =
+        bp;
+}
+
+static bool taper_points_peek(DP_StrokeEngine *se, DP_BrushPoint *out_bp)
+{
+    DP_BrushPoint *bp = DP_queue_peek(&se->taper.queue, sizeof(DP_BrushPoint));
+    if (bp) {
+        *out_bp = *bp;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static void taper_points_shift(DP_StrokeEngine *se)
+{
+    DP_queue_shift(&se->taper.queue);
+}
+
+static void taper_apply_start(DP_StrokeEngine *se, DP_BrushPoint *bp)
+{
+    long long start_offset_msec = bp->time_msec - se->taper.start_msec;
+    long long start_delay_msec = se->taper.start_delay_msec;
+    if (start_offset_msec < start_delay_msec) {
+        float k = DP_llong_to_float(start_offset_msec)
+                / DP_llong_to_float(start_delay_msec);
+        bp->pressure *=
+            DP_curve_value_at_float_nullable(se->taper.start_curve, k);
+    }
+}
+
+static void taper_apply_end(DP_StrokeEngine *se, DP_BrushPoint *bp)
+{
+    long long end_offset_msec = se->taper.last_msec - bp->time_msec;
+    long long end_delay_msec = se->taper.end_delay_msec;
+    if (end_offset_msec < end_delay_msec) {
+        float k = DP_llong_to_float(end_offset_msec)
+                / DP_llong_to_float(end_delay_msec);
+        bp->pressure *=
+            DP_curve_value_at_float_nullable(se->taper.end_curve, k);
+    }
+}
+
+static void taper_pump(DP_StrokeEngine *se, long long time_msec,
+                       DP_CanvasState *cs_or_null)
+{
+    long long cutoff_msec = time_msec - se->taper.end_delay_msec;
+    DP_BrushPoint bp;
+    while (taper_points_peek(se, &bp) && bp.time_msec < cutoff_msec) {
+        taper_apply_start(se, &bp);
+        stroke_engine_push(se, bp, cs_or_null);
+        taper_points_shift(se);
+    }
+    se->taper.last_msec = time_msec;
+}
+
+static void taper_stroke_to(DP_StrokeEngine *se, DP_BrushPoint bp,
+                            DP_CanvasState *cs_or_null)
+{
+    if (!se->taper.active) {
+        se->taper.active = true;
+        se->taper.start_msec = bp.time_msec;
+    }
+    taper_points_push(se, bp);
+    taper_pump(se, bp.time_msec, cs_or_null);
+}
+
+static void taper_finish(DP_StrokeEngine *se, DP_CanvasState *cs_or_null)
+{
+    DP_BrushPoint bp;
+    while (taper_points_peek(se, &bp)) {
+        taper_apply_start(se, &bp);
+        taper_apply_end(se, &bp);
+        stroke_engine_push(se, bp, cs_or_null);
+        taper_points_shift(se);
+    }
+    se->taper.active = false;
+}
+
+static void handle_stroke_taper(DP_StrokeEngine *se, DP_BrushPoint bp,
+                                DP_CanvasState *cs_or_null)
+{
+    if (se->taper.start_delay_msec > 0LL || se->taper.end_delay_msec > 0LL) {
+        taper_stroke_to(se, bp, cs_or_null);
+    }
+    else {
+        stroke_engine_push(se, bp, cs_or_null);
+    }
+}
+
+
 static void handle_stroke_stabilizer(DP_StrokeEngine *se, DP_BrushPoint bp,
                                      DP_CanvasState *cs_or_null)
 {
@@ -780,7 +888,7 @@ static void handle_stroke_stabilizer(DP_StrokeEngine *se, DP_BrushPoint bp,
         stabilizer_stroke_to(se, bp);
     }
     else {
-        stroke_engine_push(se, bp, cs_or_null);
+        handle_stroke_taper(se, bp, cs_or_null);
     }
 }
 
@@ -1071,7 +1179,7 @@ static void stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
 
             DP_ASSERT(queue_size == se->stabilizer.queue.used);
             DP_ASSERT(discard_count < queue_size);
-            stroke_engine_push(
+            handle_stroke_taper(
                 se, stabilizer_stabilize(se, sp, queue_size - discard_count),
                 cs_or_null);
 
@@ -1079,6 +1187,10 @@ static void stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
         }
 
         stabilizer_points_clear(se, time_msec);
+    }
+
+    if (!flush && se->taper.active) {
+        taper_pump(se, time_msec, cs_or_null);
     }
 }
 
@@ -1098,6 +1210,9 @@ void DP_stroke_engine_stroke_end(DP_StrokeEngine *se, long long time_msec,
     smoother_drain(se, cs_or_null);
     if (se->stabilizer.active) {
         stabilizer_finish(se, time_msec, cs_or_null);
+    }
+    if (se->taper.active) {
+        taper_finish(se, cs_or_null);
     }
 }
 
