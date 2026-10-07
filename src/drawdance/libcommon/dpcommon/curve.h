@@ -33,5 +33,11 @@ int DP_curve_points_count(DP_Curve *curve);
 
 double DP_curve_value_at(DP_Curve *curve, double x);
 
+float DP_curve_value_at_float(DP_Curve *curve, float x);
+
+double DP_curve_value_at_nullable(DP_Curve *curve_or_null, double x);
+
+float DP_curve_value_at_float_nullable(DP_Curve *curve_or_null, float x);
+
 
 #endif
