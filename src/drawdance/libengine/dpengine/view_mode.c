@@ -455,7 +455,8 @@ static DP_ViewModeResult apply_frame(int internal_type, int track_index,
     DP_ASSERT(track_index >= 0);
     DP_ASSERT(track_index < vmb->count);
     DP_ViewModeTrack *vmt = &vmb->tracks[track_index];
-    if (vmt->layer_id == 0 || is_hidden_in_frame(lp, vmt)) {
+    if (vmt->layer_id == 0 || effective_opacity == 0
+        || is_hidden_in_frame(lp, vmt)) {
         return make_result(false, false, 0, DP_BLEND_MODE_NORMAL, 0,
                            make_nothing_context());
     }
@@ -657,9 +658,9 @@ DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
                                make_nothing_context());
     }
     case TYPE_FRAME_RENDER:
-        return apply_frame(TYPE_FRAME_RENDER, vmc->frame.track_index,
-                           vmc->frame.vmb, lp,
-                           DP_layer_props_effective_opacity(lp));
+        return apply_frame(
+            TYPE_FRAME_RENDER, vmc->frame.track_index, vmc->frame.vmb, lp,
+            DP_fix15_mul(parent_opacity, DP_layer_props_effective_opacity(lp)));
     case TYPE_CALLBACK:
         return apply_callback(vmc->callback, lp, parent_opacity);
     default:
