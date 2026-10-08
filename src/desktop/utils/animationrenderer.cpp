@@ -125,7 +125,7 @@ QVector<int> AnimationRenderer::buildFrameOrder(
 		}
 	}
 	// Frames being skipped in the middle.
-	for(int i = skipStart + 1; i < skipEndExclusive; ++i) {
+	for(int i = skipStart; i < skipEndExclusive; ++i) {
 		Q_ASSERT(!indexes.contains(i));
 		indexes.append(i);
 	}
@@ -139,6 +139,7 @@ QVector<int> AnimationRenderer::buildFrameOrder(
 		Q_ASSERT(!indexes.contains(i));
 		indexes.append(i);
 	}
+	Q_ASSERT(indexes.size() == frameCount);
 	return indexes;
 }
 

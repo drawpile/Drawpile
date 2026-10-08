@@ -7,6 +7,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Properly select layers when switching focused tracks when the selected frame was already visible.
  * Fix: Revert default save format to the new default even if it has been changed before, since it's better to make you change it again than lose timelapse data. Thanks Sheepolution for reporting.
  * Fix: A crash on Windows when unchecking the show conflicts checkbox while still editing a shortcut. Thanks yellow circle for reporting.
+ * Fix: Make animation playback not get stuck when switching from a reversed range to a normal one without refereshing.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.
