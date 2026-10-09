@@ -4,7 +4,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "libclient/config/config.h"
 #include <QDesktopServices>
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QPushButton>
 #include <QToolButton>
 #include <QUrl>
@@ -19,67 +19,73 @@ struct Links::LinkDefinition {
 	QString title;
 	QString toolTip;
 	QUrl url;
+	int row;
+	int column;
 };
 
 Links::Links(bool vertical, QWidget *parent)
 	: QWidget{parent}
 {
-	QBoxLayout *layout = new QBoxLayout(
-		vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
-	setLayout(layout);
-
 	QVector<LinkDefinition> linkDefs = {
 		{"love", QCoreApplication::translate("donations", "Donate"),
 		 QCoreApplication::translate(
 			 "donations", "Open Drawpile's donate page in your browser"),
-		 QUrl(utils::getDonationLink())},
+		 QUrl(utils::getDonationLink()), 0, 0},
 		{"help-contents", tr("Help"),
 		 tr("Open Drawpile's help pages in your browser"),
-		 QUrl{utils::getHelpLink()}},
+		 QUrl{utils::getHelpLink()}, 0, 1},
 		{"input-tablet", tr("Tablet Setup"),
 		 tr("Open Drawpile's tablet setup and troubleshooting help page"),
-		 QUrl{"https://docs.drawpile.net/help/tech/tablet"}},
+		 QUrl{"https://docs.drawpile.net/help/tech/tablet"}, -1, -1},
 		{"user-group-new", tr("Communities"),
 		 tr("Open Drawpile's communities page in your browser"),
-		 QUrl{"https://drawpile.net/communities/"}},
+		 QUrl{"https://drawpile.net/communities/"}, 0, 2},
 		{"fa_discord", tr("Discord"), tr("Join the Drawpile Discord server"),
-		 QUrl{"https://drawpile.net/discord/"}},
+		 QUrl{"https://drawpile.net/discord/"}, 1, 0},
 		{"irc-operator", tr("libera.chat"),
 		 tr("Join the #drawpile chatroom on libera.chat"),
-		 QUrl{"https://drawpile.net/irc/"}},
+		 QUrl{"https://drawpile.net/irc/"}, 1, 1},
 		{"fa_github", tr("GitHub"),
 		 tr("Open Drawpile's GitHub page in your browser"),
-		 QUrl{"https://github.com/drawpile/Drawpile#readme"}},
+		 QUrl{"https://github.com/drawpile/Drawpile#readme"}, 1, 2},
 	};
 
 	if(vertical) {
-		QString pushButtonCss = QStringLiteral("QPushButton {"
-											   "	font-size: 20px;"
-											   "	text-decoration: underline;"
-											   "	text-align: left;"
-											   "}");
+		QVBoxLayout *linksLayout = new QVBoxLayout(this);
+		QString pushButtonCss = QStringLiteral(
+			"QPushButton {"
+			"	font-size: 20px;"
+			"	text-decoration: underline;"
+			"	text-align: left;"
+			"}");
 		for(int i = 0, count = linkDefs.size(); i < count; ++i) {
 			const LinkDefinition &ld = linkDefs[i];
 			QPushButton *link = new QPushButton;
 			link->setStyleSheet(pushButtonCss);
 			link->setFlat(true);
 			setUpLink(i, ld, link);
+			linksLayout->addWidget(link);
 		}
 	} else {
-		QString toolButtonCss = QStringLiteral("QToolButton {"
-											   "	text-decoration: underline;"
-											   "}");
+		QGridLayout *linksLayout = new QGridLayout(this);
+		QString toolButtonCss = QStringLiteral(
+			"QToolButton {"
+			"	text-decoration: underline;"
+			"}");
 		for(int i = 0, count = linkDefs.size(); i < count; ++i) {
 			const LinkDefinition &ld = linkDefs[i];
-			QToolButton *link = new QToolButton;
-			link->setStyleSheet(toolButtonCss);
-			link->setAutoRaise(true);
-			link->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-			setUpLink(i, ld, link);
+			if(ld.row >= 0 && ld.column >= 0) {
+				QToolButton *link = new QToolButton;
+				link->setStyleSheet(toolButtonCss);
+				link->setAutoRaise(true);
+				link->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+				link->setSizePolicy(
+					QSizePolicy::Expanding, QSizePolicy::Expanding);
+				setUpLink(i, ld, link);
+				linksLayout->addWidget(link, ld.row, ld.column);
+			}
 		}
 	}
-
-	layout->addStretch();
 }
 
 void Links::setUpLink(
@@ -93,8 +99,6 @@ void Links::setUpLink(
 	connect(link, &QAbstractButton::clicked, this, [url = ld.url] {
 		QDesktopServices::openUrl(url);
 	});
-
-	layout()->addWidget(link);
 
 	if(index == DONATION_LINK_INDEX) {
 		CFG_BIND_SET_FN(

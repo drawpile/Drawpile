@@ -125,7 +125,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	QScrollArea *menuScroll = new QScrollArea;
 	utils::bindKineticScrollingWith(
 		menuScroll, vertical ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded,
-		vertical ? Qt::ScrollBarAsNeeded : Qt ::ScrollBarAlwaysOff);
+		vertical ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 	menuScroll->setContentsMargins(0, 0, 0, 0);
 	menuScroll->setWidgetResizable(true);
 	menuScroll->setWidget(menu);
@@ -451,7 +451,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		recoverPage, &startdialog::Recover::openPath, this,
 		&StartDialog::openRecovery);
 
-	setMinimumSize(600, 350);
+	if(!smallScreenMode) {
+		setMinimumSize(600, 350);
+	}
 	setSmallScreenMode(smallScreenMode);
 
 	config::Config *cfg = dpAppConfig();
