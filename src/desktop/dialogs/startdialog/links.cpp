@@ -66,6 +66,7 @@ Links::Links(bool vertical, QWidget *parent)
 			setUpLink(i, ld, link);
 			linksLayout->addWidget(link);
 		}
+		linksLayout->addStretch();
 	} else {
 		QGridLayout *linksLayout = new QGridLayout(this);
 		QString toolButtonCss = QStringLiteral(
