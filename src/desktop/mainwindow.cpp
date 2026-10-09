@@ -8345,7 +8345,7 @@ void MainWindow::setupActions()
 			animationGroupMenu,
 			animationDuplicateMenu,
 		},
-		m_layerViewNormal, m_layerViewCurrentFrame, showFlipbook);
+		m_layerViewCurrentFrame, showFlipbook);
 	m_dockToolSettings->fillSettings()->setActions(layerAutomaticAlphaPreserve);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);

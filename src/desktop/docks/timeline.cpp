@@ -77,12 +77,11 @@ void Timeline::setCanvas(canvas::CanvasModel *canvas)
 }
 
 void Timeline::setActions(
-	const widgets::TimelineWidget::Actions &actions, QAction *layerViewNormal,
+	const widgets::TimelineWidget::Actions &actions,
 	QAction *layerViewCurrentFrame, QAction *showFlipbook)
 {
 	m_widget->setActions(actions);
-	setUpTitleWidget(
-		actions, layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	setUpTitleWidget(actions, layerViewCurrentFrame, showFlipbook);
 }
 
 int Timeline::currentTrackId() const
@@ -124,7 +123,7 @@ void Timeline::setLocked(bool locked)
 }
 
 void Timeline::setUpTitleWidget(
-	const widgets::TimelineWidget::Actions &actions, QAction *layerViewNormal,
+	const widgets::TimelineWidget::Actions &actions,
 	QAction *layerViewCurrentFrame, QAction *showFlipbook)
 {
 	using widgets::GroupedToolButton;
@@ -159,9 +158,8 @@ void Timeline::setUpTitleWidget(
 
 	titlebar->addStretch();
 
-	addTitleButton(titlebar, layerViewNormal, GroupedToolButton::GroupLeft);
 	addTitleButton(
-		titlebar, layerViewCurrentFrame, GroupedToolButton::GroupCenter);
+		titlebar, layerViewCurrentFrame, GroupedToolButton::GroupLeft);
 
 	widgets::GroupedToolButton *zoomButton =
 		new widgets::GroupedToolButton(GroupedToolButton::GroupRight);

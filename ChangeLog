@@ -11,6 +11,7 @@ Unreleased Version 2.3.1-pre
  * Fix: Properly apply the parent group's opacity in the rendered animation as well, rather than just on the canvas.
  * Feature: On Android, hide any open docks in small screen mode when pressing the back button before closing the main window. Thanks anonymous for suggesting.
  * Fix: Make start screen take less horizontal space in small screen mode. Thanks anonymous for reporting.
+ * Feature: Remove the "Normal View" button from the timeline header, since you can just press the frame view button to exit it. This makes the timeline fit better on small screens.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.

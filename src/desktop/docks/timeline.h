@@ -35,8 +35,7 @@ public:
 
 	void setActions(
 		const widgets::TimelineWidget::Actions &actions,
-		QAction *layerViewNormal, QAction *layerViewCurrentFrame,
-		QAction *showFlipbook);
+		QAction *layerViewCurrentFrame, QAction *showFlipbook);
 
 	int currentTrackId() const;
 	int currentFrame() const;
@@ -66,8 +65,7 @@ private:
 	void setLocked(bool locked);
 	void setUpTitleWidget(
 		const widgets::TimelineWidget::Actions &actions,
-		QAction *layerViewNormal, QAction *layerViewCurrentFrame,
-		QAction *showFlipbook);
+		QAction *layerViewCurrentFrame, QAction *showFlipbook);
 
 	static void addTitleButton(
 		docks::TitleWidget *titlebar, QAction *action,
