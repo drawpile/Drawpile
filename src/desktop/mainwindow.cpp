@@ -2312,9 +2312,7 @@ void MainWindow::handleAndroidScalingDialogShown()
 void MainWindow::handleAndroidScalingDialogDismissed()
 {
 	if(m_smallScreenMode) {
-		HudAction action;
-		action.type = HudAction::Type::None;
-		handleToggleAction(action);
+		sendNoneToggleAction();
 	} else {
 		m_restoreIntendedDockStateDebounce.start();
 	}
@@ -2336,9 +2334,7 @@ void MainWindow::showSmallScreenModePreview()
 {
 	if(m_smallScreenMode && DrawpileApp::isAndroidScalingDialogShown() &&
 	   !m_dockLayers->isVisible()) {
-		HudAction action;
-		action.type = HudAction::Type::ToggleLayer;
-		handleToggleAction(action);
+		sendToggleAction(int(HudAction::Type::ToggleLayer));
 	}
 }
 
@@ -2502,6 +2498,19 @@ bool MainWindow::event(QEvent *event)
 		m_viewStatusBar->showMessage(
 			static_cast<QStatusTipEvent *>(event)->tip());
 		return true;
+#ifdef Q_OS_ANDROID
+	case QEvent::KeyPress:
+		// When hitting the back key on Android, hide any open small screen mode
+		// stuff in response before closing the window.
+		if(m_smallScreenMode &&
+		   static_cast<const QKeyEvent *>(event)->key() == Qt::Key_Back &&
+		   (isAnyDockVisible() || m_chatbox->isVisible())) {
+			QTimer::singleShot(0, this, &MainWindow::sendNoneToggleAction);
+			event->accept();
+			return true;
+		}
+		break;
+#endif
 	case QEvent::KeyRelease: {
 		// Monitor key-up events to switch back from temporary tools/tool slots.
 		// A short tap of the tool switch shortcut switches the tool permanently
@@ -7399,9 +7408,7 @@ void MainWindow::setupActions()
 
 	connect(toggleChat, &QAction::triggered, this, [this, cfg](bool show) {
 		if(m_smallScreenMode) {
-			HudAction action;
-			action.type = HudAction::Type::ToggleChat;
-			handleToggleAction(action);
+			sendToggleAction(int(HudAction::Type::ToggleChat));
 		} else {
 			if(show) {
 				QByteArray state = cfg->getLastWindowViewState();
@@ -7802,7 +7809,7 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerUncheckAll);
 
 	connect(
-		layerMenu, &QMenu ::aboutToShow, m_dockLayers,
+		layerMenu, &QMenu::aboutToShow, m_dockLayers,
 		&docks::LayerList::updateLayerColorMenuIcon);
 
 	//
@@ -9768,6 +9775,29 @@ bool MainWindow::shouldShowDialogMaximized() const
 #else
 	return m_smallScreenMode && isMaximized();
 #endif
+}
+
+bool MainWindow::isAnyDockVisible() const
+{
+	for(QDockWidget *dw :
+		findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(dw->isVisible()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void MainWindow::sendNoneToggleAction()
+{
+	sendToggleAction(int(HudAction::Type::None));
+}
+
+void MainWindow::sendToggleAction(int type)
+{
+	HudAction action;
+	action.type = HudAction::Type(type);
+	handleToggleAction(action);
 }
 
 void MainWindow::startIntendedDockStateDebounce()

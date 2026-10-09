@@ -519,6 +519,9 @@ private:
 	void switchInterfaceMode(bool smallScreenMode);
 	void updateSmallScreenToolBarVisibility();
 	bool shouldShowDialogMaximized() const;
+	bool isAnyDockVisible() const;
+	void sendNoneToggleAction();
+	void sendToggleAction(int type);
 
 	void startIntendedDockStateDebounce();
 	void updateIntendedDockState();

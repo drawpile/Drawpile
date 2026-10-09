@@ -9,6 +9,7 @@ Unreleased Version 2.3.1-pre
  * Fix: A crash on Windows when unchecking the show conflicts checkbox while still editing a shortcut. Thanks yellow circle for reporting.
  * Fix: Make animation playback not get stuck when switching from a reversed range to a normal one without refereshing.
  * Fix: Properly apply the parent group's opacity in the rendered animation as well, rather than just on the canvas.
+ * Feature: On Android, hide any open docks in small screen mode when pressing the back button before closing the main window. Thanks anonymous for suggesting.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.
