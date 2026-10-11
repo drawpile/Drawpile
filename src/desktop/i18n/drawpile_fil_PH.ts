@@ -1528,6 +1528,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -6067,6 +6068,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -6300,6 +6302,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -6311,6 +6314,7 @@ You can exit it via the View menu or the timeline.</source>
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -9777,6 +9781,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -9784,6 +9789,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -9984,6 +9990,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+61"/>
         <source>%n role(s) imported.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10431,6 +10438,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -11485,6 +11493,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -11793,6 +11802,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -11831,6 +11841,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -14135,12 +14146,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>%n tag(s) imported: %1</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -14154,6 +14167,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
