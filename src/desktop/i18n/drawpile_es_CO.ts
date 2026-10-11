@@ -1193,12 +1193,12 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location filename="../ui/lasersettings.ui" line="+111"/>
         <source>s</source>
-        <translation></translation>
+        <translation>s</translation>
     </message>
     <message>
         <location line="-94"/>
         <source>Color:</source>
-        <translation></translation>
+        <translation>Color:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -2821,7 +2821,7 @@ Puede volver a activarla a través del menú Ver.</translation>
     <message>
         <location line="+21"/>
         <source>Chat</source>
-        <translation></translation>
+        <translation>Chat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3062,7 +3062,7 @@ Puede volver a activarla a través del menú Ver.</translation>
     <message>
         <location line="+137"/>
         <source>&amp;Zoom</source>
-        <translation></translation>
+        <translation>&amp;Zoom</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4030,7 +4030,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Zoom</source>
-        <translation></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -4040,7 +4040,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Inspector</source>
-        <translation></translation>
+        <translation>Inspector</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5050,12 +5050,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Zoom</source>
-        <translation></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Inspector</source>
-        <translation></translation>
+        <translation>Inspector</translation>
     </message>
 </context>
 <context>
@@ -5186,7 +5186,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source> MB</source>
-        <translation></translation>
+        <translation> MB</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5815,7 +5815,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -9822,7 +9822,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+105"/>
         <source>Error</source>
-        <translation></translation>
+        <translation>Error</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -9924,7 +9924,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="-5"/>
         <source>no</source>
         <comment>password</comment>
-        <translation></translation>
+        <translation>no</translation>
     </message>
     <message numerus="yes">
         <location line="-359"/>
@@ -17111,7 +17111,7 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location line="+15"/>
         <source>Bot</source>
-        <translation></translation>
+        <translation>Bot</translation>
     </message>
     <message>
         <location line="+4"/>
