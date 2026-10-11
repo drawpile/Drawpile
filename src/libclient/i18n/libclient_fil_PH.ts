@@ -936,12 +936,14 @@ Select a regular layer instead.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-3"/>
         <source>%1/%n users</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -955,6 +957,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -1121,6 +1124,7 @@ Select a regular layer instead.</source>
         <location line="+10"/>
         <source>Invalid parameter(s):</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -2556,6 +2560,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
