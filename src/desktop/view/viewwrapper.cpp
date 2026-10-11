@@ -11,7 +11,6 @@
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
-#include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/canvasview.h"
@@ -573,14 +572,6 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		laserPointerSettings,
 		&tools::LaserPointerSettings::pointerTrackingToggled, m_controller,
 		&CanvasController::setPointerTracking);
-
-	tools::ZoomSettings *zoomSettings = toolSettings->zoomSettings();
-	connect(
-		zoomSettings, &tools::ZoomSettings::resetZoom, m_controller,
-		&CanvasController::resetZoomCenter);
-	connect(
-		zoomSettings, &tools::ZoomSettings::fitToWindow, m_controller,
-		&CanvasController::zoomToFit);
 
 	toolSettings->transformSettings()->setCanvasView(this);
 }

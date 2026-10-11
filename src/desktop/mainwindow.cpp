@@ -60,6 +60,7 @@ extern "C" {
 #include "desktop/toolwidgets/rotationsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
+#include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/utils/actionbuilder.h"
 #include "desktop/utils/connections.h"
 #include "desktop/utils/qtguicompat.h"
@@ -8797,6 +8798,8 @@ void MainWindow::setupActions()
 		layerAutomaticAlphaPreserve, maskselection);
 	m_dockToolSettings->gradientSettings()->setActions(
 		layerAutomaticAlphaPreserve);
+	m_dockToolSettings->zoomSettings()->setActions(
+		zoomin, zoomorig, zoomfit, zoomout);
 	m_dockToolSettings->rotationSettings()->setActions(
 		rotateccw, rotateorig, rotatecw);
 	m_dockBrushPalette->setActions(

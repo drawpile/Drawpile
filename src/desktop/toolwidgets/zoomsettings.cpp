@@ -21,6 +21,15 @@ ZoomSettings::ZoomSettings(ToolController *ctrl, QObject *parent)
 {
 }
 
+void ZoomSettings::setActions(
+	QAction *zoomIn, QAction *resetZoom, QAction *zoomToFit, QAction *zoomOut)
+{
+	m_zoomInButton->setDefaultAction(zoomIn);
+	m_resetZoomButton->setDefaultAction(resetZoom);
+	m_zoomToFitButton->setDefaultAction(zoomToFit);
+	m_zoomOutButton->setDefaultAction(zoomOut);
+}
+
 ToolProperties ZoomSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
@@ -46,8 +55,38 @@ void ZoomSettings::pushSettings()
 
 QWidget *ZoomSettings::createUiWidget(QWidget *parent)
 {
+	m_headerWidget = new QWidget(parent);
+	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
+	headerLayout->setContentsMargins(0, 0, 0, 0);
+	headerLayout->setSpacing(0);
+	headerLayout->addStretch(1);
+
+	m_zoomInButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	m_zoomInButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	headerLayout->addWidget(m_zoomInButton, 3);
+
+	m_resetZoomButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	m_resetZoomButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	headerLayout->addWidget(m_resetZoomButton, 3);
+
+	m_zoomToFitButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	m_zoomToFitButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	headerLayout->addWidget(m_zoomToFitButton, 3);
+
+	m_zoomOutButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_zoomOutButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	headerLayout->addWidget(m_zoomOutButton, 3);
+
+	headerLayout->addStretch(1);
+
 	QWidget *widget = new QWidget(parent);
 	QFormLayout *form = new QFormLayout(widget);
+	form->setContentsMargins(3, 3, 3, 3);
+	form->setSpacing(3);
 
 	QHBoxLayout *modeLayout = new QHBoxLayout;
 	modeLayout->setContentsMargins(0, 0, 0, 0);
@@ -82,14 +121,6 @@ QWidget *ZoomSettings::createUiWidget(QWidget *parent)
 		m_zoomModeGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&ZoomSettings::pushSettings);
-
-	QPushButton *resetButton = new QPushButton(tr("Normal Size"), widget);
-	form->addRow(resetButton);
-	connect(resetButton, &QPushButton::clicked, this, &ZoomSettings::resetZoom);
-
-	QPushButton *fitButton = new QPushButton(tr("Fit To Window"), widget);
-	form->addRow(fitButton);
-	connect(fitButton, &QPushButton::clicked, this, &ZoomSettings::fitToWindow);
 
 	return widget;
 }

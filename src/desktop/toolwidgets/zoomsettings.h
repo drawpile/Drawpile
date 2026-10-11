@@ -3,6 +3,7 @@
 #define TOOLSETTINGS_ZOOM_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class QAction;
 class QButtonGroup;
 
 namespace widgets {
@@ -21,18 +22,25 @@ public:
 	bool affectsCanvas() override { return false; }
 	bool affectsLayer() override { return false; }
 
+	void setActions(
+		QAction *zoomIn, QAction *resetZoom, QAction *zoomToFit,
+		QAction *zoomOut);
+
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 	void pushSettings() override;
 
-signals:
-	void resetZoom();
-	void fitToWindow();
+	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	QWidget *m_headerWidget = nullptr;
+	widgets::GroupedToolButton *m_zoomInButton = nullptr;
+	widgets::GroupedToolButton *m_resetZoomButton = nullptr;
+	widgets::GroupedToolButton *m_zoomToFitButton = nullptr;
+	widgets::GroupedToolButton *m_zoomOutButton = nullptr;
 	widgets::GroupedToolButton *m_modeDiscreteButton = nullptr;
 	widgets::GroupedToolButton *m_modeScrubButton = nullptr;
 	QButtonGroup *m_zoomModeGroup = nullptr;
