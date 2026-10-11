@@ -140,11 +140,11 @@ bool copyFileContents(
 			} else if(written != read) {
 				outError =
 					QCoreApplication::translate(
-						"utils::paths", "Tried to write %1 byte(s) to target "
-										"file '%2', but only wrote %3")
-						.arg(
-							QString::number(read), targetFile.fileName(),
-							QString::number(written));
+						"utils::paths",
+						"Tried to write %n byte(s) to target file '%1', but "
+						"only wrote %2",
+						nullptr, read)
+						.arg(targetFile.fileName(), QString::number(written));
 				return false;
 			}
 		} else {
