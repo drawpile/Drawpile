@@ -767,7 +767,7 @@ void ProjectEditDialog::onConversionSucceeded()
 		finishConversion(true);
 	} else {
 		onConversionFailed(
-			tr("Conversion suceeded, but file saving failed."), errorMessage);
+			tr("Processing suceeded, but file saving failed."), errorMessage);
 	}
 }
 
@@ -779,7 +779,16 @@ void ProjectEditDialog::onConversionCancelled()
 void ProjectEditDialog::onConversionFailed(
 	const QString &message, const QString &detail)
 {
-	utils::showCritical(this, tr("Error"), message, detail);
+	QString informativeText;
+	if(detail.isEmpty()) {
+		informativeText = message;
+	} else {
+		informativeText = QStringLiteral("%1 (%2)").arg(message, detail);
+	}
+
+	utils::showCritical(
+		this, tr("Error"), tr("An error occured during processing."),
+		informativeText);
 	finishConversion(false);
 }
 
@@ -791,7 +800,7 @@ bool ProjectEditDialog::copyTemporaryToOutputFile(QString &outErrorMessage)
 	QCoreApplication::processEvents();
 
 	if(!m_tempFile) {
-		outErrorMessage = tr("No converted file available.");
+		outErrorMessage = tr("No processed file available.");
 		return false;
 	}
 

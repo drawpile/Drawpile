@@ -89,7 +89,7 @@ void RecordingConverter::runConversion()
 
 	int inputCount = m_inputs.size();
 	if(inputCount == 0) {
-		Q_EMIT conversionFailed(tr("No input files given."));
+		Q_EMIT conversionFailed(QStringLiteral("No input files given."));
 		return;
 	}
 
@@ -98,7 +98,7 @@ void RecordingConverter::runConversion()
 	int openError;
 	if(!project.open(outputPath, DP_PROJECT_OPEN_TRUNCATE, &openError)) {
 		Q_EMIT conversionFailed(
-			tr("Error %1 opening project file %2.")
+			QStringLiteral("Error %1 opening project file %2.")
 				.arg(QString::number(openError), outputPath),
 			QString::fromUtf8(DP_error()));
 		return;
@@ -112,7 +112,7 @@ void RecordingConverter::runConversion()
 	drawdance::ProjectMessageCompressor projectMessageCompressor;
 	if(!projectMessageCompressor.open(project)) {
 		Q_EMIT conversionFailed(
-			tr("Error initializing compressor."),
+			QStringLiteral("Error initializing compressor."),
 			QString::fromUtf8(DP_error()));
 		return;
 	}
@@ -184,7 +184,7 @@ void RecordingConverter::runConversion()
 		}
 	}
 
-	Q_EMIT conversionProgressMessage(tr("Finishing project…"));
+	Q_EMIT conversionProgressMessage(QStringLiteral("Finishing project…"));
 	int fixOrphanedContinuationsResult =
 		project.copySessionFixOrphanedContinuations();
 
@@ -195,7 +195,8 @@ void RecordingConverter::runConversion()
 
 	if(fixOrphanedContinuationsResult != 0) {
 		Q_EMIT conversionFailed(
-			tr("Error finishing project."), QString::fromUtf8(DP_error()));
+			QStringLiteral("Error finishing project."),
+			QString::fromUtf8(DP_error()));
 		return;
 	}
 
@@ -205,7 +206,8 @@ void RecordingConverter::runConversion()
 
 	if(!project.close()) {
 		Q_EMIT conversionFailed(
-			tr("Error closing project."), QString::fromUtf8(DP_error()));
+			QStringLiteral("Error closing project."),
+			QString::fromUtf8(DP_error()));
 		return;
 	}
 
@@ -234,7 +236,7 @@ bool RecordingConverter::convertProjectSession(
 	QString basename = getBasename(input.path);
 	long long sessionId = input.sessionId;
 	Q_EMIT conversionProgressMessage(
-		tr("Processing project %1 session %2…")
+		QStringLiteral("Processing project %1 session %2…")
 			.arg(basename, QString::number(sessionId)));
 
 	InputProject *ip = getInputProject(i, outErrorMessage, outDetail);
@@ -302,10 +304,11 @@ bool RecordingConverter::convertProjectSession(
 	}
 
 	if(copySessionResult != 0) {
-		outErrorMessage = tr("Error %1 copying session %2 from project %3.")
-							  .arg(
-								  QString::number(copySessionResult),
-								  QString::number(sessionId), basename);
+		outErrorMessage =
+			QStringLiteral("Error %1 copying session %2 from project %3.")
+				.arg(
+					QString::number(copySessionResult),
+					QString::number(sessionId), basename);
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -330,7 +333,7 @@ RecordingConverter::InputProject *RecordingConverter::openInputProject(
 	QString path = m_inputs[i].path;
 	QFile inputFile(path);
 	if(!inputFile.open(QIODevice::ReadOnly)) {
-		outErrorMessage = tr("Error %1 opening project %2: %3.")
+		outErrorMessage = QStringLiteral("Error %1 opening project %2: %3.")
 							  .arg(
 								  QString::number(inputFile.error()), path,
 								  inputFile.errorString());
@@ -341,15 +344,16 @@ RecordingConverter::InputProject *RecordingConverter::openInputProject(
 
 	QTemporaryFile &tempFile = ipu->tempFile;
 	if(!tempFile.open()) {
-		outErrorMessage = tr("Error %1 opening temporary file for %2: %3.")
-							  .arg(
-								  QString::number(tempFile.error()), path,
-								  tempFile.errorString());
+		outErrorMessage =
+			QStringLiteral("Error %1 opening temporary file for %2: %3.")
+				.arg(
+					QString::number(tempFile.error()), path,
+					tempFile.errorString());
 		return nullptr;
 	}
 
 	if(!io::copyFileContents(inputFile, tempFile, outDetail)) {
-		outErrorMessage = tr("Error loading project %1.").arg(path);
+		outErrorMessage = QStringLiteral("Error loading project %1.").arg(path);
 		return nullptr;
 	}
 
@@ -368,17 +372,18 @@ bool RecordingConverter::convertRecording(
 	const QString &path = m_inputs[i].path;
 	QString basename = getBasename(path);
 	Q_EMIT conversionProgressMessage(
-		tr("Converting recording %1…").arg(basename));
+		QStringLiteral("Converting recording %1…").arg(basename));
 
 	drawdance::Player player;
 	if(!player.open(DP_PLAYER_TYPE_GUESS, path)) {
-		outErrorMessage = tr("Failed to open recording %1.").arg(basename);
+		outErrorMessage =
+			QStringLiteral("Failed to open recording %1.").arg(basename);
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
 
 	if(!player.isCompatible()) {
-		outErrorMessage = tr("Incompatible recording.");
+		outErrorMessage = QStringLiteral("Incompatible recording.");
 		return false;
 	}
 
@@ -389,13 +394,14 @@ bool RecordingConverter::convertRecording(
 	int result = project.openNewSession(
 		DP_PROJECT_SOURCE_FILE, DP_PROJECT_SESSION_FLAG_CONVERTED);
 	if(result != 0) {
-		outErrorMessage = tr("Error %1 opening project session.").arg(result);
+		outErrorMessage =
+			QStringLiteral("Error %1 opening project session.").arg(result);
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
 
 	if(!projectMessageCompressor.setSessionId(project.sessionId())) {
-		outErrorMessage = tr("Error setting compressor session.");
+		outErrorMessage = QStringLiteral("Error setting compressor session.");
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -404,8 +410,8 @@ bool RecordingConverter::convertRecording(
 		DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT |
 		DP_PROJECT_SNAPSHOT_FLAG_CONVERTED);
 	if(snapshotId <= 0LL) {
-		outErrorMessage =
-			tr("Error %1 opening project snapshot.").arg(snapshotId);
+		outErrorMessage = QStringLiteral("Error %1 opening project snapshot.")
+							  .arg(snapshotId);
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -413,7 +419,7 @@ bool RecordingConverter::convertRecording(
 	result = project.finishSnapshot(snapshotId);
 	if(result != 0) {
 		outErrorMessage =
-			tr("Error %1 finishing project snapshot.").arg(result);
+			QStringLiteral("Error %1 finishing project snapshot.").arg(result);
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -443,9 +449,10 @@ bool RecordingConverter::convertRecording(
 					double(timeMsec) / 1000.0, msg,
 					DP_PROJECT_MESSAGE_FLAG_CONVERTED);
 				if(result != 0) {
-					outErrorMessage = tr("Error %1 converting recording %2.")
-										  .arg(result)
-										  .arg(basename);
+					outErrorMessage =
+						QStringLiteral("Error %1 converting recording %2.")
+							.arg(result)
+							.arg(basename);
 					outDetail = QString::fromUtf8(DP_error());
 					return false;
 				}
@@ -462,7 +469,7 @@ bool RecordingConverter::convertRecording(
 			qWarning("Error parsing recording message: %s", DP_error());
 
 		} else {
-			outErrorMessage = tr("Error %1 reading recording %2.")
+			outErrorMessage = QStringLiteral("Error %1 reading recording %2.")
 								  .arg(int(playerResult))
 								  .arg(basename);
 			outDetail = QString::fromUtf8(DP_error());
@@ -473,7 +480,7 @@ bool RecordingConverter::convertRecording(
 	}
 
 	if(!projectMessageCompressor.flush()) {
-		outErrorMessage = tr("Error flushing compressor.");
+		outErrorMessage = QStringLiteral("Error flushing compressor.");
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -497,7 +504,8 @@ bool RecordingConverter::convertRecording(
 			int saveResult = project.saveSession(canvasState);
 			if(saveResult != 0) {
 				outErrorMessage =
-					tr("Error %1 saving project snapshot.").arg(result);
+					QStringLiteral("Error %1 saving project snapshot.")
+						.arg(result);
 				outDetail = QString::fromUtf8(DP_error());
 				return false;
 			}
@@ -506,7 +514,8 @@ bool RecordingConverter::convertRecording(
 
 	result = project.closeSession();
 	if(result != 0) {
-		outErrorMessage = tr("Error %1 closing project session.").arg(result);
+		outErrorMessage =
+			QStringLiteral("Error %1 closing project session.").arg(result);
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -531,7 +540,7 @@ bool RecordingConverter::fixupProject(
 				   ip->tempFile.fileName(), DP_PROJECT_OPEN_EXISTING,
 				   &openError)) {
 				outErrorMessage =
-					tr("Error %1 opening project %2.")
+					QStringLiteral("Error %1 opening project %2.")
 						.arg(QString::number(openError), basename);
 				outDetail = QString::fromUtf8(DP_error());
 				return false;
@@ -543,7 +552,7 @@ bool RecordingConverter::fixupProject(
 	for(int j = 0; j < continuedSessionCount; ++j) {
 		const ContinuedSession &s = ip->continuedSessions[j];
 		Q_EMIT conversionProgressMessage(
-			tr("Processing project %1 snapshot %2…")
+			QStringLiteral("Processing project %1 snapshot %2…")
 				.arg(basename, QString::number(s.targetSnapshotId)));
 
 		if(s.orphaned) {
@@ -554,7 +563,7 @@ bool RecordingConverter::fixupProject(
 
 				if(!projectPlayer.open(sourceProject)) {
 					outErrorMessage =
-						tr("Error opening playback for project %1.")
+						QStringLiteral("Error opening playback for project %1.")
 							.arg(basename);
 					outDetail = QString::fromUtf8(DP_error());
 					return false;
@@ -563,7 +572,8 @@ bool RecordingConverter::fixupProject(
 				int prepareResult = projectPlayer.prepare(0.01, 0LL);
 				if(prepareResult != 0) {
 					outErrorMessage =
-						tr("Error %1 preparing playback for project %2.")
+						QStringLiteral(
+							"Error %1 preparing playback for project %2.")
 							.arg(QString::number(prepareResult), basename);
 					outDetail = QString::fromUtf8(DP_error());
 					return false;
@@ -611,7 +621,7 @@ bool RecordingConverter::fixupProject(
 
 			if(controlResult != 0) {
 				outErrorMessage =
-					tr("Error %1 processing project %2.")
+					QStringLiteral("Error %1 processing project %2.")
 						.arg(QString::number(controlResult), basename);
 				outDetail = QString::fromUtf8(DP_error());
 				return false;
@@ -621,7 +631,7 @@ bool RecordingConverter::fixupProject(
 				s.targetSnapshotId, s.sequenceId, canvasState);
 			if(replaceResult != 0) {
 				outErrorMessage =
-					tr("Error %1 replacing snapshot in project %2.")
+					QStringLiteral("Error %1 replacing snapshot in project %2.")
 						.arg(QString::number(replaceResult), basename);
 				outDetail = QString::fromUtf8(DP_error());
 				return false;
@@ -633,7 +643,7 @@ bool RecordingConverter::fixupProject(
 			// This shouldn't happen, we checked if it's present earlier.
 			if(it == ip->sessionIdMapping.constEnd()) {
 				outErrorMessage =
-					tr("Session %1 not found in project %2.")
+					QStringLiteral("Session %1 not found in project %2.")
 						.arg(QString::number(s.continueSessionId), basename);
 				return false;
 			}
@@ -642,7 +652,7 @@ bool RecordingConverter::fixupProject(
 				s.targetSnapshotId, it.value());
 			if(fixResult != 0) {
 				outErrorMessage =
-					tr("Error %1 updating snapshot in project %2.")
+					QStringLiteral("Error %1 updating snapshot in project %2.")
 						.arg(QString::number(fixResult), basename);
 				outDetail = QString::fromUtf8(DP_error());
 				return false;
@@ -667,7 +677,7 @@ bool RecordingConverter::fixupProject(
 			sourceProject.copySessionFixLastSessionId(lastSessionId);
 		if(lastSessionIdResult != 0) {
 			outErrorMessage =
-				tr("Error %1 reading sessions in project %2.")
+				QStringLiteral("Error %1 reading sessions in project %2.")
 					.arg(QString::number(lastSessionIdResult), basename);
 			outDetail = QString::fromUtf8(DP_error());
 			return false;
@@ -685,12 +695,14 @@ bool RecordingConverter::makeFinalSnapshot(
 	drawdance::Project &project, int i, QString &outErrorMessage,
 	QString &outDetail)
 {
-	Q_EMIT conversionProgressMessage(tr("Processing final project snapshot…"));
+	Q_EMIT conversionProgressMessage(
+		QStringLiteral("Processing final project snapshot…"));
 
 	drawdance::ProjectPlayer projectPlayer;
 	if(!projectPlayer.open(project)) {
 		outErrorMessage =
-			tr("Error opening playback for project %1").arg(m_tempFile->path());
+			QStringLiteral("Error opening playback for project %1")
+				.arg(m_tempFile->path());
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
 	}
@@ -698,7 +710,7 @@ bool RecordingConverter::makeFinalSnapshot(
 	int prepareResult = projectPlayer.prepare(0.01, 0LL);
 	if(prepareResult != 0) {
 		outErrorMessage =
-			tr("Error %1 preparing playback for project %2")
+			QStringLiteral("Error %1 preparing playback for project %2")
 				.arg(QString::number(prepareResult), m_tempFile->path());
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
@@ -744,7 +756,7 @@ bool RecordingConverter::makeFinalSnapshot(
 
 	if(controlResult != 0) {
 		outErrorMessage =
-			tr("Error %1 processing project %2.")
+			QStringLiteral("Error %1 processing project %2.")
 				.arg(QString::number(controlResult), m_tempFile->path());
 		outDetail = QString::fromUtf8(DP_error());
 		return false;
@@ -755,7 +767,7 @@ bool RecordingConverter::makeFinalSnapshot(
 	int saveResult = project.saveSessionAt(sessionId, sequenceId, canvasState);
 	if(saveResult != 0) {
 		outErrorMessage =
-			tr("Error %1 saving snapshot in project %2.")
+			QStringLiteral("Error %1 saving snapshot in project %2.")
 				.arg(QString::number(saveResult), m_tempFile->path());
 		outDetail = QString::fromUtf8(DP_error());
 	}
