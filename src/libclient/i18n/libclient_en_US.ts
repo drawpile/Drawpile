@@ -6,17 +6,17 @@
     <message>
         <location filename="../utils/androidutils.cpp" line="+459"/>
         <source>Resource Exhaustion</source>
-        <translation></translation>
+        <translation>Resource Exhaustion</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</source>
-        <translation></translation>
+        <translation>It looks like Drawpile exited because it ran out of memory. If you were trying to join a session or open a file, its canvas may be too large or have too many layers for your device to handle.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OK</source>
-        <translation></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -24,22 +24,22 @@
     <message>
         <location line="-57"/>
         <source>Interface scale: %1</source>
-        <translation></translation>
+        <translation>Interface scale: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Interface scale: %1 (default)</source>
-        <translation></translation>
+        <translation>Interface scale: %1 (default)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show this dialog when Drawpile starts</source>
-        <translation></translation>
+        <translation>Show this dialog when Drawpile starts</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>OK</source>
-        <translation></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -47,12 +47,12 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
         <source>No avatar</source>
-        <translation></translation>
+        <translation>No avatar</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation></translation>
+        <translation>Add avatar…</translation>
     </message>
 </context>
 <context>
@@ -60,222 +60,222 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation></translation>
+        <translation>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation></translation>
+        <translation>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation></translation>
+        <translation>Drawpile logo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation></translation>
+        <translation>drawpile.net login</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation></translation>
+        <translation>Loading application</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation></translation>
+        <translation>Starting up…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation></translation>
+        <translation>Starting, this should only take a moment…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation></translation>
+        <translation>Loading assets</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation></translation>
+        <translation>Loading, this may take a while…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation></translation>
+        <translation>Preparing</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation></translation>
+        <translation>Initializing, this may take a while…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation></translation>
+        <translation>Failed to start Drawpile: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation></translation>
+        <translation>Setting up…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation></translation>
+        <translation>Fatal error:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation></translation>
+        <translation>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation></translation>
+        <translation>Invalid session link.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation></translation>
+        <translation>However you got here was not via a valid link to a Drawpile session.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation></translation>
+        <translation>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation></translation>
+        <translation>Possibly incompatible browser:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation></translation>
+        <translation>Language:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation></translation>
+        <translation>Test your pen pressure here</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation></translation>
+        <translation>Detected mouse input, not a pen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation></translation>
+        <translation>Detected touch input, not a pen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation></translation>
+        <translation>Detected input, but not a pen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation></translation>
+        <translation>Pen pressure detected</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation></translation>
+        <translation>Pen detected, but no pressure variance</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation></translation>
+        <translation>Checking for updates…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation></translation>
+        <translation>Update check blocked</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation></translation>
+        <translation>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation></translation>
+        <translation>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation></translation>
+        <translation>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation></translation>
+        <translation>You can continue regardless, but things may not work properly.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation></translation>
+        <translation>Start Anyway</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation></translation>
+        <translation>Version:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation></translation>
+        <translation>Stable (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation></translation>
+        <translation>Beta (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation></translation>
+        <translation>The session you are trying to join requires the beta version of Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -284,23 +284,23 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+67"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation></translation>
+        <translation>Conflict</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation></translation>
+        <translation>%1 (conflict)</translation>
     </message>
     <message>
         <location line="+87"/>
         <source>Brush</source>
-        <translation></translation>
+        <translation>Brush</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation></translation>
+        <translation>Shortcut</translation>
     </message>
 </context>
 <context>
@@ -308,43 +308,43 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+97"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation></translation>
+        <translation>Bad arguments, this is probably a bug in Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unsupported format.</source>
-        <translation></translation>
+        <translation>Unsupported format.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t merge the canvas into a flat image.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t open file for writing.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation></translation>
+        <translation>Save operation failed, but the file might have been partially written.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Internal error during saving.</source>
-        <translation></translation>
+        <translation>Internal error during saving.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation></translation>
+        <translation>Unknown error.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation></translation>
+        <translation>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</translation>
     </message>
 </context>
 <context>
@@ -353,235 +353,235 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+80"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation></translation>
+        <translation>Conflict</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation></translation>
+        <translation>%1 (conflict)</translation>
     </message>
     <message>
         <location line="+76"/>
         <source>Shortcut</source>
-        <translation></translation>
+        <translation>Shortcut</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation></translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation></translation>
+        <translation>Modifiers</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation></translation>
+        <translation>Mouse Wheel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation></translation>
+        <translation>Unset</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation></translation>
+        <translation>Left Click</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation></translation>
+        <translation>Right Click</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation></translation>
+        <translation>Middle Click</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation></translation>
+        <translation>Unknown Button 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation></translation>
+        <translation>Button %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation></translation>
+        <translation>Pan Canvas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation></translation>
+        <translation>Rotate Canvas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation></translation>
+        <translation>Zoom Canvas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation></translation>
+        <translation>Pick Color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation></translation>
+        <translation>Pick Layer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation></translation>
+        <translation>Change Brush Size</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation></translation>
+        <translation>Change Brush Opacity</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation></translation>
+        <translation>Change Brush Hardness</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation></translation>
+        <translation>Constrain Tool</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation></translation>
+        <translation>Center Tool</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation></translation>
+        <translation>Constrain and Center Tool</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation></translation>
+        <translation>Unknown Constraint 0x%1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation></translation>
+        <translation>Ratchet Rotate Canvas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation></translation>
+        <translation>Free Rotate Canvas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation></translation>
+        <translation>Change Color Hue</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation></translation>
+        <translation>Change Color Saturation</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation></translation>
+        <translation>Change Color Value</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Tool</source>
-        <translation></translation>
+        <translation>Toggle Eraser Tool</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Eraser Mode</source>
-        <translation></translation>
+        <translation>Toggle Eraser Mode</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Alpha Preserve</source>
-        <translation></translation>
+        <translation>Toggle Alpha Preserve</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Undo</source>
-        <translation></translation>
+        <translation>Undo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Redo</source>
-        <translation></translation>
+        <translation>Redo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide Docks</source>
-        <translation></translation>
+        <translation>Hide Docks</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Trigger Action</source>
-        <translation></translation>
+        <translation>Trigger Action</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation></translation>
+        <translation>Unknown Action %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation></translation>
+        <translation>Inverted, Swap Axes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation></translation>
+        <translation>Inverted</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation></translation>
+        <translation>Swap Axes</translation>
     </message>
 </context>
 <context>
@@ -589,47 +589,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation></translation>
+        <translation>&apos;%1&apos; does not contain any valid host certificates.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation></translation>
+        <translation>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation></translation>
+        <translation>&apos;%1&apos; contains an invalid certificate.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation></translation>
+        <translation>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</translation>
     </message>
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation></translation>
+        <translation>Could not read certificate from &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation></translation>
+        <translation>Could not open &apos;%1&apos; for writing: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation></translation>
+        <translation>Could not write &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation></translation>
+        <translation>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation></translation>
+        <translation>Could not delete &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -638,33 +638,33 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation></translation>
+        <translation>Conflict</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation></translation>
+        <translation>%1 (conflict)</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>Action</source>
-        <translation></translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation></translation>
+        <translation>Shortcut</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Alternate</source>
-        <translation></translation>
+        <translation>Alternate</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Default</source>
-        <translation></translation>
+        <translation>Default</translation>
     </message>
 </context>
 <context>
@@ -672,49 +672,49 @@
     <message>
         <location filename="../document.cpp" line="+377"/>
         <source>Resumed.</source>
-        <translation></translation>
+        <translation>Resumed.</translation>
     </message>
     <message>
         <location line="+919"/>
         <source>Unknown format.</source>
-        <translation></translation>
+        <translation>Unknown format.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation></translation>
+        <translation>Header error.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation></translation>
+        <translation>Error opening file.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation></translation>
+        <translation>Error starting recorder.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation></translation>
+        <translation>Unknown error.</translation>
     </message>
     <message>
         <location line="+553"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation></translation>
+        <translation>Layer to selection: current layer is empty.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation></translation>
+        <translation>Select layer bounds: current layer is empty.</translation>
     </message>
     <message>
         <location line="+258"/>
         <source>Download cancelled</source>
-        <translation></translation>
+        <translation>Download cancelled</translation>
     </message>
     <message>
         <location line="-20"/>
@@ -747,17 +747,17 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation></translation>
+        <translation>Visibility: Hidden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation></translation>
+        <translation>Visibility: Revealed</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation></translation>
+        <translation>Visibility: Parent</translation>
     </message>
 </context>
 <context>
@@ -773,7 +773,7 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../export/projectsaver.cpp" line="+47"/>
         <source>Autosave cancelled during save</source>
-        <translation></translation>
+        <translation>Autosave cancelled during save</translation>
     </message>
 </context>
 <context>
@@ -781,73 +781,73 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../utils/images.cpp" line="+72"/>
         <source>Images (%1)</source>
-        <translation></translation>
+        <translation>Images (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation></translation>
+        <translation>Binary Recordings (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation></translation>
+        <translation>Text Recordings (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+88"/>
         <source>Recordings (%1)</source>
-        <translation></translation>
+        <translation>Recordings (%1)</translation>
     </message>
     <message>
         <location line="-81"/>
         <source>Performance Profile (%1)</source>
-        <translation></translation>
+        <translation>Performance Profile (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation></translation>
+        <translation>Debug Dumps (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation></translation>
+        <translation>Tablet Event Log (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation></translation>
+        <translation>MP4 Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation></translation>
+        <translation>WebM Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation></translation>
+        <translation>Text File (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation></translation>
+        <translation>Brush Pack (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation></translation>
+        <translation>Session Bans (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation></translation>
+        <translation>Roles (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -855,7 +855,7 @@ Select a regular layer instead.</translation>
         <location line="+12"/>
         <location line="+11"/>
         <source>All Supported Files (%1)</source>
-        <translation></translation>
+        <translation>All Supported Files (%1)</translation>
     </message>
     <message>
         <location line="-35"/>
@@ -863,19 +863,19 @@ Select a regular layer instead.</translation>
         <location line="+10"/>
         <location line="+13"/>
         <source>All Files (*)</source>
-        <translation></translation>
+        <translation>All Files (*)</translation>
     </message>
     <message>
         <location line="-25"/>
         <location line="+11"/>
         <location line="+12"/>
         <source>Projects (%1)</source>
-        <translation></translation>
+        <translation>Projects (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Canvases (%1)</source>
-        <translation></translation>
+        <translation>Canvases (%1)</translation>
     </message>
 </context>
 <context>
@@ -883,7 +883,7 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+131"/>
         <source>Layer %1</source>
-        <translation></translation>
+        <translation>Layer %1</translation>
     </message>
 </context>
 <context>
@@ -891,22 +891,22 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-166"/>
         <source>Shift</source>
-        <translation></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -914,22 +914,22 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+76"/>
         <source>%1d%2h%3m</source>
-        <translation></translation>
+        <translation>%1d%2h%3m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation></translation>
+        <translation>%1h%2m</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation></translation>
+        <translation>%1m</translation>
     </message>
     <message>
         <location line="+442"/>
         <source>(untitled)</source>
-        <translation></translation>
+        <translation>(untitled)</translation>
     </message>
     <message numerus="yes">
         <location line="-333"/>
@@ -950,7 +950,7 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation></translation>
+        <translation>Unknown number of actively drawing users</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -963,67 +963,67 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+24"/>
         <source>Compatible</source>
-        <translation></translation>
+        <translation>Compatible</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation></translation>
+        <translation>Requires compatibility mode (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation></translation>
+        <translation>Requires newer client (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation></translation>
+        <translation>Incompatible (%1)</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>unknown version</source>
-        <translation></translation>
+        <translation>unknown version</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation></translation>
+        <translation>Minor incompatibility</translation>
     </message>
     <message>
         <location line="+121"/>
         <source>Compatibility</source>
-        <translation></translation>
+        <translation>Compatibility</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Title</source>
-        <translation></translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server</source>
-        <translation></translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation></translation>
+        <translation>Users</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation></translation>
+        <translation>Active</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Owner</source>
-        <translation></translation>
+        <translation>Owner</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation></translation>
+        <translation>Age</translation>
     </message>
     <message>
         <location line="+169"/>
@@ -1038,17 +1038,17 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation></translation>
+        <translation>closed</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation></translation>
+        <translation>password-protected</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -1056,67 +1056,67 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../export/timelapsesaverrunnable.cpp" line="+103"/>
         <source>Loading project…</source>
-        <translation></translation>
+        <translation>Loading project…</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Calculating…</source>
-        <translation></translation>
+        <translation>Calculating…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Finishing up…</source>
-        <translation></translation>
+        <translation>Finishing up…</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Rendering preview…</source>
-        <translation></translation>
+        <translation>Rendering preview…</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Rendering timelapse…</source>
-        <translation></translation>
+        <translation>Rendering timelapse…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rendering result…</source>
-        <translation></translation>
+        <translation>Rendering result…</translation>
     </message>
     <message>
         <location line="+399"/>
         <source>No input path given.</source>
-        <translation></translation>
+        <translation>No input path given.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No output path given.</source>
-        <translation></translation>
+        <translation>No output path given.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invalid output format %1 given.</source>
-        <translation></translation>
+        <translation>Invalid output format %1 given.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid framerate %1 given.</source>
-        <translation></translation>
+        <translation>Invalid framerate %1 given.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invalid animation parameters given.</source>
-        <translation></translation>
+        <translation>Invalid animation parameters given.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Invalid time given.</source>
-        <translation></translation>
+        <translation>Invalid time given.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid frame queue size %1 given.</source>
-        <translation></translation>
+        <translation>Invalid frame queue size %1 given.</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
@@ -1129,22 +1129,22 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+22"/>
         <source>Error %d opening project.</source>
-        <translation></translation>
+        <translation>Error %d opening project.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Nothing to play back. You may not have recorded anything to this project file.</source>
-        <translation></translation>
+        <translation>Nothing to play back. You may not have recorded anything to this project file.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error reading playback timing.</source>
-        <translation></translation>
+        <translation>Error reading playback timing.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Failed to start playback.</source>
-        <translation></translation>
+        <translation>Failed to start playback.</translation>
     </message>
 </context>
 <context>
@@ -1153,13 +1153,13 @@ Select a regular layer instead.</translation>
         <location filename="../utils/strings.cpp" line="+12"/>
         <source>%</source>
         <extracomment>Percent, put after numbers as a unit, like 42%. Unless your language uses a different symbol or something, leave this as it is.</extracomment>
-        <translation></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>px</source>
         <extracomment>Abbreviation for pixels, put after a number as a unit, like 42px. Unless your language calls pixels something different, leave this as it is.</extracomment>
-        <translation></translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -1167,202 +1167,202 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+44"/>
         <source>Normal</source>
-        <translation></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recolor</source>
-        <translation></translation>
+        <translation>Recolor</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Behind</source>
-        <translation></translation>
+        <translation>Behind</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation></translation>
+        <translation>Greater Density</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation></translation>
+        <translation>Marker</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation></translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Multiply</source>
-        <translation></translation>
+        <translation>Multiply</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Screen</source>
-        <translation></translation>
+        <translation>Screen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Overlay</source>
-        <translation></translation>
+        <translation>Overlay</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation></translation>
+        <translation>Linear Dodge/Add</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation></translation>
+        <translation>Color Burn</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation></translation>
+        <translation>Color Dodge</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation></translation>
+        <translation>Vivid Light</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation></translation>
+        <translation>Pin Light</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation></translation>
+        <translation>Darker Color</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation></translation>
+        <translation>Lighter Color</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation></translation>
+        <translation>Difference</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Divide</source>
-        <translation></translation>
+        <translation>Divide</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation></translation>
+        <translation>Shade (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation></translation>
+        <translation>Shine (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation></translation>
+        <translation>Shade/Shine (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation></translation>
+        <translation>Burn (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation></translation>
+        <translation>Dodge (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation></translation>
+        <translation>Burn/Dodge (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation></translation>
+        <translation>Hard Mix (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation></translation>
+        <translation>Difference (SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
         <source>Darken</source>
-        <translation></translation>
+        <translation>Darken</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighten</source>
-        <translation></translation>
+        <translation>Lighten</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Subtract</source>
-        <translation></translation>
+        <translation>Subtract</translation>
     </message>
     <message>
         <location line="-114"/>
         <source>Erase</source>
-        <translation></translation>
+        <translation>Erase</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Erase</source>
-        <translation></translation>
+        <translation>Color Erase</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Hard Light</source>
-        <translation></translation>
+        <translation>Hard Light</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Soft Light</source>
-        <translation></translation>
+        <translation>Soft Light</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Linear Burn</source>
-        <translation></translation>
+        <translation>Linear Burn</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Linear Light</source>
-        <translation></translation>
+        <translation>Linear Light</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Hue</source>
-        <translation></translation>
+        <translation>Hue</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Saturation</source>
-        <translation></translation>
+        <translation>Saturation</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Luminosity</source>
-        <translation></translation>
+        <translation>Luminosity</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color</source>
-        <translation></translation>
+        <translation>Color</translation>
     </message>
 </context>
 <context>
@@ -1371,7 +1371,7 @@ Select a regular layer instead.</translation>
         <location filename="../brushes/brushpresetmodel.cpp" line="+2951"/>
         <source>Brush requested from user &quot;%1&quot; on %2 at %3.</source>
         <extracomment>%1 is a username, %2 is a date, %3 is a time.</extracomment>
-        <translation></translation>
+        <translation>Brush requested from user &quot;%1&quot; on %2 at %3.</translation>
     </message>
 </context>
 <context>
@@ -1379,153 +1379,153 @@ Select a regular layer instead.</translation>
     <message>
         <location line="-1325"/>
         <source>All</source>
-        <translation></translation>
+        <translation>All</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation></translation>
+        <translation>Untagged</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>History</source>
-        <translation></translation>
+        <translation>History</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation></translation>
+        <translation>Show all brushes, regardless of tagging.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation></translation>
+        <translation>Show brushes not assigned to any tag.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show a history of brushes used.</source>
-        <translation></translation>
+        <translation>Show a history of brushes used.</translation>
     </message>
     <message>
         <location line="+123"/>
         <location line="+459"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation></translation>
+        <translation>Can&apos;t open &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="-425"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation></translation>
+        <translation>Invalid brush pack: order.conf not found inside</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation></translation>
+        <translation>Uncategorized %1</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation></translation>
+        <translation>Invalid brush pack: order.conf contains no brushes</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation></translation>
+        <translation>Could not create tag &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation></translation>
+        <translation>Could not create brush preset &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation></translation>
+        <translation>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation></translation>
+        <translation>Can&apos;t read brush file &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation></translation>
+        <translation>Unknown brush format in file &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation></translation>
+        <translation>Brush file &apos;%1&apos; does not contain valid JSON: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation></translation>
+        <translation>Can&apos;t load brush from brush file &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="-461"/>
         <source> (deleted)</source>
-        <translation></translation>
+        <translation> (deleted)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source> (unsaved)</source>
-        <translation></translation>
+        <translation> (unsaved)</translation>
     </message>
     <message>
         <location line="+517"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation></translation>
+        <translation>Brush file &apos;%1&apos; does not contain a JSON object</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation></translation>
+        <translation>Brush file &apos;%1&apos; has invalid version %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation></translation>
+        <translation>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation></translation>
+        <translation>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</translation>
     </message>
     <message>
         <location line="+134"/>
         <source>No brushes exported</source>
-        <translation></translation>
+        <translation>No brushes exported</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation></translation>
+        <translation>Can&apos;t export order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Error writing &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation></translation>
+        <translation>Can&apos;t export tag &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Missing preset %1</source>
-        <translation></translation>
+        <translation>Missing preset %1</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation></translation>
+        <translation>Can&apos;t export preset &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation></translation>
+        <translation>Can&apos;t export preset thumbnail &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -1533,17 +1533,17 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../canvas/canvasmodel.cpp" line="+720"/>
         <source>No session to resume given</source>
-        <translation></translation>
+        <translation>No session to resume given</translation>
     </message>
     <message>
         <location line="+115"/>
         <source>Project recording is already active</source>
-        <translation></translation>
+        <translation>Project recording is already active</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Playback is active</source>
-        <translation></translation>
+        <translation>Playback is active</translation>
     </message>
 </context>
 <context>
@@ -1551,57 +1551,57 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
-        <translation></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation></translation>
+        <translation>Trusted</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation></translation>
+        <translation>Registered</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation></translation>
+        <translation>Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation></translation>
+        <translation>Offline</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation></translation>
+        <translation>User</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+190"/>
         <source>Server</source>
-        <translation></translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation></translation>
+        <translation>User #%1</translation>
     </message>
 </context>
 <context>
@@ -1609,52 +1609,52 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../export/videoformat.cpp" line="+96"/>
         <source>Frames as PNGs</source>
-        <translation></translation>
+        <translation>Frames as PNGs</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation></translation>
+        <translation>Frames as PNGs in ZIP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>PNG Spritesheet</source>
-        <translation></translation>
+        <translation>PNG Spritesheet</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated GIF</source>
-        <translation></translation>
+        <translation>Animated GIF</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated WEBP</source>
-        <translation></translation>
+        <translation>Animated WEBP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Animated PNG (APNG)</source>
-        <translation></translation>
+        <translation>Animated PNG (APNG)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (H.264)</source>
-        <translation></translation>
+        <translation>MP4 Video (H.264)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (AV1)</source>
-        <translation></translation>
+        <translation>MP4 Video (AV1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>MP4 Video (VP9)</source>
-        <translation></translation>
+        <translation>MP4 Video (VP9)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>WEBM Video (VP8)</source>
-        <translation></translation>
+        <translation>WEBM Video (VP8)</translation>
     </message>
 </context>
 <context>
@@ -1662,17 +1662,17 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../utils/androidutils.cpp" line="-12"/>
         <source>Dynamic</source>
-        <translation></translation>
+        <translation>Dynamic</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Desktop</source>
-        <translation></translation>
+        <translation>Desktop</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Mobile</source>
-        <translation></translation>
+        <translation>Mobile</translation>
     </message>
 </context>
 <context>
@@ -1687,7 +1687,7 @@ Select a regular layer instead.</translation>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation></translation>
+        <translation>Frames %1</translation>
     </message>
 </context>
 <context>
@@ -1695,27 +1695,27 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation></translation>
+        <translation>Trusted</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation></translation>
+        <translation>User</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation></translation>
+        <translation>Roles</translation>
     </message>
 </context>
 <context>
@@ -1724,29 +1724,29 @@ Select a regular layer instead.</translation>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation></translation>
+        <translation>User</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation></translation>
+        <translation>IP address</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation></translation>
+        <translation>Client info</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation></translation>
+        <translation>Banned by</translation>
     </message>
 </context>
 <context>
@@ -1754,154 +1754,154 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../net/client.cpp" line="+735"/>
         <source>%1 banned by %2.</source>
-        <translation></translation>
+        <translation>%1 banned by %2.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 kicked by %2.</source>
-        <translation></translation>
+        <translation>%1 kicked by %2.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>%1 made operator by the server.</source>
-        <translation></translation>
+        <translation>%1 made operator by the server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation></translation>
+        <translation>%1 made operator by %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation></translation>
+        <translation>%1 made operator via invite created by a server administrator.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation></translation>
+        <translation>%1 made operator via invite created by %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation></translation>
+        <translation>Operator status revoked from %1 by the server.</translation>
     </message>
     <message>
         <location line="-659"/>
         <source>You have been kicked.</source>
-        <translation></translation>
+        <translation>You have been kicked.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation></translation>
+        <translation>You have been kicked by %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation></translation>
+        <translation>A server error occurred.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation></translation>
+        <translation>A server error occurred: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation></translation>
+        <translation>The server is shutting down.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation></translation>
+        <translation>The session has been shut down: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation></translation>
+        <translation>Disconnected.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation></translation>
+        <translation>Disconnected: %1</translation>
     </message>
     <message>
         <location line="+563"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation></translation>
+        <translation>Only moderators can export plain bans.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation></translation>
+        <translation>Server error.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation></translation>
+        <translation>Exporting encrypted bans not configured on this server.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation></translation>
+        <translation>Exporting encrypted bans not supported by this server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation></translation>
+        <translation>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation></translation>
+        <translation>Invalid import data.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation></translation>
+        <translation>Malformed import data.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation></translation>
+        <translation>Importing encrypted bans not configured on this server.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation></translation>
+        <translation>Importing encrypted bans not supported by this server.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blocking new joins is not supported by this server. Set or change the session password instead.</source>
-        <translation></translation>
+        <translation>Blocking new joins is not supported by this server. Set or change the session password instead.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation></translation>
+        <translation>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation></translation>
+        <translation>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation></translation>
+        <translation>%1 trusted via invite created by a server administrator.</translation>
     </message>
     <message>
         <location line="+134"/>
         <source> / </source>
         <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
-        <translation></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation></translation>
+        <translation>Operator status revoked from %1 by %2.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1911,80 +1911,80 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation></translation>
+        <translation>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation></translation>
+        <translation>Session reset failed! An operator must unlock the canvas and reset the session manually.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation></translation>
+        <translation>Preparing for session reset! Please wait, the session should be available again shortly…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation></translation>
+        <translation>Preparing for session reset by %1! Please wait, the session should be available again shortly…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation></translation>
+        <translation>%1 is compressing the canvas! Please wait, the session should be available again shortly…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation></translation>
+        <translation>%1 is replacing the canvas! Please wait, the session should be available again shortly…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation></translation>
+        <translation>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation></translation>
+        <translation>Session terminated by moderator (%1).</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation></translation>
+        <translation>Session terminated by administrator: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation></translation>
+        <translation>Session terminated by moderator (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation></translation>
+        <translation>%1 trusted by the server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation></translation>
+        <translation>%1 trusted by %2.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation></translation>
+        <translation>%1 trusted via invite created by %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation></translation>
+        <translation>%1 untrusted by the server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation></translation>
+        <translation>%1 untrusted by %2.</translation>
     </message>
 </context>
 <context>
@@ -1992,60 +1992,60 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation></translation>
+        <translation>No invite codes, click Create to add one.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation></translation>
+        <translation>Used %1 by %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation></translation>
+        <translation>Created %1 by %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation></translation>
+        <translation>Operator and Trusted</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation></translation>
+        <translation>Trusted</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation></translation>
+        <translation>Code</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation></translation>
+        <translation>Creator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation></translation>
+        <translation>Role</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation></translation>
+        <translation>Uses</translation>
     </message>
 </context>
 <context>
@@ -2054,7 +2054,7 @@ Select a regular layer instead.</translation>
         <location filename="../net/login.cpp" line="+129"/>
         <location line="+752"/>
         <source>Invalid state</source>
-        <translation></translation>
+        <translation>Invalid state</translation>
     </message>
     <message>
         <location line="-687"/>
@@ -2066,140 +2066,140 @@ Select a regular layer instead.</translation>
         <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
-        <translation></translation>
+        <translation>Incompatible server</translation>
     </message>
     <message>
         <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation></translation>
+        <translation>Server is for a different Drawpile version!</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation></translation>
+        <translation>Got redirected to a server that doesn&apos;t accept redirects: %1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation></translation>
+        <translation>This server doesn&apos;t provide a way to log in for joining a session!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation></translation>
+        <translation>This server doesn&apos;t provide a way to log in for hosting a session!</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation></translation>
+        <translation>Server expects STARTTLS on unsupported socket.</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Failed to retrieve server info</source>
-        <translation></translation>
+        <translation>Failed to retrieve server info</translation>
     </message>
     <message>
         <location line="+69"/>
         <source>Session lookup failed</source>
-        <translation></translation>
+        <translation>Session lookup failed</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation></translation>
+        <translation>Incompatible redirect</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation></translation>
+        <translation>Circular redirect</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation></translation>
+        <translation>Too many redirects</translation>
     </message>
     <message>
         <location line="+108"/>
         <source>This server does not allow guest logins</source>
-        <translation></translation>
+        <translation>This server does not allow guest logins</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation></translation>
+        <translation>Password needed to log in as &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation></translation>
+        <translation>Auth server error: %1</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Group membership needed</source>
-        <translation></translation>
+        <translation>Group membership needed</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation></translation>
+        <translation>Unexpected ext-auth response: %1</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Invalid ident intent response.</source>
-        <translation></translation>
+        <translation>Invalid ident intent response.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation></translation>
+        <translation>Server misconfiguration: invalid ext-auth URL</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation></translation>
+        <translation>Unsupported ext-auth URL scheme</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation></translation>
+        <translation>Server reported two different ext-auth URLs</translation>
     </message>
     <message>
         <location line="+199"/>
         <source>New version</source>
-        <translation></translation>
+        <translation>New version</translation>
     </message>
     <message>
         <location line="-42"/>
         <source>Session not yet started!</source>
-        <translation></translation>
+        <translation>Session not yet started!</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation></translation>
+        <translation>Blocked by parental controls</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation></translation>
+        <translation>Session for a different Drawpile version (%1) in progress!</translation>
     </message>
     <message>
         <location line="+234"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation></translation>
+        <translation>TLS is not supported via this kind of socket</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation></translation>
+        <translation>Unable to set TLS error ignore state</translation>
     </message>
     <message>
         <location line="+32"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation></translation>
+        <translation>Invalid SSL certificate for host %1</translation>
     </message>
     <message>
         <location line="-1050"/>
@@ -2219,82 +2219,82 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+65"/>
         <source>Cancelled</source>
-        <translation></translation>
+        <translation>Cancelled</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation></translation>
+        <translation>Session not found!</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation></translation>
+        <translation>Invalid username!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation></translation>
+        <translation>This username has been locked</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation></translation>
+        <translation>Username already taken!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation></translation>
+        <translation>Session is closed!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is full!</source>
-        <translation></translation>
+        <translation>Server is full!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation></translation>
+        <translation>Hosting not authorized</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation></translation>
+        <translation>You have been banned from this session!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation></translation>
+        <translation>Session alias is reserved!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation></translation>
+        <translation>This usually means that your Drawpile version is too old. Do you need to update?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation></translation>
+        <translation>Session not found, it may have ended or its invite link has changed</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation></translation>
+        <translation>This server only allows joining sessions through a direct link.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation></translation>
+        <translation>Invalid host name.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation></translation>
+        <translation>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Client failed to serialize command</source>
-        <translation></translation>
+        <translation>Client failed to serialize command</translation>
     </message>
 </context>
 <context>
@@ -2302,37 +2302,37 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation></translation>
+        <translation>(untitled)</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>%1 (incompatible)</source>
-        <translation></translation>
+        <translation>%1 (incompatible)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation></translation>
+        <translation>Drawpile 2.2 (compatibility mode)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (minor incompatibility)</source>
-        <translation></translation>
+        <translation>Drawpile 2.3 (minor incompatibility)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation></translation>
+        <translation>Drawpile 2.3 (fully compatible)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation></translation>
+        <translation>Unlisted</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible version</source>
-        <translation></translation>
+        <translation>Incompatible version</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2347,27 +2347,27 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation></translation>
+        <translation>Closed (guest logins blocked)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation></translation>
+        <translation>Closed (new logins blocked)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation></translation>
+        <translation>Session password required</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation></translation>
+        <translation>Not suitable for minors (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation></translation>
+        <translation>Unknown number of actively drawing users</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -2380,22 +2380,22 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+70"/>
         <source>Title</source>
-        <translation></translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Started by</source>
-        <translation></translation>
+        <translation>Started by</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation></translation>
+        <translation>Users</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation></translation>
+        <translation>Active</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -2445,49 +2445,49 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../net/server.cpp" line="+156"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation></translation>
+        <translation>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation></translation>
+        <translation>Network read error</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation></translation>
+        <translation>Network read error: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Network write error</source>
-        <translation></translation>
+        <translation>Network write error</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation></translation>
+        <translation>Network write error: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network connection timed out</source>
-        <translation></translation>
+        <translation>Network connection timed out</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Received invalid data</source>
-        <translation></translation>
+        <translation>Received invalid data</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation></translation>
+        <translation>Socket error %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation></translation>
+        <translation>%1 (error %2)</translation>
     </message>
 </context>
 <context>
@@ -2495,86 +2495,86 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../project/projectrecorder.cpp" line="+237"/>
         <source>Autosave recording already active</source>
-        <translation></translation>
+        <translation>Autosave recording already active</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Could not find any available autosave path</source>
-        <translation></translation>
+        <translation>Could not find any available autosave path</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Could not start autosave recording: %1</source>
-        <translation></translation>
+        <translation>Could not start autosave recording: %1</translation>
     </message>
     <message>
         <location line="-154"/>
         <source>Error removing project file &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Error removing project file &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="-42"/>
         <source>Invalid session %1 given to resume</source>
-        <translation></translation>
+        <translation>Invalid session %1 given to resume</translation>
     </message>
     <message>
         <location line="+185"/>
         <source>No path to resume given</source>
-        <translation></translation>
+        <translation>No path to resume given</translation>
     </message>
     <message>
         <location line="+176"/>
         <source>Error %1 opening project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 opening project: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 closing project: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 writing to project: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 writing to project: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 resuming session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 resuming session: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 opening session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 opening session: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 closing session: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 closing session: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 recording command: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 recording command: %2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error %1 creating snapshot: %2</source>
         <extracomment>%1 is an error code, %2 is a more detailed error message.</extracomment>
-        <translation></translation>
+        <translation>Error %1 creating snapshot: %2</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Size limit of %1 exceeded</source>
         <extracomment>%1 is the size, something like &quot;5 GB&quot;.</extracomment>
-        <translation></translation>
+        <translation>Size limit of %1 exceeded</translation>
     </message>
 </context>
 <context>
@@ -2582,32 +2582,32 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../project/projectrepair.cpp" line="+38"/>
         <source>Failed to set temporary input path.</source>
-        <translation></translation>
+        <translation>Failed to set temporary input path.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Failed to open project.</source>
-        <translation></translation>
+        <translation>Failed to open project.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Failed to close project.</source>
-        <translation></translation>
+        <translation>Failed to close project.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Failed to set temporary output path.</source>
-        <translation></translation>
+        <translation>Failed to set temporary output path.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Failed to start repair: %1</source>
-        <translation></translation>
+        <translation>Failed to start repair: %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Failed to repair file: %1</source>
-        <translation></translation>
+        <translation>Failed to repair file: %1</translation>
     </message>
 </context>
 <context>
@@ -2615,54 +2615,54 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../project/projectwrangler.cpp" line="+53"/>
         <source>Initialization failed</source>
-        <translation></translation>
+        <translation>Initialization failed</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <location line="+170"/>
         <source>Not initialized</source>
-        <translation></translation>
+        <translation>Not initialized</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Error %1 opening project file: %2</source>
-        <translation></translation>
+        <translation>Error %1 opening project file: %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error %1 generating project overview: %2</source>
-        <translation></translation>
+        <translation>Error %1 generating project overview: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 preparing player: %2</source>
-        <translation></translation>
+        <translation>Error %1 preparing player: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error %1 in player: %2</source>
-        <translation></translation>
+        <translation>Error %1 in player: %2</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Unhandled error %1 of type %2: %3</source>
-        <translation></translation>
+        <translation>Unhandled error %1 of type %2: %3</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Failed to open &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Failed to open &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Failed to open temporary &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Failed to open temporary &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</source>
-        <translation></translation>
+        <translation>Failed to copy &apos;%1&apos; to temporary file &apos;%2&apos;</translation>
     </message>
 </context>
 <context>
@@ -2670,7 +2670,7 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../tools/freehand.cpp" line="+159"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation></translation>
+        <translation>Anti-overflow requires a fill source layer.</translation>
     </message>
 </context>
 <context>
@@ -2678,7 +2678,7 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../tools/gradient.cpp" line="+137"/>
         <source>You need to drag to create a gradient.</source>
-        <translation></translation>
+        <translation>You need to drag to create a gradient.</translation>
     </message>
 </context>
 <context>
@@ -2696,12 +2696,12 @@ Select a regular layer instead.</translation>
     <message>
         <location line="-253"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation></translation>
+        <translation>You don&apos;t have permission for that transformation.</translation>
     </message>
     <message>
         <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation></translation>
+        <translation>You don&apos;t have permission to stamp selections.</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -2714,7 +2714,7 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation></translation>
+        <translation>Defaults</translation>
     </message>
 </context>
 <context>
@@ -2723,52 +2723,52 @@ Select a regular layer instead.</translation>
         <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation></translation>
+        <translation>Checking for updates…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation></translation>
+        <translation>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation></translation>
+        <translation>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation></translation>
+        <translation>Network error: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t make sense of the fetched data.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t make sense of fetched updates.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t save updates.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t make sense of fetched news.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation></translation>
+        <translation>Couldn&apos;t save news.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation></translation>
+        <translation>No news available.</translation>
     </message>
 </context>
 <context>
@@ -2776,37 +2776,37 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../io/files.cpp" line="+37"/>
         <source>File size out of bounds</source>
-        <translation></translation>
+        <translation>File size out of bounds</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Could not read entire file</source>
-        <translation></translation>
+        <translation>Could not read entire file</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Error opening source file &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Error opening source file &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Error opening target file &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Error opening target file &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Failed to commit target file: %1</source>
-        <translation></translation>
+        <translation>Failed to commit target file: %1</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Error reading from source file &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Error reading from source file &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
-        <translation></translation>
+        <translation>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</translation>
     </message>
     <message numerus="yes">
         <location line="+9"/>
@@ -2819,7 +2819,7 @@ Select a regular layer instead.</translation>
     <message>
         <location line="+13"/>
         <source>Error flushing target file &apos;%1&apos;: %2</source>
-        <translation></translation>
+        <translation>Error flushing target file &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
@@ -2850,42 +2850,42 @@ Select a regular layer instead.</translation>
     <message>
         <location filename="../view/canvascontrollerbase.cpp" line="+449"/>
         <source>Vertical flip: ON</source>
-        <translation></translation>
+        <translation>Vertical flip: ON</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation></translation>
+        <translation>Vertical flip: OFF</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation></translation>
+        <translation>Horizontal mirror: ON</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation></translation>
+        <translation>Horizontal mirror: OFF</translation>
     </message>
     <message>
         <location line="+2299"/>
         <source>Zoom: %1%</source>
-        <translation></translation>
+        <translation>Zoom: %1%</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rotation: %1°</source>
-        <translation></translation>
+        <translation>Rotation: %1°</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Downloading…</source>
-        <translation></translation>
+        <translation>Downloading…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving…</source>
-        <translation></translation>
+        <translation>Saving…</translation>
     </message>
 </context>
 </TS>
