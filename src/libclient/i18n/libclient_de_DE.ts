@@ -2811,9 +2811,9 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message numerus="yes">
         <location line="+9"/>
         <source>Tried to write %n byte(s) to target file &apos;%1&apos;, but only wrote %2</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Versuchte %n Byte in Zieldatei &apos;%1&apos; zu schreiben, aber konnte nur %2 schreiben</numerusform>
+            <numerusform>Versuchte %n Bytes in Zieldatei &apos;%1&apos; zu schreiben, aber konnte nur %2 schreiben</numerusform>
         </translation>
     </message>
     <message>
