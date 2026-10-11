@@ -7853,7 +7853,7 @@ void MainWindow::setupActions()
 		//: "Feather" is a verb here, referring to blurring the selection.
 		makeAction("selectalter", tr("&Expand/Shrink/Feather Selection"))
 			.noDefaultShortcut()
-			.icon("zoom-select");
+			.icon(QStringLiteral("zoom-in"));
 	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection"))
 							  .shortcut(CTRL_KEY | Qt::Key_Comma);
 	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection"))
