@@ -7261,13 +7261,28 @@ void MainWindow::setupActions()
 #else
 #	define ZOOM_IN_SHORTCUT QKeySequence("Ctrl++"), QKeySequence("Ctrl+=")
 #endif
-	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(ZOOM_IN_SHORTCUT).autoRepeat();
-	QAction *zoomincenter = makeAction("zoomincenter", tr("Zoom In On Center")).noDefaultShortcut().autoRepeat();
-	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut).autoRepeat();
-	QAction *zoomoutcenter = makeAction("zoomoutcenter", tr("Zoom Out From Center")).noDefaultShortcut().autoRepeat();
-	QAction *zoomorig = makeAction("zoomone", tr("&Reset Zoom")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
-	QAction *zoomorigcenter = makeAction("zoomonecenter", tr("Reset Zoom At Center")).noDefaultShortcut();
 	// clang-format on
+	QAction *zoomin = makeAction("zoomin", tr("Zoom &In"))
+						  .icon(QStringLiteral("drawpile_zoom_in"))
+						  .shortcut(ZOOM_IN_SHORTCUT)
+						  .autoRepeat();
+	QAction *zoomincenter = makeAction("zoomincenter", tr("Zoom In On Center"))
+								.noDefaultShortcut()
+								.autoRepeat();
+	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out"))
+						   .icon(QStringLiteral("drawpile_zoom_out"))
+						   .shortcut(QKeySequence::ZoomOut)
+						   .autoRepeat();
+	QAction *zoomoutcenter =
+		makeAction("zoomoutcenter", tr("Zoom Out From Center"))
+			.noDefaultShortcut()
+			.autoRepeat();
+	QAction *zoomorig = makeAction("zoomone", tr("&Reset Zoom"))
+							.icon(QStringLiteral("drawpile_zoom_original"))
+							.shortcut(QKeySequence("ctrl+0"));
+	QAction *zoomorigcenter =
+		makeAction("zoomonecenter", tr("Reset Zoom At Center"))
+			.noDefaultShortcut();
 	QAction *zoomfit = makeAction("zoomfit", tr("&Fit Canvas"))
 						   .icon("zoom-select")
 						   .noDefaultShortcut();

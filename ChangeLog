@@ -15,6 +15,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Add a drag zoom mode to the zoom tool. This is the default, since it's more useful and consistent with the rotation and pan tools. You can still use the select zoom by right-clicking, holding the constrain key (Shift by default) or switching the mode of the tool. Thanks Shuko for suggesting.
  * Feature: Give the zoom tool nice header buttons to zoom in, out, fit and reset.
  * Fix: Make the zoom tool behave more predictably, it now doesn't do weird stuff like letting you select an area and then zooming out on it.
+ * Fix: Give better icons to zoom in, zoom out and reset zoom, so that they don't all just look like rectangles at a glance.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.
