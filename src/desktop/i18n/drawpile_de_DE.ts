@@ -3304,7 +3304,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+92"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menü</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -9483,17 +9483,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+111"/>
         <source>Processing suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeitung erfolgreich, aber Speichern der Datei fehlgeschlagen.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>An error occured during processing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bei der Verarbeitung ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>No processed file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine verarbeitete Datei verfügbar.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -16074,28 +16074,28 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
         <source>Drag</source>
         <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ziehen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by clicking and dragging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoomen durch Klicken und Ziehen.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Select</source>
         <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
-        <translation type="unfinished">Auswählen</translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by selecting an area.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoomen durch Auswahl eines Bereichs.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modus:</translation>
+        <translation>Modus:</translation>
     </message>
 </context>
 <context>
