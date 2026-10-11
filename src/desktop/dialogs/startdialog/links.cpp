@@ -63,8 +63,8 @@ Links::Links(bool vertical, QWidget *parent)
 			QPushButton *link = new QPushButton;
 			link->setStyleSheet(pushButtonCss);
 			link->setFlat(true);
-			setUpLink(i, ld, link);
 			linksLayout->addWidget(link);
+			setUpLink(i, ld, link);
 		}
 		linksLayout->addStretch();
 	} else {
@@ -82,8 +82,8 @@ Links::Links(bool vertical, QWidget *parent)
 				link->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 				link->setSizePolicy(
 					QSizePolicy::Expanding, QSizePolicy::Expanding);
-				setUpLink(i, ld, link);
 				linksLayout->addWidget(link, ld.row, ld.column);
+				setUpLink(i, ld, link);
 			}
 		}
 	}
