@@ -146,7 +146,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
         <location filename="../toolwidgets/gradientsettings.cpp" line="+394"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+94"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+102"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+337"/>
         <source>Preserve alpha</source>
         <translation>Зберегти альфа-сигнал</translation>
@@ -181,7 +181,7 @@
     </message>
     <message>
         <location line="-42"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-81"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-89"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+289"/>
         <source>Stabilizer: </source>
         <translation>Стабілізатор </translation>
@@ -1554,18 +1554,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+878"/>
+        <location filename="../mainwindow.cpp" line="+885"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 приєднується!</translation>
     </message>
     <message>
         <location line="+300"/>
-        <location line="+3332"/>
+        <location line="+3336"/>
         <source>Untitled</source>
         <translation>Без назви</translation>
     </message>
     <message>
-        <location line="-2085"/>
+        <location line="-2093"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>Вихід з Drawpile</translation>
@@ -1583,12 +1583,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <location line="+31"/>
-        <location line="+1168"/>
+        <location line="+1176"/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location line="-1179"/>
+        <location line="-1187"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Деякі зміни не збережено. Зберегти їх перед виходом?</translation>
     </message>
@@ -1603,7 +1603,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Відкинути</translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+837"/>
         <source>Saving...</source>
         <translation>Збереження...</translation>
     </message>
@@ -1638,12 +1638,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Не вдалося експортувати шаблон сеансу</translation>
     </message>
     <message>
-        <location line="-846"/>
+        <location line="-841"/>
         <source>Play</source>
         <translation>Пуск</translation>
     </message>
     <message>
-        <location line="+982"/>
+        <location line="+977"/>
         <source>Stop Recording</source>
         <translation>Припинити записування</translation>
     </message>
@@ -1700,12 +1700,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3722"/>
+        <location line="+3728"/>
         <source>Terminate</source>
         <translation>Перервати</translation>
     </message>
     <message>
-        <location line="-3524"/>
+        <location line="-3530"/>
         <source>Would you like to join the session instead?</source>
         <translation>Хочете замість цього долучитися до сеансу?</translation>
     </message>
@@ -1772,18 +1772,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Зберігаємо анімацію...</translation>
     </message>
     <message>
-        <location line="-1429"/>
+        <location line="-1433"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>Запитаний пензель не дозволяє іншим його використовувати.</translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+485"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>Полотно завантажено %1:%2.%3</translation>
     </message>
     <message>
-        <location line="+649"/>
+        <location line="+644"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>Зображення збережено в %1:%2.%3</translation>
@@ -1876,7 +1876,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Робота з файлами</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+60"/>
         <source>&amp;Undo</source>
         <translation>С&amp;касувати</translation>
     </message>
@@ -2034,7 +2034,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>&amp;За розміром екрана</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+177"/>
         <source>Group View</source>
         <translation>Перегляд групи</translation>
     </message>
@@ -2134,12 +2134,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>&amp;Скасувати позначення</translation>
     </message>
     <message>
-        <location line="-764"/>
+        <location line="-762"/>
         <source>Delete</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location line="+783"/>
+        <location line="+781"/>
         <source>Fill Selection</source>
         <translation>Заповнити позначене</translation>
     </message>
@@ -2159,7 +2159,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>З&amp;міни</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-683"/>
+        <location filename="../mainwindow.cpp" line="-681"/>
         <source>&amp;Expand Canvas</source>
         <translation>Роз&amp;ширити полотно</translation>
     </message>
@@ -2184,7 +2184,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Спілкування</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+276"/>
         <source>Normal View</source>
         <translation>Звичайний перегляд</translation>
     </message>
@@ -2239,12 +2239,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Показати вікно попереднього перегляду анімації</translation>
     </message>
     <message>
-        <location line="-767"/>
+        <location line="-765"/>
         <source>Zoom &amp;In</source>
         <translation>З&amp;більшити</translation>
     </message>
     <message>
-        <location line="-2612"/>
+        <location line="-2620"/>
         <source>Reason:</source>
         <translation>Причина:</translation>
     </message>
@@ -2304,7 +2304,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Експортувати &amp;пензлі…</translation>
     </message>
     <message>
-        <location line="+651"/>
+        <location line="+659"/>
         <source>Zoom &amp;Out</source>
         <translation>З&amp;меншити</translation>
     </message>
@@ -2354,7 +2354,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>&amp;На весь екран</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+137"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Масштаб</translation>
     </message>
@@ -2430,7 +2430,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message numerus="yes">
         <location line="+5"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+3885"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+3904"/>
         <source>Create Layer Group(s) on Current Key Frame(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -2684,7 +2684,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Установіть колір переднього плану на чорний, а колір фону на білий</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+270"/>
         <source>Could not write log file: %1</source>
         <translation>Не вдалося записати файл журналу: %1</translation>
     </message>
@@ -2694,17 +2694,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Не вдалося прочитати журнал: %1</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+162"/>
         <source>Focus canvas</source>
         <translation>Фокусне полотно</translation>
     </message>
     <message>
-        <location line="-1482"/>
+        <location line="-1512"/>
         <source>Show Censored Layers</source>
         <translation>Показати цензуровані шари</translation>
     </message>
     <message>
-        <location line="-5805"/>
+        <location line="-5815"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;Комбінація клавіш &quot;%1&quot; неоднозначна, вона відповідає:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2770,12 +2770,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+149"/>
-        <location line="+5335"/>
+        <location line="+5339"/>
         <source>Export Again</source>
         <translation>Знову експорт</translation>
     </message>
     <message>
-        <location line="-5331"/>
+        <location line="-5335"/>
         <source>Export Again to %1</source>
         <translation>Знову експортуйте до %1</translation>
     </message>
@@ -2790,7 +2790,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Виправити</translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+866"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>Ви не маєте дозволу вирізати, вставляти, заповнювати чи видаляти.</translation>
@@ -2846,7 +2846,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Відкриваємо файл…</translation>
     </message>
     <message>
-        <location line="-1613"/>
+        <location line="-1622"/>
         <source>Open</source>
         <translation>Відчинено</translation>
     </message>
@@ -2856,7 +2856,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ви збираєтеся відкрити новий файл і закрити це вікно.</translation>
     </message>
     <message>
-        <location line="+2302"/>
+        <location line="+2306"/>
         <source>Image saving failed</source>
         <translation>Не вдалося зберегти зображення</translation>
     </message>
@@ -2891,9 +2891,9 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Не вдалося розпочати запис.</translation>
     </message>
     <message>
-        <location line="-1886"/>
+        <location line="-1890"/>
         <location line="+56"/>
-        <location line="+1833"/>
+        <location line="+1837"/>
         <source>Unknown error.</source>
         <translation>Невідома помилка.</translation>
     </message>
@@ -2948,7 +2948,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>У вас є незбережені зміни. Зберегти їх перед повторним підключенням?</translation>
     </message>
     <message>
-        <location line="-3059"/>
+        <location line="-3063"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
         <translation>Переключено в режим перегляду кадрів.
@@ -3007,7 +3007,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1077"/>
+        <location line="+1086"/>
         <source>Open Recovered File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3017,7 +3017,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1506"/>
+        <location line="+1501"/>
         <source>Did the download complete successfully?</source>
         <translation>Завантаження успішно завершилося?</translation>
     </message>
@@ -3109,8 +3109,8 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Змінити ліміт скасування сеансу, поточний ліміт становить %1.</translation>
     </message>
     <message>
-        <location line="-2444"/>
-        <location line="+2483"/>
+        <location line="-2439"/>
+        <location line="+2478"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
@@ -3146,12 +3146,12 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Не вдалося завантажити зображення: %1.</translation>
     </message>
     <message>
-        <location line="-3539"/>
+        <location line="-3543"/>
         <source>User #%1</source>
         <translation>Користувач #%1</translation>
     </message>
     <message>
-        <location line="+3864"/>
+        <location line="+3868"/>
         <source>Altering selection…</source>
         <translation>Зміна вибору…</translation>
     </message>
@@ -3162,23 +3162,23 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+2363"/>
+        <location line="+2369"/>
         <source>Tablet Event Log...</source>
         <translation>Журнал подій планшета...</translation>
     </message>
     <message>
-        <location line="-2359"/>
+        <location line="-2365"/>
         <source>Stop Profile</source>
         <translation>Зупинити профіль</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+2360"/>
+        <location line="+2366"/>
         <source>Profile...</source>
         <translation>Профіль...</translation>
     </message>
     <message>
-        <location line="-2349"/>
+        <location line="-2355"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Встановити штучну затримку... (наразі %1 мс)</translation>
     </message>
@@ -3204,12 +3204,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+2307"/>
+        <location line="+2313"/>
         <source>Record Debug Dumps</source>
         <translation>Записуйте дампи налагодження</translation>
     </message>
     <message>
-        <location line="-2306"/>
+        <location line="-2312"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -3337,7 +3337,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4710"/>
+        <location line="-4714"/>
         <location line="+56"/>
         <source>Save Failed</source>
         <translation type="unfinished"></translation>
@@ -3353,7 +3353,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+688"/>
         <source>Resuming…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3404,7 +3404,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+313"/>
+        <location line="+308"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3479,7 +3479,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;Імпорт</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+59"/>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
         <source>&amp;Copy Merged</source>
         <translation>&amp;Копія об&apos;єднана</translation>
     </message>
@@ -3555,12 +3560,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+92"/>
-        <location line="+889"/>
+        <location line="+887"/>
         <source>Edit</source>
         <translation type="unfinished">Редагувати</translation>
     </message>
     <message>
-        <location line="-867"/>
+        <location line="-865"/>
         <source>Canvas Background</source>
         <translation>Полотно фону</translation>
     </message>
@@ -3695,7 +3700,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Панель дій вибору внизу праворуч</translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+133"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4344,7 +4349,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Режим змішування інструменту: %1</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+53"/>
         <source>Touch Tester</source>
         <translation>Торкніться Тестер</translation>
     </message>
@@ -4415,7 +4420,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+59"/>
         <source>Brush slot #%1</source>
         <translation>Слот для пензля #%1</translation>
     </message>
@@ -4500,13 +4505,13 @@ You can re-enable it via the View menu.</source>
 Ви можете знову ввімкнути її через меню «Вигляд».</translation>
     </message>
     <message>
-        <location line="+676"/>
+        <location line="+710"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>Щоб повідомити про помилку або запропонувати функцію, [перегляньте сюди].</translation>
     </message>
     <message>
-        <location line="-1306"/>
+        <location line="-1370"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>З&amp;меншити розмір пензля</translation>
     </message>
@@ -4631,7 +4636,7 @@ You can re-enable it via the View menu.</source>
         <translation>Інструменти малювання</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <location filename="../widgets/macmenu.cpp" line="+32"/>
         <source>&amp;Homepage</source>
         <translation>Дома&amp;шня сторінка</translation>
@@ -4674,7 +4679,7 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;Довідка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+178"/>
+        <location filename="../mainwindow.cpp" line="+206"/>
         <source>Finish action</source>
         <translation>Завершити дію</translation>
     </message>
@@ -8906,7 +8911,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Пройти через</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1345"/>
+        <location filename="../mainwindow.cpp" line="-1375"/>
         <source>Blend alpha</source>
         <translation>Змішати альфа</translation>
     </message>
@@ -9361,12 +9366,12 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::ProjectEditDialog</name>
     <message>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
-        <location line="+746"/>
+        <location line="+755"/>
         <source>Error %1 opening input file: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-732"/>
+        <location line="-741"/>
         <source>Error %1 opening temporary file: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9483,12 +9488,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+103"/>
-        <location line="+124"/>
+        <location line="+132"/>
         <source>Error</source>
         <translation type="unfinished">Помилка</translation>
     </message>
     <message numerus="yes">
-        <location line="-123"/>
+        <location line="-131"/>
         <source>Failed to load %n file(s).</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9498,21 +9503,26 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+111"/>
-        <source>Conversion suceeded, but file saving failed.</source>
+        <source>Processing suceeded, but file saving failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
+        <source>An error occured during processing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>No processed file available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-5"/>
         <source>Saving project…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+10"/>
         <source>No file to save to given.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10551,7 +10561,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+383"/>
         <source>Checking…</source>
         <translation>Перевірка…</translation>
     </message>
@@ -10627,7 +10637,7 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::TimelapseDialog</name>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="-335"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+193"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+199"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10639,7 +10649,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+200"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+305"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10668,12 +10678,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1239"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1256"/>
         <source>Timelapse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+59"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10851,7 +10861,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+25"/>
         <source>Logo padding:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10902,7 +10912,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+7"/>
         <source> FPS</source>
         <extracomment>Frames per second.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10915,7 +10925,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+93"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10935,7 +10945,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+575"/>
+        <location line="+617"/>
         <source>%1 loop(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -11032,7 +11042,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+270"/>
         <source>Enable touch</source>
         <translation>Увімкнути дотик</translation>
     </message>
@@ -11055,7 +11065,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-265"/>
+        <location line="-287"/>
         <source>Touch here.</source>
         <translation>Торкніться тут.</translation>
     </message>
@@ -12043,7 +12053,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Shortcuts</name>
     <message>
-        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+211"/>
+        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+215"/>
         <source>Restore Shortcut Defaults</source>
         <translation>Відновити ярлики за замовчуванням</translation>
     </message>
@@ -12054,12 +12064,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Відновити налаштування за замовчуванням…</translation>
     </message>
     <message>
-        <location line="-287"/>
+        <location line="-291"/>
         <source>Shortcuts</source>
         <translation type="unfinished">Скорочення</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+125"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation>Справді відновити всі ярлики до стандартних значень?</translation>
     </message>
@@ -12210,7 +12220,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../mainwindow.cpp" line="-717"/>
+        <location filename="../mainwindow.cpp" line="-715"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -13096,7 +13106,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-39"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1290"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1344"/>
         <source>Background:</source>
         <translation>Фон:</translation>
     </message>
@@ -13189,7 +13199,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Links</name>
     <message>
-        <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
+        <location filename="../dialogs/startdialog/links.cpp" line="+34"/>
         <source>Help</source>
         <translation>Довідка</translation>
     </message>
@@ -14889,12 +14899,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+2023"/>
+        <location line="+2044"/>
         <source>Opacity: </source>
         <translation>Непрозорість: </translation>
     </message>
     <message>
-        <location line="-2022"/>
+        <location line="-2043"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -14954,7 +14964,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Зніміть прапорець із шару</translation>
     </message>
     <message>
-        <location line="+1121"/>
+        <location line="+1142"/>
         <source>Layer Limit Reached</source>
         <translation>Досягнуто ліміту шарів</translation>
     </message>
@@ -14989,7 +14999,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+267"/>
-        <location filename="../mainwindow.cpp" line="-5896"/>
+        <location filename="../mainwindow.cpp" line="-5908"/>
         <source>Layer</source>
         <translation>Шар</translation>
     </message>
@@ -15157,12 +15167,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Хронологія</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <source>Play</source>
         <translation>Відтворити</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+36"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15218,7 +15228,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+7685"/>
+        <location filename="../mainwindow.cpp" line="+7697"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation>Пожертвувати</translation>
@@ -15230,7 +15240,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Відкрийте сторінку пожертв Drawpile у вашому браузері</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+1101"/>
+        <location filename="../mainwindow.cpp" line="+1163"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Зробіть пожертву Drawpile], щоб допомогти продовжувати розробку та роботу серверів.</translation>
@@ -15487,7 +15497,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+4"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+17"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
         <translation type="unfinished"></translation>
@@ -15797,13 +15807,13 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::LassoFillSettings</name>
     <message>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-44"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-52"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-57"/>
         <source>Stabilization mode</source>
         <translation>Режим стабілізації</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+83"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
@@ -16102,14 +16112,31 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ZoomSettings</name>
     <message>
-        <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
-        <source>Normal Size</source>
-        <translation>Нормальний розмір</translation>
+        <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
+        <source>Drag</source>
+        <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Fit To Window</source>
-        <translation>Припасувати до вікна</translation>
+        <source>Zoom by clicking and dragging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Select</source>
+        <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom by selecting an area.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Mode:</source>
+        <translation type="unfinished">Режим:</translation>
     </message>
 </context>
 <context>
@@ -16383,7 +16410,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+446"/>
         <source>Vertical flip: ON</source>
         <translation>Вертикальний переворот: УВІМК</translation>
     </message>
@@ -16403,7 +16430,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Горизонтальне дзеркало: ВИМК</translation>
     </message>
     <message>
-        <location line="+2136"/>
+        <location line="+2129"/>
         <source>Zoom: %1%</source>
         <translation>Збільшити: %1%</translation>
     </message>
@@ -16972,7 +16999,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="-2520"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-2539"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Порожній ключовий кадр (дублікат)</translation>
     </message>
@@ -17036,7 +17063,7 @@ or via Animation ▸ New Track.</source>
 або через Анімація ▸ Нова доріжка.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8787"/>
+        <location filename="../mainwindow.cpp" line="-8861"/>
         <location filename="../widgets/timelinewidget.cpp" line="+1036"/>
         <source>Track</source>
         <translation>Трек</translation>

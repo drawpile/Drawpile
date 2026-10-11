@@ -1691,190 +1691,6 @@ En su lugar, selecciona una capa regular.</translation>
     </message>
 </context>
 <context>
-    <name>impex::RecordingConverter</name>
-    <message>
-        <location filename="../import/recordingconverter.cpp" line="+92"/>
-        <source>No input files given.</source>
-        <translation>No se han proporcionado archivos de entrada.</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Error %1 opening project file %2.</source>
-        <translation>Error %1 al abrir el archivo de proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Error initializing compressor.</source>
-        <translation>Error inicializando el compresor.</translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Finishing project…</source>
-        <translation>Terminando proyecto…</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Error finishing project.</source>
-        <translation>Error terminadon proyecto.</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Error closing project.</source>
-        <translation>Error cerrando el proyecto.</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Processing project %1 session %2…</source>
-        <translation>Procesando proyecto %1 sesión %2…</translation>
-    </message>
-    <message>
-        <location line="+68"/>
-        <source>Error %1 copying session %2 from project %3.</source>
-        <translation>Error %1 al copiar la sesión %2 del proyecto %3.</translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>Error %1 opening project %2: %3.</source>
-        <translation>Error %1 al abrir el proyecto %2: %3.</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Error %1 opening temporary file for %2: %3.</source>
-        <translation>Error %1 al abrir el archivo temporal para %2: %3.</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Error loading project %1.</source>
-        <translation>Error al cargar el proyecto %1.</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Converting recording %1…</source>
-        <translation type="unfinished">Convirtiendo grabación %1…</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Failed to open recording %1.</source>
-        <translation>No se pudo abrir la grabación %1.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Incompatible recording.</source>
-        <translation>Grabación incompatible.</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Error %1 opening project session.</source>
-        <translation>Error %1 al abrir la sesión del proyecto.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Error setting compressor session.</source>
-        <translation>Error al configurar la sesión del compresor.</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Error %1 opening project snapshot.</source>
-        <translation type="unfinished">Error %1 al abrir la instantánea del proyecto.</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Error %1 finishing project snapshot.</source>
-        <translation>Error %1 al finalizar la instantánea del proyecto.</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Error %1 converting recording %2.</source>
-        <translation>Error %1 al convertir la grabación %2.</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Error %1 reading recording %2.</source>
-        <translation>Error %1 leyendon la grabación %2.</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Error flushing compressor.</source>
-        <translation type="unfinished">Error al vaciar el compresor.</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Error %1 saving project snapshot.</source>
-        <translation>Error %1 guardando la instantánea del proyecto.</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Error %1 closing project session.</source>
-        <translation type="unfinished">Error %1 cerrando la sesión del proyecto.</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Error %1 opening project %2.</source>
-        <translation>Error %1 abriendo el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Processing project %1 snapshot %2…</source>
-        <translation type="unfinished">Procesando instantánea %2 del proyecto %1…</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Error opening playback for project %1.</source>
-        <translation>Error abriendo la reproducción del proyecto %1.</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Error %1 preparing playback for project %2.</source>
-        <translation type="unfinished">Error %1 preparando la reproducción para el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+48"/>
-        <location line="+133"/>
-        <source>Error %1 processing project %2.</source>
-        <translation>Error %1 procesando el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="-123"/>
-        <source>Error %1 replacing snapshot in project %2.</source>
-        <translation>Error %1 reemplazando la instantánea en el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Session %1 not found in project %2.</source>
-        <translation>Sesión %1 no encontrada en el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Error %1 updating snapshot in project %2.</source>
-        <translation>Error %1 actualizando la instantánea en el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Error %1 reading sessions in project %2.</source>
-        <translation type="unfinished">Error %1 leyendo las sesiones en el proyecto %2.</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Processing final project snapshot…</source>
-        <translation>Procesando la instantánea final del proyecto…</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Error opening playback for project %1</source>
-        <translation type="unfinished">Error abriendo la reproducción del proyecto %1</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Error %1 preparing playback for project %2</source>
-        <translation>Error %1 preparando la reproducción del proyecto %2</translation>
-    </message>
-    <message>
-        <location line="+57"/>
-        <source>Error %1 saving snapshot in project %2.</source>
-        <translation>Error %1 guardando la instantánea en el proyecto %2.</translation>
-    </message>
-</context>
-<context>
     <name>net::AuthListModel</name>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
@@ -2992,10 +2808,13 @@ En su lugar, selecciona una capa regular.</translation>
         <source>Error writing %1 byte(s) to target file &apos;%2&apos;: %3</source>
         <translation>Error al escribir %1 byte(s) en el archivo de destino &apos;%2&apos;: %3</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location line="+9"/>
-        <source>Tried to write %1 byte(s) to target file &apos;%2&apos;, but only wrote %3</source>
-        <translation>Se intentó escribir %1 byte(s) en el archivo de destino &apos;%2&apos;, pero solo se escribieron %3</translation>
+        <source>Tried to write %n byte(s) to target file &apos;%1&apos;, but only wrote %2</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3029,7 +2848,7 @@ En su lugar, selecciona una capa regular.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../view/canvascontrollerbase.cpp" line="+442"/>
+        <location filename="../view/canvascontrollerbase.cpp" line="+449"/>
         <source>Vertical flip: ON</source>
         <translation>Voltear verticalmente: ACTIVADO</translation>
     </message>
@@ -3049,7 +2868,7 @@ En su lugar, selecciona una capa regular.</translation>
         <translation>Reflejar horizontalmente: DESACTIVADO</translation>
     </message>
     <message>
-        <location line="+2306"/>
+        <location line="+2299"/>
         <source>Zoom: %1%</source>
         <translation>Acercar: %1%</translation>
     </message>

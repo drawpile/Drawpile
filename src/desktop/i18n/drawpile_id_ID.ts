@@ -152,7 +152,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
         <location filename="../toolwidgets/gradientsettings.cpp" line="+394"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+94"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+102"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+337"/>
         <source>Preserve alpha</source>
         <translation>Pertahankan alfa</translation>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <location line="-42"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-81"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-89"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+289"/>
         <source>Stabilizer: </source>
         <translation>Penstabil: </translation>
@@ -1552,7 +1552,7 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+878"/>
+        <location filename="../mainwindow.cpp" line="+885"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 bergabung!</translation>
     </message>
@@ -1618,18 +1618,18 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
     </message>
     <message>
         <location line="+97"/>
-        <location line="+3332"/>
+        <location line="+3336"/>
         <source>Untitled</source>
         <translation>Tanpa Judul</translation>
     </message>
     <message>
-        <location line="-3280"/>
-        <location line="+5335"/>
+        <location line="-3284"/>
+        <location line="+5339"/>
         <source>Export Again</source>
         <translation>Ekspor Lagi</translation>
     </message>
     <message>
-        <location line="-5331"/>
+        <location line="-5335"/>
         <source>Export Again to %1</source>
         <translation>Ekspor Lagi ke %1</translation>
     </message>
@@ -1649,7 +1649,7 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Perbaiki</translation>
     </message>
     <message>
-        <location line="+685"/>
+        <location line="+681"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>Keluar dari Drawpile</translation>
@@ -1667,12 +1667,12 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
     <message>
         <location line="+2"/>
         <location line="+31"/>
-        <location line="+1168"/>
+        <location line="+1176"/>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
     <message>
-        <location line="-1179"/>
+        <location line="-1187"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ada perubahan yang belum disimpan. Simpan sebelum keluar?</translation>
     </message>
@@ -1687,7 +1687,7 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Buang</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+146"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>Anda tidak memiliki izin untuk memotong, menempel, mengisi, atau menghapus.</translation>
@@ -1743,7 +1743,7 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Membuka file…</translation>
     </message>
     <message>
-        <location line="-1613"/>
+        <location line="-1622"/>
         <source>Open</source>
         <translation>Buka</translation>
     </message>
@@ -1753,7 +1753,7 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Anda akan membuka file baru dan menutup jendela ini.</translation>
     </message>
     <message>
-        <location line="+2273"/>
+        <location line="+2277"/>
         <source>Saving...</source>
         <translation>Menyimpan...</translation>
     </message>
@@ -1813,12 +1813,12 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Menyimpan animasi...</translation>
     </message>
     <message>
-        <location line="-904"/>
+        <location line="-899"/>
         <source>Play</source>
         <translation>Putar</translation>
     </message>
     <message>
-        <location line="+982"/>
+        <location line="+977"/>
         <source>Stop Recording</source>
         <translation>Hentikan Rekaman</translation>
     </message>
@@ -1839,9 +1839,9 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Tidak dapat memulai perekaman.</translation>
     </message>
     <message>
-        <location line="-1886"/>
+        <location line="-1890"/>
         <location line="+56"/>
-        <location line="+1833"/>
+        <location line="+1837"/>
         <source>Unknown error.</source>
         <translation>Kesalahan tidak diketahui.</translation>
     </message>
@@ -1906,7 +1906,7 @@ Untuk menghindari langkah tambahan ini di masa mendatang, gunakan halaman Jelaja
         <translation>Anda memiliki perubahan yang belum disimpan, apakah Anda ingin menyimpannya sebelum menyambungkan kembali?</translation>
     </message>
     <message>
-        <location line="-3059"/>
+        <location line="-3063"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
         <translation>Beralih ke mode tampilan bingkai.
@@ -1965,7 +1965,7 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <translation>Pemulihan otomatis akan dinonaktifkan untuk sesi saat ini. Berkas akan tetap tersedia untuk pemulihan. Jika Anda melanjutkan, Anda tidak akan dapat membuat timelapse.</translation>
     </message>
     <message>
-        <location line="+1077"/>
+        <location line="+1086"/>
         <source>Open Recovered File</source>
         <translation>Buka Berkas yang Dipulihkan</translation>
     </message>
@@ -1975,7 +1975,7 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <translation>Anda akan membuka berkas yang dipulihkan dan menutup jendela ini.</translation>
     </message>
     <message>
-        <location line="+1506"/>
+        <location line="+1501"/>
         <source>Did the download complete successfully?</source>
         <translation>Apakah unduhan berhasil diselesaikan?</translation>
     </message>
@@ -2048,12 +2048,12 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3722"/>
+        <location line="+3728"/>
         <source>Terminate</source>
         <translation>Akhiri</translation>
     </message>
     <message>
-        <location line="-3707"/>
+        <location line="-3713"/>
         <source>Join Session</source>
         <translation>Bergabung ke Sesi</translation>
     </message>
@@ -2088,8 +2088,8 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <translation>Ubah batas urungkan sesi, batas saat ini adalah %1.</translation>
     </message>
     <message>
-        <location line="-2444"/>
-        <location line="+2483"/>
+        <location line="-2439"/>
+        <location line="+2478"/>
         <source>Error</source>
         <translation>Kesalahan</translation>
     </message>
@@ -2130,7 +2130,7 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <translation>Gambar tidak dapat dimuat</translation>
     </message>
     <message>
-        <location line="-3555"/>
+        <location line="-3559"/>
         <source>User #%1</source>
         <translation>Pengguna #%1</translation>
     </message>
@@ -2151,7 +2151,7 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <translation>Galat saat menyiapkan berkas timelapse.</translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+688"/>
         <source>Resuming…</source>
         <translation>Melanjutkan…</translation>
     </message>
@@ -2202,7 +2202,7 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
         <translation>Langsung membuka rekaman ini agar Anda dapat memutarnya kembali.</translation>
     </message>
     <message>
-        <location line="+313"/>
+        <location line="+308"/>
         <source>Open Project</source>
         <translation>Buka Proyek</translation>
     </message>
@@ -2248,23 +2248,23 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+2363"/>
+        <location line="+2369"/>
         <source>Tablet Event Log...</source>
         <translation>Log Kejadian Tablet...</translation>
     </message>
     <message>
-        <location line="-2359"/>
+        <location line="-2365"/>
         <source>Stop Profile</source>
         <translation>Hentikan Profil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+2360"/>
+        <location line="+2366"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-2349"/>
+        <location line="-2355"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Atur Lag Buatan... (saat ini %1 md)</translation>
     </message>
@@ -2290,12 +2290,12 @@ Anda dapat keluar melalui menu Tampilan atau linimasa.</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+2307"/>
+        <location line="+2313"/>
         <source>Record Debug Dumps</source>
         <translation>Rekam Debug Dump</translation>
     </message>
     <message>
-        <location line="-2306"/>
+        <location line="-2312"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2514,7 +2514,12 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
         <translation>Alat File</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+9"/>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>&amp;Undo</source>
         <translation>&amp;Urungkan</translation>
     </message>
@@ -2628,12 +2633,12 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
     </message>
     <message>
         <location line="+92"/>
-        <location line="+889"/>
+        <location line="+887"/>
         <source>Edit</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location line="-820"/>
+        <location line="-818"/>
         <source>Interface scale…</source>
         <translation>Skala antarmuka…</translation>
     </message>
@@ -2833,7 +2838,7 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
         <translation>&amp;Sesuaikan dengan Layar</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+129"/>
         <source>View</source>
         <translation>Tampilan</translation>
     </message>
@@ -3128,7 +3133,7 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
         <translation>Buat Layer pada Bingkai Kunci</translation>
     </message>
     <message>
-        <location line="+685"/>
+        <location line="+687"/>
         <source>Help</source>
         <translation>Bantuan</translation>
     </message>
@@ -3178,7 +3183,7 @@ Apakah Anda yakin ingin memulai perekaman debug dump?</translation>
         <translation>Menu Bantuan</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+132"/>
         <source>Disable view mode notices</source>
         <translation>Nonaktifkan pemberitahuan mode tampilan</translation>
     </message>
@@ -3248,18 +3253,18 @@ You can re-enable it via the View menu.</source>
 Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     </message>
     <message>
-        <location line="+676"/>
+        <location line="+710"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>Untuk melaporkan bug atau menyarankan fitur, [lihat di sini].</translation>
     </message>
     <message>
-        <location line="-2879"/>
+        <location line="-2941"/>
         <source>Delete</source>
         <translation>Hapus</translation>
     </message>
     <message>
-        <location line="+783"/>
+        <location line="+781"/>
         <source>Fill Selection</source>
         <translation>Isi Seleksi</translation>
     </message>
@@ -3279,18 +3284,18 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>&amp;Edit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-5625"/>
+        <location filename="../mainwindow.cpp" line="-5635"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>Kuas yang diminta tidak mengizinkan orang lain untuk menggunakannya.</translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+485"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>Kanvas dimuat dalam %1:%2.%3</translation>
     </message>
     <message>
-        <location line="+649"/>
+        <location line="+644"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>Gambar disimpan dalam %1:%2.%3</translation>
@@ -3389,7 +3394,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>Berkas</translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+403"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;Perluas Kanvas</translation>
     </message>
@@ -3504,7 +3509,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>&amp;Layar Penuh</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+137"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Zoom</translation>
     </message>
@@ -4067,7 +4072,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>Mode perpaduan alat: %1</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+116"/>
         <source>Could not write log file: %1</source>
         <translation>Tidak dapat menulis file log: %1</translation>
     </message>
@@ -4077,12 +4082,12 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>Tidak dapat membaca file log: %1</translation>
     </message>
     <message>
-        <location line="-539"/>
+        <location line="-541"/>
         <source>&amp;Join...</source>
         <translation>&amp;Bergabung...</translation>
     </message>
     <message>
-        <location line="-4899"/>
+        <location line="-4905"/>
         <source>Joined the session!</source>
         <translation>Berhasil bergabung ke sesi!</translation>
     </message>
@@ -4167,7 +4172,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>Ekspor &amp;Kuas…</translation>
     </message>
     <message>
-        <location line="+299"/>
+        <location line="+307"/>
         <source>&amp;Copy Merged</source>
         <translation>&amp;Salin Gabungan</translation>
     </message>
@@ -4188,7 +4193,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+748"/>
+        <location filename="../mainwindow.cpp" line="+746"/>
         <source>Layer Properties…</source>
         <translation>Properti Layer…</translation>
     </message>
@@ -4424,7 +4429,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
     </message>
     <message numerus="yes">
         <location line="+30"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+3880"/>
         <source>Set Key Frame(s) to Current Layer</source>
         <translation>
             <numerusform>Atur Key Frame ke Lapisan Saat Ini</numerusform>
@@ -4570,7 +4575,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>Alat menggambar</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <location filename="../widgets/macmenu.cpp" line="+32"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Beranda</translation>
@@ -4634,7 +4639,7 @@ Anda dapat mengaktifkannya kembali melalui menu Tampilan.</translation>
         <translation>&amp;Bantuan</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+76"/>
+        <location filename="../mainwindow.cpp" line="+104"/>
         <source>Brush slot #%1</source>
         <translation>Slot kuas #%1</translation>
     </message>
@@ -8862,7 +8867,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Teruskan</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1349"/>
+        <location filename="../mainwindow.cpp" line="-1379"/>
         <source>Blend alpha</source>
         <translation>Padukan alfa</translation>
     </message>
@@ -9317,12 +9322,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <name>dialogs::ProjectEditDialog</name>
     <message>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
-        <location line="+746"/>
+        <location line="+755"/>
         <source>Error %1 opening input file: %2</source>
         <translation>Galat %1 saat membuka berkas masukan: %2</translation>
     </message>
     <message>
-        <location line="-732"/>
+        <location line="-741"/>
         <source>Error %1 opening temporary file: %2</source>
         <translation>Galat %1 saat membuka berkas sementara: %2</translation>
     </message>
@@ -9439,12 +9444,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+103"/>
-        <location line="+124"/>
+        <location line="+132"/>
         <source>Error</source>
         <translation>Galat</translation>
     </message>
     <message numerus="yes">
-        <location line="-123"/>
+        <location line="-131"/>
         <source>Failed to load %n file(s).</source>
         <translation>
             <numerusform>Gagal memuat %n berkas.</numerusform>
@@ -9452,21 +9457,26 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+111"/>
-        <source>Conversion suceeded, but file saving failed.</source>
-        <translation>Konversi berhasil, tetapi penyimpanan berkas gagal.</translation>
+        <source>Processing suceeded, but file saving failed.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
+        <source>An error occured during processing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>No processed file available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-5"/>
         <source>Saving project…</source>
         <translation>Menyimpan proyek…</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>No converted file available.</source>
-        <translation>Tidak ada berkas hasil konversi yang tersedia.</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+10"/>
         <source>No file to save to given.</source>
         <translation>Tidak ada berkas tujuan penyimpanan yang diberikan.</translation>
     </message>
@@ -10499,7 +10509,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Kelola server</translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+383"/>
         <source>Checking…</source>
         <translation>Memeriksa…</translation>
     </message>
@@ -10573,7 +10583,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     <name>dialogs::TimelapseDialog</name>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="-335"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+193"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+199"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
         <translation>Format ini memerlukan FFmpeg, klik di sini untuk menyiapkannya.</translation>
     </message>
@@ -10585,7 +10595,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+200"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+305"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
         <translation>Encoder yang dipilih memerlukan FFmpeg. Apakah Anda ingin menyiapkannya sekarang?</translation>
     </message>
@@ -10614,12 +10624,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Pengaturan FFmpeg</translation>
     </message>
     <message>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1239"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1256"/>
         <source>Timelapse</source>
         <translation>Timelapse</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+59"/>
         <source>None</source>
         <translation>Tidak ada</translation>
     </message>
@@ -10797,7 +10807,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Skala logo:</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+25"/>
         <source>Logo padding:</source>
         <translation>Bantalan logo:</translation>
     </message>
@@ -10861,7 +10871,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Video dengan laju bingkai di atas 30 FPS tidak didukung secara luas. Banyak perangkat dan platform tidak dapat memutarnya dengan benar, menurunkan kualitasnya, atau menolak untuk mengenalinya sama sekali.</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+93"/>
         <source>FFmpeg</source>
         <translation>FFmpeg</translation>
     </message>
@@ -10881,7 +10891,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Membatalkan…</translation>
     </message>
     <message numerus="yes">
-        <location line="+575"/>
+        <location line="+617"/>
         <source>%1 loop(s)</source>
         <translation>
             <numerusform>%1 perulangan</numerusform>
@@ -10976,7 +10986,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+270"/>
         <source>Enable touch</source>
         <translation>Aktifkan sentuh</translation>
     </message>
@@ -10999,7 +11009,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-265"/>
+        <location line="-287"/>
         <source>Touch here.</source>
         <translation>Sentuh di sini.</translation>
     </message>
@@ -11975,7 +11985,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
 <context>
     <name>dialogs::settingsdialog::Shortcuts</name>
     <message>
-        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+211"/>
+        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+215"/>
         <source>Restore Shortcut Defaults</source>
         <translation>Pulihkan Default Pintasan</translation>
     </message>
@@ -11986,12 +11996,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Pulihkan default…</translation>
     </message>
     <message>
-        <location line="-287"/>
+        <location line="-291"/>
         <source>Shortcuts</source>
         <translation>Pintasan</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+125"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation>Yakin ingin memulihkan semua pintasan ke nilai defaultnya?</translation>
     </message>
@@ -12140,7 +12150,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../mainwindow.cpp" line="-717"/>
+        <location filename="../mainwindow.cpp" line="-715"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -13024,7 +13034,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="-39"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1290"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1344"/>
         <source>Background:</source>
         <translation>Latar belakang:</translation>
     </message>
@@ -13115,7 +13125,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
 <context>
     <name>dialogs::startdialog::Links</name>
     <message>
-        <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
+        <location filename="../dialogs/startdialog/links.cpp" line="+34"/>
         <source>Help</source>
         <translation>Bantuan</translation>
     </message>
@@ -14807,12 +14817,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+2023"/>
+        <location line="+2044"/>
         <source>Opacity: </source>
         <translation>Opasitas: </translation>
     </message>
     <message>
-        <location line="-2022"/>
+        <location line="-2043"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -14872,7 +14882,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Hapus Centang Layer</translation>
     </message>
     <message>
-        <location line="+1121"/>
+        <location line="+1142"/>
         <source>Layer Limit Reached</source>
         <translation>Batas Layer Tercapai</translation>
     </message>
@@ -14903,7 +14913,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+267"/>
-        <location filename="../mainwindow.cpp" line="-5896"/>
+        <location filename="../mainwindow.cpp" line="-5908"/>
         <source>Layer</source>
         <translation>Layer</translation>
     </message>
@@ -15071,12 +15081,12 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Linimasa</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <source>Play</source>
         <translation>Putar</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+36"/>
         <source>Zoom</source>
         <translation>Perbesar</translation>
     </message>
@@ -15132,7 +15142,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+7685"/>
+        <location filename="../mainwindow.cpp" line="+7697"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation>Donasi</translation>
@@ -15144,7 +15154,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Buka halaman donasi Drawpile di peramban Anda</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+1101"/>
+        <location filename="../mainwindow.cpp" line="+1163"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Donasi ke Drawpile] untuk membantu menjaga pengembangan dan server tetap berjalan.</translation>
@@ -15401,7 +15411,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+17"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
         <translation>Sesuaikan dengan Kecepatan</translation>
@@ -15711,13 +15721,13 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
 <context>
     <name>tools::LassoFillSettings</name>
     <message>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-44"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-52"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-57"/>
         <source>Stabilization mode</source>
         <translation>Mode stabilisasi</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+83"/>
         <source>Mode:</source>
         <translation>Mode:</translation>
     </message>
@@ -16016,14 +16026,31 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
 <context>
     <name>tools::ZoomSettings</name>
     <message>
-        <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
-        <source>Normal Size</source>
-        <translation>Ukuran Normal</translation>
+        <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
+        <source>Drag</source>
+        <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Fit To Window</source>
-        <translation>Sesuaikan dengan Jendela</translation>
+        <source>Zoom by clicking and dragging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Select</source>
+        <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
+        <translation type="unfinished">Pilih</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom by selecting an area.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Mode:</source>
+        <translation type="unfinished">Mode:</translation>
     </message>
 </context>
 <context>
@@ -16297,7 +16324,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Kelola…</translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+446"/>
         <source>Vertical flip: ON</source>
         <translation>Balik vertikal: AKTIF</translation>
     </message>
@@ -16317,7 +16344,7 @@ Nilai di atas 0,5 mungkin tidak terlihat.</translation>
         <translation>Cermin horizontal: NONAKTIF</translation>
     </message>
     <message>
-        <location line="+2136"/>
+        <location line="+2129"/>
         <source>Zoom: %1%</source>
         <translation>Pembesaran: %1%</translation>
     </message>
@@ -16886,7 +16913,7 @@ Hex: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="-2520"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-2539"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Bingkai kunci kosong (duplikat)</translation>
     </message>
@@ -16950,7 +16977,7 @@ Tambahkan satu menggunakan tombol ＋ di atas
 atau melalui Animasi ▸ Trek Baru.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8787"/>
+        <location filename="../mainwindow.cpp" line="-8861"/>
         <location filename="../widgets/timelinewidget.cpp" line="+1036"/>
         <source>Track</source>
         <translation>Trek</translation>

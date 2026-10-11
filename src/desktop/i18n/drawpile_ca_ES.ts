@@ -152,7 +152,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
         <location filename="../toolwidgets/gradientsettings.cpp" line="+394"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+94"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+102"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+337"/>
         <source>Preserve alpha</source>
         <translation>Preserva l&apos;alfa</translation>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <location line="-42"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-81"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-89"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+289"/>
         <source>Stabilizer: </source>
         <translation>Estabilitzador: </translation>
@@ -1553,7 +1553,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+878"/>
+        <location filename="../mainwindow.cpp" line="+885"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 s&apos;ha unit!</translation>
     </message>
@@ -1619,18 +1619,18 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
     </message>
     <message>
         <location line="+97"/>
-        <location line="+3332"/>
+        <location line="+3336"/>
         <source>Untitled</source>
         <translation>Sense titol</translation>
     </message>
     <message>
-        <location line="-3280"/>
-        <location line="+5335"/>
+        <location line="-3284"/>
+        <location line="+5339"/>
         <source>Export Again</source>
         <translation>Expotar de nou</translation>
     </message>
     <message>
-        <location line="-5331"/>
+        <location line="-5335"/>
         <source>Export Again to %1</source>
         <translation>Exportar de nou a %1</translation>
     </message>
@@ -1650,7 +1650,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation>Corregeix</translation>
     </message>
     <message>
-        <location line="+685"/>
+        <location line="+681"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>Sortir de Drawpile</translation>
@@ -1668,12 +1668,12 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
     <message>
         <location line="+2"/>
         <location line="+31"/>
-        <location line="+1168"/>
+        <location line="+1176"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-1179"/>
+        <location line="-1187"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Hi ha canvis sense desar. Els voleu guardar abans de sortir?</translation>
     </message>
@@ -1688,7 +1688,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation>Descartar</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+146"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>No teniu permís per a retallar, empegar, omplir o eliminar.</translation>
@@ -1744,7 +1744,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation>Obrint el fitxer…</translation>
     </message>
     <message>
-        <location line="-1613"/>
+        <location line="-1622"/>
         <source>Open</source>
         <translation>Obre</translation>
     </message>
@@ -1754,7 +1754,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation>Esteu a punt d&apos;obrir un nou fitxer i tancar aquesta finesta.</translation>
     </message>
     <message>
-        <location line="+2273"/>
+        <location line="+2277"/>
         <source>Saving...</source>
         <translation>Desant...</translation>
     </message>
@@ -1814,12 +1814,12 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation>Guardant animació...</translation>
     </message>
     <message>
-        <location line="-904"/>
+        <location line="-899"/>
         <source>Play</source>
         <translation>Reprodueix</translation>
     </message>
     <message>
-        <location line="+982"/>
+        <location line="+977"/>
         <source>Stop Recording</source>
         <translation>Parar l&apos;enregistrament</translation>
     </message>
@@ -1840,9 +1840,9 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation>No s&apos;ha pogut començar l&apos;enregistrament.</translation>
     </message>
     <message>
-        <location line="-1886"/>
+        <location line="-1890"/>
         <location line="+56"/>
-        <location line="+1833"/>
+        <location line="+1837"/>
         <source>Unknown error.</source>
         <translation>Error desconegut.</translation>
     </message>
@@ -1907,7 +1907,7 @@ Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enlla�
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3059"/>
+        <location line="-3063"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
@@ -1965,7 +1965,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1077"/>
+        <location line="+1086"/>
         <source>Open Recovered File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1975,7 +1975,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1506"/>
+        <location line="+1501"/>
         <source>Did the download complete successfully?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2048,12 +2048,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3722"/>
+        <location line="+3728"/>
         <source>Terminate</source>
         <translation>Finalitza</translation>
     </message>
     <message>
-        <location line="-3707"/>
+        <location line="-3713"/>
         <source>Join Session</source>
         <translation>Unir-se a la sessió</translation>
     </message>
@@ -2088,8 +2088,8 @@ You can exit it via the View menu or the timeline.</source>
         <translation>Canvia el límit de desfer de la sessió, el límit actual és %1.</translation>
     </message>
     <message>
-        <location line="-2444"/>
-        <location line="+2483"/>
+        <location line="-2439"/>
+        <location line="+2478"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
@@ -2130,7 +2130,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation>La imatge no s&apos;ha pogut carregar</translation>
     </message>
     <message>
-        <location line="-3555"/>
+        <location line="-3559"/>
         <source>User #%1</source>
         <translation>Usuari #%1</translation>
     </message>
@@ -2151,7 +2151,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+688"/>
         <source>Resuming…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2202,7 +2202,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+313"/>
+        <location line="+308"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2248,23 +2248,23 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+2363"/>
+        <location line="+2369"/>
         <source>Tablet Event Log...</source>
         <translation>Registre d&apos;esdeveniments de la tauleta...</translation>
     </message>
     <message>
-        <location line="-2359"/>
+        <location line="-2365"/>
         <source>Stop Profile</source>
         <translation>Atura el perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+2360"/>
+        <location line="+2366"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-2349"/>
+        <location line="-2355"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Estableix retard artificial... (actualment %1ms)</translation>
     </message>
@@ -2290,12 +2290,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+2307"/>
+        <location line="+2313"/>
         <source>Record Debug Dumps</source>
         <translation>Enregistra bolcats de depuració</translation>
     </message>
     <message>
-        <location line="-2306"/>
+        <location line="-2312"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2514,7 +2514,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Eines de fitxer</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+9"/>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>&amp;Undo</source>
         <translation>&amp;Desfer</translation>
     </message>
@@ -2628,12 +2633,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     </message>
     <message>
         <location line="+92"/>
-        <location line="+889"/>
+        <location line="+887"/>
         <source>Edit</source>
         <translation type="unfinished">Edita</translation>
     </message>
     <message>
-        <location line="-820"/>
+        <location line="-818"/>
         <source>Interface scale…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2833,7 +2838,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation type="unfinished">Ajusta a la pantalla</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+129"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3128,7 +3133,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Crea capes en el fotograma clau</translation>
     </message>
     <message>
-        <location line="+685"/>
+        <location line="+687"/>
         <source>Help</source>
         <translation type="unfinished">Ajuda</translation>
     </message>
@@ -3178,7 +3183,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+132"/>
         <source>Disable view mode notices</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3246,18 +3251,18 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+676"/>
+        <location line="+710"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2879"/>
+        <location line="-2941"/>
         <source>Delete</source>
         <translation>Suprimeix</translation>
     </message>
     <message>
-        <location line="+783"/>
+        <location line="+781"/>
         <source>Fill Selection</source>
         <translation>Omple la selecció</translation>
     </message>
@@ -3277,18 +3282,18 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;Edita</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-5625"/>
+        <location filename="../mainwindow.cpp" line="-5635"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+485"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+649"/>
+        <location line="+644"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation type="unfinished"></translation>
@@ -3387,7 +3392,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+403"/>
         <source>&amp;Expand Canvas</source>
         <translation>E&amp;xpandeix el llenç</translation>
     </message>
@@ -3502,7 +3507,7 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;Pantalla completa</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+137"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Zoom</translation>
     </message>
@@ -4065,7 +4070,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+116"/>
         <source>Could not write log file: %1</source>
         <translation>No s&apos;ha pogut escriure el fitxer registre: %1</translation>
     </message>
@@ -4075,12 +4080,12 @@ You can re-enable it via the View menu.</source>
         <translation>No s&apos;ha pogut llegir el fitxer de registre: %1</translation>
     </message>
     <message>
-        <location line="-539"/>
+        <location line="-541"/>
         <source>&amp;Join...</source>
         <translation>&amp;Unir-se</translation>
     </message>
     <message>
-        <location line="-4899"/>
+        <location line="-4905"/>
         <source>Joined the session!</source>
         <translation>Us heu unit a la sessió!</translation>
     </message>
@@ -4165,7 +4170,7 @@ You can re-enable it via the View menu.</source>
         <translation>Exporta pinzells (&amp;B)…</translation>
     </message>
     <message>
-        <location line="+299"/>
+        <location line="+307"/>
         <source>&amp;Copy Merged</source>
         <translation>&amp;Copia Fusionat</translation>
     </message>
@@ -4186,7 +4191,7 @@ You can re-enable it via the View menu.</source>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+748"/>
+        <location filename="../mainwindow.cpp" line="+746"/>
         <source>Layer Properties…</source>
         <translation>Propietats de la capa…</translation>
     </message>
@@ -4422,7 +4427,7 @@ You can re-enable it via the View menu.</source>
     </message>
     <message numerus="yes">
         <location line="+30"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+3880"/>
         <source>Set Key Frame(s) to Current Layer</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -4577,7 +4582,7 @@ You can re-enable it via the View menu.</source>
         <translation>Eines de dibuix</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <location filename="../widgets/macmenu.cpp" line="+32"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Pàgina principal</translation>
@@ -4641,7 +4646,7 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;Ajuda</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+76"/>
+        <location filename="../mainwindow.cpp" line="+104"/>
         <source>Brush slot #%1</source>
         <translation>Ranura de pinzell #%1</translation>
     </message>
@@ -8810,7 +8815,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1349"/>
+        <location filename="../mainwindow.cpp" line="-1379"/>
         <source>Blend alpha</source>
         <translation type="unfinished">Barreja alfa</translation>
     </message>
@@ -9265,12 +9270,12 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::ProjectEditDialog</name>
     <message>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
-        <location line="+746"/>
+        <location line="+755"/>
         <source>Error %1 opening input file: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-732"/>
+        <location line="-741"/>
         <source>Error %1 opening temporary file: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9387,12 +9392,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+103"/>
-        <location line="+124"/>
+        <location line="+132"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="-123"/>
+        <location line="-131"/>
         <source>Failed to load %n file(s).</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9401,21 +9406,26 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+111"/>
-        <source>Conversion suceeded, but file saving failed.</source>
+        <source>Processing suceeded, but file saving failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
+        <source>An error occured during processing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>No processed file available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-5"/>
         <source>Saving project…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+10"/>
         <source>No file to save to given.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10451,7 +10461,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+383"/>
         <source>Checking…</source>
         <translation>Comprovant…</translation>
     </message>
@@ -10526,7 +10536,7 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::TimelapseDialog</name>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="-335"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+193"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+199"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10538,7 +10548,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+200"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+305"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10567,12 +10577,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1239"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1256"/>
         <source>Timelapse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+59"/>
         <source>None</source>
         <translation type="unfinished">Cap</translation>
     </message>
@@ -10750,7 +10760,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+25"/>
         <source>Logo padding:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10814,7 +10824,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+93"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10834,7 +10844,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+575"/>
+        <location line="+617"/>
         <source>%1 loop(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -10930,7 +10940,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+270"/>
         <source>Enable touch</source>
         <translation>Habilitat tactil</translation>
     </message>
@@ -10953,7 +10963,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-265"/>
+        <location line="-287"/>
         <source>Touch here.</source>
         <translation>Toqueu aqui.</translation>
     </message>
@@ -11935,7 +11945,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Shortcuts</name>
     <message>
-        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+211"/>
+        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+215"/>
         <source>Restore Shortcut Defaults</source>
         <translation>Restaurar dreceres per defecte</translation>
     </message>
@@ -11946,12 +11956,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Restaurar valors per defecte…</translation>
     </message>
     <message>
-        <location line="-287"/>
+        <location line="-291"/>
         <source>Shortcuts</source>
         <translation type="unfinished">Dreceres</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+125"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation>Realment voleu restaurar totes les dreceres als seus valors per defecte?</translation>
     </message>
@@ -12101,7 +12111,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../mainwindow.cpp" line="-717"/>
+        <location filename="../mainwindow.cpp" line="-715"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -12986,7 +12996,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-39"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1290"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1344"/>
         <source>Background:</source>
         <translation>Fons:</translation>
     </message>
@@ -13078,7 +13088,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Links</name>
     <message>
-        <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
+        <location filename="../dialogs/startdialog/links.cpp" line="+34"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
@@ -14774,12 +14784,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+2023"/>
+        <location line="+2044"/>
         <source>Opacity: </source>
         <translation>Opacitat: </translation>
     </message>
     <message>
-        <location line="-2022"/>
+        <location line="-2043"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -14839,7 +14849,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Desmarca la capa</translation>
     </message>
     <message>
-        <location line="+1121"/>
+        <location line="+1142"/>
         <source>Layer Limit Reached</source>
         <translation>S&apos;ha arribat al límit de capes</translation>
     </message>
@@ -14872,7 +14882,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+267"/>
-        <location filename="../mainwindow.cpp" line="-5896"/>
+        <location filename="../mainwindow.cpp" line="-5908"/>
         <source>Layer</source>
         <translation>Capa</translation>
     </message>
@@ -15040,12 +15050,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Linia de temps</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+36"/>
         <source>Zoom</source>
         <translation type="unfinished">Zoom</translation>
     </message>
@@ -15101,7 +15111,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+7685"/>
+        <location filename="../mainwindow.cpp" line="+7697"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
@@ -15113,7 +15123,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+1101"/>
+        <location filename="../mainwindow.cpp" line="+1163"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
@@ -15370,7 +15380,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+4"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+17"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
         <translation type="unfinished"></translation>
@@ -15680,13 +15690,13 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::LassoFillSettings</name>
     <message>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-44"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-52"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-57"/>
         <source>Stabilization mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+83"/>
         <source>Mode:</source>
         <translation type="unfinished">Mode:</translation>
     </message>
@@ -15985,14 +15995,31 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ZoomSettings</name>
     <message>
-        <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
-        <source>Normal Size</source>
-        <translation>Mida normal</translation>
+        <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
+        <source>Drag</source>
+        <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Fit To Window</source>
-        <translation>Ajusta a la finestra</translation>
+        <source>Zoom by clicking and dragging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Select</source>
+        <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom by selecting an area.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Mode:</source>
+        <translation type="unfinished">Mode:</translation>
     </message>
 </context>
 <context>
@@ -16266,7 +16293,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+446"/>
         <source>Vertical flip: ON</source>
         <translation>Inversió vertical: Activada</translation>
     </message>
@@ -16286,7 +16313,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Emmirallament horitzontal: Desactivat</translation>
     </message>
     <message>
-        <location line="+2136"/>
+        <location line="+2129"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
@@ -16855,7 +16882,7 @@ Hexadecimal: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="-2520"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-2539"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16919,7 +16946,7 @@ Afegiu-ne una utilitzant el botó + superior
 o mitjançant Animació ▸ Nova pista.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8787"/>
+        <location filename="../mainwindow.cpp" line="-8861"/>
         <location filename="../widgets/timelinewidget.cpp" line="+1036"/>
         <source>Track</source>
         <translation>Pista</translation>

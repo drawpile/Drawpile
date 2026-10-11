@@ -152,7 +152,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
         <location filename="../toolwidgets/gradientsettings.cpp" line="+394"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+94"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+102"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+337"/>
         <source>Preserve alpha</source>
         <translation>알파 유지</translation>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <location line="-42"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-81"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-89"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+289"/>
         <source>Stabilizer: </source>
         <translation>그리기 안정도: </translation>
@@ -1552,7 +1552,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+878"/>
+        <location filename="../mainwindow.cpp" line="+885"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋&#xa0;안녕, %1!</translation>
     </message>
@@ -1618,18 +1618,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+97"/>
-        <location line="+3332"/>
+        <location line="+3336"/>
         <source>Untitled</source>
         <translation>무제</translation>
     </message>
     <message>
-        <location line="-3280"/>
-        <location line="+5335"/>
+        <location line="-3284"/>
+        <location line="+5339"/>
         <source>Export Again</source>
         <translation>다시 내보내기</translation>
     </message>
     <message>
-        <location line="-5331"/>
+        <location line="-5335"/>
         <source>Export Again to %1</source>
         <translation>%1로 다시 내보내기</translation>
     </message>
@@ -1649,7 +1649,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>수정</translation>
     </message>
     <message>
-        <location line="+685"/>
+        <location line="+681"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>드로파일 종료</translation>
@@ -1667,12 +1667,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <location line="+31"/>
-        <location line="+1168"/>
+        <location line="+1176"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location line="-1179"/>
+        <location line="-1187"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>변경사항이 존재합니다. 저장하겠습니까?</translation>
     </message>
@@ -1687,7 +1687,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>버리기</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+146"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>잘라내기, 붙여넣기, 채우기, 삭제 권한이 없습니다.</translation>
@@ -1743,7 +1743,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>파일을 열고 있습니다…</translation>
     </message>
     <message>
-        <location line="-1613"/>
+        <location line="-1622"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
@@ -1753,7 +1753,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>새 파일을 열고 이 창을 닫으려 합니다.</translation>
     </message>
     <message>
-        <location line="+2273"/>
+        <location line="+2277"/>
         <source>Saving...</source>
         <translation>저장 중...</translation>
     </message>
@@ -1813,12 +1813,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>애니메이션 저장 중…</translation>
     </message>
     <message>
-        <location line="-904"/>
+        <location line="-899"/>
         <source>Play</source>
         <translation>재생</translation>
     </message>
     <message>
-        <location line="+982"/>
+        <location line="+977"/>
         <source>Stop Recording</source>
         <translation>녹화 중지</translation>
     </message>
@@ -1839,9 +1839,9 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>녹화를 시작할 수 없습니다.</translation>
     </message>
     <message>
-        <location line="-1886"/>
+        <location line="-1890"/>
         <location line="+56"/>
-        <location line="+1833"/>
+        <location line="+1837"/>
         <source>Unknown error.</source>
         <translation>알 수 없는 오류.</translation>
     </message>
@@ -1906,7 +1906,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>저장되지 않은 변경사항이 있습니다, 다시 연결하기 전에 저장하시겠습니까?</translation>
     </message>
     <message>
-        <location line="-3059"/>
+        <location line="-3063"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
         <translation>프레임 보기 모드로 전환했습니다.
@@ -1965,7 +1965,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1077"/>
+        <location line="+1086"/>
         <source>Open Recovered File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1975,7 +1975,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1506"/>
+        <location line="+1501"/>
         <source>Did the download complete successfully?</source>
         <translation>다운로드가 성공적으로 완료되었습니까?</translation>
     </message>
@@ -2048,12 +2048,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3722"/>
+        <location line="+3728"/>
         <source>Terminate</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location line="-3707"/>
+        <location line="-3713"/>
         <source>Join Session</source>
         <translation>세션 참가</translation>
     </message>
@@ -2088,8 +2088,8 @@ You can exit it via the View menu or the timeline.</source>
         <translation>세션의 실행취소 제한을 변경합니다, 현재의 제한은 %1 입니다.</translation>
     </message>
     <message>
-        <location line="-2444"/>
-        <location line="+2483"/>
+        <location line="-2439"/>
+        <location line="+2478"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
@@ -2130,7 +2130,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation>이미지를 불러올 수 없습니다</translation>
     </message>
     <message>
-        <location line="-3555"/>
+        <location line="-3559"/>
         <source>User #%1</source>
         <translation>사용자 #%1</translation>
     </message>
@@ -2151,7 +2151,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+688"/>
         <source>Resuming…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2202,7 +2202,7 @@ You can exit it via the View menu or the timeline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+313"/>
+        <location line="+308"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2248,23 +2248,23 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+2363"/>
+        <location line="+2369"/>
         <source>Tablet Event Log...</source>
         <translation>타블렛 이벤트 로그...</translation>
     </message>
     <message>
-        <location line="-2359"/>
+        <location line="-2365"/>
         <source>Stop Profile</source>
         <translation>분석 중지</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+2360"/>
+        <location line="+2366"/>
         <source>Profile...</source>
         <translation>프로필...</translation>
     </message>
     <message>
-        <location line="-2349"/>
+        <location line="-2355"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>인위 랙을 설정합니다... (현재 %1 ms)</translation>
     </message>
@@ -2290,12 +2290,12 @@ You can exit it via the View menu or the timeline.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+2307"/>
+        <location line="+2313"/>
         <source>Record Debug Dumps</source>
         <translation>디버그 덤프 녹화</translation>
     </message>
     <message>
-        <location line="-2306"/>
+        <location line="-2312"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2514,7 +2514,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>파일 편집기</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+9"/>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>&amp;Undo</source>
         <translation>&amp;실행 취소</translation>
     </message>
@@ -2628,12 +2633,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+92"/>
-        <location line="+889"/>
+        <location line="+887"/>
         <source>Edit</source>
         <translation type="unfinished">편집</translation>
     </message>
     <message>
-        <location line="-820"/>
+        <location line="-818"/>
         <source>Interface scale…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2833,7 +2838,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>화면에 맞추기(&amp;F)</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+129"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3128,7 +3133,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>키 프레임에 레이어 생성</translation>
     </message>
     <message>
-        <location line="+685"/>
+        <location line="+687"/>
         <source>Help</source>
         <translation type="unfinished">도움말</translation>
     </message>
@@ -3178,7 +3183,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+132"/>
         <source>Disable view mode notices</source>
         <translation>보기 모드 알림 비활성화</translation>
     </message>
@@ -3248,18 +3253,18 @@ You can re-enable it via the View menu.</source>
 보기 메뉴에서 다시 활성화할 수 있습니다.</translation>
     </message>
     <message>
-        <location line="+676"/>
+        <location line="+710"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>버그를 보고하거나 기능을 제안하려면, [여기를 확인하십시오].</translation>
     </message>
     <message>
-        <location line="-2879"/>
+        <location line="-2941"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location line="+783"/>
+        <location line="+781"/>
         <source>Fill Selection</source>
         <translation>선택영역 채우기</translation>
     </message>
@@ -3279,18 +3284,18 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;편집</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-5625"/>
+        <location filename="../mainwindow.cpp" line="-5635"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>요청한 브러시는 다른 사용자가 사용할 수 없도록 되어 있습니다.</translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+485"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>캔버스 로드 시간 %1:%2.%3</translation>
     </message>
     <message>
-        <location line="+649"/>
+        <location line="+644"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation>이미지 저장 시간 %1:%2.%3</translation>
@@ -3389,7 +3394,7 @@ You can re-enable it via the View menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+403"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;캔버스 확장</translation>
     </message>
@@ -3504,7 +3509,7 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;풀스크린</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+137"/>
         <source>&amp;Zoom</source>
         <translation>&amp;확대/축소</translation>
     </message>
@@ -4067,7 +4072,7 @@ You can re-enable it via the View menu.</source>
         <translation>도구 혼합 모드: %1</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+116"/>
         <source>Could not write log file: %1</source>
         <translation>로그 파일을 작성할 수 없음: %1</translation>
     </message>
@@ -4077,12 +4082,12 @@ You can re-enable it via the View menu.</source>
         <translation>로그 파일을 읽을 수 없음: %1</translation>
     </message>
     <message>
-        <location line="-539"/>
+        <location line="-541"/>
         <source>&amp;Join...</source>
         <translation>&amp;참여...</translation>
     </message>
     <message>
-        <location line="-4899"/>
+        <location line="-4905"/>
         <source>Joined the session!</source>
         <translation>세션에 참여했습니다!</translation>
     </message>
@@ -4167,7 +4172,7 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;브러시 내보내기…</translation>
     </message>
     <message>
-        <location line="+299"/>
+        <location line="+307"/>
         <source>&amp;Copy Merged</source>
         <translation>합쳐서 &amp;복사</translation>
     </message>
@@ -4188,7 +4193,7 @@ You can re-enable it via the View menu.</source>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+748"/>
+        <location filename="../mainwindow.cpp" line="+746"/>
         <source>Layer Properties…</source>
         <translation>레이어 설정…</translation>
     </message>
@@ -4424,7 +4429,7 @@ You can re-enable it via the View menu.</source>
     </message>
     <message numerus="yes">
         <location line="+30"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+3861"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+3880"/>
         <source>Set Key Frame(s) to Current Layer</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -4570,7 +4575,7 @@ You can re-enable it via the View menu.</source>
         <translation>그리기 도구</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <location filename="../widgets/macmenu.cpp" line="+32"/>
         <source>&amp;Homepage</source>
         <translation>&amp;홈페이지</translation>
@@ -4634,7 +4639,7 @@ You can re-enable it via the View menu.</source>
         <translation>&amp;도움말</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+76"/>
+        <location filename="../mainwindow.cpp" line="+104"/>
         <source>Brush slot #%1</source>
         <translation>브러시 슬롯 #%1</translation>
     </message>
@@ -8862,7 +8867,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>통과</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1349"/>
+        <location filename="../mainwindow.cpp" line="-1379"/>
         <source>Blend alpha</source>
         <translation>알파 혼합</translation>
     </message>
@@ -9317,12 +9322,12 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::ProjectEditDialog</name>
     <message>
         <location filename="../dialogs/projecteditdialog.cpp" line="-359"/>
-        <location line="+746"/>
+        <location line="+755"/>
         <source>Error %1 opening input file: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-732"/>
+        <location line="-741"/>
         <source>Error %1 opening temporary file: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9439,12 +9444,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+103"/>
-        <location line="+124"/>
+        <location line="+132"/>
         <source>Error</source>
         <translation type="unfinished">오류</translation>
     </message>
     <message numerus="yes">
-        <location line="-123"/>
+        <location line="-131"/>
         <source>Failed to load %n file(s).</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9452,21 +9457,26 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+111"/>
-        <source>Conversion suceeded, but file saving failed.</source>
+        <source>Processing suceeded, but file saving failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
+        <source>An error occured during processing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>No processed file available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-5"/>
         <source>Saving project…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>No converted file available.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+10"/>
         <source>No file to save to given.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10499,7 +10509,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+383"/>
         <source>Checking…</source>
         <translation>확인 중…</translation>
     </message>
@@ -10573,7 +10583,7 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::TimelapseDialog</name>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="-335"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+193"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+199"/>
         <source>This format requires FFmpeg, click here to set it up.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10585,7 +10595,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+200"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="+293"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="+305"/>
         <source>The selected encoder requires FFmpeg. Do you want to set it up now?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10614,12 +10624,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1239"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1256"/>
         <source>Timelapse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+59"/>
         <source>None</source>
         <translation type="unfinished">없음</translation>
     </message>
@@ -10651,7 +10661,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">형식:</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -10797,7 +10807,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+25"/>
         <source>Logo padding:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10861,7 +10871,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+93"/>
         <source>FFmpeg</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10881,7 +10891,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+575"/>
+        <location line="+617"/>
         <source>%1 loop(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -10976,7 +10986,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+270"/>
         <source>Enable touch</source>
         <translation>터치 활성화</translation>
     </message>
@@ -10999,7 +11009,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-265"/>
+        <location line="-287"/>
         <source>Touch here.</source>
         <translation>여기를 터치하세요.</translation>
     </message>
@@ -11975,7 +11985,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Shortcuts</name>
     <message>
-        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+211"/>
+        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+215"/>
         <source>Restore Shortcut Defaults</source>
         <translation>핫키 기본값 복구</translation>
     </message>
@@ -11986,12 +11996,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>기본값으로 복원…</translation>
     </message>
     <message>
-        <location line="-287"/>
+        <location line="-291"/>
         <source>Shortcuts</source>
         <translation type="unfinished">핫키</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+125"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation>정말 모든 핫키를 기본값으로 복원하시겠습니까?</translation>
     </message>
@@ -12140,7 +12150,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../mainwindow.cpp" line="-717"/>
+        <location filename="../mainwindow.cpp" line="-715"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -13024,7 +13034,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-39"/>
-        <location filename="../dialogs/timelapsedialog.cpp" line="-1290"/>
+        <location filename="../dialogs/timelapsedialog.cpp" line="-1344"/>
         <source>Background:</source>
         <translation>배경:</translation>
     </message>
@@ -13115,7 +13125,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Links</name>
     <message>
-        <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
+        <location filename="../dialogs/startdialog/links.cpp" line="+34"/>
         <source>Help</source>
         <translation>도움말</translation>
     </message>
@@ -14807,12 +14817,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+2023"/>
+        <location line="+2044"/>
         <source>Opacity: </source>
         <translation>불투명도: </translation>
     </message>
     <message>
-        <location line="-2022"/>
+        <location line="-2043"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -14872,7 +14882,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>레이어 선택 해제</translation>
     </message>
     <message>
-        <location line="+1121"/>
+        <location line="+1142"/>
         <source>Layer Limit Reached</source>
         <translation>레이어 제한에 도달함</translation>
     </message>
@@ -14903,7 +14913,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+267"/>
-        <location filename="../mainwindow.cpp" line="-5896"/>
+        <location filename="../mainwindow.cpp" line="-5908"/>
         <source>Layer</source>
         <translation>레이어</translation>
     </message>
@@ -15071,12 +15081,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>타임라인</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <source>Play</source>
         <translation>재생</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+36"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15132,7 +15142,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+7685"/>
+        <location filename="../mainwindow.cpp" line="+7697"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation>후원</translation>
@@ -15144,7 +15154,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>브라우저에서 Drawpile 후원 페이지 열기</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+1101"/>
+        <location filename="../mainwindow.cpp" line="+1163"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Drawpile에 후원하기]를 클릭하여 개발과 서버 운영을 지원해 주세요.</translation>
@@ -15401,7 +15411,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+4"/>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="+9"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+17"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+17"/>
         <source>Adjust With Velocity</source>
         <translation type="unfinished"></translation>
@@ -15711,13 +15721,13 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::LassoFillSettings</name>
     <message>
-        <location filename="../toolwidgets/lassofillsettings.cpp" line="-44"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-52"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-57"/>
         <source>Stabilization mode</source>
         <translation>보정 모드</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+83"/>
         <source>Mode:</source>
         <translation>모드:</translation>
     </message>
@@ -16016,14 +16026,31 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ZoomSettings</name>
     <message>
-        <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
-        <source>Normal Size</source>
-        <translation>보통 크기(&amp;N)</translation>
+        <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
+        <source>Drag</source>
+        <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Fit To Window</source>
-        <translation>창에 맞춤</translation>
+        <source>Zoom by clicking and dragging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Select</source>
+        <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom by selecting an area.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Mode:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16297,7 +16324,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+446"/>
         <source>Vertical flip: ON</source>
         <translation>수직 반전: 켜짐</translation>
     </message>
@@ -16317,7 +16344,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>수평 미러: 꺼짐</translation>
     </message>
     <message>
-        <location line="+2136"/>
+        <location line="+2129"/>
         <source>Zoom: %1%</source>
         <translation>줌: %1%</translation>
     </message>
@@ -16886,7 +16913,7 @@ Hex: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="-2520"/>
+        <location filename="../widgets/timelinewidget.cpp" line="-2539"/>
         <source>Blank key frame (duplicate)</source>
         <translation>빈 키프레임 (복제)</translation>
     </message>
@@ -16950,7 +16977,7 @@ or via Animation ▸ New Track.</source>
 애니메이션 ▸ 새 트랙을 통해 추가하세요.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8787"/>
+        <location filename="../mainwindow.cpp" line="-8861"/>
         <location filename="../widgets/timelinewidget.cpp" line="+1036"/>
         <source>Track</source>
         <translation>트랙</translation>
