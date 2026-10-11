@@ -367,8 +367,11 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::panRequested, m_controller,
 		&CanvasController::scrollBy);
 	connect(
-		toolCtrl, &tools::ToolController::zoomRequested, m_controller,
-		&CanvasController::zoomTo);
+		toolCtrl, &tools::ToolController::zoomStepsRequested, m_controller,
+		&CanvasController::zoomStepsAt);
+	connect(
+		toolCtrl, &tools::ToolController::zoomToRectRequested, m_controller,
+		&CanvasController::zoomToRect);
 	connect(
 		toolCtrl, &tools::ToolController::scrubZoomRequested, m_controller,
 		&CanvasController::scrubZoomAt);

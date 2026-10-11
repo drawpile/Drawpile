@@ -12,7 +12,9 @@ Unreleased Version 2.3.1-pre
  * Feature: On Android, hide any open docks in small screen mode when pressing the back button before closing the main window. Thanks anonymous for suggesting.
  * Fix: Make start screen take less horizontal space in small screen mode. Thanks anonymous for reporting.
  * Feature: Remove the "Normal View" button from the timeline header, since you can just press the frame view button to exit it. This makes the timeline fit better on small screens.
- * Feature: Add a scrub zoom mode to the zoom tool. This is the default, since it's more useful and consistent with the rotation and pan tools. Thanks Shuko for suggesting.
+ * Feature: Add a drag zoom mode to the zoom tool. This is the default, since it's more useful and consistent with the rotation and pan tools. You can still use the select zoom by right-clicking, holding the constrain key (Shift by default) or switching the mode of the tool. Thanks Shuko for suggesting.
+ * Feature: Give the zoom tool nice header buttons to zoom in, out, fit and reset.
+ * Fix: Make the zoom tool behave more predictably, it now doesn't do weird stuff like letting you select an area and then zooming out on it.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.
