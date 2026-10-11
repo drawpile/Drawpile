@@ -41,8 +41,8 @@ private:
 	widgets::GroupedToolButton *m_resetZoomButton = nullptr;
 	widgets::GroupedToolButton *m_zoomToFitButton = nullptr;
 	widgets::GroupedToolButton *m_zoomOutButton = nullptr;
-	widgets::GroupedToolButton *m_modeDiscreteButton = nullptr;
 	widgets::GroupedToolButton *m_modeScrubButton = nullptr;
+	widgets::GroupedToolButton *m_modeSelectButton = nullptr;
 	QButtonGroup *m_zoomModeGroup = nullptr;
 };
 

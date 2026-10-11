@@ -278,18 +278,13 @@ void CanvasControllerBase::resetZoomCursor()
 	setZoomAt(1.0, cursorPosOrCenter());
 }
 
-void CanvasControllerBase::zoomTo(const QRect &rect, int steps)
+void CanvasControllerBase::zoomToRect(const QRect &rect)
 {
-	if(steps < 0 || rect.width() < ZOOM_TO_MINIMUM_DIMENSION ||
-	   rect.height() < ZOOM_TO_MINIMUM_DIMENSION) {
-		zoomStepsAt(steps, rect.center());
-	} else {
-		QRectF r = mapRectFromCanvas(rect).boundingRect();
-		QSizeF vs = viewSizeF();
-		qreal xScale = vs.width() / r.width();
-		qreal yScale = vs.height() / r.height();
-		setZoomAt(m_zoom * qMin(xScale, yScale), rect.center());
-	}
+	QRectF r = mapRectFromCanvas(rect).boundingRect();
+	QSizeF vs = viewSizeF();
+	qreal xScale = vs.width() / r.width();
+	qreal yScale = vs.height() / r.height();
+	setZoomAt(m_zoom * qMin(xScale, yScale), rect.center());
 }
 
 void CanvasControllerBase::zoomToFit()

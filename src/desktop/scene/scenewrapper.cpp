@@ -377,8 +377,11 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::panRequested, m_view,
 		&CanvasView::scrollBy);
 	connect(
-		toolCtrl, &tools::ToolController::zoomRequested, m_view,
-		&CanvasView::zoomTo);
+		toolCtrl, &tools::ToolController::zoomStepsRequested, m_view,
+		&CanvasView::zoomStepsAt);
+	connect(
+		toolCtrl, &tools::ToolController::zoomToRectRequested, m_view,
+		&CanvasView::zoomToRect);
 	connect(
 		toolCtrl, &tools::ToolController::scrubZoomRequested, m_view,
 		&CanvasView::scrubZoomAt);

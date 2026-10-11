@@ -635,17 +635,13 @@ void CanvasView::zoomoutCursor()
 	}
 }
 
-void CanvasView::zoomTo(const QRect &rect, int steps)
+void CanvasView::zoomToRect(const QRect &rect)
 {
-	if(rect.width() < 15 || rect.height() < 15 || steps < 0) {
-		zoomStepsAt(steps, rect.center());
-	} else {
-		QWidget *vp = viewport();
-		QRectF viewRect = mapFromCanvas(rect).boundingRect();
-		qreal xScale = qreal(vp->width()) / viewRect.width();
-		qreal yScale = qreal(vp->height()) / viewRect.height();
-		setZoomAt(m_zoom * qMin(xScale, yScale), rect.center());
-	}
+	QWidget *vp = viewport();
+	QRectF viewRect = mapFromCanvas(rect).boundingRect();
+	qreal xScale = qreal(vp->width()) / viewRect.width();
+	qreal yScale = qreal(vp->height()) / viewRect.height();
+	setZoomAt(m_zoom * qMin(xScale, yScale), rect.center());
 }
 
 void CanvasView::zoomToFit()
