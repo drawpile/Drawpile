@@ -2635,12 +2635,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+19"/>
         <source>Fill Selection</source>
-        <translation></translation>
+        <translation>Fill Selection</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recolor Selection</source>
-        <translation></translation>
+        <translation>Recolor Selection</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2665,7 +2665,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>&amp;Docks</source>
-        <translation></translation>
+        <translation>&amp;Docks</translation>
     </message>
     <message>
         <location line="+21"/>
