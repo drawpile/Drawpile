@@ -1,0 +1,6 @@
+language = "C"
+pragma_once = true
+cpp_compat = true
+
+[enum]
+prefix_with_name = true
