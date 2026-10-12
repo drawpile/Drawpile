@@ -718,7 +718,7 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation>录像</translation>
+        <translation>录像文件</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -844,7 +844,7 @@
     <message>
         <location line="+1"/>
         <source>The file %1 already exists, do you want to replace it?</source>
-        <translation>文件 %1 已经存在, 你要替换它吗?</translation>
+        <translation>文件 %1 已经存在，你要替换它吗？</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -879,7 +879,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+167"/>
         <source>Size Limit: Unlimited</source>
-        <translation>大小限制：无限</translation>
+        <translation>大小限制：无限制</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="+297"/>
@@ -2238,7 +2238,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+48"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>菜单</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -8706,24 +8706,24 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+84"/>
         <location line="+370"/>
         <source>What are invite codes?</source>
-        <translation>什么是邀请代码?</translation>
+        <translation>什么是邀请代码？</translation>
     </message>
     <message>
         <location line="-203"/>
         <source>Invite link copied to clipboard.</source>
-        <translation>邀请链接已复制到剪贴板.</translation>
+        <translation>邀请链接已复制到剪贴板。</translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
         <translation>
-            <numerusform>邀请代码链接已复制到剪贴板.</numerusform>
+            <numerusform>邀请代码链接已复制到剪贴板。</numerusform>
         </translation>
     </message>
     <message>
         <location line="+27"/>
         <source>This session is hosted on a server that &lt;strong&gt;does not support the web browser version of Drawpile&lt;/strong&gt;.</source>
-        <translation>此房间使用的服务器 &lt;strong&gt;不支持 Drawpile 的网页浏览器版本&lt;/strong&gt;。</translation>
+        <translation>此房间使用的服务器 &lt;strong&gt;不支持 Drawpile 的网页版&lt;/strong&gt;。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8734,7 +8734,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-22"/>
         <source>This session &lt;strong&gt;restricts joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation>此房间 &lt;strong&gt;限制使用网页版 Drawpile 加入。&lt;/strong&gt;</translation>
+        <translation>此房间 &lt;strong&gt;限制通过 Drawpile 的网页版来加入。&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8759,7 +8759,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>This session &lt;strong&gt;does not allow joining with the web browser version of Drawpile.&lt;/strong&gt;</source>
-        <translation>此房间 &lt;strong&gt;不允许使用网页版 Drawpile 加入。&lt;/strong&gt;</translation>
+        <translation>此房间 &lt;strong&gt;不允许通过 Drawpile 的网页版来加入。&lt;/strong&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8790,7 +8790,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>This session is &lt;strong&gt;public&lt;/strong&gt;, strangers can join it!</source>
-        <translation>此房间是 &lt;strong&gt;公开&lt;/strong&gt;的，陌生人也可以加入！</translation>
+        <translation>此房间是公开的，任何人都可以加入！</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -9458,17 +9458,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+111"/>
         <source>Processing suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>处理已成功，但文件保存失败。</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>An error occured during processing.</source>
-        <translation type="unfinished"></translation>
+        <translation>处理过程中发生错误。</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>No processed file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有可用的待处理文件。</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -15560,7 +15560,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+237"/>
         <source>Size Limit: Selection</source>
-        <translation>大小限制：选区中</translation>
+        <translation>大小限制：选区内</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -16029,28 +16029,28 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
         <source>Drag</source>
         <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>拖动</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by clicking and dragging.</source>
-        <translation type="unfinished"></translation>
+        <translation>点击并拖动来缩放。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Select</source>
         <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
-        <translation type="unfinished">选择</translation>
+        <translation>选择</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by selecting an area.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择一个区域来缩放。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mode:</source>
-        <translation type="unfinished">模式：</translation>
+        <translation>模式：</translation>
     </message>
 </context>
 <context>
