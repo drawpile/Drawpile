@@ -1,0 +1,92 @@
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -763,8 +763,11 @@
+         }
+     }
+ 
+-    static int mapAndroidKey(int key)
++    static int mapAndroidKey(int key, bool &outKeyUpOnly)
+     {
++        // For weird Lenovo Tab stylus behavior, see comment below.
++        outKeyUpOnly = false;
++
+         // 0--9        0x00000007 -- 0x00000010
+         if (key >= 0x00000007 && key <= 0x00000010)
+             return Qt::Key_0 + key - 0x00000007;
+@@ -1164,6 +1167,31 @@
+         case 0x000002ce: // Key code 718, used by Huawei styluses for a double-tap gesture.
+             return Qt::Key_F25;
+ 
++        // The Lenovo Tab stylus has one button on the side with the following
++        // creative behavior:
++        //
++        // * Single-pressing emits only a keyUp of key 600.
++        // * Double-pressing emits a keyDown and a keyUp of key 601.
++        // * Triple-pressing emits only a keyUp of key 602.
++        // * Quad-or-more-pressing does bugger all.
++        // * Holding for a few seconds emits only a keyUp of key 603.
++        // * Holding and putting the pen down emits only a keyUp of key 604.
++        //
++        // All of those key codes are made up, Android doesn't assign them any
++        // meaning. There is no way to use the button like a mouse button that
++        // you can properly press and hold to drag stuff or something, it's all
++        // just single events. Evidently, most of them only generate a keyUp.
++        //
++        // What this means is that we ignore any keyDowns of these keys and
++        // treat the keyUp as if it were a key press followed by a key release.
++        case 0x00000258:
++        case 0x00000259:
++        case 0x0000025a:
++        case 0x0000025b:
++        case 0x0000025c:
++            outKeyUpOnly = true;
++            return Qt::Key_F26 + key - 0x00000258;
++
+         default:
+             qWarning() << "Unhandled key code " << key << '!';
+             return 0;
+@@ -1281,12 +1309,16 @@
+     {
+         debugKey(key, unicode, modifier, autoRepeat, true);
+         if (!emulateTabletButtonsFromKeyboard(key, modifier, autoRepeat, true)) {
+-            QWindowSystemInterface::handleKeyEvent(0,
+-                                                   QEvent::KeyPress,
+-                                                   mapAndroidKey(key),
+-                                                   mapAndroidModifiers(modifier),
+-                                                   toString(unicode),
+-                                                   autoRepeat);
++            bool keyUpOnly;
++            int qtKey = mapAndroidKey(key, keyUpOnly);
++            if (!keyUpOnly) {
++                QWindowSystemInterface::handleKeyEvent(0,
++                                                       QEvent::KeyPress,
++                                                       qtKey,
++                                                       mapAndroidModifiers(modifier),
++                                                       toString(unicode),
++                                                       autoRepeat);
++            }
+         }
+     }
+ 
+@@ -1294,9 +1326,19 @@
+     {
+         debugKey(key, unicode, modifier, autoRepeat, false);
+         if (!emulateTabletButtonsFromKeyboard(key, modifier, autoRepeat, false)) {
++            bool keyUpOnly;
++            int qtKey = mapAndroidKey(key, keyUpOnly);
++            if (keyUpOnly) {
++                QWindowSystemInterface::handleKeyEvent(0,
++                                                       QEvent::KeyPress,
++                                                       qtKey,
++                                                       mapAndroidModifiers(modifier),
++                                                       toString(unicode),
++                                                       autoRepeat);
++            }
+             QWindowSystemInterface::handleKeyEvent(0,
+                                                    QEvent::KeyRelease,
+-                                                   mapAndroidKey(key),
++                                                   qtKey,
+                                                    mapAndroidModifiers(modifier),
+                                                    toString(unicode),
+                                                    autoRepeat);
+

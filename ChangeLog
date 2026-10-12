@@ -16,6 +16,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Give the zoom tool nice header buttons to zoom in, out, fit and reset.
  * Fix: Make the zoom tool behave more predictably, it now doesn't do weird stuff like letting you select an area and then zooming out on it.
  * Fix: Give better icons to zoom in, zoom out and reset zoom, so that they don't all just look like rectangles at a glance.
+ * Feature: Handle Lenovo Tab stylus presses on Android by translating them to F26 to F30. Thanks Moody2357 for helping to figure this out.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.
