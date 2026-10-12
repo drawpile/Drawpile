@@ -1,0 +1,47 @@
+--- a/src/plugins/platforms/android/androidjniinput.cpp
++++ b/src/plugins/platforms/android/androidjniinput.cpp
+@@ -631,6 +631,7 @@
+                 }
+ 
+                 QVariantHash data = {
++                    {QStringLiteral("type"), QStringLiteral("MotionEvent")},
+                     {QStringLiteral("deviceId"), ev.getDeviceId()},
+                     {QStringLiteral("action"), ev.getAction()},
+                     {QStringLiteral("actionMasked"), ev.getActionMasked()},
+@@ -1258,8 +1259,27 @@
+         return true;
+     }
+ 
++    static void debugKey(int key, int unicode, int modifier, bool autoRepeat, bool down)
++    {
++        if (QCoreApplication::testKritaAttribute(KRITA_QATTRIBUTE_ANDROID_DEBUG_INPUT_EVENTS)) {
++            QCoreApplication *app = QCoreApplication::instance();
++            if (app) {
++                QVariantHash data = {
++                    {QStringLiteral("type"), QStringLiteral("KeyEvent")},
++                    {QStringLiteral("action"), down ? QStringLiteral("down") : QStringLiteral("up")},
++                    {QStringLiteral("key"), key},
++                    {QStringLiteral("unicode"), unicode},
++                    {QStringLiteral("modifier"), modifier},
++                    {QStringLiteral("autoRepeat"), autoRepeat},
++                };
++                Q_EMIT app->debugAndroidInputEvent(data);
++            }
++        }
++    }
++
+     static void keyDown(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
+     {
++        debugKey(key, unicode, modifier, autoRepeat, true);
+         if (!emulateTabletButtonsFromKeyboard(key, modifier, autoRepeat, true)) {
+             QWindowSystemInterface::handleKeyEvent(0,
+                                                    QEvent::KeyPress,
+@@ -1272,6 +1292,7 @@
+ 
+     static void keyUp(JNIEnv */*env*/, jobject /*thiz*/, jint key, jint unicode, jint modifier, jboolean autoRepeat)
+     {
++        debugKey(key, unicode, modifier, autoRepeat, false);
+         if (!emulateTabletButtonsFromKeyboard(key, modifier, autoRepeat, false)) {
+             QWindowSystemInterface::handleKeyEvent(0,
+                                                    QEvent::KeyRelease,
+

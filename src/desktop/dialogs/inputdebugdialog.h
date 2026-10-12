@@ -12,6 +12,8 @@
 #endif
 
 class QLabel;
+class QPlainTextEdit;
+class QTabWidget;
 class QTableWidget;
 class QTableWidgetItem;
 
@@ -29,6 +31,8 @@ public:
 private:
 #if DRAWPILE_INPUT_DEBUG_DIALOG_ANDROID
 	void handleDebugEvent(const QVariantHash &eventData);
+	void handleMotionDebugEvent(const QVariantHash &eventData);
+	void handleKeyDebugEvent(const QVariantHash &eventData);
 
 	void addStateRowString(
 		const QVariantHash &h, const QString &key, int &inOutRowCount);
@@ -44,7 +48,9 @@ private:
 	void
 	addStateRow(const QString &key, const QString &value, int &inOutRowCount);
 
+	QTabWidget *m_tabs;
 	QTableWidget *m_stateTable;
+	QPlainTextEdit *m_keysEdit;
 #else
 	QLabel *m_unsupportedLabel;
 #endif

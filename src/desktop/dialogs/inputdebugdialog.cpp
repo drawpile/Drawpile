@@ -5,6 +5,7 @@
 #include <QDialogButtonBox>
 #include <QHeaderView>
 #include <QLabel>
+#include <QPlainTextEdit>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -28,6 +29,9 @@ InputDebugDialog::InputDebugDialog(QWidget *parent)
 	QVBoxLayout *dlgLayout = new QVBoxLayout(this);
 
 #if DRAWPILE_INPUT_DEBUG_DIALOG_ANDROID
+	m_tabs = new QTabWidget;
+	dlgLayout->addWidget(m_tabs);
+
 	m_stateTable = new QTableWidget(0, 2);
 	m_stateTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_stateTable->verticalHeader()->hide();
@@ -35,8 +39,12 @@ InputDebugDialog::InputDebugDialog(QWidget *parent)
 		{QStringLiteral("Key"), QStringLiteral("Value")});
 	m_stateTable->horizontalHeader()->setSectionResizeMode(
 		QHeaderView::Stretch);
-	dlgLayout->addWidget(m_stateTable);
+	m_tabs->addTab(m_stateTable, QStringLiteral("Motion"));
 	utils::bindKineticScrolling(m_stateTable);
+
+	m_keysEdit = new QPlainTextEdit;
+	m_keysEdit->setReadOnly(true);
+	m_tabs->addTab(m_keysEdit, QStringLiteral("Key"));
 
 	QCoreApplication::setKritaAttribute(
 		KRITA_QATTRIBUTE_ANDROID_DEBUG_INPUT_EVENTS, true);
@@ -77,6 +85,16 @@ InputDebugDialog::~InputDebugDialog()
 }
 
 void InputDebugDialog::handleDebugEvent(const QVariantHash &eventData)
+{
+	if(eventData.value(QStringLiteral("type")).toString() ==
+	   QStringLiteral("KeyEvent")) {
+		handleKeyDebugEvent(eventData);
+	} else {
+		handleMotionDebugEvent(eventData);
+	}
+}
+
+void InputDebugDialog::handleMotionDebugEvent(const QVariantHash &eventData)
 {
 	int rowCount = 0;
 
@@ -161,6 +179,22 @@ void InputDebugDialog::handleDebugEvent(const QVariantHash &eventData)
 	while(m_stateTable->rowCount() > rowCount) {
 		m_stateTable->removeRow(rowCount);
 	}
+}
+
+void InputDebugDialog::handleKeyDebugEvent(const QVariantHash &eventData)
+{
+	QString action = eventData.value(QStringLiteral("action")).toString();
+	int key = eventData.value(QStringLiteral("key")).toInt();
+	int modifier = eventData.value(QStringLiteral("modifier")).toInt();
+	int unicode = eventData.value(QStringLiteral("unicode")).toInt();
+	bool autoRepeat = eventData.value(QStringLiteral("autoRepeat")).toBool();
+	m_keysEdit->appendPlainText(
+		QStringLiteral("%1 key=%2 modifier=%3 unicode=%4 repeat=%5\n")
+			.arg(action)
+			.arg(key)
+			.arg(modifier)
+			.arg(unicode)
+			.arg(autoRepeat));
 }
 
 void InputDebugDialog::addStateRowString(
