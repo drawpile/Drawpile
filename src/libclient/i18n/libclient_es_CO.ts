@@ -2811,9 +2811,9 @@ En su lugar, selecciona una capa regular.</translation>
     <message numerus="yes">
         <location line="+9"/>
         <source>Tried to write %n byte(s) to target file &apos;%1&apos;, but only wrote %2</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Se intentó escribir %n byte en el archivo de destino &apos;%1&apos;, pero solo se escribió %2</numerusform>
+            <numerusform>Se intentó escribir %n bytes en el archivo de destino &apos;%1&apos;, pero solo se escribieron %2</numerusform>
         </translation>
     </message>
     <message>
