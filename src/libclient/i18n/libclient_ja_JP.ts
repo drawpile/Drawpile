@@ -2806,8 +2806,8 @@ Select a regular layer instead.</source>
     <message numerus="yes">
         <location line="+9"/>
         <source>Tried to write %n byte(s) to target file &apos;%1&apos;, but only wrote %2</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>対象のファイル %1 に %n バイトを書き込もうとしましたが、%2 しか書き込まれませんでした</numerusform>
         </translation>
     </message>
     <message>

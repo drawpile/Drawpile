@@ -2981,7 +2981,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+59"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>メニュー</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -9458,17 +9458,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+111"/>
         <source>Processing suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>処理は成功しましたが、ファイルの保存に失敗しました。</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>An error occured during processing.</source>
-        <translation type="unfinished"></translation>
+        <translation>処理中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>No processed file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>処理済みのファイルがありません。</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -16029,28 +16029,28 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
         <source>Drag</source>
         <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by clicking and dragging.</source>
-        <translation type="unfinished"></translation>
+        <translation>クリックしてドラッグするとズームします。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Select</source>
         <extracomment>Zoom tool mode, refers to drawing a rectangle to zoom into.</extracomment>
-        <translation type="unfinished">選択</translation>
+        <translation>選択</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by selecting an area.</source>
-        <translation type="unfinished"></translation>
+        <translation>エリアを選択してズームします。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mode:</source>
-        <translation type="unfinished">モード:</translation>
+        <translation>モード:</translation>
     </message>
 </context>
 <context>
