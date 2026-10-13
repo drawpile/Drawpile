@@ -1417,7 +1417,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Esta sesión ha indicado que sus contenidos &lt;em&gt;no son aptos para menores&lt;/em&gt; (NSFM). .&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Debes ser mayor de 18 años y tener permitido consumir contenido para adultos para proceder.&lt;/strong&gt; &lt;/p&gt;&lt;p&gt;¿Estas seguro de que quieres unirte a esta sesión?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Esta sesión ha indicado que sus contenidos &lt;em&gt;no son aptos para menores&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Debes ser mayor de 18 años y tener permitido consumir contenido para adultos para proceder.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;¿Estás seguro de que quieres unirte a esta sesión?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -9481,17 +9481,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+111"/>
         <source>Processing suceeded, but file saving failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>El procesamiento se completó con éxito, pero la operación de guardar el archivo falló.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>An error occured during processing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se produjo un error durante el procesamiento.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>No processed file available.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay ningún archivo procesado disponible.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -16072,12 +16072,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+99"/>
         <source>Drag</source>
         <extracomment>Zoom tool mode, refers to clicking and dragging to scrub zoom.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arrastrar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom by clicking and dragging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom haciendo clic y arrastrando.</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -16088,7 +16088,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Zoom by selecting an area.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom seleccionando un área.</translation>
     </message>
     <message>
         <location line="+6"/>
