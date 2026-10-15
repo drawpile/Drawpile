@@ -94,6 +94,24 @@ void ToolSettings::quickAdjustOn(
 	}
 }
 
+void ToolSettings::quickAdjustBrushSizeOn(
+	KisSliderSpinBox *slider, qreal adjustment, bool wheel,
+	qreal &inOutQuickAdjustN)
+{
+	if(slider) {
+		// Having small values skip around from spinning the wheel is
+		// unpredictable, so it feels really random and causes users to have to
+		// jigger their wheel up and down repeatedly. So only use logarithmic
+		// adjustment if we're above a reasonable threshold.
+		int currentValue = slider->value();
+		qreal effectiveAdjustment =
+			wheel && currentValue <= 30
+				? adjustment
+				: qMax(1.0, std::cbrt(currentValue)) * adjustment;
+		quickAdjustOn(slider, effectiveAdjustment, wheel, inOutQuickAdjustN);
+	}
+}
+
 void ToolSettings::adjustSlider(KisSliderSpinBox *slider, int value)
 {
 	if(slider->isSoftRangeActive()) {

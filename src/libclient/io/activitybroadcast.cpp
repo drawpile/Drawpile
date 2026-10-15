@@ -130,6 +130,9 @@ void ActivityBroadcast::sendActiveTool(int type)
 	case tools::Tool::Type::TRANSFORM:
 		name = QStringLiteral("transform");
 		break;
+	case tools::Tool::Type::LIQUIFY:
+		name = QStringLiteral("liquify");
+		break;
 	case tools::Tool::Type::PAN:
 		name = QStringLiteral("pan");
 		break;

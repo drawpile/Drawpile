@@ -33,7 +33,8 @@ public:
 		AnchorLineItemType = QGraphicsItem::UserType + 24,
 		ActionBarType = QGraphicsItem::UserType + 25,
 		StatusType = QGraphicsItem::UserType + 26,
-		TitleType = QGraphicsItem::UserType + 26,
+		TitleType = QGraphicsItem::UserType + 27,
+		LiquifyType = QGraphicsItem::UserType + 28,
 	};
 
 	static constexpr qreal Z_USER_MARKER = 999.0;

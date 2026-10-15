@@ -1,0 +1,283 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+extern "C" {
+#include <dpengine/liquify.h>
+}
+#include "libclient/drawdance/liquify.h"
+#include <cstring>
+
+namespace drawdance {
+
+LiquifyState LiquifyState::null()
+{
+	return LiquifyState(nullptr);
+}
+
+LiquifyState LiquifyState::inc(DP_LiquifyState *ls)
+{
+	return LiquifyState(DP_liquify_state_incref_nullable(ls));
+}
+
+LiquifyState LiquifyState::noinc(DP_LiquifyState *ls)
+{
+	return LiquifyState(ls);
+}
+
+LiquifyState::LiquifyState()
+	: LiquifyState(nullptr)
+{
+}
+
+LiquifyState::LiquifyState(const LiquifyState &other)
+	: LiquifyState(DP_liquify_state_incref_nullable(other.m_data))
+{
+}
+
+LiquifyState::LiquifyState(LiquifyState &&other)
+	: LiquifyState(other.m_data)
+{
+	other.m_data = nullptr;
+}
+
+LiquifyState &LiquifyState::operator=(const LiquifyState &other)
+{
+	DP_liquify_state_decref_nullable(m_data);
+	m_data = DP_liquify_state_incref_nullable(other.m_data);
+	return *this;
+}
+
+LiquifyState &LiquifyState::operator=(LiquifyState &&other)
+{
+	DP_liquify_state_decref_nullable(m_data);
+	m_data = other.m_data;
+	other.m_data = nullptr;
+	return *this;
+}
+
+LiquifyState::~LiquifyState()
+{
+	DP_liquify_state_decref_nullable(m_data);
+}
+
+DP_LiquifyState *LiquifyState::get() const
+{
+	return m_data;
+}
+
+bool LiquifyState::isNull() const
+{
+	return !m_data;
+}
+
+QRect LiquifyState::changeBounds() const
+{
+	int left, top, right, bottom;
+	if(DP_liquify_state_change_bounds(m_data, &left, &top, &right, &bottom)) {
+		return QRect(QPoint(left, top), QPoint(right, bottom));
+	} else {
+		return QRect();
+	}
+}
+
+LiquifyState::LiquifyState(DP_LiquifyState *ls)
+	: m_data(ls)
+{
+}
+
+
+Liquify Liquify::init(QRect bounds)
+{
+	return Liquify(DP_liquify_new(
+		bounds.x(), bounds.y(), bounds.width(), bounds.height()));
+}
+
+Liquify Liquify::null()
+{
+	return Liquify(nullptr);
+}
+
+Liquify Liquify::inc(DP_Liquify *l)
+{
+	return Liquify(DP_liquify_incref_nullable(l));
+}
+
+Liquify Liquify::noinc(DP_Liquify *l)
+{
+	return Liquify(l);
+}
+
+Liquify::Liquify()
+	: Liquify(nullptr)
+{
+}
+
+Liquify::Liquify(const Liquify &other)
+	: Liquify(DP_liquify_incref_nullable(other.m_data))
+{
+}
+
+Liquify::Liquify(Liquify &&other)
+	: Liquify(other.m_data)
+{
+	other.m_data = nullptr;
+}
+
+Liquify &Liquify::operator=(const Liquify &other)
+{
+	DP_liquify_decref_nullable(m_data);
+	m_data = DP_liquify_incref_nullable(other.m_data);
+	return *this;
+}
+
+Liquify &Liquify::operator=(Liquify &&other)
+{
+	DP_liquify_decref_nullable(m_data);
+	m_data = other.m_data;
+	other.m_data = nullptr;
+	return *this;
+}
+
+Liquify::~Liquify()
+{
+	DP_liquify_decref_nullable(m_data);
+}
+
+DP_Liquify *Liquify::get() const
+{
+	return m_data;
+}
+
+bool Liquify::isNull() const
+{
+	return !m_data;
+}
+
+LiquifyState Liquify::currentState() const
+{
+	return LiquifyState::noinc(DP_liquify_current_state_inc(m_data));
+}
+
+Liquify::Liquify(DP_Liquify *l)
+	: m_data(l)
+{
+}
+
+
+LiquifyTransformer
+LiquifyTransformer::init(int sourceX, int sourceY, const QImage &sourceImage)
+{
+	Q_ASSERT(!sourceImage.isNull());
+	Q_ASSERT(sourceImage.format() == QImage::Format_ARGB32_Premultiplied);
+	return LiquifyTransformer(DP_liquify_transformer_new(
+		sourceX, sourceY, sourceImage.width(), sourceImage.height(),
+		reinterpret_cast<const uint32_t *>(sourceImage.constBits())));
+}
+
+LiquifyTransformer LiquifyTransformer::null()
+{
+	return LiquifyTransformer(nullptr);
+}
+
+LiquifyTransformer LiquifyTransformer::inc(DP_LiquifyTransformer *lt)
+{
+	return LiquifyTransformer(DP_liquify_transformer_incref_nullable(lt));
+}
+
+LiquifyTransformer LiquifyTransformer::noinc(DP_LiquifyTransformer *lt)
+{
+	return LiquifyTransformer(lt);
+}
+
+LiquifyTransformer::LiquifyTransformer()
+	: LiquifyTransformer(nullptr)
+{
+}
+
+LiquifyTransformer::LiquifyTransformer(const LiquifyTransformer &other)
+	: LiquifyTransformer(DP_liquify_transformer_incref_nullable(other.m_data))
+{
+}
+
+LiquifyTransformer::LiquifyTransformer(LiquifyTransformer &&other)
+	: LiquifyTransformer(other.m_data)
+{
+	other.m_data = nullptr;
+}
+
+LiquifyTransformer &
+LiquifyTransformer::operator=(const LiquifyTransformer &other)
+{
+	DP_liquify_transformer_decref_nullable(m_data);
+	m_data = DP_liquify_transformer_incref_nullable(other.m_data);
+	return *this;
+}
+
+LiquifyTransformer &LiquifyTransformer::operator=(LiquifyTransformer &&other)
+{
+	DP_liquify_transformer_decref_nullable(m_data);
+	m_data = other.m_data;
+	other.m_data = nullptr;
+	return *this;
+}
+
+LiquifyTransformer::~LiquifyTransformer()
+{
+	DP_liquify_transformer_decref_nullable(m_data);
+}
+
+DP_LiquifyTransformer *LiquifyTransformer::get() const
+{
+	return m_data;
+}
+
+bool LiquifyTransformer::isNull() const
+{
+	return !m_data;
+}
+
+bool LiquifyTransformer::apply(
+	const LiquifyState &liquifyState, int interpolation)
+{
+	return DP_liquify_transformer_apply(
+		m_data, liquifyState.get(), interpolation);
+}
+
+QImage LiquifyTransformer::targetImage(QPoint &outPos) const
+{
+	int x, y, width, height;
+	const uint32_t *data;
+	bool have_image = DP_liquify_transformer_target_image(
+		m_data, &x, &y, &width, &height, &data);
+
+	if(have_image) {
+		QImage img(width, height, QImage::Format_ARGB32_Premultiplied);
+		size_t stride = size_t(width) * sizeof(uint32_t);
+		if(size_t(img.bytesPerLine()) == stride) {
+			std::memcpy(img.bits(), data, stride * size_t(height));
+		} else {
+			for(int i = 0; i < height; ++i) {
+				std::memcpy(img.scanLine(i), data, stride);
+				data += width;
+			}
+		}
+		outPos = QPoint(x, y);
+		return img;
+	} else {
+		outPos = QPoint(
+			DP_liquify_transformer_source_x(m_data),
+			DP_liquify_transformer_source_y(m_data));
+		return QImage();
+	}
+}
+
+LiquifyTransformer::LiquifyTransformer(DP_LiquifyTransformer *lt)
+	: m_data(lt)
+{
+}
+
+void LiquifyTransformer::disposeImage(void *user)
+{
+	QImage *img = static_cast<QImage *>(user);
+	delete img;
+}
+
+}

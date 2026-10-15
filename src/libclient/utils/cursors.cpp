@@ -25,6 +25,8 @@ Cursors::Cursors()
 	, m_lassoFill(QPixmap(":cursors/lassofill.png"), 2, 29)
 	, m_lassoFillCheck(QPixmap(":cursors/lassofillcheck.png"), 2, 29)
 	, m_line(QPixmap(":cursors/line.png"), 2, 2)
+	, m_liquify(
+		  QCursor(QPixmap(QStringLiteral(":/cursors/liquify.png")), 14, 14))
 	, m_magicWand(QPixmap(":cursors/magicwand.png"), 2, 2)
 	, m_magicWandExclude(QPixmap(":cursors/magicwand-exclude.png"), 2, 2)
 	, m_magicWandIntersect(QPixmap(":cursors/magicwand-intersect.png"), 2, 2)

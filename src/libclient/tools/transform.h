@@ -192,7 +192,6 @@ private:
 	static QPointF getQuadHandlePoint(
 		const TransformQuad &quad, Handle handle, const QPointF &targetPoint);
 
-	void hotSwapToSelection(Tool::Type tool);
 	void returnToPreviousTool();
 
 	QCursor m_outsideMoveCursor = Qt::ArrowCursor;

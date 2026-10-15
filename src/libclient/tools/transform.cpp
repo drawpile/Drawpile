@@ -390,7 +390,7 @@ TransformTool::Mode TransformTool::effectiveMode() const
 bool TransformTool::isTransformActive() const
 {
 	canvas::CanvasModel *canvas = m_owner.model();
-	return canvas && canvas->transform()->isActive();
+	return canvas && canvas->transform()->isTransformActive();
 }
 
 canvas::TransformModel *TransformTool::getActiveTransformModel() const
@@ -398,7 +398,7 @@ canvas::TransformModel *TransformTool::getActiveTransformModel() const
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas) {
 		canvas::TransformModel *transform = canvas->transform();
-		if(transform->isActive()) {
+		if(transform->isTransformActive()) {
 			return transform;
 		}
 	}

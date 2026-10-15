@@ -773,6 +773,41 @@ void setWidgetLongPressEnabled(QWidget *widget, bool enabled)
 	widget->setProperty(LongPressEventFilter::ENABLED_PROPERTY, enabled);
 }
 
+void setButtonCheckedSignalsBlocked(QAbstractButton *button, bool checked)
+{
+	if(button) {
+		QSignalBlocker blocker(button);
+		button->setChecked(checked);
+	}
+}
+
+void setSpinnerValueSignalsBlocked(QSpinBox *spinBox, int value)
+{
+	if(spinBox) {
+		QSignalBlocker blocker(spinBox);
+		spinBox->setValue(value);
+	}
+}
+
+void setDoubleSpinnerValueSignalsBlocked(QDoubleSpinBox *spinBox, double value)
+{
+	if(spinBox) {
+		QSignalBlocker blocker(spinBox);
+		spinBox->setValue(value);
+	}
+}
+
+void clickButtonGroupSignalsBlocked(QButtonGroup *group, int id)
+{
+	if(group) {
+		QAbstractButton *button = group->button(id);
+		if(button) {
+			QSignalBlocker blocker(group);
+			button->click();
+		}
+	}
+}
+
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos)
 {
 	for(QScreen *screen : dpApp().screens()) {

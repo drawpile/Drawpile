@@ -107,6 +107,7 @@ void ViewWrapper::setCanvas(canvas::CanvasModel *canvas)
 {
 	m_controller->setCanvasModel(canvas);
 	m_scene->setCanvasModel(canvas);
+	m_canvasWidget->setCanvasModel(canvas);
 }
 
 drawingboard::AnnotationItem *ViewWrapper::getAnnotationItem(int annotationId)

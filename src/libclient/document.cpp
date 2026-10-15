@@ -21,6 +21,7 @@ extern "C" {
 #include "libclient/net/invitelistmodel.h"
 #include "libclient/net/login.h"
 #include "libclient/project/resume.h"
+#include "libclient/tools/liquify.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/transform.h"
@@ -1796,6 +1797,7 @@ void Document::selectAll()
 void Document::selectNone(bool finishTransform)
 {
 	if(!m_toolctrl->transformTool()->handleDeselect(finishTransform) &&
+	   !m_toolctrl->liquifyTool()->handleDeselect(finishTransform) &&
 	   m_canvas && m_canvas->selection()->isValid()) {
 		unsigned int contextId = m_client->myId();
 		net::Message msgs[] = {

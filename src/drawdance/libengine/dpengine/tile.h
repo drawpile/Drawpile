@@ -79,6 +79,16 @@ DP_INLINE int DP_tile_total_round(int width, int height)
     return tile_counts.x * tile_counts.y;
 }
 
+DP_INLINE int DP_tile_coord_from_pixel(int pixel_coord)
+{
+    if (pixel_coord >= 0) {
+        return pixel_coord / DP_TILE_SIZE;
+    }
+    else {
+        return (pixel_coord - (DP_TILE_SIZE - 1)) / DP_TILE_SIZE;
+    }
+}
+
 
 const uint16_t *DP_tile_opaque_mask(void);
 

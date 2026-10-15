@@ -93,6 +93,10 @@ target_sources(dpclient PRIVATE
 	drawdance/layerprops.h
 	drawdance/layerpropslist.cpp
 	drawdance/layerpropslist.h
+	drawdance/liquify.cpp
+	drawdance/liquify.h
+	drawdance/liquifyworker.cpp
+	drawdance/liquifyworker.h
 	drawdance/paintengine.cpp
 	drawdance/paintengine.h
 	drawdance/perf.cpp
@@ -199,6 +203,8 @@ target_sources(dpclient PRIVATE
 	tools/laser.h
 	tools/lassofill.cpp
 	tools/lassofill.h
+	tools/liquify.cpp
+	tools/liquify.h
 	tools/magicwand.cpp
 	tools/magicwand.h
 	tools/pan.cpp

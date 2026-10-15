@@ -2161,18 +2161,8 @@ void BrushSettings::quickAdjust1(qreal adjustment, bool wheel)
 			d->ui.radiusLogarithmicBox, adjustment * 2.0, wheel,
 			d->quickAdjust1);
 	} else {
-		KisSliderSpinBox *brushsizeBox = d->ui.brushsizeBox;
-		int currentValue = brushsizeBox->value();
-		// Having small values skip around from spinning the wheel is
-		// unpredictable, so it feels really random and causes users to have to
-		// jigger their wheel up and down repeatedly. So only use logarithmic
-		// adjustment if we're above a reasonable threshold.
-		qreal effectiveAdjustment =
-			wheel && currentValue <= 30
-				? adjustment
-				: qMax(1.0, std::cbrt(currentValue)) * adjustment;
-		quickAdjustOn(
-			brushsizeBox, effectiveAdjustment, wheel, d->quickAdjust1);
+		quickAdjustBrushSizeOn(
+			d->ui.brushsizeBox, adjustment, wheel, d->quickAdjust1);
 	}
 }
 

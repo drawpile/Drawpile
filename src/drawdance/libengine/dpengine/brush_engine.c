@@ -300,6 +300,28 @@ struct DP_BrushEngine {
     void *user;
 };
 
+struct DP_LiquifyEngine {
+    DP_StrokeEngine se;
+    DP_LiquifyEnginePushDabFn push_dab;
+    void *user;
+    struct {
+        float size;
+        float amount;
+        float hardness;
+        float spacing;
+        float last_x;
+        float last_y;
+        float last_pressure;
+        float length;
+        unsigned int flags;
+        bool size_pressure;
+        bool amount_pressure;
+        bool hardness_pressure;
+        bool active;
+        bool in_progress;
+    } stroke;
+};
+
 
 DP_MaskSync *DP_mask_sync_new(void)
 {
@@ -3613,4 +3635,210 @@ void DP_brush_engine_offset_add(DP_BrushEngine *be, float x, float y)
     default:
         DP_UNREACHABLE();
     }
+}
+
+
+static void liquify_stroke_to(DP_LiquifyEngine *le, DP_BrushPoint bp);
+
+static void
+liquify_engine_handle_stroke_engine_push(void *user, DP_BrushPoint bp,
+                                         DP_UNUSED DP_CanvasState *cs_or_null)
+{
+    liquify_stroke_to(user, bp);
+}
+
+DP_LiquifyEngine *DP_liquify_engine_new(DP_LiquifyEnginePushDabFn push_dab,
+                                        void *user)
+{
+    DP_ASSERT(push_dab);
+    DP_LiquifyEngine *le = DP_malloc(sizeof(*le));
+    *le = (DP_LiquifyEngine){
+        stroke_engine_init(liquify_engine_handle_stroke_engine_push, NULL, le),
+        push_dab,
+        user,
+        {
+            0.0f,
+            0.0f,
+            0.0f,
+            0.0f,
+            0.0f,
+            0.0f,
+            0.0f,
+            0.0f,
+            0u,
+            false,
+            false,
+            false,
+            false,
+            false,
+        },
+    };
+    return le;
+}
+
+void DP_liquify_engine_free(DP_LiquifyEngine *le)
+{
+    if (le) {
+        stroke_engine_dispose(&le->se);
+        DP_free(le);
+    }
+}
+
+void DP_liquify_engine_params_set(DP_LiquifyEngine *le,
+                                  const DP_LiquifyEngineStrokeParams *lesp)
+{
+    DP_ASSERT(le);
+    DP_ASSERT(lesp);
+
+    DP_StrokeEngineStrokeParams sesp = {
+        NULL,
+        NULL,
+        lesp->smoothing,
+        0,
+        0.0f,
+        lesp->interpolate,
+        lesp->smoothing_finish_strokes,
+        false,
+    };
+    DP_stroke_engine_params_set(&le->se, &sesp);
+
+    le->stroke.size = lesp->size;
+    le->stroke.amount = lesp->amount;
+    le->stroke.hardness = lesp->hardness;
+    le->stroke.spacing = lesp->spacing;
+    le->stroke.size_pressure = lesp->size_pressure;
+    le->stroke.amount_pressure = lesp->amount_pressure;
+    le->stroke.hardness_pressure = lesp->hardness_pressure;
+}
+
+void DP_liquify_engine_stroke_begin(DP_LiquifyEngine *le, float zoom)
+{
+    DP_ASSERT(le);
+    DP_ASSERT(!le->stroke.in_progress);
+    le->stroke.active = true;
+    le->stroke.flags = 0u;
+    DP_stroke_engine_stroke_begin(&le->se, zoom);
+}
+
+void DP_liquify_engine_stroke_to(DP_LiquifyEngine *le, DP_BrushPoint bp,
+                                 unsigned int flags)
+{
+    DP_ASSERT(le);
+    DP_ASSERT(le->stroke.active);
+    le->stroke.flags = flags;
+    DP_stroke_engine_stroke_to(&le->se, bp, NULL);
+}
+
+void DP_liquify_engine_stroke_end(DP_LiquifyEngine *le, long long time_msec)
+{
+    DP_ASSERT(le);
+    DP_ASSERT(le->stroke.active);
+    DP_stroke_engine_stroke_end(&le->se, time_msec, NULL);
+    le->stroke.active = false;
+    le->stroke.in_progress = false;
+}
+
+static float liquify_size_at(DP_LiquifyEngine *le, float pressure)
+{
+    if (le->stroke.size_pressure) {
+        return le->stroke.size * pressure;
+    }
+    else {
+        return le->stroke.size;
+    }
+}
+
+static float liquify_amount_at(DP_LiquifyEngine *le, float pressure)
+{
+    if (le->stroke.amount_pressure) {
+        return le->stroke.amount * pressure;
+    }
+    else {
+        return le->stroke.amount;
+    }
+}
+
+static float liquify_hardness_at(DP_LiquifyEngine *le, float pressure)
+{
+    if (le->stroke.hardness_pressure) {
+        return le->stroke.hardness * pressure;
+    }
+    else {
+        return le->stroke.hardness;
+    }
+}
+
+static float liquify_spacing_at(DP_LiquifyEngine *le, float pressure)
+{
+    return le->stroke.spacing * liquify_size_at(le, pressure);
+}
+
+static void push_dab_liquify(DP_LiquifyEngine *le, float dab_x, float dab_y,
+                             float dab_p, float direction_rad)
+{
+    DP_LiquifyEngineDab dab = {
+        dab_x,
+        dab_y,
+        liquify_size_at(le, dab_p),
+        liquify_amount_at(le, dab_p),
+        liquify_hardness_at(le, dab_p),
+        direction_rad,
+        le->stroke.flags,
+    };
+    le->push_dab(le->user, dab);
+}
+
+static void stroke_liquify(DP_LiquifyEngine *le, float x, float y,
+                           float pressure)
+{
+    float last_x = le->stroke.last_x;
+    float last_y = le->stroke.last_y;
+    float diff_x = x - last_x;
+    float diff_y = y - last_y;
+    float dist = DP_hypotf(diff_x, diff_y);
+
+    if (dist >= 0.001f) {
+        float dx = diff_x / dist;
+        float dy = diff_y / dist;
+        float last_pressure = le->stroke.last_pressure;
+        float dp = (pressure - last_pressure) / dist;
+
+        float spacing0 = DP_max_float(liquify_spacing_at(le, pressure), 1.0f);
+
+        float length = le->stroke.length;
+        float i = length > spacing0 ? 0.0f : length == 0.0f ? spacing0 : length;
+
+        float dab_x = last_x + dx * i;
+        float dab_y = last_y + dy * i;
+        float dab_p = DP_clamp_float(last_pressure + dp * i, 0.0f, 1.0f);
+        float direction_rad = atan2f(diff_y, diff_x);
+
+        while (i <= dist) {
+            push_dab_liquify(le, dab_x, dab_y, dab_p, direction_rad);
+
+            float spacing =
+                DP_max_float(liquify_spacing_at(le, pressure), 1.0f);
+            dab_x += dx * spacing;
+            dab_y += dy * spacing;
+            dab_p = DP_clamp_float(dab_p + dp * spacing, 0.0f, 1.0f);
+            i += spacing;
+        }
+
+        le->stroke.length = i - dist;
+    }
+}
+
+static void liquify_stroke_to(DP_LiquifyEngine *le, DP_BrushPoint bp)
+{
+    if (le->stroke.in_progress) {
+        stroke_liquify(le, bp.x, bp.y, bp.pressure);
+    }
+    else {
+        le->stroke.in_progress = true;
+        le->stroke.length = 0.0f;
+        push_dab_liquify(le, bp.x, bp.y, bp.pressure, 0.0f);
+    }
+    le->stroke.last_x = bp.x;
+    le->stroke.last_y = bp.y;
+    le->stroke.last_pressure = bp.pressure;
 }

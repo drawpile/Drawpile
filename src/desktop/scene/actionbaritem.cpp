@@ -39,7 +39,7 @@ ActionBarItem::Button::Button(
 ActionBarItem::ActionBarItem(
 	const QString &title, const QStyle *style, const QFont &font,
 	QAction *overflowAction, QGraphicsItem *parent)
-	: BaseItem(parent)
+	: BaseObject(parent)
 	, m_title(title)
 	, m_overflowAction(overflowAction)
 	, m_overflowMenu(new QMenu)
@@ -92,10 +92,17 @@ void ActionBarItem::setFont(const QFont &font)
 
 void ActionBarItem::setButtons(const QVector<Button> &buttons)
 {
+	for(const Button &button : m_buttons) {
+		disconnect(
+			button.action, &QAction::toggled, this, &ActionBarItem::refresh);
+	}
+	for(const Button &button : buttons) {
+		connect(
+			button.action, &QAction::toggled, this, &ActionBarItem::refresh);
+	}
 	m_buttons = buttons;
 	m_buttons.append(Button(m_overflowAction));
 	updateBounds();
-	refresh();
 }
 
 void ActionBarItem::setOverflowMenuActions(const QVector<QAction *> &actions)
@@ -131,7 +138,6 @@ void ActionBarItem::checkHover(const QPointF &scenePos, HudAction &action)
 	if(m_bounds.contains(pos)) {
 		bool overButtons;
 		qreal pad = qreal(m_paddingSize);
-		qreal buttonSize = getButtonSize();
 		if(isLocationAtTop(m_location)) {
 			overButtons = pos.y() <= m_bounds.y() + m_buttonInnerSize;
 		} else {
@@ -140,8 +146,15 @@ void ActionBarItem::checkHover(const QPointF &scenePos, HudAction &action)
 
 		if(overButtons) {
 			int lastButtonIndex = m_buttons.size() - 1;
-			hoveredIndex = qBound(
-				0, int((pos.x() - m_bounds.x()) / buttonSize), lastButtonIndex);
+			qreal buttonX = pos.x() - m_bounds.left();
+			for(hoveredIndex = 0; hoveredIndex < lastButtonIndex;
+				++hoveredIndex) {
+				if(buttonX <= m_buttons[hoveredIndex].rect.right()) {
+					break;
+					;
+				}
+			}
+
 			if(hoveredIndex < lastButtonIndex) {
 				action.type = HudAction::Type::TriggerAction;
 				action.action = m_buttons[hoveredIndex].action;
@@ -213,14 +226,24 @@ void ActionBarItem::paint(
 		painter->drawRect(m_bounds);
 	}
 
+	int buttonCount = m_buttons.size();
+	painter->setBrush(pal.highlight());
+	painter->setPen(Qt::NoPen);
+	painter->setOpacity(hoveredIndex == -1 ? 0.5 : 0.3);
+	for(int i = 0; i < buttonCount; ++i) {
+		if(m_buttons[i].action->isChecked()) {
+			painter->drawRect(
+				m_buttons[i].rect.translated(buttonsRect.topLeft()));
+		}
+	}
+
 	QString text;
 	if(hoveredIndex != -1) {
 		text = m_buttons[hoveredIndex].text;
 		painter->setBrush(pal.highlight());
 		painter->setOpacity(1.0);
-		painter->drawRect(QRectF(
-			m_bounds.x() + buttonSize * qreal(hoveredIndex), buttonsRect.top(),
-			buttonSize, buttonSize));
+		painter->drawRect(
+			m_buttons[hoveredIndex].rect.translated(buttonsRect.topLeft()));
 	} else {
 		text = m_title;
 	}
@@ -237,35 +260,74 @@ void ActionBarItem::paint(
 		painter->drawText(textRect, text, textOption);
 	}
 
-	int buttonCount = m_buttons.size();
-	qreal buttonInnerSize = qreal(m_buttonInnerSize);
 	for(int i = 0; i < buttonCount; ++i) {
-		QRectF iconRect(
-			m_bounds.x() + qreal(i) * buttonSize + pad, buttonsRect.top() + pad,
-			buttonInnerSize, buttonInnerSize);
+		QRectF iconRect = m_buttons[i].rect;
+		QMarginsF iconMargins;
+		if(i == 0 || i == buttonCount - 1 || buttonCount <= MAX_BUTTON_COUNT) {
+			iconMargins = QMarginsF(pad, pad, pad, pad);
+		} else {
+			qreal vpad = 1.0 + ((iconRect.height() - iconRect.width()) / 2.0);
+			iconMargins = QMarginsF(1.0, vpad, 1.0, vpad);
+		}
 		painter->setOpacity(i == hoveredIndex ? 1.0 : 0.5);
-		m_buttons[i].icon.paint(painter, iconRect.toRect());
+		m_buttons[i].icon.paint(
+			painter, iconRect.translated(buttonsRect.topLeft())
+						 .marginsRemoved(iconMargins)
+						 .toRect());
 	}
 
 	painter->setOpacity(0.5);
-	for(int i = 1; i < buttonCount; ++i) {
-		qreal x = m_bounds.x() + qreal(i) * buttonSize;
-		painter->drawLine(x, buttonsRect.top(), x, buttonsRect.bottom());
+	if(buttonCount <= MAX_BUTTON_COUNT) {
+		for(int i = 1; i < buttonCount; ++i) {
+			qreal x = buttonsRect.left() + m_buttons[i].rect.left();
+			painter->drawLine(x, buttonsRect.top(), x, buttonsRect.bottom());
+		}
+	} else {
+		qreal x1 = buttonsRect.left() + m_buttons[0].rect.right() - 1.0;
+		qreal x2 =
+			buttonsRect.left() + m_buttons[buttonCount - 1].rect.left() + 1.0;
+		painter->drawLine(x1, buttonsRect.top(), x1, buttonsRect.bottom());
+		painter->drawLine(x2, buttonsRect.top(), x2, buttonsRect.bottom());
 	}
 }
 
 void ActionBarItem::updateBounds()
 {
+	refreshGeometry();
 	m_bounds = QRectF(QPointF(0.0, 0.0), getTotalSize());
 	m_bounds.moveTo(getBoundsOffsetForLocation(m_location, m_bounds));
-	refresh();
+
+	int buttonCount = m_buttons.size();
+	qreal buttonSize = getButtonSize();
+	if(buttonCount <= MAX_BUTTON_COUNT) {
+		for(int i = 0; i < buttonCount; ++i) {
+			m_buttons[i].rect =
+				QRectF(qreal(i) * buttonSize, 0.0, buttonSize, buttonSize);
+		}
+	} else {
+		// First and last buttons have normal size.
+		int lastButton = buttonCount - 1;
+		m_buttons[0].rect = QRectF(0.0, 0.0, buttonSize, buttonSize);
+		m_buttons[lastButton].rect = QRectF(
+			qreal(MAX_BUTTON_COUNT - 1) * buttonSize, 0.0, buttonSize,
+			buttonSize);
+		// Everything in the middle gets squashed.
+		qreal middleButtonWidth =
+			(buttonSize * qreal(MAX_BUTTON_COUNT - 2)) / qreal(buttonCount - 2);
+		for(int i = 1; i < lastButton; ++i) {
+			m_buttons[i].rect = QRectF(
+				buttonSize + (qreal(i - 1) * middleButtonWidth), 0.0,
+				middleButtonWidth, buttonSize);
+		}
+	}
 }
 
 QSizeF ActionBarItem::getTotalSize() const
 {
 	qreal pad = qreal(m_paddingSize);
 	qreal buttonSize = getButtonSize();
-	qreal width = qreal(m_buttons.size()) * buttonSize;
+	qreal width =
+		qreal(qMin(int(m_buttons.size()), MAX_BUTTON_COUNT)) * buttonSize;
 	qreal height = qreal(m_fontHeight) + pad * 2.0 + buttonSize;
 	return QSizeF(width, height);
 }

@@ -10,15 +10,13 @@ extern "C" {
 
 namespace drawdance {
 
-namespace {
-static DP_BrushPoint canvasPointToBrushPoint(const canvas::Point &point)
+DP_BrushPoint canvasPointToBrushPoint(const canvas::Point &point)
 {
 	DP_BrushPoint bp = {float(point.x()),		 float(point.y()),
 						float(point.pressure()), float(point.xtilt()),
 						float(point.ytilt()),	 float(point.rotation()),
 						point.timeMsec()};
 	return bp;
-}
 }
 
 StrokeEngine::StrokeEngine(PushPointFn pushPoint, PollControlFn pollControl)
@@ -186,6 +184,42 @@ DP_CanvasState *BrushEngine::sync(void *user)
 {
 	BrushEngine *brushEngine = static_cast<BrushEngine *>(user);
 	return brushEngine->m_sync();
+}
+
+
+LiquifyEngine::LiquifyEngine()
+	: m_data(DP_liquify_engine_new(&LiquifyEngine::pushDab, this))
+{
+}
+
+LiquifyEngine::~LiquifyEngine()
+{
+	DP_liquify_engine_free(m_data);
+}
+
+void LiquifyEngine::setParams(const DP_LiquifyEngineStrokeParams &params)
+{
+	DP_liquify_engine_params_set(m_data, &params);
+}
+
+void LiquifyEngine::beginStroke(float zoom)
+{
+	DP_liquify_engine_stroke_begin(m_data, zoom);
+}
+
+void LiquifyEngine::strokeTo(const canvas::Point &point, unsigned int flags)
+{
+	DP_liquify_engine_stroke_to(m_data, canvasPointToBrushPoint(point), flags);
+}
+
+void LiquifyEngine::endStroke(long long timeMsec)
+{
+	DP_liquify_engine_stroke_end(m_data, timeMsec);
+}
+
+void LiquifyEngine::pushDab(void *user, DP_LiquifyEngineDab dab)
+{
+	static_cast<LiquifyEngine *>(user)->m_dabs.append(dab);
 }
 
 }

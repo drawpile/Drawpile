@@ -15,7 +15,8 @@ struct HudAction;
 
 namespace drawingboard {
 
-class ActionBarItem final : public BaseItem {
+class ActionBarItem final : public BaseObject {
+	Q_OBJECT
 public:
 	enum { Type = ActionBarType };
 
@@ -29,6 +30,7 @@ public:
 	};
 
 	struct Button {
+		QRectF rect;
 		QAction *action;
 		QString text;
 		QIcon icon;
@@ -72,6 +74,12 @@ protected:
 		QWidget *widget = nullptr) override;
 
 private:
+	// Any number of buttons beyond this cause the middle ones to get squashed
+	// narrower. At the time of writing, the selection and transform toolbar
+	// have 6 buttons, the liquify one has 9 with all the middle ones being the
+	// liquify operations.
+	static constexpr int MAX_BUTTON_COUNT = 6;
+
 	enum class Hover {
 		None,
 		Button,

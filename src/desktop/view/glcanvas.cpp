@@ -6,10 +6,13 @@ extern "C" {
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/glcanvas.h"
+#include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/tilecache.h"
+#include "libclient/canvas/transformmodel.h"
 #include "libclient/config/config.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/view/enums.h"
+#include <QImage>
 #include <QMetaEnum>
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLFunctions>
@@ -978,6 +981,34 @@ void main()
 		f->glBlendEquation(GL_FUNC_ADD);
 	}
 
+
+	void renderLiquify(QPainter &painter)
+	{
+		painter.save();
+		painter.setRenderHint(QPainter::Antialiasing, false);
+		painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
+
+		const QTransform &invertedTransform = controller->invertedTransform();
+		QPointF canvasOffset =
+			invertedTransform.map(
+				QPointF(viewSize.width() / 2.0, viewSize.height() / 2.0)) -
+			invertedTransform.map(QPointF(0, 0));
+		painter.setTransform(controller->transform());
+		painter.drawImage(liquifyOffset + canvasOffset, liquifyImage);
+
+		painter.restore();
+	}
+
+	void resetAfterNativePainting(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
+	{
+		// Qt5 doesn't reset these in endNativePainting.
+		f->glDisableVertexAttribArray(0);
+		f->glBindBuffer(GL_ARRAY_BUFFER, 0);
+		if(!haveGles2) {
+			e->glBindVertexArray(0);
+		}
+	}
+
 	void renderScene(QPainter &painter)
 	{
 		DP_PERF_SCOPE("paint_gl:scene");
@@ -985,6 +1016,8 @@ void main()
 	}
 
 	CanvasController *controller;
+	QImage liquifyImage;
+	QPoint liquifyOffset;
 	QSize viewSize;
 	QColor checkerColor1;
 	QColor checkerColor2;
@@ -1005,6 +1038,7 @@ void main()
 	bool textureFilterLinear = false;
 	bool usingMipmaps = false;
 	bool shouldUseMipmaps = false;
+	bool haveLiquify = false;
 	GLfloat translationX;
 	GLfloat translationY;
 	GLfloat transform[9];
@@ -1107,6 +1141,14 @@ void GlCanvas::handleResize(QResizeEvent *event)
 void GlCanvas::handlePaint(QPaintEvent *event)
 {
 	paintEvent(event);
+}
+
+void GlCanvas::setCanvasModel(canvas::CanvasModel *canvas)
+{
+	canvas::TransformModel *transform = canvas->transform();
+	connect(
+		transform, &canvas::TransformModel::transformChanged, this,
+		&GlCanvas::onTransformChanged);
 }
 
 const QStringList &GlCanvas::getSystemInfo()
@@ -1283,18 +1325,37 @@ void GlCanvas::paintGL()
 		bool haveCanvas = controller->isCanvasVisible();
 		if(haveCanvas) {
 			d->renderCanvas(f, e);
-			if(d->controller->isOutlineVisible()) {
-				d->renderOutline(f, e, devicePixelRatioF());
-			}
-			// Qt5 doesn't reset these in endNativePainting.
-			f->glDisableVertexAttribArray(0);
-			f->glBindBuffer(GL_ARRAY_BUFFER, 0);
-			if(!d->haveGles2) {
-				e->glBindVertexArray(0);
-			}
-		}
 
-		painter.endNativePainting();
+			if(d->haveLiquify) {
+				// Liquify requires the outline to be on top of the liquified
+				// image, so we have to break out here and take care of that.
+				d->resetAfterNativePainting(f, e);
+				painter.endNativePainting();
+
+				d->renderLiquify(painter);
+
+				if(d->controller->isOutlineVisible()) {
+					painter.beginNativePainting();
+					if(d->haveGles2) {
+						// renderOutline expects this to be enabled
+						f->glEnableVertexAttribArray(0);
+					}
+					d->renderOutline(f, e, devicePixelRatioF());
+					d->resetAfterNativePainting(f, e);
+					painter.endNativePainting();
+				}
+
+			} else {
+				if(d->controller->isOutlineVisible()) {
+					d->renderOutline(f, e, devicePixelRatioF());
+				}
+				d->resetAfterNativePainting(f, e);
+				painter.endNativePainting();
+			}
+
+		} else {
+			painter.endNativePainting();
+		}
 
 		d->renderScene(painter);
 	}
@@ -1364,6 +1425,22 @@ void GlCanvas::onControllerViewStateSetNeeded(
 {
 	d->viewState = {viewportSize, pos, zoom, rotation, mirror, flip, true};
 	update();
+}
+
+void GlCanvas::onTransformChanged()
+{
+	canvas::CanvasModel *canvas = d->controller->canvasModel();
+	canvas::TransformModel *transform = canvas->transform();
+	if(transform->isLiquifyActive()) {
+		d->haveLiquify = true;
+		d->liquifyImage = transform->floatingImage();
+		d->liquifyOffset = transform->floatingImageOffset();
+		update();
+	} else if(d->haveLiquify) {
+		d->haveLiquify = false;
+		d->liquifyImage = QImage();
+		update();
+	}
 }
 
 }

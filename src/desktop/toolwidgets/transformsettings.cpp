@@ -496,7 +496,7 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		canvas::TransformModel *transform =
 			canvas ? canvas->transform() : nullptr;
 
-		bool haveTransform = transform && transform->isActive();
+		bool haveTransform = transform && transform->isTransformActive();
 		bool canApplyTransform = haveTransform && transform->isDstQuadValid();
 		m_scaleButton->setEnabled(haveTransform);
 		m_distortButton->setEnabled(haveTransform);

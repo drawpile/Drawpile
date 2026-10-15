@@ -26,6 +26,8 @@ public:
 	void handleResize(QResizeEvent *event) override;
 	void handlePaint(QPaintEvent *event) override;
 
+	void setCanvasModel(canvas::CanvasModel *canvas) override;
+
 	static const QStringList &getSystemInfo();
 
 Q_SIGNALS:
@@ -49,6 +51,7 @@ private:
 	void onControllerViewStateSetNeeded(
 		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
 		bool mirror, bool flip);
+	void onTransformChanged();
 
 	static QStringList systemInfo;
 

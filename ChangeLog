@@ -1,5 +1,6 @@
 Unreleased Version 2.3.2-pre
  * Feature: Angle the fixed color wheel triangle to match what other programs do, making it point to the right. Thanks resttime and Glax for contributing.
+ * Feature: Liquify tool, also known as warp. Thanks avolaki, BulletPepper, BillyBuppie, kitty, Myathingoss, Nargle, rowann, Valecita and probably others for suggesting.
 
 2026-10-21 Version 2.3.1
  * Fix: Make dock tab icons show up properly on Qt 6.11, they could end up blank there.

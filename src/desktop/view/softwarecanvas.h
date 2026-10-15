@@ -28,6 +28,8 @@ public:
 	void handleResize(QResizeEvent *event) override;
 	void handlePaint(QPaintEvent *event) override;
 
+	void setCanvasModel(canvas::CanvasModel *canvas) override;
+
 protected:
 	void paintEvent(QPaintEvent *event) override;
 
