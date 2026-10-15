@@ -592,7 +592,7 @@ static float stabilizer_update_velocity(DP_StrokeEngine *se, DP_BrushPoint bp)
 
     float zoom = se->zoom;
     float norm_dist =
-        hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
+        DP_hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
 
     return velocity_update(norm_dist, delta_sec, &se->stabilizer.last_velocity);
 }
@@ -984,7 +984,7 @@ static void handle_stroke_spline(DP_StrokeEngine *se, DP_BrushPoint bp,
     else {
         DP_SplinePoint *prev_sp = spline_at(se, prev_fill - 1);
         DP_BrushPoint prev_bp = prev_sp->p;
-        float length = hypotf(prev_bp.y - bp.y, prev_bp.x - bp.x);
+        float length = DP_hypotf(prev_bp.y - bp.y, prev_bp.x - bp.x);
         DP_SplinePoint *sp = spline_push(se, bp, length);
 
         if (prev_fill == 3) {
@@ -3231,7 +3231,7 @@ static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
     float last_pressure = be->classic.last_pressure;
     float diff_x = x - last_x;
     float diff_y = y - last_y;
-    float dist = hypotf(diff_x, diff_y);
+    float dist = DP_hypotf(diff_x, diff_y);
     float dp = (pressure - last_pressure) / dist;
 
     int x0 = DP_float_to_int(last_x);
@@ -3270,7 +3270,7 @@ static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
     float dab_p = last_pressure;
     float zoom = be->se.zoom;
     float norm_dist =
-        hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
+        DP_hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
     float dab_v = classic_update_velocity(be, norm_dist, delta_sec);
     float dab_d = be->classic.last_distance;
     int fraction = db - (da / 2);
@@ -3312,7 +3312,7 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
     float last_y = be->classic.last_y;
     float diff_x = x - last_x;
     float diff_y = y - last_y;
-    float dist = hypotf(diff_x, diff_y);
+    float dist = DP_hypotf(diff_x, diff_y);
 
     bool left;
     if (x == last_x) {
@@ -3353,7 +3353,7 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         float dab_p = CLAMP(last_pressure + dp * i, 0.0f, 1.0f);
         float zoom = be->se.zoom;
         float norm_dist =
-            hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
+            DP_hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
         float dab_v = classic_update_velocity(be, norm_dist, delta_sec);
 
         while (i <= dist) {
@@ -3453,7 +3453,7 @@ static void tilt_to_mypaint(float xtilt, float ytilt, float angle, bool mirror,
         }
         else {
             float orientation = atan2f(ytilt, xtilt);
-            float magnitude = hypotf(xtilt, ytilt);
+            float magnitude = DP_hypotf(xtilt, ytilt);
             if (mirror == flip) {
                 orientation -= angle;
             }
