@@ -56,6 +56,19 @@ typedef struct DP_MaybeTransform {
 } DP_MaybeTransform;
 
 
+// The stdlib hypotf has extra overflow checks we don't need.
+
+DP_INLINE float DP_hypotf_squared(float x, float y)
+{
+    return DP_square_float(x) + DP_square_float(y);
+}
+
+DP_INLINE float DP_hypotf(float x, float y)
+{
+    return sqrtf(DP_hypotf_squared(x, y));
+}
+
+
 DP_INLINE DP_Quad DP_quad_make(int x1, int y1, int x2, int y2, int x3, int y3,
                                int x4, int y4)
 {
