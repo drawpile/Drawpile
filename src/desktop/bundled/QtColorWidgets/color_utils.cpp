@@ -73,7 +73,6 @@ QColor color_widgets::utils::get_screen_color(const QPoint &global_pos)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     QScreen *screen = QApplication::screenAt(global_pos);
-    // Drawpile patch: make sure we don't have a null screen.
     if ( !screen )
         return QColor();
 #else

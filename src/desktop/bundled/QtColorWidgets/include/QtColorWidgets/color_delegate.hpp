@@ -31,8 +31,11 @@ public:
 protected:
     void paintItem(QPainter *painter, const QStyleOptionViewItem &option,
                     const QModelIndex &index, const QBrush& brush) const;
+
+    bool paint_frame = true;
 private:
     QSize size_hint{24, 16};
+
 };
 
 /**

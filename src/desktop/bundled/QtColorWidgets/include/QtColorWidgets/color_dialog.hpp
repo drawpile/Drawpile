@@ -26,6 +26,8 @@ class QCP_EXPORT ColorDialog : public QDialog
     Q_PROPERTY(ColorWheel::ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged)
     Q_PROPERTY(bool wheelRotating READ wheelRotating WRITE setWheelRotating NOTIFY wheelRotatingChanged)
     Q_PROPERTY(bool wheelMirrored READ wheelMirrored WRITE setWheelMirrored NOTIFY wheelMirroredChanged)
+    /// Angle for when the wheel isn't rotating
+    Q_PROPERTY(bool wheelAngle READ wheelAngle WRITE setWheelAngle NOTIFY wheelAngleChanged)
     /**
      * \brief whether the color alpha channel can be edited.
      *
@@ -78,6 +80,7 @@ public:
     ColorWheel::ColorSpaceEnum colorSpace() const;
     bool wheelRotating() const;
     bool wheelMirrored() const;
+    int wheelAngle() const;
 
     int exec() Q_DECL_OVERRIDE;
 
@@ -97,6 +100,7 @@ public Q_SLOTS:
     void setColorSpace(ColorWheel::ColorSpaceEnum space);
     void setWheelRotating(bool rotating);
     void setWheelMirrored(bool mirrored);
+    void setWheelAngle(int angle);
 
     /**
      * Set whether the color alpha channel can be edited.
@@ -119,6 +123,7 @@ Q_SIGNALS:
     void colorSpaceChanged(ColorWheel::ColorSpaceEnum space);
     void wheelRotatingChanged(bool rotating);
     void wheelMirroredChanged(bool mirrored);
+    void wheelAngleChanged(int angle);
 
     void alphaEnabledChanged(bool alphaEnabled);
 
@@ -131,6 +136,9 @@ private Q_SLOTS:
     void set_rgb();
     /// Update from Alpha slider
     void set_alpha();
+
+    void set_sat_100(double v);
+    void set_value_100(double v);
 
     void on_edit_hex_colorChanged(const QColor& color);
     void on_edit_hex_colorEditingFinished(const QColor& color);
