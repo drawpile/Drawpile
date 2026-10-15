@@ -121,8 +121,23 @@
 #ifdef _MSC_VER
 typedef long double DP_max_align_t;
 #    define DP_FORCE_INLINE DP_INLINE __forceinline
+#    define DP_DEBUG_BREAK() \
+        do {                 \
+            __debugbreak();  \
+        } while (0)
 #else
 typedef max_align_t DP_max_align_t;
+#    if defined(DP_CPU_X64)
+#        define DP_DEBUG_BREAK()               \
+            do {                               \
+                __asm__ volatile("int $0x03"); \
+            } while (0)
+#    else
+#        define DP_DEBUG_BREAK()                                             \
+            do {                                                             \
+                static_assert(false, "DP_DEBUG_BREAK not implemented here"); \
+            } while (0)
+#    endif
 #endif
 
 #ifdef __cplusplus
