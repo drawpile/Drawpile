@@ -70,6 +70,7 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
     connect(p->ui.wheel, &ColorWheel::selectorShapeChanged, this, &ColorDialog::wheelShapeChanged);
     connect(p->ui.wheel, &ColorWheel::rotatingSelectorChanged, this, &ColorDialog::wheelRotatingChanged);
     connect(p->ui.wheel, &ColorWheel::mirroredSelectorChanged, this, &ColorDialog::wheelMirroredChanged);
+    connect(p->ui.wheel, &ColorWheel::fixedSelectorAngleChanged, this, &ColorDialog::wheelAngleChanged);
 
 }
 
@@ -189,12 +190,12 @@ void ColorDialog::setColorInternal(const QColor &col)
     p->ui.spin_hue->setValue(p->ui.slide_hue->value());
 
     p->ui.slide_saturation->setValue(qRound(p->ui.wheel->saturation()*255.0));
-    p->ui.spin_saturation->setValue(p->ui.slide_saturation->value());
+    p->ui.spin_saturation->setValue(p->ui.wheel->saturation()*100.0);
     p->ui.slide_saturation->setFirstColor(QColor::fromHsvF(p->ui.wheel->hue(),0,p->ui.wheel->value()));
     p->ui.slide_saturation->setLastColor(QColor::fromHsvF(p->ui.wheel->hue(),1,p->ui.wheel->value()));
 
     p->ui.slide_value->setValue(qRound(p->ui.wheel->value()*255.0));
-    p->ui.spin_value->setValue(p->ui.slide_value->value());
+    p->ui.spin_value->setValue(p->ui.wheel->value()*100.0);
     p->ui.slide_value->setFirstColor(QColor::fromHsvF(p->ui.wheel->hue(), p->ui.wheel->saturation(),0));
     p->ui.slide_value->setLastColor(QColor::fromHsvF(p->ui.wheel->hue(), p->ui.wheel->saturation(),1));
 
@@ -415,4 +416,24 @@ int ColorDialog::exec()
     return QDialog::exec();
 }
 
+void ColorDialog::setWheelAngle(int angle)
+{
+    p->ui.wheel->setFixedSelectorAngle(angle);
+}
+
+int ColorDialog::wheelAngle() const
+{
+    return p->ui.wheel->fixedSelectorAngle();
+}
+
 } // namespace color_widgets
+
+void color_widgets::ColorDialog::set_sat_100(double v)
+{
+    p->ui.slide_saturation->setValue(qRound(v / 100.0 * 255));
+}
+
+void color_widgets::ColorDialog::set_value_100(double v)
+{
+    p->ui.slide_value->setValue(qRound(v / 100.0 * 255));
+}

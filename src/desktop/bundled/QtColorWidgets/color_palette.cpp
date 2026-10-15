@@ -321,8 +321,12 @@ void ColorPalette::setColumns(int columns)
 void ColorPalette::setColors(const QVector<QColor>& colors)
 {
     p->colors.clear();
-    // Drawpile patch: replace qAsConst with std::as_const.
+
+#if defined (__cpp_lib_as_const)
     for(auto &col: std::as_const(colors))
+#else
+    for(auto &col: qAsConst(colors))
+#endif
         p->colors.push_back(qMakePair(col,QString()));
     setDirty(true);
     Q_EMIT colorsChanged(p->colors);

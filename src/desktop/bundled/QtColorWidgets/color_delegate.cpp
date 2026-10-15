@@ -18,6 +18,7 @@ void color_widgets::ReadOnlyColorDelegate::paintItem(
     const QBrush& brush
 ) const
 {
+
         QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         const QWidget* widget = option.widget;
@@ -25,6 +26,12 @@ void color_widgets::ReadOnlyColorDelegate::paintItem(
         QStyle *style = widget ? widget->style() : QApplication::style();
         QRect geom = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, widget);
         opt.text = QString();
+
+        if ( !paint_frame )
+        {
+            painter->fillRect(geom, brush);
+            return;
+        }
 
         QStyleOptionFrame panel;
         panel.initFrom(option.widget);
@@ -36,12 +43,8 @@ void color_widgets::ReadOnlyColorDelegate::paintItem(
         panel.state |= QStyle::State_Sunken;
         panel.frameShape = QFrame::StyledPanel;
 
-//         style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, widget);
-
         panel.palette.setBrush(QPalette::Base, brush);
         style->drawPrimitive(QStyle::PE_Frame, &panel, painter, nullptr);
-//         QRect r = style->subElementRect(QStyle::SE_FrameContents, &panel, nullptr);
-//         painter->fillRect(r, brush);
 }
 
 

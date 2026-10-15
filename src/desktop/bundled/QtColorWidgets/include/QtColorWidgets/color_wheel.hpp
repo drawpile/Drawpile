@@ -31,6 +31,7 @@ class QCP_EXPORT ColorWheel : public QWidget
     Q_PROPERTY(unsigned wheelWidth READ wheelWidth WRITE setWheelWidth NOTIFY wheelWidthChanged DESIGNABLE true )
     Q_PROPERTY(ShapeEnum selectorShape READ selectorShape WRITE setSelectorShape NOTIFY selectorShapeChanged DESIGNABLE true )
     Q_PROPERTY(bool rotatingSelector READ rotatingSelector WRITE setRotatingSelector NOTIFY rotatingSelectorChanged DESIGNABLE true )
+    Q_PROPERTY(int fixedSelectorAngle READ fixedSelectorAngle WRITE setFixedSelectorAngle NOTIFY fixedSelectorAngleChanged DESIGNABLE true )
     Q_PROPERTY(ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged DESIGNABLE true )
     Q_PROPERTY(bool mirroredSelector READ mirroredSelector WRITE setMirroredSelector NOTIFY mirroredSelectorChanged DESIGNABLE true )
     Q_PROPERTY(bool alignTop READ alignTop WRITE setAlignTop NOTIFY alignTop DESIGNABLE false )
@@ -91,6 +92,9 @@ public:
     /// Whether the internal selector should rotare in accordance with the hue
     bool rotatingSelector() const;
 
+    /// Angle for the selector when it's not rotating
+    int fixedSelectorAngle() const;
+
     /// Color space used to preview/edit the color
     ColorSpaceEnum colorSpace() const;
 
@@ -129,6 +133,9 @@ public Q_SLOTS:
     /// Sets whether the internal selector should rotare in accordance with the hue
     void setRotatingSelector(bool rotating);
 
+    // Sets the angle of the selector when it's not rotating
+    void setFixedSelectorAngle(int angle);
+
     /// Sets the color space used to preview/edit the color
     void setColorSpace(ColorSpaceEnum space);
 
@@ -157,6 +164,8 @@ Q_SIGNALS:
     void selectorShapeChanged(ShapeEnum shape);
 
     void rotatingSelectorChanged(bool rotating);
+
+    void fixedSelectorAngleChanged(int angle);
 
     void colorSpaceChanged(ColorSpaceEnum space);
 

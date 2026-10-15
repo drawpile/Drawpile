@@ -12,15 +12,14 @@ SPDX-License-Identifier: LGPL-3.0-or-later
     <x>0</x>
     <y>0</y>
     <width>491</width>
-    <height>380</height>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Select Color</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="format-fill-color">
-    <normaloff>.</normaloff>.</iconset>
+   <iconset theme="format-fill-color"/>
   </property>
   <layout class="QVBoxLayout" name="layout">
    <item>
@@ -28,7 +27,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="color_widgets::ColorWheel" name="wheel" native="true">
+        <widget class="color_widgets::ColorWheel" name="wheel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -38,7 +37,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
         </widget>
        </item>
        <item>
-        <widget class="color_widgets::ColorPreview" name="preview" native="true"/>
+        <widget class="color_widgets::ColorPreview" name="preview"/>
        </item>
       </layout>
      </item>
@@ -50,7 +49,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
           <number>255</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -74,7 +73,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
           <number>255</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -98,7 +97,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
           <number>255</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -108,7 +107,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
           <number>255</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -118,7 +117,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
           <number>255</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -156,7 +155,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
           <number>255</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -167,20 +166,6 @@ SPDX-License-Identifier: LGPL-3.0-or-later
          </property>
          <property name="maximum">
           <number>359</number>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QSpinBox" name="spin_saturation">
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QSpinBox" name="spin_value">
-         <property name="maximum">
-          <number>255</number>
          </property>
         </widget>
        </item>
@@ -215,21 +200,21 @@ SPDX-License-Identifier: LGPL-3.0-or-later
        <item row="7" column="0" colspan="3">
         <widget class="Line" name="line_alpha">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item row="3" column="0" colspan="3">
         <widget class="Line" name="line">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item row="9" column="0" colspan="3">
         <widget class="Line" name="line_3">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -250,8 +235,28 @@ SPDX-License-Identifier: LGPL-3.0-or-later
            <family>Monospace</family>
           </font>
          </property>
-         <property name="showAlpha" stdset="0">
+         <property name="showAlpha">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QDoubleSpinBox" name="spin_value">
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <double>100.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QDoubleSpinBox" name="spin_saturation">
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <double>100.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -262,7 +267,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok|QDialogButtonBox::StandardButton::Reset</set>
      </property>
     </widget>
    </item>
@@ -311,11 +316,11 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <slot>set_hsv()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>71</y>
+     <x>397</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
-     <x>537</x>
+     <x>490</x>
      <y>54</y>
     </hint>
    </hints>
@@ -327,11 +332,11 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <slot>set_hsv()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>109</y>
+     <x>397</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel">
-     <x>537</x>
+     <x>490</x>
      <y>88</y>
     </hint>
    </hints>
@@ -343,11 +348,11 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <slot>set_rgb()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>156</y>
+     <x>397</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>557</x>
+     <x>490</x>
      <y>142</y>
     </hint>
    </hints>
@@ -359,11 +364,11 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <slot>set_rgb()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>194</y>
+     <x>397</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
-     <x>538</x>
+     <x>490</x>
      <y>166</y>
     </hint>
    </hints>
@@ -375,11 +380,11 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <slot>set_rgb()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>232</y>
+     <x>397</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
-     <x>537</x>
+     <x>490</x>
      <y>205</y>
     </hint>
    </hints>
@@ -391,11 +396,11 @@ SPDX-License-Identifier: LGPL-3.0-or-later
    <slot>set_alpha()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>279</y>
+     <x>397</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
-     <x>531</x>
+     <x>490</x>
      <y>251</y>
     </hint>
    </hints>
@@ -411,40 +416,8 @@ SPDX-License-Identifier: LGPL-3.0-or-later
      <y>101</y>
     </hint>
     <hint type="destinationlabel">
-     <x>568</x>
+     <x>490</x>
      <y>106</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spin_saturation</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slide_saturation</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>461</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>416</x>
-     <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spin_value</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slide_value</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>480</x>
-     <y>91</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>416</x>
-     <y>109</y>
     </hint>
    </hints>
   </connection>
@@ -459,8 +432,8 @@ SPDX-License-Identifier: LGPL-3.0-or-later
      <y>162</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>156</y>
+     <x>397</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>
@@ -475,8 +448,8 @@ SPDX-License-Identifier: LGPL-3.0-or-later
      <y>200</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>194</y>
+     <x>397</x>
+     <y>212</y>
     </hint>
    </hints>
   </connection>
@@ -491,8 +464,8 @@ SPDX-License-Identifier: LGPL-3.0-or-later
      <y>285</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>279</y>
+     <x>397</x>
+     <y>305</y>
     </hint>
    </hints>
   </connection>
@@ -507,8 +480,8 @@ SPDX-License-Identifier: LGPL-3.0-or-later
      <y>238</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>232</y>
+     <x>397</x>
+     <y>254</y>
     </hint>
    </hints>
   </connection>
@@ -576,6 +549,38 @@ SPDX-License-Identifier: LGPL-3.0-or-later
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>spin_saturation</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ColorDialog</receiver>
+   <slot>set_sat_100(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>451</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>573</x>
+     <y>67</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_value</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>ColorDialog</receiver>
+   <slot>set_value_100(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>571</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>colorChanged(QColor)</signal>
@@ -584,5 +589,7 @@ SPDX-License-Identifier: LGPL-3.0-or-later
   <slot>setColor(QColor)</slot>
   <slot>setColorInternal(QColor)</slot>
   <slot>set_alpha()</slot>
+  <slot>set_sat_100(double)</slot>
+  <slot>set_value_100(double)</slot>
  </slots>
 </ui>

@@ -47,6 +47,7 @@ public:
     bool align_top = false;
     qreal wheel_ratio = WHEEL_RATIO_DEFAULT;
     qreal device_pixel_ratio = 1.0;
+    int fixed_selector_angle = 0;
 
     Private(ColorWheel *widget)
         : w(widget), hue(0), sat(0), val(0),
@@ -208,7 +209,7 @@ public:
                 else
                     return -hue*360-60;
             }
-            return -150;
+            return 300 + fixed_selector_angle;
         }
         else
         {
@@ -219,7 +220,7 @@ public:
                 else
                     return -hue*360-45;
             }
-            return 180;
+            return 180 + fixed_selector_angle;
         }
     }
 
@@ -227,6 +228,8 @@ public:
     void render_ring()
     {
         qreal outer = outer_radius() * device_pixel_ratio;
+        if ( outer <= 0 )
+            return;
         hue_ring = QPixmap(outer*2,outer*2);
         hue_ring.fill(Qt::transparent);
         QPainter painter(&hue_ring);

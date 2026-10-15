@@ -414,4 +414,16 @@ void ColorWheel::dropEvent(QDropEvent* event)
     }
 }
 
+int ColorWheel::fixedSelectorAngle() const
+{
+    return p->fixed_selector_angle;
+}
+
+void ColorWheel::setFixedSelectorAngle(int angle)
+{
+    p->fixed_selector_angle = angle;
+    update();
+    Q_EMIT fixedSelectorAngleChanged(angle);
+}
+
 } //  namespace color_widgets
