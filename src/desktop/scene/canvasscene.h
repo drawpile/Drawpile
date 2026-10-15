@@ -22,6 +22,7 @@ class AnnotationItem;
 class CanvasItem;
 class ColorPickItem;
 class LaserTrailItem;
+class LiquifyItem;
 class MaskPreviewItem;
 class OutlineItem;
 class PathPreviewItem;
@@ -106,6 +107,8 @@ public:
 	bool hudCursorOnCanvas() const override;
 	void hudAddItem(BaseItem *item) override;
 	void hudRemoveItem(BaseItem *item) override;
+	void hudAddObject(BaseObject *object) override;
+	void hudRemoveObject(BaseObject *object) override;
 
 public slots:
 	//! Show annotation borders
@@ -187,6 +190,7 @@ private:
 	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;
 	TransformItem *m_transform;
+	LiquifyItem *m_liquify;
 
 	OutlineItem *m_outlineItem;
 	ColorPickItem *m_colorPick = nullptr;

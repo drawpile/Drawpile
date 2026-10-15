@@ -193,6 +193,10 @@ protected:
 		KisSliderSpinBox *slider, qreal adjustment, bool wheel,
 		qreal &inOutQuickAdjustN);
 
+	static void quickAdjustBrushSizeOn(
+		KisSliderSpinBox *slider, qreal adjustment, bool wheel,
+		qreal &inOutQuickAdjustN);
+
 	static void adjustSlider(KisSliderSpinBox *slider, int value);
 
 private:

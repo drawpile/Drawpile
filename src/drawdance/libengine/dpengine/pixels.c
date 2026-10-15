@@ -6414,6 +6414,12 @@ void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
     }
 }
 
+DP_Pixel8 DP_blend_pixel8(DP_Pixel8 dst, DP_Pixel8 src, uint8_t opacity)
+{
+    DP_blend_pixels8(&dst, &src, 1, opacity);
+    return dst;
+}
+
 
 DP_Spectral DP_rgb_to_spectral(float r, float g, float b)
 {

@@ -67,10 +67,15 @@ HudHandler::HudHandler(HudScene *scene, QObject *parent)
 	m_transformActionBar = new ActionBarItem(
 		QStringLiteral("- %1 -").arg(tr("Transform")), style, font,
 		overflowAction);
+	m_liquifyActionBar = new ActionBarItem(
+		QStringLiteral("- %1 -").arg(tr("Liquify")), style, font,
+		overflowAction);
 	m_selectionActionBar->updateVisibility(false);
 	m_transformActionBar->updateVisibility(false);
-	m_scene->hudAddItem(m_selectionActionBar);
-	m_scene->hudAddItem(m_transformActionBar);
+	m_liquifyActionBar->updateVisibility(false);
+	m_scene->hudAddObject(m_selectionActionBar);
+	m_scene->hudAddObject(m_transformActionBar);
+	m_scene->hudAddObject(m_liquifyActionBar);
 	connect(
 		m_selectionActionBar->overflowMenu(), &QMenu::aboutToShow, this,
 		std::bind(&ActionBarItem::setMenuShown, m_selectionActionBar, true));
@@ -78,11 +83,17 @@ HudHandler::HudHandler(HudScene *scene, QObject *parent)
 		m_transformActionBar->overflowMenu(), &QMenu::aboutToShow, this,
 		std::bind(&ActionBarItem::setMenuShown, m_transformActionBar, true));
 	connect(
+		m_liquifyActionBar->overflowMenu(), &QMenu::aboutToShow, this,
+		std::bind(&ActionBarItem::setMenuShown, m_liquifyActionBar, true));
+	connect(
 		m_selectionActionBar->overflowMenu(), &QMenu::aboutToHide, this,
 		std::bind(&ActionBarItem::setMenuShown, m_selectionActionBar, false));
 	connect(
 		m_transformActionBar->overflowMenu(), &QMenu::aboutToHide, this,
 		std::bind(&ActionBarItem::setMenuShown, m_transformActionBar, false));
+	connect(
+		m_liquifyActionBar->overflowMenu(), &QMenu::aboutToHide, this,
+		std::bind(&ActionBarItem::setMenuShown, m_liquifyActionBar, false));
 	connect(
 		&app, &DrawpileApp::refreshApplicationStyleRequested, this,
 		&HudHandler::refreshApplicationStyle, Qt::QueuedConnection);
@@ -94,31 +105,17 @@ HudHandler::HudHandler(HudScene *scene, QObject *parent)
 void HudHandler::setCurrentActionBar(ActionBar actionBar)
 {
 	if(actionBar != m_currentActionBar) {
-		switch(m_currentActionBar) {
-		case ActionBar::None:
-			break;
-		case ActionBar::Selection:
-			m_selectionActionBar->updateVisibility(false);
-			m_selectionActionBar->setMenuShown(false);
-			m_selectionActionBar->removeHover();
-			break;
-		case ActionBar::Transform:
-			m_transformActionBar->updateVisibility(false);
-			m_selectionActionBar->setMenuShown(false);
-			m_transformActionBar->removeHover();
-			break;
+		drawingboard::ActionBarItem *abi = currentActionBarItem();
+		if(abi) {
+			abi->updateVisibility(false);
+			abi->setMenuShown(false);
+			abi->removeHover();
 		}
 
 		m_currentActionBar = actionBar;
-		switch(actionBar) {
-		case ActionBar::None:
-			break;
-		case ActionBar::Selection:
-			m_selectionActionBar->updateVisibility(true);
-			break;
-		case ActionBar::Transform:
-			m_transformActionBar->updateVisibility(true);
-			break;
+		abi = currentActionBarItem();
+		if(abi) {
+			abi->updateVisibility(true);
 		}
 
 		updateItemsPositions();
@@ -150,15 +147,9 @@ HudAction HudHandler::checkHover(const QPointF &scenePos)
 {
 	HudAction action;
 
-	switch(m_currentActionBar) {
-	case ActionBar::None:
-		break;
-	case ActionBar::Selection:
-		m_selectionActionBar->checkHover(scenePos, action);
-		break;
-	case ActionBar::Transform:
-		m_transformActionBar->checkHover(scenePos, action);
-		break;
+	ActionBarItem *abi = currentActionBarItem();
+	if(abi) {
+		abi->checkHover(scenePos, action);
 	}
 
 	for(ToggleItem *ti : m_toggleItems) {
@@ -195,6 +186,8 @@ void HudHandler::activateHudAction(
 			m_selectionActionBar->setMenuShown(true);
 		} else if(action.menu == m_transformActionBar->overflowMenu()) {
 			m_transformActionBar->setMenuShown(true);
+		} else if(action.menu == m_liquifyActionBar->overflowMenu()) {
+			m_liquifyActionBar->setMenuShown(true);
 		} else if(action.menu == m_lockStatus->overflowMenu()) {
 			m_lockStatus->setMenuShown(true);
 		}
@@ -482,32 +475,36 @@ void HudHandler::updateItemsPositions()
 		updateStreamResetNoticePosition();
 	}
 
-	switch(m_currentActionBar) {
-	case ActionBar::None:
-		break;
-	case ActionBar::Selection:
-		updateSelectionActionBarPosition();
-		break;
-	case ActionBar::Transform:
-		updateTransformActionBarPosition();
-		break;
+	ActionBarItem *abi = currentActionBarItem();
+	if(abi) {
+		updateActionBarPosition(abi);
 	}
 
 	updateToggleItemsPositions();
 }
 
+drawingboard::ActionBarItem *HudHandler::currentActionBarItem()
+{
+	switch(m_currentActionBar) {
+	case ActionBar::None:
+		return nullptr;
+	case ActionBar::Selection:
+		return m_selectionActionBar;
+	case ActionBar::Transform:
+		return m_transformActionBar;
+	case ActionBar::Liquify:
+		return m_liquifyActionBar;
+	}
+	Q_UNREACHABLE();
+}
+
 QPointF HudHandler::adjustAroundActionBar(const QPointF &pos, int location)
 {
 	if(location == m_actionBarLocation) {
-		switch(m_currentActionBar) {
-		case ActionBar::None:
-			break;
-		case ActionBar::Selection:
+		drawingboard::ActionBarItem *abi = currentActionBarItem();
+		if(abi) {
 			return adjustByActionBarHeight(
-				pos, location, m_selectionActionBar->boundingRect().height());
-		case ActionBar::Transform:
-			return adjustByActionBarHeight(
-				pos, location, m_transformActionBar->boundingRect().height());
+				pos, location, abi->boundingRect().height());
 		}
 	}
 	return pos;
@@ -527,15 +524,9 @@ QPointF HudHandler::adjustByActionBarHeight(
 
 void HudHandler::removeActionBarHover()
 {
-	switch(m_currentActionBar) {
-	case ActionBar::None:
-		break;
-	case ActionBar::Selection:
-		m_selectionActionBar->removeHover();
-		break;
-	case ActionBar::Transform:
-		m_transformActionBar->removeHover();
-		break;
+	drawingboard::ActionBarItem *abi = currentActionBarItem();
+	if(abi) {
+		abi->removeHover();
 	}
 }
 
@@ -602,16 +593,9 @@ void HudHandler::updateStreamResetNoticePosition()
 		adjustAroundActionBar(pos, int(ActionBarItem::Location::BottomRight)));
 }
 
-void HudHandler::updateSelectionActionBarPosition()
+void HudHandler::updateActionBarPosition(drawingboard::ActionBarItem *abi)
 {
-	m_selectionActionBar->updateLocation(
-		ActionBarItem::Location(m_actionBarLocation), m_scene->hudSceneRect(),
-		m_topOffset);
-}
-
-void HudHandler::updateTransformActionBarPosition()
-{
-	m_transformActionBar->updateLocation(
+	abi->updateLocation(
 		ActionBarItem::Location(m_actionBarLocation), m_scene->hudSceneRect(),
 		m_topOffset);
 }
@@ -653,6 +637,7 @@ void HudHandler::refreshApplicationStyle()
 	m_lockStatus->setStyle(style);
 	m_selectionActionBar->setStyle(style);
 	m_transformActionBar->setStyle(style);
+	m_liquifyActionBar->setStyle(style);
 }
 
 void HudHandler::refreshApplicationFont()
@@ -661,6 +646,7 @@ void HudHandler::refreshApplicationFont()
 	m_lockStatus->setFont(font);
 	m_selectionActionBar->setFont(font);
 	m_transformActionBar->setFont(font);
+	m_liquifyActionBar->setFont(font);
 }
 
 QString HudHandler::getStreamResetProgressText(int percent)

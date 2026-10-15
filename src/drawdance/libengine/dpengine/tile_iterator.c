@@ -25,33 +25,48 @@
 #include <dpcommon/geom.h>
 
 
+DP_Rect DP_tile_area_make(DP_Rect pixel_area)
+{
+    DP_ASSERT(DP_rect_valid(pixel_area));
+    int x = DP_rect_x(pixel_area);
+    int y = DP_rect_y(pixel_area);
+    int col = DP_tile_coord_from_pixel(x);
+    int row = DP_tile_coord_from_pixel(y);
+    int xd = x - col * DP_TILE_SIZE;
+    int yd = y - row * DP_TILE_SIZE;
+    return DP_rect_make(col, row,
+                        DP_tile_size_round_up(DP_rect_width(pixel_area) + xd),
+                        DP_tile_size_round_up(DP_rect_height(pixel_area) + yd));
+}
+
+
 DP_TileIterator DP_tile_iterator_make(int canvas_width, int canvas_height,
                                       DP_Rect dst)
 {
     DP_Rect canvas = DP_rect_make(0, 0, canvas_width, canvas_height);
-    DP_Rect area = DP_rect_intersection(canvas, dst);
+    return DP_tile_iterator_make_with(dst, &canvas);
+}
+
+DP_TileIterator DP_tile_iterator_make_with(DP_Rect dst, DP_Rect *canvas_or_null)
+{
+    DP_Rect area;
+    if (canvas_or_null) {
+        area = DP_rect_intersection(*canvas_or_null, dst);
+    }
+    else {
+        area = dst;
+    }
+
     if (DP_rect_valid(area)) {
-        int x = DP_rect_x(area);
-        int y = DP_rect_y(area);
-        int col = x / DP_TILE_SIZE;
-        int row = y / DP_TILE_SIZE;
-        int xd = x - col * DP_TILE_SIZE;
-        int yd = y - row * DP_TILE_SIZE;
-        DP_Rect tile_area = DP_rect_make(
-            col, row, DP_tile_size_round_up(DP_rect_width(area) + xd),
-            DP_tile_size_round_up(DP_rect_height(area) + yd));
-        return (DP_TileIterator){canvas,
-                                 dst,
-                                 area,
-                                 tile_area,
+        DP_Rect tile_area = DP_tile_area_make(area);
+        return (DP_TileIterator){dst, area, tile_area,
                                  DP_rect_left(tile_area) - 1,
                                  DP_rect_top(tile_area)};
     }
     else {
-        return (DP_TileIterator){
-            canvas,  dst,
-            area,    (DP_Rect){INT_MAX, INT_MAX, INT_MIN, INT_MIN},
-            INT_MAX, INT_MAX};
+        return (DP_TileIterator){dst, area,
+                                 (DP_Rect){INT_MAX, INT_MAX, INT_MIN, INT_MIN},
+                                 INT_MAX, INT_MAX};
     }
 }
 

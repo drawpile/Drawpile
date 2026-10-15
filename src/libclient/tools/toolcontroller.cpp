@@ -20,6 +20,7 @@ extern "C" {
 #include "libclient/tools/inspector.h"
 #include "libclient/tools/laser.h"
 #include "libclient/tools/lassofill.h"
+#include "libclient/tools/liquify.h"
 #include "libclient/tools/magicwand.h"
 #include "libclient/tools/pan.h"
 #include "libclient/tools/rotation.h"
@@ -97,6 +98,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new RotationTool(*this));
 	registerTool(new Inspector(*this));
 	registerTool(new TransformTool(*this));
+	registerTool(new LiquifyTool(*this));
 	DP_mask_sync_decref(ms);
 
 #if !defined(QT_NO_DEBUG) || defined(QT_FORCE_ASSERTS)
@@ -156,6 +158,11 @@ Tool *ToolController::getTool(Tool::Type type)
 TransformTool *ToolController::transformTool()
 {
 	return static_cast<TransformTool *>(m_toolbox[Tool::TRANSFORM]);
+}
+
+LiquifyTool *ToolController::liquifyTool()
+{
+	return static_cast<LiquifyTool *>(m_toolbox[Tool::LIQUIFY]);
 }
 
 void ToolController::finishActiveTool()
@@ -393,17 +400,24 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	connect(
 		m_model->selection(), &canvas::SelectionModel::selectionChanged, this,
 		&ToolController::updateSelection);
+
+	canvas::TransformModel *transform = m_model->transform();
 	connect(
-		m_model->transform(), &canvas::TransformModel::transformChanged, this,
+		transform, &canvas::TransformModel::transformChanged, this,
 		&ToolController::updateTransformPreview);
 	connect(
-		m_model->transform(), &canvas::TransformModel::transformCut, this,
+		transform, &canvas::TransformModel::transformCut, this,
 		&ToolController::setTransformCutPreview);
 	connect(
-		m_model->transform(), &canvas::TransformModel::transformCutCleared,
-		this, &ToolController::clearTransformCutPreview);
+		transform, &canvas::TransformModel::transformCutCleared, this,
+		&ToolController::clearTransformCutPreview);
+	connect(
+		transform, &canvas::TransformModel::liquifyCancelRequested, this,
+		&ToolController::cancelLiquify, Qt::QueuedConnection);
 	m_model->setTransformInterpolation(m_transformInterpolation);
-	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
+	transform->setPreviewAccurate(m_transformPreviewAccurate);
+	transform->setLiquifyInterpolation(m_liquifyInterpolation);
+
 	updateSelection();
 	updateSelectionMaskingEnabled(m_model->isCompatibilityMode());
 	emit modelChanged(model);
@@ -513,6 +527,13 @@ void ToolController::clearTransformPreviews()
 	}
 }
 
+void ToolController::cancelLiquify()
+{
+	if(m_model && m_activeTool == m_toolbox[Tool::LIQUIFY]) {
+		m_activeTool->cancelMultipart();
+	}
+}
+
 void ToolController::setGlobalSmoothing(int smoothing)
 {
 	if(m_globalSmoothing != smoothing) {
@@ -559,6 +580,17 @@ void ToolController::setTransformParams(bool accurate, int interpolation)
 	}
 }
 
+
+void ToolController::setLiquifyParams(int interpolation)
+{
+	if(interpolation != m_liquifyInterpolation) {
+		m_liquifyInterpolation = interpolation;
+		if(m_model) {
+			m_model->transform()->setLiquifyInterpolation(interpolation);
+		}
+		updateTransformPreview();
+	}
+}
 void ToolController::setBrushSizeLimit(int brushSizeLimit)
 {
 	for(Tool *tool : m_toolbox) {
@@ -780,6 +812,25 @@ void ToolController::setStrokeEngineParams(
 	};
 	fillStabilizerVelocityParams(sesp);
 	se.setParams(sesp);
+}
+
+void ToolController::setLiquifyWorkerStrokeParams(
+	drawdance::LiquifyWorker &lw, qreal size, qreal amount, qreal hardness,
+	qreal spacing, bool sizePressure, bool amountPressure,
+	bool hardnessPressure)
+{
+	lw.setStrokeParams({
+		float(size),
+		float(amount),
+		float(hardness),
+		float(spacing),
+		qBound(0, m_globalSmoothing, MAX_SMOOTHING),
+		sizePressure,
+		amountPressure,
+		hardnessPressure,
+		m_interpolateInputs,
+		true,
+	});
 }
 
 void ToolController::executeAsync(Task *task)

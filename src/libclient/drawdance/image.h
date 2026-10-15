@@ -9,7 +9,7 @@ typedef union DP_Pixel8 DP_Pixel8;
 namespace drawdance {
 
 QImage wrapImage(DP_Image *img);
-
+QImage wrapImageUint32(int width, int height, uint32_t *pixels);
 QImage wrapPixels8(int width, int height, DP_Pixel8 *pixels);
 
 QColor sampleColorAt(

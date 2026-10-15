@@ -45,8 +45,8 @@ public:
 	bool isSquare() const override { return true; }
 	bool requiresOutline() const override { return true; }
 
-	void setAction(QAction *starttransform);
-	void setActionEnabled(bool enabled);
+	void setActions(QAction *starttransform, QAction *startliquify);
+	void setActionsEnabled(bool enabled);
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
@@ -97,6 +97,7 @@ private:
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
 	QPushButton *m_startTransformButton = nullptr;
+	QPushButton *m_startLiquifyButton = nullptr;
 	int m_toleranceBeforeDrag = -1;
 	bool m_isMagicWand = false;
 };

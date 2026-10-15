@@ -15,7 +15,8 @@ struct HudAction;
 
 namespace drawingboard {
 
-class ActionBarItem final : public BaseItem {
+class ActionBarItem final : public BaseObject {
+	Q_OBJECT
 public:
 	enum { Type = ActionBarType };
 
@@ -32,11 +33,14 @@ public:
 		QAction *action;
 		QString text;
 		QIcon icon;
+		bool grouped;
 
 		explicit Button(QAction *act);
-		Button(QAction *act, const QString &txt);
-		Button(QAction *act, const QIcon &icn);
-		Button(QAction *act, const QString &txt, const QIcon &icn);
+		Button(QAction *act, const QString &txt, bool grp = false);
+		Button(QAction *act, const QIcon &icn, bool grp = false);
+		Button(
+			QAction *act, const QString &txt, const QIcon &icn,
+			bool grp = false);
 	};
 
 	ActionBarItem(

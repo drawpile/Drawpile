@@ -11,6 +11,7 @@ class QAction;
 namespace drawingboard {
 class ActionBarItem;
 class BaseItem;
+class BaseObject;
 class CatchupItem;
 class NoticeItem;
 class StatusItem;
@@ -28,6 +29,9 @@ public:
 
 	virtual void hudAddItem(drawingboard::BaseItem *item) = 0;
 	virtual void hudRemoveItem(drawingboard::BaseItem *item) = 0;
+
+	virtual void hudAddObject(drawingboard::BaseObject *object) = 0;
+	virtual void hudRemoveObject(drawingboard::BaseObject *object) = 0;
 };
 
 class HudHandler final : public QObject {
@@ -37,6 +41,7 @@ public:
 		None,
 		Selection,
 		Transform,
+		Liquify,
 	};
 
 	explicit HudHandler(HudScene *scene, QObject *parent = nullptr);
@@ -54,6 +59,11 @@ public:
 	drawingboard::ActionBarItem *transformActionBar()
 	{
 		return m_transformActionBar;
+	}
+
+	drawingboard::ActionBarItem *liquifyActionBar()
+	{
+		return m_liquifyActionBar;
 	}
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
@@ -93,6 +103,8 @@ private:
 	static constexpr qreal NOTICE_PERSIST = 1.0;
 	static constexpr qreal POPUP_PERSIST = 3.0;
 
+	drawingboard::ActionBarItem *currentActionBarItem();
+
 	QPointF adjustAroundActionBar(const QPointF &pos, int location);
 
 	static QPointF
@@ -106,8 +118,7 @@ private:
 	void updatePopupNoticePosition();
 	void updateCatchupPosition();
 	void updateStreamResetNoticePosition();
-	void updateSelectionActionBarPosition();
-	void updateTransformActionBarPosition();
+	void updateActionBarPosition(drawingboard::ActionBarItem *abi);
 	void updateToggleItemsPositions();
 	void updateLayerTitlePosition(const QPointF &cursorPos);
 
@@ -128,6 +139,7 @@ private:
 	drawingboard::NoticeItem *m_streamResetNotice = nullptr;
 	drawingboard::ActionBarItem *m_selectionActionBar = nullptr;
 	drawingboard::ActionBarItem *m_transformActionBar = nullptr;
+	drawingboard::ActionBarItem *m_liquifyActionBar = nullptr;
 	drawingboard::TitleItem *m_layerTitle = nullptr;
 	QVector<drawingboard::ToggleItem *> m_toggleItems;
 	QString m_currentLayerTitle;

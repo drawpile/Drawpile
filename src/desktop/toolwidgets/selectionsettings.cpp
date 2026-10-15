@@ -153,22 +153,33 @@ int SelectionSettings::getSize() const
 	}
 }
 
-void SelectionSettings::setAction(QAction *starttransform)
+void SelectionSettings::setActions(
+	QAction *starttransform, QAction *startliquify)
 {
 	Q_ASSERT(m_startTransformButton);
-	m_startTransformButton->setIcon(starttransform->icon());
-	m_startTransformButton->setText(starttransform->text());
-	m_startTransformButton->setStatusTip(starttransform->statusTip());
-	m_startTransformButton->setToolTip(starttransform->statusTip());
-	connect(
-		m_startTransformButton, &QPushButton::clicked, starttransform,
-		&QAction::trigger);
+	Q_ASSERT(m_startLiquifyButton);
+
+	QPair<QAction *, QPushButton *> pairs[] = {
+		{starttransform, m_startTransformButton},
+		{startliquify, m_startLiquifyButton},
+	};
+	for(QPair<QAction *, QPushButton *> p : pairs) {
+		QAction *action = p.first;
+		QPushButton *button = p.second;
+		button->setIcon(action->icon());
+		button->setText(action->text());
+		button->setStatusTip(action->statusTip());
+		button->setToolTip(action->statusTip());
+		connect(button, &QPushButton::clicked, action, &QAction::trigger);
+	}
 }
 
-void SelectionSettings::setActionEnabled(bool enabled)
+void SelectionSettings::setActionsEnabled(bool enabled)
 {
 	Q_ASSERT(m_startTransformButton);
+	Q_ASSERT(m_startLiquifyButton);
 	m_startTransformButton->setEnabled(enabled);
+	m_startLiquifyButton->setEnabled(enabled);
 }
 
 void SelectionSettings::pushSettings()
@@ -579,6 +590,10 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_startTransformButton = new QPushButton;
 	m_startTransformButton->setEnabled(false);
 	layout->addWidget(m_startTransformButton);
+
+	m_startLiquifyButton = new QPushButton;
+	m_startLiquifyButton->setEnabled(false);
+	layout->addWidget(m_startLiquifyButton);
 
 	layout->addStretch();
 

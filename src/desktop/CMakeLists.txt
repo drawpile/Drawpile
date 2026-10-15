@@ -73,6 +73,7 @@ target_sources(drawpile PRIVATE
 	cursors/eraser.png
 	cursors/layerpicker.png
 	cursors/line.png
+	cursors/liquify.png
 	cursors/rectangle.png
 	cursors/rotate.png
 	cursors/rotate-discrete.png
@@ -292,6 +293,8 @@ target_sources(drawpile PRIVATE
 	scene/hudhandler.h
 	scene/lasertrailitem.cpp
 	scene/lasertrailitem.h
+	scene/liquifyitem.cpp
+	scene/liquifyitem.h
 	scene/maskpreviewitem.cpp
 	scene/maskpreviewitem.h
 	scene/noticeitem.cpp
@@ -330,6 +333,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/lasersettings.h
 	toolwidgets/lassofillsettings.cpp
 	toolwidgets/lassofillsettings.h
+	toolwidgets/liquifysettings.cpp
+	toolwidgets/liquifysettings.h
 	toolwidgets/pansettings.cpp
 	toolwidgets/pansettings.h
 	toolwidgets/rotationsettings.cpp

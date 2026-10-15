@@ -18,28 +18,29 @@ ActionBarItem::Button::Button(QAction *act)
 {
 }
 
-ActionBarItem::Button::Button(QAction *act, const QString &txt)
-	: Button(act, txt, act->icon())
+ActionBarItem::Button::Button(QAction *act, const QString &txt, bool grp)
+	: Button(act, txt, act->icon(), grp)
 {
 }
 
-ActionBarItem::Button::Button(QAction *act, const QIcon &icn)
-	: Button(act, utils::scrubAccelerators(act->text()), icn)
+ActionBarItem::Button::Button(QAction *act, const QIcon &icn, bool grp)
+	: Button(act, utils::scrubAccelerators(act->text()), icn, grp)
 {
 }
 
 ActionBarItem::Button::Button(
-	QAction *act, const QString &txt, const QIcon &icn)
+	QAction *act, const QString &txt, const QIcon &icn, bool grp)
 	: action(act)
 	, text(txt)
 	, icon(icn)
+	, grouped(grp)
 {
 }
 
 ActionBarItem::ActionBarItem(
 	const QString &title, const QStyle *style, const QFont &font,
 	QAction *overflowAction, QGraphicsItem *parent)
-	: BaseItem(parent)
+	: BaseObject(parent)
 	, m_title(title)
 	, m_overflowAction(overflowAction)
 	, m_overflowMenu(new QMenu)
@@ -92,6 +93,14 @@ void ActionBarItem::setFont(const QFont &font)
 
 void ActionBarItem::setButtons(const QVector<Button> &buttons)
 {
+	for(const Button &button : m_buttons) {
+		disconnect(
+			button.action, &QAction::toggled, this, &ActionBarItem::refresh);
+	}
+	for(const Button &button : buttons) {
+		connect(
+			button.action, &QAction::toggled, this, &ActionBarItem::refresh);
+	}
 	m_buttons = buttons;
 	m_buttons.append(Button(m_overflowAction));
 	updateBounds();
@@ -213,6 +222,18 @@ void ActionBarItem::paint(
 		painter->drawRect(m_bounds);
 	}
 
+	int buttonCount = m_buttons.size();
+	painter->setBrush(pal.highlight());
+	painter->setPen(Qt::NoPen);
+	painter->setOpacity(hoveredIndex == -1 ? 0.5 : 0.3);
+	for(int i = 0; i < buttonCount; ++i) {
+		if(m_buttons[i].action->isChecked()) {
+			painter->drawRect(QRectF(
+				m_bounds.x() + buttonSize * qreal(i), buttonsRect.top(),
+				buttonSize, buttonSize));
+		}
+	}
+
 	QString text;
 	if(hoveredIndex != -1) {
 		text = m_buttons[hoveredIndex].text;
@@ -237,20 +258,24 @@ void ActionBarItem::paint(
 		painter->drawText(textRect, text, textOption);
 	}
 
-	int buttonCount = m_buttons.size();
 	qreal buttonInnerSize = qreal(m_buttonInnerSize);
 	for(int i = 0; i < buttonCount; ++i) {
 		QRectF iconRect(
 			m_bounds.x() + qreal(i) * buttonSize + pad, buttonsRect.top() + pad,
 			buttonInnerSize, buttonInnerSize);
+		if(m_buttons[i].grouped) {
+			iconRect = iconRect.marginsRemoved(QMarginsF(pad, pad, pad, pad));
+		}
 		painter->setOpacity(i == hoveredIndex ? 1.0 : 0.5);
 		m_buttons[i].icon.paint(painter, iconRect.toRect());
 	}
 
 	painter->setOpacity(0.5);
 	for(int i = 1; i < buttonCount; ++i) {
-		qreal x = m_bounds.x() + qreal(i) * buttonSize;
-		painter->drawLine(x, buttonsRect.top(), x, buttonsRect.bottom());
+		if(!m_buttons[i - 1].grouped || !m_buttons[i].grouped) {
+			qreal x = m_bounds.x() + qreal(i) * buttonSize;
+			painter->drawLine(x, buttonsRect.top(), x, buttonsRect.bottom());
+		}
 	}
 }
 

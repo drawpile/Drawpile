@@ -130,6 +130,7 @@ public:
 	ActionBuilder &statusTip(const QString &tip)
 	{
 		m_action->setStatusTip(tip);
+		m_action->setToolTip(tip);
 		return *this;
 	}
 

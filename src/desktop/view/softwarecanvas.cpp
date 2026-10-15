@@ -174,6 +174,11 @@ void SoftwareCanvas::handlePaint(QPaintEvent *event)
 	paintEvent(event);
 }
 
+void SoftwareCanvas::setCanvasModel(canvas::CanvasModel *canvas)
+{
+	Q_UNUSED(canvas); // Only used by the hardware renderer.
+}
+
 void SoftwareCanvas::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);

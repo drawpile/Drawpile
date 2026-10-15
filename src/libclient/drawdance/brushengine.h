@@ -24,6 +24,8 @@ namespace drawdance {
 
 class CanvasState;
 
+DP_BrushPoint canvasPointToBrushPoint(const canvas::Point &point);
+
 class StrokeEngine final {
 public:
 	using PushPointFn = std::function<void(
@@ -118,6 +120,37 @@ private:
 	PollControlFn m_pollControl;
 	SyncFn m_sync;
 	DP_BrushEngine *m_data;
+};
+
+class LiquifyEngine final {
+public:
+	LiquifyEngine();
+	~LiquifyEngine();
+
+	LiquifyEngine(const LiquifyEngine &) = delete;
+	LiquifyEngine(LiquifyEngine &&) = delete;
+	LiquifyEngine &operator=(const LiquifyEngine &) = delete;
+	LiquifyEngine &operator=(LiquifyEngine &&) = delete;
+
+	void setParams(const DP_LiquifyEngineStrokeParams &params);
+
+	bool hasDabs() const { return !m_dabs.isEmpty(); }
+
+	const QVector<DP_LiquifyEngineDab> &dabs() const { return m_dabs; }
+
+	void clearDabs() { m_dabs.clear(); }
+
+	void beginStroke(float zoom);
+
+	void strokeTo(const canvas::Point &point, unsigned int flags);
+
+	void endStroke(long long timeMsec);
+
+private:
+	static void pushDab(void *user, DP_LiquifyEngineDab dab);
+
+	QVector<DP_LiquifyEngineDab> m_dabs;
+	DP_LiquifyEngine *m_data;
 };
 
 }

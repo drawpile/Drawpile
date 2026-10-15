@@ -8,6 +8,10 @@ class QPaintEvent;
 class QResizeEvent;
 class QWidget;
 
+namespace canvas {
+class CanvasModel;
+}
+
 namespace view {
 
 class CanvasController;
@@ -26,6 +30,8 @@ public:
 
 	virtual void handleResize(QResizeEvent *event) = 0;
 	virtual void handlePaint(QPaintEvent *event) = 0;
+
+	virtual void setCanvasModel(canvas::CanvasModel *canvas) = 0;
 };
 
 }
