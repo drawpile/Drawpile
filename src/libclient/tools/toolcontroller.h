@@ -33,6 +33,7 @@ class Client;
 
 namespace tools {
 
+class CropTool;
 class LiquifyTool;
 class Tool;
 class TransformTool;
@@ -199,8 +200,9 @@ public:
 	net::Client *client() const { return m_client; }
 
 	Tool *getTool(Tool::Type type);
-	TransformTool *transformTool();
+	CropTool *cropTool();
 	LiquifyTool *liquifyTool();
+	TransformTool *transformTool();
 
 	//! Is there a multipart drawing operation in progress?
 	bool isMultipartDrawing() const;
@@ -313,6 +315,8 @@ signals:
 	void activeBrushChanged(const brushes::ActiveBrush &);
 	bool selectionEditActiveChanged(bool selectionEditActive);
 	void transformToolStateChanged(int mode, int handle, bool dragging);
+	void cropAreaChanged(QRect cropArea);
+	void cropColorChanged(const QColor &cropColor);
 	void modelChanged(canvas::CanvasModel *model);
 	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);

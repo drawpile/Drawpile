@@ -33,6 +33,9 @@ public:
 		QFlags<view::Lock::Reason> reasons, const QStringList &descriptions,
 		const QVector<QAction *> &actions);
 
+Q_SIGNALS:
+	void cropAreaChanged(QRect cropArea);
+
 protected:
 	TouchHandler *touchHandler() const override;
 

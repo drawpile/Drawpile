@@ -35,6 +35,7 @@ public:
 		StatusType = QGraphicsItem::UserType + 26,
 		TitleType = QGraphicsItem::UserType + 27,
 		LiquifyType = QGraphicsItem::UserType + 28,
+		CropType = QGraphicsItem::UserType + 28,
 	};
 
 	static constexpr qreal Z_USER_MARKER = 999.0;

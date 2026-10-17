@@ -5,6 +5,7 @@ extern "C" {
 #include "desktop/scene/anchorlineitem.h"
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/colorpickitem.h"
+#include "desktop/scene/cropitem.h"
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/liquifyitem.h"
 #include "desktop/scene/maskpreviewitem.h"
@@ -37,6 +38,7 @@ CanvasScene::CanvasScene(bool software, QObject *parent)
 	, m_hud(new HudHandler(this, this))
 	, m_software(software)
 	, m_colorPickVisibility(ColorPickRenderer::defaultVisibility())
+	, m_cropGuides(CropItem::defaultGuides())
 {
 	m_canvasGroup = new QGraphicsItemGroup;
 	addItem(m_canvasGroup);
@@ -135,6 +137,9 @@ void CanvasScene::setZoom(qreal zoom)
 		}
 		if(m_transform) {
 			m_transform->setZoom(zoom);
+		}
+		if(m_crop) {
+			m_crop->setZoom(zoom);
 		}
 	}
 }
@@ -457,6 +462,27 @@ void CanvasScene::setTransformToolState(int mode, int handle, bool dragging)
 {
 	if(m_transform) {
 		m_transform->setToolState(mode, handle, dragging);
+	}
+}
+
+void CanvasScene::setCropArea(QRect cropArea)
+{
+	if(cropArea.isEmpty()) {
+		delete m_crop;
+		m_crop = nullptr;
+	} else if(m_crop) {
+		m_crop->setRect(cropArea);
+	} else {
+		m_crop = new CropItem(cropArea, m_cropGuides, m_zoom, m_canvasGroup);
+		m_crop->setUpdateSceneOnRefresh(true);
+	}
+}
+
+void CanvasScene::setCropGuides(int cropGuides)
+{
+	m_cropGuides = cropGuides;
+	if(m_crop) {
+		m_crop->setGuides(cropGuides);
 	}
 }
 

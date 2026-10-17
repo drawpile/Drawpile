@@ -229,6 +229,12 @@ public:
 	void setConnectionNotification(bool value) override;
 #endif
 
+	QColor getCropColor() const override;
+	void setCropColor(const QColor &value) override;
+
+	int getCropGuides() const override;
+	void setCropGuides(int value) override;
+
 	QVector<QVariantMap> getCurvesPresets() const override;
 	void setCurvesPresets(const QVector<QVariantMap> &value) override;
 

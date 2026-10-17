@@ -187,6 +187,12 @@ SETTING(
 	config::Config::defaultConnectionNotification())
 #endif
 SETTING(
+	cropColor, CropColor, "settings/cropcolor",
+	config::Config::defaultCropColor())
+SETTING(
+	cropGuides, CropGuides, "settings/cropguides",
+	config::Config::defaultCropGuides())
+SETTING(
 	curvesPresets, CurvesPresets, "curves/presets",
 	config::Config::defaultCurvesPresets())
 SETTING_GETSET(

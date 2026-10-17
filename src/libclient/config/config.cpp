@@ -377,6 +377,16 @@ bool Config::defaultConnectionNotification()
 }
 #endif
 
+QColor Config::defaultCropColor()
+{
+	return QColor(0, 0, 0, 160);
+}
+
+int Config::defaultCropGuides()
+{
+	return int(view::CropGuides::None);
+}
+
 QVector<QVariantMap> Config::defaultCurvesPresets()
 {
 	return QVector<QVariantMap>();

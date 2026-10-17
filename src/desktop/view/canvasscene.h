@@ -25,6 +25,7 @@ class AnchorLineItem;
 class AnnotationItem;
 class BaseItem;
 class ColorPickItem;
+class CropItem;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 class CursorItem;
 #endif
@@ -48,6 +49,7 @@ class CanvasScene final : public QGraphicsScene, public HudScene {
 	using BaseObject = drawingboard::BaseObject;
 	using CatchupItem = drawingboard::CatchupItem;
 	using ColorPickItem = drawingboard::ColorPickItem;
+	using CropItem = drawingboard::CropItem;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	using CursorItem = drawingboard::CursorItem;
 #endif
@@ -113,6 +115,9 @@ public:
 
 	void setTransformToolState(int mode, int handle, bool dragging);
 
+	void setCropArea(QRect cropArea);
+	void setCropGuides(int cropGuides);
+
 	HudHandler *hud() { return m_hud; }
 	QRectF hudSceneRect() const override;
 	QPointF hudCursorPos() const override;
@@ -164,6 +169,7 @@ private:
 	bool m_showSelectionMask = false;
 	int m_userMarkerPersistence = 1000;
 	int m_colorPickVisibility;
+	int m_cropGuides;
 	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;
 	QString m_currentLayerTitle;
@@ -176,6 +182,7 @@ private:
 	SelectionItem *m_selection = nullptr;
 	TransformItem *m_transform = nullptr;
 	LiquifyItem *m_liquify = nullptr;
+	CropItem *m_crop = nullptr;
 	OutlineItem *m_outline = nullptr;
 	ColorPickItem *m_colorPick = nullptr;
 	QColor m_foregroundColor;

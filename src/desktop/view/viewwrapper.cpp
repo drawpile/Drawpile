@@ -46,6 +46,7 @@ ViewWrapper::ViewWrapper(bool useOpenGl, QWidget *parent)
 	CFG_BIND_SET(
 		cfg, SamplingRingVisibility, m_scene,
 		CanvasScene::setColorPickVisibility);
+	CFG_BIND_SET(cfg, CropGuides, m_scene, CanvasScene::setCropGuides);
 }
 
 QAbstractScrollArea *ViewWrapper::viewWidget() const
@@ -361,6 +362,12 @@ void ViewWrapper::connectDocument(Document *doc)
 	connect(
 		toolCtrl, &tools::ToolController::transformToolStateChanged, m_scene,
 		&CanvasScene::setTransformToolState);
+	connect(
+		toolCtrl, &tools::ToolController::cropAreaChanged, m_scene,
+		&CanvasScene::setCropArea);
+	connect(
+		toolCtrl, &tools::ToolController::cropAreaChanged, m_controller,
+		&CanvasController::cropAreaChanged);
 	connect(
 		toolCtrl, &tools::ToolController::toolStateChanged, m_controller,
 		&CanvasController::setToolState, Qt::QueuedConnection);

@@ -114,6 +114,14 @@ enum class SamplingRingVisibility : int {
 };
 Q_ENUM_NS(SamplingRingVisibility)
 
+enum class CropGuides : int {
+	None,
+	Thirds,
+	Fifths,
+	Plus,
+};
+Q_ENUM_NS(CropGuides)
+
 }
 
 #endif
