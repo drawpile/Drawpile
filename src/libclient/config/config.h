@@ -532,6 +532,14 @@ public:
 	static bool defaultConnectionNotification();
 #endif
 
+	virtual QColor getCropColor() const = 0;
+	virtual void setCropColor(const QColor &value) = 0;
+	static QColor defaultCropColor();
+
+	virtual int getCropGuides() const = 0;
+	virtual void setCropGuides(int value) = 0;
+	static int defaultCropGuides();
+
 	virtual QVector<QVariantMap> getCurvesPresets() const = 0;
 	virtual void setCurvesPresets(const QVector<QVariantMap> &value) = 0;
 	static QVector<QVariantMap> defaultCurvesPresets();
@@ -1449,6 +1457,8 @@ Q_SIGNALS:
 #if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
 	void changeConnectionNotification(bool value);
 #endif
+	void changeCropColor(const QColor &value);
+	void changeCropGuides(int value);
 	void changeCurvesPresets(const QVector<QVariantMap> &value);
 	void changeDebounceDelayMs(int value);
 	void changeDefaultSaveFileNameTemplate(const QString &value);

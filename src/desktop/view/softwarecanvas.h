@@ -36,11 +36,13 @@ protected:
 private:
 	void setCheckerColor1(const QColor &checkerColor1);
 	void setCheckerColor2(const QColor &checkerColor2);
+	void setCropColor(const QColor cropColor);
 	void setRenderUpdateFull(bool renderUpdateFull);
 	void onControllerTransformChanged();
 	void onControllerOutlineChanged();
 	void onControllerTileCacheDirtyCheckNeeded();
 	void onSceneChanged(const QList<QRectF> &region);
+	void onCropAreaChanged(QRect cropArea);
 
 	struct Private;
 	Private *d;

@@ -853,6 +853,32 @@ void MemoryConfig::setConnectionNotification(bool value)
 }
 #endif
 
+QColor MemoryConfig::getCropColor() const
+{
+	return m_cropColor;
+}
+
+void MemoryConfig::setCropColor(const QColor &value)
+{
+	if(value != m_cropColor) {
+		m_cropColor = value;
+		Q_EMIT changeCropColor(m_cropColor);
+	}
+}
+
+int MemoryConfig::getCropGuides() const
+{
+	return m_cropGuides;
+}
+
+void MemoryConfig::setCropGuides(int value)
+{
+	if(value != m_cropGuides) {
+		m_cropGuides = value;
+		Q_EMIT changeCropGuides(m_cropGuides);
+	}
+}
+
 QVector<QVariantMap> MemoryConfig::getCurvesPresets() const
 {
 	return m_curvesPresets;

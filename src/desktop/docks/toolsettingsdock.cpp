@@ -6,6 +6,7 @@
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
+#include "desktop/toolwidgets/cropsettings.h"
 #include "desktop/toolwidgets/fillsettings.h"
 #include "desktop/toolwidgets/gradientsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
@@ -145,6 +146,10 @@ struct ToolSettings::Private {
 				new tools::LiquifySettings(ctrl)),
 			"liquify", QIcon::fromTheme("drawpile_liquify"),
 			QApplication::tr("Liquify")};
+		pages[tools::Tool::CROP] = {
+			QSharedPointer<tools::ToolSettings>(new tools::CropSettings(ctrl)),
+			"crop", QIcon::fromTheme("drawpile_crop"),
+			QApplication::tr("Crop")};
 		pages[tools::Tool::PAN] = {
 			QSharedPointer<tools::ToolSettings>(new tools::PanSettings(ctrl)),
 			"pan", QIcon::fromTheme("hand"), QApplication::tr("Pan")};
@@ -391,6 +396,12 @@ tools::ColorPickerSettings *ToolSettings::colorPickerSettings()
 {
 	return static_cast<tools::ColorPickerSettings *>(
 		getToolSettingsPage(tools::Tool::PICKER));
+}
+
+tools::CropSettings *ToolSettings::cropSettings()
+{
+	return static_cast<tools::CropSettings *>(
+		getToolSettingsPage(tools::Tool::CROP));
 }
 
 tools::FillSettings *ToolSettings::fillSettings()

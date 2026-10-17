@@ -10,6 +10,7 @@ namespace tools {
 class AnnotationSettings;
 class BrushSettings;
 class ColorPickerSettings;
+class CropSettings;
 class FillSettings;
 class GradientSettings;
 class InspectorSettings;
@@ -55,6 +56,7 @@ public:
 	tools::AnnotationSettings *annotationSettings();
 	tools::BrushSettings *brushSettings();
 	tools::ColorPickerSettings *colorPickerSettings();
+	tools::CropSettings *cropSettings();
 	tools::FillSettings *fillSettings();
 	tools::GradientSettings *gradientSettings();
 	tools::InspectorSettings *inspectorSettings();

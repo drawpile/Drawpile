@@ -190,6 +190,8 @@ target_sources(dpclient PRIVATE
 	tools/clickdetector.h
 	tools/colorpicker.cpp
 	tools/colorpicker.h
+	tools/crop.cpp
+	tools/crop.h
 	tools/enums.h
 	tools/floodfill.cpp
 	tools/floodfill.h

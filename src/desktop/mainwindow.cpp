@@ -8495,6 +8495,12 @@ void MainWindow::setupActions()
 							   .statusTip(tr("Liquify selection"))
 							   .noDefaultShortcut()
 							   .checkable();
+	QAction *croptool =
+		makeAction("toolcrop", tr("Cro&p"))
+			.icon(QStringLiteral("drawpile_crop"))
+			.statusTip(tr("Crop rectangular areas of the canvas"))
+			.noDefaultShortcut()
+			.checkable();
 	// clang-format off
 	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
@@ -8519,6 +8525,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(magicwandtool);
 	m_drawingtools->addAction(transformtool);
 	m_drawingtools->addAction(liquifytool);
+	m_drawingtools->addAction(croptool);
 	m_drawingtools->addAction(pantool);
 	m_drawingtools->addAction(zoomtool);
 	m_drawingtools->addAction(rotationtool);

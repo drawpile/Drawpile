@@ -14,6 +14,7 @@ extern "C" {
 #include "libclient/tools/annotation.h"
 #include "libclient/tools/beziertool.h"
 #include "libclient/tools/colorpicker.h"
+#include "libclient/tools/crop.h"
 #include "libclient/tools/floodfill.h"
 #include "libclient/tools/freehand.h"
 #include "libclient/tools/gradient.h"
@@ -99,6 +100,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new Inspector(*this));
 	registerTool(new TransformTool(*this));
 	registerTool(new LiquifyTool(*this));
+	registerTool(new CropTool(*this));
 	DP_mask_sync_decref(ms);
 
 #if !defined(QT_NO_DEBUG) || defined(QT_FORCE_ASSERTS)
@@ -155,14 +157,19 @@ Tool *ToolController::getTool(Tool::Type type)
 	return t;
 }
 
-TransformTool *ToolController::transformTool()
+CropTool *ToolController::cropTool()
 {
-	return static_cast<TransformTool *>(m_toolbox[Tool::TRANSFORM]);
+	return static_cast<CropTool *>(m_toolbox[Tool::CROP]);
 }
 
 LiquifyTool *ToolController::liquifyTool()
 {
 	return static_cast<LiquifyTool *>(m_toolbox[Tool::LIQUIFY]);
+}
+
+TransformTool *ToolController::transformTool()
+{
+	return static_cast<TransformTool *>(m_toolbox[Tool::TRANSFORM]);
 }
 
 void ToolController::finishActiveTool()

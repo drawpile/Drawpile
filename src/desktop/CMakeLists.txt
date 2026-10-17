@@ -289,6 +289,8 @@ target_sources(drawpile PRIVATE
 	scene/catchupitem.h
 	scene/colorpickitem.cpp
 	scene/colorpickitem.h
+	scene/cropitem.cpp
+	scene/cropitem.h
 	scene/hudhandler.cpp
 	scene/hudhandler.h
 	scene/lasertrailitem.cpp
@@ -323,6 +325,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/brushsettings.h
 	toolwidgets/colorpickersettings.cpp
 	toolwidgets/colorpickersettings.h
+	toolwidgets/cropsettings.cpp
+	toolwidgets/cropsettings.h
 	toolwidgets/fillsettings.cpp
 	toolwidgets/fillsettings.h
 	toolwidgets/gradientsettings.cpp

@@ -16,8 +16,10 @@ extern "C" {
 #include <QMetaEnum>
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLFunctions>
+#include <QPaintDevice>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 
 #define DP_PERF_CONTEXT "glcanvas"
 
@@ -982,21 +984,38 @@ void main()
 	}
 
 
-	void renderLiquify(QPainter &painter)
+	void renderLiquify(QPainter &painter, QPointF canvasOffset)
 	{
 		painter.save();
 		painter.setRenderHint(QPainter::Antialiasing, false);
 		painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
 
-		const QTransform &invertedTransform = controller->invertedTransform();
-		QPointF canvasOffset =
-			invertedTransform.map(
-				QPointF(viewSize.width() / 2.0, viewSize.height() / 2.0)) -
-			invertedTransform.map(QPointF(0, 0));
 		painter.setTransform(controller->transform());
 		painter.drawImage(liquifyOffset + canvasOffset, liquifyImage);
 
 		painter.restore();
+	}
+
+	void renderCrop(QPainter &painter, QPointF canvasOffset)
+	{
+		QPaintDevice *device = painter.device();
+		if(device) {
+			painter.save();
+			painter.setRenderHint(QPainter::Antialiasing, false);
+
+			QPainterPath path;
+			path.setFillRule(Qt::OddEvenFill);
+			path.addRect(0, 0, device->width(), device->height());
+			path.addPolygon(controller->transform().map(QPolygonF(QRectF(
+				canvasOffset + QPointF(cropArea.topLeft()),
+				QSizeF(cropArea.size())))));
+
+			painter.setPen(Qt::NoPen);
+			painter.setBrush(cropColor);
+			painter.drawPath(path);
+
+			painter.restore();
+		}
 	}
 
 	void resetAfterNativePainting(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
@@ -1019,6 +1038,8 @@ void main()
 	QImage liquifyImage;
 	QPoint liquifyOffset;
 	QSize viewSize;
+	QRect cropArea;
+	QColor cropColor;
 	QColor checkerColor1;
 	QColor checkerColor2;
 	Dirty dirty;
@@ -1055,6 +1076,7 @@ GlCanvas::GlCanvas(CanvasController *controller, QWidget *parent)
 	config::Config *cfg = dpAppConfig();
 	CFG_BIND_SET(cfg, CheckerColor1, this, GlCanvas::setCheckerColor1);
 	CFG_BIND_SET(cfg, CheckerColor2, this, GlCanvas::setCheckerColor2);
+	CFG_BIND_SET(cfg, CropColor, this, GlCanvas::setCropColor);
 	CFG_BIND_SET(cfg, UseMipmaps, this, GlCanvas::setShouldUseMipmaps);
 
 	connect(
@@ -1087,6 +1109,9 @@ GlCanvas::GlCanvas(CanvasController *controller, QWidget *parent)
 	connect(
 		controller->scene(), &CanvasScene::changed, this,
 		QOverload<>::of(&GlCanvas::update));
+	connect(
+		controller, &CanvasController::cropAreaChanged, this,
+		&GlCanvas::onCropAreaChanged);
 	connect(
 		controller, &CanvasController::viewStateSetNeeded, this,
 		&GlCanvas::onControllerViewStateSetNeeded, Qt::QueuedConnection);
@@ -1322,9 +1347,20 @@ void GlCanvas::paintGL()
 			clearColor.redF(), clearColor.greenF(), clearColor.blueF(), 1.0);
 		f->glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		bool haveCanvas = controller->isCanvasVisible();
-		if(haveCanvas) {
+		if(controller->isCanvasVisible()) {
 			d->renderCanvas(f, e);
+
+			bool haveLiquify = d->haveLiquify;
+			bool haveCrop = !d->cropArea.isEmpty() && d->cropColor.isValid();
+			QPointF canvasOffset;
+			if(haveLiquify || haveCrop) {
+				const QTransform &invertedTransform =
+					controller->invertedTransform();
+				canvasOffset = invertedTransform.map(QPointF(
+								   d->viewSize.width() / 2.0,
+								   d->viewSize.height() / 2.0)) -
+							   invertedTransform.map(QPointF(0, 0));
+			}
 
 			if(d->haveLiquify) {
 				// Liquify requires the outline to be on top of the liquified
@@ -1332,7 +1368,7 @@ void GlCanvas::paintGL()
 				d->resetAfterNativePainting(f, e);
 				painter.endNativePainting();
 
-				d->renderLiquify(painter);
+				d->renderLiquify(painter, canvasOffset);
 
 				if(d->controller->isOutlineVisible()) {
 					painter.beginNativePainting();
@@ -1353,6 +1389,9 @@ void GlCanvas::paintGL()
 				painter.endNativePainting();
 			}
 
+			if(haveCrop) {
+				d->renderCrop(painter, canvasOffset);
+			}
 		} else {
 			painter.endNativePainting();
 		}
@@ -1388,6 +1427,20 @@ void GlCanvas::setCheckerColor2(const QColor &color)
 	d->dirty.checker = true;
 	d->checkerColor2 = color;
 	update();
+}
+
+void GlCanvas::setCropColor(QColor cropColor)
+{
+	if(cropColor.isValid() && cropColor.alpha() <= 0) {
+		cropColor = QColor();
+	}
+
+	if(cropColor != d->cropColor) {
+		d->cropColor = cropColor;
+		if(!d->cropArea.isEmpty()) {
+			update();
+		}
+	}
 }
 
 void GlCanvas::setShouldUseMipmaps(bool useMipmaps)
@@ -1440,6 +1493,16 @@ void GlCanvas::onTransformChanged()
 		d->haveLiquify = false;
 		d->liquifyImage = QImage();
 		update();
+	}
+}
+
+void GlCanvas::onCropAreaChanged(QRect cropArea)
+{
+	if(cropArea != d->cropArea) {
+		d->cropArea = cropArea;
+		if(d->cropColor.isValid()) {
+			update();
+		}
 	}
 }
 

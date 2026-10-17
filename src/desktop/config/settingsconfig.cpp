@@ -262,6 +262,12 @@ SettingsConfig::SettingsConfig(
 		Qt::DirectConnection);
 #endif
 	connect(
+		m_settings, &desktop::settings::Settings::cropColorChanged, this,
+		&SettingsConfig::changeCropColor, Qt::DirectConnection);
+	connect(
+		m_settings, &desktop::settings::Settings::cropGuidesChanged, this,
+		&SettingsConfig::changeCropGuides, Qt::DirectConnection);
+	connect(
 		m_settings, &desktop::settings::Settings::curvesPresetsChanged, this,
 		&SettingsConfig::changeCurvesPresets, Qt::DirectConnection);
 	connect(
@@ -1626,6 +1632,26 @@ void SettingsConfig::setConnectionNotification(bool value)
 	m_settings->setConnectionNotification(value);
 }
 #endif
+
+QColor SettingsConfig::getCropColor() const
+{
+	return m_settings->cropColor();
+}
+
+void SettingsConfig::setCropColor(const QColor &value)
+{
+	m_settings->setCropColor(value);
+}
+
+int SettingsConfig::getCropGuides() const
+{
+	return m_settings->cropGuides();
+}
+
+void SettingsConfig::setCropGuides(int value)
+{
+	m_settings->setCropGuides(value);
+}
 
 QVector<QVariantMap> SettingsConfig::getCurvesPresets() const
 {

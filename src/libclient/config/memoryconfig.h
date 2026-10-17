@@ -222,6 +222,12 @@ public:
 	void setConnectionNotification(bool value) override;
 #endif
 
+	QColor getCropColor() const override;
+	void setCropColor(const QColor &value) override;
+
+	int getCropGuides() const override;
+	void setCropGuides(int value) override;
+
 	QVector<QVariantMap> getCurvesPresets() const override;
 	void setCurvesPresets(const QVector<QVariantMap> &value) override;
 
@@ -937,6 +943,8 @@ private:
 #if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
 	bool m_connectionNotification = defaultConnectionNotification();
 #endif
+	QColor m_cropColor = defaultCropColor();
+	int m_cropGuides = defaultCropGuides();
 	QVector<QVariantMap> m_curvesPresets = defaultCurvesPresets();
 	int m_debounceDelayMs = defaultDebounceDelayMs();
 	QString m_defaultSaveFileNameTemplate =

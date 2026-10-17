@@ -610,6 +610,18 @@ settings:
     legacy_package: 'desktop'
     condition: 'defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)'
 
+  - id: cropColor
+    type: 'QColor'
+    default: 'QColor(0, 0, 0, 160)'
+    qsettings: 'settings/cropcolor'
+    legacy_package: 'desktop'
+
+  - id: cropGuides
+    type: 'int'
+    default: 'int(view::CropGuides::None)'
+    qsettings: 'settings/cropguides'
+    legacy_package: 'desktop'
+
   - id: curvesPresets
     type: 'QVector<QVariantMap>'
     default: 'QVector<QVariantMap>()'

@@ -41,6 +41,7 @@ public:
 		MAGICWAND,
 		TRANSFORM,
 		LIQUIFY,
+		CROP,
 		PAN,
 		ZOOM,
 		ROTATION,

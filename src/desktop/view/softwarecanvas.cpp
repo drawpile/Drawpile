@@ -9,6 +9,7 @@
 #include "libclient/view/softwarecanvasrenderer.h"
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 
 Q_LOGGING_CATEGORY(
 	lcDpSoftwareCanvas, "net.drawpile.view.canvas.software", QtWarningMsg)
@@ -78,11 +79,31 @@ struct SoftwareCanvas::Private {
 
 		painter->setClipRegion(region);
 		renderer.paint(controller, painter, rect);
+
+		if(!cropArea.isEmpty() && cropColor.isValid()) {
+			painter->save();
+			painter->setRenderHint(QPainter::Antialiasing, false);
+
+			QPainterPath path;
+			path.setFillRule(Qt::OddEvenFill);
+			path.addRect(rect);
+			path.addPolygon(
+				controller->transform().map(QPolygonF(QRectF(cropArea))));
+
+			painter->setPen(Qt::NoPen);
+			painter->setBrush(cropColor);
+			painter->drawPath(path);
+
+			painter->restore();
+		}
+
 		controller->scene()->render(painter);
 	}
 
 	CanvasController *controller;
 	SoftwareCanvasRenderer renderer;
+	QRect cropArea;
+	QColor cropColor;
 	bool renderUpdateFull = false;
 };
 
@@ -99,6 +120,7 @@ SoftwareCanvas::SoftwareCanvas(CanvasController *controller, QWidget *parent)
 	config::Config *cfg = dpAppConfig();
 	CFG_BIND_SET(cfg, CheckerColor1, this, SoftwareCanvas::setCheckerColor1);
 	CFG_BIND_SET(cfg, CheckerColor2, this, SoftwareCanvas::setCheckerColor2);
+	CFG_BIND_SET(cfg, CropColor, this, SoftwareCanvas::setCropColor);
 	CFG_BIND_SET(
 		cfg, RenderUpdateFull, this, SoftwareCanvas::setRenderUpdateFull);
 
@@ -127,6 +149,9 @@ SoftwareCanvas::SoftwareCanvas(CanvasController *controller, QWidget *parent)
 	connect(
 		controller->scene(), &CanvasScene::changed, this,
 		&SoftwareCanvas::onSceneChanged);
+	connect(
+		controller, &CanvasController::cropAreaChanged, this,
+		&SoftwareCanvas::onCropAreaChanged);
 }
 
 SoftwareCanvas::~SoftwareCanvas()
@@ -197,6 +222,20 @@ void SoftwareCanvas::setCheckerColor2(const QColor &color)
 	update();
 }
 
+void SoftwareCanvas::setCropColor(QColor cropColor)
+{
+	if(cropColor.isValid() && cropColor.alpha() <= 0) {
+		cropColor = QColor();
+	}
+
+	if(cropColor != d->cropColor) {
+		d->cropColor = cropColor;
+		if(!d->cropArea.isEmpty()) {
+			update();
+		}
+	}
+}
+
 void SoftwareCanvas::setRenderUpdateFull(bool renderUpdateFull)
 {
 	d->renderUpdateFull = renderUpdateFull;
@@ -230,6 +269,21 @@ void SoftwareCanvas::onSceneChanged(const QList<QRectF> &region)
 {
 	for(const QRectF &rect : region) {
 		update(rect.toAlignedRect());
+	}
+}
+
+void SoftwareCanvas::onCropAreaChanged(QRect cropArea)
+{
+	if(cropArea != d->cropArea) {
+		// If the crop area was empty, we have to update everything to make the
+		// outside of the crop area darker. For other cases, the scene item
+		// updates that area anyway, so we don't need to bother doing math here
+		// to dirty the rectangle.
+		bool wasEmpty = d->cropArea.isEmpty();
+		d->cropArea = cropArea;
+		if(wasEmpty && d->cropColor.isValid()) {
+			update();
+		}
 	}
 }
 

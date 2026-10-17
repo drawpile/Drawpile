@@ -43,6 +43,7 @@ protected:
 private:
 	void setCheckerColor1(const QColor &checkerColor1);
 	void setCheckerColor2(const QColor &checkerColor2);
+	void setCropColor(QColor cropColor);
 	void setShouldUseMipmaps(bool useMipmaps);
 	void onControllerRenderSmoothChanged();
 	void onControllerCanvasSizeChanged();
@@ -52,6 +53,7 @@ private:
 		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
 		bool mirror, bool flip);
 	void onTransformChanged();
+	void onCropAreaChanged(QRect cropArea);
 
 	static QStringList systemInfo;
 
