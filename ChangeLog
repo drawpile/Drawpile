@@ -19,6 +19,7 @@ Unreleased Version 2.3.1-pre
  * Feature: Handle Lenovo Tab stylus presses on Android by translating them to F26 to F30. Thanks Moody2357 for helping to figure this out.
  * Fix: Properly indicate that the previous session is being resumed on Android. Thanks tiar for reporting.
  * Fix: Correctly restore local state like layer visibility when resuming a session with a snapshot on Android. Thanks tiar for reporting.
+ * Fix: Work around the Wacom Movinkpad update showing a cursor when using the stylus that will flicker out of existence every time you press down the stylus. It will now show no cursor for the stylus, as it did before. Thanks Sylvanticus for reporting.
 
 2026-09-22 Version 2.3.1-beta.2
  * Fix: Make ratchet rotation canvas shortcut work properly when the canvas is mirrored or flipped. Thanks Bovy for reporting.

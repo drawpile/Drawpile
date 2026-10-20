@@ -1,0 +1,41 @@
+[android] Work around Movinkpad bogus cursors
+
+On Android, styluses and touchscreens are not expected to show cursors.
+The Wacom Movinkpad broke that in a really strange way in the latest
+update, where they show a cursor when hovering the stylus, but then it
+disappears when pressing it down. This patch works around it by
+explicitly checking if the source of a motion is a stylus or touchscreen
+and punting to the default behavior of showing nothing.
+
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtSurface.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtSurface.java
+@@ -42,6 +42,7 @@ package org.qtproject.qt5.android;
+ 
+ import android.content.Context;
+ import android.graphics.PixelFormat;
++import android.view.InputDevice;
+ import android.view.MotionEvent;
+ import android.view.PointerIcon;
+ import android.view.SurfaceHolder;
+@@ -88,6 +89,20 @@ public class QtSurface extends SurfaceView implements SurfaceHolder.Callback
+ 
+     @Override
+     public PointerIcon onResolvePointerIcon(MotionEvent event, int pointerIndex) {
+-        return QtPointerIcon.instance().getIcon();
++        // The Wacom Movinkpad in an update from October 2026 introduced
++        // totally whacky behavior where it will show the cursor while the
++        // stylus is hovering, but will then hide it when it is pressed down.
++        // That's nonsense though, on Android it is expected that styluses and
++        // touchscreens won't have cursors and the default cursor on the
++        // Movinkpad is also empty. So we codify that here: if the motion came
++        // from a stylus or touchscreen, we use the default cursor, which will
++        // be blank unless the user somehow managed to set a different default.
++        if (event.isFromSource(InputDevice.SOURCE_BLUETOOTH_STYLUS)
++                || event.isFromSource(InputDevice.SOURCE_STYLUS)
++                || event.isFromSource(InputDevice.SOURCE_TOUCHSCREEN)) {
++            return super.onResolvePointerIcon(event, pointerIndex);
++        } else {
++            return QtPointerIcon.instance().getIcon();
++        }
+     }
+ }
