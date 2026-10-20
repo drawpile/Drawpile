@@ -1429,6 +1429,8 @@ private:
 					if(tagId == 0) {
 						qWarning(
 							"Failed to create tag %s", qUtf8Printable(tagName));
+					} else {
+						tagIdsToAssign.insert(tagId);
 					}
 				} else {
 					tagIdsToAssign.insert(tagId);
