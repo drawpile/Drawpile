@@ -1801,6 +1801,14 @@ void MainWindow::toggleProjectRecording(bool enabled)
 	}
 }
 
+void MainWindow::requestProjectSnapshot()
+{
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas && canvas->isProjectRecording()) {
+		canvas->paintEngine()->enqueueProjectSnapshotRequest();
+	}
+}
+
 void MainWindow::onProjectRecordingStarted()
 {
 	getAction("autorecord")->setChecked(true);
@@ -8617,11 +8625,17 @@ void MainWindow::setupActions()
 				QStringLiteral("Retain project recordings"))
 				.checkable()
 				.noDefaultShortcut();
+		QAction *requestProjectSnapshot =
+			makeAction(
+				"requestprojectsnapshot",
+				QStringLiteral("Request project snapshot"))
+				.noDefaultShortcut();
 		devtoolsmenu->addSeparator();
 		devtoolsmenu->addAction(artificialLag);
 		devtoolsmenu->addAction(artificialDisconnect);
 		devtoolsmenu->addAction(causeCrash);
 		devtoolsmenu->addAction(retainProjectRecordings);
+		devtoolsmenu->addAction(requestProjectSnapshot);
 		connect(
 			artificialLag, &QAction::triggered, this,
 			&MainWindow::setArtificialLag);
@@ -8629,6 +8643,9 @@ void MainWindow::setupActions()
 			artificialDisconnect, &QAction::triggered, this,
 			&MainWindow::setArtificialDisconnect);
 		connect(causeCrash, &QAction::triggered, this, &MainWindow::causeCrash);
+		connect(
+			requestProjectSnapshot, &QAction::triggered, this,
+			&MainWindow::requestProjectSnapshot);
 	}
 	// clang-format off
 
