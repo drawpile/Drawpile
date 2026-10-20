@@ -2309,7 +2309,9 @@ void BrushPresetTagModel::exportPreset(
 	}
 
 	QString thumbnailPath = QStringLiteral("%1_prev.png").arg(presetPath);
-	if(!zw.addFile(thumbnailPath, preset.originalThumbnail.bytes())) {
+	if(!zw.addFile(
+		   thumbnailPath,
+		   LazyThumbnail::toPng(preset.originalThumbnailPixmap()))) {
 		qWarning(
 			"Error exporting preset thumbnail '%s': %s",
 			qUtf8Printable(thumbnailPath), DP_error());
