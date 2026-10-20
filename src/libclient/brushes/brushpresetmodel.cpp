@@ -1334,6 +1334,7 @@ private:
 	{
 		QStringList migrations = {
 			QStringLiteral("0001-2_3_0.zpresets"),
+			QStringLiteral("0002-2_3_1.zpresets"),
 		};
 
 		for(const QString &name : migrations) {
