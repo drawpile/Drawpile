@@ -181,11 +181,13 @@ DP_Recorder *DP_canvas_history_recorder_new(
 
 void DP_canvas_history_project_recording_start(
     DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
-    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id);
+    DP_DrawContext *dc, const DP_ViewState *vs, unsigned int file_id,
+    unsigned int local_user_id);
 
 void DP_canvas_history_project_recording_snapshot(
     DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
-    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id);
+    DP_DrawContext *dc, const DP_ViewState *vs, unsigned int file_id,
+    unsigned int local_user_id);
 
 long long DP_canvas_history_project_player_snapshot(
     DP_CanvasHistory *ch, DP_Project *prj, DP_LocalState *ls,

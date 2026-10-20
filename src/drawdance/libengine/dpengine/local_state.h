@@ -87,8 +87,12 @@ bool DP_local_state_playback_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                                          void *user);
 
 bool DP_local_state_project_snapshot_build(DP_LocalState *ls,
+                                           DP_DrawContext *dc,
                                            DP_LocalStateAcceptResetMessageFn fn,
                                            void *user);
+
+bool DP_local_state_project_player_snapshot_build(
+    DP_LocalState *ls, DP_LocalStateAcceptResetMessageFn fn, void *user);
 
 
 void DP_local_state_layer_states_apply(

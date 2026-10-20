@@ -1057,8 +1057,21 @@ bool DP_local_state_playback_image_build(DP_LocalState *ls, DP_DrawContext *dc,
 }
 
 bool DP_local_state_project_snapshot_build(DP_LocalState *ls,
+                                           DP_DrawContext *dc,
                                            DP_LocalStateAcceptResetMessageFn fn,
                                            void *user)
+{
+    DP_ASSERT(ls);
+    DP_ASSERT(fn);
+    unsigned int flags =
+        RESET_IMAGE_INCLUDE_LAYER_STATES | RESET_IMAGE_INCLUDE_BACKGROUND
+        | RESET_IMAGE_INCLUDE_ACTIVE_VIEW | RESET_IMAGE_INCLUDE_ONION_SKINS
+        | RESET_IMAGE_INCLUDE_TRACK_STATES;
+    return reset_image_build(ls, dc, flags, fn, user);
+}
+
+bool DP_local_state_project_player_snapshot_build(
+    DP_LocalState *ls, DP_LocalStateAcceptResetMessageFn fn, void *user)
 {
     DP_ASSERT(ls);
     DP_ASSERT(fn);

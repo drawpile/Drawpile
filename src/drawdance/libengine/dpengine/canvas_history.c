@@ -1872,8 +1872,8 @@ static bool accept_project_recording_message(void *user, DP_Message *msg)
 }
 
 static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
-                                  DP_LocalState *ls, const DP_ViewState *vs,
-                                  unsigned int file_id,
+                                  DP_LocalState *ls, DP_DrawContext *dc,
+                                  const DP_ViewState *vs, unsigned int file_id,
                                   unsigned int local_user_id,
                                   unsigned int snapshot_flags,
                                   bool discard_other_snapshots)
@@ -1885,8 +1885,8 @@ static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
     DP_canvas_history_reset_image_new(ch, accept_project_recording_state,
                                       accept_project_recording_message,
                                       &params);
-    DP_local_state_project_snapshot_build(ls, accept_project_recording_message,
-                                          &params);
+    DP_local_state_project_snapshot_build(
+        ls, dc, accept_project_recording_message, &params);
     if (vs && DP_view_state_valid(*vs)) {
         DP_project_worker_snapshot_view_state_record(pw, file_id, 0u, vs, 0u);
     }
@@ -1895,9 +1895,10 @@ static void make_project_snapshot(DP_CanvasHistory *ch, DP_ProjectWorker *pw,
 
 void DP_canvas_history_project_recording_start(
     DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
-    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id)
+    DP_DrawContext *dc, const DP_ViewState *vs, unsigned int file_id,
+    unsigned int local_user_id)
 {
-    make_project_snapshot(ch, pw, ls, vs, file_id, local_user_id,
+    make_project_snapshot(ch, pw, ls, dc, vs, file_id, local_user_id,
                           DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT
                               | DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE,
                           false);
@@ -1905,9 +1906,10 @@ void DP_canvas_history_project_recording_start(
 
 void DP_canvas_history_project_recording_snapshot(
     DP_CanvasHistory *ch, DP_ProjectWorker *pw, DP_LocalState *ls,
-    const DP_ViewState *vs, unsigned int file_id, unsigned int local_user_id)
+    DP_DrawContext *dc, const DP_ViewState *vs, unsigned int file_id,
+    unsigned int local_user_id)
 {
-    make_project_snapshot(ch, pw, ls, vs, file_id, local_user_id,
+    make_project_snapshot(ch, pw, ls, dc, vs, file_id, local_user_id,
                           DP_PROJECT_SNAPSHOT_FLAG_AUTOSAVE, true);
 }
 
@@ -1996,7 +1998,7 @@ long long DP_canvas_history_project_player_snapshot(
     bool snapshot_ok = DP_canvas_history_reset_image_new(
                            ch, accept_project_playback_state,
                            accept_project_playback_message, &params)
-                    && DP_local_state_project_snapshot_build(
+                    && DP_local_state_project_player_snapshot_build(
                            ls, accept_project_playback_message, &params)
                     && project_playback_snapshot_view_state(&params, vs)
                     && project_playback_finish_snapshot(&params);

@@ -283,8 +283,9 @@ static void handle_internal_project_worker_metadata_request(DP_PaintEngine *pe)
 static void handle_internal_project_worker_snapshot_request(DP_PaintEngine *pe)
 {
     DP_canvas_history_project_recording_snapshot(
-        pe->ch, pe->record.pw, pe->local_state, &pe->record.current_view_state,
-        pe->record.file_id, DP_acl_state_local_user_id(pe->acls));
+        pe->ch, pe->record.pw, pe->local_state, pe->paint_dc,
+        &pe->record.current_view_state, pe->record.file_id,
+        DP_acl_state_local_user_id(pe->acls));
 }
 
 static void handle_internal_project_worker_save_request(
@@ -1328,7 +1329,8 @@ void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
     DP_ASSERT(pe->remote_queue.used == 0);
 
     DP_canvas_history_project_recording_start(
-        pe->ch, pw, pe->local_state, &pe->record.current_view_state, file_id,
+        pe->ch, pw, pe->local_state, pe->paint_dc,
+        &pe->record.current_view_state, file_id,
         DP_acl_state_local_user_id(pe->acls));
     pe->record.pw = pw;
     pe->record.file_id = file_id;
