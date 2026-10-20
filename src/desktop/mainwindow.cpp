@@ -2650,8 +2650,8 @@ void MainWindow::loadCanvasStateFromFile(
 	progressDialog->setRange(0, 0);
 	progressDialog->setCancelButton(nullptr);
 	if(resume) {
-		progressDialog->setMinimumDuration(0);
 		progressDialog->setLabelText(tr("Resuming…"));
+		progressDialog->show();
 	} else {
 		progressDialog->setLabelText(tr("Opening file…"));
 		progressDialog->setMinimumDuration(500);
