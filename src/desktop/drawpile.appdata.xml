@@ -54,6 +54,53 @@
           <li>Feature: Add some new brushes in the Drawpile category and a new Secret's Brushes category with ribbons, halftones and more provided by Blozzom.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-x86_64.msi</location>
+          <checksum type="sha256">7c3744692c0d21055b752fa959839830c009f8251271560d382b525a760912eb</checksum>
+          <size type="download">25268224</size>
+        </artifact>
+        <artifact type="binary" platform="i386-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-x86.msi</location>
+          <checksum type="sha256">b7549740dd2a0f4d68836c7b32323c709ab93a88d07fd83f380f29fd09f2dc7c</checksum>
+          <size type="download">21504000</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-arm64.msi</location>
+          <checksum type="sha256">7a6ee396cf0c340791f7be42ca0456b833383026230a774fd4d8fec6e252c106</checksum>
+          <size type="download">23535616</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-x86_64.dmg</location>
+          <checksum type="sha256">09fd02d7bcfb3cffbaab3dca4ef0c51c3fc7d02ca2e59d1ae9bf6642bc6e6de9</checksum>
+          <size type="download">34980393</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-arm64.dmg</location>
+          <checksum type="sha256">37ee88585585b9149e4dbc679e3a821f785814aaa85054591955e53ef0999fad</checksum>
+          <size type="download">32281538</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-x86_64.AppImage</location>
+          <checksum type="sha256">7b62bc712ad5f999a1683f117ad857fbdff3d0bae6a187f2015e69afcec29cca</checksum>
+          <size type="download">56366272</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-30-36-arm64-v8a.apk</location>
+          <checksum type="sha256">0679ac9e2bf32ee7f7f4dd6aa4a9534d936d8ee9299a609084905b4d56585f2f</checksum>
+          <size type="download">24669103</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.1/Drawpile-2.3.1-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">0b6eabaafb38965d9ca03201173e61f755f70da8b767c31a4a5dcd0beda83db7</checksum>
+          <size type="download">21306505</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.1.tar.gz</location>
+          <checksum type="sha256">92229f545a24ba2fda0d4e55f5af0de0cda90f4605b448645c0cbed2c6e2ce99</checksum>
+          <size type="download">12359521</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.3.0" type="stable" date="2025-11-18">
       <url>https://drawpile.net/news/release-2.3.0/</url>
