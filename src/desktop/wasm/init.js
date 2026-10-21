@@ -866,20 +866,23 @@ import { UAParser } from "ua-parser-js";
   }
 
   function makeVersionSelector(params) {
-    const currentOption = tag("option", { value: "current" }, "Drawpile 2.3.0");
-    const betaOption = tag("option", { value: "beta" }, "Drawpile 2.3.1-beta.2");
+    const oldOption = tag("option", { value: "old" }, "Drawpile 2.3.0");
+    const currentOption = tag("option", { value: "current" }, "Drawpile 2.3.1");
 
+    // This changes depending on the "current" version. The usual regexes are:
+    // For beta releases, /beta|alpha/i
+    // For old releases, /old/i
     const versionToSelect = params.get("version")?.trim();
-    if (versionToSelect && /beta|alpha/i.test(versionToSelect)) {
-      betaOption.setAttribute("selected", "");
+    if (versionToSelect && /old/i.test(versionToSelect)) {
+      oldOption.setAttribute("selected", "");
     } else {
       currentOption.setAttribute("selected", "");
     }
 
-    const select = tag("select", [currentOption, betaOption]);
+    const select = tag("select", [oldOption, currentOption]);
     const updateVersion = () => {
       const version = select.options[select.selectedIndex].value;
-      if (version !== "beta") {
+      if (version === "old") {
         pathMappingPrefix = "stable/";
       } else {
         pathMappingPrefix = null;
