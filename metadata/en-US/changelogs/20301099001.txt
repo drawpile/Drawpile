@@ -1,0 +1,1 @@
+Autorecovery, timelapses, Android 16 support, autoresume when Android terminates the application, video export on Android, multi-frame operations for animations, velocity-based stabilizer, fan fill, brush history, better device support, performance improvements and much more. See the website for details.
