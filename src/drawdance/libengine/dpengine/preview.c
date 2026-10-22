@@ -789,9 +789,9 @@ typedef struct DP_PreviewFill {
 
 static const int *preview_fill_get_layer_ids(DP_Preview *pv, int *out_count)
 {
-    DP_PreviewTransform *pvtf = (DP_PreviewTransform *)pv;
+    DP_PreviewFill *pvf = (DP_PreviewFill *)pv;
     *out_count = 1;
-    return &pvtf->layer_id;
+    return &pvf->layer_id;
 }
 
 static void preview_fill_render(DP_Preview *pv, DP_UNUSED DP_CanvasState *cs,
