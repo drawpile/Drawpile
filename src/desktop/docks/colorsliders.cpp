@@ -193,7 +193,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->value->setMaximum(255);
 	d->valuebox = new KisSliderSpinBox;
 	d->valuebox ->setIndeterminate(true);
-	d->valuebox->setMaximum(255);
+	d->valuebox->setMaximum(100);
 	d->value->setMaximumHeight(d->valuebox->height());
 	hsvGrid->addWidget(d->valueLabel, 2, 0);
 	hsvGrid->addWidget(d->value, 2, 1);
@@ -380,7 +380,7 @@ void ColorSliderDock::adjustColor(int channel, int amount)
 		d->saturationbox->setValue(d->saturationbox->value() + amount);
 		break;
 	case 2:
-		d->valuebox->setValue(d->valuebox->value() + amount);
+		d->valuebox->setValue(d->valuebox->value() / 255.0 * 100.0 + amount / 255.0 * 100.0);
 		break;
 	default:
 		qWarning("Unknown color channel %d", channel);
@@ -413,7 +413,7 @@ void ColorSliderDock::updateFromHsvSliders()
 			d->hue->value(), d->saturation->value(), d->value->value());
 		d->huebox->setValue(d->hue->value());
 		d->saturationbox->setValue(d->saturation->value());
-		d->valuebox->setValue(d->value->value());
+		d->valuebox->setValue(d->value->value() / 255.0 * 100.0);
 		updateColor(color, true, true);
 	}
 }
@@ -423,10 +423,10 @@ void ColorSliderDock::updateFromHsvSpinbox()
 	if(!d->updating) {
 		const QColor color = getColorSpaceColor(
 			d->huebox->value(), d->saturationbox->value(),
-			d->valuebox->value());
+			d->valuebox->value() / 100.0 * 255.0);
 		d->hue->setValue(d->huebox->value());
 		d->saturation->setValue(d->saturationbox->value());
-		d->value->setValue(d->valuebox->value());
+		d->value->setValue(d->valuebox->value() / 100.0 * 255.0);
 		updateColor(color, true, true);
 	}
 }
@@ -640,7 +640,7 @@ void ColorSliderDock::updateValueSlider(
 			int l =
 				qRound(color_widgets::utils::color_lightnessF(color) * 255.0);
 			d->value->setValue(l);
-			d->valuebox->setValue(l);
+			d->valuebox->setValue(l / 255.0 * 100.0);
 		}
 		break;
 	}
@@ -657,7 +657,7 @@ void ColorSliderDock::updateValueSlider(
 		if(!fromHsvSelection) {
 			int l = qRound(color_widgets::utils::color_lumaF(color) * 255.0);
 			d->value->setValue(l);
-			d->valuebox->setValue(l);
+			d->valuebox->setValue(l / 255.0 * 100.0);
 		}
 		break;
 	}
@@ -669,7 +669,7 @@ void ColorSliderDock::updateValueSlider(
 		if(!fromHsvSelection) {
 			int v = color.value();
 			d->value->setValue(v);
-			d->valuebox->setValue(v);
+			d->valuebox->setValue(v / 255.0 * 100.0);
 		}
 		break;
 	}
