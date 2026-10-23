@@ -182,7 +182,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->saturation->setMaximum(255);
 	d->saturationbox = new KisSliderSpinBox;
 	d->saturationbox ->setIndeterminate(true);
-	d->saturationbox->setMaximum(255);
+	d->saturationbox->setMaximum(100);
 	d->saturation->setMaximumHeight(d->saturationbox->height());
 	hsvGrid->addWidget(d->saturationLabel, 1, 0);
 	hsvGrid->addWidget(d->saturation, 1, 1);
@@ -377,7 +377,7 @@ void ColorSliderDock::adjustColor(int channel, int amount)
 		break;
 	}
 	case 1:
-		d->saturationbox->setValue(d->saturationbox->value() + amount);
+		d->saturationbox->setValue(d->saturationbox->value()  / 255.0 * 100.0 + amount / 255.0 * 100.0);
 		break;
 	case 2:
 		d->valuebox->setValue(d->valuebox->value() / 255.0 * 100.0 + amount / 255.0 * 100.0);
@@ -412,7 +412,7 @@ void ColorSliderDock::updateFromHsvSliders()
 		const QColor color = getColorSpaceColor(
 			d->hue->value(), d->saturation->value(), d->value->value());
 		d->huebox->setValue(d->hue->value());
-		d->saturationbox->setValue(d->saturation->value());
+		d->saturationbox->setValue(d->saturation->value() / 255.0 * 100.0);
 		d->valuebox->setValue(d->value->value() / 255.0 * 100.0);
 		updateColor(color, true, true);
 	}
@@ -422,10 +422,10 @@ void ColorSliderDock::updateFromHsvSpinbox()
 {
 	if(!d->updating) {
 		const QColor color = getColorSpaceColor(
-			d->huebox->value(), d->saturationbox->value(),
+			d->huebox->value(), d->saturationbox->value() / 100.0 * 255.0,
 			d->valuebox->value() / 100.0 * 255.0);
 		d->hue->setValue(d->huebox->value());
-		d->saturation->setValue(d->saturationbox->value());
+		d->saturation->setValue(d->saturationbox->value() / 100.0 * 255.0);
 		d->value->setValue(d->valuebox->value() / 100.0 * 255.0);
 		updateColor(color, true, true);
 	}
@@ -586,7 +586,7 @@ void ColorSliderDock::updateSaturationSlider(
 			int s = qRound(
 				color_widgets::utils::color_HSL_saturationF(color) * 255.0);
 			d->saturation->setValue(s);
-			d->saturationbox->setValue(s);
+			d->saturationbox->setValue(s / 255.0 * 100.0);
 		}
 		break;
 	}
@@ -603,7 +603,7 @@ void ColorSliderDock::updateSaturationSlider(
 		if(!fromHsvSelection) {
 			int c = qRound(color_widgets::utils::color_chromaF(color) * 255.0);
 			d->saturation->setValue(c);
-			d->saturationbox->setValue(c);
+			d->saturationbox->setValue(c / 255.0 * 100.0);
 		}
 		break;
 	}
@@ -615,7 +615,7 @@ void ColorSliderDock::updateSaturationSlider(
 		if(!fromHsvSelection) {
 			int s = color.saturation();
 			d->saturation->setValue(s);
-			d->saturationbox->setValue(s);
+			d->saturationbox->setValue(s / 255.0 * 100.0);
 		}
 		break;
 	}
