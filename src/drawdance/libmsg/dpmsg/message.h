@@ -91,6 +91,7 @@ void *DP_message_cast(DP_Message *msg, DP_MessageType type);
 size_t DP_message_length_with(DP_Message *msg, size_t header);
 size_t DP_message_length(DP_Message *msg);
 size_t DP_message_ws_length(DP_Message *msg);
+size_t DP_message_payload_length(DP_Message *msg);
 
 size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
                             DP_GetMessageBufferFn get_buffer,

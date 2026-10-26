@@ -105,6 +105,8 @@ private:
 		drawdance::ProjectMessageCompressor &projectMessageCompressor, int i,
 		long long &timeMsec, QString &outErrorMessage, QString &outDetail);
 
+	bool convertRecordingMessage();
+
 	bool fixupProject(
 		drawdance::Project &project, const QString &path, InputProject *ip,
 		int i, QString &outErrorMessage, QString &outDetail);

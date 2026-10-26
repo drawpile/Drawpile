@@ -1,6 +1,7 @@
 Unreleased Version 2.3.2-pre
  * Feature: Angle the fixed color wheel triangle to match what other programs do, making it point to the right. Thanks resttime and Glax for contributing.
  * Feature: Liquify tool, also known as warp. Thanks avolaki, BulletPepper, BillyBuppie, kitty, Myathingoss, Nargle, rowann, Valecita and probably others for suggesting; Blozzopm and Bonbli for finding issues.
+ * Fix: Split up commands from old recordings that end up too large after converting them to the current format. This manifested as "error -503" when trying to play them back. Thanks Soul for reporting.
 
 2026-10-21 Version 2.3.1
  * Fix: Make dock tab icons show up properly on Qt 6.11, they could end up blank there.

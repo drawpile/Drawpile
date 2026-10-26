@@ -272,6 +272,11 @@ size_t DP_message_ws_length(DP_Message *msg)
     return DP_message_length_with(msg, DP_MESSAGE_WS_HEADER_LENGTH);
 }
 
+size_t DP_message_payload_length(DP_Message *msg)
+{
+    return DP_message_length_with(msg, 0);
+}
+
 static size_t serialize_message(
     DP_Message *msg, bool write_body_length, DP_GetMessageBufferFn get_buffer,
     void *user, size_t (*payload_length_fn)(DP_Message *msg),

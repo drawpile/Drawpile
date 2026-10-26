@@ -71,6 +71,7 @@ public:
 
 	size_t length() const;
 	size_t wsLength() const;
+	size_t payloadLength() const;
 
 	bool equals(const Message &other) const;
 
@@ -79,6 +80,7 @@ public:
 	DP_MsgData *toData() const;
 	DP_MsgDefaultLayer *toDefaultLayer() const;
 	DP_MsgDrawDabsClassic *toDrawDabsClassic() const;
+	DP_MsgDrawDabsMyPaint *toDrawDabsMyPaint() const;
 	DP_MsgDrawDabsPixel *toDrawDabsPixel() const;
 	DP_MsgFeatureAccessLevels *toFeatureAccessLevels() const;
 	DP_MsgFillRect *toFillRect() const;

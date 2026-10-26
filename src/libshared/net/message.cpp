@@ -209,6 +209,11 @@ size_t Message::wsLength() const
 	return DP_message_ws_length(m_data);
 }
 
+size_t Message::payloadLength() const
+{
+	return DP_message_payload_length(m_data);
+}
+
 bool Message::equals(const Message &other) const
 {
 	if(m_data == other.m_data) {
@@ -249,6 +254,12 @@ DP_MsgDrawDabsClassic *Message::toDrawDabsClassic() const
 {
 	Q_ASSERT(type() == DP_MSG_DRAW_DABS_CLASSIC);
 	return static_cast<DP_MsgDrawDabsClassic *>(DP_message_internal(m_data));
+}
+
+DP_MsgDrawDabsMyPaint *Message::toDrawDabsMyPaint() const
+{
+	Q_ASSERT(type() == DP_MSG_DRAW_DABS_MYPAINT);
+	return static_cast<DP_MsgDrawDabsMyPaint *>(DP_message_internal(m_data));
 }
 
 DP_MsgDrawDabsPixel *Message::toDrawDabsPixel() const

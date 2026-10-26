@@ -28,6 +28,11 @@ public:
 
 	void close();
 
+	DP_PlayerCompatibility compatibility() const
+	{
+		return DP_player_compatibility(m_data);
+	}
+
 	bool isCompatible() const { return DP_player_compatible(m_data); }
 
 	double progress() const { return DP_player_progress(m_data); }

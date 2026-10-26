@@ -364,6 +364,245 @@ RecordingConverter::InputProject *RecordingConverter::openInputProject(
 	return ip;
 }
 
+namespace {
+struct SetClassicDabsParams {
+	const DP_ClassicDab *originalDabs;
+	int offset;
+};
+
+static void setClassicDabs(int count, DP_ClassicDab *cds, void *user)
+{
+	SetClassicDabsParams *params = static_cast<SetClassicDabsParams *>(user);
+	int offset = params->offset;
+	for(int i = 0; i < count; ++i) {
+		const DP_ClassicDab *originalDab =
+			DP_classic_dab_at(params->originalDabs, i + offset);
+
+		// The first dab of the second message (which has an offset, the first
+		// one doesn't) starts at x and y of 0 again.
+		int8_t x, y;
+		if(offset == 0 || i != 0) {
+			x = DP_classic_dab_x(originalDab);
+			y = DP_classic_dab_y(originalDab);
+		} else {
+			x = 0;
+			y = 0;
+		}
+
+		DP_classic_dab_init(
+			cds, i, x, y, DP_classic_dab_size(originalDab),
+			DP_classic_dab_hardness(originalDab),
+			DP_classic_dab_opacity(originalDab));
+	}
+}
+
+static void
+splitDrawDabsClassic(const net::Message &msg, QVector<net::Message> &outMsgs)
+{
+	DP_MsgDrawDabsClassic *mddc = msg.toDrawDabsClassic();
+	int originalDabCount;
+	const DP_ClassicDab *originalDabs =
+		DP_msg_draw_dabs_classic_dabs(mddc, &originalDabCount);
+	if(originalDabCount > 2) {
+		SetClassicDabsParams params = {originalDabs, 0};
+		int dabCount1 = originalDabCount / 2;
+		outMsgs.append(
+			net::Message::noinc(DP_msg_draw_dabs_classic_new(
+				msg.contextId(), DP_msg_draw_dabs_classic_flags(mddc),
+				DP_msg_draw_dabs_classic_layer(mddc),
+				DP_msg_draw_dabs_classic_x(mddc),
+				DP_msg_draw_dabs_classic_y(mddc),
+				DP_msg_draw_dabs_classic_color(mddc),
+				DP_msg_draw_dabs_classic_mode(mddc), setClassicDabs, dabCount1,
+				&params)));
+
+		params.offset = dabCount1;
+		int32_t x2 = DP_msg_draw_dabs_classic_x(mddc);
+		int32_t y2 = DP_msg_draw_dabs_classic_y(mddc);
+		for(int i = 0; i < dabCount1; ++i) {
+			const DP_ClassicDab *originalDab =
+				DP_classic_dab_at(originalDabs, i);
+			x2 += int32_t(DP_classic_dab_x(originalDab));
+			y2 += int32_t(DP_classic_dab_y(originalDab));
+		}
+
+		outMsgs.append(
+			net::Message::noinc(DP_msg_draw_dabs_classic_new(
+				msg.contextId(), DP_msg_draw_dabs_classic_flags(mddc),
+				DP_msg_draw_dabs_classic_layer(mddc), x2, y2,
+				DP_msg_draw_dabs_classic_color(mddc),
+				DP_msg_draw_dabs_classic_mode(mddc), setClassicDabs,
+				originalDabCount - dabCount1, &params)));
+
+	} else {
+		// Really shouldn't happen, but handle it anyway.
+		outMsgs.append(msg);
+	}
+}
+
+
+struct SetPixelDabsParams {
+	const DP_PixelDab *originalDabs;
+	int offset;
+};
+
+static void setPixelDabs(int count, DP_PixelDab *pds, void *user)
+{
+	SetPixelDabsParams *params = static_cast<SetPixelDabsParams *>(user);
+	int offset = params->offset;
+	for(int i = 0; i < count; ++i) {
+		const DP_PixelDab *originalDab =
+			DP_pixel_dab_at(params->originalDabs, i + offset);
+
+		// The first dab of the second message (which has an offset, the first
+		// one doesn't) starts at x and y of 0 again.
+		int8_t x, y;
+		if(offset == 0 || i != 0) {
+			x = DP_pixel_dab_x(originalDab);
+			y = DP_pixel_dab_y(originalDab);
+		} else {
+			x = 0;
+			y = 0;
+		}
+
+		DP_pixel_dab_init(
+			pds, i, x, y, DP_pixel_dab_size(originalDab),
+			DP_pixel_dab_opacity(originalDab));
+	}
+}
+
+static void
+splitDrawDabsPixel(const net::Message &msg, QVector<net::Message> &outMsgs)
+{
+	bool square = msg.type() == DP_MSG_DRAW_DABS_PIXEL_SQUARE;
+	DP_MsgDrawDabsPixel *mddp = msg.toDrawDabsPixel();
+	int originalDabCount;
+	const DP_PixelDab *originalDabs =
+		DP_msg_draw_dabs_pixel_dabs(mddp, &originalDabCount);
+	if(originalDabCount > 2) {
+		SetPixelDabsParams params = {originalDabs, 0};
+		int dabCount1 = originalDabCount / 2;
+		outMsgs.append(
+			net::Message::noinc((
+				square ? DP_msg_draw_dabs_pixel_square_new
+					   : DP_msg_draw_dabs_pixel_new)(
+				msg.contextId(), DP_msg_draw_dabs_pixel_flags(mddp),
+				DP_msg_draw_dabs_pixel_layer(mddp),
+				DP_msg_draw_dabs_pixel_x(mddp), DP_msg_draw_dabs_pixel_y(mddp),
+				DP_msg_draw_dabs_pixel_color(mddp),
+				DP_msg_draw_dabs_pixel_mode(mddp), setPixelDabs, dabCount1,
+				&params)));
+
+		params.offset = dabCount1;
+		int32_t x2 = DP_msg_draw_dabs_pixel_x(mddp);
+		int32_t y2 = DP_msg_draw_dabs_pixel_y(mddp);
+		for(int i = 0; i < dabCount1; ++i) {
+			const DP_PixelDab *originalDab = DP_pixel_dab_at(originalDabs, i);
+			x2 += int32_t(DP_pixel_dab_x(originalDab));
+			y2 += int32_t(DP_pixel_dab_y(originalDab));
+		}
+
+		outMsgs.append(
+			net::Message::noinc(
+				(square ? DP_msg_draw_dabs_pixel_square_new
+						: DP_msg_draw_dabs_pixel_new)(
+					msg.contextId(), DP_msg_draw_dabs_pixel_flags(mddp),
+					DP_msg_draw_dabs_pixel_layer(mddp), x2, y2,
+					DP_msg_draw_dabs_pixel_color(mddp),
+					DP_msg_draw_dabs_pixel_mode(mddp), setPixelDabs,
+					originalDabCount - dabCount1, &params)));
+
+	} else {
+		// Really shouldn't happen, but handle it anyway.
+		outMsgs.append(msg);
+	}
+}
+
+
+struct SetMyPaintDabsParams {
+	const DP_MyPaintDab *originalDabs;
+	int offset;
+};
+
+static void setMyPaintDabs(int count, DP_MyPaintDab *mpds, void *user)
+{
+	SetMyPaintDabsParams *params = static_cast<SetMyPaintDabsParams *>(user);
+	int offset = params->offset;
+	for(int i = 0; i < count; ++i) {
+		const DP_MyPaintDab *originalDab =
+			DP_mypaint_dab_at(params->originalDabs, i + offset);
+
+		// The first dab of the second message (which has an offset, the first
+		// one doesn't) starts at x and y of 0 again.
+		int8_t x, y;
+		if(offset == 0 || i != 0) {
+			x = DP_mypaint_dab_x(originalDab);
+			y = DP_mypaint_dab_y(originalDab);
+		} else {
+			x = 0;
+			y = 0;
+		}
+
+		DP_mypaint_dab_init(
+			mpds, i, x, y, DP_mypaint_dab_size(originalDab),
+			DP_mypaint_dab_hardness(originalDab),
+			DP_mypaint_dab_opacity(originalDab),
+			DP_mypaint_dab_angle(originalDab),
+			DP_mypaint_dab_aspect_ratio(originalDab));
+	}
+}
+
+static void
+splitDrawDabsMyPaint(const net::Message &msg, QVector<net::Message> &outMsgs)
+{
+	DP_MsgDrawDabsMyPaint *mddmp = msg.toDrawDabsMyPaint();
+	int originalDabCount;
+	const DP_MyPaintDab *originalDabs =
+		DP_msg_draw_dabs_mypaint_dabs(mddmp, &originalDabCount);
+	if(originalDabCount > 2) {
+		SetMyPaintDabsParams params = {originalDabs, 0};
+		int dabCount1 = originalDabCount / 2;
+		outMsgs.append(
+			net::Message::noinc(DP_msg_draw_dabs_mypaint_new(
+				msg.contextId(), DP_msg_draw_dabs_mypaint_flags(mddmp),
+				DP_msg_draw_dabs_mypaint_layer(mddmp),
+				DP_msg_draw_dabs_mypaint_x(mddmp),
+				DP_msg_draw_dabs_mypaint_y(mddmp),
+				DP_msg_draw_dabs_mypaint_color(mddmp),
+				DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
+				DP_msg_draw_dabs_mypaint_colorize(mddmp),
+				DP_msg_draw_dabs_mypaint_posterize(mddmp),
+				DP_msg_draw_dabs_mypaint_mode(mddmp), setMyPaintDabs, dabCount1,
+				&params)));
+
+		params.offset = dabCount1;
+		int32_t x2 = DP_msg_draw_dabs_mypaint_x(mddmp);
+		int32_t y2 = DP_msg_draw_dabs_mypaint_y(mddmp);
+		for(int i = 0; i < dabCount1; ++i) {
+			const DP_MyPaintDab *originalDab =
+				DP_mypaint_dab_at(originalDabs, i);
+			x2 += int32_t(DP_mypaint_dab_x(originalDab));
+			y2 += int32_t(DP_mypaint_dab_y(originalDab));
+		}
+
+		outMsgs.append(
+			net::Message::noinc(DP_msg_draw_dabs_mypaint_new(
+				msg.contextId(), DP_msg_draw_dabs_mypaint_flags(mddmp),
+				DP_msg_draw_dabs_mypaint_layer(mddmp), x2, y2,
+				DP_msg_draw_dabs_mypaint_color(mddmp),
+				DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
+				DP_msg_draw_dabs_mypaint_colorize(mddmp),
+				DP_msg_draw_dabs_mypaint_posterize(mddmp),
+				DP_msg_draw_dabs_mypaint_mode(mddmp), setMyPaintDabs,
+				originalDabCount - dabCount1, &params)));
+
+	} else {
+		// Really shouldn't happen, but handle it anyway.
+		outMsgs.append(msg);
+	}
+}
+}
+
 bool RecordingConverter::convertRecording(
 	drawdance::Project &project,
 	drawdance::ProjectMessageCompressor &projectMessageCompressor, int i,
@@ -430,6 +669,10 @@ bool RecordingConverter::convertRecording(
 	}
 
 	bool nextHasTime = true;
+	bool isOldRecording =
+		player.compatibility() == DP_PLAYER_BACKWARD_COMPATIBLE;
+	QVector<net::Message> msgs;
+	msgs.reserve(2);
 	while(true) {
 		if(isCancelled()) {
 			return false;
@@ -445,21 +688,53 @@ bool RecordingConverter::convertRecording(
 			}
 
 			if(shouldRecordMessage(msg)) {
-				result = projectMessageCompressor.recordMessage(
-					double(timeMsec) / 1000.0, msg,
-					DP_PROJECT_MESSAGE_FLAG_CONVERTED);
-				if(result != 0) {
-					outErrorMessage =
-						QStringLiteral("Error %1 converting recording %2.")
-							.arg(result)
-							.arg(basename);
-					outDetail = QString::fromUtf8(DP_error());
-					return false;
+				// Old recordings have draw dabs messages that get converted to
+				// have more parameters and larger layer id sizes, which can
+				// lead to them being larger than the maximum size and so need
+				// to be split up. Cutting them in half is fine, they can't get
+				// nearly that much bigger.
+				if(isOldRecording &&
+				   msg.payloadLength() > DP_MESSAGE_MAX_PAYLOAD_LENGTH) {
+					switch(msg.type()) {
+					case DP_MSG_DRAW_DABS_CLASSIC:
+						splitDrawDabsClassic(msg, msgs);
+						break;
+					case DP_MSG_DRAW_DABS_PIXEL:
+					case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+						splitDrawDabsPixel(msg, msgs);
+						break;
+					case DP_MSG_DRAW_DABS_MYPAINT:
+						splitDrawDabsMyPaint(msg, msgs);
+						break;
+					default:
+						qWarning(
+							"Message of type %d is too large to serialize",
+							int(msg.type()));
+						break;
+					}
+				} else {
+					msgs.append(msg);
 				}
 
-				if(playback.get()) {
-					playback.pushMessage(msg);
+				for(const net::Message &msgToRecord : msgs) {
+					result = projectMessageCompressor.recordMessage(
+						double(timeMsec) / 1000.0, msgToRecord,
+						DP_PROJECT_MESSAGE_FLAG_CONVERTED);
+					if(result != 0) {
+						outErrorMessage =
+							QStringLiteral("Error %1 converting recording %2.")
+								.arg(result)
+								.arg(basename);
+						outDetail = QString::fromUtf8(DP_error());
+						return false;
+					}
+
+					if(playback.get()) {
+						playback.pushMessage(msgToRecord);
+					}
 				}
+
+				msgs.clear();
 			}
 
 		} else if(playerResult == DP_PLAYER_RECORDING_END) {
