@@ -1099,14 +1099,16 @@ int TransformModel::getEffectiveBlendModeForLayer(int layerId) const
 void TransformModel::requestLiquifyPreviewUpdate()
 {
 	m_liquifyPreviewRequested = false;
-	if(isLiquify() && !m_layerIds.isEmpty()) {
-		if(m_liquifyPreviewInProgress) {
-			m_liquifyPreviewPending = true;
+	if(isLiquify()) {
+		if(!m_layerIds.isEmpty()) {
+			if(m_liquifyPreviewInProgress) {
+				m_liquifyPreviewPending = true;
+			} else {
+				runLiquifyPreviewUpdate();
+			}
 		} else {
-			runLiquifyPreviewUpdate();
+			m_liquifyWorker.takeUpdate();
 		}
-	} else {
-		m_liquifyWorker.takeUpdate();
 	}
 }
 
