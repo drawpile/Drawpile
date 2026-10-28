@@ -29,10 +29,14 @@ typedef struct DP_LiquifyWorkerOperationParams {
 typedef enum DP_LiquifyWorkerEventType {
     DP_LIQUIFY_WORKER_EVENT_UPDATE,
     DP_LIQUIFY_WORKER_EVENT_UNDO_LIMIT_HIT,
+    DP_LIQUIFY_WORKER_EVENT_DISPLACEMENT_CHANGED,
 } DP_LiquifyWorkerEventType;
 
 typedef struct DP_LiquifyWorkerEvent {
     DP_LiquifyWorkerEventType type;
+    union {
+        float displacement;
+    } DP_ANONYMOUS(arg);
 } DP_LiquifyWorkerEvent;
 
 typedef void (*DP_LiquifyWorkerCallbackFn)(void *user,
@@ -69,6 +73,11 @@ void DP_liquify_worker_stroke_to(DP_LiquifyWorker *lw, const DP_BrushPoint *bp,
 void DP_liquify_worker_stroke_end(DP_LiquifyWorker *lw, long long time_msec);
 
 void DP_liquify_worker_stroke_cancel(DP_LiquifyWorker *lw, long long time_msec);
+
+void DP_liquify_worker_displacement_set(DP_LiquifyWorker *lw,
+                                        float displacement);
+
+void DP_liquify_worker_displacement_apply(DP_LiquifyWorker *lw);
 
 void DP_liquify_worker_undo(DP_LiquifyWorker *lw);
 void DP_liquify_worker_redo(DP_LiquifyWorker *lw);

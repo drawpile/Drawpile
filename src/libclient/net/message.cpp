@@ -162,6 +162,11 @@ Message makeInternalSnapshotMessage(uint8_t contextId)
 	return Message::noinc(DP_msg_internal_snapshot_new(contextId));
 }
 
+Message makeInternalTransformRefreshMessage(uint8_t contextId)
+{
+	return Message::noinc(DP_msg_internal_transform_refresh_new(contextId));
+}
+
 Message makeInternalViewStateApplyMessage(
 	uint8_t contextId, QSize viewportSize, QPointF pos, qreal zoom,
 	qreal rotation, bool mirror, bool flip)

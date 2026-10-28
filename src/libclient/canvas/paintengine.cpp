@@ -171,8 +171,8 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onTimelineChanged, &PaintEngine::onSelectionsChanged,
 		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer,
 		&PaintEngine::onUndoDepthLimitSet,
-		&PaintEngine::onCensoredLayerRevealed, &PaintEngine::onViewStateSet,
-		this);
+		&PaintEngine::onCensoredLayerRevealed, &PaintEngine::onTransformRefresh,
+		&PaintEngine::onViewStateSet, this);
 	if(m_tileCacheDirtyCheckOnTick && m_cache.tile->needsDirtyCheck()) {
 		emit tileCacheDirtyCheckNeeded();
 	}
@@ -247,6 +247,12 @@ void PaintEngine::enqueueLoadBlank(
 void PaintEngine::enqueueCatchupProgress(int progress)
 {
 	net::Message msg = net::makeInternalCatchupMessage(0, progress);
+	receiveMessages(false, 1, &msg);
+}
+
+void PaintEngine::enqueueTransformRefresh()
+{
+	net::Message msg = net::makeInternalTransformRefreshMessage(0);
 	receiveMessages(false, 1, &msg);
 }
 
@@ -1030,6 +1036,12 @@ void PaintEngine::onCursorMoved(
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->cursorMoved(flags, contextId, layerId, x, y);
+}
+
+void PaintEngine::onTransformRefresh(void *user)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	Q_EMIT pe->transformRefreshRequested();
 }
 
 void PaintEngine::onViewStateSet(void *user, const DP_ViewState *vs)

@@ -56,7 +56,11 @@ public:
 
 	bool handleDeselect(bool finish);
 
+	void stamp() override;
+
 	void setProperties(const Properties &props) { m_props = props; }
+	void updateDisplacement(float displacement);
+	void applyDisplacement();
 
 private:
 	static constexpr int UNDO_DEPTH = 100;
@@ -72,6 +76,8 @@ private:
 	void endLiquify(canvas::TransformModel *transform, bool applied);
 
 	void setLiquifyWorkerOperation(drawdance::LiquifyWorker *liquifyWorker);
+
+	void apply(bool stamp);
 
 	void returnToPreviousTool();
 

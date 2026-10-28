@@ -49,7 +49,7 @@ TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
 
 void TransformSettings::setActions(
 	QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
-	QAction *shrinktoview, QAction *stamp)
+	QAction *shrinktoview)
 {
 	m_mirrorButton->setDefaultAction(mirror);
 	m_flipButton->setDefaultAction(flip);
@@ -64,7 +64,6 @@ void TransformSettings::setActions(
 	connect(
 		shrinktoview, &QAction::triggered, this,
 		&TransformSettings::shrinkToView);
-	connect(stamp, &QAction::triggered, this, &TransformSettings::stamp);
 }
 
 void TransformSettings::setCompatibilityMode(bool compatibilityMode)

@@ -27,9 +27,12 @@ struct DP_LiquifyWorker {
     void *user;
     float last_x;
     float last_y;
+    float last_displacement;
+    float base_displacement;
     bool stroking;
     bool have_last;
     bool have_changes;
+    bool have_displacement_change;
 };
 
 typedef enum DP_LiquifyWorkerJobType {
@@ -40,6 +43,8 @@ typedef enum DP_LiquifyWorkerJobType {
     DP_LIQUIFY_WORKER_JOB_STROKE_TO,
     DP_LIQUIFY_WORKER_JOB_STROKE_END,
     DP_LIQUIFY_WORKER_JOB_STROKE_CANCEL,
+    DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_SET,
+    DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_APPLY,
     DP_LIQUIFY_WORKER_JOB_UNDO,
     DP_LIQUIFY_WORKER_JOB_REDO,
     DP_LIQUIFY_WORKER_JOB_UPDATE_REQUEST,
@@ -52,6 +57,7 @@ typedef struct DP_LiquifyWorkerJob {
         DP_LiquifyWorkerOperationParams lwop;
         DP_LiquifyEngineStrokeParams lesp;
         float zoom;
+        float displacement;
         long long time_msec;
         struct {
             DP_BrushPoint bp;
@@ -66,6 +72,20 @@ static void emit_event(DP_LiquifyWorker *lw, DP_LiquifyWorkerEventType type)
     DP_LiquifyWorkerEvent event;
     event.type = type;
     lw->fn(lw->user, &event);
+}
+
+static void trigger_update(DP_LiquifyWorker *lw, float displacement)
+{
+    if (displacement == lw->last_displacement) {
+        emit_event(lw, DP_LIQUIFY_WORKER_EVENT_UPDATE);
+    }
+    else {
+        lw->last_displacement = displacement;
+        DP_LiquifyWorkerEvent event = {
+            DP_LIQUIFY_WORKER_EVENT_DISPLACEMENT_CHANGED,
+            {.displacement = displacement}};
+        lw->fn(lw->user, &event);
+    }
 }
 
 
@@ -94,13 +114,18 @@ static DP_LiquifyState *undo_stack_current(DP_LiquifyWorker *lw)
     return *pp;
 }
 
-static void undo_stack_push(DP_LiquifyWorker *lw)
+static void undo_stack_clear_undone(DP_LiquifyWorker *lw)
 {
     while (lw->undone != 0) {
         DP_liquify_state_decref(undo_stack_top(lw));
         DP_queue_pop(&lw->undo_stack);
         --lw->undone;
     }
+}
+
+static void undo_stack_push(DP_LiquifyWorker *lw)
+{
+    undo_stack_clear_undone(lw);
 
     if (DP_size_to_int(lw->undo_stack.used) == lw->undo_depth) {
         DP_liquify_state_decref(undo_stack_bottom(lw));
@@ -110,6 +135,16 @@ static void undo_stack_push(DP_LiquifyWorker *lw)
     DP_LiquifyState **pp =
         DP_queue_push(&lw->undo_stack, sizeof(DP_LiquifyState *));
     *pp = DP_liquify_current_state_inc(lw->l);
+}
+
+static void undo_stack_push_displacement(DP_LiquifyWorker *lw)
+{
+    if (lw->have_displacement_change
+        && lw->last_displacement != lw->base_displacement) {
+        undo_stack_push(lw);
+        lw->base_displacement = lw->last_displacement;
+        lw->have_displacement_change = false;
+    }
 }
 
 static void undo_stack_element_dispose(void *element)
@@ -140,6 +175,7 @@ static void handle_stroke_params_set(DP_LiquifyWorker *lw,
 
 static void handle_stroke_begin(DP_LiquifyWorker *lw, float zoom)
 {
+    undo_stack_push_displacement(lw);
     lw->have_last = false;
     lw->have_changes = false;
     lw->stroking = true;
@@ -168,13 +204,47 @@ static void handle_stroke_cancel(DP_LiquifyWorker *lw, long long time_msec)
     }
 }
 
+static void handle_displacement_set(DP_LiquifyWorker *lw, float displacement)
+{
+    if (!lw->have_displacement_change) {
+        lw->have_displacement_change = true;
+        lw->base_displacement = lw->last_displacement;
+        undo_stack_clear_undone(lw);
+    }
+
+    if (DP_liquify_displacement_set(lw->l, displacement)) {
+        // We don't emit a displacement changed event, since that's for updating
+        // the UI and these changes come from the UI and we don't want to fight
+        // with it from this thread.
+        lw->last_displacement = displacement;
+        emit_event(lw, DP_LIQUIFY_WORKER_EVENT_UPDATE);
+    }
+}
+
+static void handle_displacement_apply(DP_LiquifyWorker *lw)
+{
+    undo_stack_push_displacement(lw);
+
+    if (DP_liquify_displacement_apply(lw->l)) {
+        undo_stack_push(lw);
+        trigger_update(lw, 1.0f);
+    }
+
+    lw->last_displacement = 1.0f;
+    lw->base_displacement = 1.0f;
+    lw->have_displacement_change = false;
+}
+
 static void handle_undo(DP_LiquifyWorker *lw)
 {
+    undo_stack_push_displacement(lw);
+
     int next_undone = lw->undone + 1;
     if (DP_int_to_size(next_undone) < lw->undo_stack.used) {
         lw->undone = next_undone;
-        DP_liquify_current_state_set_inc(lw->l, undo_stack_current(lw));
-        emit_event(lw, DP_LIQUIFY_WORKER_EVENT_UPDATE);
+        DP_LiquifyState *ls = undo_stack_current(lw);
+        DP_liquify_current_state_set_inc(lw->l, ls);
+        trigger_update(lw, DP_liquify_state_displacement(ls));
     }
     else {
         emit_event(lw, DP_LIQUIFY_WORKER_EVENT_UNDO_LIMIT_HIT);
@@ -185,8 +255,9 @@ static void handle_redo(DP_LiquifyWorker *lw)
 {
     if (lw->undone > 0) {
         --lw->undone;
-        DP_liquify_current_state_set_inc(lw->l, undo_stack_current(lw));
-        emit_event(lw, DP_LIQUIFY_WORKER_EVENT_UPDATE);
+        DP_LiquifyState *ls = undo_stack_current(lw);
+        DP_liquify_current_state_set_inc(lw->l, ls);
+        trigger_update(lw, DP_liquify_state_displacement(ls));
     }
 }
 
@@ -236,6 +307,12 @@ static void run_liquify_worker_thread(void *data)
                 continue;
             case DP_LIQUIFY_WORKER_JOB_STROKE_END:
                 handle_stroke_end(lw, job.time_msec);
+                continue;
+            case DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_SET:
+                handle_displacement_set(lw, job.displacement);
+                continue;
+            case DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_APPLY:
+                handle_displacement_apply(lw);
                 continue;
             case DP_LIQUIFY_WORKER_JOB_UNDO:
                 handle_undo(lw);
@@ -369,6 +446,9 @@ DP_LiquifyWorker *DP_liquify_worker_new_inc(DP_Liquify *l, DP_DrawContext *dc,
         user,
         0.0f,
         0.0f,
+        1.0f,
+        1.0f,
+        false,
         false,
         false,
         false,
@@ -569,6 +649,32 @@ void DP_liquify_worker_stroke_cancel(DP_LiquifyWorker *lw, long long time_msec)
     }
     else {
         handle_stroke_cancel(lw, time_msec);
+    }
+}
+
+void DP_liquify_worker_displacement_set(DP_LiquifyWorker *lw,
+                                        float displacement)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(lw,
+                 (DP_LiquifyWorkerJob){DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_SET,
+                                       {.displacement = displacement}});
+    }
+    else {
+        handle_displacement_set(lw, displacement);
+    }
+}
+
+void DP_liquify_worker_displacement_apply(DP_LiquifyWorker *lw)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(lw, (DP_LiquifyWorkerJob){
+                         DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_APPLY, {0}});
+    }
+    else {
+        handle_displacement_apply(lw);
     }
 }
 

@@ -5631,6 +5631,7 @@ void MainWindow::updateSelectTransformActions()
 	bool haveLiquify = transform && transform->isLiquifyActive();
 	bool canApplyTransform = haveTransform && transform->isDstQuadValid();
 	bool canStampTransform = canApplyTransform && transform->isStampable();
+	bool canStampLiquify = haveLiquify;
 	bool haveSelection = m_toolStateNormal && !haveTransform && !haveLiquify &&
 						 canvas && canvas->selection()->isValid();
 	bool haveAnnotation =
@@ -5652,7 +5653,15 @@ void MainWindow::updateSelectTransformActions()
 	getAction("paste")->setEnabled(!haveTransform && !haveLiquify);
 	getAction("paste-centered")->setEnabled(!haveTransform && !haveLiquify);
 	getAction("pastefile")->setEnabled(!haveTransform && !haveLiquify);
-	getAction("stamp")->setEnabled(canStampTransform);
+	QAction *stamp = getAction(QStringLiteral("stamp"));
+	stamp->setEnabled(canStampTransform || canStampLiquify);
+	if(haveTransform) {
+		stamp->setText(tr("&Stamp Transform"));
+	} else if(haveLiquify) {
+		stamp->setText(tr("&Stamp Liquify"));
+	} else {
+		stamp->setText(tr("&Stamp Transform/Liquify"));
+	}
 	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
 	getAction("selectall")->setEnabled(!haveTransform);
 	getAction("selectnone")
@@ -7931,7 +7940,9 @@ void MainWindow::setupActions()
 			.icon("zoom-out")
 			.noDefaultShortcut();
 	QAction *stamp =
-		makeAction("stamp", tr("&Stamp Transform")).shortcut("Ctrl+T");
+		makeAction("stamp", tr("&Stamp Transform/Liquify"))
+			.statusTip(tr("Apply the transform or liquify and keep going"))
+			.shortcut("Ctrl+T");
 	QAction *editselection =
 		makeAction("editselection", tr("Dra&w on Selection"))
 			.checkable()
@@ -8000,6 +8011,9 @@ void MainWindow::setupActions()
 			&MainWindow::fillAreaWithBlendMode, this,
 			DP_BLEND_MODE_DARK_TO_ALPHA));
 	connect(
+		stamp, &QAction::triggered, m_doc->toolCtrl(),
+		&tools::ToolController::stamp);
+	connect(
 		starttransform, &QAction::triggered, m_dockToolSettings,
 		&docks::ToolSettings::startTransformMoveActiveLayer);
 	connect(
@@ -8061,7 +8075,7 @@ void MainWindow::setupActions()
 		starttransform, startliquify);
 	m_dockToolSettings->transformSettings()->setActions(
 		transformmirror, transformflip, transformrotatecw, transformrotateccw,
-		transformshrinktoview, stamp);
+		transformshrinktoview);
 
 	//
 	// Animation menu
@@ -9415,6 +9429,8 @@ void MainWindow::setupHud()
 	liquifyActionBar->setOverflowMenuActions({
 		getAction(QStringLiteral("cancelaction")),
 		getAction(QStringLiteral("selectnone")),
+		nullptr,
+		getAction(QStringLiteral("stamp")),
 		nullptr,
 		locationMenuAction,
 		disableAction,

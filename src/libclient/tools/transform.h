@@ -85,7 +85,7 @@ public:
 	void rotateCw();
 	void rotateCcw();
 	void shrinkToView(const QRectF &viewBounds);
-	void stamp();
+	void stamp() override;
 
 private:
 	static constexpr int MAX_QUAD_STACK_DEPTH = 250;

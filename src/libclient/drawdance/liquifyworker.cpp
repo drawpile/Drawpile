@@ -141,6 +141,16 @@ void LiquifyWorker::cancelStroke(long long timeMsec)
 	DP_liquify_worker_stroke_cancel(m_data, timeMsec);
 }
 
+void LiquifyWorker::setDisplacement(float displacement)
+{
+	DP_liquify_worker_displacement_set(m_data, displacement);
+}
+
+void LiquifyWorker::applyDisplacement()
+{
+	DP_liquify_worker_displacement_apply(m_data);
+}
+
 void LiquifyWorker::undo()
 {
 	DP_liquify_worker_undo(m_data);
@@ -170,6 +180,9 @@ void LiquifyWorker::handleLiquifyWorkerEventCallback(
 void LiquifyWorker::handleLiquifyWorkerEvent(const DP_LiquifyWorkerEvent &event)
 {
 	switch(event.type) {
+	case DP_LIQUIFY_WORKER_EVENT_DISPLACEMENT_CHANGED:
+		Q_EMIT displacementChanged(event.arg.displacement);
+		Q_FALLTHROUGH();
 	case DP_LIQUIFY_WORKER_EVENT_UPDATE:
 		if(m_updatePending.testAndSetRelaxed(0, 1)) {
 			Q_EMIT updateRequested();

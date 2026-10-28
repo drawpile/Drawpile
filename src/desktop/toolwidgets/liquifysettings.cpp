@@ -70,6 +70,25 @@ void LiquifySettings::setActions(QActionGroup *liquifyOperations)
 		resetAction, &QAction::triggered, this,
 		&LiquifySettings::loadDefaultSettings);
 
+	m_headerMenu->addSeparator();
+
+	m_stampAction = m_headerMenu->addAction(
+		QCoreApplication::translate("MainWindow", "&Stamp Liquify"));
+	m_stampAction->setEnabled(false);
+	connect(
+		m_stampAction, &QAction::triggered, controller(),
+		&tools::ToolController::stamp);
+
+	m_applyDisplacementAction = m_headerMenu->addAction(tr("Apply factor"));
+	m_applyDisplacementAction->setToolTip(
+		tr("Keep the current image and make that the new 100% factor"));
+	m_applyDisplacementAction->setStatusTip(
+		m_applyDisplacementAction->toolTip());
+	m_applyDisplacementAction->setEnabled(false);
+	connect(
+		m_applyDisplacementAction, &QAction::triggered, this,
+		&LiquifySettings::applyDisplacement);
+
 	headerLayout->addStretch(1);
 
 	QList<QAction *> operationActions = liquifyOperations->actions();
@@ -333,6 +352,19 @@ QWidget *LiquifySettings::createUiWidget(QWidget *parent)
 
 	++row;
 
+	m_displacementSlider = new widgets::NoScrollKisSliderSpinBox;
+	m_displacementSlider->setRange(1, 100);
+	m_displacementSlider->setValue(100);
+	m_displacementSlider->setPrefix(tr("Factor: "));
+	m_displacementSlider->setSuffix(strings::percent());
+	grid->addWidget(m_displacementSlider, row, 0, 1, 2);
+	connect(
+		m_displacementSlider,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&LiquifySettings::updateDisplacement);
+
+	++row;
+
 	widgets::GroupedToolButton *nearestButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	nearestButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
@@ -441,6 +473,10 @@ void LiquifySettings::setModel(canvas::CanvasModel *canvas)
 		connect(
 			transform, &canvas::TransformModel::transformChanged, this,
 			&LiquifySettings::updateEnabled, Qt::QueuedConnection);
+		connect(
+			transform, &canvas::TransformModel::liquifyDisplacementChanged,
+			this, &LiquifySettings::handleDisplacementChanged,
+			Qt::QueuedConnection);
 	}
 	updateEnabledFrom(canvas);
 }
@@ -457,11 +493,16 @@ void LiquifySettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 			canvas ? canvas->transform() : nullptr;
 
 		bool haveLiquify = transform && transform->isLiquifyActive();
+		m_stampAction->setEnabled(haveLiquify);
+		m_applyDisplacementAction->setEnabled(
+			haveLiquify && m_displacementSlider->value() != 100);
+		m_displacementSlider->setEnabled(haveLiquify);
 		m_applyButton->setEnabled(haveLiquify);
 		m_cancelButton->setEnabled(haveLiquify);
 
 		if(m_hadLiquify && !haveLiquify) {
 			setOperation(int(Operation::Move));
+			utils::setSpinnerValueSignalsBlocked(m_displacementSlider, 100);
 		}
 		m_hadLiquify = haveLiquify;
 	}
@@ -482,6 +523,26 @@ void LiquifySettings::setOperation(int operation)
 	QList<QAction *> operationActions = m_liquifyOperations->actions();
 	if(operation >= 0 && operation <= operationActions.size()) {
 		operationActions[operation]->trigger();
+	}
+}
+
+void LiquifySettings::updateDisplacement(int displacement)
+{
+	m_applyDisplacementAction->setEnabled(displacement != 100);
+	controller()->liquifyTool()->updateDisplacement(
+		float(displacement) / 100.0f);
+}
+
+void LiquifySettings::applyDisplacement()
+{
+	controller()->liquifyTool()->applyDisplacement();
+}
+
+void LiquifySettings::handleDisplacementChanged(float displacement)
+{
+	if(m_displacementSlider->isEnabled()) {
+		utils::setSpinnerValueSignalsBlocked(
+			m_displacementSlider, qRound(displacement * 100.0f));
 	}
 }
 

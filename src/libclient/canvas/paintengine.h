@@ -117,6 +117,8 @@ public:
 	//! has been processed by the paint engine.
 	void enqueueCatchupProgress(int progress);
 
+	void enqueueTransformRefresh();
+
 	void resetAcl(uint8_t localUserId);
 
 	//! Replaces the ACL state contents with the ones from the given state and
@@ -287,6 +289,7 @@ signals:
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void cursorMoved(unsigned int flags, int userId, int layerId, int x, int y);
+	void transformRefreshRequested();
 	void viewStateSet(
 		QSize viewportSize, QPointF pos, qreal zoom, qreal rotation,
 		bool mirror, bool flip);
@@ -345,6 +348,7 @@ private:
 	static void onCursorMoved(
 		void *user, unsigned int flags, unsigned int contextId, int layerId,
 		int x, int y);
+	static void onTransformRefresh(void *user);
 	static void onViewStateSet(void *user, const DP_ViewState *vs);
 
 	static void

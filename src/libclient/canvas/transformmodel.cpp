@@ -68,6 +68,10 @@ TransformModel::TransformModel(CanvasModel *canvas)
 	, m_liquifyInterpolation(DP_MSG_TRANSFORM_REGION_MODE_NEAREST)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 {
+	PaintEngine *paintEngine = canvas->paintEngine();
+	connect(
+		paintEngine, &PaintEngine::transformRefreshRequested, this,
+		&TransformModel::refresh, Qt::QueuedConnection);
 	LayerListModel *layerlist = canvas->layerlist();
 	connect(
 		layerlist, &LayerListModel::modelReset, this,
@@ -81,6 +85,9 @@ TransformModel::TransformModel(CanvasModel *canvas)
 	connect(
 		&m_liquifyWorker, &drawdance::LiquifyWorker::undoLimitHit, this,
 		&TransformModel::liquifyCancelRequested, Qt::DirectConnection);
+	connect(
+		&m_liquifyWorker, &drawdance::LiquifyWorker::displacementChanged, this,
+		&TransformModel::liquifyDisplacementChanged, Qt::DirectConnection);
 }
 
 bool TransformModel::isPreviewAccurate() const
@@ -258,7 +265,7 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 	if(m_active && m_dstQuadValid) {
 		utils::ScopedOverrideCursor waitCursor;
 		if(isLiquify()) {
-			return applyLiquify(contextId, layerId, interpolation);
+			return applyLiquify(contextId, layerId, interpolation, stamp);
 		} else if(m_pasted) {
 			return applyFloating(
 				contextId, layerId, interpolation, stamp, outMovedSelection);
@@ -689,8 +696,8 @@ QVector<net::Message> TransformModel::applyFloating(
 	return msgs;
 }
 
-QVector<net::Message>
-TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
+QVector<net::Message> TransformModel::applyLiquify(
+	uint8_t contextId, int layerId, int interpolation, bool stamp)
 {
 	if(!isLiquify()) {
 		return {};
@@ -706,13 +713,14 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 	msgs.reserve(m_layerIds.size() * 2 + 4);
 	msgs.append(net::makeUndoPointMessage(contextId));
 
-	if(m_deselectOnApply) {
+	if(!stamp && m_deselectOnApply) {
 		msgs.append(
 			net::makeSelectionClearMessage(
 				contextId, canvas::CanvasModel::MAIN_SELECTION_ID));
 	}
 
-	// If the user only liquified
+	// If the user only liquified a small part, we don't need to change the
+	// entire area, just the part that was actually modified.
 	QRect affectedSrcBounds =
 		liquifyState.changeBounds().intersected(m_srcBounds);
 	if(!affectedSrcBounds.isEmpty()) {
@@ -745,31 +753,36 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 			}
 		}
 
-		canvas::SelectionModel *selection = m_canvas->selection();
-		if(selection->isValid() && !m_deselectOnApply) {
-			QImage srcImage = selection->image();
-			drawdance::LiquifyTransformer liquifyTransformer =
-				drawdance::LiquifyTransformer::init(
-					m_srcBounds.x(), m_srcBounds.y(), srcImage);
-			liquifyTransformer.apply(liquifyState, interpolation);
+		if(!stamp) {
+			canvas::SelectionModel *selection = m_canvas->selection();
+			if(selection->isValid() && !m_deselectOnApply) {
+				QImage srcImage = selection->image();
+				drawdance::LiquifyTransformer liquifyTransformer =
+					drawdance::LiquifyTransformer::init(
+						m_srcBounds.x(), m_srcBounds.y(), srcImage);
+				liquifyTransformer.apply(liquifyState, interpolation);
 
-			QPoint dstPos;
-			QImage dstImage = liquifyTransformer.targetImage(dstPos);
-			if(dstImage.isNull()) {
-				qCWarning(
-					lcDpTransformModel, "applyLiquify: null selection image");
-			} else if(dstPos == m_srcBounds.topLeft() && dstImage == srcImage) {
-				// Nothing changed about the selection, nothing to do. Pretty
-				// likely case, since the user may have selected everything and
-				// just liquified some small part in the middle.
-			} else {
-				net::makeSelectionPutMessages(
-					msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
-					DP_MSG_SELECTION_PUT_OP_REPLACE,
-					dstPos.x() + m_liquifyCanvasOffset.x(),
-					dstPos.y() + m_liquifyCanvasOffset.y(), dstImage.width(),
-					dstImage.height(),
-					isImageOpaque(dstImage) ? QImage() : dstImage);
+				QPoint dstPos;
+				QImage dstImage = liquifyTransformer.targetImage(dstPos);
+				if(dstImage.isNull()) {
+					qCWarning(
+						lcDpTransformModel,
+						"applyLiquify: null selection image");
+				} else if(
+					dstPos == m_srcBounds.topLeft() && dstImage == srcImage) {
+					// Nothing changed about the selection, nothing to do.
+					// Pretty likely case, since the user may have selected
+					// everything and just liquified some small part in the
+					// middle.
+				} else {
+					net::makeSelectionPutMessages(
+						msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
+						DP_MSG_SELECTION_PUT_OP_REPLACE,
+						dstPos.x() + m_liquifyCanvasOffset.x(),
+						dstPos.y() + m_liquifyCanvasOffset.y(),
+						dstImage.width(), dstImage.height(),
+						isImageOpaque(dstImage) ? QImage() : dstImage);
+				}
 			}
 		}
 	}
@@ -845,24 +858,39 @@ void TransformModel::updateLayerIds()
 
 void TransformModel::setLayers(const QSet<int> &layerIds)
 {
-	m_layerIds = layerIds;
+	refreshWith(&layerIds);
+}
+
+void TransformModel::refresh()
+{
+	refreshWith(nullptr);
+}
+
+void TransformModel::refreshWith(const QSet<int> *layerIdsOrNull)
+{
 	m_floatingImage = QImage();
 	m_floatingImageOffset = m_srcBounds.topLeft();
 	m_liquifyTransformer = drawdance::LiquifyTransformer::null();
 
-	// Don't try replacing this with `erase`, that's bugged and causes botched
-	// assertions in Qt. Also avoid similar functions like `erase_if`.
-	QVector<int> layerIdsToRemove;
-	for(QHash<int, QImage>::key_iterator it = m_layerImages.keyBegin(),
-										 end = m_layerImages.keyEnd();
-		it != end; ++it) {
-		int layerId = *it;
-		if(!layerIds.contains(layerId)) {
-			layerIdsToRemove.append(layerId);
+	if(layerIdsOrNull) {
+		m_layerIds = *layerIdsOrNull;
+
+		// Don't try replacing this with `erase`, that's bugged and causes
+		// botched assertions in Qt. Also avoid similar functions like
+		// `erase_if`.
+		QVector<int> layerIdsToRemove;
+		for(QHash<int, QImage>::key_iterator it = m_layerImages.keyBegin(),
+											 end = m_layerImages.keyEnd();
+			it != end; ++it) {
+			int layerId = *it;
+			if(!m_layerIds.contains(layerId)) {
+				layerIdsToRemove.append(layerId);
+			}
 		}
-	}
-	for(int layerId : layerIdsToRemove) {
-		m_layerImages.remove(layerId);
+
+		for(int layerId : layerIdsToRemove) {
+			m_layerImages.remove(layerId);
+		}
 	}
 
 	emit transformCut(

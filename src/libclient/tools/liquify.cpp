@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/tools/liquify.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/net/client.h"
@@ -120,33 +121,7 @@ void LiquifyTool::end(const EndParams &params)
 
 void LiquifyTool::finishMultipart()
 {
-	canvas::TransformModel *transform = getActiveLiquifyModel();
-	bool allowed = true;
-	if(transform && (allowed = transform->isAllowedToApplyActiveTransform())) {
-		drawdance::LiquifyWorker &liquifyWorker = transform->liquifyWorker();
-		liquifyWorker.abort();
-		liquifyWorker.finishThread();
-		net::Client *client = m_owner.client();
-		net::MessageList msgs = transform->applyActiveTransform(
-			client->myId(), m_owner.activeLayer(),
-			m_owner.liquifyInterpolation(), false);
-		int count = msgs.size();
-		if(count == 0) {
-			endLiquify(transform, false);
-		} else {
-			client->sendCommands(count, msgs.constData());
-			endLiquify(transform, true);
-		}
-	}
-
-	if(allowed) {
-		returnToPreviousTool();
-	} else {
-		emit m_owner.showMessageRequested(
-			QCoreApplication::translate(
-				"tools::TransformSettings",
-				"You don't have permission to cut and paste."));
-	}
+	apply(false);
 }
 
 void LiquifyTool::cancelMultipart()
@@ -214,6 +189,27 @@ bool LiquifyTool::handleDeselect(bool finish)
 		}
 	}
 	return false;
+}
+
+void LiquifyTool::stamp()
+{
+	apply(true);
+}
+
+void LiquifyTool::updateDisplacement(float displacement)
+{
+	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
+	if(liquifyWorker) {
+		liquifyWorker->setDisplacement(displacement);
+	}
+}
+
+void LiquifyTool::applyDisplacement()
+{
+	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
+	if(liquifyWorker) {
+		liquifyWorker->applyDisplacement();
+	}
 }
 
 bool LiquifyTool::isLiquifyActive() const
@@ -319,6 +315,44 @@ void LiquifyTool::setLiquifyWorkerOperation(
 		return;
 	}
 	Q_UNREACHABLE();
+}
+
+void LiquifyTool::apply(bool stamp)
+{
+	canvas::TransformModel *transform = getActiveLiquifyModel();
+	bool allowed = true;
+	if(transform && (allowed = transform->isAllowedToApplyActiveTransform())) {
+		drawdance::LiquifyWorker &liquifyWorker = transform->liquifyWorker();
+		liquifyWorker.abort();
+		liquifyWorker.finishThread();
+		net::Client *client = m_owner.client();
+		net::MessageList msgs = transform->applyActiveTransform(
+			client->myId(), m_owner.activeLayer(),
+			m_owner.liquifyInterpolation(), stamp);
+
+		int count = msgs.size();
+		bool haveMessages = count != 0;
+		if(haveMessages) {
+			client->sendCommands(count, msgs.constData());
+		}
+
+		if(stamp) {
+			m_owner.model()->paintEngine()->enqueueTransformRefresh();
+		} else {
+			endLiquify(transform, haveMessages);
+		}
+	}
+
+	if(allowed) {
+		if(!stamp) {
+			returnToPreviousTool();
+		}
+	} else {
+		emit m_owner.showMessageRequested(
+			QCoreApplication::translate(
+				"tools::TransformSettings",
+				"You don't have permission to cut and paste."));
+	}
 }
 
 void LiquifyTool::returnToPreviousTool()

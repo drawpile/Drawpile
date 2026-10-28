@@ -304,6 +304,8 @@ public slots:
 	//! Used to finish fills when merging layers or similar.
 	void flushPreviewedActions();
 
+	void stamp();
+
 signals:
 	void activeToolChanged(int type);
 	void toolCapabilitiesChanged(unsigned int capabilities);

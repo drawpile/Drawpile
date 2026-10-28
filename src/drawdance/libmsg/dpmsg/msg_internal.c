@@ -381,6 +381,12 @@ DP_Message *DP_msg_internal_view_state_apply_new(unsigned int context_id,
     return msg;
 }
 
+DP_Message *DP_msg_internal_transform_refresh_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_TRANSFORM_REFRESH,
+                            sizeof(DP_MsgInternal));
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {

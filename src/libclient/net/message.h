@@ -81,6 +81,8 @@ Message makeInternalStreamResetStartMessage(
 
 Message makeInternalSnapshotMessage(uint8_t contextId);
 
+Message makeInternalTransformRefreshMessage(uint8_t contextId);
+
 Message makeInternalViewStateApplyMessage(
 	uint8_t contextId, QSize viewportSize, QPointF pos, qreal zoom,
 	qreal rotation, bool mirror, bool flip);

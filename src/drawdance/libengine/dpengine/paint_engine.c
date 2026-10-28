@@ -138,6 +138,7 @@ struct DP_PaintEngine {
     DP_Atomic default_layer_id;
     DP_Atomic undo_depth_limit;
     DP_Atomic just_reset;
+    DP_Atomic transform_refresh;
     bool catching_up;
     bool reset_locked;
     DP_Thread *paint_thread;
@@ -478,6 +479,9 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_free(DP_atomic_ptr_xch(&pe->view_state, vs));
         break;
     }
+    case DP_MSG_INTERNAL_TYPE_TRANSFORM_REFRESH:
+        DP_atomic_set(&pe->transform_refresh, true);
+        break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -880,6 +884,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_atomic_set(&pe->undo_depth_limit,
                   DP_canvas_history_undo_depth_limit(pe->ch));
     DP_atomic_set(&pe->just_reset, false);
+    DP_atomic_set(&pe->transform_refresh, false);
     pe->catching_up = false;
     pe->reset_locked = false;
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
@@ -2070,6 +2075,7 @@ void DP_paint_engine_tick(
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
     DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed,
+    DP_PaintEngineTransformRefreshFn transform_refresh,
     DP_PaintEngineViewStateSetFn view_state_set, void *user)
 {
     DP_ASSERT(pe);
@@ -2209,6 +2215,11 @@ void DP_paint_engine_tick(
     int undo_depth_limit = DP_atomic_xch(&pe->undo_depth_limit, -1);
     if (undo_depth_limit != -1) {
         undo_depth_limit_set(user, undo_depth_limit);
+    }
+
+    bool transform_refreshed = DP_atomic_xch(&pe->transform_refresh, false);
+    if (transform_refreshed) {
+        transform_refresh(user);
     }
 
     DP_ViewState *vs = DP_atomic_ptr_xch(&pe->view_state, NULL);

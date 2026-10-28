@@ -264,6 +264,11 @@ void ToolController::flushPreviewedActions()
 	m_activeTool->flushPreviewedActions();
 }
 
+void ToolController::stamp()
+{
+	m_activeTool->stamp();
+}
+
 Tool::Type ToolController::activeTool() const
 {
 	Q_ASSERT(m_activeTool);

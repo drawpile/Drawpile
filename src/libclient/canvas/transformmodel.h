@@ -104,6 +104,7 @@ signals:
 	void transformCutCleared();
 	void liquifyPreviewRequested();
 	void liquifyCancelRequested();
+	void liquifyDisplacementChanged(float displacement);
 
 private:
 	QVector<net::Message> applyFromCanvas(
@@ -141,7 +142,7 @@ private:
 		bool *outMovedSelection);
 
 	QVector<net::Message>
-	applyLiquify(uint8_t contextId, int layerId, int interpolation);
+	applyLiquify(uint8_t contextId, int layerId, int interpolation, bool stamp);
 
 	void applyLiquifyCutAndPaste(
 		QVector<net::Message> &msgs,
@@ -153,6 +154,8 @@ private:
 
 	void updateLayerIds();
 	void setLayers(const QSet<int> &layerIds);
+	void refresh();
+	void refreshWith(const QSet<int> *layerIdsOrNull);
 
 	QImage getLayerImage(int layerId) const;
 	QImage getLayerImageWithMask(int layerId, const QImage &mask) const;

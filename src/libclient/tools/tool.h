@@ -182,6 +182,8 @@ public:
 		Q_UNUSED(selectionMaskingEnabled);
 	}
 
+	virtual void stamp() {}
+
 protected:
 	bool isActiveTool() const;
 	bool isCompatibilityMode() const;
