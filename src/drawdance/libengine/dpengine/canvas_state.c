@@ -598,8 +598,9 @@ handle_put_image(DP_CanvasState *cs, DP_DrawContext *dc,
     int y = DP_uint32_to_int(uy);
     int width = DP_uint32_to_int(uw);
     int height = DP_uint32_to_int(uh);
+    DP_Rect image_bounds = DP_rect_make(x, y, width, height);
     DP_Rect canvas_bounds = DP_rect_make(0, 0, cs->width, cs->height);
-    if (!DP_rect_intersects(canvas_bounds, canvas_bounds)) {
+    if (!DP_rect_intersects(image_bounds, canvas_bounds)) {
         DP_error_set("Put image: out of bounds");
         return NULL;
     }
