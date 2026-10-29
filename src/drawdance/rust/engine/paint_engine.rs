@@ -375,6 +375,7 @@ impl PaintEngine {
                 Some(Self::on_default_layer_set),
                 Some(Self::on_undo_depth_limit_set),
                 Some(Self::on_censored_layer_revealed),
+                Some(Self::on_transform_refresh_requested),
                 Some(Self::on_view_state_set),
                 user.cast(),
             );
@@ -403,6 +404,7 @@ impl PaintEngine {
     extern "C" fn on_default_layer_set(_user: *mut c_void, _layer_id: c_int) {}
     extern "C" fn on_undo_depth_limit_set(_user: *mut c_void, _undo_depth_limit: c_int) {}
     extern "C" fn on_censored_layer_revealed(_user: *mut c_void, _layer_id: c_int) {}
+    extern "C" fn on_transform_refresh_requested(_user: *mut c_void) {}
     extern "C" fn on_view_state_set(_user: *mut c_void, _vs: *const DP_ViewState) {}
 
     pub fn save(&mut self, path: &str, save_type: DP_SaveImageType) -> Result<()> {
