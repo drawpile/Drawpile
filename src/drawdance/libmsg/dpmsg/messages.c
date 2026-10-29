@@ -1794,8 +1794,13 @@ DP_Message *DP_msg_server_command_deserialize_compat(
 {
     DP_Message *msg =
         DP_msg_server_command_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_server_command_parse(unsigned int context_id,
@@ -1927,8 +1932,13 @@ DP_Message *DP_msg_disconnect_deserialize_compat(unsigned int context_id,
                                                  size_t length)
 {
     DP_Message *msg = DP_msg_disconnect_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_disconnect_parse(unsigned int context_id,
@@ -2037,8 +2047,13 @@ DP_Message *DP_msg_ping_deserialize_compat(unsigned int context_id,
                                            size_t length)
 {
     DP_Message *msg = DP_msg_ping_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_ping_parse(unsigned int context_id, DP_TextReader *reader)
@@ -2085,8 +2100,13 @@ DP_Message *DP_msg_keep_alive_deserialize_compat(unsigned int context_id,
                                                  size_t length)
 {
     DP_Message *msg = DP_msg_keep_alive_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
@@ -2179,8 +2199,13 @@ DP_Message *DP_msg_thumbnail_deserialize_compat(unsigned int context_id,
                                                 size_t length)
 {
     DP_Message *msg = DP_msg_thumbnail_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_thumbnail_parse(unsigned int context_id,
@@ -2347,8 +2372,13 @@ DP_Message *DP_msg_join_deserialize_compat(unsigned int context_id,
                                            size_t length)
 {
     DP_Message *msg = DP_msg_join_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_join_parse(unsigned int context_id, DP_TextReader *reader)
@@ -2432,8 +2462,13 @@ DP_Message *DP_msg_leave_deserialize_compat(unsigned int context_id,
                                             size_t length)
 {
     DP_Message *msg = DP_msg_leave_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_leave_parse(unsigned int context_id,
@@ -2529,8 +2564,13 @@ DP_Message *DP_msg_session_owner_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_session_owner_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_session_owner_parse(unsigned int context_id,
@@ -2689,8 +2729,13 @@ DP_Message *DP_msg_chat_deserialize_compat(unsigned int context_id,
                                            size_t length)
 {
     DP_Message *msg = DP_msg_chat_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_chat_parse(unsigned int context_id, DP_TextReader *reader)
@@ -2828,8 +2873,13 @@ DP_Message *DP_msg_trusted_users_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_trusted_users_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_trusted_users_parse(unsigned int context_id,
@@ -2890,8 +2940,13 @@ DP_Message *DP_msg_soft_reset_deserialize_compat(unsigned int context_id,
                                                  size_t length)
 {
     DP_Message *msg = DP_msg_soft_reset_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
@@ -2995,8 +3050,13 @@ DP_Message *DP_msg_private_chat_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_private_chat_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_private_chat_parse(unsigned int context_id,
@@ -3132,8 +3192,13 @@ DP_Message *DP_msg_reset_stream_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_reset_stream_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_reset_stream_parse(unsigned int context_id,
@@ -3239,8 +3304,13 @@ DP_Message *DP_msg_interval_deserialize_compat(unsigned int context_id,
                                                size_t length)
 {
     DP_Message *msg = DP_msg_interval_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_interval_parse(unsigned int context_id,
@@ -3342,8 +3412,13 @@ DP_Message *DP_msg_laser_trail_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_laser_trail_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_laser_trail_parse(unsigned int context_id,
@@ -3452,8 +3527,13 @@ DP_Message *DP_msg_move_pointer_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_move_pointer_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_move_pointer_parse(unsigned int context_id,
@@ -3569,8 +3649,13 @@ DP_Message *DP_msg_user_acl_deserialize_compat(unsigned int context_id,
                                                size_t length)
 {
     DP_Message *msg = DP_msg_user_acl_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_user_acl_parse(unsigned int context_id,
@@ -3738,8 +3823,13 @@ DP_Message *DP_msg_layer_acl_deserialize_compat(unsigned int context_id,
     DP_Message *msg = DP_msg_layer_acl_new(
         context_id, deserialize_layer_id_compat(id), flags & (uint8_t)0x83,
         read_uint8_array, exclusive_count, exclusive_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_layer_acl_parse(unsigned int context_id,
@@ -3883,8 +3973,13 @@ DP_Message *DP_msg_feature_access_levels_deserialize_compat(
 {
     DP_Message *msg =
         DP_msg_feature_access_levels_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_feature_access_levels_parse(unsigned int context_id,
@@ -4020,8 +4115,13 @@ DP_Message *DP_msg_default_layer_deserialize_compat(unsigned int context_id,
     uint16_t id = read_uint16(buffer + read, &read);
     DP_Message *msg =
         DP_msg_default_layer_new(context_id, deserialize_layer_id_compat(id));
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_default_layer_parse(unsigned int context_id,
@@ -4116,8 +4216,13 @@ DP_Message *DP_msg_undo_depth_deserialize_compat(unsigned int context_id,
                                                  size_t length)
 {
     DP_Message *msg = DP_msg_undo_depth_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_undo_depth_parse(unsigned int context_id,
@@ -4242,8 +4347,13 @@ DP_Message *DP_msg_data_deserialize_compat(unsigned int context_id,
                                            size_t length)
 {
     DP_Message *msg = DP_msg_data_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_data_parse(unsigned int context_id, DP_TextReader *reader)
@@ -4414,8 +4524,13 @@ DP_Message *DP_msg_local_change_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_local_change_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_local_change_parse(unsigned int context_id,
@@ -4603,8 +4718,13 @@ DP_Message *DP_msg_undo_point_deserialize_compat(unsigned int context_id,
                                                  size_t length)
 {
     DP_Message *msg = DP_msg_undo_point_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_undo_point_parse(unsigned int context_id,
@@ -4705,8 +4825,13 @@ DP_Message *DP_msg_canvas_resize_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_canvas_resize_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_canvas_resize_parse(unsigned int context_id,
@@ -4909,8 +5034,13 @@ DP_Message *DP_msg_layer_attributes_deserialize_compat(
     DP_Message *msg = DP_msg_layer_attributes_new(
         context_id, deserialize_layer_id_compat(id), sublayer,
         flags & (uint8_t)0x7, opacity, blend);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_layer_attributes_parse(unsigned int context_id,
@@ -5087,8 +5217,13 @@ DP_Message *DP_msg_layer_retitle_deserialize_compat(unsigned int context_id,
     const char *title = (const char *)buffer + read;
     DP_Message *msg = DP_msg_layer_retitle_new(
         context_id, deserialize_layer_id_compat(id), title, title_len);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_layer_retitle_parse(unsigned int context_id,
@@ -5321,8 +5456,13 @@ DP_Message *DP_msg_put_image_deserialize_compat(unsigned int context_id,
         DP_msg_put_image_new(context_id, deserialize_layer_id_compat(layer),
                              DP_blend_mode_to_compatible(mode), x, y, w, h,
                              read_bytes, image_size, image_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_put_image_parse(unsigned int context_id,
@@ -5576,8 +5716,13 @@ DP_Message *DP_msg_fill_rect_deserialize_compat(unsigned int context_id,
     DP_Message *msg = DP_msg_fill_rect_new(
         context_id, deserialize_layer_id_compat(layer),
         DP_blend_mode_to_compatible(mode), x, y, w, h, color);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_fill_rect_parse(unsigned int context_id,
@@ -5719,8 +5864,13 @@ DP_msg_pen_up_deserialize_compat(unsigned int context_id,
         return NULL;
     }
     DP_Message *msg = DP_msg_pen_up_new(context_id, 0);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader)
@@ -5874,8 +6024,13 @@ DP_Message *DP_msg_annotation_create_deserialize_compat(
     uint16_t h = read_uint16(buffer + read, &read);
     DP_Message *msg = DP_msg_annotation_create_new(
         context_id, convert_other_id_compat(id), x, y, w, h);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_annotation_create_parse(unsigned int context_id,
@@ -6059,8 +6214,13 @@ DP_Message *DP_msg_annotation_reshape_deserialize_compat(
     uint16_t h = read_uint16(buffer + read, &read);
     DP_Message *msg = DP_msg_annotation_reshape_new(
         context_id, convert_other_id_compat(id), x, y, w, h);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_annotation_reshape_parse(unsigned int context_id,
@@ -6281,8 +6441,13 @@ DP_Message *DP_msg_annotation_edit_deserialize_compat(
     DP_Message *msg = DP_msg_annotation_edit_new(
         context_id, convert_other_id_compat(id), bg, flags & (uint8_t)0x7,
         border, text, text_len);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_annotation_edit_parse(unsigned int context_id,
@@ -6453,8 +6618,13 @@ DP_Message *DP_msg_annotation_delete_deserialize_compat(
     uint16_t id = read_uint16(buffer + read, &read);
     DP_Message *msg =
         DP_msg_annotation_delete_new(context_id, convert_other_id_compat(id));
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_annotation_delete_parse(unsigned int context_id,
@@ -6634,8 +6804,13 @@ DP_Message *DP_msg_put_tile_deserialize_compat(unsigned int context_id,
     DP_Message *msg = DP_msg_put_tile_new(
         context_id, 0, deserialize_layer_id_compat(layer), sublayer, col, row,
         repeat, read_bytes, image_size, image_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
@@ -6805,8 +6980,13 @@ DP_Message *DP_msg_canvas_background_deserialize_compat(
 {
     DP_Message *msg =
         DP_msg_canvas_background_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_canvas_background_parse(unsigned int context_id,
@@ -7253,8 +7433,13 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize_compat(
         deserialize_layer_id_compat(layer), x, y, color,
         DP_blend_mode_to_compatible(mode), classic_dab_deserialize_compat,
         dabs_count, dabs_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
@@ -7722,8 +7907,13 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize_compat(
         deserialize_layer_id_compat(layer), x, y, color,
         DP_blend_mode_to_compatible(mode), pixel_dab_deserialize_compat,
         dabs_count, dabs_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
@@ -7887,8 +8077,13 @@ DP_Message *DP_msg_draw_dabs_pixel_square_deserialize_compat(
         deserialize_layer_id_compat(layer), x, y, color,
         DP_blend_mode_to_compatible(mode), pixel_dab_deserialize_compat,
         dabs_count, dabs_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
@@ -8393,8 +8588,13 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize_compat(
         context_id, 0, deserialize_layer_id_compat(layer), x, y, color,
         lock_alpha, colorize, posterize, mode, mypaint_dab_deserialize_compat,
         dabs_count, dabs_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
@@ -9172,8 +9372,13 @@ DP_Message *DP_msg_move_rect_deserialize_compat(unsigned int context_id,
         context_id, deserialize_layer_id_compat(layer),
         deserialize_layer_id_compat(source), sx, sy, tx, ty, w, h,
         (uint8_t)DP_BLEND_MODE_NORMAL, 255, read_bytes, mask_size, mask_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
@@ -9394,8 +9599,13 @@ DP_Message *DP_msg_set_metadata_int_deserialize_compat(
 {
     DP_Message *msg =
         DP_msg_set_metadata_int_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_set_metadata_int_parse(unsigned int context_id,
@@ -9597,8 +9807,13 @@ DP_Message *DP_msg_layer_tree_create_deserialize_compat(
         context_id, deserialize_layer_id_compat(id),
         deserialize_layer_id_compat(source),
         deserialize_layer_id_compat(target), fill, flags, title, title_len);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_layer_tree_create_parse(unsigned int context_id,
@@ -9792,8 +10007,13 @@ DP_Message *DP_msg_layer_tree_move_deserialize_compat(
         context_id, deserialize_layer_id_compat(layer),
         deserialize_layer_id_compat(parent),
         deserialize_layer_id_compat(sibling));
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_layer_tree_move_parse(unsigned int context_id,
@@ -9943,8 +10163,13 @@ DP_Message *DP_msg_layer_tree_delete_deserialize_compat(
     DP_Message *msg = DP_msg_layer_tree_delete_new(
         context_id, deserialize_layer_id_compat(id),
         deserialize_layer_id_compat(merge_to));
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_layer_tree_delete_parse(unsigned int context_id,
@@ -10286,8 +10511,13 @@ DP_Message *DP_msg_transform_region_deserialize_compat(
         deserialize_layer_id_compat(source), bx, by, bw, bh, x1, y1, x2, y2, x3,
         y3, x4, y4, mode, DP_BLEND_MODE_NORMAL, 255, read_bytes, mask_size,
         mask_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
@@ -10595,8 +10825,13 @@ DP_Message *DP_msg_track_create_deserialize_compat(unsigned int context_id,
         context_id, convert_other_id_compat(id),
         convert_other_id_compat(insert_id), convert_other_id_compat(source_id),
         title, title_len);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_track_create_parse(unsigned int context_id,
@@ -10769,8 +11004,13 @@ DP_Message *DP_msg_track_retitle_deserialize_compat(unsigned int context_id,
     const char *title = (const char *)buffer + read;
     DP_Message *msg = DP_msg_track_retitle_new(
         context_id, convert_other_id_compat(id), title, title_len);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_track_retitle_parse(unsigned int context_id,
@@ -10909,8 +11149,13 @@ DP_Message *DP_msg_track_delete_deserialize_compat(unsigned int context_id,
     uint16_t id = read_uint16(buffer + read, &read);
     DP_Message *msg =
         DP_msg_track_delete_new(context_id, convert_other_id_compat(id));
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_track_delete_parse(unsigned int context_id,
@@ -11062,8 +11307,13 @@ DP_Message *DP_msg_track_order_deserialize_compat(unsigned int context_id,
     void *tracks_user = (void *)(buffer + read);
     DP_Message *msg = DP_msg_track_order_new(context_id, read_track_ids_compat,
                                              tracks_count, tracks_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_track_order_parse(unsigned int context_id,
@@ -11250,8 +11500,13 @@ DP_Message *DP_msg_key_frame_set_deserialize_compat(unsigned int context_id,
             ? deserialize_layer_id_compat(source_id)
             : convert_other_id_compat(source_id),
         source_index, source);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_key_frame_set_parse(unsigned int context_id,
@@ -11437,8 +11692,13 @@ DP_Message *DP_msg_key_frame_retitle_deserialize_compat(
     DP_Message *msg = DP_msg_key_frame_retitle_new(
         context_id, convert_other_id_compat(track_id), frame_index, title,
         title_len);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_key_frame_retitle_parse(unsigned int context_id,
@@ -11646,8 +11906,13 @@ DP_Message *DP_msg_key_frame_layer_attributes_deserialize_compat(
         context_id, convert_other_id_compat(track_id), frame_index,
         read_key_frame_layer_flags_compat, layer_flags_count / 2,
         layer_flags_user);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_key_frame_layer_attributes_parse(unsigned int context_id,
@@ -11835,8 +12100,13 @@ DP_Message *DP_msg_key_frame_delete_deserialize_compat(
     DP_Message *msg = DP_msg_key_frame_delete_new(
         context_id, convert_other_id_compat(track_id), frame_index,
         convert_other_id_compat(move_track_id), move_frame_index);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_key_frame_delete_parse(unsigned int context_id,
@@ -12328,8 +12598,13 @@ DP_Message *DP_msg_local_match_deserialize_compat(unsigned int context_id,
 {
     DP_Message *msg =
         DP_msg_local_match_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_local_match_parse(unsigned int context_id,
@@ -13034,8 +13309,13 @@ DP_Message *DP_msg_undo_deserialize_compat(unsigned int context_id,
                                            size_t length)
 {
     DP_Message *msg = DP_msg_undo_deserialize(context_id, buffer, length);
-    DP_message_compat_set(msg);
-    return msg;
+    if (msg) {
+        DP_message_compat_set(msg);
+        return msg;
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_Message *DP_msg_undo_parse(unsigned int context_id, DP_TextReader *reader)

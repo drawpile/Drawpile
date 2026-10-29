@@ -1007,8 +1007,13 @@ write_key_frame_layer_flags_compat(const uint32_t *DP_RESTRICT id_flag_pairs,
         {% else %}
             DP_Message *msg = DP_{{ message.func_name }}_deserialize(context_id, buffer, length);
         {% endif %}
-            DP_message_compat_set(msg);
-            return msg;
+            if (msg) {
+                DP_message_compat_set(msg);
+                return msg;
+            }
+            else {
+                return NULL;
+            }
     }
     {% endif %}
 
