@@ -5109,7 +5109,8 @@ static bool snapshot_metadata_dimensions_valid(int width, int height)
         || DP_canvas_state_dimensions_in_bounds(width, height);
 }
 
-static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
+static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c,
+                              size_t max_pixel_size)
 {
     DP_Project *prj = c->prj;
     sqlite3_stmt *stmt =
@@ -5146,7 +5147,7 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
         case DP_PROJECT_SNAPSHOT_METADATA_BACKGROUND_TILE: {
             const unsigned char *data = sqlite3_column_blob(stmt, 1);
             size_t size = DP_int_to_size(sqlite3_column_bytes(stmt, 1));
-            if (data && size >= 4) {
+            if (data && size >= 4 && size <= max_pixel_size) {
                 DP_ProjectCanvasFromSnapshotTileJobParams params = {
                     {
                         c,
@@ -6534,7 +6535,7 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
     DP_PERF_END(setup);
 
     DP_PERF_BEGIN(metadata, "load:metadata");
-    bool metadata_ok = cfs_read_metadata(&c);
+    bool metadata_ok = cfs_read_metadata(&c, max_pixel_size);
     DP_PERF_END(metadata);
     if (!metadata_ok) {
         cfs_context_dispose(&c, false);
