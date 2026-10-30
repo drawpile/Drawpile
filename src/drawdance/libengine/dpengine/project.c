@@ -5145,6 +5145,7 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c,
         DP_transient_canvas_state_transient_metadata(tcs);
 
     bool error;
+    bool want_background_tile = true;
     int width = 0;
     int height = 0;
     int offset_x = 0;
@@ -5158,24 +5159,30 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c,
         case DP_PROJECT_SNAPSHOT_METADATA_HEIGHT:
             height = sqlite3_column_int(stmt, 1);
             break;
-        case DP_PROJECT_SNAPSHOT_METADATA_BACKGROUND_TILE: {
-            const unsigned char *data = sqlite3_column_blob(stmt, 1);
-            size_t size = DP_int_to_size(sqlite3_column_bytes(stmt, 1));
-            if (data && size >= 4 && size <= max_pixel_size) {
-                DP_ProjectCanvasFromSnapshotTileJobParams params = {
-                    {
-                        c,
-                        {{{0u}, -1}},
-                        -1,
-                        TILE_JOB_REPEAT_SENTINEL_BACKGROUND,
-                        size,
-                    },
-                    data,
-                };
-                DP_worker_push_with(c->worker, cfs_insert_tile_job, &params);
+        case DP_PROJECT_SNAPSHOT_METADATA_BACKGROUND_TILE:
+            if (want_background_tile) {
+                want_background_tile = false;
+                const unsigned char *data = sqlite3_column_blob(stmt, 1);
+                size_t size = DP_int_to_size(sqlite3_column_bytes(stmt, 1));
+                if (data && size >= 4 && size <= max_pixel_size) {
+                    DP_ProjectCanvasFromSnapshotTileJobParams params = {
+                        {
+                            c,
+                            {{{0u}, -1}},
+                            -1,
+                            TILE_JOB_REPEAT_SENTINEL_BACKGROUND,
+                            size,
+                        },
+                        data,
+                    };
+                    DP_worker_push_with(c->worker, cfs_insert_tile_job,
+                                        &params);
+                }
+            }
+            else {
+                DP_warn("Duplicate background tile");
             }
             break;
-        }
         case DP_PROJECT_SNAPSHOT_METADATA_DPIX:
             DP_transient_document_metadata_dpix_set(
                 tdm, sqlite3_column_int(stmt, 1));
