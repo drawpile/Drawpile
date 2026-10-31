@@ -522,12 +522,10 @@ void TransformModel::applyMoveRect(
 				lcDpTransformModel,
 				"applyMoveRect: image from layer %d is null", layerId);
 		} else {
-			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
-			applyOpacityToImage(img);
-			net::makePutImageMessagesCompat(
-				msgs, contextId, layerId,
-				uint8_t(getEffectiveBlendModeForLayer(layerId)), dstTopLeftX,
-				dstTopLeftY, img, m_canvas->isCompatibilityMode());
+			applyCutAndPaste(
+				msgs, contextId, layerId, sourceId, srcX, srcY, srcW, srcH,
+				getEffectiveBlendModeForLayer(layerId), mask,
+				QPoint(dstTopLeftX, dstTopLeftY), img);
 		}
 	}
 }
@@ -568,12 +566,9 @@ void TransformModel::applyTransformRegion(
 				"applyTransformRegion: could not transform image: %s",
 				DP_error());
 		} else {
-			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
-			applyOpacityToImage(img);
-			net::makePutImageMessagesCompat(
-				msgs, contextId, layerId,
-				uint8_t(getEffectiveBlendModeForLayer(layerId)), offset.x(),
-				offset.y(), img, m_canvas->isCompatibilityMode());
+			applyCutAndPaste(
+				msgs, contextId, layerId, sourceId, srcX, srcY, srcW, srcH,
+				getEffectiveBlendModeForLayer(layerId), mask, offset, img);
 		}
 	}
 }
@@ -599,11 +594,7 @@ void TransformModel::applyTransformRegionSelection(
 					"%s",
 					DP_error());
 			} else {
-				net::makeSelectionPutMessages(
-					msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
-					DP_MSG_SELECTION_PUT_OP_REPLACE, offset.x(), offset.y(),
-					img.width(), img.height(),
-					isImageOpaque(img) ? QImage() : img);
+				applySelectionCutAndPaste(msgs, contextId, offset, img);
 			}
 		} else {
 			qCWarning(
@@ -763,13 +754,8 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 				// likely case, since the user may have selected everything and
 				// just liquified some small part in the middle.
 			} else {
-				net::makeSelectionPutMessages(
-					msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
-					DP_MSG_SELECTION_PUT_OP_REPLACE,
-					dstPos.x() + m_liquifyCanvasOffset.x(),
-					dstPos.y() + m_liquifyCanvasOffset.y(), dstImage.width(),
-					dstImage.height(),
-					isImageOpaque(dstImage) ? QImage() : dstImage);
+				applySelectionCutAndPaste(
+					msgs, contextId, dstPos + m_liquifyCanvasOffset, dstImage);
 			}
 		}
 	}
@@ -801,15 +787,53 @@ void TransformModel::applyLiquifyCutAndPaste(
 	if(dstImage.isNull()) {
 		qCWarning(lcDpTransformModel, "applyLiquifyCutAndPaste: null image");
 	} else {
-		applyCut(
-			msgs, contextId, sourceId, offsetBounds.x(), offsetBounds.y(),
-			bounds.width(), bounds.height(), mask);
-		net::makePutImageMessagesCompat(
-			msgs, contextId, layerId, DP_BLEND_MODE_NORMAL,
-			dstPos.x() + m_liquifyCanvasOffset.x(),
-			dstPos.y() + m_liquifyCanvasOffset.y(), dstImage,
-			m_canvas->isCompatibilityMode());
+		applyCutAndPaste(
+			msgs, contextId, layerId, sourceId, offsetBounds.x(),
+			offsetBounds.y(), bounds.width(), bounds.height(),
+			DP_BLEND_MODE_NORMAL, mask, dstPos + m_liquifyCanvasOffset,
+			dstImage);
 	}
+}
+
+void TransformModel::applyCutAndPaste(
+	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+	int sourceId, int srcX, int srcY, int srcW, int srcH, int blendMode,
+	const QImage &mask, QPoint targetPos, QImage &img) const
+{
+	QRect targetBounds = clampPasteToCanvas(targetPos, img);
+	applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
+	if(!targetBounds.isEmpty()) {
+		applyOpacityToImage(img);
+		net::makePutImageMessagesCompat(
+			msgs, contextId, layerId, uint8_t(blendMode), targetBounds.x(),
+			targetBounds.y(), img, m_canvas->isCompatibilityMode());
+	}
+}
+
+void TransformModel::applySelectionCutAndPaste(
+	QVector<net::Message> &msgs, unsigned int contextId, QPoint targetPos,
+	QImage &img) const
+{
+	QRect targetBounds = clampPasteToCanvas(targetPos, img);
+	net::makeSelectionPutMessages(
+		msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
+		DP_MSG_SELECTION_PUT_OP_REPLACE, targetBounds.x(), targetBounds.y(),
+		img.width(), img.height(), isImageOpaque(img) ? QImage() : img);
+}
+
+QRect TransformModel::clampPasteToCanvas(QPoint targetPos, QImage &img) const
+{
+	QRect canvasRect(QPoint(0, 0), m_canvas->size());
+	QRect targetBounds(targetPos, img.size());
+	if(!canvasRect.contains(targetBounds)) {
+		targetBounds = targetBounds.intersected(canvasRect);
+		if(targetBounds.isEmpty()) {
+			img = QImage();
+		} else {
+			img = img.copy(targetBounds.translated(-targetPos));
+		}
+	}
+	return targetBounds;
 }
 
 void TransformModel::clear()

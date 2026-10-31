@@ -149,6 +149,17 @@ private:
 		int layerId, int sourceId, QRect bounds, const QImage &mask,
 		int interpolation);
 
+	void applyCutAndPaste(
+		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+		int sourceId, int srcX, int srcY, int srcW, int srcH, int blendMode,
+		const QImage &mask, QPoint targetPos, QImage &img) const;
+
+	void applySelectionCutAndPaste(
+		QVector<net::Message> &msgs, unsigned int contextId, QPoint targetPos,
+		QImage &img) const;
+
+	QRect clampPasteToCanvas(QPoint targetPos, QImage &img) const;
+
 	void clear();
 
 	void updateLayerIds();
