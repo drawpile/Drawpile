@@ -1243,6 +1243,10 @@ static DP_CanvasState *handle_transform_region(
         return NULL;
     }
 
+    // TODO: remove this condition with the next protocol version, it's not a
+    // good idea. You may legitimately scale an image significantly larger than
+    // the canvas when animating. Currently bound by compatibility though. See a
+    // check against this in transformmodel.cpp.
     if (DP_rect_width(dst_bounds) > (canvas_width * 2LL)
         || DP_rect_height(dst_bounds) > (canvas_height * 2LL)) {
         DP_error_set(

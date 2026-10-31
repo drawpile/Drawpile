@@ -621,7 +621,22 @@ bool TransformModel::isDstQuadBoundingRectAreaSizeOutOfBounds() const
 	// Some extra padding to make sure we're not hitting some edge case.
 	long long width = rect.width() + 2LL;
 	long long height = rect.height() + 2LL;
-	return width * height > DP_IMAGE_TRANSFORM_MAX_AREA;
+	if(width * height > DP_IMAGE_TRANSFORM_MAX_AREA) {
+		return true;
+	}
+
+	// TODO: Remove the limit with twice canvas size in the next protocol
+	// version. See canvas_state.c for a comment in that regard.
+	if(m_canvas) {
+		QSize canvasSize = m_canvas->size();
+		long long canvasWidth = canvasSize.width();
+		long long canvasHeight = canvasSize.height();
+		if(width > canvasWidth * 2LL || height > canvasHeight * 2LL) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void TransformModel::applyCut(
