@@ -31,6 +31,8 @@ DP_ViewState *DP_playback_view_state(DP_Playback *pb);
 DP_CanvasState *DP_playback_local_canvas_inc(DP_Playback *pb);
 DP_CanvasState *DP_playback_history_canvas_noinc(DP_Playback *pb);
 
+void DP_playback_local_state_reset_to(DP_Playback *pb, DP_CanvasState *cs);
+
 bool DP_playback_local_state_dirty(DP_Playback *pb);
 void DP_playback_local_state_dirty_set(DP_Playback *pb, bool local_state_dirty);
 

@@ -97,6 +97,12 @@ DP_CanvasState *DP_playback_history_canvas_noinc(DP_Playback *pb)
     return DP_canvas_history_get_noinc_nolock(pb->ch);
 }
 
+void DP_playback_local_state_reset_to(DP_Playback *pb, DP_CanvasState *cs)
+{
+    DP_ASSERT(pb);
+    DP_local_state_reset_to(pb->ls, cs);
+}
+
 bool DP_playback_local_state_dirty(DP_Playback *pb)
 {
     DP_ASSERT(pb);

@@ -45,6 +45,7 @@ DP_local_state_new(DP_CanvasState *cs_or_null,
 void DP_local_state_free(DP_LocalState *ls);
 
 void DP_local_state_reset(DP_LocalState *ls);
+void DP_local_state_reset_to(DP_LocalState *ls, DP_CanvasState *cs);
 
 // Calls the given function with actions to restore the local state, then calls
 // it with a null action last.

@@ -7463,6 +7463,7 @@ static DP_CanvasState *canvas_from_snapshot_playback(
         DP_CanvasState *cs = c->load_snapshot_fn(
             c->prj, DP_playback_draw_context(c->pb), snapshot_id);
         if (cs) {
+            DP_playback_local_state_reset_to(c->pb, cs);
             DP_playback_canvas_history_reset_to_state_noinc(c->pb, cs);
         }
         else {
