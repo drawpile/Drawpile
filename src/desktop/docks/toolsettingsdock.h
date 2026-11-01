@@ -5,6 +5,13 @@
 #include "libclient/tools/tool.h"
 
 class QStackedWidget;
+class TransformQuad;
+
+namespace io {
+namespace clip {
+struct TransformState;
+}
+}
 
 namespace tools {
 class AnnotationSettings;
@@ -139,8 +146,11 @@ public slots:
 
 	void startTransformMoveActiveLayer();
 	void startTransformMoveMask();
-	void startTransformPaste(const QRect &srcBounds, const QImage &image);
+	void startTransformPaste(
+		const QRect &srcBounds, const QImage &image,
+		const io::clip::TransformState *state = nullptr);
 	void startLiquifyActiveLayer();
+	void startLiquifyPaste(const QImage &image, const QByteArray &liquifyData);
 
 signals:
 	//! This signal is emitted when the current tool changes its size

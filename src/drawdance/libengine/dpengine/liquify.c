@@ -8,11 +8,15 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
+#include <dpcommon/input.h>
+#include <dpcommon/output.h>
 #include <dpcommon/threading.h>
 #include <math.h>
 #if DP_LIQUIFY_DEBUG_OVERLAY
 #    include <helpers.h> // For RGB <> HSV functions.
 #endif
+
+#define DP_LIQUIFY_SERIALIZE_MAGIC "dplq1"
 
 
 typedef struct DP_LiquifyTile DP_LiquifyTile;
@@ -451,6 +455,105 @@ DP_Liquify *DP_liquify_new(int mask_x, int mask_y, int mask_width,
     return l;
 }
 
+#define DESERIALIZE_READ(INPUT, BUFFER, SIZE)                              \
+    do {                                                                   \
+        DP_Input *_input = (INPUT);                                        \
+        void *_buffer = (BUFFER);                                          \
+        size_t _size = (SIZE);                                             \
+        bool _error;                                                       \
+        size_t _read = DP_input_read(_input, _buffer, _size, &_error);     \
+        if (_error) {                                                      \
+            return false;                                                  \
+        }                                                                  \
+        else if (_read != _size) {                                         \
+            DP_error_set("Wanted %zu byte(s), but got %zu", _size, _read); \
+        }                                                                  \
+    } while (0)
+
+static bool deserialize_magic(DP_Input *input)
+{
+    unsigned char buffer[sizeof(DP_LIQUIFY_SERIALIZE_MAGIC)];
+    DESERIALIZE_READ(input, buffer, sizeof(buffer));
+    if (memcmp(buffer, DP_LIQUIFY_SERIALIZE_MAGIC, sizeof(buffer)) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("Bad magic");
+        return false;
+    }
+}
+
+static bool deserialize_float(DP_Input *input, float *out_f)
+{
+    DESERIALIZE_READ(input, out_f, sizeof(*out_f));
+    return true;
+}
+
+static bool deserialize_rect(DP_Input *input, DP_Rect *out_rect)
+{
+    int coords[4];
+    DESERIALIZE_READ(input, coords, sizeof(coords));
+    out_rect->x1 = coords[0];
+    out_rect->y1 = coords[1];
+    out_rect->x2 = coords[2];
+    out_rect->y2 = coords[3];
+    return true;
+}
+
+static bool deserialize_tiles(DP_Input *input, DP_Liquify *l,
+                              DP_Rect tile_bounds)
+{
+    l->lm = map_alloc_zeroed(tile_bounds);
+    size_t count = map_tile_count(tile_bounds);
+    for (size_t i = 0; i < count; ++i) {
+        unsigned char have_tile;
+        DESERIALIZE_READ(input, &have_tile, 1);
+        if (have_tile) {
+            DP_LiquifyTile *lt = tile_alloc(l);
+            l->lm->tiles[i] = lt;
+            DESERIALIZE_READ(input, lt->d, sizeof(lt->d));
+        }
+    }
+    return true;
+}
+
+DP_Liquify *DP_liquify_new_deserialize(DP_Input *input, int mask_width,
+                                       int mask_height)
+{
+    DP_ASSERT(input);
+
+    float displacement;
+    DP_Rect mask_rect, tile_bounds;
+    bool header_ok = deserialize_magic(input)
+                  && deserialize_float(input, &displacement)
+                  && deserialize_rect(input, &mask_rect)
+                  && deserialize_rect(input, &tile_bounds);
+    if (!header_ok) {
+        return NULL;
+    }
+
+    if (!DP_rect_valid(mask_rect) || DP_rect_width(mask_rect) != mask_width
+        || DP_rect_height(mask_rect) != mask_height) {
+        DP_error_set("Invalid mask rectangle");
+        return NULL;
+    }
+
+    DP_Liquify *l = DP_liquify_new(DP_rect_x(mask_rect), DP_rect_y(mask_rect),
+                                   mask_width, mask_height);
+    if (!l) {
+        return NULL;
+    }
+
+    if (DP_rect_valid(tile_bounds)
+        && !deserialize_tiles(input, l, tile_bounds)) {
+        DP_liquify_decref(l);
+        return NULL;
+    }
+
+    l->displacement = displacement;
+    return l;
+}
+
 DP_Liquify *DP_liquify_incref(DP_Liquify *l)
 {
     DP_ASSERT(l);
@@ -498,6 +601,34 @@ int DP_liquify_refcount(DP_Liquify *l)
     DP_ASSERT(l);
     DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
     return DP_atomic_get(&l->refcount);
+}
+
+int DP_liquify_mask_x(DP_Liquify *l)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    return DP_rect_x(l->mask_rect);
+}
+
+int DP_liquify_mask_y(DP_Liquify *l)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    return DP_rect_y(l->mask_rect);
+}
+
+int DP_liquify_mask_width(DP_Liquify *l)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    return DP_rect_width(l->mask_rect);
+}
+
+int DP_liquify_mask_height(DP_Liquify *l)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    return DP_rect_height(l->mask_rect);
 }
 
 DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l)
@@ -951,6 +1082,19 @@ bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
     return true;
 }
 
+float DP_liquify_displacement(DP_Liquify *l)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+
+    DP_Mutex *mutex = l->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    float displacement = l->displacement;
+    DP_MUTEX_MUST_UNLOCK(mutex);
+
+    return displacement;
+}
+
 bool DP_liquify_displacement_set(DP_Liquify *l, float displacement)
 {
     DP_ASSERT(l);
@@ -1006,6 +1150,89 @@ bool DP_liquify_displacement_apply(DP_Liquify *l)
 
     DP_MUTEX_MUST_UNLOCK(mutex);
     return changed;
+}
+
+static bool serialize_bool(DP_Output *output, bool b)
+{
+    unsigned char c = b ? 1 : 0;
+    return DP_output_write(output, &c, 1);
+}
+
+static bool serialize_float(DP_Output *output, float f)
+{
+    return DP_output_write(output, &f, sizeof(f));
+}
+
+static bool serialize_rect(DP_Output *output, DP_Rect rect)
+{
+    int coords[4] = {rect.x1, rect.y1, rect.x2, rect.y2};
+    return DP_output_write(output, coords, sizeof(coords));
+}
+
+static bool serialize_tiles(DP_Output *output, DP_LiquifyMap *lm)
+{
+    size_t count = map_tile_count(lm->tile_bounds);
+    for (size_t i = 0; i < count; ++i) {
+        DP_LiquifyTile *lt = lm->tiles[i];
+        bool ok;
+        if (lt) {
+            ok = serialize_bool(output, true)
+              && DP_output_write(output, lt->d, sizeof(lt->d));
+        }
+        else {
+            ok = serialize_bool(output, false);
+        }
+
+        if (!ok) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool serialize_map(DP_Output *output, DP_LiquifyMap *lm_or_null)
+{
+    if (lm_or_null) {
+        return serialize_rect(output, lm_or_null->tile_bounds)
+            && serialize_tiles(output, lm_or_null);
+    }
+    else {
+        return serialize_rect(output, DP_RECT_INVALID);
+    }
+}
+
+static bool serialize_liqufy(DP_Liquify *l, DP_Output *output)
+{
+    return DP_output_write(output, DP_LIQUIFY_SERIALIZE_MAGIC,
+                           sizeof(DP_LIQUIFY_SERIALIZE_MAGIC))
+        && serialize_float(output, l->displacement)
+        && serialize_rect(output, l->mask_rect) && serialize_map(output, l->lm);
+}
+
+bool DP_liquify_serialize(DP_Liquify *l, DP_LiquifySerializeWriteFn write,
+                          void *user)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    DP_ASSERT(write);
+
+    DP_Output *output = DP_zstd_stream_output_new(write, user);
+    if (!output) {
+        return false;
+    }
+
+    DP_Mutex *mutex = l->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    bool ok = serialize_liqufy(l, output);
+    DP_MUTEX_MUST_UNLOCK(mutex);
+
+    if (ok) {
+        return DP_output_free(output);
+    }
+    else {
+        DP_output_free_discard(output);
+        return false;
+    }
 }
 
 

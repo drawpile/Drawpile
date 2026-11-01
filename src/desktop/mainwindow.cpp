@@ -5647,8 +5647,11 @@ void MainWindow::updateSelectTransformActions()
 	getAction("saveselection")->setEnabled(haveSelection);
 #endif
 
-	getAction("cutlayer")->setEnabled(haveSelection);
-	getAction("copylayer")->setEnabled(haveSelection);
+	QAction *copylayer = getAction(QStringLiteral("copylayer"));
+	QAction *cutlayer = getAction(QStringLiteral("cutlayer"));
+	cutlayer->setEnabled(haveSelection || canStampTransform || canStampLiquify);
+	copylayer->setEnabled(
+		haveSelection || canStampTransform || canStampLiquify);
 	getAction("copyvisible")->setEnabled(haveSelection);
 	getAction("copymerged")->setEnabled(haveSelection);
 	getAction("paste")->setEnabled(!haveTransform && !haveLiquify);
@@ -5657,10 +5660,16 @@ void MainWindow::updateSelectTransformActions()
 	QAction *stamp = getAction(QStringLiteral("stamp"));
 	stamp->setEnabled(canStampTransform || canStampLiquify);
 	if(haveTransform) {
+		copylayer->setText(tr("Cop&y Transform"));
+		cutlayer->setText(tr("Cu&t Transform"));
 		stamp->setText(tr("&Stamp Transform"));
 	} else if(haveLiquify) {
+		copylayer->setText(tr("Cop&y Liquify"));
+		cutlayer->setText(tr("Cu&t Liquify"));
 		stamp->setText(tr("&Stamp Liquify"));
 	} else {
+		copylayer->setText(tr("Cop&y From Layer"));
+		cutlayer->setText(tr("Cu&t From Layer"));
 		stamp->setText(tr("&Stamp Transform/Liquify"));
 	}
 	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
@@ -5746,8 +5755,40 @@ void MainWindow::copyText()
 // clang-format on
 void MainWindow::paste()
 {
+	canvas::CanvasModel *canvas = m_canvasView->canvas();
+	if(!canvas || canvas->transform()->isActive()) {
+		return;
+	}
+
 	utils::ScopedOverrideCursor waitCursor;
 	const QMimeData *mimeData = io::clip::mimeData();
+
+	if(io::clip::TransformState state =
+		   io::clip::getTransformStateFrom(mimeData);
+	   !state.isNull()) {
+
+		QImage img = io::clip::getSourceImageFrom(mimeData);
+		if(!img.isNull()) {
+			m_dockToolSettings->startTransformPaste(
+				state.srcBounds,
+				img.convertToFormat(QImage::Format_ARGB32_Premultiplied),
+				&state);
+			return;
+		}
+	}
+
+	if(QByteArray liquifyData = io::clip::getLiquifyDataFrom(mimeData);
+	   !liquifyData.isEmpty()) {
+
+		QImage img = io::clip::getSourceImageFrom(mimeData);
+		if(!img.isNull()) {
+			m_dockToolSettings->startLiquifyPaste(
+				img.convertToFormat(QImage::Format_ARGB32_Premultiplied),
+				liquifyData);
+			return;
+		}
+	}
+
 	QImage img = io::clip::getImageFrom(mimeData);
 	if(!img.isNull()) {
 		QPoint pastepos;
@@ -5779,6 +5820,11 @@ void MainWindow::paste()
 
 void MainWindow::pasteCentered()
 {
+	canvas::CanvasModel *canvas = m_canvasView->canvas();
+	if(!canvas || canvas->transform()->isActive()) {
+		return;
+	}
+
 	utils::ScopedOverrideCursor waitCursor;
 	const QMimeData *mimeData = io::clip::mimeData();
 	QImage img = io::clip::getImageFrom(mimeData);
@@ -6948,7 +6994,7 @@ void MainWindow::setupActions()
 						  "the clipboard"))
 			.shortcut("Ctrl+Alt+C");
 	QAction *copylayer =
-		makeAction("copylayer", tr("Copy From &Layer"))
+		makeAction("copylayer", tr("Cop&y From Layer"))
 			.icon("edit-copy")
 			.statusTip(
 				tr("Copy selected area of the current layer to the clipboard"))
@@ -9393,6 +9439,9 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("transformshrinktoview")),
 		getAction(QStringLiteral("stamp")),
 		nullptr,
+		getAction(QStringLiteral("copylayer")),
+		getAction(QStringLiteral("cutlayer")),
+		nullptr,
 		locationMenuAction,
 		disableAction,
 	});
@@ -9432,6 +9481,9 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("selectnone")),
 		nullptr,
 		getAction(QStringLiteral("stamp")),
+		nullptr,
+		getAction(QStringLiteral("copylayer")),
+		getAction(QStringLiteral("cutlayer")),
 		nullptr,
 		locationMenuAction,
 		disableAction,

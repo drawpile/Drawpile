@@ -31,6 +31,8 @@ typedef enum DP_LiquifyWorkerEventType {
     DP_LIQUIFY_WORKER_EVENT_UNDO_LIMIT_HIT,
     DP_LIQUIFY_WORKER_EVENT_DISPLACEMENT_CHANGED,
     DP_LIQUIFY_WORKER_EVENT_STAMP,
+    DP_LIQUIFY_WORKER_EVENT_COPY,
+    DP_LIQUIFY_WORKER_EVENT_CUT,
 } DP_LiquifyWorkerEventType;
 
 typedef struct DP_LiquifyWorkerEvent {
@@ -86,6 +88,9 @@ void DP_liquify_worker_redo(DP_LiquifyWorker *lw);
 void DP_liquify_worker_update_request(DP_LiquifyWorker *lw);
 
 void DP_liquify_worker_stamp(DP_LiquifyWorker *lw);
+
+void DP_liquify_worker_copy(DP_LiquifyWorker *lw);
+void DP_liquify_worker_cut(DP_LiquifyWorker *lw);
 
 void DP_liquify_worker_abort(DP_LiquifyWorker *lw);
 

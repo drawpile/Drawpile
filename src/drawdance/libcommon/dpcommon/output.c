@@ -591,6 +591,8 @@ static bool zstd_stream_output_compress(DP_ZstdStreamOutputState *state,
     DP_ASSERT(state->inbuf_fill != 0 || end_op == ZSTD_e_end);
 
     ZSTD_inBuffer input = {state->inbuf, state->inbuf_fill, 0};
+    state->inbuf_fill = 0;
+
     while (input.pos < input.size) {
         ZSTD_outBuffer output = {state->outbuf, state->outbuf_size, 0};
 
@@ -608,8 +610,8 @@ static bool zstd_stream_output_compress(DP_ZstdStreamOutputState *state,
             return false;
         }
 
-        if (remaining != 0) {
-            state->write(state->user, state->outbuf, remaining);
+        if (output.pos != 0) {
+            state->write(state->user, state->outbuf, output.pos);
         }
     }
     return true;

@@ -32,7 +32,7 @@ void LiquifyTool::begin(const BeginParams &params)
 		// happening. We'll just cancel t he running stroke and assume the user
 		// doesn't care about whatever trailing stuff it's still doing to work
 		// against that. Also, right-click just cancels.
-		liquifyWorker->cancelStroke(QDateTime::currentMSecsSinceEpoch());
+		cancelStroke(liquifyWorker);
 		if(!params.right) {
 			setLiquifyWorkerOperation(liquifyWorker);
 			m_owner.setLiquifyWorkerStrokeParams(
@@ -118,6 +118,39 @@ void LiquifyTool::end(const EndParams &params)
 	}
 }
 
+bool LiquifyTool::copyCut(bool cut)
+{
+	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
+	if(liquifyWorker) {
+		cancelStroke(liquifyWorker);
+		if(cut) {
+			liquifyWorker->cut();
+		} else {
+			liquifyWorker->copy();
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void LiquifyTool::applyCopyCut(bool cut)
+{
+	canvas::TransformModel *transform = getActiveLiquifyModel();
+	if(transform) {
+		transform->copyLiquify();
+		if(cut) {
+			net::Client *client = m_owner.client();
+			net::MessageList msgs = transform->cutSource(client->myId());
+			int count = msgs.size();
+			if(count != 0) {
+				client->sendCommands(count, msgs.constData());
+			}
+			endLiquify(transform, false);
+		}
+	}
+}
+
 void LiquifyTool::finishMultipart()
 {
 	apply(false);
@@ -137,7 +170,7 @@ void LiquifyTool::undoMultipart()
 {
 	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
 	if(liquifyWorker) {
-		liquifyWorker->cancelStroke(QDateTime::currentMSecsSinceEpoch());
+		cancelStroke(liquifyWorker);
 		liquifyWorker->undo();
 	}
 }
@@ -146,7 +179,7 @@ void LiquifyTool::redoMultipart()
 {
 	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
 	if(liquifyWorker) {
-		liquifyWorker->cancelStroke(QDateTime::currentMSecsSinceEpoch());
+		cancelStroke(liquifyWorker);
 		liquifyWorker->redo();
 	}
 }
@@ -172,6 +205,15 @@ void LiquifyTool::beginTemporary(Tool::Type toolToReturnTo)
 	}
 }
 
+void LiquifyTool::beginTemporaryPaste(
+	Tool::Type toolToReturnTo, const QImage &img, const QByteArray &liquifyData)
+{
+	if(!isLiquifyActive()) {
+		m_toolToReturnTo = toolToReturnTo;
+		tryBeginLiquify(&img, &liquifyData);
+	}
+}
+
 void LiquifyTool::clearTemporary()
 {
 	m_toolToReturnTo = Tool::Type::_LASTTOOL;
@@ -194,7 +236,7 @@ void LiquifyTool::stamp()
 {
 	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
 	if(liquifyWorker) {
-		liquifyWorker->cancelStroke(QDateTime::currentMSecsSinceEpoch());
+		cancelStroke(liquifyWorker);
 		liquifyWorker->stamp();
 	}
 }
@@ -256,7 +298,8 @@ QPointF LiquifyTool::getLiquifyOffset() const
 	return -QPointF(m_owner.model()->transform()->liquifyCanvasOffset());
 }
 
-canvas::TransformModel *LiquifyTool::tryBeginLiquify()
+canvas::TransformModel *
+LiquifyTool::tryBeginLiquify(const QImage *img, const QByteArray *liquifyData)
 {
 	Q_ASSERT(!isLiquifyActive());
 
@@ -278,22 +321,38 @@ canvas::TransformModel *LiquifyTool::tryBeginLiquify()
 		return nullptr;
 	}
 
-	canvas::SelectionModel *selection = canvas->selection();
-	if(!selection->isValid()) {
-		emit m_owner.showMessageRequested(
-			QCoreApplication::translate(
-				"tools::TransformSettings",
-				"Nothing selected that could be liquified."));
-		returnToPreviousTool();
-		return nullptr;
-	}
+	if(img && liquifyData) {
+		drawdance::Liquify liquify = drawdance::Liquify::deserialize(
+			*liquifyData, img->width(), img->height());
+		if(liquify.isNull()) {
+			returnToPreviousTool();
+			return nullptr;
+		}
 
-	canvas::TransformModel *transform = canvas->transform();
-	transform->beginLiquifyFromCanvas(
-		selection->bounds(), selection->image(), m_owner.selectedLayers(),
-		m_owner.liquifyInterpolation(), UNDO_DEPTH);
-	setCursor(utils::Cursors::liquify());
-	return transform;
+		canvas::TransformModel *transform = canvas->transform();
+		transform->beginLiquifyPaste(
+			liquify, *img, m_owner.liquifyInterpolation(), UNDO_DEPTH);
+		setCursor(utils::Cursors::liquify());
+		return transform;
+
+	} else {
+		canvas::SelectionModel *selection = canvas->selection();
+		if(!selection->isValid()) {
+			Q_EMIT m_owner.showMessageRequested(
+				QCoreApplication::translate(
+					"tools::TransformSettings",
+					"Nothing selected that could be liquified."));
+			returnToPreviousTool();
+			return nullptr;
+		}
+
+		canvas::TransformModel *transform = canvas->transform();
+		transform->beginLiquifyFromCanvas(
+			selection->bounds(), selection->image(), m_owner.selectedLayers(),
+			m_owner.liquifyInterpolation(), UNDO_DEPTH);
+		setCursor(utils::Cursors::liquify());
+		return transform;
+	}
 }
 
 void LiquifyTool::endLiquify(canvas::TransformModel *transform, bool applied)
@@ -376,6 +435,11 @@ void LiquifyTool::returnToPreviousTool()
 		m_toolToReturnTo = Tool::Type::_LASTTOOL;
 		emit m_owner.toolSwitchRequested(toolToReturnTo);
 	}
+}
+
+void LiquifyTool::cancelStroke(drawdance::LiquifyWorker *liquifyWorker)
+{
+	liquifyWorker->cancelStroke(QDateTime::currentMSecsSinceEpoch());
 }
 
 }

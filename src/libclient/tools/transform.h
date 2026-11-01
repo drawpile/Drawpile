@@ -13,6 +13,12 @@ namespace canvas {
 class TransformModel;
 }
 
+namespace io {
+namespace clip {
+struct TransformState;
+}
+}
+
 namespace net {
 class Client;
 }
@@ -50,6 +56,8 @@ public:
 	void hover(const HoverParams &params) override;
 	void end(const EndParams &params) override;
 
+	bool copyCut(bool cut) override;
+
 	void finishMultipart() override;
 	void cancelMultipart() override;
 	void undoMultipart() override;
@@ -62,7 +70,8 @@ public:
 		Tool::Type toolToReturnTo, bool onlyMask, bool quickMove,
 		const QCursor &outsideMoveCursor);
 	void beginTemporaryPaste(
-		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image);
+		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image,
+		const io::clip::TransformState *state = nullptr);
 	void clearTemporary();
 
 	bool handleDeselect(bool finish);
@@ -96,7 +105,9 @@ private:
 	canvas::TransformModel *getActiveTransformModel() const;
 	canvas::TransformModel *
 	tryBeginMove(bool firstClick, bool onlyMask, Mode mode);
-	void tryBeginPaste(const QRect &srcBounds, const QImage &image);
+	void tryBeginPaste(
+		const QRect &srcBounds, const QImage &image,
+		const io::clip::TransformState *state = nullptr);
 	void endTransform(canvas::TransformModel *transform, bool applied);
 
 	bool checkAndSend(net::Client *client, const net::MessageList &msgs);

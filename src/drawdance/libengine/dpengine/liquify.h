@@ -4,6 +4,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_Input DP_Input;
 
 
 // #define DP_LIQUIFY_DEBUG_OVERLAY 1
@@ -58,9 +59,14 @@ typedef struct DP_LiquifyOpParams {
     } DP_ANONYMOUS(op);
 } DP_LiquifyOpParams;
 
+typedef void (*DP_LiquifySerializeWriteFn)(void *user, void *data, size_t size);
+
 
 DP_Liquify *DP_liquify_new(int mask_x, int mask_y, int mask_width,
                            int mask_height);
+
+DP_Liquify *DP_liquify_new_deserialize(DP_Input *input, int mask_width,
+                                       int mask_height);
 
 DP_Liquify *DP_liquify_incref(DP_Liquify *l);
 DP_Liquify *DP_liquify_incref_nullable(DP_Liquify *l_or_null);
@@ -69,6 +75,11 @@ void DP_liquify_decref(DP_Liquify *l);
 void DP_liquify_decref_nullable(DP_Liquify *l_or_null);
 
 int DP_liquify_refcount(DP_Liquify *l);
+
+int DP_liquify_mask_x(DP_Liquify *l);
+int DP_liquify_mask_y(DP_Liquify *l);
+int DP_liquify_mask_width(DP_Liquify *l);
+int DP_liquify_mask_height(DP_Liquify *l);
 
 DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l);
 
@@ -79,9 +90,13 @@ bool DP_liquify_current_state_set_inc(DP_Liquify *l, DP_LiquifyState *ls);
 bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
                    const DP_LiquifyOpParams *params);
 
+float DP_liquify_displacement(DP_Liquify *l);
 bool DP_liquify_displacement_set(DP_Liquify *l, float displacement);
 
 bool DP_liquify_displacement_apply(DP_Liquify *l);
+
+bool DP_liquify_serialize(DP_Liquify *l, DP_LiquifySerializeWriteFn write,
+                          void *user);
 
 
 DP_LiquifyState *DP_liquify_state_incref(DP_LiquifyState *ls);

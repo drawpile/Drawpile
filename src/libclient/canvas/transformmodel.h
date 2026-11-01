@@ -18,6 +18,12 @@ namespace drawdance {
 class CanvasState;
 }
 
+namespace io {
+namespace clip {
+struct TransformState;
+}
+}
+
 namespace canvas {
 
 class CanvasModel;
@@ -64,12 +70,18 @@ public:
 		const QRect &srcBounds, const QImage &mask,
 		const QSet<int> &sourceLayerIds);
 
-	void beginFloating(const QRect &srcBounds, const QImage &image);
+	void beginFloating(
+		const QRect &srcBounds, const QImage &image,
+		const io::clip::TransformState *state = nullptr);
 
 	void beginLiquifyFromCanvas(
 		const QRect &srcBounds, const QImage &mask,
 		const QSet<int> &sourceLayerIds, int liquifyInterpolation,
 		int undoDepth);
+
+	void beginLiquifyPaste(
+		const drawdance::Liquify &liquify, const QImage &image,
+		int liquifyInterpolation, int undoDepth);
 
 	void setDeselectOnApply(bool deselectOnApply);
 	void setDstQuad(const TransformQuad &dstQuad);
@@ -85,6 +97,10 @@ public:
 	QVector<net::Message> applyActiveTransform(
 		uint8_t contextId, int layerId, int interpolation, bool stamp,
 		bool *outMovedSelection = nullptr);
+
+	void copyTransform(int handleMode, bool constrain, bool center);
+	void copyLiquify();
+	QVector<net::Message> cutSource(uint8_t contextId);
 
 	bool isAllowedToApplyActiveTransform() const;
 
@@ -103,6 +119,7 @@ signals:
 	void liquifyCancelRequested();
 	void liquifyDisplacementChanged(float displacement);
 	void liquifyStampRequested();
+	void liquifyCopyCutRequested(bool cut);
 
 private:
 	QVector<net::Message> applyFromCanvas(

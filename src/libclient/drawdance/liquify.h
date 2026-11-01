@@ -41,6 +41,8 @@ private:
 class Liquify final {
 public:
 	static Liquify init(QRect bounds);
+	static Liquify
+	deserialize(const QByteArray &data, int maskWidth, int maskHeight);
 	static Liquify null();
 	static Liquify inc(DP_Liquify *l);
 	static Liquify noinc(DP_Liquify *l);
@@ -56,10 +58,18 @@ public:
 
 	bool isNull() const;
 
+	QRect maskBounds() const;
+
+	float displacement() const;
+
 	LiquifyState currentState() const;
+
+	QByteArray serialize() const;
 
 private:
 	explicit Liquify(DP_Liquify *l);
+
+	static void serializeWrite(void *user, void *data, size_t size);
 
 	DP_Liquify *m_data;
 };
