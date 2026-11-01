@@ -377,10 +377,10 @@ void ColorSliderDock::adjustColor(int channel, int amount)
 		break;
 	}
 	case 1:
-		d->saturationbox->setValue(qRound(d->saturationbox->value()  / 255.0 * 100.0 + amount / 255.0 * 100.0));
+		d->saturationbox->setValue(qRound(d->saturationbox->value() + amount / 255.0 * 100.0));
 		break;
 	case 2:
-		d->valuebox->setValue(qRound(d->valuebox->value() / 255.0 * 100.0 + amount / 255.0 * 100.0));
+		d->valuebox->setValue(qRound(d->valuebox->value() + amount / 255.0 * 100.0));
 		break;
 	default:
 		qWarning("Unknown color channel %d", channel);
@@ -584,10 +584,8 @@ void ColorSliderDock::updateSaturationSlider(
 		d->saturation->setColors(colors);
 		// Saturation is indeterminate at the lightness extremes.
 		if(!fromHsvSelection && lf != 0.0 && lf != 1.0) {
-			int s = qRound(
-				color_widgets::utils::color_HSL_saturationF(color) * 255.0);
-			d->saturation->setValue(s);
-			d->saturationbox->setValue(qRound(s / 255.0 * 100.0));
+			d->saturation->setValue(qRound(color_widgets::utils::color_HSL_saturationF(color) * 255.0));
+			d->saturationbox->setValue(qRound(color_widgets::utils::color_HSL_saturationF(color) * 100.0));
 		}
 		break;
 	}
@@ -602,9 +600,8 @@ void ColorSliderDock::updateSaturationSlider(
 		}
 		d->saturation->setColors(colors);
 		if(!fromHsvSelection) {
-			int c = qRound(color_widgets::utils::color_chromaF(color) * 255.0);
-			d->saturation->setValue(c);
-			d->saturationbox->setValue(qRound(c / 255.0 * 100.0));
+			d->saturation->setValue(qRound(color_widgets::utils::color_chromaF(color) * 255.0));
+			d->saturationbox->setValue(qRound(color_widgets::utils::color_chromaF(color) * 100.0));
 		}
 		break;
 	}
@@ -638,10 +635,8 @@ void ColorSliderDock::updateValueSlider(
 		}
 		d->value->setColors(colors);
 		if(!fromHsvSelection) {
-			int l =
-				qRound(color_widgets::utils::color_lightnessF(color) * 255.0);
-			d->value->setValue(l);
-			d->valuebox->setValue(qRound(l / 255.0 * 100.0));
+			d->value->setValue(qRound(color_widgets::utils::color_lightnessF(color) * 255.0));
+			d->valuebox->setValue(qRound(color_widgets::utils::color_lightnessF(color) * 100.0));
 		}
 		break;
 	}
@@ -656,9 +651,8 @@ void ColorSliderDock::updateValueSlider(
 		}
 		d->value->setColors(colors);
 		if(!fromHsvSelection) {
-			int l = qRound(color_widgets::utils::color_lumaF(color) * 255.0);
-			d->value->setValue(l);
-			d->valuebox->setValue(qRound(l / 255.0 * 100.0));
+			d->value->setValue(qRound(color_widgets::utils::color_lumaF(color) * 255.0));
+			d->valuebox->setValue(qRound(color_widgets::utils::color_lumaF(color) * 100.0));
 		}
 		break;
 	}
