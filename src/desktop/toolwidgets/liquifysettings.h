@@ -32,7 +32,7 @@ public:
 	bool isLocked() override { return !m_featureAccess; }
 	bool requiresSelection() override { return true; }
 
-	void setActions(QActionGroup *liquifyOperations);
+	void setActions(QActionGroup *liquifyOperations, QAction *stamp);
 
 	void toggleEraserMode() override;
 
@@ -88,9 +88,13 @@ private:
 	int selectedOperation() const;
 	void setOperation(int operation);
 
+	void updateDisplacement(int displacement);
+	void applyDisplacement();
+	void handleDisplacementChanged(float displacement);
+
 	QWidget *m_headerWidget = nullptr;
 	QMenu *m_headerMenu = nullptr;
-	QAction *m_restoreAction = nullptr;
+	QAction *m_applyDisplacementAction = nullptr;
 	QActionGroup *m_liquifyOperations = nullptr;
 	KisSliderSpinBox *m_sizeSlider = nullptr;
 	widgets::GroupedToolButton *m_sizePressureButton = nullptr;
@@ -99,6 +103,7 @@ private:
 	KisSliderSpinBox *m_hardnessSlider = nullptr;
 	widgets::GroupedToolButton *m_hardnessPressureButton = nullptr;
 	KisSliderSpinBox *m_spacingSlider = nullptr;
+	KisSliderSpinBox *m_displacementSlider = nullptr;
 	QButtonGroup *m_interpolationGroup = nullptr;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;

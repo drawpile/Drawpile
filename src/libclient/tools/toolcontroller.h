@@ -304,6 +304,8 @@ public slots:
 	//! Used to finish fills when merging layers or similar.
 	void flushPreviewedActions();
 
+	void stamp();
+
 signals:
 	void activeToolChanged(int type);
 	void toolCapabilitiesChanged(unsigned int capabilities);
@@ -362,6 +364,7 @@ private slots:
 		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);
 	void clearTransformCutPreview();
 	void clearTransformPreviews();
+	void handleLiquifyStamp();
 	void cancelLiquify();
 	void notifyAsyncExecutionFinished(Task *task);
 

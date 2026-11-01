@@ -264,6 +264,11 @@ void ToolController::flushPreviewedActions()
 	m_activeTool->flushPreviewedActions();
 }
 
+void ToolController::stamp()
+{
+	m_activeTool->stamp();
+}
+
 Tool::Type ToolController::activeTool() const
 {
 	Q_ASSERT(m_activeTool);
@@ -412,6 +417,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		transform, &canvas::TransformModel::transformCutCleared, this,
 		&ToolController::clearTransformCutPreview);
 	connect(
+		transform, &canvas::TransformModel::liquifyStampRequested, this,
+		&ToolController::handleLiquifyStamp, Qt::QueuedConnection);
+	connect(
 		transform, &canvas::TransformModel::liquifyCancelRequested, this,
 		&ToolController::cancelLiquify, Qt::QueuedConnection);
 	m_model->setTransformInterpolation(m_transformInterpolation);
@@ -524,6 +532,13 @@ void ToolController::clearTransformPreviews()
 		canvas::PaintEngine *paintEngine = m_model->paintEngine();
 		paintEngine->clearAllTransformPreviews();
 		paintEngine->clearCutPreview();
+	}
+}
+
+void ToolController::handleLiquifyStamp()
+{
+	if(m_model && m_activeTool == m_toolbox[Tool::LIQUIFY]) {
+		liquifyTool()->applyStamp();
 	}
 }
 

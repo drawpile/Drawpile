@@ -58,10 +58,7 @@ public:
 	int blendMode() const { return m_blendMode; }
 	qreal opacity() const { return m_opacity; }
 
-	bool isStampable() const
-	{
-		return (m_pasted || m_layerIds.size() == 1) && m_liquifyWorker.isNull();
-	}
+	bool isStampable() const { return m_pasted || m_layerIds.size() == 1; }
 
 	void beginFromCanvas(
 		const QRect &srcBounds, const QImage &mask,
@@ -104,6 +101,8 @@ signals:
 	void transformCutCleared();
 	void liquifyPreviewRequested();
 	void liquifyCancelRequested();
+	void liquifyDisplacementChanged(float displacement);
+	void liquifyStampRequested();
 
 private:
 	QVector<net::Message> applyFromCanvas(
@@ -141,18 +140,27 @@ private:
 		bool *outMovedSelection);
 
 	QVector<net::Message>
-	applyLiquify(uint8_t contextId, int layerId, int interpolation);
+	applyLiquify(uint8_t contextId, int layerId, int interpolation, bool stamp);
 
 	void applyLiquifyCutAndPaste(
 		QVector<net::Message> &msgs,
 		const drawdance::LiquifyState &liquifyState, unsigned int contextId,
 		int layerId, int sourceId, QRect bounds, const QImage &mask,
-		int interpolation);
+		int interpolation, QImage *outSourceImage = nullptr);
+
+	void applyFloatingLiquify(
+		QVector<net::Message> &msgs,
+		const drawdance::LiquifyState &liquifyState, unsigned int contextId,
+		int layerId, QRect bounds, int interpolation);
 
 	void applyCutAndPaste(
 		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
 		int sourceId, int srcX, int srcY, int srcW, int srcH, int blendMode,
 		const QImage &mask, QPoint targetPos, QImage &img) const;
+
+	void applyPaste(
+		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+		int blendMode, QPoint targetPos, QImage &img) const;
 
 	void applySelectionCutAndPaste(
 		QVector<net::Message> &msgs, unsigned int contextId, QPoint targetPos,
@@ -227,6 +235,7 @@ private:
 	TransformQuad m_dstQuad;
 	QImage m_mask;
 	QImage m_floatingImage;
+	QImage m_liquifyFloatingSourceImage;
 	QHash<int, QImage> m_layerImages;
 	unsigned int m_liquifyPreviewId = 0u;
 	QPoint m_floatingImageOffset;

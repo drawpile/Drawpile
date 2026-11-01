@@ -49,16 +49,23 @@ public:
 	void endStroke(long long timeMsec);
 	void cancelStroke(long long timeMsec);
 
+	void setDisplacement(float displacement);
+	void applyDisplacement();
+
 	void undo();
 	void redo();
 
 	void requestUpdate();
+
+	void stamp();
 
 	void abort();
 
 Q_SIGNALS:
 	void updateRequested();
 	void undoLimitHit();
+	void displacementChanged(float displacement);
+	void stampRequested();
 
 private:
 	static void handleLiquifyWorkerEventCallback(

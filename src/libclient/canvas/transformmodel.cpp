@@ -81,6 +81,12 @@ TransformModel::TransformModel(CanvasModel *canvas)
 	connect(
 		&m_liquifyWorker, &drawdance::LiquifyWorker::undoLimitHit, this,
 		&TransformModel::liquifyCancelRequested, Qt::DirectConnection);
+	connect(
+		&m_liquifyWorker, &drawdance::LiquifyWorker::displacementChanged, this,
+		&TransformModel::liquifyDisplacementChanged, Qt::DirectConnection);
+	connect(
+		&m_liquifyWorker, &drawdance::LiquifyWorker::stampRequested, this,
+		&TransformModel::liquifyStampRequested, Qt::DirectConnection);
 }
 
 bool TransformModel::isPreviewAccurate() const
@@ -258,7 +264,7 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 	if(m_active && m_dstQuadValid) {
 		utils::ScopedOverrideCursor waitCursor;
 		if(isLiquify()) {
-			return applyLiquify(contextId, layerId, interpolation);
+			return applyLiquify(contextId, layerId, interpolation, stamp);
 		} else if(m_pasted) {
 			return applyFloating(
 				contextId, layerId, interpolation, stamp, outMovedSelection);
@@ -695,11 +701,27 @@ QVector<net::Message> TransformModel::applyFloating(
 	return msgs;
 }
 
-QVector<net::Message>
-TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
+QVector<net::Message> TransformModel::applyLiquify(
+	uint8_t contextId, int layerId, int interpolation, bool stamp)
 {
 	if(!isLiquify()) {
 		return {};
+	}
+
+	if(stamp && !isStampable()) {
+		qCWarning(lcDpTransformModel, "Attempt to stamp unstampable liquify");
+		return {};
+	}
+
+	int singleLayerSourceId;
+	if(m_pasted) {
+		singleLayerSourceId = 0;
+	} else {
+		singleLayerSourceId = getSingleLayerMoveId(layerId);
+		if(stamp && singleLayerSourceId == 0) {
+			qCWarning(lcDpTransformModel, "Got no layer to stamp liquify with");
+			return {};
+		}
 	}
 
 	drawdance::Liquify liquify = m_liquifyWorker.liquify();
@@ -712,15 +734,24 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 	msgs.reserve(m_layerIds.size() * 2 + 4);
 	msgs.append(net::makeUndoPointMessage(contextId));
 
-	if(m_deselectOnApply) {
+	if(!stamp && m_deselectOnApply) {
 		msgs.append(
 			net::makeSelectionClearMessage(
 				contextId, canvas::CanvasModel::MAIN_SELECTION_ID));
 	}
 
-	// If the user only liquified
-	QRect affectedSrcBounds =
-		liquifyState.changeBounds().intersected(m_srcBounds);
+	// If the user only liquified a small part of the source and didn't change
+	// layers somehow, we don't need to change the entire area, just the part
+	// that was actually modified.
+	QRect affectedSrcBounds;
+	if(stamp || m_pasted ||
+	   (singleLayerSourceId != 0 && singleLayerSourceId != layerId)) {
+		affectedSrcBounds = m_srcBounds;
+	} else {
+		affectedSrcBounds =
+			m_srcBounds.intersected(liquifyState.changeBounds());
+	}
+
 	if(!affectedSrcBounds.isEmpty()) {
 		QImage croppedMask;
 		if(!m_mask.isNull()) {
@@ -731,46 +762,76 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 		drawdance::CanvasState canvasState =
 			m_canvas->paintEngine()->historyCanvasState();
 
-		int singleLayerSourceId = getSingleLayerMoveId(layerId);
-		if(singleLayerSourceId > 0) {
-			if(!canvasState.isBlankIn(
+		if(m_pasted) {
+			applyFloatingLiquify(
+				msgs, liquifyState, contextId, layerId, affectedSrcBounds,
+				interpolation);
+
+		} else if(stamp) {
+			if(canvasState.isBlankIn(
 				   singleLayerSourceId, affectedSrcBounds, croppedMask)) {
-				applyLiquifyCutAndPaste(
-					msgs, liquifyState, contextId, layerId, singleLayerSourceId,
-					affectedSrcBounds, croppedMask, interpolation);
+				return {}; // Don't stamp nothingness, that's useless.
 			}
+
+			applyLiquifyCutAndPaste(
+				msgs, liquifyState, contextId, layerId, singleLayerSourceId,
+				affectedSrcBounds, croppedMask, interpolation,
+				&m_liquifyFloatingSourceImage);
+			if(!m_liquifyFloatingSourceImage.isNull()) {
+				m_stamped = true;
+				m_pasted = true;
+				emit transformCutCleared();
+				emit transformChanged();
+			}
+
 		} else {
-			for(int layerIdToLiquify : m_layerIds) {
+			if(singleLayerSourceId > 0) {
 				if(!canvasState.isBlankIn(
-					   layerIdToLiquify, affectedSrcBounds, croppedMask)) {
+					   singleLayerSourceId, affectedSrcBounds, croppedMask)) {
 					applyLiquifyCutAndPaste(
-						msgs, liquifyState, contextId, layerIdToLiquify,
-						layerIdToLiquify, affectedSrcBounds, croppedMask,
+						msgs, liquifyState, contextId, layerId,
+						singleLayerSourceId, affectedSrcBounds, croppedMask,
 						interpolation);
+				}
+			} else {
+				for(int layerIdToLiquify : m_layerIds) {
+					if(!canvasState.isBlankIn(
+						   layerIdToLiquify, affectedSrcBounds, croppedMask)) {
+						applyLiquifyCutAndPaste(
+							msgs, liquifyState, contextId, layerIdToLiquify,
+							layerIdToLiquify, affectedSrcBounds, croppedMask,
+							interpolation);
+					}
 				}
 			}
 		}
 
-		canvas::SelectionModel *selection = m_canvas->selection();
-		if(selection->isValid() && !m_deselectOnApply) {
-			QImage srcImage = selection->image();
-			drawdance::LiquifyTransformer liquifyTransformer =
-				drawdance::LiquifyTransformer::init(
-					m_srcBounds.x(), m_srcBounds.y(), srcImage);
-			liquifyTransformer.apply(liquifyState, interpolation);
+		if(!stamp) {
+			canvas::SelectionModel *selection = m_canvas->selection();
+			if(selection->isValid() && !m_deselectOnApply) {
+				QImage srcImage = selection->image();
+				drawdance::LiquifyTransformer liquifyTransformer =
+					drawdance::LiquifyTransformer::init(
+						m_srcBounds.x(), m_srcBounds.y(), srcImage);
+				liquifyTransformer.apply(liquifyState, interpolation);
 
-			QPoint dstPos;
-			QImage dstImage = liquifyTransformer.targetImage(dstPos);
-			if(dstImage.isNull()) {
-				qCWarning(
-					lcDpTransformModel, "applyLiquify: null selection image");
-			} else if(dstPos == m_srcBounds.topLeft() && dstImage == srcImage) {
-				// Nothing changed about the selection, nothing to do. Pretty
-				// likely case, since the user may have selected everything and
-				// just liquified some small part in the middle.
-			} else {
-				applySelectionCutAndPaste(
-					msgs, contextId, dstPos + m_liquifyCanvasOffset, dstImage);
+				QPoint dstPos;
+				QImage dstImage = liquifyTransformer.targetImage(dstPos);
+				if(dstImage.isNull()) {
+					qCWarning(
+						lcDpTransformModel,
+						"applyLiquify: null selection image");
+				} else if(
+					dstPos == m_srcBounds.topLeft() && dstImage == srcImage) {
+					// Nothing changed about the selection, nothing to do.
+					// Pretty likely case, since the user may have selected
+					// everything and just liquified some small part in the
+					// middle.
+				} else {
+					applySelectionCutAndPaste(
+						msgs, contextId, dstPos + m_liquifyCanvasOffset,
+						dstImage);
+				}
 			}
 		}
 	}
@@ -781,11 +842,17 @@ TransformModel::applyLiquify(uint8_t contextId, int layerId, int interpolation)
 void TransformModel::applyLiquifyCutAndPaste(
 	QVector<net::Message> &msgs, const drawdance::LiquifyState &liquifyState,
 	unsigned int contextId, int layerId, int sourceId, QRect bounds,
-	const QImage &mask, int interpolation)
+	const QImage &mask, int interpolation, QImage *outSourceImage)
 {
 	QRect offsetBounds = bounds.translated(m_liquifyCanvasOffset);
 	QImage srcImage =
 		getLayerImageWithMaskAndBounds(sourceId, mask, offsetBounds);
+
+	// This is used to set the floating liquify image.
+	if(outSourceImage) {
+		*outSourceImage = srcImage;
+	}
+
 	if(srcImage.isNull()) {
 		qCWarning(
 			lcDpTransformModel,
@@ -810,13 +877,45 @@ void TransformModel::applyLiquifyCutAndPaste(
 	}
 }
 
+void TransformModel::applyFloatingLiquify(
+	QVector<net::Message> &msgs, const drawdance::LiquifyState &liquifyState,
+	unsigned int contextId, int layerId, QRect bounds, int interpolation)
+{
+	if(m_liquifyFloatingSourceImage.isNull()) {
+		qCWarning(
+			lcDpTransformModel, "applyFloatingLiquify: null source image");
+	} else {
+		drawdance::LiquifyTransformer liquifyTransformer =
+			drawdance::LiquifyTransformer::init(
+				bounds.x(), bounds.y(), m_liquifyFloatingSourceImage);
+		liquifyTransformer.apply(liquifyState, interpolation);
+
+		QPoint dstPos;
+		QImage dstImage = liquifyTransformer.targetImage(dstPos);
+		if(dstImage.isNull()) {
+			qCWarning(lcDpTransformModel, "applyFloatingLiquify: null image");
+		} else {
+			applyPaste(
+				msgs, contextId, layerId, DP_BLEND_MODE_NORMAL,
+				dstPos + m_liquifyCanvasOffset, dstImage);
+		}
+	}
+}
+
 void TransformModel::applyCutAndPaste(
 	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
 	int sourceId, int srcX, int srcY, int srcW, int srcH, int blendMode,
 	const QImage &mask, QPoint targetPos, QImage &img) const
 {
-	QRect targetBounds = clampPasteToCanvas(targetPos, img);
 	applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
+	applyPaste(msgs, contextId, layerId, blendMode, targetPos, img);
+}
+
+void TransformModel::applyPaste(
+	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+	int blendMode, QPoint targetPos, QImage &img) const
+{
+	QRect targetBounds = clampPasteToCanvas(targetPos, img);
 	if(!targetBounds.isEmpty()) {
 		applyOpacityToImage(img);
 		net::makePutImageMessagesCompat(
@@ -863,6 +962,7 @@ void TransformModel::clear()
 	m_dstQuad.clear();
 	m_mask = QImage();
 	m_floatingImage = QImage();
+	m_liquifyFloatingSourceImage = QImage();
 	m_floatingImageOffset = QPoint();
 	m_liquifyCanvasOffset = QPoint();
 	m_layerImages.clear();
@@ -1166,7 +1266,8 @@ void TransformModel::runLiquifyPreviewUpdate()
 		}
 
 		m_liquifyTransformer = drawdance::LiquifyTransformer::init(
-			m_srcBounds.x(), m_srcBounds.y(), getMergedImage());
+			m_srcBounds.x(), m_srcBounds.y(),
+			m_pasted ? m_liquifyFloatingSourceImage : getMergedImage());
 	}
 
 	m_liquifyPreviewInProgress = true;

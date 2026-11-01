@@ -38,7 +38,7 @@ public:
 
 	void setActions(
 		QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
-		QAction *shrinktoview, QAction *stamp);
+		QAction *shrinktoview);
 
 	void setCanvasView(view::CanvasWrapper *canvasView)
 	{

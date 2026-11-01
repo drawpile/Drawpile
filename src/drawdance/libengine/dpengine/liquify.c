@@ -36,6 +36,7 @@ struct DP_Liquify {
     DP_Mutex *mutex;
     DP_LiquifyMap *lm;
     DP_LiquifyTile *free_tiles;
+    float displacement;
     DP_Atomic refcount;
     DP_Rect mask_rect;
 };
@@ -43,6 +44,7 @@ struct DP_Liquify {
 struct DP_LiquifyState {
     DP_Liquify *l;
     DP_LiquifyMap *lm;
+    float displacement;
     DP_Atomic refcount;
 };
 
@@ -62,6 +64,7 @@ struct DP_LiquifyTransformer {
     DP_LiquifyImage debug;
 #endif
     int interpolation;
+    float displacement;
     DP_Atomic refcount;
 };
 
@@ -196,6 +199,13 @@ static bool tile_is_blank(DP_LiquifyTile *lt)
     static const float blank[DP_TILE_LENGTH * 2] = {0};
     static_assert(sizeof(blank) == sizeof(lt->d), "Liquify lengths match");
     return memcmp(lt->d, blank, sizeof(blank)) == 0;
+}
+
+static void tile_apply_displacement(DP_LiquifyTile *lt, float displacement)
+{
+    for (int i = 0; i < (int)DP_ARRAY_LENGTH(lt->d); ++i) {
+        lt->d[i] *= displacement;
+    }
 }
 
 
@@ -435,6 +445,7 @@ DP_Liquify *DP_liquify_new(int mask_x, int mask_y, int mask_width,
     l->mutex = mutex;
     l->lm = NULL;
     l->free_tiles = NULL;
+    l->displacement = 1.0f;
     DP_atomic_set(&l->refcount, 1);
     l->mask_rect = DP_rect_make(mask_x, mask_y, mask_width, mask_height);
     return l;
@@ -501,6 +512,7 @@ DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l)
     DP_Mutex *mutex = l->mutex;
     DP_MUTEX_MUST_LOCK(mutex);
     ls->lm = map_incref_nullable(l->lm);
+    ls->displacement = l->displacement;
     DP_MUTEX_MUST_UNLOCK(mutex);
 
     return ls;
@@ -939,6 +951,63 @@ bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
     return true;
 }
 
+bool DP_liquify_displacement_set(DP_Liquify *l, float displacement)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+
+    DP_Mutex *mutex = l->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+
+    bool changed = l->displacement != displacement;
+    if (changed) {
+        l->displacement = displacement;
+    }
+
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    return changed;
+}
+
+bool DP_liquify_displacement_apply(DP_Liquify *l)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+
+    DP_Mutex *mutex = l->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+
+    float displacement = l->displacement;
+    bool changed = displacement != 1.0f;
+    DP_LiquifyMap *old_lm = l->lm;
+    if (changed && old_lm) {
+        l->displacement = 1.0f;
+        DP_Rect tile_bounds = old_lm->tile_bounds;
+        DP_LiquifyMap *lm = map_make_editable(old_lm, tile_bounds);
+
+        int tile_count =
+            DP_rect_width(tile_bounds) * DP_rect_height(tile_bounds);
+        for (int i = 0; i < tile_count; ++i) {
+            DP_LiquifyTile *old_lt = lm->tiles[i];
+            if (old_lt) {
+                DP_LiquifyTile *lt = tile_make_editable(l, old_lt);
+                tile_apply_displacement(lt, displacement);
+                if (lt != old_lt) {
+                    lm->tiles[i] = lt;
+                    tile_decref(l, old_lt);
+                }
+            }
+        }
+
+        if (lm != old_lm) {
+            l->lm = lm;
+            map_decref(l, old_lm);
+        }
+    }
+
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    return changed;
+}
+
 
 DP_LiquifyState *DP_liquify_state_incref(DP_LiquifyState *ls)
 {
@@ -1006,7 +1075,15 @@ void DP_liquify_state_apply(DP_LiquifyState *ls)
         map_decref_nullable(l, old_lm);
         l->lm = map_incref_nullable(new_lm);
     }
+    l->displacement = ls->displacement;
     DP_MUTEX_MUST_UNLOCK(mutex);
+}
+
+float DP_liquify_state_displacement(DP_LiquifyState *ls)
+{
+    DP_ASSERT(ls);
+    DP_ASSERT(DP_atomic_get(&ls->refcount) > 0);
+    return ls->displacement;
 }
 
 bool DP_liquify_state_change_bounds(DP_LiquifyState *ls, int *out_left,
@@ -1095,6 +1172,7 @@ DP_LiquifyTransformer *DP_liquify_transformer_new(int source_x, int source_y,
         {NULL, 0, 0, 0, 0},
 #endif
         -1,
+        1.0f,
         DP_ATOMIC_INIT(1),
     };
     return ltr;
@@ -1232,7 +1310,8 @@ static void liquify_transformer_reset_tile(DP_TileIterator *ti,
 static void
 liquify_transformer_apply_tile(DP_TileIterator *ti, DP_LiquifyTile *lt,
                                DP_LiquifyImage *source, DP_LiquifyImage *target,
-                               int interpolation, float eps, int tsx, int tsy)
+                               int interpolation, float displacement, float eps,
+                               int tsx, int tsy)
 {
     DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
     while (DP_tile_into_dst_iterator_next(&tidi)) {
@@ -1242,6 +1321,8 @@ liquify_transformer_apply_tile(DP_TileIterator *ti, DP_LiquifyTile *lt,
         int sy = ty + tsy;
         float dx, dy;
         tile_get_xy(lt, tidi.tile_x, tidi.tile_y, &dx, &dy);
+        dx *= displacement;
+        dy *= displacement;
         if (fabsf(dx) < eps && fabsf(dy) < eps) {
             liquify_image_set(target, tx, ty,
                               liquify_image_get_checked(source, sx, sy));
@@ -1285,7 +1366,8 @@ static void liquify_transformer_apply_diff(
     DP_LiquifyMap *lm, DP_LiquifyMap *old_lm, DP_LiquifyImage *source,
     DP_LiquifyImage *target, DP_Rect target_bounds, DP_Rect old_target_bounds,
     DP_Rect lm_bounds, DP_Rect old_lm_bounds, int interpolation,
-    int old_interpolation, int tsx, int tsy)
+    int old_interpolation, float displacement, float old_displacement, int tsx,
+    int tsy)
 {
     if (!DP_rect_equal(target_bounds, old_target_bounds)) {
         uint32_t *old_target_data = target->data;
@@ -1296,6 +1378,7 @@ static void liquify_transformer_apply_diff(
 
     float eps = DP_image_transform_epsilon(interpolation);
     bool interpolation_changed = interpolation != old_interpolation;
+    bool displacement_changed = displacement != old_displacement;
 
     DP_Rect lm_union_bounds = DP_rect_union(lm_bounds, old_lm_bounds);
     DP_TileIterator ti =
@@ -1304,9 +1387,10 @@ static void liquify_transformer_apply_diff(
         DP_LiquifyTile *lt = map_get_tile_checked(lm, ti.col, ti.row);
         DP_LiquifyTile *old_lt = map_get_tile_checked(old_lm, ti.col, ti.row);
         if (lt) {
-            if (lt != old_lt || interpolation_changed) {
+            if (lt != old_lt || interpolation_changed || displacement_changed) {
                 liquify_transformer_apply_tile(&ti, lt, source, target,
-                                               interpolation, eps, tsx, tsy);
+                                               interpolation, displacement, eps,
+                                               tsx, tsy);
             }
         }
         else if (old_lt) {
@@ -1315,11 +1399,10 @@ static void liquify_transformer_apply_diff(
     }
 }
 
-static void
-liquify_transformer_apply_tiles_new(DP_LiquifyMap *lm, DP_LiquifyImage *source,
-                                    DP_LiquifyImage *target,
-                                    DP_Rect target_bounds, DP_Rect lm_bounds,
-                                    int interpolation, int tsx, int tsy)
+static void liquify_transformer_apply_tiles_new(
+    DP_LiquifyMap *lm, DP_LiquifyImage *source, DP_LiquifyImage *target,
+    DP_Rect target_bounds, DP_Rect lm_bounds, int interpolation,
+    float displacement, int tsx, int tsy)
 {
     float eps = DP_image_transform_epsilon(interpolation);
     DP_TileIterator ti = DP_tile_iterator_make_with(target_bounds, &lm_bounds);
@@ -1327,7 +1410,8 @@ liquify_transformer_apply_tiles_new(DP_LiquifyMap *lm, DP_LiquifyImage *source,
         DP_LiquifyTile *lt = map_get_tile(lm, ti.col, ti.row);
         if (lt) {
             liquify_transformer_apply_tile(&ti, lt, source, target,
-                                           interpolation, eps, tsx, tsy);
+                                           interpolation, displacement, eps,
+                                           tsx, tsy);
         }
     }
 }
@@ -1363,7 +1447,8 @@ static void liquify_transformer_reset(DP_LiquifyTransformer *ltr,
 static bool liquify_transformer_apply_state(DP_LiquifyTransformer *ltr,
                                             DP_LiquifyState *ls,
                                             DP_LiquifyMap *old_lm,
-                                            int interpolation)
+                                            int interpolation,
+                                            float displacement)
 {
     DP_Rect source_bounds = liquify_image_bounds(&ltr->source);
 
@@ -1381,7 +1466,8 @@ static bool liquify_transformer_apply_state(DP_LiquifyTransformer *ltr,
             liquify_transformer_apply_diff(
                 lm, old_lm, &ltr->source, &ltr->target, target_bounds,
                 old_target_bounds, lm_bounds, map_pixel_bounds(old_lm),
-                interpolation, ltr->interpolation, tsx, tsy);
+                interpolation, ltr->interpolation, displacement,
+                ltr->displacement, tsx, tsy);
         }
         else {
             // New image, initialize from the source, apply the map. If there is
@@ -1398,9 +1484,9 @@ static bool liquify_transformer_apply_state(DP_LiquifyTransformer *ltr,
                 ltr->target = liquify_transformer_init_target(
                     source_bounds, target_bounds, ltr->source.data);
             }
-            liquify_transformer_apply_tiles_new(lm, &ltr->source, &ltr->target,
-                                                target_bounds, lm_bounds,
-                                                interpolation, tsx, tsy);
+            liquify_transformer_apply_tiles_new(
+                lm, &ltr->source, &ltr->target, target_bounds, lm_bounds,
+                interpolation, displacement, tsx, tsy);
         }
     }
     else {
@@ -1412,7 +1498,7 @@ static bool liquify_transformer_apply_state(DP_LiquifyTransformer *ltr,
 
 static bool liquify_transformer_apply(DP_LiquifyTransformer *ltr,
                                       DP_LiquifyState *ls_or_null,
-                                      int interpolation)
+                                      int interpolation, float displacement)
 {
     DP_ASSERT(ltr);
     DP_ASSERT(DP_atomic_get(&ltr->refcount) > 0);
@@ -1421,7 +1507,8 @@ static bool liquify_transformer_apply(DP_LiquifyTransformer *ltr,
     if (ls_or_null) {
         if (old_ls) {
             if (ls_or_null->lm == old_ls->lm) {
-                if (interpolation == ltr->interpolation) {
+                if (interpolation == ltr->interpolation
+                    && displacement == ltr->displacement) {
                     // Just the same map, nothing changed.
                     DP_liquify_state_decref(old_ls);
                     ltr->ls = DP_liquify_state_incref(ls_or_null);
@@ -1430,13 +1517,14 @@ static bool liquify_transformer_apply(DP_LiquifyTransformer *ltr,
                 else {
                     // Same map, but interpolation changed, recalculate tiles.
                     return liquify_transformer_apply_state(
-                        ltr, ls_or_null, old_ls->lm, interpolation);
+                        ltr, ls_or_null, old_ls->lm, interpolation,
+                        displacement);
                 }
             }
             else {
                 // Different map, do a full diff.
                 bool changed = liquify_transformer_apply_state(
-                    ltr, ls_or_null, old_ls->lm, interpolation);
+                    ltr, ls_or_null, old_ls->lm, interpolation, displacement);
                 DP_liquify_state_decref(old_ls);
                 ltr->ls = DP_liquify_state_incref(ls_or_null);
                 return changed;
@@ -1444,8 +1532,8 @@ static bool liquify_transformer_apply(DP_LiquifyTransformer *ltr,
         }
         else {
             // New map, initialize it.
-            bool changed = liquify_transformer_apply_state(ltr, ls_or_null,
-                                                           NULL, interpolation);
+            bool changed = liquify_transformer_apply_state(
+                ltr, ls_or_null, NULL, interpolation, displacement);
             ltr->ls = DP_liquify_state_incref(ls_or_null);
             return changed;
         }
@@ -1555,8 +1643,11 @@ bool DP_liquify_transformer_apply(DP_LiquifyTransformer *ltr,
     DP_ASSERT(ltr);
     DP_ASSERT(DP_atomic_get(&ltr->refcount) > 0);
 
-    bool changed = liquify_transformer_apply(ltr, ls_or_null, interpolation);
+    float displacement = ls_or_null ? ls_or_null->displacement : 1.0f;
+    bool changed =
+        liquify_transformer_apply(ltr, ls_or_null, interpolation, displacement);
     ltr->interpolation = interpolation;
+    ltr->displacement = displacement;
 
 #if DP_LIQUIFY_DEBUG_OVERLAY
     liquify_transformer_apply_debug_overlay(ltr);
