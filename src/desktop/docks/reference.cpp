@@ -6,7 +6,7 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/referenceview.h"
-#include "libclient/document.h"
+#include "libclient/io/clipboard.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QHBoxLayout>
@@ -196,14 +196,13 @@ void ReferenceDock::openReferenceFile()
 
 void ReferenceDock::updateMenuActions()
 {
-	m_pasteAction->setEnabled(Document::clipboardHasImageData());
+	m_pasteAction->setEnabled(io::clip::hasImage());
 	m_closeAction->setEnabled(m_view->hasImage());
 }
 
 void ReferenceDock::pasteReferenceImage()
 {
-	handleImageDrop(
-		Document::getClipboardImageData(Document::getClipboardData()));
+	handleImageDrop(io::clip::getImageFrom(io::clip::mimeData()));
 }
 
 void ReferenceDock::showReferenceImageFromFile(

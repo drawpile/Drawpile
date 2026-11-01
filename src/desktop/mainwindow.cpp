@@ -92,6 +92,7 @@ extern "C" {
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/import/loadresult.h"
+#include "libclient/io/clipboard.h"
 #include "libclient/io/files.h"
 #include "libclient/io/pathinfo.h"
 #include "libclient/net/client.h"
@@ -5746,8 +5747,8 @@ void MainWindow::copyText()
 void MainWindow::paste()
 {
 	utils::ScopedOverrideCursor waitCursor;
-	const QMimeData *mimeData = Document::getClipboardData();
-	QImage img = Document::getClipboardImageData(mimeData);
+	const QMimeData *mimeData = io::clip::mimeData();
+	QImage img = io::clip::getImageFrom(mimeData);
 	if(!img.isNull()) {
 		QPoint pastepos;
 		bool pasteAtPos = false;
@@ -5779,8 +5780,8 @@ void MainWindow::paste()
 void MainWindow::pasteCentered()
 {
 	utils::ScopedOverrideCursor waitCursor;
-	const QMimeData *mimeData = Document::getClipboardData();
-	QImage img = Document::getClipboardImageData(mimeData);
+	const QMimeData *mimeData = io::clip::mimeData();
+	QImage img = io::clip::getImageFrom(mimeData);
 	if(!img.isNull()) {
 		pasteImage(img, nullptr, true);
 	}

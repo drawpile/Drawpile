@@ -18,6 +18,7 @@ extern "C" {
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/projectsaver.h"
 #include "libclient/export/thumbnailerrunnable.h"
+#include "libclient/io/clipboard.h"
 #include "libclient/net/invitelistmodel.h"
 #include "libclient/net/login.h"
 #include "libclient/project/resume.h"
@@ -43,9 +44,6 @@ extern "C" {
 #include <dpcommon/platform_qt.h>
 #include <functional>
 #include <parson.h>
-#ifndef HAVE_CLIPBOARD_EMULATION
-#	include <QClipboard>
-#endif
 
 Document::Document(
 	int canvasImplementation, config::Config *cfg, QObject *parent)
@@ -1922,36 +1920,14 @@ bool Document::copyFromLayer(int layer)
 		return false;
 	}
 
-#ifdef HAVE_CLIPBOARD_EMULATION
-	QMimeData *data = &clipboardData;
-	data->clear();
-#else
-	QMimeData *data = new QMimeData;
-#endif
-
 	bool found;
 	QImage img = m_canvas->selectionToImage(layer, &found);
 	if(!img.isNull() && layer == 0) {
 		fillBackground(img);
 	}
 
-#ifdef Q_OS_LINUX
-	// Copying image data from one Drawpile canvas to another is busted on
-	// Wayland, obliterating transparency. We store a PNG directly instead.
-	if(QGuiApplication::platformName() == QStringLiteral("wayland")) {
-		QByteArray bytes;
-		{
-			QBuffer buffer(&bytes);
-			buffer.open(QIODevice::WriteOnly);
-			img.save(&buffer, "PNG");
-		}
-		data->setData(QStringLiteral("image/png"), bytes);
-	} else {
-		data->setImageData(img);
-	}
-#else
-	data->setImageData(img);
-#endif
+	io::clip::EditableMimeData edit;
+	edit.setImageData(img);
 
 	// Store also original coordinates
 	QRect bounds = m_canvas->selection()->bounds();
@@ -1961,11 +1937,7 @@ bool Document::copyFromLayer(int layer)
 						QByteArray::number(srcpos.y()) + "," +
 						QByteArray::number(qApp->applicationPid()) + "," +
 						QByteArray::number(pasteId());
-	data->setData("x-drawpile/pastesrc", srcbuf);
-
-#ifndef HAVE_CLIPBOARD_EMULATION
-	QGuiApplication::clipboard()->setMimeData(data);
-#endif
+	edit.setData(QStringLiteral("x-drawpile/pastesrc"), srcbuf);
 
 	return found;
 }
@@ -2323,38 +2295,6 @@ void Document::addServerLogEntry(const QString &log)
 	m_serverLog->setData(m_serverLog->index(i), log);
 }
 
-const QMimeData *Document::getClipboardData()
-{
-#ifdef HAVE_CLIPBOARD_EMULATION
-	return &clipboardData;
-#else
-	return QGuiApplication::clipboard()->mimeData();
-#endif
-}
-
-bool Document::clipboardHasImageData()
-{
-	const QMimeData *mimeData = getClipboardData();
-	return mimeData && (mimeData->hasImage() ||
-						mimeData->hasFormat(QStringLiteral("image/png")));
-}
-
-QImage Document::getClipboardImageData(const QMimeData *mimeData)
-{
-	if(mimeData) {
-		if(mimeData->hasImage()) {
-			return mimeData->imageData().value<QImage>();
-		} else if(mimeData->hasFormat(QStringLiteral("image/png"))) {
-			QImage img;
-			if(img.loadFromData(
-				   mimeData->data(QStringLiteral("image/png")), "PNG")) {
-				return img;
-			}
-		}
-	}
-	return QImage();
-}
-
 void Document::onThumbnailQueried(const QString &payload)
 {
 	qDebug("Server queried thumbnail");
@@ -2480,7 +2420,3 @@ void Document::updateProjectRecordingProjectPath()
 		}
 	}
 }
-
-#ifdef HAVE_CLIPBOARD_EMULATION
-QMimeData Document::clipboardData;
-#endif

@@ -147,6 +147,8 @@ target_sources(dpclient PRIVATE
 	import/loadresult.h
 	import/recordingconverter.cpp
 	import/recordingconverter.h
+	io/clipboard.cpp
+	io/clipboard.h
 	io/files.cpp
 	io/files.h
 	io/pathinfo.cpp

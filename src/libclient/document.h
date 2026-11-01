@@ -18,9 +18,6 @@ extern "C" {
 #include <QQueue>
 #include <QStringListModel>
 #include <functional>
-#ifdef Q_OS_ANDROID
-#	include <QMimeData>
-#endif
 
 class ProjectSaver;
 class QMimeData;
@@ -339,10 +336,6 @@ public slots:
 
 	void addServerLogEntry(const QString &log);
 
-	static const QMimeData *getClipboardData();
-	static bool clipboardHasImageData();
-	static QImage getClipboardImageData(const QMimeData *mimeData);
-
 private slots:
 	void onServerLogin(const net::LoggedInParams &params);
 	void onServerDisconnect(
@@ -521,10 +514,6 @@ private:
 	bool m_sessionOutOfSpace = false;
 	bool m_preparingReset = false;
 	bool m_projectDirty = false;
-
-#ifdef HAVE_CLIPBOARD_EMULATION
-	static QMimeData clipboardData;
-#endif
 };
 
 #endif // DOCUMENT_H
