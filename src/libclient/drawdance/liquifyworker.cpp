@@ -171,6 +171,16 @@ void LiquifyWorker::stamp()
 	DP_liquify_worker_stamp(m_data);
 }
 
+void LiquifyWorker::copy()
+{
+	DP_liquify_worker_copy(m_data);
+}
+
+void LiquifyWorker::cut()
+{
+	DP_liquify_worker_cut(m_data);
+}
+
 void LiquifyWorker::abort()
 {
 	DP_liquify_worker_abort(m_data);
@@ -198,6 +208,12 @@ void LiquifyWorker::handleLiquifyWorkerEvent(const DP_LiquifyWorkerEvent &event)
 		return;
 	case DP_LIQUIFY_WORKER_EVENT_STAMP:
 		Q_EMIT stampRequested();
+		return;
+	case DP_LIQUIFY_WORKER_EVENT_COPY:
+		Q_EMIT copyCutRequested(false);
+		return;
+	case DP_LIQUIFY_WORKER_EVENT_CUT:
+		Q_EMIT copyCutRequested(true);
 		return;
 	}
 	qWarning("Unhandled liquify worker event type %d", int(event.type));

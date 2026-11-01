@@ -49,6 +49,8 @@ typedef enum DP_LiquifyWorkerJobType {
     DP_LIQUIFY_WORKER_JOB_REDO,
     DP_LIQUIFY_WORKER_JOB_UPDATE_REQUEST,
     DP_LIQUIFY_WORKER_JOB_STAMP,
+    DP_LIQUIFY_WORKER_JOB_COPY,
+    DP_LIQUIFY_WORKER_JOB_CUT,
 } DP_LiquifyWorkerJobType;
 
 typedef struct DP_LiquifyWorkerJob {
@@ -285,6 +287,16 @@ static void handle_stamp(DP_LiquifyWorker *lw)
     emit_event(lw, DP_LIQUIFY_WORKER_EVENT_STAMP);
 }
 
+static void handle_copy(DP_LiquifyWorker *lw)
+{
+    emit_event(lw, DP_LIQUIFY_WORKER_EVENT_COPY);
+}
+
+static void handle_cut(DP_LiquifyWorker *lw)
+{
+    emit_event(lw, DP_LIQUIFY_WORKER_EVENT_CUT);
+}
+
 
 static bool shift_job(DP_Mutex *queue_mutex, DP_Queue *queue,
                       DP_LiquifyWorkerJob *out_job)
@@ -347,6 +359,12 @@ static void run_liquify_worker_thread(void *data)
                 continue;
             case DP_LIQUIFY_WORKER_JOB_STAMP:
                 handle_stamp(lw);
+                continue;
+            case DP_LIQUIFY_WORKER_JOB_COPY:
+                handle_copy(lw);
+                continue;
+            case DP_LIQUIFY_WORKER_JOB_CUT:
+                handle_cut(lw);
                 continue;
             }
             DP_UNREACHABLE();
@@ -742,6 +760,28 @@ void DP_liquify_worker_stamp(DP_LiquifyWorker *lw)
     }
     else {
         handle_stamp(lw);
+    }
+}
+
+void DP_liquify_worker_copy(DP_LiquifyWorker *lw)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(lw, (DP_LiquifyWorkerJob){DP_LIQUIFY_WORKER_JOB_COPY, {0}});
+    }
+    else {
+        handle_copy(lw);
+    }
+}
+
+void DP_liquify_worker_cut(DP_LiquifyWorker *lw)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(lw, (DP_LiquifyWorkerJob){DP_LIQUIFY_WORKER_JOB_CUT, {0}});
+    }
+    else {
+        handle_cut(lw);
     }
 }
 

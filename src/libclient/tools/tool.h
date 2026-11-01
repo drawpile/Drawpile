@@ -116,6 +116,14 @@ public:
 	virtual void hover(const HoverParams &params) { Q_UNUSED(params); }
 	virtual void end(const EndParams &params) = 0;
 
+	//! Intercept a copy or cut operation. Used by e.g. the transform tool to
+	//! let you copy a transform in flight.
+	virtual bool copyCut(bool cut)
+	{
+		Q_UNUSED(cut);
+		return false;
+	}
+
 	//! Perform an undo or redo operation, return whether it was handled. Most
 	//! tools just return false here and let the regular undo handling happen,
 	//! but the freehand tool sends it through its stroke worker instead.

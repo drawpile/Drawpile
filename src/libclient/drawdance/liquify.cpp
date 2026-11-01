@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpcommon/input.h>
 #include <dpengine/liquify.h>
 }
 #include "libclient/drawdance/liquify.h"
+#include "libshared/util/qtcompat.h"
 #include <cstring>
 
 namespace drawdance {
@@ -90,6 +92,18 @@ Liquify Liquify::init(QRect bounds)
 		bounds.x(), bounds.y(), bounds.width(), bounds.height()));
 }
 
+Liquify
+Liquify::deserialize(const QByteArray &data, int maskWidth, int maskHeight)
+{
+	DP_Input *input = DP_zstd_stream_input_new(data.constData(), data.size());
+	Liquify liquify(DP_liquify_new_deserialize(input, maskWidth, maskHeight));
+	DP_input_free(input);
+	if(liquify.isNull()) {
+		qWarning("Error deserializing liquify: %s", DP_error());
+	}
+	return liquify;
+}
+
 Liquify Liquify::null()
 {
 	return Liquify(nullptr);
@@ -151,14 +165,43 @@ bool Liquify::isNull() const
 	return !m_data;
 }
 
+QRect Liquify::maskBounds() const
+{
+	return QRect(
+		DP_liquify_mask_x(m_data), DP_liquify_mask_y(m_data),
+		DP_liquify_mask_width(m_data), DP_liquify_mask_height(m_data));
+}
+
+float Liquify::displacement() const
+{
+	return DP_liquify_displacement(m_data);
+}
+
 LiquifyState Liquify::currentState() const
 {
 	return LiquifyState::noinc(DP_liquify_current_state_inc(m_data));
 }
 
+QByteArray Liquify::serialize() const
+{
+	QByteArray data;
+	if(DP_liquify_serialize(m_data, &Liquify::serializeWrite, &data)) {
+		return data;
+	} else {
+		qWarning("Liquify::serialize failed: %s", DP_error());
+		return QByteArray();
+	}
+}
+
 Liquify::Liquify(DP_Liquify *l)
 	: m_data(l)
 {
+}
+
+void Liquify::serializeWrite(void *user, void *data, size_t size)
+{
+	static_cast<QByteArray *>(user)->append(
+		static_cast<const char *>(data), compat::castSize(size));
 }
 
 

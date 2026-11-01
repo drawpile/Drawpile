@@ -58,6 +58,8 @@ public:
 	void requestUpdate();
 
 	void stamp();
+	void copy();
+	void cut();
 
 	void abort();
 
@@ -66,6 +68,7 @@ Q_SIGNALS:
 	void undoLimitHit();
 	void displacementChanged(float displacement);
 	void stampRequested();
+	void copyCutRequested(bool cut);
 
 private:
 	static void handleLiquifyWorkerEventCallback(

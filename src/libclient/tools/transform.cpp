@@ -3,6 +3,7 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
+#include "libclient/io/clipboard.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/cursors.h"
@@ -141,6 +142,24 @@ void TransformTool::end(const EndParams &params)
 	}
 }
 
+bool TransformTool::copyCut(bool cut)
+{
+	canvas::TransformModel *transform = getActiveTransformModel();
+	if(transform) {
+		transform->copyTransform(int(m_mode), m_constrain, m_center);
+		if(cut) {
+			net::Client *client = m_owner.client();
+			net::MessageList msgs = transform->cutSource(client->myId());
+			if(checkAndSend(client, msgs)) {
+				endTransform(transform, false);
+			}
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void TransformTool::finishMultipart()
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
@@ -160,9 +179,10 @@ void TransformTool::finishMultipart()
 	if(allowed) {
 		returnToPreviousTool();
 	} else {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings",
-			"You don't have permission for that transformation."));
+		emit m_owner.showMessageRequested(
+			QCoreApplication::translate(
+				"tools::TransformSettings",
+				"You don't have permission for that transformation."));
 	}
 }
 
@@ -225,11 +245,12 @@ void TransformTool::beginTemporaryMove(
 }
 
 void TransformTool::beginTemporaryPaste(
-	Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image)
+	Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image,
+	const io::clip::TransformState *state)
 {
 	if(!isTransformActive()) {
 		m_toolToReturnTo = toolToReturnTo;
-		tryBeginPaste(srcBounds, image);
+		tryBeginPaste(srcBounds, image, state);
 	}
 }
 
@@ -366,9 +387,10 @@ void TransformTool::stamp()
 	}
 
 	if(!allowed) {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings",
-			"You don't have permission to stamp selections."));
+		emit m_owner.showMessageRequested(
+			QCoreApplication::translate(
+				"tools::TransformSettings",
+				"You don't have permission to stamp selections."));
 	}
 }
 
@@ -413,25 +435,28 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(!canvas) {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings", "No canvas present."));
+		emit m_owner.showMessageRequested(
+			QCoreApplication::translate(
+				"tools::TransformSettings", "No canvas present."));
 		returnToPreviousTool();
 		return nullptr;
 	}
 
 	if(!canvas->aclState()->canUseFeature(DP_FEATURE_REGION_MOVE)) {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings",
-			"You don't have permission to transform selections."));
+		emit m_owner.showMessageRequested(
+			QCoreApplication::translate(
+				"tools::TransformSettings",
+				"You don't have permission to transform selections."));
 		returnToPreviousTool();
 		return nullptr;
 	}
 
 	canvas::SelectionModel *selection = canvas->selection();
 	if(!selection->isValid()) {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings",
-			"Nothing selected that could be transformed."));
+		emit m_owner.showMessageRequested(
+			QCoreApplication::translate(
+				"tools::TransformSettings",
+				"Nothing selected that could be transformed."));
 		returnToPreviousTool();
 		return nullptr;
 	}
@@ -452,7 +477,9 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 	return transform;
 }
 
-void TransformTool::tryBeginPaste(const QRect &srcBounds, const QImage &image)
+void TransformTool::tryBeginPaste(
+	const QRect &srcBounds, const QImage &image,
+	const io::clip::TransformState *state)
 {
 	Q_ASSERT(!isTransformActive());
 	Q_ASSERT(m_quadStack.isEmpty());
@@ -468,17 +495,30 @@ void TransformTool::tryBeginPaste(const QRect &srcBounds, const QImage &image)
 	}
 
 	canvas::TransformModel *transform = canvas->transform();
-	transform->beginFloating(srcBounds, image);
-	m_mode = Mode::Scale;
+	transform->beginFloating(srcBounds, image, state);
 	m_firstClick = false;
 	m_applyOnEnd = false;
-	m_constrain = false;
-	m_center = false;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
 	m_quadStack.clear();
 	m_quadStack.append(transform->dstQuad());
 	m_quadStackTop = 0;
+
+	if(state) {
+		if(state->handleMode == int(Mode::Distort)) {
+			m_mode = Mode::Distort;
+		} else {
+			m_mode = Mode::Scale;
+		}
+		m_constrain = state->constrain;
+		m_center = state->center;
+	} else {
+		m_mode = Mode::Scale;
+		m_constrain = false;
+		m_center = false;
+	}
+
+	emitStateChange(transform, m_hoverHandle);
 }
 
 void TransformTool::endTransform(
@@ -631,6 +671,8 @@ QCursor TransformTool::getCommonHandleCursor(
 	const canvas::TransformModel *transform, Handle handle) const
 {
 	switch(handle) {
+	case Handle::Invalid:
+		return Qt::PointingHandCursor;
 	case Handle::TopEdge:
 		return getShearCursor(getCursorQuad(transform).topEdgeAngle());
 	case Handle::RightEdge:

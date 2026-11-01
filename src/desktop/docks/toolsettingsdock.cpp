@@ -651,13 +651,14 @@ void ToolSettings::startTransformMove(
 }
 
 void ToolSettings::startTransformPaste(
-	const QRect &srcBounds, const QImage &image)
+	const QRect &srcBounds, const QImage &image,
+	const io::clip::TransformState *state)
 {
 	tools::Tool::Type toolToReturnTo = d->currentTool;
 	setToolTemporary(tools::Tool::TRANSFORM);
 	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
 		d->ctrl->transformTool()->beginTemporaryPaste(
-			toolToReturnTo, srcBounds, image);
+			toolToReturnTo, srcBounds, image, state);
 	} else {
 		qWarning(
 			"ToolSettings::startTransformPaste: active tool is not transform");
@@ -674,6 +675,19 @@ void ToolSettings::startLiquifyActiveLayer()
 		qWarning(
 			"ToolSettings::startLiquifyActiveLayer: active tool is not "
 			"liquify");
+	}
+}
+
+void ToolSettings::startLiquifyPaste(
+	const QImage &image, const QByteArray &liquifyData)
+{
+	tools::Tool::Type toolToReturnTo = d->currentTool;
+	setToolTemporary(tools::Tool::LIQUIFY);
+	if(d->ctrl->activeTool() == tools::Tool::LIQUIFY) {
+		d->ctrl->liquifyTool()->beginTemporaryPaste(
+			toolToReturnTo, image, liquifyData);
+	} else {
+		qWarning("ToolSettings::startLiquifyPaste: active tool is not liquify");
 	}
 }
 

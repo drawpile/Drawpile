@@ -522,13 +522,18 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		}
 
 		if(transform) {
+			QSignalBlocker blendModeManagerBlocker(m_blendModeManager);
 			m_blendModeManager->selectBlendMode(transform->blendMode());
+			QSignalBlocker opacitySliderBlocker(m_opacitySlider);
 			setOpacity(transform->opacity());
 		}
 
 		TransformTool *tt = tool();
 		m_constrainButton->setChecked(haveTransform && tt->constrain());
 		m_centerButton->setChecked(haveTransform && tt->center());
+		updateHandles(int(tt->mode()));
+
+		pushSettings();
 	}
 }
 

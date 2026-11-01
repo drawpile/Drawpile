@@ -280,6 +280,7 @@ public slots:
 	//! End a stroke
 	void endDrawing(bool constrain, bool center);
 
+	bool copyCut(bool cut);
 	void undoRedo(bool redo);
 
 	/**
@@ -365,6 +366,7 @@ private slots:
 	void clearTransformCutPreview();
 	void clearTransformPreviews();
 	void handleLiquifyStamp();
+	void handleLiquifyCopyCut(bool cut);
 	void cancelLiquify();
 	void notifyAsyncExecutionFinished(Task *task);
 

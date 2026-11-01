@@ -2169,14 +2169,18 @@ void Document::copyMerged()
 
 void Document::copyLayer()
 {
-	copyFromLayer(m_toolctrl->activeLayer());
+	if(!m_toolctrl->copyCut(false)) {
+		copyFromLayer(m_toolctrl->activeLayer());
+	}
 }
 
 void Document::cutLayer()
 {
-	if(checkPermission(DP_FEATURE_PUT_IMAGE) &&
-	   copyFromLayer(m_toolctrl->activeLayer())) {
-		clearArea();
+	if(checkPermission(DP_FEATURE_PUT_IMAGE)) {
+		if(!m_toolctrl->copyCut(true) &&
+		   copyFromLayer(m_toolctrl->activeLayer())) {
+			clearArea();
+		}
 	}
 }
 

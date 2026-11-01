@@ -420,6 +420,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		transform, &canvas::TransformModel::liquifyStampRequested, this,
 		&ToolController::handleLiquifyStamp, Qt::QueuedConnection);
 	connect(
+		transform, &canvas::TransformModel::liquifyCopyCutRequested, this,
+		&ToolController::handleLiquifyCopyCut, Qt::QueuedConnection);
+	connect(
 		transform, &canvas::TransformModel::liquifyCancelRequested, this,
 		&ToolController::cancelLiquify, Qt::QueuedConnection);
 	m_model->setTransformInterpolation(m_transformInterpolation);
@@ -539,6 +542,13 @@ void ToolController::handleLiquifyStamp()
 {
 	if(m_model && m_activeTool == m_toolbox[Tool::LIQUIFY]) {
 		liquifyTool()->applyStamp();
+	}
+}
+
+void ToolController::handleLiquifyCopyCut(bool cut)
+{
+	if(m_model && m_activeTool == m_toolbox[Tool::LIQUIFY]) {
+		liquifyTool()->applyCopyCut(cut);
 	}
 }
 
@@ -719,6 +729,11 @@ void ToolController::endDrawing(bool constrain, bool center)
 		}
 		m_model->paintEngine()->setLocalDrawingInProgress(false);
 	}
+}
+
+bool ToolController::copyCut(bool cut)
+{
+	return m_model && m_activeTool && m_activeTool->copyCut(cut);
 }
 
 void ToolController::undoRedo(bool redo)

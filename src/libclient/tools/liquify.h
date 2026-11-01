@@ -43,6 +43,9 @@ public:
 	void motion(const MotionParams &params) override;
 	void end(const EndParams &params) override;
 
+	bool copyCut(bool cut) override;
+	void applyCopyCut(bool cut);
+
 	void finishMultipart() override;
 	void cancelMultipart() override;
 	void undoMultipart() override;
@@ -52,6 +55,9 @@ public:
 	void offsetActiveTool(int x, int y) override;
 
 	void beginTemporary(Tool::Type toolToReturnTo);
+	void beginTemporaryPaste(
+		Tool::Type toolToReturnTo, const QImage &img,
+		const QByteArray &liquifyData);
 	void clearTemporary();
 
 	bool handleDeselect(bool finish);
@@ -73,7 +79,8 @@ private:
 	canvas::TransformModel *getActiveLiquifyModel() const;
 	drawdance::LiquifyWorker *getActiveLiquifyWorker() const;
 	QPointF getLiquifyOffset() const;
-	canvas::TransformModel *tryBeginLiquify();
+	canvas::TransformModel *tryBeginLiquify(
+		const QImage *img = nullptr, const QByteArray *liquifyData = nullptr);
 	void endLiquify(canvas::TransformModel *transform, bool applied);
 
 	void setLiquifyWorkerOperation(drawdance::LiquifyWorker *liquifyWorker);
@@ -81,6 +88,8 @@ private:
 	bool apply(bool stamp);
 
 	void returnToPreviousTool();
+
+	static void cancelStroke(drawdance::LiquifyWorker *liquifyWorker);
 
 	Properties m_props;
 	canvas::Point m_firstPoint;

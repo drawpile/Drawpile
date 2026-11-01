@@ -30,7 +30,6 @@ public:
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
 	bool isLocked() override { return !m_featureAccess; }
-	bool requiresSelection() override { return true; }
 
 	void setActions(QActionGroup *liquifyOperations, QAction *stamp);
 
