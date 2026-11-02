@@ -210,8 +210,7 @@ char *DP_file_path_unique(const char *path, int max,
         return NULL;
     }
 
-    void **buffer_ptr;
-    DP_Output *output = DP_mem_output_new(len + 8, false, &buffer_ptr, NULL);
+    DP_Output *output = DP_mem_output_new(len + 8, true);
     const char *ext = ext_present ? dot : "";
 
     for (int i = next_index; i <= max; ++i) {
@@ -222,8 +221,9 @@ char *DP_file_path_unique(const char *path, int max,
             DP_output_format(output, "%.*s (%d)%s", prefix_len, path, i, ext);
         }
 
-        char *buffer = *buffer_ptr;
+        char *buffer = DP_output_buffer(output);
         if (accept(user, buffer)) {
+            DP_output_free_on_close_set(output, false);
             DP_output_free(output);
             return buffer;
         }
@@ -232,9 +232,7 @@ char *DP_file_path_unique(const char *path, int max,
         }
     }
 
-    char *buffer = *buffer_ptr;
     DP_output_free(output);
-    DP_free(buffer);
     return NULL;
 }
 

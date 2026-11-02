@@ -176,7 +176,11 @@ static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
                         const char *format, int quality,
                         QImage::Format imageFormat)
 {
-    QIODevice *dev = DP_output_qiodevice(output);
+    QIODevice *dev;
+    if (!DP_output_control(output, DP_OUTPUT_CONTROL_QIODEVICE, &dev)) {
+        return false;
+    }
+
     bool ok;
     if (dev) {
         ok = write_image_to_qiodevice(dev, width, height, pixels, format,

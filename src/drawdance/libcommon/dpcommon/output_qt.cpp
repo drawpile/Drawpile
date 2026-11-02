@@ -98,9 +98,15 @@ static bool qfile_output_seek(void *internal, size_t offset)
     return do_seek("QFile", get_file(internal), offset);
 }
 
-static QIODevice *qfile_output_qiodevice(void *internal)
+static bool qfile_output_control(void *internal, int command, void *param)
 {
-    return get_file(internal);
+    switch (command) {
+    case DP_OUTPUT_CONTROL_QIODEVICE:
+        *static_cast<QIODevice **>(param) = get_file(internal);
+        return true;
+    default:
+        return false;
+    }
 }
 
 static bool qfile_output_dispose(void *internal, bool discard)
@@ -115,9 +121,8 @@ static bool qfile_output_dispose(void *internal, bool discard)
 }
 
 static const DP_OutputMethods qfile_output_methods = {
-    qfile_output_write,   nullptr,           qfile_output_flush,
-    qfile_output_tell,    qfile_output_seek, qfile_output_qiodevice,
-    qfile_output_dispose,
+    qfile_output_write, qfile_output_flush,   qfile_output_tell,
+    qfile_output_seek,  qfile_output_control, qfile_output_dispose,
 };
 
 static const DP_OutputMethods *qfile_output_init(void *internal, void *arg)
@@ -180,9 +185,15 @@ static bool qsavefile_output_seek(void *internal, size_t offset)
     return do_seek("QSaveFile", get_save_file(internal), offset);
 }
 
-static QIODevice *qsavefile_output_qiodevice(void *internal)
+static bool qsavefile_output_control(void *internal, int command, void *param)
 {
-    return get_save_file(internal);
+    switch (command) {
+    case DP_OUTPUT_CONTROL_QIODEVICE:
+        *static_cast<QIODevice **>(param) = get_save_file(internal);
+        return true;
+    default:
+        return false;
+    }
 }
 
 static bool qsavefile_output_dispose(void *internal, bool discard)
@@ -195,10 +206,8 @@ static bool qsavefile_output_dispose(void *internal, bool discard)
 }
 
 static const DP_OutputMethods qsavefile_output_methods = {
-    qsavefile_output_write,   nullptr,
-    qsavefile_output_flush,   qsavefile_output_tell,
-    qsavefile_output_seek,    qsavefile_output_qiodevice,
-    qsavefile_output_dispose,
+    qsavefile_output_write, qsavefile_output_flush,   qsavefile_output_tell,
+    qsavefile_output_seek,  qsavefile_output_control, qsavefile_output_dispose,
 };
 
 static const DP_OutputMethods *qsavefile_output_init(void *internal, void *arg)
@@ -253,9 +262,16 @@ static bool kcompressiondevice_output_seek(void *internal, size_t offset)
     return do_seek("KCompressionDevice", get_dev(internal), offset);
 }
 
-static QIODevice *kcompressiondevice_output_qiodevice(void *internal)
+static bool kcompressiondevice_output_control(void *internal, int command,
+                                              void *param)
 {
-    return get_dev(internal);
+    switch (command) {
+    case DP_OUTPUT_CONTROL_QIODEVICE:
+        *static_cast<QIODevice **>(param) = get_dev(internal);
+        return true;
+    default:
+        return false;
+    }
 }
 
 static bool kcompressiondevice_output_dispose(void *internal, bool discard)
@@ -278,13 +294,9 @@ static bool kcompressiondevice_output_dispose(void *internal, bool discard)
 }
 
 static const DP_OutputMethods kcompressiondevice_output_methods = {
-    kcompressiondevice_output_write,
-    nullptr,
-    nullptr,
-    kcompressiondevice_output_tell,
-    kcompressiondevice_output_seek,
-    kcompressiondevice_output_qiodevice,
-    kcompressiondevice_output_dispose,
+    kcompressiondevice_output_write,   nullptr,
+    kcompressiondevice_output_tell,    kcompressiondevice_output_seek,
+    kcompressiondevice_output_control, kcompressiondevice_output_dispose,
 };
 
 static const DP_OutputMethods *kcompressiondevice_output_init(void *internal,
