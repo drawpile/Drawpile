@@ -129,6 +129,11 @@ DP_Output *DP_gzip_output_new_from_path(const char *path);
 DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close);
 
 
+typedef void (*DP_OutputStreamWriteFn)(void *user, void *data, size_t size);
+
+DP_Output *DP_zstd_stream_output_new(DP_OutputStreamWriteFn write, void *user);
+
+
 #define DP_OUTPUT_INT8(X)                                       \
     (DP_OutputBinaryEntry)                                      \
     {                                                           \

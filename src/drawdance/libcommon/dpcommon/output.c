@@ -25,6 +25,7 @@
 #include "conversions.h"
 #include <errno.h>
 #include <zlib.h>
+#include <zstd.h>
 
 #ifdef DP_QT_IO
 #    include "output_qt.h"
@@ -554,14 +555,163 @@ static const DP_OutputMethods *mem_output_init(void *internal, void *arg)
     return &mem_output_methods;
 }
 
-DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close)
+static DP_MemOutputState mem_output_state_make(size_t initial_capacity,
+                                               bool free_on_close)
 {
     size_t capacity = initial_capacity < DP_MEM_OUTPUT_MIN_CAPACITY
                         ? DP_MEM_OUTPUT_MIN_CAPACITY
                         : initial_capacity;
     DP_MemOutputState state = {DP_malloc(capacity), capacity, 0, free_on_close};
     state.buffer[0] = '\0';
+    return state;
+}
+
+DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close)
+{
+    DP_MemOutputState state =
+        mem_output_state_make(initial_capacity, free_on_close);
     return DP_output_new(mem_output_init, &state, sizeof(state));
+}
+
+
+typedef struct DP_ZstdStreamOutputState {
+    ZSTD_CCtx *cctx;
+    size_t inbuf_fill;
+    size_t inbuf_size;
+    size_t outbuf_size;
+    unsigned char *inbuf;
+    unsigned char *outbuf;
+    DP_OutputStreamWriteFn write;
+    void *user;
+} DP_ZstdStreamOutputState;
+
+static bool zstd_stream_output_compress(DP_ZstdStreamOutputState *state,
+                                        ZSTD_EndDirective end_op, bool discard)
+{
+    DP_ASSERT(state->inbuf_fill != 0 || end_op == ZSTD_e_end);
+
+    ZSTD_inBuffer input = {state->inbuf, state->inbuf_fill, 0};
+    while (input.pos < input.size) {
+        ZSTD_outBuffer output = {state->outbuf, state->outbuf_size, 0};
+
+        size_t remaining =
+            ZSTD_compressStream2(state->cctx, &output, &input, end_op);
+        if (ZSTD_isError(remaining)) {
+            if (discard) {
+                DP_warn("Error in zstd compression stream: %s",
+                        ZSTD_getErrorName(remaining));
+            }
+            else {
+                DP_error_set("Error in zstd compression stream: %s",
+                             ZSTD_getErrorName(remaining));
+            }
+            return false;
+        }
+
+        if (remaining != 0) {
+            state->write(state->user, state->outbuf, remaining);
+        }
+    }
+    return true;
+}
+
+static size_t zstd_stream_output_write(void *internal, const void *buffer,
+                                       size_t size)
+{
+    DP_ZstdStreamOutputState *state = internal;
+    const unsigned char *in = buffer;
+    size_t pos = 0;
+
+    if (state->inbuf_fill != 0) {
+        size_t need = DP_min_size(state->inbuf_size - state->inbuf_fill, size);
+        memcpy(state->inbuf + state->inbuf_fill, in + pos, need);
+        state->inbuf_fill += need;
+        if (state->inbuf_fill < state->inbuf_size) {
+            DP_ASSERT(need == size);
+            return need;
+        }
+        else if (!zstd_stream_output_compress(state, ZSTD_e_continue, false)) {
+            return pos;
+        }
+        pos += need;
+    }
+
+    while (size - pos >= state->inbuf_size) {
+        memcpy(state->inbuf, in + pos, state->inbuf_size);
+        state->inbuf_fill = state->inbuf_size;
+        if (!zstd_stream_output_compress(state, ZSTD_e_continue, false)) {
+            return pos;
+        }
+        pos += state->inbuf_size;
+    }
+
+    if (pos < size) {
+        size_t need = size - pos;
+        memcpy(state->inbuf + state->inbuf_fill, in + pos, need);
+        state->inbuf_fill += need;
+        pos += need;
+    }
+
+    DP_ASSERT(pos == size);
+    return pos;
+}
+
+static bool zstd_stream_output_dispose(void *internal, bool discard)
+{
+    DP_ZstdStreamOutputState *state = internal;
+    bool ok = zstd_stream_output_compress(state, ZSTD_e_end, discard);
+    DP_free(state->outbuf);
+    DP_free(state->inbuf);
+    ZSTD_freeCCtx(state->cctx);
+    return ok;
+}
+
+static const DP_OutputMethods zstd_stream_output_methods = {
+    zstd_stream_output_write,   NULL, NULL, NULL, NULL,
+    zstd_stream_output_dispose,
+};
+
+static const DP_OutputMethods *zstd_stream_output_init(void *internal,
+                                                       void *arg)
+{
+    *((DP_ZstdStreamOutputState *)internal) =
+        *((DP_ZstdStreamOutputState *)arg);
+    return &zstd_stream_output_methods;
+}
+
+DP_Output *DP_zstd_stream_output_new(DP_OutputStreamWriteFn write, void *user)
+{
+    DP_ASSERT(write);
+
+    size_t inbuf_size = ZSTD_CStreamInSize();
+    if (inbuf_size == 0) {
+        DP_error_set("Invalid zstd input buffer size");
+        return NULL;
+    }
+
+    size_t outbuf_size = ZSTD_CStreamOutSize();
+    if (outbuf_size == 0) {
+        DP_error_set("Invalid zstd output buffer size");
+        return NULL;
+    }
+
+    ZSTD_CCtx *cctx = ZSTD_createCCtx();
+    if (!cctx) {
+        DP_error_set("Error creating zstd compression context");
+        return NULL;
+    }
+
+    DP_ZstdStreamOutputState state = {
+        cctx,
+        0,
+        inbuf_size,
+        outbuf_size,
+        DP_malloc(inbuf_size),
+        DP_malloc(outbuf_size),
+        write,
+        user,
+    };
+    return DP_output_new(zstd_stream_output_init, &state, sizeof(state));
 }
 
 

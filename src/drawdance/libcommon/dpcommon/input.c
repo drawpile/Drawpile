@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <zstd.h>
 #ifdef DP_QT_IO
 #    include "input_qt.h"
 #endif
@@ -323,6 +323,77 @@ DP_Input *DP_file_input_new_from_path(const char *path)
         return NULL;
     }
 #endif
+}
+
+
+typedef struct DP_ZstdStreamInputState {
+    ZSTD_DCtx *dctx;
+    size_t pos;
+    size_t input_size;
+    const unsigned char *input_buffer;
+} DP_ZstdStreamInputState;
+
+static size_t zstd_stream_input_read(void *internal, void *buffer, size_t size,
+                                     bool *out_error)
+{
+    DP_ZstdStreamInputState *state = internal;
+
+    ZSTD_outBuffer output = {buffer, size, 0};
+    while (output.pos < output.size) {
+        ZSTD_inBuffer input = {state->input_buffer + state->pos,
+                               state->input_size - state->pos, 0};
+        if (input.size == 0) {
+            break;
+        }
+
+        size_t result = ZSTD_decompressStream(state->dctx, &output, &input);
+        state->pos += input.pos;
+
+        if (ZSTD_isError(result)) {
+            DP_error_set("Error in zstd decompression stream: %s",
+                         ZSTD_getErrorName(result));
+            *out_error = true;
+            return 0;
+        }
+
+        if (input.pos == 0 && output.pos == 0) {
+            break;
+        }
+    }
+
+    return output.pos;
+}
+
+static void zstd_stream_input_dispose(void *internal)
+{
+    DP_ZstdStreamInputState *state = internal;
+    ZSTD_freeDCtx(state->dctx);
+}
+
+static const DP_InputMethods zstd_stream_input_methods = {
+    zstd_stream_input_read,    NULL, NULL, NULL, NULL, NULL, NULL,
+    zstd_stream_input_dispose,
+};
+
+const DP_InputMethods *zstd_stream_input_init(void *internal, void *arg)
+{
+    *((DP_ZstdStreamInputState *)internal) = *((DP_ZstdStreamInputState *)arg);
+    return &zstd_stream_input_methods;
+}
+
+DP_Input *DP_zstd_stream_input_new(const void *buffer, size_t size)
+{
+    DP_ASSERT(buffer);
+    DP_ASSERT(size > 0);
+
+    ZSTD_DCtx *dctx = ZSTD_createDCtx();
+    if (!dctx) {
+        DP_error_set("Error creating zstd decompression context");
+        return NULL;
+    }
+
+    DP_ZstdStreamInputState state = {dctx, 0, size, buffer};
+    return DP_input_new(zstd_stream_input_init, &state, sizeof(state));
 }
 
 

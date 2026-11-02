@@ -52,7 +52,7 @@ dp_target_sources(dpcommon
 )
 
 target_include_directories(dpcommon PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(dpcommon PUBLIC ZLIB::ZLIB)
+target_link_libraries(dpcommon PUBLIC zstd::libzstd ZLIB::ZLIB)
 
 if(WIN32)
     target_sources(dpcommon PRIVATE dpcommon/threading_win32.c)
