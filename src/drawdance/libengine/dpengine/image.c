@@ -543,20 +543,20 @@ bool DP_image_thumbnail_from_canvas_write(
         return false;
     }
 
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *output = DP_mem_output_new(1024, false, &buffer_ptr, &size_ptr);
+    DP_Output *output = DP_mem_output_new(1024, true);
     bool write_ok = write_fn(user, thumb, output);
-    void *buffer = *buffer_ptr;
-    size_t size = *size_ptr;
-    DP_output_free(output);
     DP_image_free(thumb);
-
     if (!write_ok) {
-        DP_free(buffer);
+        DP_output_free(output);
         return false;
     }
-    else if (!buffer || size == 0) {
+
+    void *buffer = DP_output_buffer(output);
+    size_t size = DP_output_buffer_size(output);
+    DP_output_free_on_close_set(output, false);
+    DP_output_free(output);
+
+    if (!buffer || size == 0) {
         DP_error_set("Writing reset thumbnail resulted in no data");
         DP_free(buffer);
         return false;

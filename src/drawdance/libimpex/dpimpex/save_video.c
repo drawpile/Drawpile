@@ -2165,10 +2165,8 @@ DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params)
     }
 
     // Generate GIF palette into an in-memory buffer.
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *palette_output = DP_mem_output_new(
-        DP_SAVE_VIDEO_GIF_PALETTE_BYTES, true, &buffer_ptr, &size_ptr);
+    DP_Output *palette_output =
+        DP_mem_output_new(DP_SAVE_VIDEO_GIF_PALETTE_BYTES, true);
     if (!palette_output) {
         return DP_SAVE_RESULT_INTERNAL_ERROR;
     }
@@ -2185,10 +2183,11 @@ DP_SaveResult DP_save_animation_gif(DP_SaveAnimationGifParams params)
         // Render out the actual GIF based on the generated palette.
         result = DP_save_animation_video((DP_SaveAnimationVideoParams){
             params.cs, params.area, params.destination, params.path_or_output,
-            *buffer_ptr, *size_ptr, params.flags, DP_SAVE_VIDEO_FORMAT_GIF,
-            params.width, params.height, params.frame_indexes,
-            params.frame_index_count, params.framerate, 1, on_gif_progress_gif,
-            &params});
+            DP_output_buffer(palette_output),
+            DP_output_buffer_size(palette_output), params.flags,
+            DP_SAVE_VIDEO_FORMAT_GIF, params.width, params.height,
+            params.frame_indexes, params.frame_index_count, params.framerate, 1,
+            on_gif_progress_gif, &params});
     }
 
     DP_output_free(palette_output);

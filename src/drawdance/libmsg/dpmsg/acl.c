@@ -482,9 +482,7 @@ static void dump_annotation_acls(DP_Output *output, DP_AclState *acls)
 char *DP_acl_state_dump(DP_AclState *acls)
 {
     DP_ASSERT(acls);
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *output = DP_mem_output_new(1024, false, &buffer_ptr, &size_ptr);
+    DP_Output *output = DP_mem_output_new(1024, false);
 
     DP_output_format(output, "acl state %p\n", (void *)acls);
     DP_output_format(output, "    all_locked: %s\n",
@@ -516,7 +514,7 @@ char *DP_acl_state_dump(DP_AclState *acls)
     dump_layer_acls(output, acls);
     dump_annotation_acls(output, acls);
 
-    char *buffer = *buffer_ptr;
+    char *buffer = DP_output_buffer(output);
     DP_output_free(output);
     return buffer;
 }

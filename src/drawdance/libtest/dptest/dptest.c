@@ -55,11 +55,11 @@ void DP_test_register(DP_TestRegistry *R, const char *name, DP_TestFn test_fn,
 }
 
 
-static DP_Output *append_test_name(void ***buffer_ptr, DP_Output *out,
-                                   const char *arg, size_t length)
+static DP_Output *append_test_name(DP_Output *out, const char *arg,
+                                   size_t length)
 {
     if (!out) {
-        out = DP_mem_output_new(64, false, buffer_ptr, NULL);
+        out = DP_mem_output_new(64, true);
         if (!out) {
             DP_panic("Error creating mem output: %s", DP_error());
         }
@@ -69,8 +69,7 @@ static DP_Output *append_test_name(void ***buffer_ptr, DP_Output *out,
     return out;
 }
 
-static DP_Output *parse_comma_separated_test_names(void ***buffer_ptr,
-                                                   DP_Output *out,
+static DP_Output *parse_comma_separated_test_names(DP_Output *out,
                                                    const char *arg)
 {
     size_t start = 0;
@@ -78,14 +77,13 @@ static DP_Output *parse_comma_separated_test_names(void ***buffer_ptr,
     for (size_t i = 0; i < total_length; ++i) {
         if (arg[i] == ',') {
             if (start != i) {
-                out = append_test_name(buffer_ptr, out, arg + start, i - start);
+                out = append_test_name(out, arg + start, i - start);
             }
             start = i + 1;
         }
     }
     if (start < total_length) {
-        out = append_test_name(buffer_ptr, out, arg + start,
-                               total_length - start);
+        out = append_test_name(out, arg + start, total_length - start);
     }
     return out;
 }
@@ -93,8 +91,6 @@ static DP_Output *parse_comma_separated_test_names(void ***buffer_ptr,
 static bool parse_run_params(struct DP_TestRunParams *params, int argc,
                              char **argv, int offset)
 {
-    void **includes_buffer_ptr = NULL;
-    void **excludes_buffer_ptr = NULL;
     DP_Output *includes_out = NULL;
     DP_Output *excludes_out = NULL;
     bool error = false;
@@ -103,13 +99,11 @@ static bool parse_run_params(struct DP_TestRunParams *params, int argc,
         const char *arg = argv[i];
         if (strncmp(arg, INCLUDE_PREFIX, strlen(INCLUDE_PREFIX)) == 0) {
             includes_out = parse_comma_separated_test_names(
-                &includes_buffer_ptr, includes_out,
-                arg + strlen(INCLUDE_PREFIX));
+                includes_out, arg + strlen(INCLUDE_PREFIX));
         }
         else if (strncmp(arg, EXCLUDE_PREFIX, strlen(EXCLUDE_PREFIX)) == 0) {
             excludes_out = parse_comma_separated_test_names(
-                &excludes_buffer_ptr, excludes_out,
-                arg + strlen(EXCLUDE_PREFIX));
+                excludes_out, arg + strlen(EXCLUDE_PREFIX));
         }
         else {
             DP_warn("Unknown argument '%s'", arg);
@@ -120,8 +114,9 @@ static bool parse_run_params(struct DP_TestRunParams *params, int argc,
     char *includes;
     if (includes_out) {
         DP_output_write(includes_out, "\0", 1);
-        includes = *includes_buffer_ptr;
-        DP_free(includes_out);
+        includes = DP_output_buffer(includes_out);
+        DP_output_free_on_close_set(includes_out, false);
+        DP_output_free(includes_out);
     }
     else {
         includes = NULL;
@@ -130,8 +125,9 @@ static bool parse_run_params(struct DP_TestRunParams *params, int argc,
     char *excludes;
     if (excludes_out) {
         DP_output_write(excludes_out, "\0", 1);
-        excludes = *excludes_buffer_ptr;
-        DP_free(excludes_out);
+        excludes = DP_output_buffer(excludes_out);
+        DP_output_free_on_close_set(excludes_out, false);
+        DP_output_free(excludes_out);
     }
     else {
         excludes = NULL;
@@ -325,13 +321,11 @@ static void write_comment_line(FILE *fp, const char *s, size_t length)
 static void write_comment(FILE *fp, const char *fmt, va_list ap) DP_VFORMAT(2);
 static void write_comment(FILE *fp, const char *fmt, va_list ap)
 {
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *mem = DP_mem_output_new(64, true, &buffer_ptr, &size_ptr);
+    DP_Output *mem = DP_mem_output_new(64, true);
     DP_output_vformat(mem, fmt, ap);
 
-    char *buffer = *buffer_ptr;
-    size_t size = *size_ptr;
+    char *buffer = DP_output_buffer(mem);
+    size_t size = DP_output_buffer_size(mem);
 
     size_t start = 0;
     size_t length = 0;

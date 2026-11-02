@@ -315,21 +315,18 @@ static bool ora_store_mimetype(DP_ZipWriter *zw)
 static bool ora_store_png(DP_SaveOraContext *c, const char *name,
                           bool (*write_png)(void *, DP_Output *), void *user)
 {
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *output = DP_mem_output_new(64, false, &buffer_ptr, &size_ptr);
-    bool ok = write_png(user, output);
-    void *buffer = *buffer_ptr;
-    size_t size = *size_ptr;
-    DP_output_free(output);
-
-    if (ok) {
-        return DP_zip_writer_add_file(c->zw, name, buffer, size, false, true);
-    }
-    else {
-        DP_free(buffer);
+    DP_Output *output = DP_mem_output_new(64, true);
+    if (!write_png(user, output)) {
+        DP_output_free(output);
         return false;
     }
+
+    void *buffer = DP_output_buffer(output);
+    size_t size = DP_output_buffer_size(output);
+    DP_output_free_on_close_set(output, false);
+    DP_output_free(output);
+
+    return DP_zip_writer_add_file(c->zw, name, buffer, size, false, true);
 }
 
 struct DP_OraWriteUpixelsParams {
@@ -851,9 +848,7 @@ static void ora_write_timeline_xml(DP_SaveOraContext *c, DP_Output *output,
 static char *ora_write_xml(DP_SaveOraContext *c, DP_CanvasState *cs,
                            size_t *out_size)
 {
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *output = DP_mem_output_new(1024, false, &buffer_ptr, &size_ptr);
+    DP_Output *output = DP_mem_output_new(1024, false);
 
     DP_OUTPUT_PRINT_LITERAL(
         output, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -882,8 +877,8 @@ static char *ora_write_xml(DP_SaveOraContext *c, DP_CanvasState *cs,
 
     DP_OUTPUT_PRINT_LITERAL(output, "</image>");
 
-    *out_size = *size_ptr;
-    char *buffer = *buffer_ptr;
+    *out_size = DP_output_buffer_size(output);
+    char *buffer = DP_output_buffer(output);
     DP_output_free(output);
     return buffer;
 }
@@ -1254,13 +1249,8 @@ static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
         return NULL;
     }
 
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *output = DP_mem_output_new(64, false, &buffer_ptr, &size_ptr);
+    DP_Output *output = DP_mem_output_new(64, true);
     bool ok = DP_image_write_png(img, output);
-    void *buffer = *buffer_ptr;
-    size_t size = *size_ptr;
-    DP_output_free_discard(output);
     DP_image_free(img);
     if (!ok) {
         DP_output_free_discard(output);
@@ -1268,6 +1258,11 @@ static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
         save_frame_set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
     }
+
+    void *buffer = DP_output_buffer(output);
+    size_t size = DP_output_buffer_size(output);
+    DP_output_free_on_close_set(output, false);
+    DP_output_free(output);
 
     if (!buffer || size == 0) {
         DP_warn("Output %d is null", frame_index);

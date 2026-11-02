@@ -24,12 +24,6 @@
 #include "common.h"
 #include <stdio.h>
 
-#ifdef __cplusplus
-class QIODevice;
-#else
-typedef struct QIODevice QIODevice;
-#endif
-
 #define DP_OUTPUT_PRINT_LITERAL(OUTPUT, LITERAL) \
     DP_output_write((OUTPUT), "" LITERAL, strlen(LITERAL))
 
@@ -38,15 +32,37 @@ typedef struct QIODevice QIODevice;
                     sizeof((unsigned char[]){__VA_ARGS__}))
 
 
+// Commands for DP_output_control. They will generally return true if supported
+// and false if unsupported. Exceptions for commands that can fail are listed.
+
+// Retrieves a QIODevice * from the output. The parameter must be a QIODevice **
+// to write to.
+#define DP_OUTPUT_CONTROL_QIODEVICE 1
+
+// Clears the buffer of a memory output. The parameter is ignored.
+#define DP_OUTPUT_CONTROL_CLEAR 2
+
+// Retrieves the buffer from a memory output. The parameter must be an void **
+// to write to. Modifying the memory output invalidates the pointer!
+#define DP_OUTPUT_CONTROL_BUFFER 3
+
+// Retrieves the buffer fill from a memory output. The parameter must be a
+// size_t * to write to.
+#define DP_OUTPUT_CONTROL_BUFFER_SIZE 4
+
+// Sets whether a memory output should free its buffer on close. The parameter
+// must be an bool * to read the value to set from.
+#define DP_OUTPUT_CONTROL_FREE_ON_CLOSE_SET 5
+
+
 typedef struct DP_Output DP_Output;
 
 typedef struct DP_OutputMethods {
     size_t (*write)(void *internal, const void *buffer, size_t size);
-    bool (*clear)(void *internal);
     bool (*flush)(void *internal);
     size_t (*tell)(void *internal, bool *out_error);
     bool (*seek)(void *internal, size_t offset);
-    QIODevice *(*qiodevice)(void *internal);
+    bool (*control)(void *internal, int command, void *param);
     bool (*dispose)(void *internal, bool discard);
 } DP_OutputMethods;
 
@@ -71,15 +87,23 @@ bool DP_output_vformat(DP_Output *output, const char *fmt, va_list ap)
 
 bool DP_output_format(DP_Output *output, const char *fmt, ...) DP_FORMAT(2, 3);
 
-bool DP_output_clear(DP_Output *output);
-
 bool DP_output_flush(DP_Output *output);
 
 size_t DP_output_tell(DP_Output *output, bool *out_error);
 
 bool DP_output_seek(DP_Output *output, size_t offset);
 
-QIODevice *DP_output_qiodevice(DP_Output *output);
+bool DP_output_control(DP_Output *output, int command, void *param);
+
+// Wrappers for DP_output_control.
+
+bool DP_output_clear(DP_Output *output);
+
+void *DP_output_buffer(DP_Output *output);
+
+size_t DP_output_buffer_size(DP_Output *output);
+
+bool DP_output_free_on_close_set(DP_Output *output, bool free_on_close);
 
 
 #ifndef RUST_BINDGEN
@@ -102,8 +126,7 @@ DP_Output *DP_gzip_output_new(void *gf, bool close);
 DP_Output *DP_gzip_output_new_from_path(const char *path);
 
 
-DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
-                             void ***out_buffer, size_t **out_size);
+DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close);
 
 
 #define DP_OUTPUT_INT8(X)                                       \

@@ -142,19 +142,6 @@ bool DP_output_format(DP_Output *output, const char *fmt, ...)
     return result;
 }
 
-bool DP_output_clear(DP_Output *output)
-{
-    DP_ASSERT(output);
-    bool (*clear)(void *) = output->methods->clear;
-    if (clear) {
-        return clear(output->internal);
-    }
-    else {
-        DP_error_set("Clearing output not supported");
-        return false;
-    }
-}
-
 bool DP_output_flush(DP_Output *output)
 {
     DP_ASSERT(output);
@@ -193,11 +180,47 @@ bool DP_output_seek(DP_Output *output, size_t offset)
     }
 }
 
-QIODevice *DP_output_qiodevice(DP_Output *output)
+bool DP_output_control(DP_Output *output, int command, void *param)
 {
     DP_ASSERT(output);
-    QIODevice *(*qiodevice)(void *) = output->methods->qiodevice;
-    return qiodevice ? qiodevice(output->internal) : NULL;
+    bool (*control)(void *, int, void *) = output->methods->control;
+    return control && control(output->internal, command, param);
+}
+
+bool DP_output_clear(DP_Output *output)
+{
+    DP_ASSERT(output);
+    return DP_output_control(output, DP_OUTPUT_CONTROL_CLEAR, NULL);
+}
+
+void *DP_output_buffer(DP_Output *output)
+{
+    DP_ASSERT(output);
+    void *buffer;
+    if (DP_output_control(output, DP_OUTPUT_CONTROL_BUFFER, &buffer)) {
+        return buffer;
+    }
+    else {
+        return NULL;
+    }
+}
+
+size_t DP_output_buffer_size(DP_Output *output)
+{
+    DP_ASSERT(output);
+    size_t size;
+    if (DP_output_control(output, DP_OUTPUT_CONTROL_BUFFER_SIZE, &size)) {
+        return size;
+    }
+    else {
+        return 0;
+    }
+}
+
+bool DP_output_free_on_close_set(DP_Output *output, bool free_on_close)
+{
+    return DP_output_control(output, DP_OUTPUT_CONTROL_FREE_ON_CLOSE_SET,
+                             &free_on_close);
 }
 
 
@@ -273,8 +296,12 @@ static bool file_output_dispose(void *internal, bool discard)
 }
 
 static const DP_OutputMethods file_output_methods = {
-    file_output_write, NULL, file_output_flush,   file_output_tell,
-    file_output_seek,  NULL, file_output_dispose,
+    file_output_write,
+    file_output_flush,
+    file_output_tell,
+    file_output_seek,
+    NULL,
+    file_output_dispose,
 };
 
 static const DP_OutputMethods *file_output_init(void *internal, void *arg)
@@ -413,8 +440,12 @@ static bool gzip_output_dispose(void *internal, bool discard)
 }
 
 static const DP_OutputMethods gzip_output_methods = {
-    gzip_output_write, NULL, gzip_output_flush,   gzip_output_tell,
-    gzip_output_seek,  NULL, gzip_output_dispose,
+    gzip_output_write,
+    gzip_output_flush,
+    gzip_output_tell,
+    gzip_output_seek,
+    NULL,
+    gzip_output_dispose,
 };
 
 static const DP_OutputMethods *gzip_output_init(void *internal, void *arg)
@@ -475,18 +506,32 @@ static size_t mem_output_write(void *internal, const void *buffer, size_t size)
     return size;
 }
 
-static bool mem_output_clear(void *internal)
-{
-    DP_MemOutputState *state = internal;
-    state->used = 0;
-    state->buffer[0] = '\0';
-    return true;
-}
-
 static size_t mem_output_tell(void *internal, DP_UNUSED bool *out_error)
 {
     DP_MemOutputState *state = internal;
     return state->used;
+}
+
+static bool mem_output_control(void *internal, int command, void *param)
+{
+    DP_MemOutputState *state = internal;
+    switch (command) {
+    case DP_OUTPUT_CONTROL_CLEAR:
+        state->used = 0;
+        state->buffer[0] = '\0';
+        return true;
+    case DP_OUTPUT_CONTROL_BUFFER:
+        *(void **)param = state->buffer;
+        return true;
+    case DP_OUTPUT_CONTROL_BUFFER_SIZE:
+        *(size_t *)param = state->used;
+        return true;
+    case DP_OUTPUT_CONTROL_FREE_ON_CLOSE_SET:
+        state->free_on_close = *(bool *)param;
+        return true;
+    default:
+        return false;
+    }
 }
 
 static bool mem_output_dispose(void *internal, DP_UNUSED bool discard)
@@ -499,7 +544,7 @@ static bool mem_output_dispose(void *internal, DP_UNUSED bool discard)
 }
 
 static const DP_OutputMethods mem_output_methods = {
-    mem_output_write,   mem_output_clear, NULL, mem_output_tell, NULL, NULL,
+    mem_output_write,   NULL, mem_output_tell, NULL, mem_output_control,
     mem_output_dispose,
 };
 
@@ -509,29 +554,14 @@ static const DP_OutputMethods *mem_output_init(void *internal, void *arg)
     return &mem_output_methods;
 }
 
-static void mem_output_assign_out_vars(DP_Output *output, void ***out_buffer,
-                                       size_t **out_size)
-{
-    DP_MemOutputState *state = (void *)output->internal;
-    if (out_buffer) {
-        *out_buffer = (void *)&state->buffer;
-    }
-    if (out_size) {
-        *out_size = &state->used;
-    }
-}
-
-DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
-                             void ***out_buffer, size_t **out_size)
+DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close)
 {
     size_t capacity = initial_capacity < DP_MEM_OUTPUT_MIN_CAPACITY
                         ? DP_MEM_OUTPUT_MIN_CAPACITY
                         : initial_capacity;
     DP_MemOutputState state = {DP_malloc(capacity), capacity, 0, free_on_close};
     state.buffer[0] = '\0';
-    DP_Output *output = DP_output_new(mem_output_init, &state, sizeof(state));
-    mem_output_assign_out_vars(output, out_buffer, out_size);
-    return output;
+    return DP_output_new(mem_output_init, &state, sizeof(state));
 }
 
 
