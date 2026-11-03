@@ -225,10 +225,18 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 			}
 		});
 
+	tools::TransformSettings *ts = transformSettings();
+	connect(
+		ts, &tools::TransformSettings::requiresSelectionChanged, this,
+		&ToolSettings::requiresSelectionChanged);
+
 	tools::LiquifySettings *ls = liquifySettings();
 	connect(
 		ls, &tools::LiquifySettings::sizeChanged, this,
 		&ToolSettings::sizeChanged);
+	connect(
+		ls, &tools::LiquifySettings::requiresSelectionChanged, this,
+		&ToolSettings::requiresSelectionChanged);
 
 	connect(
 		ctrl, &tools::ToolController::globalSmoothingChanged, bs,

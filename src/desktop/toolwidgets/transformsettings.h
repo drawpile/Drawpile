@@ -36,6 +36,7 @@ public:
 
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
+	bool requiresSelection() override { return !m_hadTransform; }
 
 	void setActions(
 		QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
@@ -67,6 +68,7 @@ public:
 signals:
 	void blendModeChanged(int blendMode);
 	void opacityChanged(qreal opacity);
+	void requiresSelectionChanged();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
@@ -126,6 +128,7 @@ private:
 	view::CanvasWrapper *m_canvasView = nullptr;
 	qreal m_quickAdjust2 = 0.0;
 	bool m_handleButtonsVisible = true;
+	bool m_hadTransform = false;
 };
 
 }

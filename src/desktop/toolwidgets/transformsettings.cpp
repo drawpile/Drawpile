@@ -570,6 +570,11 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		updateHandles(int(tt->mode()));
 
 		pushSettings();
+
+		if(haveTransform != m_hadTransform) {
+			m_hadTransform = haveTransform;
+			Q_EMIT requiresSelectionChanged();
+		}
 	}
 }
 
