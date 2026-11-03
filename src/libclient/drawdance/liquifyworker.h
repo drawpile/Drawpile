@@ -49,6 +49,10 @@ public:
 	void endStroke(long long timeMsec);
 	void cancelStroke(long long timeMsec);
 
+	void beginOffset();
+	void setOffset(const QPoint delta);
+	void endOffset();
+
 	void setDisplacement(float displacement);
 	void applyDisplacement();
 

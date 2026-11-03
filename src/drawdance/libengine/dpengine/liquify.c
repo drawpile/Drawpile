@@ -41,6 +41,8 @@ struct DP_Liquify {
     DP_LiquifyMap *lm;
     DP_LiquifyTile *free_tiles;
     float displacement;
+    int offset_x;
+    int offset_y;
     DP_Atomic refcount;
     DP_Rect mask_rect;
 };
@@ -49,6 +51,8 @@ struct DP_LiquifyState {
     DP_Liquify *l;
     DP_LiquifyMap *lm;
     float displacement;
+    int offset_x;
+    int offset_y;
     DP_Atomic refcount;
 };
 
@@ -68,6 +72,8 @@ struct DP_LiquifyTransformer {
     DP_LiquifyImage debug;
 #endif
     int interpolation;
+    int offset_x;
+    int offset_y;
     float displacement;
     DP_Atomic refcount;
 };
@@ -449,6 +455,8 @@ DP_Liquify *DP_liquify_new(int mask_x, int mask_y, int mask_width,
     l->mutex = mutex;
     l->lm = NULL;
     l->free_tiles = NULL;
+    l->offset_x = 0;
+    l->offset_y = 0;
     l->displacement = 1.0f;
     DP_atomic_set(&l->refcount, 1);
     l->mask_rect = DP_rect_make(mask_x, mask_y, mask_width, mask_height);
@@ -481,6 +489,12 @@ static bool deserialize_magic(DP_Input *input)
         DP_error_set("Bad magic");
         return false;
     }
+}
+
+static bool deserialize_int(DP_Input *input, int *out_i)
+{
+    DESERIALIZE_READ(input, out_i, sizeof(*out_i));
+    return true;
 }
 
 static bool deserialize_float(DP_Input *input, float *out_f)
@@ -523,9 +537,12 @@ DP_Liquify *DP_liquify_new_deserialize(DP_Input *input, int mask_width,
     DP_ASSERT(input);
 
     float displacement;
+    int offset_x, offset_y;
     DP_Rect mask_rect, tile_bounds;
     bool header_ok = deserialize_magic(input)
                   && deserialize_float(input, &displacement)
+                  && deserialize_int(input, &offset_x)
+                  && deserialize_int(input, &offset_y)
                   && deserialize_rect(input, &mask_rect)
                   && deserialize_rect(input, &tile_bounds);
     if (!header_ok) {
@@ -551,6 +568,8 @@ DP_Liquify *DP_liquify_new_deserialize(DP_Input *input, int mask_width,
     }
 
     l->displacement = displacement;
+    l->offset_x = offset_x;
+    l->offset_y = offset_y;
     return l;
 }
 
@@ -644,6 +663,8 @@ DP_LiquifyState *DP_liquify_current_state_inc(DP_Liquify *l)
     DP_MUTEX_MUST_LOCK(mutex);
     ls->lm = map_incref_nullable(l->lm);
     ls->displacement = l->displacement;
+    ls->offset_x = l->offset_x;
+    ls->offset_y = l->offset_y;
     DP_MUTEX_MUST_UNLOCK(mutex);
 
     return ls;
@@ -1082,6 +1103,34 @@ bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
     return true;
 }
 
+void DP_liquify_offset(DP_Liquify *l, int *out_x, int *out_y)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    DP_ASSERT(out_x);
+    DP_ASSERT(out_y);
+    DP_Mutex *mutex = l->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    *out_x = l->offset_x;
+    *out_y = l->offset_y;
+    DP_MUTEX_MUST_UNLOCK(mutex);
+}
+
+bool DP_liquify_offset_set(DP_Liquify *l, int x, int y)
+{
+    DP_ASSERT(l);
+    DP_ASSERT(DP_atomic_get(&l->refcount) > 0);
+    DP_Mutex *mutex = l->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    bool changed = x != l->offset_x || y != l->offset_y;
+    if (changed) {
+        l->offset_x = x;
+        l->offset_y = y;
+    }
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    return changed;
+}
+
 float DP_liquify_displacement(DP_Liquify *l)
 {
     DP_ASSERT(l);
@@ -1158,6 +1207,11 @@ static bool serialize_bool(DP_Output *output, bool b)
     return DP_output_write(output, &c, 1);
 }
 
+static bool serialize_int(DP_Output *output, int i)
+{
+    return DP_output_write(output, &i, sizeof(i));
+}
+
 static bool serialize_float(DP_Output *output, float f)
 {
     return DP_output_write(output, &f, sizeof(f));
@@ -1206,6 +1260,8 @@ static bool serialize_liqufy(DP_Liquify *l, DP_Output *output)
     return DP_output_write(output, DP_LIQUIFY_SERIALIZE_MAGIC,
                            sizeof(DP_LIQUIFY_SERIALIZE_MAGIC))
         && serialize_float(output, l->displacement)
+        && serialize_int(output, l->offset_x)
+        && serialize_int(output, l->offset_y)
         && serialize_rect(output, l->mask_rect) && serialize_map(output, l->lm);
 }
 
@@ -1303,6 +1359,8 @@ void DP_liquify_state_apply(DP_LiquifyState *ls)
         l->lm = map_incref_nullable(new_lm);
     }
     l->displacement = ls->displacement;
+    l->offset_x = ls->offset_x;
+    l->offset_y = ls->offset_y;
     DP_MUTEX_MUST_UNLOCK(mutex);
 }
 
@@ -1311,6 +1369,16 @@ float DP_liquify_state_displacement(DP_LiquifyState *ls)
     DP_ASSERT(ls);
     DP_ASSERT(DP_atomic_get(&ls->refcount) > 0);
     return ls->displacement;
+}
+
+void DP_liquify_state_offset(DP_LiquifyState *ls, int *out_x, int *out_y)
+{
+    DP_ASSERT(ls);
+    DP_ASSERT(DP_atomic_get(&ls->refcount) > 0);
+    DP_ASSERT(out_x);
+    DP_ASSERT(out_y);
+    *out_x = ls->offset_x;
+    *out_y = ls->offset_y;
 }
 
 bool DP_liquify_state_change_bounds(DP_LiquifyState *ls, int *out_left,
@@ -1399,6 +1467,8 @@ DP_LiquifyTransformer *DP_liquify_transformer_new(int source_x, int source_y,
         {NULL, 0, 0, 0, 0},
 #endif
         -1,
+        0,
+        0,
         1.0f,
         DP_ATOMIC_INIT(1),
     };
@@ -1870,11 +1940,26 @@ bool DP_liquify_transformer_apply(DP_LiquifyTransformer *ltr,
     DP_ASSERT(ltr);
     DP_ASSERT(DP_atomic_get(&ltr->refcount) > 0);
 
-    float displacement = ls_or_null ? ls_or_null->displacement : 1.0f;
+    float displacement;
+    int offset_x, offset_y;
+    if (ls_or_null) {
+        displacement = ls_or_null->displacement;
+        offset_x = ls_or_null->offset_x;
+        offset_y = ls_or_null->offset_y;
+    }
+    else {
+        displacement = 1.0f;
+        offset_x = 0;
+        offset_y = 0;
+    }
+
     bool changed =
-        liquify_transformer_apply(ltr, ls_or_null, interpolation, displacement);
+        liquify_transformer_apply(ltr, ls_or_null, interpolation, displacement)
+        || offset_x != ltr->offset_x || offset_y != ltr->offset_y;
     ltr->interpolation = interpolation;
     ltr->displacement = displacement;
+    ltr->offset_x = offset_x;
+    ltr->offset_y = offset_y;
 
 #if DP_LIQUIFY_DEBUG_OVERLAY
     liquify_transformer_apply_debug_overlay(ltr);
@@ -1898,10 +1983,10 @@ bool DP_liquify_transformer_target_image(DP_LiquifyTransformer *ltr, int *out_x,
 #endif
     if (target->data) {
         if (out_x) {
-            *out_x = target->x;
+            *out_x = target->x + ltr->offset_x;
         }
         if (out_y) {
-            *out_y = target->y;
+            *out_y = target->y + ltr->offset_y;
         }
         if (out_width) {
             *out_width = target->width;

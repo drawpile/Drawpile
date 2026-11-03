@@ -77,6 +77,12 @@ void DP_liquify_worker_stroke_end(DP_LiquifyWorker *lw, long long time_msec);
 
 void DP_liquify_worker_stroke_cancel(DP_LiquifyWorker *lw, long long time_msec);
 
+void DP_liquify_worker_offset_begin(DP_LiquifyWorker *lw);
+
+void DP_liquify_worker_offset_set(DP_LiquifyWorker *lw, int dx, int dy);
+
+void DP_liquify_worker_offset_end(DP_LiquifyWorker *lw);
+
 void DP_liquify_worker_displacement_set(DP_LiquifyWorker *lw,
                                         float displacement);
 

@@ -89,10 +89,10 @@ void LiquifySettings::setActions(
 	QList<QAction *> operationActions = liquifyOperations->actions();
 	int operationCount = operationActions.size();
 	Q_ASSERT(operationCount == int(Operation::Last) + 1);
-	for(int i = 0; i < operationCount; ++i) {
+	for(int i = 0; i < operationCount - 1; ++i) {
 		widgets::GroupedToolButton *button = new widgets::GroupedToolButton(
 			i == 0 ? widgets::GroupedToolButton::GroupLeft
-			: i == int(Operation::Last)
+			: i == int(Operation::Last) - 1
 				? widgets::GroupedToolButton::GroupRight
 				: widgets::GroupedToolButton::GroupCenter);
 		button->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -101,6 +101,9 @@ void LiquifySettings::setActions(
 	}
 
 	headerLayout->addStretch(1);
+
+	m_headerMenu->addSeparator();
+	m_headerMenu->addAction(operationActions.constLast());
 
 	pushSettings();
 	connect(
@@ -235,6 +238,9 @@ void LiquifySettings::pushSettings()
 	case int(Operation::Erase):
 		props.operation = LiquifyTool::Operation::Erase;
 		break;
+	case int(Operation::Offset):
+		props.operation = LiquifyTool::Operation::Offset;
+		break;
 	default:
 		qWarning("Unhandled liquify operation %d", operation);
 		break;
@@ -242,9 +248,10 @@ void LiquifySettings::pushSettings()
 
 	controller()->liquifyTool()->setProperties(props);
 
-	if(props.size != m_lastEmittedSize) {
-		m_lastEmittedSize = props.size;
-		Q_EMIT sizeChanged(getSize());
+	int sizeToEmit = operation == int(Operation::Offset) ? 0 : int(props.size);
+	if(sizeToEmit != m_lastEmittedSize) {
+		m_lastEmittedSize = sizeToEmit;
+		Q_EMIT sizeChanged(sizeToEmit);
 	}
 }
 

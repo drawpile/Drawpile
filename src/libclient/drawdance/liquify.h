@@ -29,6 +29,8 @@ public:
 
 	bool isNull() const;
 
+	QPoint offset() const;
+
 	QRect changeBounds() const;
 
 private:

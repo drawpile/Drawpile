@@ -70,6 +70,13 @@ bool LiquifyState::isNull() const
 	return !m_data;
 }
 
+QPoint LiquifyState::offset() const
+{
+	int x, y;
+	DP_liquify_state_offset(m_data, &x, &y);
+	return QPoint(x, y);
+}
+
 QRect LiquifyState::changeBounds() const
 {
 	int left, top, right, bottom;

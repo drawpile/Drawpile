@@ -75,7 +75,8 @@ private:
 		Shrink,
 		Smoothe,
 		Erase,
-		Last = Erase,
+		Offset,
+		Last = Offset,
 	};
 
 	void loadDefaultSettings();
@@ -108,7 +109,7 @@ private:
 	QButtonGroup *m_interpolationGroup = nullptr;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
-	qreal m_lastEmittedSize = 0.0;
+	int m_lastEmittedSize = 0;
 	qreal m_quickAdjust1 = 0.0;
 	qreal m_quickAdjust2 = 0.0;
 	qreal m_quickAdjust3 = 0.0;

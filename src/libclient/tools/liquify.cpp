@@ -34,33 +34,44 @@ void LiquifyTool::begin(const BeginParams &params)
 		// against that. Also, right-click just cancels.
 		cancelStroke(liquifyWorker);
 		if(!params.right) {
-			setLiquifyWorkerOperation(liquifyWorker);
-			m_owner.setLiquifyWorkerStrokeParams(
-				*liquifyWorker, m_props.size, m_props.amount, m_props.hardness,
-				m_props.spacing, m_props.sizePressure, m_props.amountPressure,
-				m_props.hardnessPressure);
-			m_firstPoint = params.point;
 			m_zoom = params.zoom;
-			m_drawing = true;
+			m_firstPoint = params.point;
 
-			// If there is no pressure-related inputs or the user explicitly
-			// requested there be no initial dab delay, we start a stroke
-			// immediately. Otherwise we wait for it to stabilize.
-			bool havePressureDynamics = m_props.sizePressure ||
-										m_props.amountPressure ||
-										m_props.hardnessPressure;
-			if(havePressureDynamics && m_owner.delayInitialDab()) {
-				m_strokeStarted = false;
+			if(m_props.operation == Operation::Offset) {
+				m_dragging = true;
+				m_drawing = false;
+				liquifyWorker->beginOffset();
+
 			} else {
-				m_strokeStarted = true;
-				liquifyWorker->beginStroke(m_zoom);
-				liquifyWorker->strokeTo(
-					m_firstPoint.posAdjustedBy(getLiquifyOffset()),
-					params.constrain, params.center);
+				m_drawing = true;
+				m_dragging = false;
+
+				setLiquifyWorkerOperation(liquifyWorker);
+				m_owner.setLiquifyWorkerStrokeParams(
+					*liquifyWorker, m_props.size, m_props.amount,
+					m_props.hardness, m_props.spacing, m_props.sizePressure,
+					m_props.amountPressure, m_props.hardnessPressure);
+
+				// If there is no pressure-related inputs or the user explicitly
+				// requested there be no initial dab delay, we start a stroke
+				// immediately. Otherwise we wait for it to stabilize.
+				bool havePressureDynamics = m_props.sizePressure ||
+											m_props.amountPressure ||
+											m_props.hardnessPressure;
+				if(havePressureDynamics && m_owner.delayInitialDab()) {
+					m_strokeStarted = false;
+				} else {
+					m_strokeStarted = true;
+					liquifyWorker->beginStroke(m_zoom);
+					liquifyWorker->strokeTo(
+						m_firstPoint.posAdjustedBy(getLiquifyOffset()),
+						params.constrain, params.center);
+				}
 			}
 		}
 	} else if(!params.right) {
 		m_drawing = false;
+		m_dragging = false;
 		tryBeginLiquify();
 	}
 }
@@ -96,6 +107,20 @@ void LiquifyTool::motion(const MotionParams &params)
 				}
 			}
 		}
+	} else if(m_dragging) {
+		drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
+		if(liquifyWorker) {
+			QPointF delta = static_cast<QPointF>(params.point) -
+							static_cast<QPointF>(m_firstPoint);
+			if(params.constrain) {
+				if(qAbs(delta.x()) < qAbs(delta.y())) {
+					delta.setX(0.0);
+				} else {
+					delta.setY(0.0);
+				}
+			}
+			liquifyWorker->setOffset(delta.toPoint());
+		}
 	}
 }
 
@@ -115,6 +140,12 @@ void LiquifyTool::end(const EndParams &params)
 			liquifyWorker->endStroke(QDateTime::currentMSecsSinceEpoch());
 		}
 		m_strokeStarted = false;
+	} else if(m_dragging) {
+		m_dragging = false;
+		drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
+		if(liquifyWorker) {
+			liquifyWorker->endOffset();
+		}
 	}
 }
 
@@ -246,6 +277,20 @@ void LiquifyTool::applyStamp()
 	apply(true);
 }
 
+void LiquifyTool::setProperties(const Properties &props)
+{
+	if(isLiquifyActive()) {
+		bool wasOffset = m_props.operation == Operation::Offset;
+		bool isOffset = props.operation == Operation::Offset;
+		if(!wasOffset && isOffset) {
+			setCursor(utils::Cursors::move());
+		} else if(wasOffset && !isOffset) {
+			setCursor(utils::Cursors::liquify());
+		}
+	}
+	m_props = props;
+}
+
 void LiquifyTool::updateDisplacement(float displacement)
 {
 	drawdance::LiquifyWorker *liquifyWorker = getActiveLiquifyWorker();
@@ -321,6 +366,7 @@ LiquifyTool::tryBeginLiquify(const QImage *img, const QByteArray *liquifyData)
 		return nullptr;
 	}
 
+	canvas::TransformModel *transform;
 	if(img && liquifyData) {
 		drawdance::Liquify liquify = drawdance::Liquify::deserialize(
 			*liquifyData, img->width(), img->height());
@@ -329,11 +375,9 @@ LiquifyTool::tryBeginLiquify(const QImage *img, const QByteArray *liquifyData)
 			return nullptr;
 		}
 
-		canvas::TransformModel *transform = canvas->transform();
+		transform = canvas->transform();
 		transform->beginLiquifyPaste(
 			liquify, *img, m_owner.liquifyInterpolation(), UNDO_DEPTH);
-		setCursor(utils::Cursors::liquify());
-		return transform;
 
 	} else {
 		canvas::SelectionModel *selection = canvas->selection();
@@ -346,13 +390,19 @@ LiquifyTool::tryBeginLiquify(const QImage *img, const QByteArray *liquifyData)
 			return nullptr;
 		}
 
-		canvas::TransformModel *transform = canvas->transform();
+		transform = canvas->transform();
 		transform->beginLiquifyFromCanvas(
 			selection->bounds(), selection->image(), m_owner.selectedLayers(),
 			m_owner.liquifyInterpolation(), UNDO_DEPTH);
-		setCursor(utils::Cursors::liquify());
-		return transform;
 	}
+
+	if(m_props.operation == Operation::Offset) {
+		setCursor(utils::Cursors::move());
+	} else {
+		setCursor(utils::Cursors::liquify());
+	}
+
+	return transform;
 }
 
 void LiquifyTool::endLiquify(canvas::TransformModel *transform, bool applied)
@@ -379,6 +429,8 @@ void LiquifyTool::setLiquifyWorkerOperation(
 		return;
 	case Operation::Erase:
 		liquifyWorker->setOperationErase();
+		return;
+	case Operation::Offset:
 		return;
 	}
 	Q_UNREACHABLE();
