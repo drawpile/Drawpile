@@ -494,11 +494,17 @@ void LiquifySettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		m_applyButton->setEnabled(haveLiquify);
 		m_cancelButton->setEnabled(haveLiquify);
 
-		if(m_hadLiquify && !haveLiquify) {
+		bool hadLiquify = m_hadLiquify;
+		m_hadLiquify = haveLiquify;
+
+		if(hadLiquify && !haveLiquify) {
 			setOperation(int(Operation::Move));
 			utils::setSpinnerValueSignalsBlocked(m_displacementSlider, 100);
 		}
-		m_hadLiquify = haveLiquify;
+
+		if(hadLiquify != haveLiquify) {
+			Q_EMIT requiresSelectionChanged();
+		}
 	}
 }
 

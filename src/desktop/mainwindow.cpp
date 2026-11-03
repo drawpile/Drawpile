@@ -408,6 +408,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::triggerUpdateLockState);
 	connect(
+		m_dockToolSettings, &docks::ToolSettings::requiresSelectionChanged,
+		this, &MainWindow::triggerUpdateLockState);
+	connect(
 		m_dockToolSettings, &docks::ToolSettings::showMessageRequested, this,
 		[this](const QString &message) {
 			m_canvasView->showPopupNotice(message);

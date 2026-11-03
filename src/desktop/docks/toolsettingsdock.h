@@ -175,6 +175,7 @@ signals:
 	void toolChanged(tools::Tool::Type tool);
 
 	void activeBrushChanged();
+	void requiresSelectionChanged();
 
 	void showMessageRequested(const QString &message);
 

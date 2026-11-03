@@ -30,6 +30,7 @@ public:
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
 	bool isLocked() override { return !m_featureAccess; }
+	bool requiresSelection() override { return !m_hadLiquify; }
 
 	void setActions(QActionGroup *liquifyOperations, QAction *stamp);
 
@@ -56,6 +57,7 @@ public:
 
 Q_SIGNALS:
 	void sizeChanged(int size);
+	void requiresSelectionChanged();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
