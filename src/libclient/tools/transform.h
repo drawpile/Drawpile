@@ -46,6 +46,7 @@ public:
 		LeftEdge,
 		Outside,
 		Inside,
+		Pivot,
 	};
 
 	TransformTool(ToolController &owner);
@@ -85,6 +86,9 @@ public:
 	bool center() const { return m_center; }
 	void setCenter(bool center) { m_center = center; }
 
+	void setPivotShown(bool pivotShown);
+	void resetPivot();
+
 	void setFeatureAccess(bool canTransform) { m_canTransform = canTransform; }
 	void setForceMove(bool forceMove) { m_forceMove = forceMove; }
 	void setApplyOnEnd(bool applyOnEnd) { m_applyOnEnd = applyOnEnd; }
@@ -114,6 +118,8 @@ private:
 
 	void updateHoverHandle(
 		const canvas::TransformModel *transform, const QPointF &point);
+
+	void emitCurrentStateChange(const canvas::TransformModel *transform);
 
 	void
 	emitStateChange(const canvas::TransformModel *transform, Handle handle);
@@ -171,18 +177,28 @@ private:
 
 	void dragDistort(canvas::TransformModel *transform, bool constrain);
 
+	void dragPivot(canvas::TransformModel *transform, bool constrain);
+
 	QPointF getConstrainedEdgeDelta(
 		const QPointF &prevPoint, const QPointF &nextPoint,
 		const QPointF &delta) const;
 
 	static QPointF getPointAlongAxis(const QLineF &axis, const QPointF &target);
 
-	static QPolygonF rotateQuad(const TransformQuad &quad, qreal angle);
-
 	static QPolygonF rotateQuadAround(
 		const TransformQuad &quad, qreal angle, const QPointF &center);
 
-	void updateQuad(canvas::TransformModel *transform, const QPolygonF &target);
+	static QPointF
+	calculateRelativePivot(const TransformQuad &quad, const QPointF &pivotPos);
+
+	static QPointF
+	calculateEdgeDragPoint(QPointF p, QPointF pivotPos, qreal sx, qreal sy);
+
+	static qreal crossProduct(const QLineF &a, const QLineF &b);
+
+	void updateQuad(
+		canvas::TransformModel *transform, const QPolygonF &target,
+		const QPointF &pivot);
 
 	void pushQuad(canvas::TransformModel *transform);
 
@@ -217,6 +233,7 @@ private:
 	bool m_applyOnEnd = false;
 	bool m_constrain = false;
 	bool m_center = false;
+	bool m_pivotShown = true;
 	qreal m_angle = 0.0;
 	qreal m_zoom = 1.0;
 	Handle m_hoverHandle = Handle::Invalid;

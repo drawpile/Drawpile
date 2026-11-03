@@ -18,7 +18,9 @@
 #include <QComboBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
+#include <QMenu>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QSpacerItem>
@@ -30,7 +32,8 @@ namespace tools {
 
 namespace props {
 static const ToolProperties::Value<bool> accuratepreview{
-	QStringLiteral("accuratepreview"), true};
+	QStringLiteral("accuratepreview"), true},
+	pivotshown{QStringLiteral("pivotshown"), true};
 }
 
 TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
@@ -49,7 +52,7 @@ TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
 
 void TransformSettings::setActions(
 	QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
-	QAction *shrinktoview)
+	QAction *shrinktoview, QAction *stamp)
 {
 	m_mirrorButton->setDefaultAction(mirror);
 	m_flipButton->setDefaultAction(flip);
@@ -64,6 +67,9 @@ void TransformSettings::setActions(
 	connect(
 		shrinktoview, &QAction::triggered, this,
 		&TransformSettings::shrinkToView);
+
+	m_headerMenu->addSeparator();
+	m_headerMenu->addAction(stamp);
 }
 
 void TransformSettings::setCompatibilityMode(bool compatibilityMode)
@@ -75,16 +81,16 @@ ToolProperties TransformSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
 	cfg.setValue(props::accuratepreview, m_previewGroup->checkedId() != 0);
+	cfg.setValue(props::pivotshown, m_showPivotAction->isChecked());
 	return cfg;
 }
 
 void TransformSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	QAbstractButton *previewButton =
-		m_previewGroup->button(cfg.value(props::accuratepreview) ? 1 : 0);
-	if(previewButton) {
-		previewButton->setChecked(true);
-	}
+	utils::setButtonCheckedSignalsBlocked(
+		m_previewGroup->button(cfg.value(props::accuratepreview) ? 1 : 0),
+		true);
+	m_showPivotAction->setChecked(cfg.value(props::pivotshown));
 }
 
 void TransformSettings::pushSettings()
@@ -95,6 +101,7 @@ void TransformSettings::pushSettings()
 	if(tt->mode() != tools::TransformTool::Mode::Move) {
 		tt->setMode(tools::TransformTool::Mode(m_handlesGroup->checkedId()));
 	}
+	tt->setPivotShown(m_showPivotAction->isChecked());
 }
 
 void TransformSettings::toggleEraserMode()
@@ -137,27 +144,54 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
 	headerLayout->setContentsMargins(0, 0, 0, 0);
 	headerLayout->setSpacing(0);
+
+	widgets::GroupedToolButton *headerMenuButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	headerLayout->addWidget(headerMenuButton);
+	headerMenuButton->setIcon(
+		QIcon::fromTheme(QStringLiteral("application-menu")));
+	headerMenuButton->setPopupMode(QToolButton::InstantPopup);
+
+	m_headerMenu = new QMenu(headerMenuButton);
+	headerMenuButton->setMenu(m_headerMenu);
+
+	m_showPivotAction = m_headerMenu->addAction(tr("Show pivot"));
+	m_showPivotAction->setToolTip(
+		tr("Display the pivot point when transforming"));
+	m_showPivotAction->setStatusTip(m_showPivotAction->toolTip());
+	m_showPivotAction->setCheckable(true);
+	connect(
+		m_showPivotAction, &QAction::triggered, this,
+		&TransformSettings::pushSettings);
+
+	m_resetPivotAction = m_headerMenu->addAction(tr("Reset pivot to center"));
+	m_resetPivotAction->setToolTip(tr("Return the pivot point to the center"));
+	m_resetPivotAction->setStatusTip(m_resetPivotAction->toolTip());
+	connect(
+		m_resetPivotAction, &QAction::triggered, this,
+		&TransformSettings::resetPivot);
+
 	headerLayout->addStretch(1);
 
 	m_mirrorButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	headerLayout->addWidget(m_mirrorButton, 3);
+	headerLayout->addWidget(m_mirrorButton, 2);
 
 	m_flipButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_flipButton, 3);
+	headerLayout->addWidget(m_flipButton, 2);
 
 	m_rotateCwButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_rotateCwButton, 3);
+	headerLayout->addWidget(m_rotateCwButton, 2);
 
 	m_rotateCcwButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_rotateCcwButton, 3);
+	headerLayout->addWidget(m_rotateCcwButton, 2);
 
 	m_shrinkToViewButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	headerLayout->addWidget(m_shrinkToViewButton, 3);
+	headerLayout->addWidget(m_shrinkToViewButton, 2);
 
 	headerLayout->addStretch(1);
 
@@ -506,6 +540,8 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		m_opacitySlider->setEnabled(haveTransform);
 		m_applyButton->setEnabled(canApplyTransform);
 		m_cancelButton->setEnabled(haveTransform);
+		m_resetPivotAction->setEnabled(
+			haveTransform && !transform->dstQuad().isCenterPivot());
 
 		bool canChangePreview =
 			!haveTransform || transform->canPreviewAccurate();
@@ -580,6 +616,11 @@ void TransformSettings::updateOpacity(int value)
 void TransformSettings::setOpacity(qreal opacity)
 {
 	m_opacitySlider->setValue(qRound(opacity * 100.0));
+}
+
+void TransformSettings::resetPivot()
+{
+	tool()->resetPivot();
 }
 
 TransformTool *TransformSettings::tool()

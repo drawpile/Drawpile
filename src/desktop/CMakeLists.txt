@@ -303,6 +303,8 @@ target_sources(drawpile PRIVATE
 	scene/outlineitem.h
 	scene/pathpreviewitem.cpp
 	scene/pathpreviewitem.h
+	scene/pivotitem.cpp
+	scene/pivotitem.h
 	scene/scenewrapper.cpp
 	scene/scenewrapper.h
 	scene/selectionitem.cpp

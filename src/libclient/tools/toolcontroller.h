@@ -315,7 +315,8 @@ signals:
 	void activeAnnotationChanged(int annotationId);
 	void activeBrushChanged(const brushes::ActiveBrush &);
 	bool selectionEditActiveChanged(bool selectionEditActive);
-	void transformToolStateChanged(int mode, int handle, bool dragging);
+	void transformToolStateChanged(
+		int mode, int handle, bool dragging, bool pivotShown);
 	void modelChanged(canvas::CanvasModel *model);
 	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);

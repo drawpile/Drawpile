@@ -77,20 +77,20 @@ TransformState getTransformStateFrom(const QMimeData *data)
 
 	QByteArray bytes = data->data(QStringLiteral("x-drawpile/transformstate"));
 	QDataStream stream(bytes);
-	QPointF topLeft, topRight, bottomRight, bottomLeft;
+	QPointF topLeft, topRight, bottomRight, bottomLeft, pivot;
 	QRect srcBounds;
 	float opacity;
 	int blendMode, handleMode;
 	bool constrain, center;
-	stream >> topLeft >> topRight >> bottomRight >> bottomLeft >> srcBounds >>
-		opacity >> blendMode >> handleMode >> constrain >> center;
+	stream >> topLeft >> topRight >> bottomRight >> bottomLeft >> pivot >>
+		srcBounds >> opacity >> blendMode >> handleMode >> constrain >> center;
 	if(stream.status() != QDataStream::Ok) {
 		qWarning("Clipboard: invalid transform state data");
 		return TransformState();
 	}
 
 	return {
-		TransformQuad(topLeft, topRight, bottomRight, bottomLeft),
+		TransformQuad(topLeft, topRight, bottomRight, bottomLeft, pivot),
 		srcBounds,
 		opacity,
 		blendMode,
@@ -176,6 +176,7 @@ void EditableMimeData::setTransformState(const TransformState &state)
 			stream << state.quad.topRight();
 			stream << state.quad.bottomRight();
 			stream << state.quad.bottomLeft();
+			stream << state.quad.pivot();
 			stream << state.srcBounds;
 			stream << state.opacity;
 			stream << state.blendMode;

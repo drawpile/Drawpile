@@ -26,6 +26,7 @@ class LiquifyItem;
 class MaskPreviewItem;
 class OutlineItem;
 class PathPreviewItem;
+class PivotItem;
 class SelectionItem;
 class TransformItem;
 class UserMarkerItem;
@@ -73,7 +74,8 @@ public:
 	void setSelectionIgnored(bool selectionIgnored);
 	void setShowSelectionMask(bool showSelectionMask);
 
-	void setTransformToolState(int mode, int handle, bool dragging);
+	void
+	setTransformToolState(int mode, int handle, bool dragging, bool pivotShown);
 
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setUserMarkerPersistence(int userMarkerPersistence);
@@ -190,6 +192,7 @@ private:
 	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;
 	TransformItem *m_transform;
+	PivotItem *m_pivot;
 	LiquifyItem *m_liquify;
 
 	OutlineItem *m_outlineItem;

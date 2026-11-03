@@ -8123,7 +8123,7 @@ void MainWindow::setupActions()
 		starttransform, startliquify);
 	m_dockToolSettings->transformSettings()->setActions(
 		transformmirror, transformflip, transformrotatecw, transformrotateccw,
-		transformshrinktoview);
+		transformshrinktoview, stamp);
 
 	//
 	// Animation menu
@@ -9436,10 +9436,12 @@ void MainWindow::setupHud()
 	transformActionBar->setOverflowMenuActions({
 		getAction(QStringLiteral("cancelaction")),
 		getAction(QStringLiteral("selectnone")),
-		nullptr,
 		getAction(QStringLiteral("transformshrinktoview")),
-		getAction(QStringLiteral("stamp")),
 		nullptr,
+		m_dockToolSettings->transformSettings()->showPivotAction(),
+		m_dockToolSettings->transformSettings()->resetPivotAction(),
+		nullptr,
+		getAction(QStringLiteral("stamp")),
 		getAction(QStringLiteral("copylayer")),
 		getAction(QStringLiteral("cutlayer")),
 		nullptr,
@@ -9482,7 +9484,6 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("selectnone")),
 		nullptr,
 		getAction(QStringLiteral("stamp")),
-		nullptr,
 		getAction(QStringLiteral("copylayer")),
 		getAction(QStringLiteral("cutlayer")),
 		nullptr,

@@ -33,6 +33,7 @@ class LiquifyItem;
 class MaskPreviewItem;
 class OutlineItem;
 class PathPreviewItem;
+class PivotItem;
 class SelectionItem;
 class TransformItem;
 class UserMarkerItem;
@@ -57,6 +58,7 @@ class CanvasScene final : public QGraphicsScene, public HudScene {
 	using NoticeItem = drawingboard::NoticeItem;
 	using OutlineItem = drawingboard::OutlineItem;
 	using PathPreviewItem = drawingboard::PathPreviewItem;
+	using PivotItem = drawingboard::PivotItem;
 	using SelectionItem = drawingboard::SelectionItem;
 	using ToggleItem = drawingboard::ToggleItem;
 	using TransformItem = drawingboard::TransformItem;
@@ -111,7 +113,8 @@ public:
 
 	void setSelectionIgnored(bool selectionIgnored);
 
-	void setTransformToolState(int mode, int handle, bool dragging);
+	void
+	setTransformToolState(int mode, int handle, bool dragging, bool pivotShown);
 
 	HudHandler *hud() { return m_hud; }
 	QRectF hudSceneRect() const override;
@@ -175,6 +178,7 @@ private:
 	PathPreviewItem *m_pathPreview = nullptr;
 	SelectionItem *m_selection = nullptr;
 	TransformItem *m_transform = nullptr;
+	PivotItem *m_pivot = nullptr;
 	LiquifyItem *m_liquify = nullptr;
 	OutlineItem *m_outline = nullptr;
 	ColorPickItem *m_colorPick = nullptr;
