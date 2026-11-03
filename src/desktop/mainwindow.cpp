@@ -5696,6 +5696,7 @@ void MainWindow::updateSelectTransformActions()
 					  : tr("Cr&op canvas to selection…"));
 	getAction("starttransform")->setEnabled(haveSelection);
 	getAction("starttransformmask")->setEnabled(haveSelection);
+	getAction(QStringLiteral("startliquify"))->setEnabled(haveSelection);
 	getAction("transformmirror")->setEnabled(haveTransform);
 	getAction("transformflip")->setEnabled(haveTransform);
 	getAction("transformrotatecw")->setEnabled(haveTransform);
