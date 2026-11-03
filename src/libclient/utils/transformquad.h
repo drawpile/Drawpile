@@ -19,25 +19,31 @@ public:
 
 	TransformQuad(
 		const QPointF &topLeft, const QPointF &topRight,
-		const QPointF &bottomRight, const QPointF &bottomLeft)
+		const QPointF &bottomRight, const QPointF &bottomLeft,
+		const QPointF &pivot = QPointF(0.5, 0.5))
 		: m_polygon({topLeft, topRight, bottomRight, bottomLeft})
+		, m_pivot(pivot)
 	{
 	}
 
-	explicit TransformQuad(const QRectF &rect)
+	explicit TransformQuad(
+		const QRectF &rect, const QPointF &pivot = QPointF(0.5, 0.5))
 		: TransformQuad(
 			  rect.topLeft(), rect.topRight(), rect.bottomRight(),
-			  rect.bottomLeft())
+			  rect.bottomLeft(), pivot)
 	{
 	}
 
-	explicit TransformQuad(const QRect &rect)
-		: TransformQuad(QRectF(rect))
+	explicit TransformQuad(
+		const QRect &rect, const QPointF &pivot = QPointF(0.5, 0.5))
+		: TransformQuad(QRectF(rect), pivot)
 	{
 	}
 
-	explicit TransformQuad(const QPolygonF &polygon)
+	explicit TransformQuad(
+		const QPolygonF &polygon, const QPointF &pivot = QPointF(0.5, 0.5))
 		: m_polygon(polygonToQuad(polygon))
+		, m_pivot(pivot)
 	{
 	}
 
@@ -45,12 +51,12 @@ public:
 
 	TransformQuad round() const
 	{
-		TransformQuad quad;
+		QPolygonF polygon;
 		for(const QPointF &point : m_polygon) {
-			quad.m_polygon.append(
+			polygon.append(
 				QPointF(std::round(point.x()), std::round(point.y())));
 		}
-		return quad;
+		return TransformQuad(polygon, m_pivot);
 	}
 
 	QRectF boundingRect() const { return m_polygon.boundingRect(); }
@@ -82,12 +88,12 @@ public:
 
 	bool operator==(const TransformQuad &other) const
 	{
-		return m_polygon == other.m_polygon;
+		return m_polygon == other.m_polygon && m_pivot == other.m_pivot;
 	}
 
 	bool operator!=(const TransformQuad &other) const
 	{
-		return m_polygon != other.m_polygon;
+		return m_polygon != other.m_polygon || m_pivot != other.m_pivot;
 	}
 
 	QPointF topLeft() const
@@ -169,6 +175,20 @@ public:
 		return QLineF(bottomLeft(), topLeft()).angle();
 	}
 
+	QPointF pivot() const { return m_pivot; }
+
+	QPointF pivotPos() const
+	{
+		return QLineF(
+				   QLineF(topLeft(), topRight()).pointAt(m_pivot.x()),
+				   QLineF(bottomLeft(), bottomRight()).pointAt(m_pivot.x()))
+			.pointAt(m_pivot.y());
+	}
+
+	bool isCenterPivot() const { return m_pivot == centerPivot(); }
+
+	static constexpr QPointF centerPivot() { return QPointF(0.5, 0.5); }
+
 private:
 	static QPolygonF polygonToQuad(const QPolygonF &polygon)
 	{
@@ -186,6 +206,7 @@ private:
 	}
 
 	QPolygonF m_polygon;
+	QPointF m_pivot = centerPivot();
 };
 
 #endif

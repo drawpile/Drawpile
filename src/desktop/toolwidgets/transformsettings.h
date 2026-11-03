@@ -8,6 +8,7 @@ class KisSliderSpinBox;
 class QAction;
 class QButtonGroup;
 class QComboBox;
+class QMenu;
 class QPushButton;
 
 namespace canvas {
@@ -38,7 +39,10 @@ public:
 
 	void setActions(
 		QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
-		QAction *shrinktoview);
+		QAction *shrinktoview, QAction *stamp);
+
+	QAction *showPivotAction() { return m_showPivotAction; }
+	QAction *resetPivotAction() { return m_resetPivotAction; }
 
 	void setCanvasView(view::CanvasWrapper *canvasView)
 	{
@@ -89,9 +93,14 @@ private:
 	void updateOpacity(int value);
 	void setOpacity(qreal opacity);
 
+	void resetPivot();
+
 	TransformTool *tool();
 
 	QWidget *m_headerWidget = nullptr;
+	QMenu *m_headerMenu = nullptr;
+	QAction *m_showPivotAction = nullptr;
+	QAction *m_resetPivotAction = nullptr;
 	widgets::GroupedToolButton *m_mirrorButton = nullptr;
 	widgets::GroupedToolButton *m_flipButton = nullptr;
 	widgets::GroupedToolButton *m_rotateCwButton = nullptr;

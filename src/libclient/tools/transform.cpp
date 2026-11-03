@@ -9,6 +9,7 @@
 #include "libclient/utils/cursors.h"
 #include <QCoreApplication>
 #include <QPair>
+#include <QTransform>
 #include <cmath>
 
 using utils::Cursors;
@@ -97,6 +98,9 @@ void TransformTool::end(const EndParams &params)
 		int clicks = m_clickDetector.clicks();
 		bool finish = m_applyOnEnd;
 		if(!finish && clicks > 0) {
+			const TransformQuad &lastQuad = m_quadStack[m_quadStackTop];
+			bool resetPivot = false;
+
 			// If this is the click that started the transform, don't act on it.
 			if(m_firstClick) {
 				m_doubleClickHandle = Handle::None;
@@ -112,12 +116,24 @@ void TransformTool::end(const EndParams &params)
 					// User double-clicked or right-clicked outside of the
 					// transform, apply it.
 					finish = true;
+				} else if(m_doubleClickHandle == Handle::Pivot && clicks == 2) {
+					// User double-clicked on the pivot, reset it to the center.
+					resetPivot = !lastQuad.isCenterPivot();
 				} else {
 					// User clicked somewhere else, just disregard that.
 				}
 				m_doubleClickHandle = m_dragHandle;
 			}
-			transform->setDstQuad(m_quadStack[m_quadStackTop]);
+
+			if(resetPivot) {
+				updateQuad(
+					transform, lastQuad.polygon(),
+					TransformQuad::centerPivot());
+				pushQuad(transform);
+			} else {
+				transform->setDstQuad(lastQuad);
+			}
+
 		} else {
 			continueDrag(
 				transform, params.constrain ^ m_constrain,
@@ -277,9 +293,30 @@ void TransformTool::setMode(Mode mode)
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && mode != m_mode) {
 		m_mode = mode;
-		emitStateChange(
-			transform,
-			m_dragHandle == Handle::None ? m_hoverHandle : m_dragHandle);
+		emitCurrentStateChange(transform);
+	}
+}
+
+void TransformTool::setPivotShown(bool pivotShown)
+{
+	if(pivotShown != m_pivotShown) {
+		m_pivotShown = pivotShown;
+		canvas::TransformModel *transform = getActiveTransformModel();
+		if(transform) {
+			emitCurrentStateChange(transform);
+		}
+	}
+}
+
+void TransformTool::resetPivot()
+{
+	canvas::TransformModel *transform = getActiveTransformModel();
+	if(transform && m_dragHandle == Handle::None) {
+		const TransformQuad &quad = transform->dstQuad();
+		if(!quad.isCenterPivot()) {
+			updateQuad(transform, quad.polygon(), TransformQuad::centerPivot());
+			pushQuad(transform);
+		}
 	}
 }
 
@@ -288,13 +325,23 @@ void TransformTool::mirror()
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && m_dragHandle == Handle::None) {
 		const TransformQuad &quad = transform->dstQuad();
-		QPolygonF target({
-			quad.topRight(),
-			quad.topLeft(),
-			quad.bottomLeft(),
-			quad.bottomRight(),
-		});
-		updateQuad(transform, target);
+		QPolygonF target;
+		if(!quad.isCenterPivot() && transform->isDstQuadValid()) {
+			QTransform tf;
+			QPointF pivotPos = quad.pivotPos();
+			tf.translate(pivotPos.x(), pivotPos.y());
+			tf.scale(-1.0, 1.0);
+			tf.translate(-pivotPos.x(), -pivotPos.y());
+			target = tf.map(quad.polygon());
+		} else {
+			target = QPolygonF({
+				quad.topRight(),
+				quad.topLeft(),
+				quad.bottomLeft(),
+				quad.bottomRight(),
+			});
+		}
+		updateQuad(transform, target, quad.pivot());
 		pushQuad(transform);
 	}
 }
@@ -304,13 +351,23 @@ void TransformTool::flip()
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && m_dragHandle == Handle::None) {
 		const TransformQuad &quad = transform->dstQuad();
-		QPolygonF target({
-			quad.bottomLeft(),
-			quad.bottomRight(),
-			quad.topRight(),
-			quad.topLeft(),
-		});
-		updateQuad(transform, target);
+		QPolygonF target;
+		if(!quad.isCenterPivot() && transform->isDstQuadValid()) {
+			QTransform tf;
+			QPointF pivotPos = quad.pivotPos();
+			tf.translate(pivotPos.x(), pivotPos.y());
+			tf.scale(1.0, -1.0);
+			tf.translate(-pivotPos.x(), -pivotPos.y());
+			target = tf.map(quad.polygon());
+		} else {
+			target = QPolygonF({
+				quad.bottomLeft(),
+				quad.bottomRight(),
+				quad.topRight(),
+				quad.topLeft(),
+			});
+		}
+		updateQuad(transform, target, quad.pivot());
 		pushQuad(transform);
 	}
 }
@@ -319,7 +376,10 @@ void TransformTool::rotateCw()
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && m_dragHandle == Handle::None) {
-		updateQuad(transform, rotateQuad(transform->dstQuad(), 90.0));
+		const TransformQuad &quad = transform->dstQuad();
+		updateQuad(
+			transform, rotateQuadAround(quad, 90.0, quad.pivotPos()),
+			quad.pivot());
 		pushQuad(transform);
 	}
 }
@@ -328,7 +388,10 @@ void TransformTool::rotateCcw()
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && m_dragHandle == Handle::None) {
-		updateQuad(transform, rotateQuad(transform->dstQuad(), -90.0));
+		const TransformQuad &quad = transform->dstQuad();
+		updateQuad(
+			transform, rotateQuadAround(quad, -90.0, quad.pivotPos()),
+			quad.pivot());
 		pushQuad(transform);
 	}
 }
@@ -337,7 +400,8 @@ void TransformTool::shrinkToView(const QRectF &viewBounds)
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && m_dragHandle == Handle::None) {
-		QPolygonF target = transform->dstQuad().polygon();
+		const TransformQuad &quad = transform->dstQuad();
+		QPolygonF target = quad.polygon();
 		QRectF transformBounds = target.boundingRect();
 		QSizeF transformSize = transformBounds.size();
 		QSizeF viewSize = viewBounds.size() * 0.7;
@@ -362,8 +426,8 @@ void TransformTool::shrinkToView(const QRectF &viewBounds)
 			target.translate(offset);
 		}
 
-		if(target != transform->dstQuad().polygon()) {
-			updateQuad(transform, target);
+		if(target != quad.polygon()) {
+			updateQuad(transform, target, quad.pivot());
 			pushQuad(transform);
 		}
 	}
@@ -474,6 +538,7 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 	m_quadStack.clear();
 	m_quadStack.append(transform->dstQuad());
 	m_quadStackTop = 0;
+	emitCurrentStateChange(transform);
 	return transform;
 }
 
@@ -585,11 +650,19 @@ void TransformTool::updateHoverHandle(
 	}
 }
 
+void TransformTool::emitCurrentStateChange(
+	const canvas::TransformModel *transform)
+{
+	emitStateChange(
+		transform, m_dragHandle == Handle::None ? m_hoverHandle : m_dragHandle);
+}
+
 void TransformTool::emitStateChange(
 	const canvas::TransformModel *transform, Handle handle)
 {
 	emit m_owner.transformToolStateChanged(
-		int(m_mode), int(handle), isDragging());
+		int(m_mode), int(handle), isDragging(),
+		m_mode != Mode::Move && m_pivotShown);
 	setCursor(getHandleCursor(transform, handle));
 }
 
@@ -672,6 +745,7 @@ QCursor TransformTool::getCommonHandleCursor(
 {
 	switch(handle) {
 	case Handle::Invalid:
+	case Handle::Pivot:
 		return Qt::PointingHandCursor;
 	case Handle::TopEdge:
 		return getShearCursor(getCursorQuad(transform).topEdgeAngle());
@@ -802,6 +876,9 @@ void TransformTool::continueDragTransform(
 	case Handle::Outside:
 		dragRotate(transform, constrain);
 		break;
+	case Handle::Pivot:
+		dragPivot(transform, constrain);
+		break;
 	default:
 		qWarning(
 			"TransformTool::continueDragTransform: invalid handle %d",
@@ -835,6 +912,9 @@ void TransformTool::continueDragDistort(
 	case Handle::Outside:
 		dragRotate(transform, constrain);
 		break;
+	case Handle::Pivot:
+		dragPivot(transform, constrain);
+		break;
 	default:
 		qWarning(
 			"TransformTool::continueDragDistort: invalid handle %d",
@@ -856,73 +936,95 @@ void TransformTool::dragMove(canvas::TransformModel *transform, bool constrain)
 	// integer coordinates anyway, so this shouldn't lose information.
 	QPolygon polygon = m_dragStartQuad.polygon().toPolygon();
 	polygon.translate(delta.toPoint());
-	updateQuad(transform, QPolygonF(polygon));
+	updateQuad(transform, QPolygonF(polygon), m_dragStartQuad.pivot());
 }
 
 void TransformTool::dragRotate(
 	canvas::TransformModel *transform, bool constrain)
 {
-	QPointF dragStartCenter = m_dragStartQuad.center();
-	qreal a1 = QLineF(dragStartCenter, m_dragStartPoint).angle();
-	qreal a2 = QLineF(dragStartCenter, m_dragCurrentPoint).angle();
+	QPointF dragStartPivot = m_dragStartQuad.pivotPos();
+	qreal a1 = QLineF(dragStartPivot, m_dragStartPoint).angle();
+	qreal a2 = QLineF(dragStartPivot, m_dragCurrentPoint).angle();
 	qreal ad = a1 - a2;
 	if(constrain) {
 		constexpr qreal STEP = 15.0;
 		ad = std::round(ad / STEP) * STEP;
 	}
 	updateQuad(
-		transform, rotateQuadAround(m_dragStartQuad, ad, dragStartCenter));
+		transform, rotateQuadAround(m_dragStartQuad, ad, dragStartPivot),
+		m_dragStartQuad.pivot());
 }
 
 void TransformTool::dragShear(canvas::TransformModel *transform)
 {
 	QPointF delta = m_dragCurrentPoint - m_dragStartPoint;
 	QPointF topLeftDelta, topRightDelta, bottomRightDelta, bottomLeftDelta;
+	QPointF pivot = m_dragStartQuad.pivot();
+
 	switch(m_dragHandle) {
-	case Handle::TopEdge:
+	case Handle::TopEdge: {
 		delta = getConstrainedEdgeDelta(
 			m_dragStartQuad.topLeft(), m_dragStartQuad.topRight(), delta);
-		topLeftDelta = delta;
-		topRightDelta = delta;
-		bottomRightDelta = -delta;
-		bottomLeftDelta = -delta;
+		qreal topFactor = 1.0;
+		qreal bottomFactor =
+			std::abs(pivot.y()) > 1e-6 ? -(1.0 - pivot.y()) / pivot.y() : -1.0;
+		topLeftDelta = delta * topFactor;
+		topRightDelta = delta * topFactor;
+		bottomRightDelta = delta * bottomFactor;
+		bottomLeftDelta = delta * bottomFactor;
 		break;
-	case Handle::RightEdge:
+	}
+	case Handle::RightEdge: {
 		delta = getConstrainedEdgeDelta(
 			m_dragStartQuad.topRight(), m_dragStartQuad.bottomRight(), delta);
-		topLeftDelta = -delta;
-		topRightDelta = delta;
-		bottomRightDelta = delta;
-		bottomLeftDelta = -delta;
+		qreal rightFactor = 1.0;
+		qreal leftFactor = std::abs(1.0 - pivot.x()) > 1e-6
+							   ? -pivot.x() / (1.0 - pivot.x())
+							   : -1.0;
+		topRightDelta = delta * rightFactor;
+		bottomRightDelta = delta * rightFactor;
+		topLeftDelta = delta * leftFactor;
+		bottomLeftDelta = delta * leftFactor;
 		break;
-	case Handle::BottomEdge:
+	}
+	case Handle::BottomEdge: {
 		delta = getConstrainedEdgeDelta(
 			m_dragStartQuad.bottomRight(), m_dragStartQuad.bottomLeft(), delta);
-		topLeftDelta = -delta;
-		topRightDelta = -delta;
-		bottomRightDelta = delta;
-		bottomLeftDelta = delta;
+		qreal bottomFactor = 1.0;
+		qreal topFactor = std::abs(1.0 - pivot.y()) > 1e-6
+							  ? -pivot.y() / (1.0 - pivot.y())
+							  : -1.0;
+		bottomRightDelta = delta * bottomFactor;
+		bottomLeftDelta = delta * bottomFactor;
+		topLeftDelta = delta * topFactor;
+		topRightDelta = delta * topFactor;
 		break;
-	case Handle::LeftEdge:
+	}
+	case Handle::LeftEdge: {
 		delta = getConstrainedEdgeDelta(
 			m_dragStartQuad.bottomLeft(), m_dragStartQuad.topLeft(), delta);
-		topLeftDelta = delta;
-		topRightDelta = -delta;
-		bottomRightDelta = -delta;
-		bottomLeftDelta = delta;
+		qreal leftFactor = 1.0;
+		qreal rightFactor =
+			std::abs(pivot.x()) > 1e-6 ? -(1.0 - pivot.x()) / pivot.x() : -1.0;
+		topLeftDelta = delta * leftFactor;
+		bottomLeftDelta = delta * leftFactor;
+		topRightDelta = delta * rightFactor;
+		bottomRightDelta = delta * rightFactor;
 		break;
+	}
 	default:
 		qWarning(
 			"TransformTool::dragShear: invalid handle %d", int(m_dragHandle));
 		return;
 	}
+
 	QPolygonF target({
 		m_dragStartQuad.topLeft() + topLeftDelta,
 		m_dragStartQuad.topRight() + topRightDelta,
 		m_dragStartQuad.bottomRight() + bottomRightDelta,
 		m_dragStartQuad.bottomLeft() + bottomLeftDelta,
 	});
-	updateQuad(transform, target);
+	updateQuad(transform, target, m_dragStartQuad.pivot());
 }
 
 void TransformTool::dragScaleEdge(
@@ -964,32 +1066,40 @@ void TransformTool::dragScaleEdge(
 		topLeftDelta = delta;
 		topRightDelta = delta;
 		if(center) {
-			bottomRightDelta = -delta;
-			bottomLeftDelta = -delta;
+			qreal ry = m_dragStartQuad.pivot().y();
+			qreal ratio = std::abs(ry) > 1e-6 ? (1.0 - ry) / ry : 1.0;
+			bottomRightDelta = -delta * ratio;
+			bottomLeftDelta = -delta * ratio;
 		}
 		break;
 	case Handle::Right:
 		topRightDelta = delta;
 		bottomRightDelta = delta;
 		if(center) {
-			topLeftDelta = -delta;
-			bottomLeftDelta = -delta;
+			qreal rx = m_dragStartQuad.pivot().x();
+			qreal ratio = std::abs(1.0 - rx) > 1e-6 ? rx / (1.0 - rx) : 1.0;
+			topLeftDelta = -delta * ratio;
+			bottomLeftDelta = -delta * ratio;
 		}
 		break;
 	case Handle::Bottom:
 		bottomRightDelta = delta;
 		bottomLeftDelta = delta;
 		if(center) {
-			topLeftDelta = -delta;
-			topRightDelta = -delta;
+			qreal ry = m_dragStartQuad.pivot().y();
+			qreal ratio = std::abs(1.0 - ry) > 1e-6 ? ry / (1.0 - ry) : 1.0;
+			topLeftDelta = -delta * ratio;
+			topRightDelta = -delta * ratio;
 		}
 		break;
 	case Handle::Left:
 		topLeftDelta = delta;
 		bottomLeftDelta = delta;
 		if(center) {
-			topRightDelta = -delta;
-			bottomRightDelta = -delta;
+			qreal rx = m_dragStartQuad.pivot().x();
+			qreal ratio = std::abs(rx) > 1e-6 ? (1.0 - rx) / rx : 1.0;
+			topRightDelta = -delta * ratio;
+			bottomRightDelta = -delta * ratio;
 		}
 		break;
 	default:
@@ -1004,7 +1114,7 @@ void TransformTool::dragScaleEdge(
 		m_dragStartQuad.bottomRight() + bottomRightDelta,
 		m_dragStartQuad.bottomLeft() + bottomLeftDelta,
 	});
-	updateQuad(transform, target);
+	updateQuad(transform, target, m_dragStartQuad.pivot());
 }
 
 void TransformTool::dragScaleCorner(
@@ -1074,10 +1184,34 @@ void TransformTool::dragScaleCorner(
 
 	QPointF deltas[4];
 	deltas[dragged] = delta;
-	deltas[dependent1] = pointOnAxis1 - dependentPoint1;
-	deltas[dependent2] = pointOnAxis2 - dependentPoint2;
 	if(center) {
-		deltas[opposite] = -delta;
+		QPointF pivotPos = m_dragStartQuad.pivotPos();
+		QPointF initialDistance = draggedPoint - pivotPos;
+		QPointF currentDistance = (draggedPoint + delta) - pivotPos;
+
+		qreal sx;
+		if(std::abs(initialDistance.x()) > 1e-6) {
+			sx = currentDistance.x() / initialDistance.x();
+		} else {
+			sx = 1.0;
+		}
+
+		qreal sy;
+		if(std::abs(initialDistance.y()) > 1e-6) {
+			sy = currentDistance.y() / initialDistance.y();
+		} else {
+			sy = 1.0;
+		}
+
+		deltas[dependent1] =
+			calculateEdgeDragPoint(dependentPoint1, pivotPos, sx, sy);
+		deltas[dependent2] =
+			calculateEdgeDragPoint(dependentPoint2, pivotPos, sx, sy);
+		deltas[opposite] =
+			calculateEdgeDragPoint(oppositePoint, pivotPos, sx, sy);
+	} else {
+		deltas[dependent1] = pointOnAxis1 - dependentPoint1;
+		deltas[dependent2] = pointOnAxis2 - dependentPoint2;
 	}
 
 	QPolygonF target({
@@ -1086,7 +1220,7 @@ void TransformTool::dragScaleCorner(
 		m_dragStartQuad.bottomRight() + deltas[TransformQuad::BOTTOM_RIGHT],
 		m_dragStartQuad.bottomLeft() + deltas[TransformQuad::BOTTOM_LEFT],
 	});
-	updateQuad(transform, target);
+	updateQuad(transform, target, m_dragStartQuad.pivot());
 }
 
 void TransformTool::dragDistort(
@@ -1152,7 +1286,23 @@ void TransformTool::dragDistort(
 		m_dragStartQuad.bottomRight() + bottomRightDelta,
 		m_dragStartQuad.bottomLeft() + bottomLeftDelta,
 	});
-	updateQuad(transform, target);
+	updateQuad(transform, target, m_dragStartQuad.pivot());
+}
+
+void TransformTool::dragPivot(canvas::TransformModel *transform, bool constrain)
+{
+	QPointF delta = m_dragCurrentPoint - m_dragStartPoint;
+	if(constrain) {
+		if(std::abs(delta.x()) < std::abs(delta.y())) {
+			delta.setX(0.0);
+		} else {
+			delta.setY(0.0);
+		}
+	}
+
+	QPointF pivot =
+		calculateRelativePivot(m_dragStartQuad, m_dragStartHandlePoint + delta);
+	updateQuad(transform, m_dragStartQuad.polygon(), pivot);
 }
 
 QPointF TransformTool::getConstrainedEdgeDelta(
@@ -1178,11 +1328,6 @@ TransformTool::getPointAlongAxis(const QLineF &axis, const QPointF &target)
 	}
 }
 
-QPolygonF TransformTool::rotateQuad(const TransformQuad &quad, qreal angle)
-{
-	return rotateQuadAround(quad, angle, quad.center());
-}
-
 QPolygonF TransformTool::rotateQuadAround(
 	const TransformQuad &quad, qreal angle, const QPointF &center)
 {
@@ -1193,10 +1338,71 @@ QPolygonF TransformTool::rotateQuadAround(
 	return t.map(quad.polygon());
 }
 
-void TransformTool::updateQuad(
-	canvas::TransformModel *transform, const QPolygonF &target)
+QPointF TransformTool::calculateRelativePivot(
+	const TransformQuad &quad, const QPointF &pivotPos)
 {
-	transform->setDstQuad(TransformQuad(target));
+	QLineF e(quad.topLeft(), quad.topRight());
+	QLineF f(quad.topLeft(), quad.bottomLeft());
+	QLineF h(quad.topLeft(), pivotPos);
+	QLineF g(
+		QPointF(0, 0), (quad.bottomRight() - quad.bottomLeft()) -
+						   (quad.topRight() - quad.topLeft()));
+
+	qreal k2 = crossProduct(g, f);
+	qreal k1 = crossProduct(e, f) + crossProduct(h, g);
+	qreal k0 = crossProduct(h, e);
+
+	qreal v = 0.0;
+	if(std::abs(k2) < 1e-6) {
+		if(std::abs(k1) > 1e-6) {
+			v = -k0 / k1;
+		}
+	} else {
+		qreal discriminant = (k1 * k1) - (4.0 * k2 * k0);
+		if(discriminant < 0.0) {
+			return TransformQuad::centerPivot();
+		} else {
+			qreal sqrtD = std::sqrt(discriminant);
+			v = (-k1 - sqrtD) / (2.0 * k2);
+			if(v < -1.0 || v > 2.0) {
+				v = (-k1 + sqrtD) / (2.0 * k2);
+			}
+		}
+	}
+
+	QPointF num = h.p2() - h.p1() - v * (f.p2() - f.p1());
+	QPointF den = e.p2() - e.p1() + v * (g.p2() - g.p1());
+
+	qreal u;
+	if(std::abs(den.x()) > std::abs(den.y())) {
+		u = num.x() / den.x();
+	} else if(std::abs(den.y()) > 1e-6) {
+		u = num.y() / den.y();
+	} else {
+		u = 0.0;
+	}
+
+	return QPointF(u, v);
+}
+
+QPointF TransformTool::calculateEdgeDragPoint(
+	QPointF p, QPointF pivotPos, qreal sx, qreal sy)
+{
+	return (pivotPos +
+			QPointF((p.x() - pivotPos.x()) * sx, (p.y() - pivotPos.y()) * sy)) -
+		   p;
+}
+
+qreal TransformTool::crossProduct(const QLineF &a, const QLineF &b)
+{
+	return a.dx() * b.dy() - a.dy() * b.dx();
+}
+
+void TransformTool::updateQuad(
+	canvas::TransformModel *transform, const QPolygonF &target,
+	const QPointF &pivot)
+{
+	transform->setDstQuad(TransformQuad(target, pivot));
 }
 
 void TransformTool::pushQuad(canvas::TransformModel *transform)
@@ -1225,6 +1431,11 @@ TransformTool::Handle TransformTool::getHandleAt(
 		const TransformQuad &quad = transform->dstQuad();
 		if(m_mode != Mode::Move) {
 			qreal closestDistance;
+			if(m_pivotShown && transform->isDstQuadValid()) {
+				checkHandleAt(
+					point, zoom, closestHandle, closestDistance, offset,
+					Handle::Pivot, quad.pivotPos());
+			}
 			checkHandleAt(
 				point, zoom, closestHandle, closestDistance, offset,
 				Handle::TopLeft, quad.topLeft());
@@ -1344,6 +1555,8 @@ QPointF TransformTool::getQuadHandlePoint(
 		return quad.bottomLeft();
 	case Handle::Left:
 		return quad.left();
+	case Handle::Pivot:
+		return quad.pivotPos();
 	default:
 		return targetPoint;
 	}

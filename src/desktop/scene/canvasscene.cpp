@@ -9,6 +9,7 @@
 #include "desktop/scene/maskpreviewitem.h"
 #include "desktop/scene/outlineitem.h"
 #include "desktop/scene/pathpreviewitem.h"
+#include "desktop/scene/pivotitem.h"
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
@@ -38,6 +39,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_pathPreview(nullptr)
 	, m_selection(nullptr)
 	, m_transform(nullptr)
+	, m_pivot(nullptr)
 	, m_liquify(nullptr)
 	, m_showAnnotationBorders(false)
 	, m_showAnnotations(true)
@@ -167,6 +169,7 @@ void CanvasScene::setZoom(qreal zoom)
 		}
 		if(m_transform) {
 			m_transform->setZoom(zoom);
+			m_pivot->setZoom(zoom);
 		}
 	}
 }
@@ -273,10 +276,12 @@ void CanvasScene::setShowSelectionMask(bool showSelectionMask)
 	}
 }
 
-void CanvasScene::setTransformToolState(int mode, int handle, bool dragging)
+void CanvasScene::setTransformToolState(
+	int mode, int handle, bool dragging, bool pivotShown)
 {
 	if(m_transform) {
 		m_transform->setToolState(mode, handle, dragging);
+		m_pivot->setToolState(handle, dragging, pivotShown);
 	}
 }
 
@@ -375,18 +380,28 @@ void CanvasScene::onTransformChanged()
 		bool valid = transform->isDstQuadValid();
 		if(m_transform) {
 			m_transform->setQuad(quad, valid);
+			m_pivot->setQuadValid(valid);
 		} else {
 			m_transform = new TransformItem(quad, valid, m_zoom, m_group);
+			m_pivot = new PivotItem(valid, m_zoom, m_group);
 		}
+
 		// Accurate previews happen in the paint engine, fast ones in the item.
 		if(transform->isPreviewAccurate()) {
 			m_transform->setPreviewImage(QImage());
 		} else {
 			m_transform->setPreviewImage(transform->floatingImage());
 		}
+
+		if(valid) {
+			m_pivot->updatePosition(quad.pivotPos());
+		}
+
 	} else if(m_transform) {
 		delete m_transform;
+		delete m_pivot;
 		m_transform = nullptr;
+		m_pivot = nullptr;
 	}
 
 	if(active && isLiquify) {
