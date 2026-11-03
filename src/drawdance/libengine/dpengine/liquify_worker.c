@@ -29,7 +29,10 @@ struct DP_LiquifyWorker {
     float last_y;
     float last_displacement;
     float base_displacement;
+    int base_offset_x;
+    int base_offset_y;
     bool stroking;
+    bool offsetting;
     bool have_last;
     bool have_changes;
     bool have_displacement_change;
@@ -43,6 +46,9 @@ typedef enum DP_LiquifyWorkerJobType {
     DP_LIQUIFY_WORKER_JOB_STROKE_TO,
     DP_LIQUIFY_WORKER_JOB_STROKE_END,
     DP_LIQUIFY_WORKER_JOB_STROKE_CANCEL,
+    DP_LIQUIFY_WORKER_JOB_OFFSET_BEGIN,
+    DP_LIQUIFY_WORKER_JOB_OFFSET_SET,
+    DP_LIQUIFY_WORKER_JOB_OFFSET_END,
     DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_SET,
     DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_APPLY,
     DP_LIQUIFY_WORKER_JOB_UNDO,
@@ -66,6 +72,10 @@ typedef struct DP_LiquifyWorkerJob {
             DP_BrushPoint bp;
             unsigned int flags;
         } stroke_to;
+        struct {
+            int dx;
+            int dy;
+        } offset_set;
     };
 } DP_LiquifyWorkerJob;
 
@@ -195,6 +205,8 @@ static void handle_stroke_begin(DP_LiquifyWorker *lw, float zoom)
     lw->have_last = false;
     lw->have_changes = false;
     lw->stroking = true;
+    lw->offsetting = false;
+    DP_liquify_offset(lw->l, &lw->base_offset_x, &lw->base_offset_y);
     DP_liquify_engine_stroke_begin(lw->le, zoom);
 }
 
@@ -217,6 +229,34 @@ static void handle_stroke_cancel(DP_LiquifyWorker *lw, long long time_msec)
 {
     if (lw->stroking) {
         handle_stroke_end(lw, time_msec);
+    }
+    lw->offsetting = false;
+}
+
+static void handle_offset_begin(DP_LiquifyWorker *lw)
+{
+    lw->offsetting = true;
+    DP_liquify_offset(lw->l, &lw->base_offset_x, &lw->base_offset_y);
+}
+
+static void handle_offset_set(DP_LiquifyWorker *lw, int dx, int dy)
+{
+    if (lw->offsetting
+        && DP_liquify_offset_set(lw->l, lw->base_offset_x + dx,
+                                 lw->base_offset_y + dy)) {
+        emit_event(lw, DP_LIQUIFY_WORKER_EVENT_UPDATE);
+    }
+}
+
+static void handle_offset_end(DP_LiquifyWorker *lw)
+{
+    if (lw->offsetting) {
+        lw->offsetting = false;
+        int offset_x, offset_y;
+        DP_liquify_offset(lw->l, &offset_x, &offset_y);
+        if (offset_x != lw->base_offset_x || offset_y != lw->base_offset_y) {
+            undo_stack_push_state(lw);
+        }
     }
 }
 
@@ -342,6 +382,15 @@ static void run_liquify_worker_thread(void *data)
             case DP_LIQUIFY_WORKER_JOB_STROKE_CANCEL:
                 handle_stroke_cancel(lw, job.time_msec);
                 continue;
+            case DP_LIQUIFY_WORKER_JOB_OFFSET_BEGIN:
+                handle_offset_begin(lw);
+                continue;
+            case DP_LIQUIFY_WORKER_JOB_OFFSET_SET:
+                handle_offset_set(lw, job.offset_set.dx, job.offset_set.dy);
+                continue;
+            case DP_LIQUIFY_WORKER_JOB_OFFSET_END:
+                handle_offset_end(lw);
+                continue;
             case DP_LIQUIFY_WORKER_JOB_DISPLACEMENT_SET:
                 handle_displacement_set(lw, job.displacement);
                 continue;
@@ -441,8 +490,8 @@ static bool handle_dab(DP_LiquifyWorker *lw, DP_LiquifyEngineDab dab)
         DP_UNREACHABLE();
     }
 
-    params.x = dab.x;
-    params.y = dab.y;
+    params.x = dab.x - DP_int_to_float(lw->base_offset_x);
+    params.y = dab.y - DP_int_to_float(lw->base_offset_y);
     params.radius = dab.size / 2.0f;
     params.hardness = dab.hardness;
     return DP_liquify_op(lw->l, lw->dc, &params);
@@ -488,6 +537,9 @@ DP_LiquifyWorker *DP_liquify_worker_new_inc(DP_Liquify *l, DP_DrawContext *dc,
         0.0f,
         1.0f,
         1.0f,
+        0,
+        0,
+        false,
         false,
         false,
         false,
@@ -689,6 +741,42 @@ void DP_liquify_worker_stroke_cancel(DP_LiquifyWorker *lw, long long time_msec)
     }
     else {
         handle_stroke_cancel(lw, time_msec);
+    }
+}
+
+void DP_liquify_worker_offset_begin(DP_LiquifyWorker *lw)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(
+            lw, (DP_LiquifyWorkerJob){DP_LIQUIFY_WORKER_JOB_OFFSET_BEGIN, {0}});
+    }
+    else {
+        handle_offset_begin(lw);
+    }
+}
+
+void DP_liquify_worker_offset_set(DP_LiquifyWorker *lw, int dx, int dy)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(lw, (DP_LiquifyWorkerJob){DP_LIQUIFY_WORKER_JOB_OFFSET_SET,
+                                           {.offset_set = {dx, dy}}});
+    }
+    else {
+        handle_offset_set(lw, dx, dy);
+    }
+}
+
+void DP_liquify_worker_offset_end(DP_LiquifyWorker *lw)
+{
+    DP_ASSERT(lw);
+    if (lw->thread) {
+        push_job(lw,
+                 (DP_LiquifyWorkerJob){DP_LIQUIFY_WORKER_JOB_OFFSET_END, {0}});
+    }
+    else {
+        handle_offset_end(lw);
     }
 }
 

@@ -90,6 +90,9 @@ bool DP_liquify_current_state_set_inc(DP_Liquify *l, DP_LiquifyState *ls);
 bool DP_liquify_op(DP_Liquify *l, DP_DrawContext *dc,
                    const DP_LiquifyOpParams *params);
 
+void DP_liquify_offset(DP_Liquify *l, int *out_x, int *out_y);
+bool DP_liquify_offset_set(DP_Liquify *l, int x, int y);
+
 float DP_liquify_displacement(DP_Liquify *l);
 bool DP_liquify_displacement_set(DP_Liquify *l, float displacement);
 
@@ -110,6 +113,8 @@ int DP_liquify_state_refcount(DP_LiquifyState *ls);
 void DP_liquify_state_apply(DP_LiquifyState *ls);
 
 float DP_liquify_state_displacement(DP_LiquifyState *ls);
+
+void DP_liquify_state_offset(DP_LiquifyState *ls, int *out_x, int *out_y);
 
 bool DP_liquify_state_change_bounds(DP_LiquifyState *ls, int *out_left,
                                     int *out_top, int *out_right,

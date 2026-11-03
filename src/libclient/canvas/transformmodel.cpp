@@ -823,10 +823,10 @@ QVector<net::Message> TransformModel::applyLiquify(
 	}
 
 	// If the user only liquified a small part of the source and didn't change
-	// layers somehow, we don't need to change the entire area, just the part
-	// that was actually modified.
+	// layers somehow or moved the liquify around, we don't need to change the
+	// entire area, just the part that was actually modified.
 	QRect affectedSrcBounds;
-	if(stamp || m_pasted ||
+	if(stamp || m_pasted || liquifyState.offset() != QPoint(0, 0) ||
 	   (singleLayerSourceId != 0 && singleLayerSourceId != layerId)) {
 		affectedSrcBounds = m_srcBounds;
 	} else {

@@ -22,7 +22,8 @@ public:
 		Rotate,
 		Smoothe,
 		Erase,
-		Last = Erase,
+		Offset,
+		Last = Offset,
 	};
 
 	struct Properties {
@@ -65,7 +66,7 @@ public:
 	void stamp() override;
 	void applyStamp();
 
-	void setProperties(const Properties &props) { m_props = props; }
+	void setProperties(const Properties &props);
 	void updateDisplacement(float displacement);
 	void applyDisplacement();
 
@@ -96,6 +97,7 @@ private:
 	qreal m_zoom = 1.0;
 	Tool::Type m_toolToReturnTo = Tool::Type::_LASTTOOL;
 	bool m_drawing = false;
+	bool m_dragging = false;
 	bool m_strokeStarted = false;
 };
 

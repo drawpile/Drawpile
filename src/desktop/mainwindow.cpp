@@ -8661,6 +8661,12 @@ void MainWindow::setupActions()
 								.statusTip(tr("Erase", "liquify"))
 								.checkable()
 								.noDefaultShortcut();
+	QAction *liquifyOffset =
+		makeAction("liquifyoffset", tr("Reposition", "liquify"))
+			.icon(QStringLiteral("hand"))
+			.statusTip(tr("Move the position of the liquified area", "liquify"))
+			.checkable()
+			.noDefaultShortcut();
 	QActionGroup *liquifyOperations = new QActionGroup(this);
 	liquifyOperations->addAction(liquifyMove);
 	liquifyOperations->addAction(liquifyRotateLeft);
@@ -8669,6 +8675,7 @@ void MainWindow::setupActions()
 	liquifyOperations->addAction(liquifyShrink);
 	liquifyOperations->addAction(liquifySmoothe);
 	liquifyOperations->addAction(liquifyErase);
+	liquifyOperations->addAction(liquifyOffset);
 
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
 	// clang-format off
@@ -9483,6 +9490,8 @@ void MainWindow::setupHud()
 			QIcon::fromTheme(QStringLiteral("drawpile_liquify_erase"))),
 	});
 	liquifyActionBar->setOverflowMenuActions({
+		getAction(QStringLiteral("liquifyoffset")),
+		nullptr,
 		getAction(QStringLiteral("cancelaction")),
 		getAction(QStringLiteral("selectnone")),
 		nullptr,

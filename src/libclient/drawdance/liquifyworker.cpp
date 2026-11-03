@@ -141,6 +141,21 @@ void LiquifyWorker::cancelStroke(long long timeMsec)
 	DP_liquify_worker_stroke_cancel(m_data, timeMsec);
 }
 
+void LiquifyWorker::beginOffset()
+{
+	DP_liquify_worker_offset_begin(m_data);
+}
+
+void LiquifyWorker::setOffset(const QPoint delta)
+{
+	DP_liquify_worker_offset_set(m_data, delta.x(), delta.y());
+}
+
+void LiquifyWorker::endOffset()
+{
+	DP_liquify_worker_offset_end(m_data);
+}
+
 void LiquifyWorker::setDisplacement(float displacement)
 {
 	DP_liquify_worker_displacement_set(m_data, displacement);
