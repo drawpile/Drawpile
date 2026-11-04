@@ -9,6 +9,7 @@ Unreleased Version 2.3.2-pre
  * Feature: Try a bit harder to keep dppr file creation time consistent. May not work on all systems, file times are unreliable. Thanks Daorf for suggesting.
  * Feature: Allow copying and pasting transforms and liquifies. Thanks BulletPepper for suggesting.
  * Feature: Add pivot point to transforms. You can toggle this in the transform tool settings menu at the top-left. Double-clicking the point resets it. Thanks Aries Raenidaz, Bro, BulletPepper, GreenDyno and tiar for suggesting.
+ * Feature: Allow holding Alt to switch timeline frames by scrolling, Ctrl+Alt to scroll within the valid frame area. Thanks Ben for suggesting.
 
 2026-10-21 Version 2.3.1
  * Fix: Make dock tab icons show up properly on Qt 6.11, they could end up blank there.
