@@ -46,6 +46,8 @@
 #        define DP_PLATFORM "darwin"
 #    elif defined(__linux__)
 #        define DP_PLATFORM "linux"
+#    elif defined(__FreeBSD__)
+#        define DP_PLATFORM "freebsd"
 #    elif defined(__HAIKU__)
 #        define DP_PLATFORM "haiku"
 #    else
