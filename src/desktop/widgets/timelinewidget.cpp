@@ -2083,7 +2083,15 @@ void TimelineWidget::wheelEvent(QWheelEvent *event)
 	d->updateWheelState(event);
 	Qt::KeyboardModifiers modifiers = event->modifiers();
 	QPoint pd = event->pixelDelta() * (event->inverted() ? -1 : 1);
-	if(modifiers.testFlag(Qt::ControlModifier)) {
+	if(modifiers.testFlag(Qt::AltModifier)) {
+		int delta = pd.y() == 0 ? -pd.x() : pd.y();
+		if(delta < 0) {
+			prevFrameWith(modifiers.testFlag(Qt::ControlModifier), false);
+		} else if(delta > 0) {
+			nextFrameWith(modifiers.testFlag(Qt::ControlModifier), false);
+		}
+
+	} else if(modifiers.testFlag(Qt::ControlModifier)) {
 		if(pd.y() != 0) {
 			zoomBy(pd.y() < 0 ? -1 : 1);
 		}
