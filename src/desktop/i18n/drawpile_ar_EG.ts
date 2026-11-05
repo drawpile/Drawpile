@@ -119,12 +119,12 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation>‌‏‎‏</translation>
+        <translation>منع الفيضان‌‏‎‏:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">تسامح: </translation>
+        <translation>التحمل: </translation>
     </message>
     <message>
         <location line="+13"/>
