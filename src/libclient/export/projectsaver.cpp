@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/projectsaver.h"
 #include "libclient/io/files.h"
+#include <QDateTime>
 #include <QFile>
 #include <QLoggingCategory>
 #include <QTemporaryFile>
@@ -112,6 +113,10 @@ int ProjectSaver::handleSaveStart()
 				qUtf8Printable(saveFile.errorString()));
 			return int(DP_SAVE_RESULT_OPEN_ERROR);
 		}
+
+		tempFile.setFileTime(
+			saveFile.fileTime(QFileDevice::FileBirthTime),
+			QFileDevice::FileBirthTime);
 
 		QString copyError;
 		bool copyOk = CanvasSaverRunnable::copyFileContents(saveFile, tempFile);
