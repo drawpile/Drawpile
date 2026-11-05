@@ -56,7 +56,7 @@ TrayIcon::TrayIcon()
 	QAction *quitAction = menu->addAction(tr("Quit"));
 
 	// In Qt 5.6 and up we can just do addAction(title, &functor)
-	connect(showAction, &QAction::triggered, &MainWindow::showDefaultInstance);
+	connect(showAction, &QAction::triggered, this, &MainWindow::showDefaultInstance);
 	connect(remoteAction, &QAction::triggered, this, &TrayIcon::openRemote);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::quitServer);
 

@@ -383,8 +383,8 @@ void ServerSummaryPage::showSettingsDialog()
 
 	ui.restartAlert->setVisible(static_cast<const LocalServer*>(d->server)->isRunning());
 
-	connect(ui.pickCert, &QPushButton::clicked, std::bind(&pickFilePath, this, ui.certFile));
-	connect(ui.pickKey, &QPushButton::clicked, std::bind(&pickFilePath, this, ui.keyFile));
+	connect(ui.pickCert, &QPushButton::clicked, dlg, std::bind(&pickFilePath, this, ui.certFile));
+	connect(ui.pickKey, &QPushButton::clicked, dlg, std::bind(&pickFilePath, this, ui.keyFile));
 
 	{
 		QSettings cfg;

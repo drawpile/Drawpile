@@ -53,7 +53,9 @@ bool startServer()
 	// Start a new thread for the server
 	qDebug() << "Starting server thread";
 	QThread *serverThread = new QThread;
-	auto initConnetion = serverThread->connect(serverThread, &QThread::started, threadInitFunc);
+	auto initConnetion = serverThread->connect(
+		serverThread, &QThread::started, serverThread, threadInitFunc,
+		Qt::DirectConnection);
 	mutex.lock();
 	serverThread->start();
 
@@ -73,9 +75,13 @@ bool startServer()
 	// The local server connector to use
 	LocalServer *localServer = new LocalServer(server);
 
-	QObject::connect(localServer, &LocalServer::serverError, [](const QString &error) {
-		QMessageBox::warning(nullptr, QApplication::tr("Drawpile Server"), error);
-	});
+	QObject::connect(
+		localServer, &LocalServer::serverError, localServer,
+		[](const QString &error) {
+			QMessageBox::warning(
+				nullptr, QApplication::tr("Drawpile Server"), error);
+		},
+		Qt::DirectConnection);
 
 	// Create the system tray menu
 	if(QSettings().value("ui/trayicon", true).toBool()) {
@@ -92,7 +98,7 @@ bool startServer()
 	// Quit when last window is closed, but not if the tray icon is visible
 	qApp->setQuitOnLastWindowClosed(false);
 #ifndef Q_OS_MACOS
-	QObject::connect(qApp, &QApplication::lastWindowClosed, []() {
+	QObject::connect(qApp, &QApplication::lastWindowClosed, qApp, []() {
 		if(!TrayIcon::isTrayIconVisible())
 			qApp->quit();
 	});

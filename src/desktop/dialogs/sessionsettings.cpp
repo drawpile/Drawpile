@@ -195,7 +195,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	QHeaderView *banlistHeader = m_ui->banlistView->horizontalHeader();
 	banlistHeader->setSectionResizeMode(1, QHeaderView::Stretch);
 	banlistHeader->setSectionResizeMode(2, QHeaderView::Stretch);
-	connect(m_ui->removeBan, &QPushButton::clicked, [this]() {
+	connect(m_ui->removeBan, &QPushButton::clicked, this, [this]() {
 		const int id = m_ui->banlistView->selectionModel()
 						   ->currentIndex()
 						   .data(Qt::UserRole)
@@ -253,13 +253,13 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 
 	m_ui->addAnnouncement->setMenu(addAnnouncementMenu);
 
-	connect(addAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {
+	connect(addAnnouncementMenu, &QMenu::triggered, this, [this](QAction *a) {
 		const QString apiUrl = a->property("API_URL").toString();
 		qDebug() << "Requesting public announcement:" << apiUrl;
 		m_doc->sendAnnounce(apiUrl);
 	});
 
-	connect(m_ui->removeAnnouncement, &QPushButton::clicked, [this]() {
+	connect(m_ui->removeAnnouncement, &QPushButton::clicked, this, [this]() {
 		QItemSelection sel =
 			m_ui->announcementListView->selectionModel()->selection();
 		QString apiUrl;

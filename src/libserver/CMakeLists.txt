@@ -57,6 +57,10 @@ target_link_libraries(dpserver
 		${QT_PACKAGE_NAME}::Network
 )
 
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+	target_compile_definitions(dpserver PRIVATE QT_NO_CONTEXTLESS_CONNECT=1)
+endif()
+
 if(TARGET "${QT_PACKAGE_NAME}::WebSockets")
 	target_link_libraries(dpserver PUBLIC ${QT_PACKAGE_NAME}::WebSockets)
 endif()

@@ -219,7 +219,7 @@ void Announcements::refreshListings()
 			sessionlisting::refreshSessions(updates);
 
 		connect(
-			response, &AnnouncementApiResponse::finished,
+			response, &AnnouncementApiResponse::finished, this,
 			[this, refreshServer, updates, response](
 				const QVariant &result, const QString &message,
 				const QString &error) {

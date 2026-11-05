@@ -38,7 +38,7 @@ QNetworkAccessManager *getInstance()
 		nam = new QNetworkAccessManager;
 		nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 		QMetaObject::Connection conn =
-			t->connect(t, &QThread::finished, [nam, t]() {
+			t->connect(t, &QThread::finished, nam, [nam, t]() {
 				qCDebug(lcDpNetworkAccess)
 					<< "thread" << t << "ended. Removing NetworkAccessManager";
 				nam->deleteLater();

@@ -146,7 +146,7 @@ void Notifications::initGrid(config::Config *cfg, QVBoxLayout *layout)
 		preview->setIcon(QIcon::fromTheme("media-playback-start"));            \
 		grid->addWidget(preview, row, 4, Qt::AlignHCenter);                    \
                                                                                \
-		connect(preview, &QToolButton::clicked, [this, text] {                 \
+		connect(preview, &QToolButton::clicked, this, [this, text] {           \
 			dpApp().notifications()->preview(                                  \
 				this, notification::Event::EVENT, text);                       \
 		});                                                                    \

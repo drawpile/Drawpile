@@ -127,7 +127,7 @@ OnionSkinsDock::OnionSkinsDock(QWidget *parent)
 	d->belowPreview->setMinimumWidth(24);
 	d->belowPreview->setToolTip(tr("Tint Below"));
 	titlebar->addCustomWidget(d->belowPreview);
-	connect(d->belowPreview, &ColorPreview::clicked, [this]() {
+	connect(d->belowPreview, &ColorPreview::clicked, this, [this]() {
 		showColorPicker(d->belowPreview->color(), [this](QColor color) {
 			d->belowPreview->setColor(color);
 		});
@@ -152,7 +152,7 @@ OnionSkinsDock::OnionSkinsDock(QWidget *parent)
 	d->abovePreview->setMinimumWidth(24);
 	d->abovePreview->setToolTip(tr("Tint Above"));
 	titlebar->addCustomWidget(d->abovePreview);
-	connect(d->abovePreview, &ColorPreview::clicked, [this]() {
+	connect(d->abovePreview, &ColorPreview::clicked, this, [this]() {
 		showColorPicker(d->abovePreview->color(), [this](QColor color) {
 			d->abovePreview->setColor(color);
 		});
@@ -273,7 +273,7 @@ void OnionSkinsDock::buildWidget()
 
 		slider->setValue(
 			savedFrames.value(frameNumber, getSliderDefault(frameNumber)));
-		connect(slider, &QSlider::valueChanged, [=](int value) {
+		connect(slider, &QSlider::valueChanged, this, [=](int value) {
 			onSliderValueChange(frameNumber, value);
 		});
 
@@ -316,7 +316,7 @@ void OnionSkinsDock::showColorPicker(
 	const QColor &currentColor, std::function<void(QColor)> onColorSelected)
 {
 	ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(currentColor, this);
-	connect(dlg, &ColorDialog::colorSelected, onColorSelected);
+	connect(dlg, &ColorDialog::colorSelected, this, onColorSelected);
 	dlg->show();
 }
 

@@ -155,7 +155,7 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 
 	connect(
 		d->ui.typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this](int) {
+		this, [this](int) {
 			updateType();
 			updateResult();
 		});
@@ -164,7 +164,7 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 		&CanvasShortcutsDialog::updateResult);
 	connect(
 		d->ui.actionCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this](int) {
+		this, [this](int) {
 			updateAction();
 			updateResult();
 		});

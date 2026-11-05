@@ -54,18 +54,20 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	connect(
 		m_sessions, &SessionServer::sessionEnded, this,
 		&MultiServer::tryAutoStop);
-	connect(m_sessions, &SessionServer::userCountChanged, [this](int users) {
-		printStatusUpdate();
-		emit userCountChanged(users);
-		// The server will be fully stopped after all users have disconnected
-		if(users == 0) {
-			if(m_state == STOPPING) {
-				stop();
-			} else {
-				tryAutoStop();
+	connect(
+		m_sessions, &SessionServer::userCountChanged, this, [this](int users) {
+			printStatusUpdate();
+			emit userCountChanged(users);
+			// The server will be fully stopped after all users have
+			// disconnected
+			if(users == 0) {
+				if(m_state == STOPPING) {
+					stop();
+				} else {
+					tryAutoStop();
+				}
 			}
-		}
-	});
+		});
 }
 
 /**

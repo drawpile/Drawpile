@@ -67,6 +67,10 @@ target_link_libraries(dpshared
 		${QT_PACKAGE_NAME}::Network
 )
 
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+	target_compile_definitions(dpshared PRIVATE QT_NO_CONTEXTLESS_CONNECT=1)
+endif()
+
 if(TARGET libsodium::libsodium)
 	target_sources(dpshared PRIVATE
 		util/authtoken.cpp

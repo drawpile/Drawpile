@@ -1462,7 +1462,7 @@ void FileWrangler::showOpenFileContentDialog(
 				fileOpenCompleted(fileName);
 			}
 		};
-	connect(dialog, &QFileDialog::fileSelected, fileSelected);
+	connect(dialog, &QFileDialog::fileSelected, parentWidget(), fileSelected);
 
 	dialog->show();
 #endif

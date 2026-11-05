@@ -592,7 +592,7 @@ void StartDialog::addListServerUrl(const QUrl &url)
 	AddServerDialog *dlg = new AddServerDialog{this};
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(dlg, &QObject::destroyed, [this]() {
+	connect(dlg, &QObject::destroyed, this, [this]() {
 		m_addServerButton->setEnabled(true);
 	});
 

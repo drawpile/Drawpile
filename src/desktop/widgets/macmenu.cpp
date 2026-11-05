@@ -116,12 +116,12 @@ MacMenu::MacMenu()
 	QAction *versioncheck = makeAction(
 		helpmenu, "versioncheck", MainWindow::tr("Check For Updates"));
 
-	connect(homepage, &QAction::triggered, &MainWindow::homepage);
-	connect(donate, &QAction::triggered, &MainWindow::donate);
-	connect(about, &QAction::triggered, &MainWindow::about);
-	connect(macabout, &QAction::triggered, &MainWindow::about);
-	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
-	connect(macaboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(homepage, &QAction::triggered, this, &MainWindow::homepage);
+	connect(donate, &QAction::triggered, this, &MainWindow::donate);
+	connect(about, &QAction::triggered, this, &MainWindow::about);
+	connect(macabout, &QAction::triggered, this, &MainWindow::about);
+	connect(aboutqt, &QAction::triggered, this, &QApplication::aboutQt);
+	connect(macaboutqt, &QAction::triggered, this, &QApplication::aboutQt);
 	connect(versioncheck, &QAction::triggered, this, &MacMenu::checkForUpdates);
 
 	dpApp().recents().bindFileMenu(m_recent);

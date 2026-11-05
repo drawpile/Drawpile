@@ -40,8 +40,8 @@ MyPaintInput::MyPaintInput(
 	widgetLayout->addWidget(m_box);
 	m_box->setToolTip(inputDescription);
 	connect(
-		m_box, &QCheckBox::clicked, this,
-		&MyPaintInput::handleBoxClicked, Qt::QueuedConnection);
+		m_box, &QCheckBox::clicked, this, &MyPaintInput::handleBoxClicked,
+		Qt::QueuedConnection);
 
 	// Constructing these widgets in large volumes is slow and make the brush
 	// setting dialog take a long time to appear, so we lazily initialize them.
@@ -138,7 +138,7 @@ void MyPaintInput::constructCurveWidgets()
 	m_ySpinner->setRange(0.01, m_yHardMax, 2);
 	connect(
 		m_ySpinner,
-		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		[this](double value) {
 			m_yMax = value;
 			m_yMin = -value;
@@ -152,7 +152,7 @@ void MyPaintInput::constructCurveWidgets()
 	m_xMinSpinner->setRange(m_xHardMin, m_xHardMax - 0.01, 2);
 	connect(
 		m_xMinSpinner,
-		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		[this](double value) {
 			m_xMin = value;
 			if(m_xMax - m_xMin < 0.01) {
@@ -168,7 +168,7 @@ void MyPaintInput::constructCurveWidgets()
 	m_xMaxSpinner->setRange(m_xHardMin + 0.01, m_xHardMax, 2);
 	connect(
 		m_xMaxSpinner,
-		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		[this](double value) {
 			m_xMax = value;
 			if(m_xMax - m_xMin < 0.01) {
