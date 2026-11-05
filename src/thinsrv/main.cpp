@@ -120,7 +120,8 @@ int main(int argc, char *argv[])
 				"Setting very coarse watchdog timer every %dms", watchdogMsec);
 			watchdogTimer->setTimerType(Qt::VeryCoarseTimer);
 		}
-		QObject::connect(watchdogTimer, &QTimer::timeout, &initsys::watchdog);
+		QObject::connect(
+			watchdogTimer, &QTimer::timeout, app.get(), &initsys::watchdog);
 		watchdogTimer->start();
 	} else {
 		qInfo("Watchdog timer not enabled");

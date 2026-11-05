@@ -125,7 +125,7 @@ struct LoginDialog::Private {
 		// Session list page
 		utils::bindKineticScrolling(ui->sessionList);
 		QObject::connect(
-			ui->sessionList, &QTableView::doubleClicked,
+			ui->sessionList, &QTableView::doubleClicked, okButton,
 			[this](const QModelIndex &) {
 				if(okButton->isEnabled())
 					okButton->click();
@@ -1347,7 +1347,7 @@ void LoginDialog::onOkClicked()
 				i.data(net::LoginSessionModel::JoinDenyReasonsRole)
 					.toStringList();
 			QIcon icon =
-				i.data(net ::LoginSessionModel::JoinDenyIcon).value<QIcon>();
+				i.data(net::LoginSessionModel::JoinDenyIcon).value<QIcon>();
 			showJoinDenyMessageBox(this, reasons, icon);
 		}
 		break;

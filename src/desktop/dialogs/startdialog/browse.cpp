@@ -415,7 +415,7 @@ void Browse::refreshServer(
 	m_refreshesInProgress.insert(ls.name, response);
 
 	connect(
-		response, &sessionlisting::AnnouncementApiResponse::serverGone,
+		response, &sessionlisting::AnnouncementApiResponse::serverGone, this,
 		[urlString = ls.url]() {
 			qInfo(
 				"List server at %s is gone. Removing.",

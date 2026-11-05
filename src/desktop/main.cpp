@@ -1054,7 +1054,7 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	config::Config *cfg = app.config();
 	QObject::connect(
-		cfg, &config::Config::changeWriteLogFile, &utils::enableLogFile);
+		cfg, &config::Config::changeWriteLogFile, &app, &utils::enableLogFile);
 	utils::enableLogFile(cfg->getWriteLogFile());
 
 	app.initTheme();
@@ -1123,7 +1123,7 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	// This is a hack to deal with the menu disappearing when the final
 	// window is closed by a confirmation sheet.
-	QObject::connect(&app, &QGuiApplication::lastWindowClosed, [] {
+	QObject::connect(&app, &QGuiApplication::lastWindowClosed, &app, [] {
 		QTimer::singleShot(0, [] {
 			qGuiApp->focusWindowChanged(nullptr);
 		});

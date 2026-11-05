@@ -240,7 +240,7 @@ void SessionPage::terminateSession()
 		);
 	msg->setAttribute(Qt::WA_DeleteOnClose, true);
 
-	connect(msg, &QMessageBox::buttonClicked, [msg, this](QAbstractButton *btn) {
+	connect(msg, &QMessageBox::buttonClicked, this, [msg, this](QAbstractButton *btn) {
 		if(msg->standardButton(btn) == QMessageBox::Yes)
 			d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Delete, QStringList() << "sessions" << d->id, QJsonObject());
 	});
@@ -256,7 +256,7 @@ void SessionPage::changePassword()
 	dlg->setInputMode(QInputDialog::TextInput);
 	dlg->setTextEchoMode(QLineEdit::PasswordEchoOnEdit);
 	dlg->setLabelText(tr("Change password"));
-	connect(dlg, &QInputDialog::accepted, [dlg, this]() {
+	connect(dlg, &QInputDialog::accepted, this, [dlg, this]() {
 		QJsonObject o;
 		o["password"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
@@ -274,7 +274,7 @@ void SessionPage::changeTitle()
 	dlg->setInputMode(QInputDialog::TextInput);
 	dlg->setLabelText(tr("Change title"));
 	dlg->setTextValue(d->title->text());
-	connect(dlg, &QInputDialog::accepted, [dlg, this]() {
+	connect(dlg, &QInputDialog::accepted, this, [dlg, this]() {
 		QJsonObject o;
 		o["title"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
@@ -290,7 +290,7 @@ void SessionPage::sendMessage()
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setInputMode(QInputDialog::TextInput);
 	dlg->setLabelText(tr("Send message"));
-	connect(dlg, &QInputDialog::accepted, [dlg, this]() {
+	connect(dlg, &QInputDialog::accepted, this, [dlg, this]() {
 		QJsonObject o;
 		o["alert"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
@@ -328,7 +328,7 @@ void SessionPage::sendUserMessage()
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setInputMode(QInputDialog::TextInput);
 	dlg->setLabelText(tr("Send message"));
-	connect(dlg, &QInputDialog::accepted, [dlg, id, this]() {
+	connect(dlg, &QInputDialog::accepted, this, [dlg, id, this]() {
 		QJsonObject o;
 		o["alert"] = dlg->textValue();
 		d->server->makeApiRequest("msguser", JsonApiMethod::Update, QStringList() << "sessions" << d->id << QString::number(id), o);

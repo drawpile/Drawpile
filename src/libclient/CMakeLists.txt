@@ -403,6 +403,10 @@ target_link_libraries(dpclient
 		${QT_PACKAGE_NAME}::Gui
 )
 
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+	target_compile_definitions(dpclient PRIVATE QT_NO_CONTEXTLESS_CONNECT=1)
+endif()
+
 if(TARGET ${QT_PACKAGE_NAME}::WebSockets)
 	target_sources(dpclient PRIVATE
 		net/websocketserver.cpp

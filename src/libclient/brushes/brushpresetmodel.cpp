@@ -113,12 +113,12 @@ using PresetShortcutMap = QHash<QKeySequence, PresetShortcut>;
 
 class BrushPresetTagModel::Private {
 public:
-	Private()
+	Private(BrushPresetTagModel *parent)
 		: m_presetChangeTimer(Qt::VeryCoarseTimer, 4000)
 	{
 		initDb();
 		connect(
-			&m_presetChangeTimer, &CompressedTimer::timeout,
+			&m_presetChangeTimer, &CompressedTimer::timeout, parent,
 			std::bind(&Private::writePresetChanges, this));
 	}
 
@@ -1231,7 +1231,7 @@ private:
 				&Private::migrateMarkerBlendMode,
 				&Private::migratePresetHistory,
 				&Private::migratePresetState,
-			};
+		};
 
 		int originalMigrationVersion = migrationVersionVariant.toInt();
 		int migrationVersion = originalMigrationVersion;
@@ -1550,7 +1550,7 @@ QString Preset::makeEffectivePreviewTitle(const QString &originalTitle)
 
 BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 	: QAbstractItemModel(parent)
-	, d(new Private)
+	, d(new Private(this))
 {
 	d->setPresetModel(new BrushPresetModel(this));
 	d->initShortcuts();

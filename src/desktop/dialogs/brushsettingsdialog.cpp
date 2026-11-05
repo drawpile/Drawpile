@@ -737,7 +737,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		int(DP_BRUSH_SHAPE_MYPAINT));
 	connect(
 		d->brushTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		makeBrushChangeCallbackArg<int>([this](int index) {
+		this, makeBrushChangeCallbackArg<int>([this](int index) {
 			int brushType = d->brushTypeCombo->itemData(index).toInt();
 			switch(brushType) {
 			case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
@@ -793,7 +793,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 
 	connect(
 		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		makeBrushChangeCallbackArg<int>([this](int index) {
+		this, makeBrushChangeCallbackArg<int>([this](int index) {
 			d->brush.setPaintMode(d->paintModeCombo->itemData(index).toInt());
 			emitChange();
 		}));
@@ -822,7 +822,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->colorPickBox->setIcon(QIcon::fromTheme("color-picker"));
 	layout->addRow(d->colorPickBox);
 	connect(
-		d->colorPickBox, &QCheckBox::clicked,
+		d->colorPickBox, &QCheckBox::clicked, this,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
 			d->brush.classic().colorpick = checked;
 			emitChange();
@@ -831,7 +831,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->pixelPerfectBox = buildPixelPerfectBox();
 	layout->addRow(d->pixelPerfectBox);
 	connect(
-		d->pixelPerfectBox, &QCheckBox::clicked,
+		d->pixelPerfectBox, &QCheckBox::clicked, this,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
 			d->brush.setPixelPerfect(checked);
 			emitChange();
@@ -843,7 +843,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		"Disables all smoothing and stabilization for instant pixel drawing."));
 	layout->addRow(d->pixelArtInputBox);
 	connect(
-		d->pixelArtInputBox, &QCheckBox::clicked,
+		d->pixelArtInputBox, &QCheckBox::clicked, this,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
 			d->brush.setPixelArtInput(checked);
 			emitChange();
@@ -859,7 +859,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->spacingSpinner);
 	connect(
 		d->spacingSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		makeBrushChangeCallbackArg<int>([this](int value) {
+		this, makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().spacing = value / 100.0;
 			emitChange();
 		}));
@@ -872,7 +872,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		tr("Average Smoothing"), int(brushes::Smoothing));
 	connect(
 		d->stabilizationModeCombo,
-		QOverload<int>::of(&QComboBox::currentIndexChanged),
+		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int index) {
 			d->brush.setStabilizationMode(
 				brushes::StabilizationMode(
@@ -889,7 +889,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->stabilizerSpinner);
 	connect(
 		d->stabilizerSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.setStabilizerSampleCount(value);
 			emitChange();
@@ -903,7 +903,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->smoothingSpinner);
 	connect(
 		d->smoothingSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.setSmoothing(value - d->globalSmoothing);
 			emitChange();
@@ -921,7 +921,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		dpAppConfig(), AutomaticAlphaPreserve, d->blendModeManager,
 		BlendModeManager::setAutomaticAlphaPerserve);
 	connect(
-		d->blendModeManager, &BlendModeManager::blendModeChanged,
+		d->blendModeManager, &BlendModeManager::blendModeChanged, this,
 		[this](int blendMode, bool eraseMode) {
 			if(!isUpdating()) {
 				d->brush.classic().erase = eraseMode;
@@ -970,7 +970,7 @@ QWidget *BrushSettingsDialog::buildAntiOverflowPageUi()
 		d->antiOverflowToleranceSpinner);
 	connect(
 		d->antiOverflowToleranceSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.antiOverflow().tolerance = value;
 			emitChange();
@@ -986,7 +986,7 @@ QWidget *BrushSettingsDialog::buildAntiOverflowPageUi()
 		d->antiOverflowExpandSpinner);
 	connect(
 		d->antiOverflowExpandSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.antiOverflow().expand = value;
 			emitChange();
@@ -1016,7 +1016,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSizeSpinner);
 	connect(
 		d->classicSizeSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().size.max = value;
 			emitChange();
@@ -1036,7 +1036,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSizeMinSpinner);
 	connect(
 		d->classicSizeMinSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().size.min = value;
 			emitChange();
@@ -1049,7 +1049,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicSizeCurve->curveWidget());
 	connect(
-		d->classicSizeCurve, &widgets::CurveWidget::curveChanged,
+		d->classicSizeCurve, &widgets::CurveWidget::curveChanged, this,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
 			[this](const KisCubicCurve &curve) {
 				d->brush.classic().setSizeCurve(curve);
@@ -1082,7 +1082,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->classicOpacitySpinner);
 	connect(
 		d->classicOpacitySpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().opacity.max = value / 100.0;
 			emitChange();
@@ -1102,7 +1102,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 		d->classicOpacityMinSpinner);
 	connect(
 		d->classicOpacityMinSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().opacity.min = value / 100.0;
 			emitChange();
@@ -1115,7 +1115,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicOpacityCurve->curveWidget());
 	connect(
-		d->classicOpacityCurve, &widgets::CurveWidget::curveChanged,
+		d->classicOpacityCurve, &widgets::CurveWidget::curveChanged, this,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
 			[this](const KisCubicCurve &curve) {
 				d->brush.classic().setOpacityCurve(curve);
@@ -1148,7 +1148,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->classicHardnessSpinner);
 	connect(
 		d->classicHardnessSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().hardness.max = value / 100.0;
 			emitChange();
@@ -1168,7 +1168,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 		d->classicHardnessMinSpinner);
 	connect(
 		d->classicHardnessMinSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().hardness.min = value / 100.0;
 			emitChange();
@@ -1181,7 +1181,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicHardnessCurve->curveWidget());
 	connect(
-		d->classicHardnessCurve, &widgets::CurveWidget::curveChanged,
+		d->classicHardnessCurve, &widgets::CurveWidget::curveChanged, this,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
 			[this](const KisCubicCurve &curve) {
 				d->brush.classic().setHardnessCurve(curve);
@@ -1235,7 +1235,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSmudgingSpinner);
 	connect(
 		d->classicSmudgingSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().smudge.max = value / 100.0;
 			emitChange();
@@ -1249,7 +1249,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		d->classicColorPickupSpinner);
 	connect(
 		d->classicColorPickupSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().resmudge = value;
 			emitChange();
@@ -1268,7 +1268,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		d->classicSmudgingMinSpinner);
 	connect(
 		d->classicSmudgingMinSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().smudge.min = value / 100.0;
 			emitChange();
@@ -1281,7 +1281,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicSmudgingCurve->curveWidget());
 	connect(
-		d->classicSmudgingCurve, &widgets::CurveWidget::curveChanged,
+		d->classicSmudgingCurve, &widgets::CurveWidget::curveChanged, this,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
 			[this](const KisCubicCurve &curve) {
 				d->brush.classic().setSmudgeCurve(curve);
@@ -1314,7 +1314,7 @@ QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(d->classicJitterSpinner);
 	connect(
 		d->classicJitterSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().jitter.max = value / 100.0;
 			emitChange();
@@ -1334,7 +1334,7 @@ QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
 		d->classicJitterMinSpinner);
 	connect(
 		d->classicJitterMinSpinner,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().jitter.min = value / 100.0;
 			emitChange();
@@ -1347,7 +1347,7 @@ QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicJitterCurve->curveWidget());
 	connect(
-		d->classicJitterCurve, &widgets::CurveWidget::curveChanged,
+		d->classicJitterCurve, &widgets::CurveWidget::curveChanged, this,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
 			[this](const KisCubicCurve &curve) {
 				d->brush.classic().setJitterCurve(curve);
@@ -1383,7 +1383,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 {
 	QComboBox *typeCombo = buildClassicTypeCombo();
 	connect(
-		typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
 		makeBrushChangeCallbackArg<int>([this, typeCombo, setType](int index) {
 			int type = typeCombo->itemData(index).toInt();
 			(d->brush.classic().*setType)(DP_ClassicBrushDynamicType(type));
@@ -1395,7 +1395,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 	velocitySlider->setPrefix(tr("Maximum Velocity: "));
 	connect(
 		velocitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		makeBrushChangeCallbackArg<int>([=](int value) {
+		this, makeBrushChangeCallbackArg<int>([=](int value) {
 			(d->brush.classic().*setVelocity)(float(value) / 100.0f);
 			emitChange();
 		}));
@@ -1406,7 +1406,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 	distanceSlider->setPrefix(tr("Maximum Distance: "));
 	connect(
 		distanceSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		makeBrushChangeCallbackArg<int>([=](int value) {
+		this, makeBrushChangeCallbackArg<int>([=](int value) {
 			(d->brush.classic().*setDistance)(float(value));
 			emitChange();
 		}));
@@ -1417,7 +1417,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 		tr("Set the maximum velocity for Size, Opacity, Hardness, Smudging and "
 		   "Jitter at once."));
 	connect(
-		applyVelocityToAllButton, &QPushButton::clicked,
+		applyVelocityToAllButton, &QPushButton::clicked, this,
 		makeBrushChangeCallback([=]() {
 			brushes::ClassicBrush &b = d->brush.classic();
 			float maxVelocity = float(velocitySlider->value()) / 100.0f;
@@ -1437,7 +1437,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
 		tr("Set the maximum distance for Size, Opacity, Hardness, Smudging and "
 		   "Jitter at once."));
 	connect(
-		applyDistanceToAllButton, &QPushButton::clicked,
+		applyDistanceToAllButton, &QPushButton::clicked, this,
 		makeBrushChangeCallback([=]() {
 			brushes::ClassicBrush &b = d->brush.classic();
 			float maxDistance = float(distanceSlider->value());
@@ -1474,7 +1474,8 @@ void BrushSettingsDialog::buildClassicApplyToAllButton(
 		tr("Set this curve for Size, Opacity, Hardness and Smudging at once."));
 	curve->addButton(applyToAllButton);
 	connect(
-		applyToAllButton, &QPushButton::clicked, makeBrushChangeCallback([=]() {
+		applyToAllButton, &QPushButton::clicked, this,
+		makeBrushChangeCallback([=]() {
 			applyCurveToAllClassicSettings(curve->curve());
 			ToolMessage::showText(
 				tr("Curve set for all settings in this brush."));
@@ -1526,7 +1527,7 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	kineticScroller->disableKineticScrollingOnWidget(page.baseValueSpinner);
 	connect(
 		page.baseValueSpinner,
-		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
+		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this,
 		makeBrushChangeCallbackArg<double>([=](double value) {
 			d->brush.myPaint().settings().mappings[setting].base_value = value;
 			emitChange();
@@ -1583,7 +1584,7 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 		mypaint_brush_input_info(MyPaintBrushInput(input))};
 	d->myPaintPages[setting].inputs[input] = inputWidget;
 	connect(
-		inputWidget, &widgets::MyPaintInput::controlPointsChanged,
+		inputWidget, &widgets::MyPaintInput::controlPointsChanged, this,
 		makeBrushChangeCallback([this, setting, input]() {
 			widgets::MyPaintInput *otherWidget =
 				d->myPaintPages[setting].inputs[input];

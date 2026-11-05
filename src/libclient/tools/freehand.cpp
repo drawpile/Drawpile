@@ -108,9 +108,12 @@ Freehand::Freehand(ToolController &owner, DP_MaskSync *ms)
 	m_pollTimer.setSingleShot(false);
 	m_pollTimer.setTimerType(Qt::PreciseTimer);
 	m_pollTimer.setInterval(15);
-	QObject::connect(&m_pollTimer, &QTimer::timeout, [this] {
-		poll();
-	});
+	QObject::connect(
+		&m_pollTimer, &QTimer::timeout, &m_owner,
+		[this] {
+			poll();
+		},
+		Qt::DirectConnection);
 }
 
 Freehand::~Freehand()

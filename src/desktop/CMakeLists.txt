@@ -438,8 +438,6 @@ target_sources(drawpile PRIVATE
 	widgets/dualcolorbutton.h
 	widgets/expandshrinkspinner.cpp
 	widgets/expandshrinkspinner.h
-	widgets/filmstrip.cpp
-	widgets/filmstrip.h
 	widgets/flipbookview.cpp
 	widgets/flipbookview.h
 	widgets/groupedtoolbutton.cpp
@@ -529,6 +527,10 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Xml
 )
+
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+	target_compile_definitions(drawpile PRIVATE QT_NO_CONTEXTLESS_CONNECT=1)
+endif()
 
 if(AUDIO_IMPL STREQUAL "MINIAUDIO")
 	add_subdirectory(bundled/miniaudio)

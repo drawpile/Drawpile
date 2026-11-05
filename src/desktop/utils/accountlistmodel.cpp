@@ -233,7 +233,7 @@ void AccountListModel::readPassword(
 		new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
 	readJob->setKey(keychainSecretName);
 	connect(
-		readJob, &QKeychain::ReadPasswordJob::finished,
+		readJob, &QKeychain::ReadPasswordJob::finished, this,
 		[keychainSecretName](QKeychain::Job *job) {
 			QKeychain::Error error = job->error();
 			if(error != QKeychain::NoError &&
@@ -297,7 +297,7 @@ void AccountListModel::deletePassword(const QString &keychainSecretName)
 	deleteJob->setInsecureFallback(true);
 	deleteJob->setKey(keychainSecretName);
 	connect(
-		deleteJob, &QKeychain::Job::finished,
+		deleteJob, &QKeychain::Job::finished, this,
 		[keychainSecretName](QKeychain::Job *job) {
 			QKeychain::Error error = job->error();
 			if(error != QKeychain::NoError &&

@@ -867,9 +867,10 @@ void BrushPalette::prepareTagAssignmentMenu()
 					action->setCheckable(true);
 					action->setChecked(ta.assigned);
 					int tagId = ta.id;
-					connect(action, &QAction::triggered, [=](bool checked) {
-						changeTagAssignment(tagId, checked);
-					});
+					connect(
+						action, &QAction::triggered, this, [=](bool checked) {
+							changeTagAssignment(tagId, checked);
+						});
 				}
 			}
 		} else {

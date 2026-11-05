@@ -50,6 +50,11 @@ target_link_libraries(${srvlib} PUBLIC
 
 target_link_libraries(${srvname} PRIVATE ${srvlib})
 
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+	target_compile_definitions(${srvlib} PRIVATE QT_NO_CONTEXTLESS_CONNECT=1)
+	target_compile_definitions(${srvname} PRIVATE QT_NO_CONTEXTLESS_CONNECT=1)
+endif()
+
 if(SERVERGUI)
 	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Widgets)
 

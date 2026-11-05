@@ -13,7 +13,6 @@ INCLUDEPATH += ../../../client/
 
 HEADERS += collection.h \
 	../colorbutton.h colorbutton_plugin.h \
-	../filmstrip.h filmstrip_plugin.h \
 	../tablettest.h tablettester_plugin.h \
 	../spinner.h spinner_plugin.h \
 	../presetselector.h presetselector_plugin.h \
@@ -21,7 +20,6 @@ HEADERS += collection.h \
 
 SOURCES += collection.cpp \
 	../colorbutton.cpp colorbutton_plugin.cpp \
-	../filmstrip.cpp filmstrip_plugin.cpp \
 	../tablettest.cpp tablettester_plugin.cpp \
 	../spinner.cpp spinner_plugin.cpp \
 	../presetselector.cpp presetselector_plugin.cpp \

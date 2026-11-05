@@ -534,14 +534,16 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_dockToolSettings->annotationSettings(),
 		&tools::AnnotationSettings::selectionIdChanged, this,
 		&MainWindow::updateSelectTransformActions);
+	// clang-format on
 	connect(
 		m_dockToolSettings->annotationSettings(),
-		&tools::AnnotationSettings::showAnnotationsRequested, [this] {
+		&tools::AnnotationSettings::showAnnotationsRequested, this, [this] {
 			QAction *showannotations = getAction("showannotations");
 			if(!showannotations->isChecked()) {
 				showannotations->toggle();
 			}
 		});
+	// clang-format off
 	connect(
 		m_dockLayers, &docks::LayerList::layerSelected, m_chatbox,
 		&widgets::ChatBox::setCurrentLayer);
@@ -564,14 +566,16 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_dockBrushPalette, &docks::BrushPalette::editBrushRequested, this,
 		&MainWindow::showBrushSettingsDialogPreset);
+	// clang-format on
 	connect(
 		m_dockToolSettings->laserPointerSettings(),
-		&tools::LaserPointerSettings::showLaserTrailsRequested, [this] {
+		&tools::LaserPointerSettings::showLaserTrailsRequested, this, [this] {
 			QAction *showlasers = getAction("showlasers");
 			if(!showlasers->isChecked()) {
 				showlasers->toggle();
 			}
 		});
+	// clang-format off
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
@@ -3117,7 +3121,7 @@ void MainWindow::showProjectPlaybackDialog(
 		Qt::DirectConnection);
 	connect(
 		m_projectPlaybackDialog, &dialogs::ProjectPlaybackDialog::destroyed,
-		[=] {
+		this, [=] {
 #ifndef __EMSCRIPTEN__
 			recordAction->setEnabled(true);
 #endif
@@ -6087,7 +6091,7 @@ void MainWindow::showLayoutsDialog()
 			dlg->setObjectName("layoutsdialog");
 			dlg->setAttribute(Qt::WA_DeleteOnClose);
 			connect(
-				dlg, &dialogs::LayoutsDialog::applyState,
+				dlg, &dialogs::LayoutsDialog::applyState, this,
 				[this](const QByteArray &state) {
 					if(!m_smallScreenMode) {
 						QScopedValueRollback<bool> updateRollback(
@@ -9035,13 +9039,13 @@ void MainWindow::setupActions()
 #endif
 
 
-	connect(homepage, &QAction::triggered, &MainWindow::homepage);
-	connect(donate, &QAction::triggered, &MainWindow::donate);
-	connect(about, &QAction::triggered, &MainWindow::about);
-	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(homepage, &QAction::triggered, this, &MainWindow::homepage);
+	connect(donate, &QAction::triggered, this, &MainWindow::donate);
+	connect(about, &QAction::triggered, this, &MainWindow::about);
+	connect(aboutqt, &QAction::triggered, this, &QApplication::aboutQt);
 #ifdef Q_OS_MACOS
-	connect(macabout, &QAction::triggered, &MainWindow::about);
-	connect(macaboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(macabout, &QAction::triggered, this, &MainWindow::about);
+	connect(macaboutqt, &QAction::triggered, this, &QApplication::aboutQt);
 #endif
 
 #ifndef __EMSCRIPTEN__
@@ -9058,7 +9062,7 @@ void MainWindow::setupActions()
 		std::bind(&MainWindow::showTouchTestDialog, this, this));
 	// clang-format off
 
-	connect(showlogfile, &QAction::triggered, [this] {
+	connect(showlogfile, &QAction::triggered, this, [this] {
 		QString logFilePath = utils::logFilePath();
 		QFile logFile{logFilePath};
 		if(!logFile.exists()) {

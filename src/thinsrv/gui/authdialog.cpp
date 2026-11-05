@@ -26,14 +26,19 @@ AuthDialog::~AuthDialog()
 void AuthDialog::init()
 {
 	QNetworkAccessManager *nm = networkaccess::getInstance();
-	connect(nm, &QNetworkAccessManager::authenticationRequired, [](QNetworkReply *reply, QAuthenticator *auth) {
-		AuthDialog dlg;
-		dlg.m_ui->label->setText(QStringLiteral("Authentication required for \"%1\"").arg(reply->request().url().host()));
-		if(dlg.exec() == QDialog::Accepted) {
-			auth->setUser(dlg.m_ui->username->text());
-			auth->setPassword(dlg.m_ui->password->text());
-		}
-	});
+	connect(
+		nm, &QNetworkAccessManager::authenticationRequired, nm,
+		[](QNetworkReply *reply, QAuthenticator *auth) {
+			AuthDialog dlg;
+			dlg.m_ui->label->setText(
+				QStringLiteral("Authentication required for \"%1\"")
+					.arg(reply->request().url().host()));
+			if(dlg.exec() == QDialog::Accepted) {
+				auth->setUser(dlg.m_ui->username->text());
+				auth->setPassword(dlg.m_ui->password->text());
+			}
+		},
+		Qt::DirectConnection);
 }
 
 }
