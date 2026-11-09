@@ -231,7 +231,6 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 	d->sendButton =
 		new QPushButton(QIcon::fromTheme("drawpile_chat_send"), tr("Send"));
 	d->sendButton->setFlat(true);
-	d->sendButton->setEnabled(false);
 	d->sendButton->setSizePolicy(
 		{QSizePolicy::Preferred, QSizePolicy::Expanding});
 	inputLayout->addWidget(d->sendButton);
@@ -240,9 +239,6 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 
 	connect(
 		d->myline, &ChatLineEdit::messageSent, this, &ChatWidget::sendMessage);
-	connect(
-		d->myline, &ChatLineEdit::messageAvailable, d->sendButton,
-		&QPushButton::setEnabled);
 	connect(
 		d->sendButton, &QPushButton::clicked, d->myline,
 		&ChatLineEdit::sendMessage);

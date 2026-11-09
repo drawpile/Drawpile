@@ -17,13 +17,7 @@ public:
 	void sendMessage();
 
 signals:
-	void messageAvailable(bool available);
 	void messageSent(const QString &message);
-
-private:
-	void updateMessageAvailable();
-
-	bool m_wasMessageAvailable = false;
 };
 
 #endif
