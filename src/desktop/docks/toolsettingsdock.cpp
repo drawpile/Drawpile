@@ -231,9 +231,11 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		&ToolSettings::requiresSelectionChanged);
 
 	tools::LiquifySettings *ls = liquifySettings();
-	connect(
-		ls, &tools::LiquifySettings::sizeChanged, this,
-		&ToolSettings::sizeChanged);
+	connect(ls, &tools::LiquifySettings::sizeChanged, this, [this](int size) {
+		if(d->currentTool == tools::Tool::LIQUIFY) {
+			Q_EMIT sizeChanged(size);
+		}
+	});
 	connect(
 		ls, &tools::LiquifySettings::requiresSelectionChanged, this,
 		&ToolSettings::requiresSelectionChanged);
