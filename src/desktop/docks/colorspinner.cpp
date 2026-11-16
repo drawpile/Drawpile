@@ -82,6 +82,9 @@ struct ColorSpinnerDock::Private {
 #endif
 	bool updating = false;
 	bool settingColorFromShades = false;
+	bool mirror = true;
+	int shape = int(color_widgets::ColorWheel::ShapeTriangle);
+	int angle = int(color_widgets::ColorWheel::AngleRotating);
 };
 
 ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
@@ -412,16 +415,16 @@ void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 void ColorSpinnerDock::setShape(int shape)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
-	d->colorwheel->setSelectorShape(
-		color_widgets::ColorWheel::ShapeEnum(shape));
+	d->shape = shape;
+	updateActualShapeAngleMirror();
 	updateShapeAction();
 }
 
 void ColorSpinnerDock::setAngle(int angle)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
-	d->colorwheel->setRotatingSelector(
-		angle != int(color_widgets::ColorWheel::AngleFixed));
+	d->angle = angle;
+	updateActualShapeAngleMirror();
 	updateShapeAction();
 }
 
@@ -449,11 +452,11 @@ void ColorSpinnerDock::setMirror(bool mirror)
 	QScopedValueRollback<bool> guard(d->updating, true);
 	if(mirror) {
 		d->directionAscendingAction->setChecked(true);
-		d->colorwheel->setMirroredSelector(true);
 	} else {
 		d->directionDescendingAction->setChecked(true);
-		d->colorwheel->setMirroredSelector(false);
 	}
+	d->mirror = mirror;
+	updateActualShapeAngleMirror();
 }
 
 void ColorSpinnerDock::setAlign(int align)
@@ -524,6 +527,18 @@ void ColorSpinnerDock::setShadesEnabled(bool shadesEnabled)
 		d->shadeSelector->deleteLater();
 		d->shadeSelector = nullptr;
 	}
+}
+
+void ColorSpinnerDock::updateActualShapeAngleMirror()
+{
+	bool rotating = d->angle != int(color_widgets::ColorWheel::AngleFixed);
+	bool square = d->shape != int(color_widgets::ColorWheel::ShapeTriangle);
+	bool mirror = d->mirror;
+	d->colorwheel->setRotatingSelector(rotating);
+	d->colorwheel->setSelectorShape(
+		square ? color_widgets::ColorWheel::ShapeSquare
+			   : color_widgets::ColorWheel::ShapeTriangle);
+	d->colorwheel->setMirroredSelector(rotating || square ? mirror : !mirror);
 }
 
 void ColorSpinnerDock::updateShapeAction()

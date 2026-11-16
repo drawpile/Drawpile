@@ -50,6 +50,7 @@ signals:
 	void colorSelected(const QColor &color);
 
 private:
+	void updateActualShapeAngleMirror();
 	void updateShapeAction();
 	void setSwatchFlags(int flags);
 	void showContextMenu(const QPoint &pos);
