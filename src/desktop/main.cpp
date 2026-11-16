@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/main.h"
 #include "cmake-config/config.h"
+#include "desktop/config/colorwheelconfig.h"
 #include "desktop/config/settingsconfig.h"
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/mainwindow.h"
@@ -88,6 +89,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 	, m_settings(new desktop::settings::Settings(this))
 	, m_config(new config::SettingsConfig(m_settings, this))
+	, m_colorWheelConfig(new config::ColorWheelConfig(m_config, this))
 	, m_notifications(new notification::Notifications(this))
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}

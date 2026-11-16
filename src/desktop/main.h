@@ -22,6 +22,7 @@ class BrushPresetTagModel;
 }
 
 namespace config {
+class ColorWheelConfig;
 class Config;
 }
 
@@ -75,6 +76,7 @@ public:
 	QSettings *scalingSettings();
 	void resetSettingsPath(const QString &path);
 
+	config::ColorWheelConfig *colorWheelConfig() { return m_colorWheelConfig; }
 	notification::Notifications *notifications() { return m_notifications; }
 
 	const utils::StateDatabase &state() const { return *m_state; }
@@ -154,6 +156,7 @@ protected:
 private:
 	desktop::settings::Settings *m_settings;
 	config::Config *m_config;
+	config::ColorWheelConfig *m_colorWheelConfig;
 	notification::Notifications *m_notifications;
 	int m_canvasImplementation;
 	bool m_canvasImplementationFromSettings = false;

@@ -36,8 +36,6 @@ public slots:
 	void setColor(const QColor &color);
 	void setColorFromShades(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
-	void setShape(int shape);
-	void setAngle(int angle);
 	void setColorSpace(int colorSpace);
 	void setMirror(bool mirror);
 	void setAlign(int align);
@@ -50,8 +48,7 @@ signals:
 	void colorSelected(const QColor &color);
 
 private:
-	void updateActualShapeAngleMirror();
-	void updateShapeAction();
+	void updateColorWheelConfig();
 	void setSwatchFlags(int flags);
 	void showContextMenu(const QPoint &pos);
 	void showShadesContextMenu(const QPoint &pos);

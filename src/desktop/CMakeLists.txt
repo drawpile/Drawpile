@@ -62,6 +62,8 @@ target_sources(drawpile PRIVATE
 	chat/chatwindow.h
 	chat/useritemdelegate.cpp
 	chat/useritemdelegate.h
+	config/colorwheelconfig.cpp
+	config/colorwheelconfig.h
 	config/settingsconfig.cpp
 	config/settingsconfig.h
 	cursors/arrow.png
