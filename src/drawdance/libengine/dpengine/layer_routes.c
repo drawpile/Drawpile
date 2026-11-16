@@ -91,7 +91,8 @@ static void index_layers(DP_LayerRoutes *lr, DP_DrawContext *dc,
         DP_draw_context_layer_indexes_set(dc, i);
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-        DP_LayerRoutesEntry *lre = insert(lr, dc, lp, child_lpl, parent_lre);
+        DP_LayerRoutesEntry *lre =
+            insert(lr, dc, lp, child_lpl != NULL, parent_lre);
         if (child_lpl) {
             index_layers(lr, dc, child_lpl, lre);
         }

@@ -1001,7 +1001,7 @@ static void reset_entry_layer_to_message(struct DP_ResetImageMessageContext *c,
                                          const DP_ResetEntryLayer *rel)
 {
     DP_LayerProps *lp = rel->lp;
-    bool group = DP_layer_props_children_noinc(lp);
+    bool group = DP_layer_props_children_noinc(lp) != NULL;
     if (rel->sublayer_id == 0) {
         uint8_t create_flags =
             DP_flag_uint8(rel->parent_id != 0,

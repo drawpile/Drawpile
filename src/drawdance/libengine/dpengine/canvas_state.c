@@ -2151,7 +2151,8 @@ bool DP_canvas_state_to_flat_separated_urgba8(
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return flatten_canvas(cs, flags, area_or_null, vmf_or_null, NULL,
                           to_flat_separated_urgba8_get_buffer,
-                          to_flat_separated_urgba8_to_buffer, buffer);
+                          to_flat_separated_urgba8_to_buffer, buffer)
+        != NULL;
 }
 
 DP_TransientTile *

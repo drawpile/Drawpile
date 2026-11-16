@@ -38,7 +38,7 @@ bool DP_event_log_close(void);
 DP_INLINE bool DP_event_log_is_open(void)
 {
     extern DP_Output *DP_event_log_output;
-    return DP_event_log_output;
+    return DP_event_log_output != NULL;
 }
 
 void DP_event_log_write_meta(const char *fmt, ...) DP_FORMAT(1, 2);

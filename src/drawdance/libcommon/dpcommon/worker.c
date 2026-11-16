@@ -65,7 +65,7 @@ static bool shift_worker_element(DP_Mutex *queue_mutex, DP_Queue *queue,
         DP_queue_shift(queue);
     }
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
-    return element;
+    return element != NULL;
 }
 
 static void run_worker_thread(void *data)

@@ -48,7 +48,7 @@ static bool init_mutex(void)
         }
         DP_atomic_unlock(&event_log_lock);
     }
-    return event_log_mutex;
+    return event_log_mutex != NULL;
 }
 
 static bool close_event_log(DP_Output *output)

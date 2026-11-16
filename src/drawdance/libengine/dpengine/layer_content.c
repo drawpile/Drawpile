@@ -291,7 +291,7 @@ static bool mark(void *data, int tile_index)
     DP_ASSERT(tile_index >= 0);
     DP_LayerContent *lc = data;
     DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
-    return lc->elements[tile_index].tile;
+    return lc->elements[tile_index].tile != NULL;
 }
 
 static void layer_content_diff_mark(DP_LayerContent *lc, DP_CanvasDiff *diff)
@@ -2161,7 +2161,7 @@ void DP_transient_layer_content_put_pixels(DP_TransientLayerContent *tlc,
 
     while (DP_tile_iterator_next(&ti)) {
         int i = ti.row * wt + ti.col;
-        bool tile_present = tlc->elements[i].tile;
+        bool tile_present = tlc->elements[i].tile != NULL;
         if (tile_present || DP_blend_mode_blend_blank(blend_mode)) {
             DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
             DP_TransientTile *tt = NULL;

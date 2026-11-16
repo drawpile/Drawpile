@@ -96,7 +96,7 @@ static bool shift_job(DP_Mutex *queue_mutex, DP_Queue *queue,
         DP_queue_shift(queue);
     }
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
-    return job;
+    return job != NULL;
 }
 
 static void run_stroke_worker_thread(void *data)
@@ -332,7 +332,7 @@ void DP_stroke_worker_classic_brush_set(DP_StrokeWorker *sw,
             *brush,
             *besp,
             color_override ? *color_override : DP_upixel_float_zero(),
-            color_override,
+            color_override != NULL,
             eraser_override,
         };
         push_job(sw,
@@ -367,7 +367,7 @@ void DP_stroke_worker_mypaint_brush_set(DP_StrokeWorker *sw,
             *settings,
             *besp,
             color_override ? *color_override : DP_upixel_float_zero(),
-            color_override,
+            color_override != NULL,
             eraser_override,
         };
         push_job(sw,

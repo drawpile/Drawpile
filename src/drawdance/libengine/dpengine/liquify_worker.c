@@ -348,7 +348,7 @@ static bool shift_job(DP_Mutex *queue_mutex, DP_Queue *queue,
         DP_queue_shift(queue);
     }
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
-    return job;
+    return job != NULL;
 }
 
 static void run_liquify_worker_thread(void *data)

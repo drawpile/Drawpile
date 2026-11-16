@@ -84,7 +84,7 @@ static bool init_mutex(void)
         }
         DP_atomic_unlock(&perf_lock);
     }
-    return perf_mutex;
+    return perf_mutex != NULL;
 }
 
 static bool close_perf(DP_Output *output)

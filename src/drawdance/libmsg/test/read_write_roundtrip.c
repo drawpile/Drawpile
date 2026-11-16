@@ -1153,7 +1153,7 @@ static void reset_stream_roundtrip(TEST_PARAMS)
     int stream_count;
     DP_Message **stream_msgs =
         DP_reset_stream_producer_free_finish(rsp, &stream_count);
-    if (!OK(stream_msgs, "producer finished")
+    if (!OK(stream_msgs != NULL, "producer finished")
         || !OK(stream_count > 0, "stream message count %d", stream_count)) {
         DP_message_vector_dispose(&in_msgs);
         return;

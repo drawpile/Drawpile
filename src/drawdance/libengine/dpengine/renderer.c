@@ -463,7 +463,7 @@ int DP_renderer_thread_count(DP_Renderer *renderer)
 bool DP_renderer_checkers(DP_Renderer *renderer)
 {
     DP_ASSERT(renderer);
-    return renderer->checker;
+    return renderer->checker != NULL;
 }
 
 bool DP_renderer_checkers_visible(DP_Renderer *renderer)
@@ -709,7 +709,7 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
     // non-opaque value or there's weird blend modes like Erase at top-level.
     // The OpenGL canvas view does its own background instead, so if that's in
     // use, renderer->checker will be null.
-    bool has_checker = renderer->checker;
+    bool has_checker = renderer->checker != NULL;
     renderer->checkers_visible =
         !DP_canvas_state_background_opaque(cs) || layers_can_decrease_opacity;
 

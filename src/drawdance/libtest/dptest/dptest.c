@@ -495,7 +495,7 @@ bool DP_test_not_null_ok(DP_TestContext *T, const char *file, int line,
 {
     va_list ap;
     va_start(ap, fmt);
-    bool result = DP_test_vok(T, file, line, a, fmt, ap);
+    bool result = DP_test_vok(T, file, line, a != NULL, fmt, ap);
     va_end(ap);
     if (!result) {
         DIAG_VALUE("actual", "%p", sa, a);

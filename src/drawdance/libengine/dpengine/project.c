@@ -2570,7 +2570,7 @@ static bool snapshot_insert_layer(DP_Project *prj,
     size_t title_length;
     const char *title = DP_layer_props_title(lp, &title_length);
     unsigned int flags =
-        DP_flag_uint(child_lpl, DP_PROJECT_SNAPSHOT_LAYER_FLAG_GROUP)
+        DP_flag_uint(child_lpl != NULL, DP_PROJECT_SNAPSHOT_LAYER_FLAG_GROUP)
         | DP_flag_uint(DP_layer_props_hidden(lp),
                        DP_PROJECT_SNAPSHOT_LAYER_FLAG_HIDDEN)
         | DP_flag_uint(DP_layer_props_censored_remote(lp),
@@ -2784,7 +2784,7 @@ static bool snapshot_handle_frame(DP_Project *prj,
     sqlite3_stmt *stmt =
         snapshot_prepare(prj, DP_PROJECT_SNAPSHOT_STATEMENT_INSERT_KEY_FRAME);
     if (!stmt) {
-        return stmt;
+        return false;
     }
 
     DP_KeyFrame *kf = ref->kf;
