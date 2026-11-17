@@ -44,6 +44,9 @@ private:
 	widgets::GroupedToolButton *m_modeScrubButton = nullptr;
 	widgets::GroupedToolButton *m_modeSelectButton = nullptr;
 	QButtonGroup *m_zoomModeGroup = nullptr;
+	widgets::GroupedToolButton *m_scrubHorizontalButton = nullptr;
+	widgets::GroupedToolButton *m_scrubVerticalButton = nullptr;
+	QButtonGroup *m_scrubDirectionGroup = nullptr;
 };
 
 }

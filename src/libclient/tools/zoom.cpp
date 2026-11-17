@@ -32,8 +32,9 @@ void ZoomTool::motion(const MotionParams &params)
 	m_end = params.point.toPoint();
 	if(m_scrubbing) {
 		QPointF viewPos = params.viewPos;
-		qreal delta = params.center ? viewPos.x() - m_scrubLast.x()
-									: m_scrubLast.y() - viewPos.y();
+		bool horizontal = !m_scrubVertical ^ params.center;
+		qreal delta = horizontal ? viewPos.x() - m_scrubLast.x()
+							   : m_scrubLast.y() - viewPos.y();
 		Q_EMIT m_owner.scrubZoomRequested(delta, m_scrubPos);
 		m_scrubLast = viewPos;
 	} else {

@@ -21,6 +21,10 @@ public:
 	void end(const EndParams &params) override;
 
 	void setScrub(bool scrub);
+	void setScrubVertical(bool scrubVertical)
+	{
+		m_scrubVertical = scrubVertical;
+	}
 
 private:
 	static constexpr int STEPS = 3;
@@ -31,6 +35,7 @@ private:
 	QRect getRect(bool center) const;
 
 	bool m_scrub = false;
+	bool m_scrubVertical = true;
 	bool m_drawing = false;
 	bool m_reverse = false;
 	bool m_scrubbing = false;
