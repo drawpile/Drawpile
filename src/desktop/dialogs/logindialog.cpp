@@ -124,12 +124,6 @@ struct LoginDialog::Private {
 
 		// Session list page
 		utils::bindKineticScrolling(ui->sessionList);
-		QObject::connect(
-			ui->sessionList, &QTableView::doubleClicked, okButton,
-			[this](const QModelIndex &) {
-				if(okButton->isEnabled())
-					okButton->click();
-			});
 
 		ui->showNsfw->setEnabled(
 			parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
@@ -165,6 +159,12 @@ struct LoginDialog::Private {
 		// Buttons
 		okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
 		okButton->setDefault(true);
+		QObject::connect(
+			ui->sessionList, &QTableView::doubleClicked, okButton,
+			[this](const QModelIndex &) {
+				if(okButton->isEnabled())
+					okButton->click();
+			});
 
 		cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
 		yesButton = ui->buttonBox->button(QDialogButtonBox::Yes);
