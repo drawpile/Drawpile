@@ -89,7 +89,6 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 	, m_settings(new desktop::settings::Settings(this))
 	, m_config(new config::SettingsConfig(m_settings, this))
-	, m_colorWheelConfig(new config::ColorWheelConfig(m_config, this))
 	, m_notifications(new notification::Notifications(this))
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}
@@ -183,6 +182,7 @@ void DrawpileApp::initState()
 	Q_ASSERT(!m_recents);
 	m_state = new utils::StateDatabase{this};
 	m_recents = new utils::Recents{*m_state};
+	m_colorWheelConfig = new config::ColorWheelConfig(m_config, this);
 }
 
 bool DrawpileApp::event(QEvent *e)
