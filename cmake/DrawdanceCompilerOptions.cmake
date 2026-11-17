@@ -35,6 +35,9 @@ if(MSVC)
         # C4702: unreachable code
         #  - macros from uthash causing problems again
         /wd4702
+        # C4815: flexible array member in object will have no elements
+        #  - bogus warning, zero elements is totally legitimate
+        /wd4815
     )
     # Disable exceptions in MSVC STL. Probably. It's undocumented.
     add_compile_definitions(_HAS_EXCEPTIONS=0)
