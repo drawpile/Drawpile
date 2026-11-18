@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/titlewidget.h"
-#include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
-
+#include "desktop/widgets/groupedtoolbutton.h"
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
@@ -13,7 +11,8 @@
 
 namespace docks {
 
-TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
+TitleWidget::TitleWidget(QDockWidget *parent)
+	: QWidget(parent)
 {
 	// Retain the title bar's size when it's hidden to avoid jiggering.
 	utils::setWidgetRetainSizeWhenHidden(this, true);
@@ -29,27 +28,34 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 	m_button->setPopupMode(QToolButton::InstantPopup);
 	m_layout->addWidget(m_button);
 
-	m_menu = new QMenu{this};
-	connect(m_menu, &QMenu::aboutToShow, this, &TitleWidget::updateContextMenuActions);
+	m_menu = new QMenu(this);
+	connect(
+		m_menu, &QMenu::aboutToShow, this,
+		&TitleWidget::updateContextMenuActions);
 	m_button->setMenu(m_menu);
 
-	m_dockAction = new QAction{tr("Docked"), m_menu};
+	m_dockAction = m_menu->addAction(tr("Docked"));
 	m_dockAction->setCheckable(true);
-	connect(m_dockAction, &QAction::triggered, this, &TitleWidget::toggleFloating);
-	m_menu->addAction(m_dockAction);
+	connect(
+		m_dockAction, &QAction::triggered, this, &TitleWidget::toggleFloating);
 
-	m_dockableAction = new QAction{tr("Dockable by Dragging"), m_menu};
+	m_dockableAction = m_menu->addAction(tr("Dockable by Dragging"));
 	m_dockableAction->setCheckable(true);
-	connect(m_dockableAction, &QAction::triggered, this, &TitleWidget::toggleDockable);
-	m_menu->addAction(m_dockableAction);
+	connect(
+		m_dockableAction, &QAction::triggered, this,
+		&TitleWidget::toggleDockable);
 
-	m_closeAction = new QAction{tr("Close"), m_menu};
+	m_closeAction = m_menu->addAction(tr("Close"));
 	connect(m_closeAction, &QAction::triggered, parent, &QDockWidget::close);
-	m_menu->addAction(m_closeAction);
 
-	connect(parent, &QDockWidget::featuresChanged, this, &TitleWidget::onFeaturesChanged);
-	connect(parent, &QDockWidget::dockLocationChanged, this, &TitleWidget::onDockLocationChanged);
-	QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent->parentWidget());
+	connect(
+		parent, &QDockWidget::featuresChanged, this,
+		&TitleWidget::onFeaturesChanged);
+	connect(
+		parent, &QDockWidget::dockLocationChanged, this,
+		&TitleWidget::onDockLocationChanged);
+	QMainWindow *mainWindow =
+		qobject_cast<QMainWindow *>(parent->parentWidget());
 	if(mainWindow) {
 		onDockLocationChanged(mainWindow->dockWidgetArea(parent));
 	}
@@ -130,12 +136,14 @@ void TitleWidget::updateContextMenuActions()
 
 	QDockWidget::DockWidgetFeatures features =
 		parent ? parent->features() : QDockWidget::NoDockWidgetFeatures;
-	m_closeAction->setEnabled(features.testFlag(QDockWidget::DockWidgetClosable));
+	m_closeAction->setEnabled(
+		features.testFlag(QDockWidget::DockWidgetClosable));
 
 	if(parent && parent->isFloating()) {
 		m_dockAction->setChecked(false);
 		m_dockableAction->setEnabled(true);
-		m_dockableAction->setChecked(parent->allowedAreas() != Qt::NoDockWidgetArea);
+		m_dockableAction->setChecked(
+			parent->allowedAreas() != Qt::NoDockWidgetArea);
 	} else {
 		m_dockAction->setChecked(true);
 		m_dockableAction->setEnabled(false);

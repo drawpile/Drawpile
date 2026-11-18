@@ -1,28 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TITLEWIDGET_H
-#define TITLEWIDGET_H
-
+#ifndef DESKTOP_DOCKS_TITLEWIDGET_H
+#define DESKTOP_DOCKS_TITLEWIDGET_H
 #include <QDockWidget>
 
 class QBoxLayout;
 class QMenu;
 
-namespace widgets{
+namespace widgets {
 class GroupedToolButton;
 }
 
 namespace docks {
 
-class TitleWidget final : public QWidget
-{
+class TitleWidget final : public QWidget {
 	Q_OBJECT
 public:
 	explicit TitleWidget(QDockWidget *parent = nullptr);
 
 	void addCustomWidget(QWidget *widget, int stretch = 0);
 	void addSpace(int space);
-	void addStretch(int stretch=0);
+	void addStretch(int stretch = 0);
 
 	/// Add a spacer to the left side to center the custom widgets
 	void addCenteringSpacer();
@@ -34,7 +31,7 @@ public:
 	// up by the button disappearing.
 	void setKeepButtonSpace(bool keepButtonSpace);
 
-private slots:
+private Q_SLOTS:
 	void toggleFloating();
 	void toggleDockable();
 	void updateContextMenuActions();
@@ -52,4 +49,4 @@ private:
 
 }
 
-#endif // TITLEWIDGET_H
+#endif
