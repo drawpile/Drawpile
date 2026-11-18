@@ -113,7 +113,8 @@ void DockBase::setArrangeMode(bool arrangeMode)
 		arrangeLayout->setSpacing(0);
 		arrangeLayout->setContentsMargins(2, 2, 1, 2);
 
-		QLabel *arrangeLabel = new QLabel(tr("Drag here to arrange"));
+		QLabel *arrangeLabel = new QLabel(tr("Drag here"));
+		arrangeLabel->setToolTip(tr("Drag here to arrange"));
 		arrangeLabel->setAlignment(Qt::AlignCenter);
 		arrangeLayout->addWidget(arrangeLabel, 1);
 
