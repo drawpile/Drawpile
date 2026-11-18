@@ -1609,14 +1609,17 @@ void MainWindow::restoreSettings(config::Config *cfg)
 	}
 
 	const QVariantMap docksConfig = cfg->getLastWindowDocks();
-	for(QDockWidget *dw :
-		findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+	for(docks::DockBase *dw : findChildren<docks::DockBase *>(
+			QString(), Qt::FindDirectChildrenOnly)) {
 		if(!dw->objectName().isEmpty()) {
 			const QVariantMap dock =
 				docksConfig.value(dw->objectName()).value<QVariantMap>();
-			if(dock.value("undockable", false).toBool()) {
+			if(dock.value(QStringLiteral("undockable"), false).toBool()) {
 				dw->setFloating(true);
 				dw->setAllowedAreas(Qt::NoDockWidgetArea);
+			}
+			if(dock.value(QStringLiteral("titlebar"), false).toBool()) {
+				dw->setDragSpaceEnabled(true);
 			}
 		}
 	}
@@ -2106,13 +2109,15 @@ void MainWindow::saveWindowState()
 		// TODO: This should be separate from window state and happen only when
 		// dock states change
 		QVariantMap docksConfig;
-		for(const QDockWidget *dw : findChildren<const QDockWidget *>(
+		for(const docks::DockBase *dw : findChildren<const docks::DockBase *>(
 				QString(), Qt::FindDirectChildrenOnly)) {
 			if(!dw->objectName().isEmpty()) {
 				docksConfig[dw->objectName()] = QVariantMap{
 					{QStringLiteral("undockable"),
 					 dw->isFloating() &&
-						 dw->allowedAreas() == Qt::NoDockWidgetArea}};
+						 dw->allowedAreas() == Qt::NoDockWidgetArea},
+					{QStringLiteral("titlebar"), dw->dragSpaceEnabled()},
+				};
 			}
 		}
 		cfg->setLastWindowDocks(docksConfig);

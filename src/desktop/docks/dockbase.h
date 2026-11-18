@@ -26,6 +26,12 @@ public:
 	QWidget *actualTitleBarWidget() const;
 	void setArrangeMode(bool arrangeMode);
 
+	bool dragSpaceEnabled() const;
+	void setDragSpaceEnabled(bool enabled);
+
+	const QString &fullTitle() { return m_fullTitle; }
+	const QString &shortTitle() { return m_shortTitle; }
+
 signals:
 	void arrangingFinished();
 	void tabUpdateRequested();

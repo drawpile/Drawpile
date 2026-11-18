@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/dockbase.h"
+#include "desktop/docks/titlewidget.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
 #include <QApplication>
@@ -11,6 +12,29 @@
 #include <QVariant>
 
 namespace docks {
+
+namespace {
+class ArrangeWidget : public QWidget {
+public:
+	explicit ArrangeWidget(int targetHeight, QWidget *parent = nullptr)
+		: QWidget(parent)
+		, m_targetHeight(targetHeight)
+	{
+	}
+
+	QSize sizeHint() const override
+	{
+		QSize s = QWidget::sizeHint();
+		s.setHeight(m_targetHeight);
+		return s;
+	}
+
+	QSize minimumSizeHint() const override { return sizeHint(); }
+
+private:
+	const int m_targetHeight;
+};
+}
 
 DockBase::DockBase(
 	const QString &fullTitle, const QString &shortTitle, const QIcon &tabIcon,
@@ -83,7 +107,8 @@ void DockBase::setArrangeMode(bool arrangeMode)
 {
 	if(arrangeMode && !m_originalTitleBarWidget) {
 		m_originalTitleBarWidget = titleBarWidget();
-		QWidget *arrangeWidget = new QWidget;
+		ArrangeWidget *arrangeWidget =
+			new ArrangeWidget(m_originalTitleBarWidget->height());
 		QHBoxLayout *arrangeLayout = new QHBoxLayout(arrangeWidget);
 		arrangeLayout->setSpacing(0);
 		arrangeLayout->setContentsMargins(2, 2, 1, 2);
@@ -110,6 +135,20 @@ void DockBase::setArrangeMode(bool arrangeMode)
 		if(arrangeWidget) {
 			arrangeWidget->deleteLater();
 		}
+	}
+}
+
+bool DockBase::dragSpaceEnabled() const
+{
+	TitleWidget *tw = qobject_cast<TitleWidget *>(actualTitleBarWidget());
+	return tw && tw->dragSpaceEnabled();
+}
+
+void DockBase::setDragSpaceEnabled(bool enabled)
+{
+	TitleWidget *tw = qobject_cast<TitleWidget *>(actualTitleBarWidget());
+	if(tw) {
+		tw->setDragSpaceEnabled(enabled);
 	}
 }
 

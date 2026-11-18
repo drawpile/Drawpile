@@ -3,8 +3,10 @@
 #define DESKTOP_DOCKS_TITLEWIDGET_H
 #include <QDockWidget>
 
-class QBoxLayout;
+class QHBoxLayout;
+class QLabel;
 class QMenu;
+class QVBoxLayout;
 
 namespace widgets {
 class GroupedToolButton;
@@ -31,6 +33,11 @@ public:
 	// up by the button disappearing.
 	void setKeepButtonSpace(bool keepButtonSpace);
 
+	bool dragSpaceEnabled() const { return m_dragLabel != nullptr; }
+
+public Q_SLOTS:
+	void setDragSpaceEnabled(bool enabled);
+
 private Q_SLOTS:
 	void toggleFloating();
 	void toggleDockable();
@@ -39,11 +46,14 @@ private Q_SLOTS:
 	void onDockLocationChanged(Qt::DockWidgetArea area);
 
 private:
-	QBoxLayout *m_layout;
+	QVBoxLayout *m_dragLayout;
+	QHBoxLayout *m_layout;
+	QWidget *m_dragLabel = nullptr;
 	widgets::GroupedToolButton *m_button;
 	QMenu *m_menu;
 	QAction *m_dockAction;
 	QAction *m_dockableAction;
+	QAction *m_dragSpaceAction;
 	QAction *m_closeAction;
 };
 
