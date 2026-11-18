@@ -232,7 +232,7 @@
         <location line="-58"/>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+89"/>
         <source>Choose an action</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть дію</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -622,7 +622,7 @@
     <message>
         <location line="+14"/>
         <source>Open Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити відтворення</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -693,7 +693,7 @@
     <message>
         <location line="+9"/>
         <source>Project Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Інформація про проект</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -718,12 +718,12 @@
     <message>
         <location line="+8"/>
         <source>Recordings</source>
-        <translation type="unfinished"></translation>
+        <translation>Запис</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти проект</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -748,7 +748,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated PNG</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт анімованого PNG</translation>
     </message>
     <message>
         <location line="+106"/>
