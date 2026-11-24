@@ -356,6 +356,7 @@ public:
 
 	DP_BrushShape shape() const;
 	bool hasHardness() const;
+	bool needsPixelCoordinates() const;
 
 	ClassicBrush &classic() { return m_classic; }
 	const ClassicBrush &classic() const { return m_classic; }

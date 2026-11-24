@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/tools/shapetools.h"
+#include "libclient/brushes/brush.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/tools/toolcontroller.h"
@@ -63,6 +64,7 @@ void ShapeTool::begin(const BeginParams &params)
 	m_mirror = params.mirror;
 	m_flip = params.flip;
 	m_drawing = true;
+	m_roundCoordinates = m_owner.activeBrush().needsPixelCoordinates();
 
 	updatePreview();
 }
@@ -165,14 +167,14 @@ Line::Line(ToolController &owner, DP_MaskSync *ms)
 canvas::PointVector Line::pointVector() const
 {
 	PointVectorGenerator gen;
-	gen.append(m_p1);
-	gen.append(m_p2);
+	gen.append(p1());
+	gen.append(p2());
 	return gen.pv();
 }
 
 QPointF Line::getConstrainPoint() const
 {
-	return constraints::angle(m_start, m_current, angle());
+	return constraints::angle(start(), current(), angle());
 }
 
 Rectangle::Rectangle(ToolController &owner, DP_MaskSync *ms)
@@ -183,11 +185,11 @@ Rectangle::Rectangle(ToolController &owner, DP_MaskSync *ms)
 canvas::PointVector Rectangle::pointVector() const
 {
 	PointVectorGenerator gen;
-	gen.append(m_p1);
-	gen.append(QPointF(m_p1.x(), m_p2.y()));
-	gen.append(m_p2);
-	gen.append(QPointF(m_p2.x(), m_p1.y()));
-	gen.append(QPointF(m_p1.x(), m_p1.y()));
+	gen.append(p1());
+	gen.append(QPointF(p1().x(), p2().y()));
+	gen.append(p2());
+	gen.append(QPointF(p2().x(), p1().y()));
+	gen.append(p1());
 	return gen.pv();
 }
 
@@ -215,9 +217,9 @@ canvas::PointVector Ellipse::pointVector() const
 	}
 
 	for(qreal t = 0.0; t < 2.0 * M_PI; t += step) {
-		gen.append(QPointF(cx + a * cos(t), cy + b * sin(t)));
+		gen.append(maybeRound(QPointF(cx + a * cos(t), cy + b * sin(t))));
 	}
-	gen.append(QPointF(cx + a, cy));
+	gen.append(maybeRound(QPointF(cx + a, cy)));
 
 	return gen.pv();
 }

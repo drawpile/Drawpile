@@ -14,6 +14,7 @@ Unreleased Version 2.3.2-pre
  * Fix: Make S and V color sliders use percentages instead of 8 bit values. Thanks resttime for contributing.
  * Feature: Allow switching the zoom tool to horizontal drag, for people used to that from other programs. Thanks AgraFL for suggesting.
  * Feature: Allow enabling title bars on individual docks to allow for easier dragging. Mostly useful if you have floating docks you want to fegularly move around. Thanks olly/bnyu for suggesting.
+ * Fix: Make 45 degree angle lines with pixel brushes always be a clean line. Thanks Frizy for reporting.
 
 2026-10-21 Version 2.3.1
  * Fix: Make dock tab icons show up properly on Qt 6.11, they could end up blank there.

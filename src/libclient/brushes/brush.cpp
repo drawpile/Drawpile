@@ -1330,6 +1330,17 @@ bool ActiveBrush::hasHardness() const
 	}
 }
 
+bool ActiveBrush::needsPixelCoordinates() const
+{
+	switch(shape()) {
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
+		return true;
+	default:
+		return false;
+	}
+}
+
 DP_PaintMode ActiveBrush::paintMode() const
 {
 	return m_activeType == CLASSIC ? m_classic.paint_mode

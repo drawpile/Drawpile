@@ -39,19 +39,35 @@ protected:
 	virtual canvas::PointVector pointVector() const = 0;
 	virtual QPointF getConstrainPoint() const;
 	void updatePreview();
-	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
+
+	QPointF start() const { return maybeRound(m_start); }
+	QPointF current() const { return maybeRound(m_current); }
+	QPointF p1() const { return maybeRound(m_p1); }
+	QPointF p2() const { return maybeRound(m_p2); }
+
+	QPointF maybeRound(QPointF p) const
+	{
+		if(m_roundCoordinates) {
+			return QPointF(p.toPoint());
+		} else {
+			return p;
+		}
+	}
+
+	QRectF rect() const { return QRectF(p1(), p2()).normalized(); }
 	qreal angle() const { return m_angle; }
 
-	QPointF m_start, m_current, m_p1, m_p2;
 	bool m_drawing = false;
 
 private:
 	void updateShape(bool constrain, bool center);
 
+	QPointF m_start, m_current, m_p1, m_p2;
 	qreal m_zoom = 1.0;
 	qreal m_angle = 0.0;
 	bool m_mirror = false;
 	bool m_flip = false;
+	bool m_roundCoordinates = false;
 	drawdance::BrushEngine m_brushEngine;
 };
 
