@@ -1,0 +1,6 @@
+# Undoing a conflicting operation.
+reset 500x500 3
+remote fill 0,0 100x100 0000ff
+local fill 50,50 100x100 ff0000
+remote undo
+receive 1

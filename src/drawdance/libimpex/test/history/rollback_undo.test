@@ -1,0 +1,9 @@
+# Issues an undo onto a conflict. This is a distilled random test case that hit
+# a bug.
+reset 500x500 3
+local resize 0,1,0,0
+receive 1
+local undo
+remote resize 0,0,1,0
+local fill 0,0 100x100 ff0000
+receive 2

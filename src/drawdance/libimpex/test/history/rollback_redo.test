@@ -1,0 +1,10 @@
+# Redo getting rolled back.
+reset 500x500 3
+local resize 0,1,0,0
+receive 1
+local undo
+receive 1
+local redo
+local fill 0,0 100x100 ff0000
+remote resize 0,0,1,0
+receive 2

@@ -152,6 +152,8 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                void (*push_message)(void *, DP_Message *),
                                void *user);
 
+int DP_canvas_history_local_fork_count(DP_CanvasHistory *ch);
+
 bool DP_canvas_history_local_fork_clear(DP_CanvasHistory *ch,
                                         DP_DrawContext *dc);
 

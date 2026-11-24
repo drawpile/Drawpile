@@ -1,0 +1,8 @@
+# Issues a bogus undo, that must not mess up the rollback. This is a distilled
+# random test case that hit a bug in a rollback fix.
+reset 500x500 3
+local undo
+remote resize 0,0,1,0
+local fill 0,0 100x100 ff0000
+local undo
+receive 3

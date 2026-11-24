@@ -1,0 +1,81 @@
+# This is a sample canvas history test case file, the historygen.pl script will
+# parse, check and generate C code for the actual test. Empty lines and lines
+# starting with # are ignored. Other instructions are per-line. Ideally your
+# test cases should have a *brief* comment on what they are about in the header
+# and no ramble on the individual commands. Explaining sections is okay.
+#
+# The point of these is to test Drawpile's rollback netcode. Local commands are
+# executed immediately and kept in a local fork of the canvas history until the
+# command comes back from the remote. Remote commands from other users may come
+# in along the way and are reconciled with the local fork. Conflicts cause the
+# fork to be replayed. We only test realistic cases here: every local command
+# will come back from the remote in order. This stuff is complicated enough
+# without getting into cases that can never happen in normal operation.
+# Particularly undos and redos have had many bugs in the past, since they have
+# to roll back and forth commands while taking care not to restore a rolled-back
+# local state or something.
+#
+# Each test case will be executed once for the "client", where local commands
+# are sent immediately and then later received and reconciled from the remote,
+# and once for the "server", where only the remote commands are handled. Then
+# the results are compared, with the expectation that the canonical server side
+# matches the local client side that went through the whole out-of-order
+# rollback business. A mismatch always means that the client is wrong.
+#
+# Several commands have a local and a remote variant. The local variant means
+# that the local user issued the command and is waiting for it to come back from
+# the remote. A remote command means that another user issued the command. Some
+# technical details: there is one layer, the local user is user 1, the remote
+# user is user 2, the canvas background is always white. Each regular command
+# will set an undo point.
+
+# reset [width]x[height] [undo_limit]
+# Reset command. Clears the history, sets the canvas size and undo limit.
+# Minimum undo limit is 3, maximum is 255. This must be the first command in a
+# test case and that is also the only place you can use it at currently. Unless
+# you have a reason to do it differently, use these parameters.
+reset 500x500 3
+
+# [local|remote] resize [top],[right],[bottom],[left]
+# Resizes the canvas in the given directions. Positive numbers expand the canvas
+# in that direction, negative ones contract it.
+local resize 0,100,200,0
+
+# [local|remote] fill [x],[y] [width]x[height] [color]
+# Fills a rectangular area of the canvas starting from the top-left coordinates
+# and spanning for the given width and height with the given color. This command
+# will conflict with any overlapping fills. For consistency, use red colors for
+# local commands and blue colors for remote ones.
+local fill 0,0 100x100 ff0000
+
+# [local|remote] undo
+# Undoes the effects of the last non-undone command. If the undo limit given in
+# the last reset command is exceeded, this will do nothing. Note that the undo
+# limit is shared between all users.
+local undo
+
+# [local|remote] redo
+# Redoes the effects of the next undone command. If there is no undone command
+# or the command has fallen beyond the undo limit, this will do nothing. Issuing
+# a command that isn't undo or redo will cut off any undone commands.
+local redo
+
+# receive [n]
+# Receives the next n not yet received local command(s) from the remote and
+# reconciles them with the local state. Each local command must be received from
+# the remote by the end of the test case. You also can't receive more commands
+# than are left. The historygen.pl script will validate this.
+receive 4
+
+# check
+# Checks whether the local and remote canvas look the same at this point. This
+# happens automatically at the end of the test, but can be done in the middle as
+# well. You can only use this command at points where all local commands have
+# been received, since only then should the local and remote state be in sync.
+check
+
+# Some remote examples.
+remote resize 20,20,20,20
+remote fill 50,50 100x100 0000ff
+remote undo
+remote redo

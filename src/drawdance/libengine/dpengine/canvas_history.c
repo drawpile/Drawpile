@@ -1182,6 +1182,12 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
 }
 
 
+int DP_canvas_history_local_fork_count(DP_CanvasHistory *ch)
+{
+    DP_ASSERT(ch);
+    return DP_size_to_int(ch->fork.queue.used);
+}
+
 bool DP_canvas_history_local_fork_clear(DP_CanvasHistory *ch,
                                         DP_DrawContext *dc)
 {

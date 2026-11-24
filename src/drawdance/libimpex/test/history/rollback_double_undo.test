@@ -1,0 +1,9 @@
+# Two undos getting hit by a rollback.
+reset 500x500 3
+local resize 0,1,0,0
+local fill 0,0 10x10 ff0000
+receive 2
+local undo
+local undo
+remote resize 0,0,1,0
+receive 2

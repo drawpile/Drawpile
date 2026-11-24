@@ -1,0 +1,8 @@
+# Rollback undo followed by a redo.
+reset 500x500 3
+local resize 0,1,0,0
+receive 1
+local undo
+remote resize 0,0,1,0
+local redo
+receive 2

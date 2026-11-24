@@ -105,6 +105,7 @@ if(TESTS)
     )
     target_link_libraries(dptest_impex PUBLIC dptest dpimpex)
     add_dptest_targets(impex dptest_impex
+        test/history.c
         test/image_thumbnail.c
         test/resize_image.c
     )

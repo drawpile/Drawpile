@@ -1,0 +1,11 @@
+# Conflict between a fill and a canvas resize and vice-versa.
+reset 500x500 3
+
+local fill 0,0 100x100 ff0000
+remote resize 100,100,100,100
+receive 1
+check
+
+local resize 50,50,50,50
+remote fill 600,600 100x100 0000ff
+receive 1

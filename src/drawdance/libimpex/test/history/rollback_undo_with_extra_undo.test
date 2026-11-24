@@ -1,0 +1,9 @@
+# Like rollback_undo.test, but with another undo at the end.
+reset 500x500 3
+local resize 0,1,0,0
+receive 1
+local undo
+remote resize 0,0,1,0
+local fill 0,0 100x100 ff0000
+local undo
+receive 3

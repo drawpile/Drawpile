@@ -1,0 +1,11 @@
+# Hitting the undo limit with rollbacks.
+reset 500x500 3
+local fill 0,0 10x10 ff0000
+local fill 20,20 10x10 ff0000
+local fill 40,40 10x10 ff0000
+receive 3
+local undo
+remote resize 0,1,0,0
+local undo
+remote resize 0,0,1,0
+receive 2

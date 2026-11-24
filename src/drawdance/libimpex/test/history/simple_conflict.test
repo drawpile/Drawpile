@@ -1,0 +1,6 @@
+# Simple conflict between fills on the same layer. The remote fill happens first
+# canonically, so blue should be at the bottom.
+reset 500x500 3
+local fill 50,50 100x100 ff0000
+remote fill 100,100 100x100 0000ff
+receive 1

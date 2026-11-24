@@ -1,0 +1,6 @@
+# Fork gets cleared by conflicting resize, then hitting an undo.
+reset 500x500 3
+local fill 0,0 100x100 ff0000
+remote resize 0,1,0,0
+local undo
+receive 2
