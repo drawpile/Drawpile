@@ -11,11 +11,14 @@ namespace tools {
 
 class PointVectorGenerator {
 public:
-	PointVectorGenerator() {}
+	PointVectorGenerator(bool roundCoordinates)
+		: m_roundCoordinates(roundCoordinates)
+	{
+	}
 
 	void append(const QPointF &point)
 	{
-		if(!m_pv.isEmpty()) {
+		if(!m_roundCoordinates && !m_pv.isEmpty()) {
 			// MyPaint brushes don't take kindly to unnatural delta times. Very
 			// short ones cause weird brush behavior and long ones (5 seconds+)
 			// cause them to not draw the stroke at all. So we interpolate.
@@ -45,6 +48,7 @@ private:
 
 	long long m_time = 0LL;
 	canvas::PointVector m_pv;
+	const bool m_roundCoordinates;
 };
 
 void ShapeTool::begin(const BeginParams &params)
@@ -166,7 +170,7 @@ Line::Line(ToolController &owner, DP_MaskSync *ms)
 
 canvas::PointVector Line::pointVector() const
 {
-	PointVectorGenerator gen;
+	PointVectorGenerator gen(roundCoordinates());
 	gen.append(p1());
 	gen.append(p2());
 	return gen.pv();
@@ -184,7 +188,7 @@ Rectangle::Rectangle(ToolController &owner, DP_MaskSync *ms)
 
 canvas::PointVector Rectangle::pointVector() const
 {
-	PointVectorGenerator gen;
+	PointVectorGenerator gen(roundCoordinates());
 	gen.append(p1());
 	gen.append(QPointF(p1().x(), p2().y()));
 	gen.append(p2());
@@ -205,7 +209,7 @@ canvas::PointVector Ellipse::pointVector() const
 	qreal b = r.height() / 2.0;
 	qreal cx = r.x() + a;
 	qreal cy = r.y() + b;
-	PointVectorGenerator gen;
+	PointVectorGenerator gen(roundCoordinates());
 
 	qreal radius = (a + b) / 2.0;
 	qreal step;

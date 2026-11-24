@@ -57,6 +57,8 @@ protected:
 	QRectF rect() const { return QRectF(p1(), p2()).normalized(); }
 	qreal angle() const { return m_angle; }
 
+	bool roundCoordinates() const { return m_roundCoordinates; }
+
 	bool m_drawing = false;
 
 private:
