@@ -182,14 +182,16 @@ static int command_run(int argc, char **argv, int offset, DP_TestRegistry *R,
 {
     struct DP_TestRunParams params;
     if (parse_run_params(&params, argc, argv, offset)) {
-        DP_TestContext context = {NULL, "«", "»", stdout, stderr, 0, 0, user};
+        DP_TestContext context = {NULL, "«", "»",  stdout, stderr,
+                                  0LL,  0LL, user, 0u};
         unsigned int seed = (unsigned int)time(NULL);
         DP_test_note(&context, "srand seed is %u", seed);
-        srand(seed);
 
         for (int i = 0; i < R->used; ++i) {
             DP_Test *test = &R->tests[i];
             if (should_run_test(&params, test)) {
+                srand(seed);
+                context.srand_seed = seed;
                 context.test = test;
                 run_test(&context);
             }

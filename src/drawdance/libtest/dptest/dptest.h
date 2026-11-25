@@ -44,6 +44,7 @@ typedef struct DP_TestContext {
     long long total;
     long long passed;
     void *user;
+    unsigned int srand_seed;
 } DP_TestContext;
 
 typedef void (*DP_TestRegisterFn)(DP_TestRegistry *);
@@ -120,6 +121,7 @@ bool DP_test_file_eq_ok(DP_TestContext *T, const char *file, int line,
 #define TEST_PARAMS     DP_TestContext *T
 #define REGISTER_ARGS   R
 #define TEST_ARGS       T
+#define TEST_SRAND_SEED T->srand_seed
 
 // For sticking TEST_PARAMS into a struct, e.g. to have them in callbacks.
 #define TEST_FIELD_DECL DP_TestContext *T
