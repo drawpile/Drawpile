@@ -47,6 +47,18 @@ settings:
       Xiaomi workaround. Their stylus inputs page up and down keys for its
       buttons. This workaround turns them into mouse button presses instead.
 
+  - id: androidWorkaroundHideTouchAndStylusCursors
+    type: 'bool'
+    default: 'true'
+    qsettings: 'settings/androidworkaround/hidetouchandstyluscursors'
+    legacy_package: 'libclient'
+    condition: 'defined(Q_OS_ANDROID)'
+    comment: |
+      Several devices have busted cursors for styluses, showing the cursor only
+      while hovering or having it show up randomly. This workaround disables the
+      cursor for those types of input sources. On most devices this doesn't make
+      a difference, since they never show a cursor for those sources anyway.
+
   - id: androidWorkaroundIgnoreHistoricTabletEvents
     type: 'bool'
     default:

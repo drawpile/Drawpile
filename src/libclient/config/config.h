@@ -309,6 +309,12 @@ public:
 	static bool defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown();
 #endif
 
+#if defined(Q_OS_ANDROID)
+	virtual bool getAndroidWorkaroundHideTouchAndStylusCursors() const = 0;
+	virtual void setAndroidWorkaroundHideTouchAndStylusCursors(bool value) = 0;
+	static bool defaultAndroidWorkaroundHideTouchAndStylusCursors();
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 	virtual bool getAndroidWorkaroundIgnoreHistoricTabletEvents() const = 0;
 	virtual void setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value) = 0;
@@ -1388,6 +1394,9 @@ Q_SIGNALS:
 #endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	void changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value);
+#endif
+#if defined(Q_OS_ANDROID)
+	void changeAndroidWorkaroundHideTouchAndStylusCursors(bool value);
 #endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 	void changeAndroidWorkaroundIgnoreHistoricTabletEvents(bool value);

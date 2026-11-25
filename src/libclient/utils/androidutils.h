@@ -111,6 +111,8 @@ int androidLongPressTimeout();
 
 bool androidLooksLikeXiaomiDevice();
 
+void androidSetHideTouchAndStylusCursors(bool hide);
+
 bool androidIsLowMemoryKillReportSupported();
 
 bool androidShowScalingDialog(

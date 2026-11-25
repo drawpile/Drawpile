@@ -140,6 +140,22 @@ void MemoryConfig::setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(
 }
 #endif
 
+#if defined(Q_OS_ANDROID)
+bool MemoryConfig::getAndroidWorkaroundHideTouchAndStylusCursors() const
+{
+	return m_androidWorkaroundHideTouchAndStylusCursors;
+}
+
+void MemoryConfig::setAndroidWorkaroundHideTouchAndStylusCursors(bool value)
+{
+	if(value != m_androidWorkaroundHideTouchAndStylusCursors) {
+		m_androidWorkaroundHideTouchAndStylusCursors = value;
+		Q_EMIT changeAndroidWorkaroundHideTouchAndStylusCursors(
+			m_androidWorkaroundHideTouchAndStylusCursors);
+	}
+}
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 bool MemoryConfig::getAndroidWorkaroundIgnoreHistoricTabletEvents() const
 {

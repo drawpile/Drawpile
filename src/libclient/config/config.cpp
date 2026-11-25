@@ -83,6 +83,13 @@ bool Config::defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown()
 }
 #endif
 
+#if defined(Q_OS_ANDROID)
+bool Config::defaultAndroidWorkaroundHideTouchAndStylusCursors()
+{
+	return true;
+}
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 bool Config::defaultAndroidWorkaroundIgnoreHistoricTabletEvents()
 {

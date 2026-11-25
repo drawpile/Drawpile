@@ -17,7 +17,15 @@ and punting to the default behavior of showing nothing.
  import android.view.MotionEvent;
  import android.view.PointerIcon;
  import android.view.SurfaceHolder;
-@@ -88,6 +89,20 @@ public class QtSurface extends SurfaceView implements SurfaceHolder.Callback
+@@ -49,6 +50,7 @@ import android.view.SurfaceView;
+ 
+ public class QtSurface extends SurfaceView implements SurfaceHolder.Callback
+ {
++    private static boolean hideTouchAndStylusCursors = false;
+     private Object m_accessibilityDelegate = null;
+ 
+     public QtSurface(Context context, int id, boolean onTop, int imageDepth)
+@@ -88,6 +90,29 @@ public class QtSurface extends SurfaceView implements SurfaceHolder.Callback
  
      @Override
      public PointerIcon onResolvePointerIcon(MotionEvent event, int pointerIndex) {
@@ -30,12 +38,21 @@ and punting to the default behavior of showing nothing.
 +        // Movinkpad is also empty. So we codify that here: if the motion came
 +        // from a stylus or touchscreen, we use the default cursor, which will
 +        // be blank unless the user somehow managed to set a different default.
-+        if (event.isFromSource(InputDevice.SOURCE_BLUETOOTH_STYLUS)
++        // External devices aren't affected by this issue as far as we know (or
++        // at least aren't made worse by it), so they are excluded here.
++        if (hideTouchAndStylusCursors &&
++                (event.getDevice() == null || !event.getDevice().isExternal()) &&
++                  (event.isFromSource(InputDevice.SOURCE_BLUETOOTH_STYLUS)
 +                || event.isFromSource(InputDevice.SOURCE_STYLUS)
-+                || event.isFromSource(InputDevice.SOURCE_TOUCHSCREEN)) {
++                || event.isFromSource(InputDevice.SOURCE_TOUCHSCREEN))) {
 +            return super.onResolvePointerIcon(event, pointerIndex);
 +        } else {
 +            return QtPointerIcon.instance().getIcon();
 +        }
++    }
++
++    public static void setHideTouchAndStylusCursors(boolean hide)
++    {
++        hideTouchAndStylusCursors = hide;
      }
  }

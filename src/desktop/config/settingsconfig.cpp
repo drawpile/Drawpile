@@ -60,6 +60,14 @@ SettingsConfig::SettingsConfig(
 			changeAndroidWorkaroundEmulateMouseButtonsForPageUpDown,
 		Qt::DirectConnection);
 #endif
+#if defined(Q_OS_ANDROID)
+	connect(
+		m_settings,
+		&desktop::settings::Settings::
+			androidWorkaroundHideTouchAndStylusCursorsChanged,
+		this, &SettingsConfig::changeAndroidWorkaroundHideTouchAndStylusCursors,
+		Qt::DirectConnection);
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 	connect(
 		m_settings,
@@ -1077,6 +1085,18 @@ void SettingsConfig::setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(
 	bool value)
 {
 	m_settings->setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(value);
+}
+#endif
+
+#if defined(Q_OS_ANDROID)
+bool SettingsConfig::getAndroidWorkaroundHideTouchAndStylusCursors() const
+{
+	return m_settings->androidWorkaroundHideTouchAndStylusCursors();
+}
+
+void SettingsConfig::setAndroidWorkaroundHideTouchAndStylusCursors(bool value)
+{
+	m_settings->setAndroidWorkaroundHideTouchAndStylusCursors(value);
 }
 #endif
 

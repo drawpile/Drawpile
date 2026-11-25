@@ -60,6 +60,11 @@ public:
 	setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value) override;
 #endif
 
+#if defined(Q_OS_ANDROID)
+	bool getAndroidWorkaroundHideTouchAndStylusCursors() const override;
+	void setAndroidWorkaroundHideTouchAndStylusCursors(bool value) override;
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 	bool getAndroidWorkaroundIgnoreHistoricTabletEvents() const override;
 	void setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value) override;

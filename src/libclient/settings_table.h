@@ -39,6 +39,13 @@ SETTING(
 	"settings/androidworkaround/emulatemousebuttonsforpageupdown",
 	config::Config::defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown())
 #endif
+#if defined(Q_OS_ANDROID)
+SETTING(
+	androidWorkaroundHideTouchAndStylusCursors,
+	AndroidWorkaroundHideTouchAndStylusCursors,
+	"settings/androidworkaround/hidetouchandstyluscursors",
+	config::Config::defaultAndroidWorkaroundHideTouchAndStylusCursors())
+#endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 SETTING(
 	androidWorkaroundIgnoreHistoricTabletEvents,

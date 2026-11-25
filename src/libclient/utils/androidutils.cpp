@@ -381,6 +381,15 @@ bool androidLooksLikeXiaomiDevice()
 	return looksLikeXiaomiDeviceResult > 0;
 }
 
+void androidSetHideTouchAndStylusCursors(bool hide)
+{
+	QJniEnvironment env;
+	QJniObject::callStaticMethod<void>(
+		"org/qtproject/qt5/android/QtSurface", "setHideTouchAndStylusCursors",
+		"(Z)V", jboolean(hide));
+	clearException(env);
+}
+
 bool androidIsLowMemoryKillReportSupported()
 {
 	static int lowMemoryKillReportSupportedResult;

@@ -53,6 +53,11 @@ public:
 	setAndroidWorkaroundEmulateMouseButtonsForPageUpDown(bool value) override;
 #endif
 
+#if defined(Q_OS_ANDROID)
+	bool getAndroidWorkaroundHideTouchAndStylusCursors() const override;
+	void setAndroidWorkaroundHideTouchAndStylusCursors(bool value) override;
+#endif
+
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 	bool getAndroidWorkaroundIgnoreHistoricTabletEvents() const override;
 	void setAndroidWorkaroundIgnoreHistoricTabletEvents(bool value) override;
@@ -872,6 +877,10 @@ private:
 #if defined(KRITA_QATTRIBUTE_ANDROID_EMULATE_MOUSE_BUTTONS_FOR_PAGE_UP_DOWN)
 	bool m_androidWorkaroundEmulateMouseButtonsForPageUpDown =
 		defaultAndroidWorkaroundEmulateMouseButtonsForPageUpDown();
+#endif
+#if defined(Q_OS_ANDROID)
+	bool m_androidWorkaroundHideTouchAndStylusCursors =
+		defaultAndroidWorkaroundHideTouchAndStylusCursors();
 #endif
 #if defined(KRITA_QATTRIBUTE_ANDROID_IGNORE_HISTORIC_TABLET_EVENTS)
 	bool m_androidWorkaroundIgnoreHistoricTabletEvents =

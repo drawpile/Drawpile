@@ -190,6 +190,17 @@ void Tablet::initTablet(config::Config *cfg, QFormLayout *form)
 	form->addRow(nullptr, ignoreHistoricTabletEventsWorkaround);
 #endif
 
+#ifdef Q_OS_ANDROID
+	QCheckBox *hideTouchAndStylusCursorsWorkaround =
+		//: Wacom is a brand that makes Android tablets. This is a setting for
+		//: a workaround that matters for those tablets.
+		new QCheckBox(tr("Hide stylus cursors (Wacom)"));
+	CFG_BIND_CHECKBOX(
+		cfg, AndroidWorkaroundHideTouchAndStylusCursors,
+		hideTouchAndStylusCursorsWorkaround);
+	form->addRow(nullptr, hideTouchAndStylusCursorsWorkaround);
+#endif
+
 	QComboBox *eraserAction = new QComboBox;
 	eraserAction->addItem(
 		tr("Treat as regular pen tip"), int(tools::EraserAction::Ignore));

@@ -1113,6 +1113,14 @@ static StartupOptions initApp(DrawpileApp &app)
 		}));
 #endif
 
+#ifdef Q_OS_ANDROID
+	CFG_BIND_SET_FN(
+		cfg, AndroidWorkaroundHideTouchAndStylusCursors, &app,
+		([](bool enabled) {
+			utils::androidSetHideTouchAndStylusCursors(enabled);
+		}));
+#endif
+
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
