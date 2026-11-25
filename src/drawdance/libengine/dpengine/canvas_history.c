@@ -409,7 +409,7 @@ static bool fork_entries_concurrent_with(DP_CanvasHistory *ch,
     DP_ASSERT(ch);
     DP_ASSERT(aa);
     return DP_queue_all(&ch->fork.queue, sizeof(DP_ForkEntry),
-                        fork_entry_concurrent_with, &aa);
+                        fork_entry_concurrent_with, aa);
 }
 
 
