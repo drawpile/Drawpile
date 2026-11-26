@@ -1779,6 +1779,11 @@ bool DP_canvas_history_reset_image_new(
         DP_CanvasHistoryEntry *entry = &entries[i];
         switch (entry->undo) {
         case DP_UNDO_UNDONE:
+            // Local matches get discarded below, so we need to stop early to
+            // avoid recording an undo prefix for something that doesn't exist.
+            if (DP_msg_local_match_is_local_match(entry->msg)) {
+                break;
+            }
             // If this is an undone entry, prefix it with an undo by user 0.
             // That's never a valid user for an undo otherwise, so it instead
             // gets interpreted as meaning to mark the next command undone.
