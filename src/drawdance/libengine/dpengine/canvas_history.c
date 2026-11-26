@@ -933,7 +933,7 @@ DP_CanvasState *DP_canvas_history_stream_start_state_inc(DP_CanvasHistory *ch)
     DP_ASSERT(ch);
     int used = ch->used;
     for (int i = 0; i < used; ++i) {
-        DP_CanvasState *cs = ch->entries->state;
+        DP_CanvasState *cs = ch->entries[i].state;
         if (cs) {
             return DP_canvas_state_incref(cs);
         }
