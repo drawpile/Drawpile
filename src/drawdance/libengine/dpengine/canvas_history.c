@@ -1538,8 +1538,17 @@ static bool handle_remote_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
         return handle_command(ch, dc, msg, type, index);
     }
     case DP_FORK_ACTION_ROLLBACK:
-        return search_and_replay_from(ch, dc, ch->fork.start - ch->offset,
-                                      true);
+        if (!search_and_replay_from(ch, dc, ch->fork.start - ch->offset,
+                                    true)) {
+            return false;
+        }
+        // Undos aren't part of the history, they have to be reapplied.
+        if (type == DP_MSG_UNDO) {
+            return handle_command(ch, dc, msg, type, index);
+        }
+        else {
+            return true;
+        }
     default:
         DP_ASSERT(fork_action == DP_FORK_ACTION_ALREADY_DONE);
         return true;
