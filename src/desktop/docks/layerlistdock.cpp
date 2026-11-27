@@ -501,8 +501,14 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		m_actions.layerAlphaPreserve, &QAction::triggered, this,
 		&LayerList::setLayerAlphaPreserve);
 	connect(
+		m_actions.layerAlphaPreserveToggle, &QAction::triggered,
+		m_alphaInheritButton, &widgets::GroupedToolButton::click);
+	connect(
 		m_actions.layerClip, &QAction::triggered, this,
 		&LayerList::setLayerClip);
+	connect(
+		m_actions.layerClipToggle, &QAction::triggered, m_clipButton,
+		&widgets::GroupedToolButton::click);
 	connect(
 		actions.layerColorMenu, &QMenu::triggered, this,
 		&LayerList::setLayerColor);
@@ -2287,7 +2293,9 @@ void LayerList::updateUiFromCurrent()
 		bool enabled = !layer.group || layer.isolated;
 		m_actions.layerAlphaBlend->setEnabled(enabled);
 		m_actions.layerAlphaPreserve->setEnabled(enabled);
+		m_actions.layerAlphaPreserveToggle->setEnabled(enabled);
 		m_actions.layerClip->setEnabled(enabled);
+		m_actions.layerClipToggle->setEnabled(enabled);
 		if(layer.clip) {
 			m_actions.layerClip->setChecked(true);
 		} else if(alphaPreserve) {

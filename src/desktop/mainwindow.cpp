@@ -7788,19 +7788,25 @@ void MainWindow::setupActions()
 								   "dialogs::LayerProperties", "Blend alpha"))
 			.checkable()
 			.checked()
-			.noDefaultShortcut();
+			.noDefaultShortcutWithTitle(tr("Set layer blend alpha"));
 	QAction *layerAlphaPreserve =
 		makeAction(
 			"layeralphapreserve",
 			QCoreApplication::translate(
 				"dialogs::LayerProperties", "Inherit alpha"))
 			.checkable()
+			.noDefaultShortcutWithTitle(tr("Set layer inherit alpha"));
+	QAction *layerAlphaPreserveToggle =
+		makeAction("layeralphapreservetoggle", tr("Toggle layer inherit alpha"))
 			.noDefaultShortcut();
 	QAction *layerClip =
 		makeAction(
 			"layerclip", QCoreApplication::translate(
 							 "dialogs::LayerProperties", "Clip to layer below"))
 			.checkable()
+			.noDefaultShortcutWithTitle(tr("Set clip to layer below"));
+	QAction *layerClipToggle =
+		makeAction("layercliptoggle", tr("Toggle clip to layer below"))
 			.noDefaultShortcut();
 	QActionGroup *layerAlphaGroup = new QActionGroup(this);
 	layerAlphaGroup->addAction(layerAlphaBlend);
@@ -8396,7 +8402,9 @@ void MainWindow::setupActions()
 		layerAlphaGroup,
 		layerAlphaBlend,
 		layerAlphaPreserve,
+		layerAlphaPreserveToggle,
 		layerClip,
+		layerClipToggle,
 		layerAutomaticAlphaPreserve,
 		layerColorMenu,
 		layerViewMenu,

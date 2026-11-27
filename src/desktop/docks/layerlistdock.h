@@ -71,7 +71,9 @@ public:
 		QActionGroup *layerAlphaGroup = nullptr;
 		QAction *layerAlphaBlend = nullptr;
 		QAction *layerAlphaPreserve = nullptr;
+		QAction *layerAlphaPreserveToggle = nullptr;
 		QAction *layerClip = nullptr;
+		QAction *layerClipToggle = nullptr;
 		QAction *layerAutomaticAlphaPreserve = nullptr;
 		QMenu *layerColorMenu = nullptr;
 		QMenu *layerViewMenu = nullptr;
