@@ -7,12 +7,35 @@
 #    include <unistd.h>
 #endif
 
+#ifdef _WIN32
+typedef VOID(WINAPI *DP_GetSystemTimePreciseAsFileTimeFn)(LPFILETIME);
+static DP_GetSystemTimePreciseAsFileTimeFn get_system_time_precise_as_file_time;
+#endif
+
+void DP_time_init(void)
+{
+#ifdef _WIN32
+    if (!get_system_time_precise_as_file_time) {
+        HMODULE module = GetModuleHandleA("kernel32.dll");
+        if (module) {
+            get_system_time_precise_as_file_time =
+                reinterpret_cast<DP_GetSystemTimePreciseAsFileTimeFn>(
+                    GetProcAddress(module, "GetSystemTimePreciseAsFileTime"));
+        }
+    }
+#endif
+}
 
 long long DP_time_unix_msec(void)
 {
-#if defined(_WIN32)
+#ifdef _WIN32
     FILETIME ft;
-    GetSystemTimePreciseAsFileTime(&ft);
+    if (get_system_time_precise_as_file_time) {
+        get_system_time_precise_as_file_time(&ft);
+    }
+    else {
+        GetSystemTimeAsFileTime(&ft);
+    }
 
     // Gotta unpack the timestamp.
     ULARGE_INTEGER li = {

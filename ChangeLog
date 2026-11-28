@@ -17,6 +17,7 @@ Unreleased Version 2.3.2-pre
  * Fix: Make 45 degree angle lines with pixel brushes always be a clean line. Thanks Frizy for reporting.
  * Feature: Allow using the Android system cursor behavior instead of always hiding them for styluses and touch. There are a scant few devices where that actually makes a difference, since most of them hide those cursors anyway, but if you have such a device and really like cursors the option is there now.
  * Feature: Add actions to toggle clipping and inherit alpha on layers so that you can assign shortcuts to those. The previous actions that do it one way have been given a clearer title and still work together with the blend alpha action. Thanks mauv for suggesting.
+ * Fix: Make Drawpile work on Windows 7 again, it complained about GetSystemTimePrceiseAsFileTime not existing. Thanks dAVePAGE for reporting.
 
 2026-10-21 Version 2.3.1
  * Fix: Make dock tab icons show up properly on Qt 6.11, they could end up blank there.

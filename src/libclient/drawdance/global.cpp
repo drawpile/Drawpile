@@ -3,6 +3,7 @@ extern "C" {
 #include <dpcommon/common.h>
 #include <dpcommon/cpu.h>
 #include <dpcommon/threading.h>
+#include <dpcommon/timing.h>
 #include <dpengine/draw_context.h>
 #include <dpengine/tile.h>
 #include <dpimpex/image_impex.h>
@@ -65,6 +66,11 @@ void initLogging()
 void initCpuSupport()
 {
 	DP_cpu_support_init();
+}
+
+void initTiming()
+{
+	DP_time_init();
 }
 
 void initImageImportExport()

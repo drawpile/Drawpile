@@ -25,6 +25,7 @@
 #include <dpcommon/cpu.h>
 #include <dpcommon/file.h>
 #include <dpcommon/output.h>
+#include <dpcommon/timing.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -265,6 +266,7 @@ int DP_test_main(int argc, char **argv, DP_TestRegisterFn register_fn,
                  void *user)
 {
     DP_cpu_support_init();
+    DP_time_init();
 
     DP_TestRegistry registry = {0, 0, NULL, user};
     register_fn(&registry);

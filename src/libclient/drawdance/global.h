@@ -14,6 +14,8 @@ void initLogging();
 
 void initCpuSupport();
 
+void initTiming();
+
 void initImageImportExport();
 
 void initStaticTiles();

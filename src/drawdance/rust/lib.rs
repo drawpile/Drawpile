@@ -11,6 +11,7 @@ include!("bindings.rs");
 
 extern "C" {
     pub fn DP_cpu_support_init();
+    pub fn DP_time_init();
     pub fn DP_cmake_config_version() -> *const c_char;
 }
 
@@ -20,6 +21,7 @@ pub mod msg;
 
 pub fn init() {
     unsafe { DP_cpu_support_init() };
+    unsafe { DP_time_init() };
     unsafe { DP_image_impex_init() };
 }
 
